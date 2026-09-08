@@ -46,6 +46,14 @@
   .addbox select,.addbox input,.addbox textarea{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:14px}
   .addbox button{margin-top:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-weight:800;cursor:pointer}
   .addbox .st{font-size:12.5px;color:var(--ink-soft);margin-top:8px}
+  .usebadge{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;opacity:.75}
+  .lookupbox{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:28px}
+  .lookupbox h2{font-size:16px;margin:0 0 10px}
+  .lookupbox .row{display:flex;gap:8px}
+  .lookupbox input{flex:1;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:14px}
+  .lookupbox button{background:var(--panel2, #f2efe4);border:1.5px solid var(--line);border-radius:8px;padding:0 18px;font-weight:800;cursor:pointer}
+  .lookupbox .result{margin-top:12px;font-size:13.5px;line-height:1.8}
+  .lookupbox .result .hit{background:var(--bg);border-radius:8px;padding:6px 10px;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -71,6 +79,15 @@
     <textarea id="addNote" maxlength="200" style="min-height:60px" placeholder="這張卡在提示什麼、怎麼用"></textarea>
     <button id="addBtn">加進卡池</button>
     <div class="st" id="addStatus"></div>
+  </div>
+
+  <div class="lookupbox">
+    <h2>🔍 查我抽過哪些卡</h2>
+    <div class="row">
+      <input type="number" id="lookupEnv" min="1" max="60" placeholder="輸入你的編號">
+      <button id="lookupBtn">查詢</button>
+    </div>
+    <div class="result" id="lookupResult"></div>
   </div>
 
   <div id="sections"></div>
@@ -139,6 +156,22 @@ const custom = {producer:[], engineer:[], marketing:[], creative:[]};
 const root = document.getElementById("sections");
 function escapeHtml(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
 
+// 全班抽卡紀錄——用來算「這張卡被抽過幾次」＋查某個編號抽過哪些卡
+let allRounds = {};
+let usageCount = {}; // `${role}::${cardValue}` -> 次數
+
+function recomputeUsage() {
+  usageCount = {};
+  Object.values(allRounds).forEach(r => {
+    Object.entries(r.players || {}).forEach(([env, p]) => {
+      const card = (r.cards || {})[p.role];
+      if (!card) return;
+      const key = p.role + "::" + card.v;
+      usageCount[key] = (usageCount[key] || 0) + 1;
+    });
+  });
+}
+
 function renderAll() {
   root.innerHTML = "";
   SECTIONS.forEach(s => {
@@ -146,11 +179,15 @@ function renderAll() {
     const total = s.deck.length + customList.length;
     const sec = document.createElement("div");
     sec.className = "section";
+    const badge = (v) => {
+      const n = usageCount[s.key + "::" + v] || 0;
+      return n > 0 ? `<div class="usebadge">🎲 全班已抽過 ${n} 次</div>` : "";
+    };
     const baseHtml = s.deck.map(c =>
-      `<div class="cardbox ${s.key}"><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div><div class="note">💡 ${escapeHtml(c.note)}</div></div>`
+      `<div class="cardbox ${s.key}"><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div><div class="note">💡 ${escapeHtml(c.note)}</div>${badge(c.v)}</div>`
     ).join("");
     const customHtml = customList.map(c =>
-      `<div class="cardbox ${s.key} custom"><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div>${c.note ? `<div class="note">💡 ${escapeHtml(c.note)}</div>` : ""}<div class="by">✨ #${c.addedBy} 新增</div></div>`
+      `<div class="cardbox ${s.key} custom"><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div>${c.note ? `<div class="note">💡 ${escapeHtml(c.note)}</div>` : ""}<div class="by">✨ #${c.addedBy} 新增</div>${badge(c.v)}</div>`
     ).join("");
     sec.innerHTML = `<h2>${s.title}</h2><div class="n">${total} 張卡（含 ${customList.length} 張同學新增）</div>` +
       `<div class="cardgrid">${baseHtml}${customHtml}</div>`;
@@ -164,7 +201,31 @@ SECTIONS.forEach(s => {
     renderAll();
   });
 });
+db.ref(`${NS}/rounds`).on("value", snap => {
+  allRounds = snap.val() || {};
+  recomputeUsage();
+  renderAll();
+});
 renderAll();
+
+const ROLE_TITLE = {producer:"🟢 執行製作人", engineer:"🔵 首席工程師", marketing:"🟣 行銷主管", creative:"🔴 創意總監"};
+document.getElementById("lookupBtn").onclick = () => {
+  const env = parseInt(document.getElementById("lookupEnv").value, 10);
+  const resEl = document.getElementById("lookupResult");
+  if (!env || env < 1 || env > 60) { resEl.textContent = "請輸入 1-60 的編號"; return; }
+  const hits = [];
+  Object.values(allRounds).forEach(r => {
+    const p = (r.players || {})[env];
+    if (!p) return;
+    const card = (r.cards || {})[p.role];
+    if (!card) return;
+    hits.push({role: p.role, v: card.v, t: r.createdAt});
+  });
+  hits.sort((a, b) => a.t - b.t);
+  if (!hits.length) { resEl.innerHTML = `<div class="hit">#${env} 還沒有抽過任何卡</div>`; return; }
+  resEl.innerHTML = `<div style="margin-bottom:6px">#${env} 總共玩過 ${hits.length} 輪：</div>` +
+    hits.map((h, i) => `<div class="hit">第${i+1}輪　${ROLE_TITLE[h.role]}：${escapeHtml(h.v)}</div>`).join("");
+};
 
 document.getElementById("addBtn").onclick = () => {
   const env = parseInt(document.getElementById("addEnv").value, 10);

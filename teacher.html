@@ -264,25 +264,63 @@ const ENA_LABELS = {
   role_initiator: "角色：提案者", role_clarifier: "角色：澄清者",
   role_evaluator: "角色：評論者", role_elaborator: "角色：疊加者",
 };
-db.ref(`${NS}/analysis/ena/latest`).on("value", snap => {
+function renderEdgeTable(d, label) {
+  const edges = (d.edges || []).slice().sort((a, b) => b.weight - a.weight);
+  if (!edges.length) return `<p style="margin:4px 0">目前資料量太少，還算不出共現連結。</p>`;
+  let html = `<table style="margin:4px 0 12px"><thead><tr><th>連結（哪兩種認知/角色訊號常常一起出現）</th><th style="width:70px">強度</th></tr></thead><tbody>`;
+  edges.slice(0, 10).forEach(e => {
+    html += `<tr><td>${label(e.a)} <span style="opacity:.5">×</span> ${label(e.b)}</td><td class="pair">${e.weight}</td></tr>`;
+  });
+  return html + `</tbody></table>`;
+}
+
+db.ref(`${NS}/analysis/ena`).on("value", snap => {
   const d = snap.val();
   const el = $("enaPanel");
-  if (!d) { el.textContent = "尚未產生分析（跑一次 test_tools/ena_pipeline.py 之後會顯示在這裡）"; return; }
-  const nodeWeights = d.nodeWeights || {};
-  const edges = (d.edges || []).slice().sort((a, b) => b.weight - a.weight);
+  if (!d || !d.keyword) { el.textContent = "尚未產生分析（跑一次 test_tools/ena_pipeline.py 之後會顯示在這裡）"; return; }
   const label = c => ENA_LABELS[c] || c;
-  let html = `<p>累計 <b>${d.roundCount || 0}</b> 輪討論、<b>${d.stanzaCount || 0}</b> 則發言被編碼、` +
-    `觸發 <b>${Object.keys(nodeWeights).length}</b> 種code、<b>${edges.length}</b> 條共現連結` +
-    `（產生於 ${fmtTime(d.generatedAt)}）</p>`;
-  if (edges.length) {
-    html += `<table style="margin-top:8px"><thead><tr><th>連結（哪兩種認知/角色訊號常常一起出現）</th><th style="width:70px">強度</th></tr></thead><tbody>`;
-    edges.slice(0, 12).forEach(e => {
-      html += `<tr><td>${label(e.a)} <span style="opacity:.5">×</span> ${label(e.b)}</td><td class="pair">${e.weight}</td></tr>`;
+  const kw = d.keyword, lda = d.lda, agr = d.agreement;
+
+  let html = `<p style="font-weight:700">方法一：關鍵字啟發式編碼（v0）</p>`;
+  html += `<p>累計 <b>${kw.roundCount || 0}</b> 輪討論、<b>${kw.stanzaCount || 0}</b> 則發言被編碼、` +
+    `觸發 <b>${Object.keys(kw.nodeWeights || {}).length}</b> 種code、` +
+    `<b>${(kw.edges || []).length}</b> 條共現連結（產生於 ${fmtTime(kw.generatedAt)}）</p>`;
+  html += renderEdgeTable(kw, label);
+
+  if (lda) {
+    html += `<p style="font-weight:700;margin-top:14px">方法二：LDA主題模型＋教師關鍵字比對（v0）</p>`;
+    if (lda.ldaMeta && lda.ldaMeta.skipped) {
+      html += `<p>${lda.ldaMeta.reason || "資料量不足，這次跳過"}</p>`;
+    } else {
+      html += `<p>觸發 <b>${Object.keys(lda.nodeWeights || {}).length}</b> 種code、` +
+        `<b>${(lda.edges || []).length}</b> 條共現連結` +
+        `（${lda.ldaMeta ? lda.ldaMeta.nTopics + "個主題，" + lda.ldaMeta.mappedTopics + "個成功對應到code" : ""}）</p>`;
+      html += renderEdgeTable(lda, label);
+    }
+  }
+
+  if (agr) {
+    const pct = agr.avgJaccard === null ? "N/A" : (agr.avgJaccard * 100).toFixed(0) + "%";
+    html += `<p style="font-weight:700;margin-top:10px">兩方法一致性（粗略對照，非正式kappa）</p>` +
+      `<p>比對了 <b>${agr.comparedRounds}</b> 輪，平均Jaccard相似度 <b>${pct}</b>——` +
+      `${agr.avgJaccard !== null && agr.avgJaccard < 0.3 ? "目前兩條路標的code差異頗大，符合v0關鍵字表都還沒校準過的預期，之後要用真實資料反覆調整。" : "有一定的重疊。"}</p>`;
+  }
+
+  // 過程內轉折點（楊老師2026-09-09重新定調的分析重點：哪個環節觸發轉折，不是橫斷比較）
+  const transitions = [];
+  Object.entries(kw.transitions || {}).forEach(([rid, ts]) => {
+    ts.forEach(t => transitions.push(t));
+  });
+  transitions.sort((a, b) => b.newConnections - a.newConnections);
+  if (transitions.length) {
+    html += `<p style="font-weight:700;margin-top:14px">🔍 過程內轉折點候選（哪一句話讓認知連結網路多長出了新連結）</p>`;
+    html += `<table style="margin-top:4px"><thead><tr><th style="width:50px">編號</th><th style="width:60px">新連結數</th><th>那句話</th></tr></thead><tbody>`;
+    transitions.slice(0, 6).forEach(t => {
+      html += `<tr><td class="pair">#${t.env}</td><td>${t.newConnections}</td><td style="font-size:12px">${escapeHtml(t.textPreview)}…</td></tr>`;
     });
     html += `</tbody></table>`;
-  } else {
-    html += `<p>目前資料量太少，還算不出共現連結。</p>`;
   }
+
   el.innerHTML = html;
 });
 

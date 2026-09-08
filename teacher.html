@@ -299,11 +299,24 @@ db.ref(`${NS}/analysis/ena`).on("value", snap => {
     }
   }
 
-  if (agr) {
-    const pct = agr.avgJaccard === null ? "N/A" : (agr.avgJaccard * 100).toFixed(0) + "%";
-    html += `<p style="font-weight:700;margin-top:10px">兩方法一致性（粗略對照，非正式kappa）</p>` +
-      `<p>比對了 <b>${agr.comparedRounds}</b> 輪，平均Jaccard相似度 <b>${pct}</b>——` +
-      `${agr.avgJaccard !== null && agr.avgJaccard < 0.3 ? "目前兩條路標的code差異頗大，符合v0關鍵字表都還沒校準過的預期，之後要用真實資料反覆調整。" : "有一定的重疊。"}</p>`;
+  if (agr && agr.jaccard) {
+    const j = agr.jaccard;
+    const pct = j.avgJaccard === null ? "N/A" : (j.avgJaccard * 100).toFixed(0) + "%";
+    html += `<p style="font-weight:700;margin-top:10px">兩方法一致性</p>` +
+      `<p>Jaccard（整輪code集合重疊，粗略對照）：比對 <b>${j.comparedRounds}</b> 輪，平均 <b>${pct}</b>——` +
+      `${j.avgJaccard !== null && j.avgJaccard < 0.3 ? "目前兩條路標的code差異頗大，符合v0關鍵字表都還沒校準過的預期。" : "有一定的重疊。"}</p>`;
+    const kappaEntries = Object.entries(agr.kappaByCode || {}).filter(([, v]) => !v.skipped);
+    if (kappaEntries.length) {
+      html += `<p>Cohen's kappa（逐句二元比對，ncodeR常見門檻是kappa≥0.65）：</p>` +
+        `<table style="margin:4px 0"><thead><tr><th>Code</th><th style="width:80px">kappa</th></tr></thead><tbody>`;
+      kappaEntries.forEach(([code, v]) => {
+        const color = v.kappa >= 0.65 ? "var(--ok)" : "var(--warn)";
+        html += `<tr><td>${label(code)}</td><td class="pair" style="color:${color}">${v.kappa.toFixed(2)}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p style="font-size:12px">目前資料量太小，${Object.keys(agr.kappaByCode || {}).length}個code全部因為「至少一方全0或全1」算不出kappa——這是預期中的正常現象，等真實資料累積多了才會有意義的數字。</p>`;
+    }
   }
 
   // 過程內轉折點（楊老師2026-09-09重新定調的分析重點：哪個環節觸發轉折，不是橫斷比較）

@@ -44,9 +44,11 @@
     <div class="stat"><div class="n" id="statPlayers">0</div><div class="l">出現過的編號數</div></div>
     <div class="stat"><div class="n queuecount" id="statQueue">0</div><div class="l">目前排隊中</div></div>
     <div class="stat"><div class="n" id="statMatched" style="color:var(--ok)">0</div><div class="l">配對中／進行中</div></div>
+    <div class="stat"><div class="n" id="statAvgDuration">--</div><div class="l">平均每輪花費時間</div></div>
   </div>
   <div class="rolebreak" id="rolebreak"></div>
   <div class="imbalance" id="imbalance" hidden></div>
+  <div id="testSummary" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:13px;color:var(--ink-soft);line-height:1.8"></div>
   <table>
     <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
     <tbody id="rows"></tbody>
@@ -94,9 +96,12 @@ db.ref(`${NS}/queue`).on("value", snap => {
     imb.hidden = true;
   }
 });
+let leftEnvs = new Set();
 db.ref(`${NS}/playerStatus`).on("value", snap => {
   const val = snap.val() || {};
   $("statMatched").textContent = Object.values(val).filter(p => p.state === "matched").length;
+  leftEnvs = new Set(Object.entries(val).filter(([,p]) => p.state === "left").map(([env]) => env));
+  renderAll(latestRounds);
 });
 function $(id){ return document.getElementById(id); }
 
@@ -121,12 +126,45 @@ function renderAll(rounds) {
       return `<details open><summary>#${e}（${list.length}則）</summary>` +
         list.map(p => `<div class="prompt">${escapeHtml(p.text)}</div>`).join("") + `</details>`;
     }).join("");
-    const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "")).join(" ↔ ");
+    const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "") +
+      (leftEnvs.has(e) ? ' <span style="color:var(--warn);font-weight:800">⚠️離線</span>' : "")).join(" ↔ ");
     tr.innerHTML = `<td>${fmtTime(r.createdAt)}</td><td class="pair">${whoLine}</td><td>${cardHtml}</td><td>${promptHtml}</td>`;
     rows.appendChild(tr);
   });
   $("statRounds").textContent = ids.length;
   $("statPlayers").textContent = seenPlayers.size;
+
+  // 平均每輪花費時間：同一個編號連續兩輪的createdAt間隔，當作「上一輪玩了多久」
+  // 的估計值（沒有明確的「結束時間」欄位，用下一輪開始的時間點回推）。
+  const byEnv = {};
+  ids.forEach(id => {
+    Object.keys(rounds[id].players || {}).forEach(e => {
+      (byEnv[e] = byEnv[e] || []).push(rounds[id].createdAt);
+    });
+  });
+  const gaps = [];
+  Object.values(byEnv).forEach(times => {
+    times.sort((a,b) => a-b);
+    for (let i = 1; i < times.length; i++) gaps.push(times[i] - times[i-1]);
+  });
+  if (gaps.length) {
+    const avgMs = gaps.reduce((a,b) => a+b, 0) / gaps.length;
+    $("statAvgDuration").textContent = Math.round(avgMs/1000/60*10)/10 + " 分";
+  } else {
+    $("statAvgDuration").textContent = "--";
+  }
+
+  // 測試概要
+  const roleCounts = {};
+  ids.forEach(id => Object.values(rounds[id].players || {}).forEach(p => {
+    roleCounts[p.role] = (roleCounts[p.role]||0) + 1;
+  }));
+  const times = ids.map(id => rounds[id].createdAt);
+  const span = times.length ? Math.round((Math.max(...times) - Math.min(...times))/1000/60) : 0;
+  const roleLine = ROLE_KEYS.map(k => `${ROLE_LABEL[k]} ${roleCounts[k]||0}次`).join("、");
+  $("testSummary").innerHTML = ids.length
+    ? `<b>測試概要</b>：累計 ${ids.length} 輪、${seenPlayers.size} 個不同編號、時間跨度約 ${span} 分鐘。各角色出現次數：${roleLine}。`
+    : "";
 }
 
 function escapeHtml(s){

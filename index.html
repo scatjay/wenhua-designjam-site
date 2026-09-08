@@ -76,6 +76,7 @@
   .queuepanel .qitem.has{border-color:var(--accent);background:var(--accent-soft)}
   .queuehint{background:var(--red-soft);border:1.5px solid var(--red);color:var(--red);border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:700;margin:-8px 0 16px;text-align:center}
   .queuesummary{text-align:center;font-size:11.5px;color:var(--ink-soft);margin:-10px 0 16px}
+  .leftTag{color:var(--red);font-size:11px;font-weight:800}
 
   .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0;border:1px solid var(--line)}
@@ -422,8 +423,11 @@ $("cancelBtn").onclick = () => {
 
 $("rerollBtn").onclick = () => {
   if (feedUnsub) { feedUnsub(); feedUnsub = null; }
+  presenceUnsubs.forEach(u => u());
+  presenceUnsubs = [];
   currentRoundId = null;
   roundCount++;
+  db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().cancel();
   db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"idle", t: Date.now()});
   show("login");
 };
@@ -595,6 +599,11 @@ function watchMatch() {
       currentRoundId = d.roundId;
       myQueueKey = null;
       myWaitSince = null;
+      // 🔴 2026-09-08 抓到：配對成功後如果有人手機沒電/斷線/離開教室，
+      // 其他組員的畫面完全看不出來，還是靜靜顯示那個人的卡片、以為他還在。
+      // 用onDisconnect：真的斷線時自動把自己的playerStatus標成"left"，
+      // 其他組員訂閱這個路徑就能顯示「⚠️已離線」。
+      db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().update({state: "left"});
       db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => renderRound(rs.val()));
     }
   });
@@ -668,6 +677,24 @@ function makeRound(group) {
   db.ref().update(updates);
 }
 
+let presenceUnsubs = [];
+function watchTeammatePresence(round) {
+  presenceUnsubs.forEach(u => u());
+  presenceUnsubs = [];
+  const myKey = String(myEnv);
+  Object.keys(round.players || {}).forEach(env => {
+    if (env === myKey) return;
+    const ref = db.ref(`${NS}/playerStatus/${env}`);
+    const handler = (snap) => {
+      const left = (snap.val() || {}).state === "left";
+      const tag = document.getElementById("leftTag_" + env);
+      if (tag) tag.hidden = !left;
+    };
+    ref.on("value", handler);
+    presenceUnsubs.push(() => ref.off("value", handler));
+  });
+}
+
 function renderRound(round) {
   if (!round) return;
   const myKey = String(myEnv);
@@ -686,13 +713,14 @@ function renderRound(round) {
     const who = "#" + env + (p.nickname ? "　" + p.nickname : "");
     const div = document.createElement("div");
     div.className = "role-card " + r.cls + (mine ? " yours" : "");
-    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${r.label}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
+    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${r.label} <span id="leftTag_${env}" class="leftTag" hidden>⚠️ 已離線</span></div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
     box.appendChild(div);
   });
   $("saveStatus").textContent = "";
   $("doneCard").hidden = true;
   feedRoundPlayers = round.players;
   watchFeed(currentRoundId);
+  watchTeammatePresence(round);
   show("playing");
 }
 

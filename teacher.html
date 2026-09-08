@@ -67,7 +67,11 @@ const ROLE_LABEL = {producer:"🟢製作人", engineer:"🔵工程師", marketin
 function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }
 
 db.ref(`${NS}/queue`).on("value", snap => {
-  $("statQueue").textContent = snap.numChildren();
+  // queue 是 queue/{角色}/{每個人} 兩層結構，numChildren()只會算到角色數(0-4)，
+  // 不是實際等待人數——要把四個角色底下的人數加總才對。
+  let total = 0;
+  snap.forEach(roleSnap => { total += roleSnap.numChildren(); });
+  $("statQueue").textContent = total;
 });
 function $(id){ return document.getElementById(id); }
 

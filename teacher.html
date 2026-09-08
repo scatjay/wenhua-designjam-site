@@ -37,6 +37,13 @@
 </head>
 <body>
 <div class="wrap">
+  <div id="gate" class="card-box" style="max-width:360px;margin:60px auto;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 24px">
+    <div style="font-weight:800;font-size:16px;margin-bottom:14px">🔒 教師後台通關密碼</div>
+    <input type="password" id="gatePass" placeholder="輸入密碼" style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px;text-align:center">
+    <button id="gateBtn" style="width:100%;margin-top:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer">進入</button>
+    <div id="gateStatus" style="font-size:12px;color:var(--warn);margin-top:8px;min-height:16px"></div>
+  </div>
+  <div id="dashboard" hidden>
   <h1>文化遊戲松 Design Jam · 教師後台</h1>
   <p class="sub">即時顯示配對紀錄與每輪學生貼上的討論內容 · 編號僅供去識別化，不含姓名學號</p>
   <div class="stats">
@@ -60,6 +67,7 @@
     <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
     <tbody id="fbrows"></tbody>
   </table>
+  </div>
 </div>
 <script>
 const firebaseConfig = {
@@ -71,6 +79,34 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const NS = "whgm";
+
+// 🔒 教師後台通關密碼——只是前端字串比對，不是真正的伺服器驗證，
+// 看原始碼(檢視網頁原始碼/F12)還是找得到，但足夠擋掉學生隨手點進來逛。
+// 楊老師要改密碼：直接改這裡這一行的字串就好，改完重新部署即可生效。
+const TEACHER_PASSCODE = "wenhua0909";
+(function gateInit(){
+  const KEY = "designjam_teacher_unlocked";
+  // 用localStorage不是sessionStorage——楊老師要「真的登入過一次，這台裝置
+  // 就記住」，不要每次重開分頁/瀏覽器都要再輸入一次。
+  let already = false;
+  try { already = localStorage.getItem(KEY) === "1"; } catch(_) {}
+  if (already) { unlock(); return; }
+  document.getElementById("gateBtn").onclick = tryUnlock;
+  document.getElementById("gatePass").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+  function tryUnlock(){
+    const val = document.getElementById("gatePass").value;
+    if (val === TEACHER_PASSCODE) {
+      try { localStorage.setItem(KEY, "1"); } catch(_) {}
+      unlock();
+    } else {
+      document.getElementById("gateStatus").textContent = "密碼不對，再試一次";
+    }
+  }
+  function unlock(){
+    document.getElementById("gate").hidden = true;
+    document.getElementById("dashboard").hidden = false;
+  }
+})();
 const ROLE_LABEL = {producer:"🟢製作人", engineer:"🔵工程師", marketing:"🟣行銷", creative:"🔴創意總監"};
 
 function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文化遊戲松 Design Jam · 完整卡池</title>
+<style>
+  :root{
+    --bg:#faf8f2; --panel:#ffffff; --ink:#2b2820; --ink-soft:#5c5648; --line:#ddd7c6;
+    --accent:#c2711f;
+    --green:#3f7a34; --green-soft:#e9f3e3;
+    --blue:#2f6690; --blue-soft:#e5eff6;
+    --purple:#7a3f92; --purple-soft:#f2e7f6;
+    --red:#b8452f; --red-soft:#fbe9e3;
+    --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
+  .wrap{max-width:900px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:22px;font-weight:800;margin:4px 0 2px}
+  .sub{color:var(--ink-soft);font-size:14px;margin:0 0 20px;line-height:1.6}
+  .back{display:inline-block;margin-bottom:14px;color:var(--accent);font-weight:700;text-decoration:none;font-size:14px}
+  .section{margin-bottom:34px}
+  .section h2{font-size:17px;margin:0 0 4px}
+  .section .n{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px}
+  .cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .cardbox{border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .cardbox .v{font-size:14.5px;font-weight:800;margin-bottom:4px;line-height:1.4}
+  .cardbox .d{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;opacity:.75;margin-bottom:6px}
+  .cardbox .note{font-size:13px;line-height:1.6;opacity:.9}
+  .producer{background:var(--green-soft);border:1px solid var(--green);color:var(--green)}
+  .producer .v{color:var(--ink)}
+  .engineer{background:var(--blue-soft);border:1px solid var(--blue);color:var(--blue)}
+  .engineer .v{color:var(--ink)}
+  .marketing{background:var(--purple-soft);border:1px solid var(--purple);color:var(--purple)}
+  .marketing .v{color:var(--ink)}
+  .creative{background:var(--red-soft);border:1px solid var(--red);color:var(--red)}
+  .creative .v{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← 回配對頁面</a>
+  <h1>完整卡池 · 文化遊戲松 Design Jam</h1>
+  <p class="sub">目前遊戲裡所有角色的所有卡片內容，方便瀏覽全貌、也方便楊老師比對更新。這裡是唯讀顯示，實際內容寫在 index.html 的卡片資料裡。</p>
+  <div id="sections"></div>
+</div>
+<script>
+const PRODUCER = [
+  {v:"30分鐘／只能純聊天講故事／新手一人", d:"時程與資源", note:"沒有工具可用，只能用嘴巴把遊戲講成一個故事，逼你想清楚核心體驗是什麼。"},
+  {v:"1天／Gemini免費額度／新手一人", d:"時程與資源", note:"一天內只夠做出最小可玩雛形，別想著做完整內容。"},
+  {v:"3天／Gemini免費額度／兩個新手", d:"時程與資源", note:"多一個人手，但都沒經驗，分工比技術更重要。"},
+  {v:"1週／AI Studio額度／一個有經驗", d:"時程與資源", note:"有個懂AI工具的人帶路，一週足夠做出可以展示的prototype。"},
+  {v:"2週／Claude Code訂閱／兩個有經驗", d:"時程與資源", note:"資源最寬裕的組合，可以真的把功能做出來，不只是紙上談兵。"},
+  {v:"1學期／全部工具開放／團隊支援", d:"時程與資源", note:"這是這門課實際的資源規模——用這張卡想像最終成品可以做到多完整。"},
+  {v:"現場5分鐘／無限資源／傳說等級", d:"時程與資源", note:"故意荒謬的組合：資源無限但時間逼死人，練習「先講重點」的能力。"},
+];
+const ENGINEER = [
+  {v:"手機直向 App", d:"形式／平台", note:"單手滑、通勤也能玩，介面要簡單、關卡要短。"},
+  {v:"網頁互動小說", d:"形式／平台", note:"純文字＋選擇分支，不用畫面資源就能做出敘事深度。"},
+  {v:"實境走讀 App（AR疊圖）", d:"形式／平台", note:"玩家要實際走到那個地點才能觸發內容，適合結合真實的台南場景。"},
+  {v:"桌遊 Print & Play", d:"形式／平台", note:"印出來就能玩，不用寫程式，考驗規則設計本身夠不夠有趣。"},
+  {v:"對話式聊天機器人", d:"形式／平台", note:"整個遊戲就是一場對話，玩法藏在你怎麼設計AI的回應邏輯裡。"},
+  {v:"短影音互動劇", d:"形式／平台", note:"像抖音一樣滑，每支影片是一個選擇點，適合快節奏的敘事。"},
+  {v:"語音導覽＋關卡", d:"形式／平台", note:"用耳朵玩的遊戲，畫面不重要，聲音設計跟節奏才是關鍵。"},
+  {v:"迷宮解謎印刷單張", d:"形式／平台", note:"一張紙搞定，適合在課堂現場立刻發下去測試。"},
+  {v:"教室黑板真人版", d:"形式／平台", note:"完全不用任何載具，靠肢體和口頭規則就要讓遊戲成立。"},
+];
+const MARKETING = [
+  {v:"國小校外教學團 ／ 好奇心", d:"客群／情感訴求", note:"要讓沒有耐心的小朋友願意一直玩，規則要秒懂。"},
+  {v:"觀光客 ／ 打卡拍照慾", d:"客群／情感訴求", note:"玩家想要的是「拍出來好看」，遊戲要製造上鏡的瞬間。"},
+  {v:"在地阿公阿嬤 ／ 懷舊感", d:"客群／情感訴求", note:"要喚起記憶中的台南，而不是介紹一個陌生城市給他們認識。"},
+  {v:"大學生揪團 ／ 競爭好勝", d:"客群／情感訴求", note:"要有排行榜或PK機制，讓朋友之間可以互相比較。"},
+  {v:"家庭親子 ／ 溫馨陪伴", d:"客群／情感訴求", note:"大人小孩都要能一起玩，不能只顧一邊的程度。"},
+  {v:"恐怖片愛好者 ／ 驚嚇刺激", d:"客群／情感訴求", note:"要能把台南的老屋、傳說轉成真的會讓人心跳加速的東西。"},
+  {v:"美食愛好者 ／ 口水直流", d:"客群／情感訴求", note:"用視覺和描述勾起食慾，小吃不只是背景是主角。"},
+  {v:"歷史控 ／ 考據癖", d:"客群／情感訴求", note:"這群人會挑你的考據錯誤，內容細節要禁得起檢驗。"},
+  {v:"隨便路過的人 ／ 五分鐘殺時間", d:"客群／情感訴求", note:"完全沒有動機，遊戲要在前10秒就抓住他，不然直接關掉。"},
+];
+const CREATIVE = [
+  {v:"解謎 × 五條港", d:"類型 × 台南文化元素", note:"用五條港的貿易路線、水道結構本身當謎題素材。"},
+  {v:"模擬經營 × 廟宇遶境", d:"類型 × 台南文化元素", note:"玩家要管理一場遶境活動的人力、路線、香火資源。"},
+  {v:"恐怖 × 老屋", d:"類型 × 台南文化元素", note:"老屋的歷史感本身就是恐怖素材，不用硬加鬼怪。"},
+  {v:"節奏音樂 × 度小月／小吃", d:"類型 × 台南文化元素", note:"配合打拍子動作模擬「做小吃」的節奏感（切、煮、擺盤）。"},
+  {v:"卡牌對戰 × 小封神神怪", d:"類型 × 台南文化元素", note:"把小封神裡的神怪角色設計成有屬性、技能的對戰卡片。"},
+  {v:"收集養成 × 運河生態", d:"類型 × 台南文化元素", note:"蒐集運河沿岸的生物或地景，養成/圖鑑式的長期黏著。"},
+  {v:"派對遊戲 × 孔廟／文昌祠", d:"類型 × 台南文化元素", note:"多人同樂、輕鬆競賽，用考生拜文昌帝君的情境包裝。"},
+  {v:"敘事抉擇 × 安平古堡", d:"類型 × 台南文化元素", note:"用古堡的歷史轉折（荷蘭/明鄭/清）設計玩家的分支選擇。"},
+  {v:"潛行動作 × 中西區巷弄", d:"類型 × 台南文化元素", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。"},
+];
+const SECTIONS = [
+  {key:"producer", title:"🟢 執行製作人", deck:PRODUCER},
+  {key:"engineer", title:"🔵 首席工程師", deck:ENGINEER},
+  {key:"marketing", title:"🟣 行銷主管", deck:MARKETING},
+  {key:"creative", title:"🔴 創意總監", deck:CREATIVE},
+];
+const root = document.getElementById("sections");
+SECTIONS.forEach(s => {
+  const sec = document.createElement("div");
+  sec.className = "section";
+  sec.innerHTML = `<h2>${s.title}</h2><div class="n">${s.deck.length} 張卡</div>` +
+    `<div class="cardgrid">` + s.deck.map(c =>
+      `<div class="cardbox ${s.key}"><div class="v">${c.v}</div><div class="d">${c.d}</div><div class="note">💡 ${c.note}</div></div>`
+    ).join("") + `</div>`;
+  root.appendChild(sec);
+});
+</script>
+</body>
+</html>

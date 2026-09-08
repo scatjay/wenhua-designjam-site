@@ -8,11 +8,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
   :root{
-    --bg:#151710; --panel:#1e2118; --ink:#f1efe4; --ink-soft:#b8b6a8; --line:#3a3d2e;
-    --accent:#e0a83e; --ok:#6fae5a; --warn:#d3a752;
+    --bg:#faf8f2; --panel:#ffffff; --ink:#2b2820; --ink-soft:#5c5648; --line:#ddd7c6;
+    --accent:#c2711f; --ok:#3f7a34; --warn:#a86a15;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:15px}
   .wrap{max-width:960px;margin:0 auto;padding:20px 16px 60px}
   h1{font-size:20px;margin:0 0 4px}
   .sub{color:var(--ink-soft);font-size:13px;margin:0 0 18px}
@@ -92,7 +92,8 @@ function renderAll(rounds) {
       return `<details open><summary>#${e}（${list.length}則）</summary>` +
         list.map(p => `<div class="prompt">${escapeHtml(p.text)}</div>`).join("") + `</details>`;
     }).join("");
-    tr.innerHTML = `<td>${fmtTime(r.createdAt)}</td><td class="pair">#${envs.join(" ↔ #")}</td><td>${cardHtml}</td><td>${promptHtml}</td>`;
+    const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "")).join(" ↔ ");
+    tr.innerHTML = `<td>${fmtTime(r.createdAt)}</td><td class="pair">${whoLine}</td><td>${cardHtml}</td><td>${promptHtml}</td>`;
     rows.appendChild(tr);
   });
   $("statRounds").textContent = ids.length;

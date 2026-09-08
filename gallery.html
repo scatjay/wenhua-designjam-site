@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文化遊戲松 Design Jam · 大家的構想</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+  :root{
+    --bg:#faf8f2; --panel:#ffffff; --panel2:#f2efe4; --ink:#2b2820; --ink-soft:#5c5648;
+    --line:#ddd7c6; --accent:#c2711f;
+    --green:#3f7a34; --green-soft:#e9f3e3;
+    --blue:#2f6690; --blue-soft:#e5eff6;
+    --purple:#7a3f92; --purple-soft:#f2e7f6;
+    --red:#b8452f; --red-soft:#fbe9e3;
+    --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
+  .wrap{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:22px;font-weight:800;margin:4px 0 2px}
+  .sub{color:var(--ink-soft);font-size:14px;margin:0 0 20px;line-height:1.6}
+  .back{display:inline-block;margin-bottom:14px;color:var(--accent);font-weight:700;text-decoration:none;font-size:14px}
+  .grid{display:grid;gap:16px}
+  .round{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+  .round .meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;font-size:12px;color:var(--ink-soft)}
+  .round .envs{font-family:monospace;font-weight:800;color:var(--accent);font-size:15px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+  .chip{border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:700}
+  .chip.producer{background:var(--green-soft);color:var(--green)}
+  .chip.engineer{background:var(--blue-soft);color:var(--blue)}
+  .chip.marketing{background:var(--purple-soft);color:var(--purple)}
+  .chip.creative{background:var(--red-soft);color:var(--red)}
+  .discuss{background:var(--panel2);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:13.5px;white-space:pre-wrap;line-height:1.6}
+  .discuss b{color:var(--accent)}
+  .empty{color:var(--ink-soft);font-size:14px;text-align:center;padding:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← 回配對頁面</a>
+  <h1>大家 Jam 出來的構想</h1>
+  <p class="sub">看看其他組合抽到什麼、想出了什麼方向——只有去識別化編號，看不到姓名學號。</p>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
+  authDomain: "gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gen-lang-client-0929530380",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const NS = "whgm";
+const ROLE_LABEL = {producer:"🟢 製作人", engineer:"🔵 工程師", marketing:"🟣 行銷", creative:"🔴 創意總監"};
+function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }
+function escapeHtml(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+function $(id){ return document.getElementById(id); }
+
+const promptCache = {};
+let latestRounds = {};
+
+function renderAll() {
+  const grid = $("grid");
+  const ids = Object.keys(latestRounds).sort((a,b) => latestRounds[b].createdAt - latestRounds[a].createdAt);
+  if (!ids.length) { grid.innerHTML = '<div class="empty">還沒有人完成配對，第一組會出現在這裡</div>'; return; }
+  grid.innerHTML = "";
+  ids.forEach(id => {
+    const r = latestRounds[id];
+    const envs = Object.keys(r.players || {});
+    const chips = Object.entries(r.players).map(([env, p]) => {
+      const card = r.cards[p.role];
+      return `<span class="chip ${p.role}">${ROLE_LABEL[p.role]}：${card.v}</span>`;
+    }).join("");
+    const prompts = promptCache[id] || {};
+    const discussHtml = envs.map(e => {
+      const list = prompts[e] || [];
+      if (!list.length) return "";
+      return list.map(p => `<div class="discuss"><b>#${e}</b>　${escapeHtml(p.text)}</div>`).join("");
+    }).join("");
+    const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "")).join(" · ");
+    const div = document.createElement("div");
+    div.className = "round";
+    div.innerHTML = `<div class="meta"><span class="envs">${whoLine}</span><span>${fmtTime(r.createdAt)}</span></div>
+      <div class="chips">${chips}</div>${discussHtml}`;
+    grid.appendChild(div);
+  });
+}
+
+db.ref(`${NS}/rounds`).on("value", snap => {
+  latestRounds = snap.val() || {};
+  renderAll();
+  Object.keys(latestRounds).forEach(id => {
+    if (promptCache[id]) return;
+    promptCache[id] = {};
+    db.ref(`${NS}/prompts/${id}`).on("value", psnap => {
+      const val = psnap.val() || {};
+      const byEnv = {};
+      Object.entries(val).forEach(([env, obj]) => { byEnv[env] = Object.values(obj).sort((a,b)=>a.t-b.t); });
+      promptCache[id] = byEnv;
+      renderAll();
+    });
+  });
+});
+</script>
+</body>
+</html>

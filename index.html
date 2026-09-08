@@ -9,19 +9,19 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
   :root{
-    --bg:#151710; --panel:#1e2118; --panel2:#262a1e; --ink:#f1efe4; --ink-soft:#b8b6a8;
-    --line:#3a3d2e; --accent:#e0a83e; --accent-soft:#3a3115;
-    --green:#5a8f4a; --green-soft:#1c2618;
-    --blue:#4a7ea8; --blue-soft:#182228;
-    --purple:#9a5ab0; --purple-soft:#241a28;
-    --red:#c2543f; --red-soft:#2a1a16;
-    --shadow:0 2px 4px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    --bg:#faf8f2; --panel:#ffffff; --panel2:#f2efe4; --ink:#2b2820; --ink-soft:#5c5648;
+    --line:#ddd7c6; --accent:#c2711f; --accent-soft:#f6e8d5;
+    --green:#3f7a34; --green-soft:#e9f3e3;
+    --blue:#2f6690; --blue-soft:#e5eff6;
+    --purple:#7a3f92; --purple-soft:#f2e7f6;
+    --red:#b8452f; --red-soft:#fbe9e3;
+    --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;min-height:100vh}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;min-height:100vh;font-size:16px}
   .wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px}
-  h1{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wrap:balance}
-  .sub{color:var(--ink-soft);font-size:13.5px;margin:0 0 22px;line-height:1.6}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wrap:balance}
+  .sub{color:var(--ink-soft);font-size:15px;margin:0 0 22px;line-height:1.7}
   .card-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
   label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
   input[type=number]{width:100%;padding:14px 16px;font-size:22px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-weight:700;text-align:center}
@@ -31,10 +31,11 @@
   .btn-primary:disabled{opacity:.4;cursor:not-allowed}
   .btn-ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
   .status{font-size:13px;color:var(--ink-soft);text-align:center;margin-top:10px;min-height:18px}
-  .rolepick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-  .rolebtn{border-radius:12px;padding:14px 10px;text-align:left;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink)}
+  .rolepick{display:grid;grid-template-columns:1fr;gap:10px;margin-top:6px}
+  .rolebtn{border-radius:12px;padding:14px 16px;text-align:left;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink)}
   .rolebtn .rk{font-size:11px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;opacity:.85;display:block;margin-bottom:2px}
-  .rolebtn .rn{font-size:14px;font-weight:700}
+  .rolebtn .rn{font-size:15px;font-weight:800}
+  .rolebtn .rdesc{display:block;font-size:12.5px;font-weight:400;opacity:.85;margin-top:3px;line-height:1.5}
   .rolebtn.sel{border-width:2px;box-shadow:0 0 0 2px inset currentColor}
   .rolebtn.rc-producer{color:var(--green)} .rolebtn.rc-producer.sel{background:var(--green-soft)}
   .rolebtn.rc-engineer{color:var(--blue)} .rolebtn.rc-engineer.sel{background:var(--blue-soft)}
@@ -44,7 +45,7 @@
   .role-card .rk{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;opacity:.85;margin-bottom:4px}
   .role-card .rv{font-size:18px;font-weight:800;line-height:1.35}
   .role-card .rd{font-size:12.5px;opacity:.75;margin-top:4px}
-  .role-card .rp{font-size:12px;opacity:.7;margin-top:8px;border-top:1px dashed rgba(255,255,255,.15);padding-top:6px}
+  .role-card .rp{font-size:13px;opacity:.85;margin-top:8px;border-top:1px dashed rgba(30,25,10,.15);padding-top:6px}
   .rc-producer{background:var(--green-soft);border:1px solid var(--green)}
   .rc-producer .rk{color:var(--green)}
   .rc-engineer{background:var(--blue-soft);border:1px solid var(--blue)}
@@ -68,11 +69,22 @@
   footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:30px;opacity:.6}
 
   .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-  .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0}
+  .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0;border:1px solid var(--line)}
   .qrbox #qrcanvas img,.qrbox #qrcanvas table{display:block}
   .qrmeta{flex:1;min-width:180px}
   .qrmeta .t{font-weight:800;font-size:15px;margin-bottom:4px}
   .qrmeta .u{font-family:monospace;font-size:12px;color:var(--ink-soft);word-break:break-all}
+  .donecard{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:2px solid var(--accent);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center}
+  .donecard .badge{display:inline-block;background:var(--accent);color:#fff;font-weight:800;font-size:13px;letter-spacing:.03em;padding:5px 14px;border-radius:999px;margin-bottom:10px}
+  .donecard .who{font-size:20px;font-weight:800;margin-bottom:4px}
+  .donecard .combo{font-size:13.5px;color:var(--ink-soft);line-height:1.7}
+  .donecard .combo b{color:var(--ink);font-weight:700}
+  .feed{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;margin-bottom:14px}
+  .feed .msg{background:var(--panel2);border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.6}
+  .feed .msg.mine{background:var(--accent-soft);border:1px solid var(--accent)}
+  .feed .msg .who{font-weight:800;font-size:12px;color:var(--accent);margin-bottom:2px}
+  .feed .msg .txt{white-space:pre-wrap}
+  .feed .empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:20px 0}
   .howto{list-style:none;margin:0;padding:0;counter-reset:step}
   .howto li{counter-increment:step;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
   .howto li:last-child{border-bottom:none}
@@ -82,7 +94,7 @@
   .howto .st span{color:var(--ink-soft);font-size:12.5px}
   @media (min-width: 720px){
     .wrap{max-width:760px}
-    .rolepick{grid-template-columns:1fr 1fr 1fr 1fr}
+    .rolepick{grid-template-columns:1fr 1fr}
   }
 </style>
 </head>
@@ -104,17 +116,20 @@
     <label style="margin-bottom:12px">怎麼玩</label>
     <ol class="howto">
       <li><div class="st"><b>輸入編號、選角色</b><span>用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）</span></div></li>
-      <li><div class="st"><b>系統配對</b><span>等系統找到選了不同角色的人，湊成一組（2-4人）</span></div></li>
+      <li><div class="st"><b>系統配對</b><span>只要湊到至少2人、且選了不同角色，就會開局——人數不設上限，同一角色也可以不只一人</span></div></li>
       <li><div class="st"><b>各自抽卡</b><span>每個角色隨機抽到一張任務卡，代表你這個角色的限制條件</span></div></li>
-      <li><div class="st"><b>一起 blend 構想</b><span>把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想</span></div></li>
+      <li><div class="st"><b>一起 blend 構想</b><span>把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——<b>建議一輪抓5-8分鐘</b>：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串</span></div></li>
       <li><div class="st"><b>下載設計文件</b><span>把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告</span></div></li>
-      <li><div class="st"><b>重玩</b><span>不滿意就重配對、換角色、重抽，可以一直迭代</span></div></li>
+      <li><div class="st"><b>重玩</b><span>不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案</span></div></li>
     </ol>
   </div>
 
   <div id="login" class="card-box">
     <label for="envInput">你的編號（信封上那組，不是學號）</label>
     <input type="number" id="envInput" min="1" max="60" placeholder="例如 17" inputmode="numeric">
+    <label for="nickInput" style="margin-top:16px">幫自己取個暱稱（選填）</label>
+    <input type="text" id="nickInput" maxlength="20" placeholder="例如：芒果冰、隊長17號" style="width:100%;padding:12px 14px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)">
+    <div class="hint">⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果</div>
     <label style="margin-top:16px">這一輪想扮演的角色</label>
     <div class="rolepick" id="rolepick"></div>
     <button class="btn-primary" id="joinBtn" disabled>開始配對</button>
@@ -127,10 +142,22 @@
   </div>
 
   <div id="playing" hidden>
+    <div id="doneCard" class="donecard" hidden>
+      <div class="badge">✅ 本輪已記錄</div>
+      <div class="who" id="doneWho">--</div>
+      <div class="combo" id="doneCombo"></div>
+    </div>
     <div class="group-line">第 <b id="roundNo">1</b> 輪 · 這組編號：<span id="groupEnvs" class="envtag">--</span></div>
     <div id="cards"></div>
     <div class="card-box">
-      <label>把你們 blend 出來的構想／Gemini 對話貼在這裡</label>
+      <label>不知道怎麼開始？先請 Gemini 幫忙探索</label>
+      <button class="btn-ghost" id="copyPromptBtn" style="width:100%">📋 複製一鍵探索指令，貼去 Gemini</button>
+      <div class="hint" id="copyStatus"></div>
+    </div>
+    <div class="card-box">
+      <label>這組的即時討論串（輪流貼上，大家馬上看得到）</label>
+      <div class="feed" id="feed"><div class="empty">還沒有人發言</div></div>
+      <label>把你跟 Gemini 討論的心得貼上來</label>
       <textarea id="promptBox" placeholder="貼上這一組討論、跟 Gemini 交流的過程…"></textarea>
       <div class="row">
         <button class="btn-ghost" id="saveBtn">記錄這段</button>
@@ -151,7 +178,7 @@
     </div>
   </div>
 
-  <footer>編號僅供去識別化記錄，不會顯示或連結到姓名學號 · 教師端 <a href="teacher.html" style="color:var(--ink-soft)">teacher.html</a></footer>
+  <footer>編號僅供去識別化記錄，不會顯示或連結到姓名學號 · <a href="gallery.html" style="color:var(--accent);font-weight:700">瀏覽大家的構想</a> · <a href="cards.html" style="color:var(--accent);font-weight:700">完整卡池</a> · 教師端 <a href="teacher.html" style="color:var(--ink-soft)">teacher.html</a></footer>
 </div>
 
 <script>
@@ -209,10 +236,18 @@ const CREATIVE = [
   {v:"潛行動作 × 中西區巷弄", d:"類型 × 台南文化元素", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。"},
 ];
 const ROLES = [
-  {key:"producer", label:"執行製作人", emoji:"🟢", cls:"rc-producer", deck:PRODUCER, ask:"要在什麼時程／資源下做出這個東西？"},
-  {key:"engineer", label:"首席工程師", emoji:"🔵", cls:"rc-engineer", deck:ENGINEER, ask:"這個構想要用什麼形式／平台做出來？"},
-  {key:"marketing", label:"行銷主管", emoji:"🟣", cls:"rc-marketing", deck:MARKETING, ask:"這是要做給誰玩、打中他們什麼感覺？"},
-  {key:"creative", label:"創意總監", emoji:"🔴", cls:"rc-creative", deck:CREATIVE, ask:"遊戲類型和台南文化元素要怎麼結合？"},
+  {key:"producer", label:"執行製作人", emoji:"🟢", cls:"rc-producer", deck:PRODUCER,
+    ask:"要在什麼時程／資源下做出這個東西？",
+    desc:"管時程、預算、人力。負責提醒大家「這在現實中做得完嗎？」"},
+  {key:"engineer", label:"首席工程師", emoji:"🔵", cls:"rc-engineer", deck:ENGINEER,
+    ask:"這個構想要用什麼形式／平台做出來？",
+    desc:"管技術實現。負責決定「這個構想具體要用什麼形式做出來」"},
+  {key:"marketing", label:"行銷主管", emoji:"🟣", cls:"rc-marketing", deck:MARKETING,
+    ask:"這是要做給誰玩、打中他們什麼感覺？",
+    desc:"管客群與賣點。負責提醒大家「這個東西要吸引誰、憑什麼吸引他」"},
+  {key:"creative", label:"創意總監", emoji:"🔴", cls:"rc-creative", deck:CREATIVE,
+    ask:"遊戲類型和台南文化元素要怎麼結合？",
+    desc:"管整體願景。負責決定「這是一個什麼類型的遊戲、怎麼融入台南文化」"},
 ];
 const ROLE_BY_KEY = Object.fromEntries(ROLES.map(r => [r.key, r]));
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
@@ -231,10 +266,13 @@ function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
 let myEnv = null;
 let myRole = null;
+let myNick = "";
 let myQueueKey = null;
 let statusRef = null;
 let currentRoundId = null;
 let roundCount = 0;
+let feedUnsub = null;
+let feedRoundPlayers = {};
 
 const $ = (id) => document.getElementById(id);
 
@@ -245,7 +283,7 @@ ROLES.forEach(r => {
   b.type = "button";
   b.className = "rolebtn " + r.cls;
   b.dataset.role = r.key;
-  b.innerHTML = `<span class="rk">${r.emoji} ${r.key}</span><span class="rn">${r.label}</span>`;
+  b.innerHTML = `<span class="rk">${r.emoji} ${r.key}</span><span class="rn">${r.label}<span class="rdesc">${r.desc}</span></span>`;
   b.onclick = () => {
     [...pickBox.children].forEach(c => c.classList.remove("sel"));
     b.classList.add("sel");
@@ -260,6 +298,7 @@ $("joinBtn").onclick = () => {
   if (!v || v < 1 || v > 60) { $("loginStatus").textContent = "請輸入 1-60 的編號"; return; }
   if (!myRole) { $("loginStatus").textContent = "請選一個角色"; return; }
   myEnv = v;
+  myNick = $("nickInput").value.trim().slice(0, 20);
   startQueue();
 };
 
@@ -269,25 +308,90 @@ $("cancelBtn").onclick = () => {
 };
 
 $("rerollBtn").onclick = () => {
+  if (feedUnsub) { feedUnsub(); feedUnsub = null; }
   currentRoundId = null;
   roundCount++;
   db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"idle", t: Date.now()});
   show("login");
 };
 
-$("saveBtn").onclick = () => {
-  const text = $("promptBox").value.trim();
-  if (!text || !currentRoundId) return;
-  db.ref(`${NS}/prompts/${currentRoundId}/${myEnv}`).push({text, t: Date.now(), role: myRole})
-    .then(() => { $("saveStatus").textContent = "已記錄 · " + new Date().toLocaleTimeString(); $("promptBox").value=""; })
-    .catch(e => { $("saveStatus").textContent = "記錄失敗：" + e.message; });
-};
+function buildGeminiPrompt(round) {
+  const lines = [];
+  lines.push("我們這組在玩「文化遊戲松」課堂的 Design Jam 暖身練習，抽到以下限制條件：");
+  lines.push("");
+  Object.entries(round.players).forEach(([env, p]) => {
+    const r = ROLE_BY_KEY[p.role];
+    const card = round.cards[p.role];
+    const who = p.nickname ? `#${env} ${p.nickname}` : `#${env}`;
+    lines.push(`- ${r.emoji} ${who} · ${r.label}（${card.d}）：${card.v}`);
+  });
+  lines.push("");
+  lines.push("請先幫我們探索 2-3 個可能的遊戲構想方向（不要一次給答案），每個方向簡短說明玩法核心跟台南文化元素怎麼融入。");
+  lines.push("等我們告訴你選哪一個方向之後，再幫忙把它收斂成一段清楚的構想描述，包含：玩法核心、台南文化元素怎麼融入、大致的遊戲畫面或形式。");
+  return lines.join("\n");
+}
 
-$("downloadBtn").onclick = () => {
+$("copyPromptBtn").onclick = () => {
   if (!currentRoundId) return;
   db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => {
     const round = rs.val();
     if (!round) return;
+    const text = buildGeminiPrompt(round);
+    const done = () => { $("copyStatus").textContent = "已複製，去 Gemini 貼上吧！"; };
+    const fail = (e) => {
+      // fallback: select a temporary textarea for manual copy
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); }
+      catch(_) { $("copyStatus").textContent = "自動複製失敗，請長按下面文字手動複製：\n\n" + text; }
+      ta.remove();
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fail);
+    } else {
+      fail();
+    }
+  });
+};
+
+$("saveBtn").onclick = () => {
+  const text = $("promptBox").value.trim();
+  if (!text || !currentRoundId) return;
+  db.ref(`${NS}/prompts/${currentRoundId}/${myEnv}`).push({text, t: Date.now(), role: myRole})
+    .then(() => {
+      $("saveStatus").textContent = "已記錄 · " + new Date().toLocaleTimeString();
+      $("promptBox").value = "";
+      showDoneCard();
+    })
+    .catch(e => { $("saveStatus").textContent = "記錄失敗：" + e.message; });
+};
+
+function showDoneCard() {
+  db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => {
+    const round = rs.val();
+    if (!round) return;
+    const who = myNick ? `#${myEnv}　${myNick}` : `#${myEnv}`;
+    $("doneWho").textContent = who + " · 第 " + (roundCount + 1) + " 輪";
+    const lines = Object.entries(round.players).map(([env, p]) => {
+      const r = ROLE_BY_KEY[p.role];
+      const card = round.cards[p.role];
+      return `${r.emoji} <b>${r.label}</b>：${card.v}`;
+    });
+    $("doneCombo").innerHTML = lines.join("<br>") + "<br><br>📸 把這張卡截圖，就是這一輪的完成紀錄";
+    $("doneCard").hidden = false;
+  });
+}
+
+$("downloadBtn").onclick = () => {
+  if (!currentRoundId) return;
+  Promise.all([
+    db.ref(`${NS}/rounds/${currentRoundId}`).once("value"),
+    db.ref(`${NS}/prompts/${currentRoundId}`).once("value"),
+  ]).then(([rs, ps]) => {
+    const round = rs.val();
+    if (!round) return;
+    const allPrompts = ps.val() || {};
     const lines = [];
     lines.push(`# 文化遊戲松 Design Jam 構想卡`);
     lines.push(``);
@@ -296,14 +400,28 @@ $("downloadBtn").onclick = () => {
     Object.entries(round.players).forEach(([env, p]) => {
       const r = ROLE_BY_KEY[p.role];
       const card = round.cards[p.role];
-      lines.push(`## ${r.emoji} #${env} · ${r.label}`);
+      const nick = p.nickname ? `（${p.nickname}）` : "";
+      lines.push(`## ${r.emoji} #${env}${nick} · ${r.label}`);
       lines.push(`- 抽到：**${card.v}**（${card.d}）`);
       if (card.note) lines.push(`- 提示：${card.note}`);
       lines.push(`- 引導問題：${r.ask}`);
       lines.push(``);
     });
-    const myText = $("promptBox").value.trim();
-    if (myText) { lines.push(`## 我方（#${myEnv}）記錄的討論`); lines.push(``); lines.push(myText); lines.push(``); }
+    // pull EVERY group member's saved discussion, not just whoever is downloading
+    const unsavedMine = $("promptBox").value.trim();
+    let anyDiscuss = false;
+    lines.push(`## 這組記錄下來的討論`);
+    lines.push(``);
+    Object.keys(round.players).forEach(env => {
+      const list = Object.values(allPrompts[env] || {}).sort((a,b) => a.t - b.t);
+      list.forEach(p => { anyDiscuss = true; lines.push(`**#${env}**：${p.text}`); lines.push(``); });
+    });
+    if (unsavedMine) {
+      anyDiscuss = true;
+      lines.push(`**#${myEnv}（尚未按「記錄這段」，抓的是目前文字框內容）**：${unsavedMine}`);
+      lines.push(``);
+    }
+    if (!anyDiscuss) { lines.push(`_（這組還沒有人記錄討論內容——記得先跟 Gemini 討論、貼回來按「記錄這段」再下載，才會是完整的構想）_`); lines.push(``); }
     lines.push(`---`);
     lines.push(`把這份帶去 Gemini 繼續發展這個遊戲構想。`);
     const blob = new Blob([lines.join("\n")], {type: "text/markdown;charset=utf-8"});
@@ -335,7 +453,9 @@ function startQueue() {
   show("waiting");
   const qref = db.ref(`${NS}/queue/${myRole}`).push();
   myQueueKey = qref.key;
-  qref.set({env: myEnv, t: Date.now()});
+  const entry = {env: myEnv, t: Date.now()};
+  if (myNick) entry.nickname = myNick;
+  qref.set(entry);
   db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"queued", t: Date.now()});
   watchMatch();
   watchQueueForMatching();
@@ -354,28 +474,27 @@ function watchMatch() {
   });
 }
 
-// Any waiting client watches all 4 role-queues; whenever >=2 distinct
-// roles have someone waiting, try to claim the group via a transaction
-// lock so only one client actually forms the round.
+// Any waiting client watches all 4 role-queues; as soon as >=2 people are
+// waiting in total (any role mix, repeats allowed), try to claim the WHOLE
+// waiting pool via a transaction lock so only one client actually forms
+// the round. No cap on group size.
 function watchQueueForMatching() {
   db.ref(`${NS}/queue`).on("value", (snap) => {
     const val = snap.val() || {};
-    const heads = []; // one earliest waiting player per role that has anyone
+    const all = [];
     ROLES.forEach(r => {
       const roleQ = val[r.key];
       if (!roleQ) return;
-      const entries = Object.entries(roleQ).map(([key, v]) => ({key, role:r.key, ...v}));
-      entries.sort((a,b) => a.t - b.t);
-      if (entries[0]) heads.push(entries[0]);
+      Object.entries(roleQ).forEach(([key, v]) => all.push({key, role:r.key, ...v}));
     });
-    if (heads.length < 2) return;
-    // cap group size at 4, prefer more distinct roles when available
-    const group = heads.slice(0, 4);
-    const lockKey = group.map(g => g.role + ":" + g.key).sort().join("_");
+    const distinctRoles = new Set(all.map(g => g.role)).size;
+    if (all.length < 2 || distinctRoles < 2) return; // need >=2 people AND >=2 different roles to open a round
+    all.sort((a,b) => a.t - b.t);
+    const lockKey = all.map(g => g.role + ":" + g.key).sort().join("_");
     db.ref(`${NS}/matchLocks/${lockKey}`).transaction(cur => cur === null ? true : undefined)
       .then(res => {
         if (!res.committed) return;
-        makeRound(group);
+        makeRound(all);
       });
   });
 }
@@ -385,8 +504,8 @@ function makeRound(group) {
   const players = {};
   const cards = {};
   group.forEach(g => {
-    players[g.env] = { role: g.role };
-    cards[g.role] = pick(ROLE_BY_KEY[g.role].deck);
+    players[g.env] = g.nickname ? { role: g.role, nickname: g.nickname } : { role: g.role };
+    if (!cards[g.role]) cards[g.role] = pick(ROLE_BY_KEY[g.role].deck);
   });
   const roundData = { createdAt: Date.now(), players, cards };
   const updates = {};
@@ -402,7 +521,10 @@ function renderRound(round) {
   if (!round) return;
   const myKey = String(myEnv);
   const envs = Object.keys(round.players || {});
-  $("groupEnvs").textContent = "#" + envs.join(" #");
+  $("groupEnvs").textContent = envs.map(e => {
+    const nick = round.players[e].nickname;
+    return "#" + e + (nick ? "("+nick+")" : "");
+  }).join(" · ");
   $("roundNo").textContent = roundCount + 1;
   const box = $("cards");
   box.innerHTML = "";
@@ -410,14 +532,45 @@ function renderRound(round) {
     const r = ROLE_BY_KEY[p.role];
     const card = round.cards[p.role];
     const mine = env === myKey;
+    const who = "#" + env + (p.nickname ? "　" + p.nickname : "");
     const div = document.createElement("div");
     div.className = "role-card " + r.cls + (mine ? " yours" : "");
-    div.innerHTML = `<div class="rk">${r.emoji} #${env} · ${r.label}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
+    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${r.label}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
     box.appendChild(div);
   });
   $("saveStatus").textContent = "";
+  $("doneCard").hidden = true;
+  feedRoundPlayers = round.players;
+  watchFeed(currentRoundId);
   show("playing");
 }
+
+function watchFeed(roundId) {
+  if (feedUnsub) { feedUnsub(); feedUnsub = null; }
+  const ref = db.ref(`${NS}/prompts/${roundId}`);
+  const handler = (snap) => {
+    const val = snap.val() || {};
+    const all = [];
+    Object.entries(val).forEach(([env, obj]) => {
+      Object.values(obj).forEach(p => all.push({env, ...p}));
+    });
+    all.sort((a,b) => a.t - b.t);
+    const box = $("feed");
+    if (!all.length) { box.innerHTML = '<div class="empty">還沒有人發言</div>'; return; }
+    box.innerHTML = all.map(p => {
+      const nick = (feedRoundPlayers[p.env] && feedRoundPlayers[p.env].nickname) || "";
+      const roleInfo = ROLE_BY_KEY[p.role];
+      const who = `#${p.env}${nick ? " "+nick : ""} · ${roleInfo ? roleInfo.emoji+roleInfo.label : ""}`;
+      const mine = String(p.env) === String(myEnv);
+      return `<div class="msg${mine ? " mine":""}"><div class="who">${who}</div><div class="txt">${escapeHtml(p.text)}</div></div>`;
+    }).join("");
+    box.scrollTop = box.scrollHeight;
+  };
+  ref.on("value", handler);
+  feedUnsub = () => ref.off("value", handler);
+}
+
+function escapeHtml(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
 
 window.addEventListener("beforeunload", () => { leaveQueue(); });
 </script>

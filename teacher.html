@@ -126,7 +126,7 @@ function renderAll(rounds) {
     const promptHtml = envs.map(e => {
       const list = promptsForRound[e] || [];
       if (!list.length) return `<details><summary>#${e} 尚無記錄</summary></details>`;
-      return `<details open><summary>#${e}（${list.length}則）</summary>` +
+      return `<details><summary>#${e}（${list.length}則，點開看內容）</summary>` +
         list.map(p => `<div class="prompt">${escapeHtml(p.text)}</div>`).join("") + `</details>`;
     }).join("");
     const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "") +

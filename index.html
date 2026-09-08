@@ -67,6 +67,9 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .envtag{font-family:monospace;background:var(--panel2);padding:2px 8px;border-radius:6px;font-weight:700}
   footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:30px;opacity:.6}
+  .topnav{display:flex;gap:8px;margin-bottom:16px}
+  .topnav a{flex:1;text-align:center;padding:10px 8px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-size:13px;font-weight:700;text-decoration:none}
+  .topnav a:hover{background:var(--accent-soft);border-color:var(--accent)}
 
   .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0;border:1px solid var(--line)}
@@ -103,6 +106,11 @@
   <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px">文化遊戲松實作 · 熱身</div>
   <h1>文化遊戲松 Design Jam</h1>
   <p class="sub">改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。</p>
+
+  <div class="topnav">
+    <a href="cards.html">🗂️ 完整卡池（可自己新增卡片）</a>
+    <a href="gallery.html">🖼️ 瀏覽大家的構想</a>
+  </div>
 
   <div class="card-box qrbox">
     <div id="qrcanvas"></div>
@@ -251,6 +259,18 @@ const ROLES = [
 ];
 const ROLE_BY_KEY = Object.fromEntries(ROLES.map(r => [r.key, r]));
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+// custom, student-submitted cards — kept separate from the base deck,
+// merged in at draw time. Live-synced so new cards show up without reload.
+const customCards = {producer:[], engineer:[], marketing:[], creative:[]};
+ROLES.forEach(r => {
+  db.ref(`${NS}/customCards/${r.key}`).on("value", snap => {
+    customCards[r.key] = Object.values(snap.val() || {});
+  });
+});
+function deckFor(roleKey) {
+  return ROLE_BY_KEY[roleKey].deck.concat(customCards[roleKey] || []);
+}
 
 // ---- QR code for easy phone join ----
 (function renderQR(){
@@ -505,7 +525,7 @@ function makeRound(group) {
   const cards = {};
   group.forEach(g => {
     players[g.env] = g.nickname ? { role: g.role, nickname: g.nickname } : { role: g.role };
-    if (!cards[g.role]) cards[g.role] = pick(ROLE_BY_KEY[g.role].deck);
+    if (!cards[g.role]) cards[g.role] = pick(deckFor(g.role));
   });
   const roundData = { createdAt: Date.now(), players, cards };
   const updates = {};

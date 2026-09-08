@@ -45,7 +45,7 @@
   </div>
   <div id="dashboard" hidden>
   <h1>文化遊戲松 Design Jam · 教師後台</h1>
-  <p class="sub">即時顯示配對紀錄與每輪學生貼上的討論內容 · 編號僅供去識別化，不含姓名學號</p>
+  <p class="sub">即時顯示配對紀錄與每輪學生貼上的討論內容 · 編號僅供去識別化，不含姓名學號 · <a href="#" id="logoutLink" style="color:var(--accent);font-weight:700">登出</a></p>
   <div class="stats">
     <div class="stat"><div class="n" id="statRounds">0</div><div class="l">累計配對輪次</div></div>
     <div class="stat"><div class="n" id="statPlayers">0</div><div class="l">出現過的編號數</div></div>
@@ -88,6 +88,13 @@ const TEACHER_PASSCODE = "0909";
   const KEY = "designjam_teacher_unlocked";
   // 用localStorage不是sessionStorage——楊老師要「真的登入過一次，這台裝置
   // 就記住」，不要每次重開分頁/瀏覽器都要再輸入一次。
+  document.getElementById("logoutLink").onclick = (e) => {
+    e.preventDefault();
+    try { localStorage.removeItem(KEY); } catch(_) {}
+    document.getElementById("gatePass").value = "";
+    document.getElementById("gate").hidden = false;
+    document.getElementById("dashboard").hidden = true;
+  };
   let already = false;
   try { already = localStorage.getItem(KEY) === "1"; } catch(_) {}
   if (already) { unlock(); return; }

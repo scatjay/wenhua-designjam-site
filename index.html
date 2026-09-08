@@ -56,7 +56,7 @@
   .rc-creative .rk{color:var(--red)}
   .yours{position:relative}
   .yours::after{content:"YOU";position:absolute;top:12px;right:14px;font-size:10px;font-weight:800;background:var(--accent);color:#241a05;padding:2px 8px;border-radius:999px}
-  .group-line{background:var(--panel2);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:14px}
+  .group-line{background:var(--panel2);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .group-line b{color:var(--accent)}
   textarea{width:100%;min-height:110px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:14px;resize:vertical}
   .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.6}
@@ -176,7 +176,9 @@
         <button class="btn-ghost" id="closeDoneCardBtn" style="width:100%;margin-top:18px">✕ 截圖完了，關閉回去繼續討論</button>
       </div>
     </div>
-    <div class="group-line">第 <b id="roundNo">1</b> 輪 · 這組編號：<span id="groupEnvs" class="envtag">--</span></div>
+    <div class="group-line">第 <b id="roundNo">1</b> 輪 · 這組編號：<span id="groupEnvs" class="envtag">--</span>
+      <button class="btn-ghost" id="topRerollBtn" style="float:right;padding:4px 12px;font-size:12px">🏠 回登入／選角色</button>
+    </div>
     <div id="cards"></div>
     <div class="card-box">
       <label>不知道怎麼開始？先請 Gemini 幫忙探索</label>
@@ -432,7 +434,7 @@ $("cancelBtn").onclick = () => {
   show("login");
 };
 
-$("rerollBtn").onclick = () => {
+function doReroll() {
   if (feedUnsub) { feedUnsub(); feedUnsub = null; }
   presenceUnsubs.forEach(u => u());
   presenceUnsubs = [];
@@ -442,7 +444,18 @@ $("rerollBtn").onclick = () => {
   db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().cancel();
   db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"idle", t: Date.now()});
   show("login");
-};
+}
+// 🔴 2026-09-09 楊老師：已經加入這輪討論的話，離開前要跟學生確認一次——
+// 避免不小心點到「回登入」把正在進行的討論弄丟（尤其現在頂部也多了一個
+// 隨手可點的捷徑按鈕，更容易誤觸）。
+function confirmAndReroll() {
+  if (currentRoundId) {
+    if (!confirm("你正在這一輪的討論中，確定要離開、回到登入畫面重新配對嗎？\n（已經記錄過的討論內容不會不見，但這一輪就結束了）")) return;
+  }
+  doReroll();
+}
+$("rerollBtn").onclick = confirmAndReroll;
+$("topRerollBtn").onclick = confirmAndReroll;
 
 function buildGeminiPrompt(round) {
   const lines = [];

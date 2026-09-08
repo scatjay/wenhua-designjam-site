@@ -30,6 +30,9 @@
   summary{cursor:pointer;font-size:12px;color:var(--ink-soft)}
   .prompt{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;font-size:12.5px;white-space:pre-wrap}
   .queuecount{color:var(--warn)}
+  .rolebreak{display:flex;gap:8px;flex-wrap:wrap;margin:-8px 0 18px;font-size:12px}
+  .rolebreak span{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 10px}
+  .imbalance{background:#fbe9e3;border:1.5px solid var(--warn);color:var(--warn);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;margin:-6px 0 18px}
 </style>
 </head>
 <body>
@@ -40,7 +43,10 @@
     <div class="stat"><div class="n" id="statRounds">0</div><div class="l">累計配對輪次</div></div>
     <div class="stat"><div class="n" id="statPlayers">0</div><div class="l">出現過的編號數</div></div>
     <div class="stat"><div class="n queuecount" id="statQueue">0</div><div class="l">目前排隊中</div></div>
+    <div class="stat"><div class="n" id="statMatched" style="color:var(--ok)">0</div><div class="l">配對中／進行中</div></div>
   </div>
+  <div class="rolebreak" id="rolebreak"></div>
+  <div class="imbalance" id="imbalance" hidden></div>
   <table>
     <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
     <tbody id="rows"></tbody>
@@ -66,12 +72,31 @@ const ROLE_LABEL = {producer:"🟢製作人", engineer:"🔵工程師", marketin
 
 function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }
 
+const ROLE_KEYS = ["producer","engineer","marketing","creative"];
 db.ref(`${NS}/queue`).on("value", snap => {
   // queue 是 queue/{角色}/{每個人} 兩層結構，numChildren()只會算到角色數(0-4)，
   // 不是實際等待人數——要把四個角色底下的人數加總才對。
-  let total = 0;
-  snap.forEach(roleSnap => { total += roleSnap.numChildren(); });
+  const val = snap.val() || {};
+  const counts = {};
+  ROLE_KEYS.forEach(k => { counts[k] = (val[k] ? Object.keys(val[k]).length : 0); });
+  const total = Object.values(counts).reduce((a,b) => a+b, 0);
   $("statQueue").textContent = total;
+  $("rolebreak").innerHTML = ROLE_KEYS.map(k => `<span>${ROLE_LABEL[k]}：${counts[k]}人等</span>`).join("");
+  // 🔴 死鎖偵測：如果同時間大家都只選同一種角色，配對條件「至少2種角色」
+  // 永遠不會成立——這裡直接標紅提醒楊老師，該用麥克風口頭引導換角色了。
+  const distinctRoles = Object.values(counts).filter(n => n > 0).length;
+  const imb = $("imbalance");
+  if (total > 0 && distinctRoles < 2) {
+    const missing = ROLE_KEYS.filter(k => counts[k] === 0).map(k => ROLE_LABEL[k]).join("、");
+    imb.hidden = false;
+    imb.textContent = `⚠️ 目前只有一種角色在排隊，配不到人！建議口頭提醒學生改選：${missing}`;
+  } else {
+    imb.hidden = true;
+  }
+});
+db.ref(`${NS}/playerStatus`).on("value", snap => {
+  const val = snap.val() || {};
+  $("statMatched").textContent = Object.values(val).filter(p => p.state === "matched").length;
 });
 function $(id){ return document.getElementById(id); }
 

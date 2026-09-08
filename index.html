@@ -74,6 +74,8 @@
   .queuepanel .qitem{flex:1;min-width:110px;text-align:center;padding:8px 6px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
   .queuepanel .qitem b{display:block;font-size:16px;margin-top:2px}
   .queuepanel .qitem.has{border-color:var(--accent);background:var(--accent-soft)}
+  .queuehint{background:var(--red-soft);border:1.5px solid var(--red);color:var(--red);border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:700;margin:-8px 0 16px;text-align:center}
+  .queuesummary{text-align:center;font-size:11.5px;color:var(--ink-soft);margin:-10px 0 16px}
 
   .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0;border:1px solid var(--line)}
@@ -117,6 +119,8 @@
   </div>
 
   <div class="queuepanel" id="queuepanel"></div>
+  <div class="queuehint" id="queuehint" hidden></div>
+  <div class="queuesummary" id="queuesummary"></div>
 
   <div class="card-box qrbox">
     <div id="qrcanvas"></div>
@@ -153,6 +157,7 @@
   <div id="waiting" class="card-box" hidden>
     <div class="status"><span class="spinner"></span>配對中…等其他角色的人加入（<span id="waitRole"></span>）</div>
     <div class="hint" id="waitNick" style="text-align:center"></div>
+    <div class="queuehint" id="waitHint" style="margin-top:10px" hidden></div>
     <button class="btn-ghost" id="cancelBtn" style="width:100%;margin-top:14px">取消配對／換角色</button>
   </div>
 
@@ -286,15 +291,67 @@ function deckFor(roleKey) {
 
 // 即時排隊看板——不用登入也看得到，讓大家知道現在還缺哪個角色的人。
 // 這不是「房間列表」：配對還是全自動的，這裡純粹是「目前狀態」的參考資訊。
+//
+// 🔴 2026-09-08 楊老師抓到的死鎖風險：如果同時間大家都只選同一個角色，
+// 「至少2種不同角色」的配對條件永遠不成立，會卡住而且畫面上不會有任何錯誤。
+// 這裡把「目前哪個角色掛零」算出來，主動提示——不是等學生自己盯著看板猜。
+let latestQueueCounts = {};
 db.ref(`${NS}/queue`).on("value", snap => {
   const val = snap.val() || {};
+  latestQueueCounts = {};
+  ROLES.forEach(r => { latestQueueCounts[r.key] = Object.keys(val[r.key] || {}).length; });
   const panel = document.getElementById("queuepanel");
-  if (!panel) return;
-  panel.innerHTML = ROLES.map(r => {
-    const n = Object.keys(val[r.key] || {}).length;
-    return `<div class="qitem${n > 0 ? ' has' : ''}">${r.emoji} ${r.label}<b>${n}</b>等待中</div>`;
-  }).join("");
+  if (panel) {
+    panel.innerHTML = ROLES.map(r =>
+      `<div class="qitem${latestQueueCounts[r.key] > 0 ? ' has' : ''}">${r.emoji} ${r.label}<b>${latestQueueCounts[r.key]}</b>等待中</div>`
+    ).join("");
+  }
+  const total = Object.values(latestQueueCounts).reduce((a,b) => a+b, 0);
+  const distinctRoles = Object.values(latestQueueCounts).filter(n => n > 0).length;
+  const hintEl = document.getElementById("queuehint");
+  if (hintEl) {
+    if (total > 0 && distinctRoles < 2) {
+      const missing = ROLES.filter(r => latestQueueCounts[r.key] === 0).map(r => r.emoji + r.label).join("、");
+      hintEl.hidden = false;
+      hintEl.textContent = `⚠️ 目前只有一種角色在等，配不到人！想加入的人請選：${missing}`;
+    } else {
+      hintEl.hidden = true;
+    }
+  }
+  updateWaitHint();
 });
+
+let matchedCount = 0;
+db.ref(`${NS}/playerStatus`).on("value", snap => {
+  const val = snap.val() || {};
+  matchedCount = Object.values(val).filter(p => p.state === "matched").length;
+  renderQueueSummary();
+});
+function renderQueueSummary() {
+  const el = document.getElementById("queuesummary");
+  if (!el) return;
+  const waiting = Object.values(latestQueueCounts).reduce((a,b) => a+b, 0);
+  el.textContent = `目前等待中 ${waiting} 人 · 配對中／進行中 ${matchedCount} 人`;
+}
+renderQueueSummary();
+
+// 已經在等待畫面、且等超過30秒還配不到 → 主動提醒該換哪個角色，不要讓學生
+// 只能乾等、猜測是不是自己卡住了。
+let myWaitSince = null;
+function updateWaitHint() {
+  const hintEl = document.getElementById("waitHint");
+  if (!hintEl || !myWaitSince) return;
+  const waited = Date.now() - myWaitSince;
+  const distinctRoles = Object.values(latestQueueCounts).filter(n => n > 0).length;
+  if (waited > 30000 && distinctRoles < 2) {
+    const missing = ROLES.filter(r => r.key !== myRole).map(r => r.emoji + r.label).join("、");
+    hintEl.hidden = false;
+    hintEl.textContent = `⏳ 已經等超過30秒——目前缺其他角色的人，建議按下面「換角色」改選：${missing}`;
+  } else {
+    hintEl.hidden = true;
+  }
+}
+setInterval(updateWaitHint, 5000);
 
 // ---- QR code for easy phone join ----
 (function renderQR(){
@@ -502,10 +559,13 @@ function show(which) {
 
 function leaveQueue() {
   if (myQueueKey && myRole) { db.ref(`${NS}/queue/${myRole}/${myQueueKey}`).remove(); myQueueKey = null; }
+  myWaitSince = null;
 }
 
 function startQueue() {
   $("waitRole").textContent = ROLE_BY_KEY[myRole].label;
+  $("waitHint").hidden = true;
+  myWaitSince = Date.now();
   show("waiting");
   const qref = db.ref(`${NS}/queue/${myRole}`).push();
   myQueueKey = qref.key;
@@ -525,6 +585,7 @@ function watchMatch() {
     if (d && d.state === "matched" && d.roundId && d.roundId !== currentRoundId) {
       currentRoundId = d.roundId;
       myQueueKey = null;
+      myWaitSince = null;
       db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => renderRound(rs.val()));
     }
   });

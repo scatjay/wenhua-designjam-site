@@ -674,10 +674,16 @@ function watchMatch() {
 // 全部搶鎖成功——結果同一個編號同時出現在好幾個不同round裡，playerStatus
 // 只會存最後一次寫入，其他round變成幽靈房間。實測(3人同時排隊)直接重現：
 // 短短100ms內生出4個互相重疊的round，編號56/58/60都被重複配對。
-// 修法：改成對**queue本身**做transaction——挑選＋從queue移除在同一次
-// atomic read-modify-write裡完成，Firebase遇到並發寫入會自動重試整個
-// transaction直到沒有衝突，這樣才真正保證同一個人不會被兩個client同時挑走。
-let _lastPickedGroup = null;
+// ⚠ 第一次修法（對queue整體做transaction）實測仍然不夠——換成3人burst
+// 重跑一次，還是在20ms內生出兩個重疊的round（57、58同時進了兩組）。
+// 真正的修法不是想辦法讓「挑選」這個動作變成atomic（挑選邏輯本身很難完美
+// atomic，因為要跨好幾個queue節點判斷角色多樣性），而是讓「每一個人」有
+// 獨立、簡單、Firebase transaction保證絕對安全的專屬鎖——即playerStatus
+// /{env}本身。挑選階段維持單純讀快照就好（可能挑到已經被搶走的人也沒關係），
+// 真正的把關在makeRound()：每個人各自搶自己的playerStatus，搶輸的人自動
+// 被踢出這組，只有真正搶到手的人才會寫進round。這是Firebase transaction
+// 最基本、最不會出錯的用法（單一路徑的read-modify-write），比對一整個
+// collection做transaction可靠得多。
 function watchQueueForMatching() {
   db.ref(`${NS}/queue`).on("value", (snap) => {
     const val = snap.val() || {};
@@ -688,70 +694,68 @@ function watchQueueForMatching() {
       Object.entries(roleQ).forEach(([key, v]) => all.push({key, role:r.key, ...v}));
     });
     const distinctRoles = new Set(all.map(g => g.role)).size;
-    if (all.length < 2 || distinctRoles < 2) return; // 先用快照粗篩，省得每次queue change都開transaction
+    if (all.length < 2 || distinctRoles < 2) return; // need >=2 people AND >=2 different roles to open a round
+    all.sort((a,b) => a.t - b.t);
 
-    db.ref(`${NS}/queue`).transaction(cur => {
-      _lastPickedGroup = null;
-      if (!cur) return cur; // abort：目前沒人在等
-      const all2 = [];
-      ROLES.forEach(r => {
-        const roleQ = cur[r.key];
-        if (!roleQ) return;
-        Object.entries(roleQ).forEach(([key, v]) => all2.push({key, role:r.key, ...v}));
-      });
-      const distinctRoles2 = new Set(all2.map(g => g.role)).size;
-      if (all2.length < 2 || distinctRoles2 < 2) return; // abort：transaction內重新確認一次(拿到的是當下真正的資料)
-
-      all2.sort((a,b) => a.t - b.t);
-      const byRole = {};
-      all2.forEach(g => { (byRole[g.role] = byRole[g.role] || []).push(g); });
-      const picked = [];
-      const pickedKeys = new Set();
-      Object.values(byRole).forEach(list => {
-        picked.push(list[0]);
-        pickedKeys.add(list[0].role + ":" + list[0].key);
-      });
-      picked.sort((a,b) => a.t - b.t);
-      for (const g of all2) {
-        if (picked.length >= MAX_GROUP_SIZE) break;
-        const k = g.role + ":" + g.key;
-        if (pickedKeys.has(k)) continue;
-        picked.push(g);
-        pickedKeys.add(k);
-      }
-
-      // 從這份queue快照裡真的刪掉被選中的人——這一步跟「挑選」同一個
-      // transaction完成，才不會有別的client看到中間狀態插進來搶到同一批人。
-      picked.forEach(g => {
-        delete cur[g.role][g.key];
-        if (Object.keys(cur[g.role]).length === 0) delete cur[g.role];
-      });
-      _lastPickedGroup = picked;
-      return cur;
-    }).then(res => {
-      if (res.committed && _lastPickedGroup && _lastPickedGroup.length) {
-        makeRound(_lastPickedGroup);
-      }
+    const byRole = {};
+    all.forEach(g => { (byRole[g.role] = byRole[g.role] || []).push(g); });
+    const picked = [];
+    const pickedKeys = new Set();
+    Object.values(byRole).forEach(list => {
+      picked.push(list[0]);
+      pickedKeys.add(list[0].role + ":" + list[0].key);
     });
+    picked.sort((a,b) => a.t - b.t);
+    for (const g of all) {
+      if (picked.length >= MAX_GROUP_SIZE) break;
+      const k = g.role + ":" + g.key;
+      if (pickedKeys.has(k)) continue;
+      picked.push(g);
+      pickedKeys.add(k);
+    }
+    makeRound(picked);
   });
 }
 
 function makeRound(group) {
   const roundId = db.ref(`${NS}/rounds`).push().key;
-  const players = {};
-  const cards = {};
-  group.forEach(g => {
-    players[g.env] = g.nickname ? { role: g.role, nickname: g.nickname } : { role: g.role };
-    if (!cards[g.role]) cards[g.role] = pick(deckFor(g.role));
+  // 每個人各自搶自己的playerStatus——這是真正防止「同一人被配進兩個round」
+  // 的關鍵：只有目前不是"matched"狀態的人才搶得到，搶輸(已被別的並發makeRound
+  // 搶先配走)的人會被自動排除在這組之外，不會出現在最終round裡。
+  const claims = group.map(g =>
+    db.ref(`${NS}/playerStatus/${g.env}`).transaction(cur => {
+      // "matched"＝已經在別的round裡；"claimed"＝正有另一個並發的makeRound
+      // 在搶這個人（毫秒級的中繼狀態）——兩種都要abort，不然retry進來的
+      // transaction只擋"matched"沒擋"claimed"，還是會被搶到手兩次。
+      // 卡住超過5秒的"claimed"視為異常(例如同組另一人搶輸中斷)，放行重搶。
+      if (cur && cur.state === "matched") return;
+      if (cur && cur.state === "claimed" && Date.now() - (cur.t||0) < 5000) return;
+      return {state: "claimed", roundId, t: Date.now(), lastActive: Date.now()};
+    }).then(res => res.committed ? g : null)
+  );
+  Promise.all(claims).then(results => {
+    const won = results.filter(Boolean);
+    const distinctRoles = new Set(won.map(g => g.role)).size;
+    if (won.length < 2 || distinctRoles < 2) {
+      // 這組大部分人被搶走、湊不成隊了——搶到手的那幾位退回idle，讓他們被下一輪配對撿走
+      won.forEach(g => db.ref(`${NS}/playerStatus/${g.env}`).set({state:"idle", t: Date.now()}));
+      return;
+    }
+    const players = {};
+    const cards = {};
+    won.forEach(g => {
+      players[g.env] = g.nickname ? { role: g.role, nickname: g.nickname } : { role: g.role };
+      if (!cards[g.role]) cards[g.role] = pick(deckFor(g.role));
+    });
+    const roundData = { createdAt: Date.now(), players, cards };
+    const updates = {};
+    updates[`${NS}/rounds/${roundId}`] = roundData;
+    won.forEach(g => {
+      updates[`${NS}/playerStatus/${g.env}`] = {state:"matched", roundId, t: Date.now(), lastActive: Date.now()};
+      updates[`${NS}/queue/${g.role}/${g.key}`] = null;
+    });
+    db.ref().update(updates);
   });
-  const roundData = { createdAt: Date.now(), players, cards };
-  const updates = {};
-  updates[`${NS}/rounds/${roundId}`] = roundData;
-  group.forEach(g => {
-    updates[`${NS}/playerStatus/${g.env}`] = {state:"matched", roundId, t: Date.now(), lastActive: Date.now()};
-    updates[`${NS}/queue/${g.role}/${g.key}`] = null;
-  });
-  db.ref().update(updates);
 }
 
 // 標記「我剛做了一件事」——存了討論、複製了指令、送了意見，都算。

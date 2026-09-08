@@ -88,7 +88,8 @@
   .qrmeta{flex:1;min-width:180px}
   .qrmeta .t{font-weight:800;font-size:15px;margin-bottom:4px}
   .qrmeta .u{font-family:monospace;font-size:12px;color:var(--ink-soft);word-break:break-all}
-  .donecard{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:2px solid var(--accent);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center}
+  .donecard{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+  .donecard-inner{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:2px solid var(--accent);border-radius:16px;padding:24px;text-align:center;max-width:480px;width:100%;margin:auto}
   .donecard .badge{display:inline-block;background:var(--accent);color:#fff;font-weight:800;font-size:13px;letter-spacing:.03em;padding:5px 14px;border-radius:999px;margin-bottom:10px}
   .donecard .who{font-size:20px;font-weight:800;margin-bottom:4px}
   .donecard .combo{font-size:13.5px;color:var(--ink-soft);line-height:1.7}
@@ -168,9 +169,12 @@
 
   <div id="playing" hidden>
     <div id="doneCard" class="donecard" hidden>
-      <div class="badge">✅ 本輪已記錄</div>
-      <div class="who" id="doneWho">--</div>
-      <div class="combo" id="doneCombo"></div>
+      <div class="donecard-inner">
+        <div class="badge">✅ 本輪已記錄</div>
+        <div class="who" id="doneWho">--</div>
+        <div class="combo" id="doneCombo"></div>
+        <button class="btn-ghost" id="closeDoneCardBtn" style="width:100%;margin-top:18px">✕ 截圖完了，關閉回去繼續討論</button>
+      </div>
     </div>
     <div class="group-line">第 <b id="roundNo">1</b> 輪 · 這組編號：<span id="groupEnvs" class="envtag">--</span></div>
     <div id="cards"></div>
@@ -523,7 +527,7 @@ function showDoneCard() {
         html += `<br><br>📊 累計玩過 <b>${stats.roundCount}</b> 輪 · 累積投入約 <b>${Math.round(stats.totalMs/60000)}</b> 分鐘` +
           (stats.cardsAdded ? ` · 新增過 <b>${stats.cardsAdded}</b> 張卡片` : "");
       }
-      html += "<br><br>📸 把這張卡截圖，就是這一輪的完成紀錄";
+      html += "<br><br>📸 直接把整個畫面截圖，就是這一輪去識別化的完成紀錄";
       $("doneCombo").innerHTML = html;
       $("doneCard").hidden = false;
     };
@@ -541,6 +545,8 @@ function showDoneCard() {
     }).then(res => finish(res.snapshot.val()));
   });
 }
+
+$("closeDoneCardBtn").onclick = () => { $("doneCard").hidden = true; };
 
 $("downloadBtn").onclick = () => {
   if (!currentRoundId) return;

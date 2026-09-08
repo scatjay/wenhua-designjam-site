@@ -71,6 +71,18 @@
     </div>
   </details>
 
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px" open>
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🔬 ENA跨週認知網路分析（v0，關鍵字啟發式編碼）</summary>
+    <div id="enaPanel" style="font-size:13px;color:var(--ink-soft);line-height:1.8;margin-top:10px">載入中…</div>
+    <p style="font-size:11px;opacity:.75;margin-top:10px">
+      方法：Shaffer團隊epistemic network analysis（見<code>research_pbl_knowledge_model/</code>）——
+      把每輪討論的文字用growth_model.py三軸階段＋Benne &amp; Sheats角色共16個code編碼，同輪內滑動視窗
+      累積code兩兩共現次數，建成加權網路。<b>誠實聲明</b>：目前是v0關鍵字啟發式編碼，未經ncodeR驗證，
+      是要跟LDA／embedding平行對照的其中一條路，不能單獨拿來下結論；下方資料多為demo測試回合
+      （編號&gt;52），真實學生資料要今天課後才開始累積，第2週（約09-16）課後才會有初步的真實分析樣貌。
+    </p>
+  </details>
+
   <table>
     <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
     <tbody id="rows"></tbody>
@@ -240,6 +252,38 @@ db.ref(`${NS}/feedback`).on("value", snap => {
     tr.innerHTML = `<td>${fmtTime(f.t)}</td><td class="pair">#${f.env}</td><td>${escapeHtml(f.text)}</td>`;
     rows.appendChild(tr);
   });
+});
+
+const ENA_LABELS = {
+  game_S1_imitate: "遊戲設計 S1 模仿", game_S2_experiment: "遊戲設計 S2 嘗試",
+  game_S3_constraint: "遊戲設計 S3 整合限制", game_S4_evaluate: "遊戲設計 S4 自主評鑑",
+  ai_S1_copy: "AI協作 S1 複製貼上", ai_S2_param: "AI協作 S2 參數調整",
+  ai_S3_iterate: "AI協作 S3 追問迭代", ai_S4_critique: "AI協作 S4 批判評估",
+  culture_S1_surface: "文史普及 S1 表層置入", culture_S2_inform: "文史普及 S2 資訊轉述",
+  culture_S3_experience: "文史普及 S3 體驗轉譯", culture_S4_lowbarrier: "文史普及 S4 降低門檻",
+  role_initiator: "角色：提案者", role_clarifier: "角色：澄清者",
+  role_evaluator: "角色：評論者", role_elaborator: "角色：疊加者",
+};
+db.ref(`${NS}/analysis/ena/latest`).on("value", snap => {
+  const d = snap.val();
+  const el = $("enaPanel");
+  if (!d) { el.textContent = "尚未產生分析（跑一次 test_tools/ena_pipeline.py 之後會顯示在這裡）"; return; }
+  const nodeWeights = d.nodeWeights || {};
+  const edges = (d.edges || []).slice().sort((a, b) => b.weight - a.weight);
+  const label = c => ENA_LABELS[c] || c;
+  let html = `<p>累計 <b>${d.roundCount || 0}</b> 輪討論、<b>${d.stanzaCount || 0}</b> 則發言被編碼、` +
+    `觸發 <b>${Object.keys(nodeWeights).length}</b> 種code、<b>${edges.length}</b> 條共現連結` +
+    `（產生於 ${fmtTime(d.generatedAt)}）</p>`;
+  if (edges.length) {
+    html += `<table style="margin-top:8px"><thead><tr><th>連結（哪兩種認知/角色訊號常常一起出現）</th><th style="width:70px">強度</th></tr></thead><tbody>`;
+    edges.slice(0, 12).forEach(e => {
+      html += `<tr><td>${label(e.a)} <span style="opacity:.5">×</span> ${label(e.b)}</td><td class="pair">${e.weight}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+  } else {
+    html += `<p>目前資料量太少，還算不出共現連結。</p>`;
+  }
+  el.innerHTML = html;
 });
 
 let latestRounds = {};

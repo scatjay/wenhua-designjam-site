@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文化遊戲松 Design Jam</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  :root{
+    --bg:#151710; --panel:#1e2118; --panel2:#262a1e; --ink:#f1efe4; --ink-soft:#b8b6a8;
+    --line:#3a3d2e; --accent:#e0a83e; --accent-soft:#3a3115;
+    --green:#5a8f4a; --green-soft:#1c2618;
+    --blue:#4a7ea8; --blue-soft:#182228;
+    --purple:#9a5ab0; --purple-soft:#241a28;
+    --red:#c2543f; --red-soft:#2a1a16;
+    --shadow:0 2px 4px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wrap:balance}
+  .sub{color:var(--ink-soft);font-size:13.5px;margin:0 0 22px;line-height:1.6}
+  .card-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+  label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+  input[type=number]{width:100%;padding:14px 16px;font-size:22px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-weight:700;text-align:center}
+  input[type=number]:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;font-size:15px;padding:14px 20px;font-family:inherit}
+  .btn-primary{background:var(--accent);color:#241a05;width:100%;margin-top:16px}
+  .btn-primary:disabled{opacity:.4;cursor:not-allowed}
+  .btn-ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+  .status{font-size:13px;color:var(--ink-soft);text-align:center;margin-top:10px;min-height:18px}
+  .rolepick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+  .rolebtn{border-radius:12px;padding:14px 10px;text-align:left;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink)}
+  .rolebtn .rk{font-size:11px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;opacity:.85;display:block;margin-bottom:2px}
+  .rolebtn .rn{font-size:14px;font-weight:700}
+  .rolebtn.sel{border-width:2px;box-shadow:0 0 0 2px inset currentColor}
+  .rolebtn.rc-producer{color:var(--green)} .rolebtn.rc-producer.sel{background:var(--green-soft)}
+  .rolebtn.rc-engineer{color:var(--blue)} .rolebtn.rc-engineer.sel{background:var(--blue-soft)}
+  .rolebtn.rc-marketing{color:var(--purple)} .rolebtn.rc-marketing.sel{background:var(--purple-soft)}
+  .rolebtn.rc-creative{color:var(--red)} .rolebtn.rc-creative.sel{background:var(--red-soft)}
+  .role-card{border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow)}
+  .role-card .rk{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;opacity:.85;margin-bottom:4px}
+  .role-card .rv{font-size:18px;font-weight:800;line-height:1.35}
+  .role-card .rd{font-size:12.5px;opacity:.75;margin-top:4px}
+  .role-card .rp{font-size:12px;opacity:.7;margin-top:8px;border-top:1px dashed rgba(255,255,255,.15);padding-top:6px}
+  .rc-producer{background:var(--green-soft);border:1px solid var(--green)}
+  .rc-producer .rk{color:var(--green)}
+  .rc-engineer{background:var(--blue-soft);border:1px solid var(--blue)}
+  .rc-engineer .rk{color:var(--blue)}
+  .rc-marketing{background:var(--purple-soft);border:1px solid var(--purple)}
+  .rc-marketing .rk{color:var(--purple)}
+  .rc-creative{background:var(--red-soft);border:1px solid var(--red)}
+  .rc-creative .rk{color:var(--red)}
+  .yours{position:relative}
+  .yours::after{content:"YOU";position:absolute;top:12px;right:14px;font-size:10px;font-weight:800;background:var(--accent);color:#241a05;padding:2px 8px;border-radius:999px}
+  .group-line{background:var(--panel2);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:14px}
+  .group-line b{color:var(--accent)}
+  textarea{width:100%;min-height:110px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:14px;resize:vertical}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.6}
+  .row{display:flex;gap:10px;margin-top:12px}
+  .row button{flex:1}
+  [hidden]{display:none!important}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .envtag{font-family:monospace;background:var(--panel2);padding:2px 8px;border-radius:6px;font-weight:700}
+  footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:30px;opacity:.6}
+
+  .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0}
+  .qrbox #qrcanvas img,.qrbox #qrcanvas table{display:block}
+  .qrmeta{flex:1;min-width:180px}
+  .qrmeta .t{font-weight:800;font-size:15px;margin-bottom:4px}
+  .qrmeta .u{font-family:monospace;font-size:12px;color:var(--ink-soft);word-break:break-all}
+  @media (min-width: 720px){
+    .wrap{max-width:760px}
+    .rolepick{grid-template-columns:1fr 1fr 1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px">文化遊戲松實作 · 熱身</div>
+  <h1>文化遊戲松 Design Jam</h1>
+  <p class="sub">改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。</p>
+
+  <div class="card-box qrbox">
+    <div id="qrcanvas"></div>
+    <div class="qrmeta">
+      <div class="t">手機掃這裡加入</div>
+      <div class="u" id="urlText"></div>
+    </div>
+  </div>
+
+  <div id="login" class="card-box">
+    <label for="envInput">你的編號（信封上那組，不是學號）</label>
+    <input type="number" id="envInput" min="1" max="60" placeholder="例如 17" inputmode="numeric">
+    <label style="margin-top:16px">這一輪想扮演的角色</label>
+    <div class="rolepick" id="rolepick"></div>
+    <button class="btn-primary" id="joinBtn" disabled>開始配對</button>
+    <div class="status" id="loginStatus"></div>
+  </div>
+
+  <div id="waiting" class="card-box" hidden>
+    <div class="status"><span class="spinner"></span>配對中…等其他角色的人加入（<span id="waitRole"></span>）</div>
+    <button class="btn-ghost" id="cancelBtn" style="width:100%;margin-top:14px">取消配對／換角色</button>
+  </div>
+
+  <div id="playing" hidden>
+    <div class="group-line">第 <b id="roundNo">1</b> 輪 · 這組編號：<span id="groupEnvs" class="envtag">--</span></div>
+    <div id="cards"></div>
+    <div class="card-box">
+      <label>把你們 blend 出來的構想／Gemini 對話貼在這裡</label>
+      <textarea id="promptBox" placeholder="貼上這一組討論、跟 Gemini 交流的過程…"></textarea>
+      <div class="row">
+        <button class="btn-ghost" id="saveBtn">記錄這段</button>
+        <button class="btn-ghost" id="downloadBtn">下載構想 .md</button>
+      </div>
+      <div class="hint" id="saveStatus"></div>
+    </div>
+    <div class="card-box">
+      <label>對這個工具的意見（想加什麼、想改什麼）</label>
+      <textarea id="feedbackBox" style="min-height:70px" placeholder="例如：想要角色卡再多一點選項、想看到別組抽到什麼…"></textarea>
+      <div class="row">
+        <button class="btn-ghost" id="feedbackBtn">送出意見</button>
+      </div>
+      <div class="hint" id="feedbackStatus"></div>
+    </div>
+    <div class="row">
+      <button class="btn-primary" id="rerollBtn">再玩一輪（可換角色）</button>
+    </div>
+  </div>
+
+  <footer>編號僅供去識別化記錄，不會顯示或連結到姓名學號 · 教師端 <a href="teacher.html" style="color:var(--ink-soft)">teacher.html</a></footer>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
+  authDomain: "gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gen-lang-client-0929530380",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const NS = "whgm";
+
+// ---- card data ----
+const PRODUCER = [
+  {v:"30分鐘／只能純聊天講故事／新手一人", d:"時程與資源"},
+  {v:"1天／Gemini免費額度／新手一人", d:"時程與資源"},
+  {v:"3天／Gemini免費額度／兩個新手", d:"時程與資源"},
+  {v:"1週／AI Studio額度／一個有經驗", d:"時程與資源"},
+  {v:"2週／Claude Code訂閱／兩個有經驗", d:"時程與資源"},
+  {v:"1學期／全部工具開放／團隊支援", d:"時程與資源"},
+  {v:"現場5分鐘／無限資源／傳說等級", d:"時程與資源"},
+];
+const ENGINEER = [
+  {v:"手機直向 App", d:"形式／平台"},
+  {v:"網頁互動小說", d:"形式／平台"},
+  {v:"實境走讀 App（AR疊圖）", d:"形式／平台"},
+  {v:"桌遊 Print & Play", d:"形式／平台"},
+  {v:"對話式聊天機器人", d:"形式／平台"},
+  {v:"短影音互動劇", d:"形式／平台"},
+  {v:"語音導覽＋關卡", d:"形式／平台"},
+  {v:"迷宮解謎印刷單張", d:"形式／平台"},
+  {v:"教室黑板真人版", d:"形式／平台"},
+];
+const MARKETING = [
+  {v:"國小校外教學團 ／ 好奇心", d:"客群／情感訴求"},
+  {v:"觀光客 ／ 打卡拍照慾", d:"客群／情感訴求"},
+  {v:"在地阿公阿嬤 ／ 懷舊感", d:"客群／情感訴求"},
+  {v:"大學生揪團 ／ 競爭好勝", d:"客群／情感訴求"},
+  {v:"家庭親子 ／ 溫馨陪伴", d:"客群／情感訴求"},
+  {v:"恐怖片愛好者 ／ 驚嚇刺激", d:"客群／情感訴求"},
+  {v:"美食愛好者 ／ 口水直流", d:"客群／情感訴求"},
+  {v:"歷史控 ／ 考據癖", d:"客群／情感訴求"},
+  {v:"隨便路過的人 ／ 五分鐘殺時間", d:"客群／情感訴求"},
+];
+const CREATIVE = [
+  {v:"解謎 × 五條港", d:"類型 × 台南文化元素"},
+  {v:"模擬經營 × 廟宇遶境", d:"類型 × 台南文化元素"},
+  {v:"恐怖 × 老屋", d:"類型 × 台南文化元素"},
+  {v:"節奏音樂 × 度小月／小吃", d:"類型 × 台南文化元素"},
+  {v:"卡牌對戰 × 小封神神怪", d:"類型 × 台南文化元素"},
+  {v:"收集養成 × 運河生態", d:"類型 × 台南文化元素"},
+  {v:"派對遊戲 × 孔廟／文昌祠", d:"類型 × 台南文化元素"},
+  {v:"敘事抉擇 × 安平古堡", d:"類型 × 台南文化元素"},
+  {v:"潛行動作 × 中西區巷弄", d:"類型 × 台南文化元素"},
+];
+const ROLES = [
+  {key:"producer", label:"執行製作人", emoji:"🟢", cls:"rc-producer", deck:PRODUCER, ask:"要在什麼時程／資源下做出這個東西？"},
+  {key:"engineer", label:"首席工程師", emoji:"🔵", cls:"rc-engineer", deck:ENGINEER, ask:"這個構想要用什麼形式／平台做出來？"},
+  {key:"marketing", label:"行銷主管", emoji:"🟣", cls:"rc-marketing", deck:MARKETING, ask:"這是要做給誰玩、打中他們什麼感覺？"},
+  {key:"creative", label:"創意總監", emoji:"🔴", cls:"rc-creative", deck:CREATIVE, ask:"遊戲類型和台南文化元素要怎麼結合？"},
+];
+const ROLE_BY_KEY = Object.fromEntries(ROLES.map(r => [r.key, r]));
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+// ---- QR code for easy phone join ----
+(function renderQR(){
+  const url = location.href.split("#")[0].split("?")[0];
+  const urlEl = document.getElementById("urlText");
+  if (urlEl) urlEl.textContent = url;
+  const qr = qrcode(0, "M");
+  qr.addData(url);
+  qr.make();
+  const holder = document.getElementById("qrcanvas");
+  if (holder) holder.innerHTML = qr.createSvgTag({cellSize:4, margin:2});
+})();
+
+let myEnv = null;
+let myRole = null;
+let myQueueKey = null;
+let statusRef = null;
+let currentRoundId = null;
+let roundCount = 0;
+
+const $ = (id) => document.getElementById(id);
+
+// build role picker
+const pickBox = $("rolepick");
+ROLES.forEach(r => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "rolebtn " + r.cls;
+  b.dataset.role = r.key;
+  b.innerHTML = `<span class="rk">${r.emoji} ${r.key}</span><span class="rn">${r.label}</span>`;
+  b.onclick = () => {
+    [...pickBox.children].forEach(c => c.classList.remove("sel"));
+    b.classList.add("sel");
+    myRole = r.key;
+    $("joinBtn").disabled = false;
+  };
+  pickBox.appendChild(b);
+});
+
+$("joinBtn").onclick = () => {
+  const v = parseInt($("envInput").value, 10);
+  if (!v || v < 1 || v > 60) { $("loginStatus").textContent = "請輸入 1-60 的編號"; return; }
+  if (!myRole) { $("loginStatus").textContent = "請選一個角色"; return; }
+  myEnv = v;
+  startQueue();
+};
+
+$("cancelBtn").onclick = () => {
+  leaveQueue();
+  show("login");
+};
+
+$("rerollBtn").onclick = () => {
+  currentRoundId = null;
+  roundCount++;
+  db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"idle", t: Date.now()});
+  show("login");
+};
+
+$("saveBtn").onclick = () => {
+  const text = $("promptBox").value.trim();
+  if (!text || !currentRoundId) return;
+  db.ref(`${NS}/prompts/${currentRoundId}/${myEnv}`).push({text, t: Date.now(), role: myRole})
+    .then(() => { $("saveStatus").textContent = "已記錄 · " + new Date().toLocaleTimeString(); $("promptBox").value=""; })
+    .catch(e => { $("saveStatus").textContent = "記錄失敗：" + e.message; });
+};
+
+$("downloadBtn").onclick = () => {
+  if (!currentRoundId) return;
+  db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => {
+    const round = rs.val();
+    if (!round) return;
+    const lines = [];
+    lines.push(`# 文化遊戲松 Design Jam 構想卡`);
+    lines.push(``);
+    lines.push(`第 ${roundCount + 1} 輪 · 編號 ${Object.keys(round.players).map(e=>"#"+e).join(" ")}`);
+    lines.push(``);
+    Object.entries(round.players).forEach(([env, p]) => {
+      const r = ROLE_BY_KEY[p.role];
+      const card = round.cards[p.role];
+      lines.push(`## ${r.emoji} #${env} · ${r.label}`);
+      lines.push(`- 抽到：**${card.v}**（${card.d}）`);
+      lines.push(`- 引導問題：${r.ask}`);
+      lines.push(``);
+    });
+    const myText = $("promptBox").value.trim();
+    if (myText) { lines.push(`## 我方（#${myEnv}）記錄的討論`); lines.push(``); lines.push(myText); lines.push(``); }
+    lines.push(`---`);
+    lines.push(`把這份帶去 Gemini 繼續發展這個遊戲構想。`);
+    const blob = new Blob([lines.join("\n")], {type: "text/markdown;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `designjam_${Object.keys(round.players).join("-")}_r${roundCount+1}.md`;
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+};
+
+$("feedbackBtn").onclick = () => {
+  const text = $("feedbackBox").value.trim();
+  if (!text) return;
+  db.ref(`${NS}/feedback`).push({env: myEnv, text, t: Date.now()})
+    .then(() => { $("feedbackStatus").textContent = "謝謝，已送出！"; $("feedbackBox").value=""; })
+    .catch(e => { $("feedbackStatus").textContent = "送出失敗：" + e.message; });
+};
+
+function show(which) {
+  ["login","waiting","playing"].forEach(id => $(id).hidden = (id !== which));
+}
+
+function leaveQueue() {
+  if (myQueueKey && myRole) { db.ref(`${NS}/queue/${myRole}/${myQueueKey}`).remove(); myQueueKey = null; }
+}
+
+function startQueue() {
+  $("waitRole").textContent = ROLE_BY_KEY[myRole].label;
+  show("waiting");
+  const qref = db.ref(`${NS}/queue/${myRole}`).push();
+  myQueueKey = qref.key;
+  qref.set({env: myEnv, t: Date.now()});
+  db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"queued", t: Date.now()});
+  watchMatch();
+  watchQueueForMatching();
+}
+
+function watchMatch() {
+  if (statusRef) statusRef.off();
+  statusRef = db.ref(`${NS}/playerStatus/${myEnv}`);
+  statusRef.on("value", (snap) => {
+    const d = snap.val();
+    if (d && d.state === "matched" && d.roundId && d.roundId !== currentRoundId) {
+      currentRoundId = d.roundId;
+      myQueueKey = null;
+      db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => renderRound(rs.val()));
+    }
+  });
+}
+
+// Any waiting client watches all 4 role-queues; whenever >=2 distinct
+// roles have someone waiting, try to claim the group via a transaction
+// lock so only one client actually forms the round.
+function watchQueueForMatching() {
+  db.ref(`${NS}/queue`).on("value", (snap) => {
+    const val = snap.val() || {};
+    const heads = []; // one earliest waiting player per role that has anyone
+    ROLES.forEach(r => {
+      const roleQ = val[r.key];
+      if (!roleQ) return;
+      const entries = Object.entries(roleQ).map(([key, v]) => ({key, role:r.key, ...v}));
+      entries.sort((a,b) => a.t - b.t);
+      if (entries[0]) heads.push(entries[0]);
+    });
+    if (heads.length < 2) return;
+    // cap group size at 4, prefer more distinct roles when available
+    const group = heads.slice(0, 4);
+    const lockKey = group.map(g => g.role + ":" + g.key).sort().join("_");
+    db.ref(`${NS}/matchLocks/${lockKey}`).transaction(cur => cur === null ? true : undefined)
+      .then(res => {
+        if (!res.committed) return;
+        makeRound(group);
+      });
+  });
+}
+
+function makeRound(group) {
+  const roundId = db.ref(`${NS}/rounds`).push().key;
+  const players = {};
+  const cards = {};
+  group.forEach(g => {
+    players[g.env] = { role: g.role };
+    cards[g.role] = pick(ROLE_BY_KEY[g.role].deck);
+  });
+  const roundData = { createdAt: Date.now(), players, cards };
+  const updates = {};
+  updates[`${NS}/rounds/${roundId}`] = roundData;
+  group.forEach(g => {
+    updates[`${NS}/playerStatus/${g.env}`] = {state:"matched", roundId, t: Date.now()};
+    updates[`${NS}/queue/${g.role}/${g.key}`] = null;
+  });
+  db.ref().update(updates);
+}
+
+function renderRound(round) {
+  if (!round) return;
+  const myKey = String(myEnv);
+  const envs = Object.keys(round.players || {});
+  $("groupEnvs").textContent = "#" + envs.join(" #");
+  $("roundNo").textContent = roundCount + 1;
+  const box = $("cards");
+  box.innerHTML = "";
+  Object.entries(round.players).forEach(([env, p]) => {
+    const r = ROLE_BY_KEY[p.role];
+    const card = round.cards[p.role];
+    const mine = env === myKey;
+    const div = document.createElement("div");
+    div.className = "role-card " + r.cls + (mine ? " yours" : "");
+    div.innerHTML = `<div class="rk">${r.emoji} #${env} · ${r.label}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp">${r.ask}</div>`;
+    box.appendChild(div);
+  });
+  $("saveStatus").textContent = "";
+  show("playing");
+}
+
+window.addEventListener("beforeunload", () => { leaveQueue(); });
+</script>
+</body>
+</html>

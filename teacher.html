@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文化遊戲松 Design Jam · 教師後台</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+  :root{
+    --bg:#151710; --panel:#1e2118; --ink:#f1efe4; --ink-soft:#b8b6a8; --line:#3a3d2e;
+    --accent:#e0a83e; --ok:#6fae5a; --warn:#d3a752;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--ink-soft);font-size:13px;margin:0 0 18px}
+  .stats{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-width:110px}
+  .stat .n{font-size:26px;font-weight:800;color:var(--accent)}
+  .stat .l{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);border-radius:12px;overflow:hidden}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--ink-soft);font-weight:600;font-size:11px;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  .pair{font-family:monospace;font-weight:700;color:var(--accent)}
+  .cardline{font-size:12px;color:var(--ink-soft);margin-bottom:2px}
+  details{margin-top:6px}
+  summary{cursor:pointer;font-size:12px;color:var(--ink-soft)}
+  .prompt{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;font-size:12.5px;white-space:pre-wrap}
+  .queuecount{color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>文化遊戲松 Design Jam · 教師後台</h1>
+  <p class="sub">即時顯示配對紀錄與每輪學生貼上的討論內容 · 編號僅供去識別化，不含姓名學號</p>
+  <div class="stats">
+    <div class="stat"><div class="n" id="statRounds">0</div><div class="l">累計配對輪次</div></div>
+    <div class="stat"><div class="n" id="statPlayers">0</div><div class="l">出現過的編號數</div></div>
+    <div class="stat"><div class="n queuecount" id="statQueue">0</div><div class="l">目前排隊中</div></div>
+  </div>
+  <table>
+    <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <h2 style="font-size:16px;margin:28px 0 10px">💬 學生對這個工具的意見</h2>
+  <table>
+    <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
+    <tbody id="fbrows"></tbody>
+  </table>
+</div>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
+  authDomain: "gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gen-lang-client-0929530380",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const NS = "whgm";
+const ROLE_LABEL = {producer:"🟢製作人", engineer:"🔵工程師", marketing:"🟣行銷", creative:"🔴創意總監"};
+
+function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }
+
+db.ref(`${NS}/queue`).on("value", snap => {
+  $("statQueue").textContent = snap.numChildren();
+});
+function $(id){ return document.getElementById(id); }
+
+const promptCache = {}; // roundId -> {env -> [texts]}
+
+function renderAll(rounds) {
+  const rows = $("rows");
+  rows.innerHTML = "";
+  const ids = Object.keys(rounds || {}).sort((a,b) => rounds[b].createdAt - rounds[a].createdAt);
+  const seenPlayers = new Set();
+  ids.forEach(id => {
+    const r = rounds[id];
+    const envs = Object.keys(r.players || {});
+    envs.forEach(e => seenPlayers.add(e));
+    const tr = document.createElement("tr");
+    const cardHtml = Object.entries(r.cards || {}).map(([k,c]) =>
+      `<div class="cardline">${ROLE_LABEL[k]||k}：${c.v}</div>`).join("");
+    const promptsForRound = (promptCache[id] || {});
+    const promptHtml = envs.map(e => {
+      const list = promptsForRound[e] || [];
+      if (!list.length) return `<details><summary>#${e} 尚無記錄</summary></details>`;
+      return `<details open><summary>#${e}（${list.length}則）</summary>` +
+        list.map(p => `<div class="prompt">${escapeHtml(p.text)}</div>`).join("") + `</details>`;
+    }).join("");
+    tr.innerHTML = `<td>${fmtTime(r.createdAt)}</td><td class="pair">#${envs.join(" ↔ #")}</td><td>${cardHtml}</td><td>${promptHtml}</td>`;
+    rows.appendChild(tr);
+  });
+  $("statRounds").textContent = ids.length;
+  $("statPlayers").textContent = seenPlayers.size;
+}
+
+function escapeHtml(s){
+  const d = document.createElement("div"); d.textContent = s; return d.innerHTML;
+}
+
+db.ref(`${NS}/feedback`).on("value", snap => {
+  const val = snap.val() || {};
+  const rows = $("fbrows");
+  rows.innerHTML = "";
+  Object.values(val).sort((a,b) => b.t - a.t).forEach(f => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${fmtTime(f.t)}</td><td class="pair">#${f.env}</td><td>${escapeHtml(f.text)}</td>`;
+    rows.appendChild(tr);
+  });
+});
+
+let latestRounds = {};
+db.ref(`${NS}/rounds`).on("value", snap => {
+  latestRounds = snap.val() || {};
+  renderAll(latestRounds);
+  // attach prompt listeners for any new rounds
+  Object.keys(latestRounds).forEach(id => {
+    if (promptCache[id]) return;
+    promptCache[id] = {};
+    db.ref(`${NS}/prompts/${id}`).on("value", psnap => {
+      const val = psnap.val() || {};
+      const byEnv = {};
+      Object.entries(val).forEach(([env, obj]) => {
+        byEnv[env] = Object.values(obj).sort((a,b) => a.t - b.t);
+      });
+      promptCache[id] = byEnv;
+      renderAll(latestRounds);
+    });
+  });
+});
+</script>
+</body>
+</html>

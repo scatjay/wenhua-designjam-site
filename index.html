@@ -659,8 +659,7 @@ function watchMatch() {
 
 // Any waiting client watches all 4 role-queues; as soon as >=2 people are
 // waiting in total (any role mix, repeats allowed), try to claim a bounded
-// slice of the waiting pool via a transaction lock so only one client
-// actually forms the round.
+// slice of the waiting pool so only one client actually forms the round.
 //
 // 🔴 2026-09-08 修：整班50人同時排隊時，不能把queue裡所有人打包成同一組
 // （那樣一整班會擠成一組，角色卡變成50人共用4張）。改成每組最多
@@ -668,6 +667,17 @@ function watchMatch() {
 // 角色多樣性），剩下名額才依排隊時間先後補滿（同一角色可以補到不只一位，
 // 這個既有規則保留）。這樣短時間大量排隊會自動、立刻拆成很多組小隊，
 // 不是手動開房間——學生體驗完全不變，還是「選角色→等一下→自動配對成功」。
+//
+// 🔴 2026-09-09 抓到更嚴重的問題：原本用「衍生出來的lockKey」搶
+// matchLocks/{lockKey}，同一時間3人以上湧入時，不同client讀到queue的
+// 時間點差幾毫秒、算出的picked組合就不一樣，各自的lockKey互不相同、
+// 全部搶鎖成功——結果同一個編號同時出現在好幾個不同round裡，playerStatus
+// 只會存最後一次寫入，其他round變成幽靈房間。實測(3人同時排隊)直接重現：
+// 短短100ms內生出4個互相重疊的round，編號56/58/60都被重複配對。
+// 修法：改成對**queue本身**做transaction——挑選＋從queue移除在同一次
+// atomic read-modify-write裡完成，Firebase遇到並發寫入會自動重試整個
+// transaction直到沒有衝突，這樣才真正保證同一個人不會被兩個client同時挑走。
+let _lastPickedGroup = null;
 function watchQueueForMatching() {
   db.ref(`${NS}/queue`).on("value", (snap) => {
     const val = snap.val() || {};
@@ -678,32 +688,51 @@ function watchQueueForMatching() {
       Object.entries(roleQ).forEach(([key, v]) => all.push({key, role:r.key, ...v}));
     });
     const distinctRoles = new Set(all.map(g => g.role)).size;
-    if (all.length < 2 || distinctRoles < 2) return; // need >=2 people AND >=2 different roles to open a round
-    all.sort((a,b) => a.t - b.t);
+    if (all.length < 2 || distinctRoles < 2) return; // 先用快照粗篩，省得每次queue change都開transaction
 
-    const byRole = {};
-    all.forEach(g => { (byRole[g.role] = byRole[g.role] || []).push(g); });
-    const picked = [];
-    const pickedKeys = new Set();
-    Object.values(byRole).forEach(list => {
-      picked.push(list[0]);
-      pickedKeys.add(list[0].role + ":" + list[0].key);
-    });
-    picked.sort((a,b) => a.t - b.t);
-    for (const g of all) {
-      if (picked.length >= MAX_GROUP_SIZE) break;
-      const k = g.role + ":" + g.key;
-      if (pickedKeys.has(k)) continue;
-      picked.push(g);
-      pickedKeys.add(k);
-    }
-
-    const lockKey = picked.map(g => g.role + ":" + g.key).sort().join("_");
-    db.ref(`${NS}/matchLocks/${lockKey}`).transaction(cur => cur === null ? true : undefined)
-      .then(res => {
-        if (!res.committed) return;
-        makeRound(picked);
+    db.ref(`${NS}/queue`).transaction(cur => {
+      _lastPickedGroup = null;
+      if (!cur) return cur; // abort：目前沒人在等
+      const all2 = [];
+      ROLES.forEach(r => {
+        const roleQ = cur[r.key];
+        if (!roleQ) return;
+        Object.entries(roleQ).forEach(([key, v]) => all2.push({key, role:r.key, ...v}));
       });
+      const distinctRoles2 = new Set(all2.map(g => g.role)).size;
+      if (all2.length < 2 || distinctRoles2 < 2) return; // abort：transaction內重新確認一次(拿到的是當下真正的資料)
+
+      all2.sort((a,b) => a.t - b.t);
+      const byRole = {};
+      all2.forEach(g => { (byRole[g.role] = byRole[g.role] || []).push(g); });
+      const picked = [];
+      const pickedKeys = new Set();
+      Object.values(byRole).forEach(list => {
+        picked.push(list[0]);
+        pickedKeys.add(list[0].role + ":" + list[0].key);
+      });
+      picked.sort((a,b) => a.t - b.t);
+      for (const g of all2) {
+        if (picked.length >= MAX_GROUP_SIZE) break;
+        const k = g.role + ":" + g.key;
+        if (pickedKeys.has(k)) continue;
+        picked.push(g);
+        pickedKeys.add(k);
+      }
+
+      // 從這份queue快照裡真的刪掉被選中的人——這一步跟「挑選」同一個
+      // transaction完成，才不會有別的client看到中間狀態插進來搶到同一批人。
+      picked.forEach(g => {
+        delete cur[g.role][g.key];
+        if (Object.keys(cur[g.role]).length === 0) delete cur[g.role];
+      });
+      _lastPickedGroup = picked;
+      return cur;
+    }).then(res => {
+      if (res.committed && _lastPickedGroup && _lastPickedGroup.length) {
+        makeRound(_lastPickedGroup);
+      }
+    });
   });
 }
 

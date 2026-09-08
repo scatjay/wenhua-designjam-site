@@ -558,7 +558,12 @@ function show(which) {
 }
 
 function leaveQueue() {
-  if (myQueueKey && myRole) { db.ref(`${NS}/queue/${myRole}/${myQueueKey}`).remove(); myQueueKey = null; }
+  if (myQueueKey && myRole) {
+    const ref = db.ref(`${NS}/queue/${myRole}/${myQueueKey}`);
+    ref.onDisconnect().cancel();
+    ref.remove();
+    myQueueKey = null;
+  }
   myWaitSince = null;
 }
 
@@ -572,6 +577,10 @@ function startQueue() {
   const entry = {env: myEnv, t: Date.now()};
   if (myNick) entry.nickname = myNick;
   qref.set(entry);
+  // 🔴 2026-09-08 抓到：等待中重整頁面／斷線，會留下永久的「幽靈排隊者」——
+  // 之後可能被配對進一個房間但本人早就不在了，另一個人卡在空房間裡等。
+  // 用RTDB的onDisconnect：這個分頁真的斷線時，伺服器端自動清掉這筆排隊紀錄。
+  qref.onDisconnect().remove();
   db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"queued", t: Date.now()});
   watchMatch();
   watchQueueForMatching();

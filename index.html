@@ -146,6 +146,7 @@
 
   <div id="waiting" class="card-box" hidden>
     <div class="status"><span class="spinner"></span>配對中…等其他角色的人加入（<span id="waitRole"></span>）</div>
+    <div class="hint" id="waitNick" style="text-align:center"></div>
     <button class="btn-ghost" id="cancelBtn" style="width:100%;margin-top:14px">取消配對／換角色</button>
   </div>
 
@@ -284,6 +285,14 @@ function deckFor(roleKey) {
   if (holder) holder.innerHTML = qr.createSvgTag({cellSize:4, margin:2});
 })();
 
+const AUTO_NICKS = [
+  "度小月忍者","黑輪特攻隊","蝦仁飯俠","安平古堡貓","意麵刺客","虱目魚戰士",
+  "碗粿忍者","鹹粥女王","棺材板隊長","米糕大魔王","關廟鳳梨兵","鹽水蜂炮手",
+  "安平夕陽人","赤崁樓幽靈","五條港船長","台江候鳥","度小月特務","蔦松貓咪",
+  "擔仔麵刺客","牛肉湯勇者","炒鱔魚教主","土魠魚焿神","椪餅忍者","鱔魚意麵王",
+];
+function randomNickname() { return AUTO_NICKS[Math.floor(Math.random() * AUTO_NICKS.length)]; }
+
 let myEnv = null;
 let myRole = null;
 let myNick = "";
@@ -318,7 +327,11 @@ $("joinBtn").onclick = () => {
   if (!v || v < 1 || v > 60) { $("loginStatus").textContent = "請輸入 1-60 的編號"; return; }
   if (!myRole) { $("loginStatus").textContent = "請選一個角色"; return; }
   myEnv = v;
-  myNick = $("nickInput").value.trim().slice(0, 20);
+  const typed = $("nickInput").value.trim().slice(0, 20);
+  const autoAssigned = !typed;
+  myNick = typed || randomNickname();
+  if (autoAssigned) $("nickInput").value = myNick;
+  $("waitNick").textContent = autoAssigned ? `🎲 幫你取了暱稱：${myNick}（下一輪想改就直接改暱稱那格）` : "";
   startQueue();
 };
 

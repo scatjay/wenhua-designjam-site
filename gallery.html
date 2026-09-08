@@ -35,13 +35,15 @@
   .discuss{background:var(--panel2);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:13.5px;white-space:pre-wrap;line-height:1.6}
   .discuss b{color:var(--accent)}
   .empty{color:var(--ink-soft);font-size:14px;text-align:center;padding:40px 0}
+  .round.demo{border:2px dashed var(--accent);background:#fffaf0}
+  .demo-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;margin-right:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="index.html">← 回配對頁面</a>
   <h1>大家 Jam 出來的構想</h1>
-  <p class="sub">看看其他組合抽到什麼、想出了什麼方向——只有去識別化編號，看不到姓名學號。</p>
+  <p class="sub">看看其他組合抽到什麼、想出了什麼方向——只有去識別化編號，看不到姓名學號。虛線框、標「🧪 示範」的是老師測試流程用的範例，不是真的同學。</p>
   <div class="grid" id="grid"></div>
 </div>
 <script>
@@ -81,9 +83,10 @@ function renderAll() {
       return list.map(p => `<div class="discuss"><b>#${e}</b>　${escapeHtml(p.text)}</div>`).join("");
     }).join("");
     const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "")).join(" · ");
+    const isDemo = envs.some(e => parseInt(e, 10) > 52);
     const div = document.createElement("div");
-    div.className = "round";
-    div.innerHTML = `<div class="meta"><span class="envs">${whoLine}</span><span>${fmtTime(r.createdAt)}</span></div>
+    div.className = "round" + (isDemo ? " demo" : "");
+    div.innerHTML = `<div class="meta"><span class="envs">${isDemo ? '<span class="demo-badge">🧪 示範</span>' : ''}${whoLine}</span><span>${fmtTime(r.createdAt)}</span></div>
       <div class="chips">${chips}</div>${discussHtml}`;
     grid.appendChild(div);
   });

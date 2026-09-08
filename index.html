@@ -73,6 +73,13 @@
   .qrmeta{flex:1;min-width:180px}
   .qrmeta .t{font-weight:800;font-size:15px;margin-bottom:4px}
   .qrmeta .u{font-family:monospace;font-size:12px;color:var(--ink-soft);word-break:break-all}
+  .howto{list-style:none;margin:0;padding:0;counter-reset:step}
+  .howto li{counter-increment:step;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .howto li:last-child{border-bottom:none}
+  .howto li::before{content:counter(step);flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#241a05;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+  .howto .st{font-size:14px}
+  .howto .st b{display:block;margin-bottom:1px}
+  .howto .st span{color:var(--ink-soft);font-size:12.5px}
   @media (min-width: 720px){
     .wrap{max-width:760px}
     .rolepick{grid-template-columns:1fr 1fr 1fr 1fr}
@@ -91,6 +98,18 @@
       <div class="t">手機掃這裡加入</div>
       <div class="u" id="urlText"></div>
     </div>
+  </div>
+
+  <div class="card-box">
+    <label style="margin-bottom:12px">怎麼玩</label>
+    <ol class="howto">
+      <li><div class="st"><b>輸入編號、選角色</b><span>用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）</span></div></li>
+      <li><div class="st"><b>系統配對</b><span>等系統找到選了不同角色的人，湊成一組（2-4人）</span></div></li>
+      <li><div class="st"><b>各自抽卡</b><span>每個角色隨機抽到一張任務卡，代表你這個角色的限制條件</span></div></li>
+      <li><div class="st"><b>一起 blend 構想</b><span>把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想</span></div></li>
+      <li><div class="st"><b>下載設計文件</b><span>把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告</span></div></li>
+      <li><div class="st"><b>重玩</b><span>不滿意就重配對、換角色、重抽，可以一直迭代</span></div></li>
+    </ol>
   </div>
 
   <div id="login" class="card-box">
@@ -148,46 +167,46 @@ const NS = "whgm";
 
 // ---- card data ----
 const PRODUCER = [
-  {v:"30分鐘／只能純聊天講故事／新手一人", d:"時程與資源"},
-  {v:"1天／Gemini免費額度／新手一人", d:"時程與資源"},
-  {v:"3天／Gemini免費額度／兩個新手", d:"時程與資源"},
-  {v:"1週／AI Studio額度／一個有經驗", d:"時程與資源"},
-  {v:"2週／Claude Code訂閱／兩個有經驗", d:"時程與資源"},
-  {v:"1學期／全部工具開放／團隊支援", d:"時程與資源"},
-  {v:"現場5分鐘／無限資源／傳說等級", d:"時程與資源"},
+  {v:"30分鐘／只能純聊天講故事／新手一人", d:"時程與資源", note:"沒有工具可用，只能用嘴巴把遊戲講成一個故事，逼你想清楚核心體驗是什麼。"},
+  {v:"1天／Gemini免費額度／新手一人", d:"時程與資源", note:"一天內只夠做出最小可玩雛形，別想著做完整內容。"},
+  {v:"3天／Gemini免費額度／兩個新手", d:"時程與資源", note:"多一個人手，但都沒經驗，分工比技術更重要。"},
+  {v:"1週／AI Studio額度／一個有經驗", d:"時程與資源", note:"有個懂AI工具的人帶路，一週足夠做出可以展示的prototype。"},
+  {v:"2週／Claude Code訂閱／兩個有經驗", d:"時程與資源", note:"資源最寬裕的組合，可以真的把功能做出來，不只是紙上談兵。"},
+  {v:"1學期／全部工具開放／團隊支援", d:"時程與資源", note:"這是這門課實際的資源規模——用這張卡想像最終成品可以做到多完整。"},
+  {v:"現場5分鐘／無限資源／傳說等級", d:"時程與資源", note:"故意荒謬的組合：資源無限但時間逼死人，練習「先講重點」的能力。"},
 ];
 const ENGINEER = [
-  {v:"手機直向 App", d:"形式／平台"},
-  {v:"網頁互動小說", d:"形式／平台"},
-  {v:"實境走讀 App（AR疊圖）", d:"形式／平台"},
-  {v:"桌遊 Print & Play", d:"形式／平台"},
-  {v:"對話式聊天機器人", d:"形式／平台"},
-  {v:"短影音互動劇", d:"形式／平台"},
-  {v:"語音導覽＋關卡", d:"形式／平台"},
-  {v:"迷宮解謎印刷單張", d:"形式／平台"},
-  {v:"教室黑板真人版", d:"形式／平台"},
+  {v:"手機直向 App", d:"形式／平台", note:"單手滑、通勤也能玩，介面要簡單、關卡要短。"},
+  {v:"網頁互動小說", d:"形式／平台", note:"純文字＋選擇分支，不用畫面資源就能做出敘事深度。"},
+  {v:"實境走讀 App（AR疊圖）", d:"形式／平台", note:"玩家要實際走到那個地點才能觸發內容，適合結合真實的台南場景。"},
+  {v:"桌遊 Print & Play", d:"形式／平台", note:"印出來就能玩，不用寫程式，考驗規則設計本身夠不夠有趣。"},
+  {v:"對話式聊天機器人", d:"形式／平台", note:"整個遊戲就是一場對話，玩法藏在你怎麼設計AI的回應邏輯裡。"},
+  {v:"短影音互動劇", d:"形式／平台", note:"像抖音一樣滑，每支影片是一個選擇點，適合快節奏的敘事。"},
+  {v:"語音導覽＋關卡", d:"形式／平台", note:"用耳朵玩的遊戲，畫面不重要，聲音設計跟節奏才是關鍵。"},
+  {v:"迷宮解謎印刷單張", d:"形式／平台", note:"一張紙搞定，適合在課堂現場立刻發下去測試。"},
+  {v:"教室黑板真人版", d:"形式／平台", note:"完全不用任何載具，靠肢體和口頭規則就要讓遊戲成立。"},
 ];
 const MARKETING = [
-  {v:"國小校外教學團 ／ 好奇心", d:"客群／情感訴求"},
-  {v:"觀光客 ／ 打卡拍照慾", d:"客群／情感訴求"},
-  {v:"在地阿公阿嬤 ／ 懷舊感", d:"客群／情感訴求"},
-  {v:"大學生揪團 ／ 競爭好勝", d:"客群／情感訴求"},
-  {v:"家庭親子 ／ 溫馨陪伴", d:"客群／情感訴求"},
-  {v:"恐怖片愛好者 ／ 驚嚇刺激", d:"客群／情感訴求"},
-  {v:"美食愛好者 ／ 口水直流", d:"客群／情感訴求"},
-  {v:"歷史控 ／ 考據癖", d:"客群／情感訴求"},
-  {v:"隨便路過的人 ／ 五分鐘殺時間", d:"客群／情感訴求"},
+  {v:"國小校外教學團 ／ 好奇心", d:"客群／情感訴求", note:"要讓沒有耐心的小朋友願意一直玩，規則要秒懂。"},
+  {v:"觀光客 ／ 打卡拍照慾", d:"客群／情感訴求", note:"玩家想要的是「拍出來好看」，遊戲要製造上鏡的瞬間。"},
+  {v:"在地阿公阿嬤 ／ 懷舊感", d:"客群／情感訴求", note:"要喚起記憶中的台南，而不是介紹一個陌生城市給他們認識。"},
+  {v:"大學生揪團 ／ 競爭好勝", d:"客群／情感訴求", note:"要有排行榜或PK機制，讓朋友之間可以互相比較。"},
+  {v:"家庭親子 ／ 溫馨陪伴", d:"客群／情感訴求", note:"大人小孩都要能一起玩，不能只顧一邊的程度。"},
+  {v:"恐怖片愛好者 ／ 驚嚇刺激", d:"客群／情感訴求", note:"要能把台南的老屋、傳說轉成真的會讓人心跳加速的東西。"},
+  {v:"美食愛好者 ／ 口水直流", d:"客群／情感訴求", note:"用視覺和描述勾起食慾，小吃不只是背景是主角。"},
+  {v:"歷史控 ／ 考據癖", d:"客群／情感訴求", note:"這群人會挑你的考據錯誤，內容細節要禁得起檢驗。"},
+  {v:"隨便路過的人 ／ 五分鐘殺時間", d:"客群／情感訴求", note:"完全沒有動機，遊戲要在前10秒就抓住他，不然直接關掉。"},
 ];
 const CREATIVE = [
-  {v:"解謎 × 五條港", d:"類型 × 台南文化元素"},
-  {v:"模擬經營 × 廟宇遶境", d:"類型 × 台南文化元素"},
-  {v:"恐怖 × 老屋", d:"類型 × 台南文化元素"},
-  {v:"節奏音樂 × 度小月／小吃", d:"類型 × 台南文化元素"},
-  {v:"卡牌對戰 × 小封神神怪", d:"類型 × 台南文化元素"},
-  {v:"收集養成 × 運河生態", d:"類型 × 台南文化元素"},
-  {v:"派對遊戲 × 孔廟／文昌祠", d:"類型 × 台南文化元素"},
-  {v:"敘事抉擇 × 安平古堡", d:"類型 × 台南文化元素"},
-  {v:"潛行動作 × 中西區巷弄", d:"類型 × 台南文化元素"},
+  {v:"解謎 × 五條港", d:"類型 × 台南文化元素", note:"用五條港的貿易路線、水道結構本身當謎題素材。"},
+  {v:"模擬經營 × 廟宇遶境", d:"類型 × 台南文化元素", note:"玩家要管理一場遶境活動的人力、路線、香火資源。"},
+  {v:"恐怖 × 老屋", d:"類型 × 台南文化元素", note:"老屋的歷史感本身就是恐怖素材，不用硬加鬼怪。"},
+  {v:"節奏音樂 × 度小月／小吃", d:"類型 × 台南文化元素", note:"配合打拍子動作模擬「做小吃」的節奏感（切、煮、擺盤）。"},
+  {v:"卡牌對戰 × 小封神神怪", d:"類型 × 台南文化元素", note:"把小封神裡的神怪角色設計成有屬性、技能的對戰卡片。"},
+  {v:"收集養成 × 運河生態", d:"類型 × 台南文化元素", note:"蒐集運河沿岸的生物或地景，養成/圖鑑式的長期黏著。"},
+  {v:"派對遊戲 × 孔廟／文昌祠", d:"類型 × 台南文化元素", note:"多人同樂、輕鬆競賽，用考生拜文昌帝君的情境包裝。"},
+  {v:"敘事抉擇 × 安平古堡", d:"類型 × 台南文化元素", note:"用古堡的歷史轉折（荷蘭/明鄭/清）設計玩家的分支選擇。"},
+  {v:"潛行動作 × 中西區巷弄", d:"類型 × 台南文化元素", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。"},
 ];
 const ROLES = [
   {key:"producer", label:"執行製作人", emoji:"🟢", cls:"rc-producer", deck:PRODUCER, ask:"要在什麼時程／資源下做出這個東西？"},
@@ -279,6 +298,7 @@ $("downloadBtn").onclick = () => {
       const card = round.cards[p.role];
       lines.push(`## ${r.emoji} #${env} · ${r.label}`);
       lines.push(`- 抽到：**${card.v}**（${card.d}）`);
+      if (card.note) lines.push(`- 提示：${card.note}`);
       lines.push(`- 引導問題：${r.ask}`);
       lines.push(``);
     });
@@ -392,7 +412,7 @@ function renderRound(round) {
     const mine = env === myKey;
     const div = document.createElement("div");
     div.className = "role-card " + r.cls + (mine ? " yours" : "");
-    div.innerHTML = `<div class="rk">${r.emoji} #${env} · ${r.label}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp">${r.ask}</div>`;
+    div.innerHTML = `<div class="rk">${r.emoji} #${env} · ${r.label}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
     box.appendChild(div);
   });
   $("saveStatus").textContent = "";

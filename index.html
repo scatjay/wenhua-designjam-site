@@ -70,6 +70,10 @@
   .topnav{display:flex;gap:8px;margin-bottom:16px}
   .topnav a{flex:1;text-align:center;padding:10px 8px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-size:13px;font-weight:700;text-decoration:none}
   .topnav a:hover{background:var(--accent-soft);border-color:var(--accent)}
+  .queuepanel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;font-size:12.5px}
+  .queuepanel .qitem{flex:1;min-width:110px;text-align:center;padding:8px 6px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+  .queuepanel .qitem b{display:block;font-size:16px;margin-top:2px}
+  .queuepanel .qitem.has{border-color:var(--accent);background:var(--accent-soft)}
 
   .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0;border:1px solid var(--line)}
@@ -112,6 +116,8 @@
     <a href="gallery.html">🖼️ 瀏覽大家的構想</a>
   </div>
 
+  <div class="queuepanel" id="queuepanel"></div>
+
   <div class="card-box qrbox">
     <div id="qrcanvas"></div>
     <div class="qrmeta">
@@ -124,7 +130,7 @@
     <label style="margin-bottom:12px">怎麼玩</label>
     <ol class="howto">
       <li><div class="st"><b>輸入編號、選角色</b><span>用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）</span></div></li>
-      <li><div class="st"><b>系統配對</b><span>只要湊到至少2人、且選了不同角色，就會開局——人數不設上限，同一角色也可以不只一人</span></div></li>
+      <li><div class="st"><b>系統自動配對</b><span>不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等</span></div></li>
       <li><div class="st"><b>各自抽卡</b><span>每個角色隨機抽到一張任務卡，代表你這個角色的限制條件</span></div></li>
       <li><div class="st"><b>一起 blend 構想</b><span>把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——<b>建議一輪抓5-8分鐘</b>：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串</span></div></li>
       <li><div class="st"><b>下載設計文件</b><span>把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告</span></div></li>
@@ -261,6 +267,11 @@ const ROLES = [
 const ROLE_BY_KEY = Object.fromEntries(ROLES.map(r => [r.key, r]));
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
+// 2026-09-08 楊老師抓到的問題：整堂課(50人上限)同時排隊時，原本「把queue裡
+// 所有人一次打包成一組」會變成全班擠進同一組。加人數上限，讓短時間內大量
+// 排隊會自動拆成多個2-4人小隊，不是手動開房間、是全自動配對變聰明一點。
+const MAX_GROUP_SIZE = 4;
+
 // custom, student-submitted cards — kept separate from the base deck,
 // merged in at draw time. Live-synced so new cards show up without reload.
 const customCards = {producer:[], engineer:[], marketing:[], creative:[]};
@@ -272,6 +283,18 @@ ROLES.forEach(r => {
 function deckFor(roleKey) {
   return ROLE_BY_KEY[roleKey].deck.concat(customCards[roleKey] || []);
 }
+
+// 即時排隊看板——不用登入也看得到，讓大家知道現在還缺哪個角色的人。
+// 這不是「房間列表」：配對還是全自動的，這裡純粹是「目前狀態」的參考資訊。
+db.ref(`${NS}/queue`).on("value", snap => {
+  const val = snap.val() || {};
+  const panel = document.getElementById("queuepanel");
+  if (!panel) return;
+  panel.innerHTML = ROLES.map(r => {
+    const n = Object.keys(val[r.key] || {}).length;
+    return `<div class="qitem${n > 0 ? ' has' : ''}">${r.emoji} ${r.label}<b>${n}</b>等待中</div>`;
+  }).join("");
+});
 
 // ---- QR code for easy phone join ----
 (function renderQR(){
@@ -508,9 +531,16 @@ function watchMatch() {
 }
 
 // Any waiting client watches all 4 role-queues; as soon as >=2 people are
-// waiting in total (any role mix, repeats allowed), try to claim the WHOLE
-// waiting pool via a transaction lock so only one client actually forms
-// the round. No cap on group size.
+// waiting in total (any role mix, repeats allowed), try to claim a bounded
+// slice of the waiting pool via a transaction lock so only one client
+// actually forms the round.
+//
+// 🔴 2026-09-08 修：整班50人同時排隊時，不能把queue裡所有人打包成同一組
+// （那樣一整班會擠成一組，角色卡變成50人共用4張）。改成每組最多
+// MAX_GROUP_SIZE人：先確保現有的每個不同角色各挑最早排隊的一位（保證
+// 角色多樣性），剩下名額才依排隊時間先後補滿（同一角色可以補到不只一位，
+// 這個既有規則保留）。這樣短時間大量排隊會自動、立刻拆成很多組小隊，
+// 不是手動開房間——學生體驗完全不變，還是「選角色→等一下→自動配對成功」。
 function watchQueueForMatching() {
   db.ref(`${NS}/queue`).on("value", (snap) => {
     const val = snap.val() || {};
@@ -523,11 +553,29 @@ function watchQueueForMatching() {
     const distinctRoles = new Set(all.map(g => g.role)).size;
     if (all.length < 2 || distinctRoles < 2) return; // need >=2 people AND >=2 different roles to open a round
     all.sort((a,b) => a.t - b.t);
-    const lockKey = all.map(g => g.role + ":" + g.key).sort().join("_");
+
+    const byRole = {};
+    all.forEach(g => { (byRole[g.role] = byRole[g.role] || []).push(g); });
+    const picked = [];
+    const pickedKeys = new Set();
+    Object.values(byRole).forEach(list => {
+      picked.push(list[0]);
+      pickedKeys.add(list[0].role + ":" + list[0].key);
+    });
+    picked.sort((a,b) => a.t - b.t);
+    for (const g of all) {
+      if (picked.length >= MAX_GROUP_SIZE) break;
+      const k = g.role + ":" + g.key;
+      if (pickedKeys.has(k)) continue;
+      picked.push(g);
+      pickedKeys.add(k);
+    }
+
+    const lockKey = picked.map(g => g.role + ":" + g.key).sort().join("_");
     db.ref(`${NS}/matchLocks/${lockKey}`).transaction(cur => cur === null ? true : undefined)
       .then(res => {
         if (!res.committed) return;
-        makeRound(all);
+        makeRound(picked);
       });
   });
 }

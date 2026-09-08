@@ -240,6 +240,12 @@ document.getElementById("addBtn").onclick = () => {
   if (note) data.note = note;
   db.ref(`${NS}/customCards/${role}`).push(data)
     .then(() => {
+      // 累計「新增過幾張卡片」——跟index.html的完成卡是同一份playerStats，
+      // 讓學生截圖時看得到自己對卡池的貢獻累計，不用另外查。
+      db.ref(`${NS}/playerStats/${env}`).transaction(cur => {
+        cur = cur || {roundCount: 0, totalMs: 0, cardsAdded: 0};
+        return {...cur, cardsAdded: (cur.cardsAdded||0) + 1, lastSeen: Date.now()};
+      });
       statusEl.textContent = "✅ 新卡已加入卡池，其他人可能會抽到囉！";
       document.getElementById("addV").value = "";
       document.getElementById("addNote").value = "";

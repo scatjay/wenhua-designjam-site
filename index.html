@@ -77,6 +77,10 @@
   .queuehint{background:var(--red-soft);border:1.5px solid var(--red);color:var(--red);border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:700;margin:-8px 0 16px;text-align:center}
   .queuesummary{text-align:center;font-size:11.5px;color:var(--ink-soft);margin:-10px 0 16px}
   .leftTag{color:var(--red);font-size:11px;font-weight:800}
+  .statusTag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;margin-left:4px;vertical-align:middle}
+  .statusTag.on{background:var(--green-soft);color:var(--green)}
+  .statusTag.idle{background:var(--accent-soft);color:var(--accent)}
+  .statusTag.off{background:var(--red-soft);color:var(--red)}
 
   .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0;border:1px solid var(--line)}
@@ -323,16 +327,19 @@ db.ref(`${NS}/queue`).on("value", snap => {
 });
 
 let matchedCount = 0;
+let activeGroupCount = 0;
 db.ref(`${NS}/playerStatus`).on("value", snap => {
   const val = snap.val() || {};
-  matchedCount = Object.values(val).filter(p => p.state === "matched").length;
+  const matched = Object.values(val).filter(p => p.state === "matched");
+  matchedCount = matched.length;
+  activeGroupCount = new Set(matched.map(p => p.roundId)).size;
   renderQueueSummary();
 });
 function renderQueueSummary() {
   const el = document.getElementById("queuesummary");
   if (!el) return;
   const waiting = Object.values(latestQueueCounts).reduce((a,b) => a+b, 0);
-  el.textContent = `目前等待中 ${waiting} 人 · 配對中／進行中 ${matchedCount} 人`;
+  el.textContent = `目前等待中 ${waiting} 人 · 配對中／進行中 ${matchedCount} 人 · 進行中的討論 ${activeGroupCount} 組`;
 }
 renderQueueSummary();
 
@@ -425,6 +432,7 @@ $("rerollBtn").onclick = () => {
   if (feedUnsub) { feedUnsub(); feedUnsub = null; }
   presenceUnsubs.forEach(u => u());
   presenceUnsubs = [];
+  if (presenceTickTimer) { clearInterval(presenceTickTimer); presenceTickTimer = null; }
   currentRoundId = null;
   roundCount++;
   db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().cancel();
@@ -454,6 +462,7 @@ $("copyPromptBtn").onclick = () => {
     const round = rs.val();
     if (!round) return;
     const text = buildGeminiPrompt(round);
+    markActive();
     const done = () => { $("copyStatus").textContent = "已複製，去 Gemini 貼上吧！"; };
     const fail = (e) => {
       // fallback: select a temporary textarea for manual copy
@@ -479,24 +488,57 @@ $("saveBtn").onclick = () => {
     .then(() => {
       $("saveStatus").textContent = "已記錄 · " + new Date().toLocaleTimeString();
       $("promptBox").value = "";
+      markActive();
       showDoneCard();
     })
     .catch(e => { $("saveStatus").textContent = "記錄失敗：" + e.message; });
 };
 
+// 這輪算不算「完成一次」只commit一次，同一輪按多次「記錄這段」不會重複累計。
+let roundStatsCommitted = false;
+
+// 🔴 2026-09-08 楊老師定案：截圖上傳的完成卡**不放編號**——編號雖然是去識別化
+// 用的，但截圖一旦透過flipclass等有登入的管道繳交，編號就會被綁回真實身份，
+// 反而破壞了信封編號的去識別化設計。這裡只用暱稱，不用編號。
 function showDoneCard() {
   db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => {
     const round = rs.val();
     if (!round) return;
-    const who = myNick ? `#${myEnv}　${myNick}` : `#${myEnv}`;
-    $("doneWho").textContent = who + " · 第 " + (roundCount + 1) + " 輪";
-    const lines = Object.entries(round.players).map(([env, p]) => {
-      const r = ROLE_BY_KEY[p.role];
-      const card = round.cards[p.role];
-      return `${r.emoji} <b>${r.label}</b>：${card.v}`;
-    });
-    $("doneCombo").innerHTML = lines.join("<br>") + "<br><br>📸 把這張卡截圖，就是這一輪的完成紀錄";
-    $("doneCard").hidden = false;
+    const finish = (stats) => {
+      $("doneWho").textContent = (myNick || "（沒有暱稱）") + " · 第 " + (roundCount + 1) + " 輪";
+      const lines = Object.entries(round.players).map(([env, p]) => {
+        const r = ROLE_BY_KEY[p.role];
+        const card = round.cards[p.role];
+        return `${r.emoji} <b>${r.label}</b>：${card.v}`;
+      });
+      const teammateNotes = Object.keys(round.players)
+        .filter(env => env !== String(myEnv))
+        .map(env => {
+          const st = statusOf(teammateRaw[env]);
+          return st.cls === "on" ? null : `${ROLE_BY_KEY[round.players[env].role].emoji} ${round.players[env].nickname || "隊友"}：${st.label}`;
+        }).filter(Boolean);
+      let html = lines.join("<br>");
+      if (teammateNotes.length) html += "<br><br>" + teammateNotes.join("<br>");
+      if (stats) {
+        html += `<br><br>📊 累計玩過 <b>${stats.roundCount}</b> 輪 · 累積投入約 <b>${Math.round(stats.totalMs/60000)}</b> 分鐘` +
+          (stats.cardsAdded ? ` · 新增過 <b>${stats.cardsAdded}</b> 張卡片` : "");
+      }
+      html += "<br><br>📸 把這張卡截圖，就是這一輪的完成紀錄";
+      $("doneCombo").innerHTML = html;
+      $("doneCard").hidden = false;
+    };
+    if (roundStatsCommitted) { finish(null); return; }
+    roundStatsCommitted = true;
+    const durationMs = Date.now() - round.createdAt;
+    db.ref(`${NS}/playerStats/${myEnv}`).transaction(cur => {
+      cur = cur || {roundCount: 0, totalMs: 0, cardsAdded: 0};
+      return {
+        roundCount: (cur.roundCount||0) + 1,
+        totalMs: (cur.totalMs||0) + Math.max(0, durationMs),
+        cardsAdded: cur.cardsAdded || 0,
+        lastSeen: Date.now(),
+      };
+    }).then(res => finish(res.snapshot.val()));
   });
 }
 
@@ -553,7 +595,7 @@ $("feedbackBtn").onclick = () => {
   const text = $("feedbackBox").value.trim();
   if (!text) return;
   db.ref(`${NS}/feedback`).push({env: myEnv, text, t: Date.now()})
-    .then(() => { $("feedbackStatus").textContent = "謝謝，已送出！"; $("feedbackBox").value=""; })
+    .then(() => { $("feedbackStatus").textContent = "謝謝，已送出！"; $("feedbackBox").value=""; markActive(); })
     .catch(e => { $("feedbackStatus").textContent = "送出失敗：" + e.message; });
 };
 
@@ -603,7 +645,7 @@ function watchMatch() {
       // 其他組員的畫面完全看不出來，還是靜靜顯示那個人的卡片、以為他還在。
       // 用onDisconnect：真的斷線時自動把自己的playerStatus標成"left"，
       // 其他組員訂閱這個路徑就能顯示「⚠️已離線」。
-      db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().update({state: "left"});
+      db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().update({state: "left", leftAt: firebase.database.ServerValue.TIMESTAMP});
       db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => renderRound(rs.val()));
     }
   });
@@ -671,32 +713,64 @@ function makeRound(group) {
   const updates = {};
   updates[`${NS}/rounds/${roundId}`] = roundData;
   group.forEach(g => {
-    updates[`${NS}/playerStatus/${g.env}`] = {state:"matched", roundId, t: Date.now()};
+    updates[`${NS}/playerStatus/${g.env}`] = {state:"matched", roundId, t: Date.now(), lastActive: Date.now()};
     updates[`${NS}/queue/${g.role}/${g.key}`] = null;
   });
   db.ref().update(updates);
 }
 
+// 標記「我剛做了一件事」——存了討論、複製了指令、送了意見，都算。
+// 沒有做這件事超過IDLE_MS，隊友畫面上會顯示「暫無動作」，跟真的斷線分開。
+const IDLE_MS = 4 * 60 * 1000;
+function markActive() {
+  if (myEnv && currentRoundId) {
+    db.ref(`${NS}/playerStatus/${myEnv}`).update({lastActive: Date.now()});
+  }
+}
+
 let presenceUnsubs = [];
+let teammateRaw = {};
+let presenceTickTimer = null;
+function statusOf(raw) {
+  if (!raw) return {label: "🟢 在線", cls: "on"};
+  if (raw.state === "left") {
+    const t = raw.leftAt ? new Date(raw.leftAt).toLocaleTimeString("zh-TW", {hour12:false}) : "";
+    return {label: `🔴 已離線${t ? "（"+t+"）" : ""}`, cls: "off"};
+  }
+  if (raw.lastActive && Date.now() - raw.lastActive > IDLE_MS) {
+    return {label: "🟡 暫無動作", cls: "idle"};
+  }
+  return {label: "🟢 在線", cls: "on"};
+}
+function renderPresenceTags() {
+  Object.keys(teammateRaw).forEach(env => {
+    const tag = document.getElementById("statusTag_" + env);
+    if (!tag) return;
+    const st = statusOf(teammateRaw[env]);
+    tag.textContent = st.label;
+    tag.className = "statusTag " + st.cls;
+  });
+}
 function watchTeammatePresence(round) {
   presenceUnsubs.forEach(u => u());
   presenceUnsubs = [];
+  teammateRaw = {};
+  if (presenceTickTimer) clearInterval(presenceTickTimer);
   const myKey = String(myEnv);
   Object.keys(round.players || {}).forEach(env => {
     if (env === myKey) return;
     const ref = db.ref(`${NS}/playerStatus/${env}`);
-    const handler = (snap) => {
-      const left = (snap.val() || {}).state === "left";
-      const tag = document.getElementById("leftTag_" + env);
-      if (tag) tag.hidden = !left;
-    };
+    const handler = (snap) => { teammateRaw[env] = snap.val(); renderPresenceTags(); };
     ref.on("value", handler);
     presenceUnsubs.push(() => ref.off("value", handler));
   });
+  // 定時重算——idle是「多久沒動作」，光靠Firebase change事件抓不到「純粹時間流逝」這件事。
+  presenceTickTimer = setInterval(renderPresenceTags, 15000);
 }
 
 function renderRound(round) {
   if (!round) return;
+  roundStatsCommitted = false;
   const myKey = String(myEnv);
   const envs = Object.keys(round.players || {});
   $("groupEnvs").textContent = envs.map(e => {
@@ -713,7 +787,8 @@ function renderRound(round) {
     const who = "#" + env + (p.nickname ? "　" + p.nickname : "");
     const div = document.createElement("div");
     div.className = "role-card " + r.cls + (mine ? " yours" : "");
-    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${r.label} <span id="leftTag_${env}" class="leftTag" hidden>⚠️ 已離線</span></div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
+    const statusHtml = mine ? "" : `<span id="statusTag_${env}" class="statusTag on">🟢 在線</span>`;
+    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${r.label} ${statusHtml}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
     box.appendChild(div);
   });
   $("saveStatus").textContent = "";

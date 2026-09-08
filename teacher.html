@@ -45,6 +45,7 @@
     <div class="stat"><div class="n queuecount" id="statQueue">0</div><div class="l">目前排隊中</div></div>
     <div class="stat"><div class="n" id="statMatched" style="color:var(--ok)">0</div><div class="l">配對中／進行中</div></div>
     <div class="stat"><div class="n" id="statAvgDuration">--</div><div class="l">平均每輪花費時間</div></div>
+    <div class="stat"><div class="n" id="statActiveGroups" style="color:var(--ok)">0</div><div class="l">進行中的討論組數</div></div>
   </div>
   <div class="rolebreak" id="rolebreak"></div>
   <div class="imbalance" id="imbalance" hidden></div>
@@ -99,7 +100,9 @@ db.ref(`${NS}/queue`).on("value", snap => {
 let leftEnvs = new Set();
 db.ref(`${NS}/playerStatus`).on("value", snap => {
   const val = snap.val() || {};
-  $("statMatched").textContent = Object.values(val).filter(p => p.state === "matched").length;
+  const matched = Object.values(val).filter(p => p.state === "matched");
+  $("statMatched").textContent = matched.length;
+  $("statActiveGroups").textContent = new Set(matched.map(p => p.roundId)).size;
   leftEnvs = new Set(Object.entries(val).filter(([,p]) => p.state === "left").map(([env]) => env));
   renderAll(latestRounds);
 });

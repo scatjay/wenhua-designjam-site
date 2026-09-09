@@ -385,7 +385,22 @@ const AUTO_NICKS = [
   "椪餅獵人","黑輪特攻隊","蜜餞精靈","肉燥飯君主","蚵仔煎術士","芒果冰巨龍",
   "豆花聖騎士","鹽水意麵刺客","麻豆文旦法師","關廟麵大祭司","鱔魚炒麵劍聖","度小月大祭司",
 ];
-function randomNickname() { return AUTO_NICKS[Math.floor(Math.random() * AUTO_NICKS.length)]; }
+// 2026-09-09 楊老師：測試員（自動取暱稱的人）不要撞名——查一下目前排隊中已經有誰用了
+// 哪個暱稱，優先挑沒被用過的；24個都被用光這種少見狀況才加兩位數尾碼保底。
+async function randomNickname() {
+  let used = new Set();
+  try {
+    const snap = await db.ref(`${NS}/queue`).once("value");
+    const val = snap.val() || {};
+    Object.values(val).forEach(roleQ => {
+      Object.values(roleQ || {}).forEach(g => { if (g && g.nickname) used.add(g.nickname); });
+    });
+  } catch(_) {}
+  const free = AUTO_NICKS.filter(n => !used.has(n));
+  if (free.length) return free[Math.floor(Math.random() * free.length)];
+  const base = AUTO_NICKS[Math.floor(Math.random() * AUTO_NICKS.length)];
+  return base + (10 + Math.floor(Math.random() * 90));
+}
 
 let myEnv = null;
 let myRole = null;
@@ -416,7 +431,7 @@ ROLES.forEach(r => {
   pickBox.appendChild(b);
 });
 
-$("joinBtn").onclick = () => {
+$("joinBtn").onclick = async () => {
   const raw = $("envInput").value;
   const v = parseInt(raw, 10);
   // 2026-09-09 楊老師：老師本人測試用編號00、駱老師用99（不是打錯，00不能用!v判斷）。
@@ -428,7 +443,9 @@ $("joinBtn").onclick = () => {
   try { localStorage.setItem("designjam_env", String(v)); } catch(_) {}
   const typed = $("nickInput").value.trim().slice(0, 20);
   const autoAssigned = !typed;
-  myNick = typed || randomNickname();
+  $("joinBtn").disabled = true;
+  myNick = typed || await randomNickname();
+  $("joinBtn").disabled = false;
   if (autoAssigned) $("nickInput").value = myNick;
   $("waitNick").textContent = autoAssigned ? `🎲 幫你取了暱稱：${myNick}（下一輪想改就直接改暱稱那格）` : "";
   startQueue();

@@ -156,7 +156,8 @@
 
   <div id="login" class="card-box">
     <label for="envInput" data-i18n="envLabel">你的編號（信封上那組，不是學號）</label>
-    <input type="number" id="envInput" min="0" max="99" placeholder="例如 17" data-i18n-ph="envPh" inputmode="numeric">
+    <input type="number" id="envInput" min="0" max="130" placeholder="例如 17" data-i18n-ph="envPh" inputmode="numeric">
+    <div class="hint" id="envLockHint" hidden style="margin-top:4px">🔒 編號已鎖定，避免中途誤改 · <a href="#" id="envUnlockLink" style="color:var(--accent);font-weight:700">不是你？點此重新輸入</a></div>
     <label for="nickInput" style="margin-top:16px" data-i18n="nickLabel">幫自己取個暱稱（選填）</label>
     <input type="text" id="nickInput" maxlength="20" placeholder="例如：芒果冰、隊長17號" data-i18n-ph="nickPh" style="width:100%;padding:12px 14px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)">
     <div class="hint" data-i18n="hint1">⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果</div>
@@ -519,11 +520,27 @@ let savedLang = "zh";
 try { savedLang = localStorage.getItem("designjam_lang") || "zh"; } catch(_) {}
 applyLang(savedLang);
 
-// 2026-09-09 楊老師：登入頁自己打過編號/暱稱，之後回來不用再打一次——
-// 兩個欄位都自動帶入上次用過的值，但保留可以改（換裝置用的人、暱稱想換一下都不會卡住）。
+// 2026-09-09 楊老師：登入頁自己打過編號/暱稱，之後回來不用再打一次——都自動帶入上次的值。
+// 暱稱可以隨時改；編號一旦輸入過就鎖起來不給改（避免中途誤觸改掉，identity只認這個編號），
+// 只留一個小小的「不是你？」連結當例外出口（借用裝置、打錯的情況才用得到）。
+function lockEnvInput() {
+  $("envInput").readOnly = true;
+  $("envInput").style.background = "var(--panel2, #f2efe4)";
+  $("envLockHint").hidden = false;
+}
+function unlockEnvInput() {
+  $("envInput").readOnly = false;
+  $("envInput").style.background = "";
+  $("envInput").value = "";
+  $("envLockHint").hidden = true;
+  try { localStorage.removeItem("designjam_env"); } catch(_) {}
+  $("envInput").focus();
+}
+$("envUnlockLink").onclick = (e) => { e.preventDefault(); unlockEnvInput(); };
+
 try {
   const savedEnv = localStorage.getItem("designjam_env");
-  if (savedEnv) $("envInput").value = savedEnv;
+  if (savedEnv) { $("envInput").value = savedEnv; lockEnvInput(); }
   const savedNick = localStorage.getItem("designjam_nick");
   if (savedNick) $("nickInput").value = savedNick;
 } catch(_) {}
@@ -532,12 +549,14 @@ $("joinBtn").onclick = async () => {
   const raw = $("envInput").value;
   const v = parseInt(raw, 10);
   // 2026-09-09 楊老師：老師本人測試用編號00、駱老師用99（不是打錯，00不能用!v判斷）。
-  const validEnv = raw !== "" && !Number.isNaN(v) && (v === 0 || (v >= 1 && v <= 60) || v === 99);
+  // 2026-09-09 楊老師：遊戲設計學(17位)共用這套系統，編號101起編，跟文化遊戲松(1-52)區隔。
+  const validEnv = raw !== "" && !Number.isNaN(v) && (v === 0 || (v >= 1 && v <= 60) || v === 99 || (v >= 101 && v <= 130));
   if (!validEnv) { $("loginStatus").textContent = "請輸入信封上的編號"; return; }
   if (!myRole) { $("loginStatus").textContent = "請選一個角色"; return; }
   myEnv = v;
   // 2026-09-09 楊老師：登入時就知道編號了，卡池頁不用再讓學生重打一次，存起來給那邊抓。
   try { localStorage.setItem("designjam_env", String(v)); } catch(_) {}
+  lockEnvInput();
   const typed = $("nickInput").value.trim().slice(0, 20);
   const autoAssigned = !typed;
   $("joinBtn").disabled = true;

@@ -111,17 +111,23 @@
     .wrap{max-width:760px}
     .rolepick{grid-template-columns:1fr 1fr}
   }
+  .langbtn{background:var(--panel);border:1.5px solid var(--line);border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:700;color:var(--ink-soft);cursor:pointer}
+  .langbtn.sel{background:var(--accent);color:#241a05;border-color:var(--accent)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px">文化遊戲松實作 · 熱身</div>
+  <div class="langswitch" style="display:flex;gap:8px;margin-bottom:10px">
+    <button type="button" id="langZh" class="langbtn sel">中文</button>
+    <button type="button" id="langVi" class="langbtn">Tiếng Việt</button>
+  </div>
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px" data-i18n="kicker">文化遊戲松實作 · 熱身</div>
   <h1>文化遊戲松 Cultural Game Jam</h1>
-  <p class="sub">改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。</p>
+  <p class="sub" data-i18n="sub">改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。</p>
 
   <div class="topnav">
-    <a href="cards.html">🗂️ 完整卡池（可自己新增卡片）</a>
-    <a href="gallery.html">🖼️ 瀏覽大家的構想</a>
+    <a href="cards.html" data-i18n="navCards">🗂️ 完整卡池（可自己新增卡片）</a>
+    <a href="gallery.html" data-i18n="navGallery">🖼️ 瀏覽大家的構想</a>
   </div>
 
   <div class="queuepanel" id="queuepanel"></div>
@@ -139,77 +145,77 @@
   <div class="card-box">
     <label style="margin-bottom:12px">怎麼玩</label>
     <ol class="howto">
-      <li><div class="st"><b>輸入編號、選角色</b><span>用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）</span></div></li>
-      <li><div class="st"><b>系統自動配對</b><span>不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等</span></div></li>
-      <li><div class="st"><b>各自抽卡</b><span>每個角色隨機抽到一張任務卡，代表你這個角色的限制條件</span></div></li>
-      <li><div class="st"><b>一起 blend 構想</b><span>把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——<b>建議一輪抓5-8分鐘</b>：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串</span></div></li>
-      <li><div class="st"><b>下載設計文件</b><span>把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告</span></div></li>
-      <li><div class="st"><b>重玩</b><span>不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案</span></div></li>
+      <li><div class="st"><b data-i18n="howto1b">輸入編號、選角色</b><span data-i18n="howto1s">用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）</span></div></li>
+      <li><div class="st"><b data-i18n="howto2b">系統自動配對</b><span data-i18n="howto2s">不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等</span></div></li>
+      <li><div class="st"><b data-i18n="howto3b">各自抽卡</b><span data-i18n="howto3s">每個角色隨機抽到一張任務卡，代表你這個角色的限制條件</span></div></li>
+      <li><div class="st"><b data-i18n="howto4b">一起 blend 構想</b><span data-i18n="howto4s">把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——建議一輪抓5-8分鐘：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串</span></div></li>
+      <li><div class="st"><b data-i18n="howto5b">下載設計文件</b><span data-i18n="howto5s">把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告</span></div></li>
+      <li><div class="st"><b data-i18n="howto6b">重玩</b><span data-i18n="howto6s">不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案</span></div></li>
     </ol>
   </div>
 
   <div id="login" class="card-box">
-    <label for="envInput">你的編號（信封上那組，不是學號）</label>
-    <input type="number" id="envInput" min="0" max="99" placeholder="例如 17" inputmode="numeric">
-    <label for="nickInput" style="margin-top:16px">幫自己取個暱稱（選填）</label>
-    <input type="text" id="nickInput" maxlength="20" placeholder="例如：芒果冰、隊長17號" style="width:100%;padding:12px 14px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)">
-    <div class="hint">⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果</div>
-    <label style="margin-top:16px">這一輪想扮演的角色</label>
+    <label for="envInput" data-i18n="envLabel">你的編號（信封上那組，不是學號）</label>
+    <input type="number" id="envInput" min="0" max="99" placeholder="例如 17" data-i18n-ph="envPh" inputmode="numeric">
+    <label for="nickInput" style="margin-top:16px" data-i18n="nickLabel">幫自己取個暱稱（選填）</label>
+    <input type="text" id="nickInput" maxlength="20" placeholder="例如：芒果冰、隊長17號" data-i18n-ph="nickPh" style="width:100%;padding:12px 14px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)">
+    <div class="hint" data-i18n="hint1">⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果</div>
+    <label style="margin-top:16px" data-i18n="roleLabel">這一輪想扮演的角色</label>
     <div class="rolepick" id="rolepick"></div>
-    <button class="btn-primary" id="joinBtn" disabled>開始配對</button>
+    <button class="btn-primary" id="joinBtn" disabled data-i18n="joinBtn">開始配對</button>
     <div class="status" id="loginStatus"></div>
   </div>
 
   <div id="waiting" class="card-box" hidden>
-    <div class="status"><span class="spinner"></span>配對中…等其他角色的人加入（<span id="waitRole"></span>）</div>
+    <div class="status"><span class="spinner"></span><span data-i18n="waitingText">配對中…等其他角色的人加入（</span><span id="waitRole"></span><span data-i18n="waitingClose">）</span></div>
     <div class="hint" id="waitNick" style="text-align:center"></div>
     <div class="queuehint" id="waitHint" style="margin-top:10px" hidden></div>
-    <button class="btn-ghost" id="cancelBtn" style="width:100%;margin-top:14px">取消配對／換角色</button>
+    <button class="btn-ghost" id="cancelBtn" style="width:100%;margin-top:14px" data-i18n="cancelBtn">取消配對／換角色</button>
   </div>
 
   <div id="playing" hidden>
     <div id="doneCard" class="donecard" hidden>
       <div class="donecard-inner">
-        <div class="badge">✅ 本輪已記錄</div>
+        <div class="badge" data-i18n="doneBadge">✅ 本輪已記錄</div>
         <div class="who" id="doneWho">--</div>
         <div class="combo" id="doneCombo"></div>
-        <button class="btn-ghost" id="closeDoneCardBtn" style="width:100%;margin-top:18px">✕ 截圖完了，關閉回去繼續討論</button>
+        <button class="btn-ghost" id="closeDoneCardBtn" style="width:100%;margin-top:18px" data-i18n="closeDoneBtn">✕ 截圖完了，關閉回去繼續討論</button>
       </div>
     </div>
-    <div class="group-line">第 <b id="roundNo">1</b> 輪 · 這組編號：<span id="groupEnvs" class="envtag">--</span>
-      <button class="btn-ghost" id="topRerollBtn" style="float:right;padding:4px 12px;font-size:12px">🏠 回登入／選角色</button>
+    <div class="group-line"><span data-i18n="roundNoPrefix">第 </span><b id="roundNo">1</b><span data-i18n="roundNoMidGroup"> 輪 · 這組編號：</span><span id="groupEnvs" class="envtag">--</span>
+      <button class="btn-ghost" id="topRerollBtn" style="float:right;padding:4px 12px;font-size:12px" data-i18n="topRerollBtn">🏠 回登入／選角色</button>
     </div>
     <div id="cards"></div>
     <div class="card-box">
-      <label>不知道怎麼開始？先請 Gemini 幫忙探索</label>
-      <button class="btn-ghost" id="copyPromptBtn" style="width:100%">📋 複製一鍵探索指令，貼去 Gemini</button>
+      <label data-i18n="howToStartLabel">不知道怎麼開始？先請 Gemini 幫忙探索</label>
+      <button class="btn-ghost" id="copyPromptBtn" style="width:100%" data-i18n="copyPromptBtn">📋 複製一鍵探索指令，貼去 Gemini</button>
       <div class="hint" id="copyStatus"></div>
     </div>
     <div class="card-box">
-      <label>這組的即時討論串（輪流貼上，大家馬上看得到）</label>
-      <div class="feed" id="feed"><div class="empty">還沒有人發言</div></div>
-      <label>把你跟 Gemini 討論的心得貼上來</label>
-      <textarea id="promptBox" placeholder="貼上這一組討論、跟 Gemini 交流的過程…"></textarea>
+      <label data-i18n="feedLabel">這組的即時討論串（輪流貼上，大家馬上看得到）</label>
+      <div class="feed" id="feed"><div class="empty" data-i18n="feedEmpty">還沒有人發言</div></div>
+      <label data-i18n="pasteLabel">把你跟 Gemini 討論的心得貼上來</label>
+      <textarea id="promptBox" placeholder="貼上這一組討論、跟 Gemini 交流的過程…" data-i18n-ph="promptBoxPh"></textarea>
       <div class="row">
-        <button class="btn-ghost" id="saveBtn">記錄這段</button>
-        <button class="btn-ghost" id="downloadBtn">下載構想 .md</button>
+        <button class="btn-ghost" id="saveBtn" data-i18n="saveBtn">記錄這段</button>
+        <button class="btn-ghost" id="downloadBtn" data-i18n="downloadBtn">下載構想 .md</button>
       </div>
       <div class="hint" id="saveStatus"></div>
     </div>
     <div class="card-box">
-      <label>對這個工具的意見（想加什麼、想改什麼）</label>
-      <textarea id="feedbackBox" style="min-height:70px" placeholder="例如：想要角色卡再多一點選項、想看到別組抽到什麼…"></textarea>
+      <label data-i18n="feedbackLabel">對這個工具的意見（想加什麼、想改什麼）</label>
+      <textarea id="feedbackBox" style="min-height:70px" placeholder="例如：想要角色卡再多一點選項、想看到別組抽到什麼…" data-i18n-ph="feedbackPh"></textarea>
       <div class="row">
-        <button class="btn-ghost" id="feedbackBtn">送出意見</button>
+        <button class="btn-ghost" id="feedbackBtn" data-i18n="feedbackBtn">送出意見</button>
       </div>
       <div class="hint" id="feedbackStatus"></div>
     </div>
     <div class="row">
-      <button class="btn-primary" id="rerollBtn">再玩一輪（可換角色）</button>
+      <button class="btn-primary" id="rerollBtn" data-i18n="rerollBtn">再玩一輪（可換角色）</button>
     </div>
   </div>
 
-  <footer>編號僅供去識別化記錄，不會顯示或連結到姓名學號 · <a href="gallery.html" style="color:var(--accent);font-weight:700">瀏覽大家的構想</a> · <a href="cards.html" style="color:var(--accent);font-weight:700">完整卡池</a></footer>
+  <footer><span data-i18n="footer">編號僅供去識別化記錄，不會顯示或連結到姓名學號</span> · <a href="gallery.html" style="color:var(--accent);font-weight:700" data-i18n="navGallery2">瀏覽大家的構想</a> · <a href="cards.html" style="color:var(--accent);font-weight:700" data-i18n="navCards2">完整卡池</a></footer>
 </div>
 
 <script>
@@ -222,6 +228,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const NS = "whgm";
+
+let currentLang = "zh"; // 2026-09-09 楊老師：加越南語切換（修課有越南僑生）
 
 // ---- card data ----
 const PRODUCER = [
@@ -267,19 +275,26 @@ const CREATIVE = [
   {v:"潛行動作 × 中西區巷弄", d:"類型 × 台南文化元素", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。"},
 ];
 const ROLES = [
-  {key:"producer", label:"執行製作人", emoji:"🟢", cls:"rc-producer", deck:PRODUCER,
-    ask:"要在什麼時程／資源下做出這個東西？",
-    desc:"管時程、預算、人力。負責提醒大家「這在現實中做得完嗎？」"},
-  {key:"engineer", label:"首席工程師", emoji:"🔵", cls:"rc-engineer", deck:ENGINEER,
-    ask:"這個構想要用什麼形式／平台做出來？",
-    desc:"管技術實現。負責決定「這個構想具體要用什麼形式做出來」"},
-  {key:"marketing", label:"行銷主管", emoji:"🟣", cls:"rc-marketing", deck:MARKETING,
-    ask:"這是要做給誰玩、打中他們什麼感覺？",
-    desc:"管客群與賣點。負責提醒大家「這個東西要吸引誰、憑什麼吸引他」"},
-  {key:"creative", label:"創意總監", emoji:"🔴", cls:"rc-creative", deck:CREATIVE,
-    ask:"遊戲類型和台南文化元素要怎麼結合？",
-    desc:"管整體願景。負責決定「這是一個什麼類型的遊戲、怎麼融入台南文化」"},
+  {key:"producer", label:"執行製作人", labelVi:"Nhà sản xuất điều hành", emoji:"🟢", cls:"rc-producer", deck:PRODUCER,
+    ask:"要在什麼時程／資源下做出這個東西？", askVi:"Cần làm ra thứ này trong thời gian／nguồn lực nào?",
+    desc:"管時程、預算、人力。負責提醒大家「這在現實中做得完嗎？」",
+    descVi:"Quản lý tiến độ, ngân sách, nhân lực. Nhắc mọi người 'liệu có làm xong trong thực tế không?'"},
+  {key:"engineer", label:"首席工程師", labelVi:"Kỹ sư trưởng", emoji:"🔵", cls:"rc-engineer", deck:ENGINEER,
+    ask:"這個構想要用什麼形式／平台做出來？", askVi:"Ý tưởng này sẽ được làm ra dưới hình thức／nền tảng nào?",
+    desc:"管技術實現。負責決定「這個構想具體要用什麼形式做出來」",
+    descVi:"Quản lý việc hiện thực hóa kỹ thuật. Quyết định 'ý tưởng này cụ thể sẽ làm bằng hình thức gì'"},
+  {key:"marketing", label:"行銷主管", labelVi:"Trưởng phòng tiếp thị", emoji:"🟣", cls:"rc-marketing", deck:MARKETING,
+    ask:"這是要做給誰玩、打中他們什麼感覺？", askVi:"Trò chơi này làm cho ai chơi, chạm đến cảm xúc gì của họ?",
+    desc:"管客群與賣點。負責提醒大家「這個東西要吸引誰、憑什麼吸引他」",
+    descVi:"Quản lý đối tượng khách hàng và điểm bán. Nhắc mọi người 'thứ này thu hút ai, vì sao thu hút được họ'"},
+  {key:"creative", label:"創意總監", labelVi:"Giám đốc sáng tạo", emoji:"🔴", cls:"rc-creative", deck:CREATIVE,
+    ask:"遊戲類型和台南文化元素要怎麼結合？", askVi:"Thể loại trò chơi và yếu tố văn hóa Đài Nam sẽ kết hợp thế nào?",
+    desc:"管整體願景。負責決定「這是一個什麼類型的遊戲、怎麼融入台南文化」",
+    descVi:"Quản lý tầm nhìn tổng thể. Quyết định 'đây là thể loại trò chơi gì, làm sao đưa văn hóa Đài Nam vào'"},
 ];
+const rlabel = r => currentLang === "vi" ? r.labelVi : r.label;
+const rask = r => currentLang === "vi" ? r.askVi : r.ask;
+const rdesc = r => currentLang === "vi" ? r.descVi : r.desc;
 const ROLE_BY_KEY = Object.fromEntries(ROLES.map(r => [r.key, r]));
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
@@ -421,7 +436,7 @@ ROLES.forEach(r => {
   b.type = "button";
   b.className = "rolebtn " + r.cls;
   b.dataset.role = r.key;
-  b.innerHTML = `<span class="rk">${r.emoji} ${r.key}</span><span class="rn">${r.label}<span class="rdesc">${r.desc}</span></span>`;
+  b.innerHTML = `<span class="rk">${r.emoji} ${r.key}</span><span class="rn">${rlabel(r)}<span class="rdesc">${rdesc(r)}</span></span>`;
   b.onclick = () => {
     [...pickBox.children].forEach(c => c.classList.remove("sel"));
     b.classList.add("sel");
@@ -430,6 +445,79 @@ ROLES.forEach(r => {
   };
   pickBox.appendChild(b);
 });
+
+// ---- 2026-09-09 楊老師交辦：加越南語切換（修課有越南僑生）----
+// 範圍：靜態UI文字（說明、標籤、按鈕、角色名稱/引導問題）。卡片本身抽到的內容
+// （card.v/card.d/card.note，上百句台南文化限制條件）沒有翻譯——這批量太大，
+// 上課中臨時翻不精準風險太高，留給有空時再處理，不是漏掉。
+const I18N = {
+  kicker: {zh:"文化遊戲松實作 · 熱身", vi:"Thực hành Cultural Game Jam · Khởi động"},
+  sub: {zh:"改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。",
+        vi:"Chuyển thể từ Design Jam của Stone Librande (GDC). Nhập mã số ẩn danh của bạn, chọn vai trò muốn đóng trong vòng này, hệ thống sẽ ghép bạn với người chơi vai trò khác thành một nhóm, mỗi người rút một thẻ nhiệm vụ, rồi cùng dùng Gemini để kết hợp ý tưởng. Có thể ghép lại, rút lại thẻ, đổi vai trò bao nhiêu lần cũng được."},
+  navCards: {zh:"🗂️ 完整卡池（可自己新增卡片）", vi:"🗂️ Bộ thẻ đầy đủ (có thể tự thêm thẻ)"},
+  navGallery: {zh:"🖼️ 瀏覽大家的構想", vi:"🖼️ Xem ý tưởng của mọi người"},
+  navCards2: {zh:"完整卡池", vi:"Bộ thẻ đầy đủ"},
+  navGallery2: {zh:"瀏覽大家的構想", vi:"Xem ý tưởng của mọi người"},
+  howto1b: {zh:"輸入編號、選角色", vi:"Nhập mã số, chọn vai trò"},
+  howto1s: {zh:"用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）", vi:"Dùng mã số trên phong bì, chọn vai trò muốn đóng trong vòng này (Nhà sản xuất / Kỹ sư / Tiếp thị / Giám đốc sáng tạo)"},
+  howto2b: {zh:"系統自動配對", vi:"Hệ thống tự động ghép nhóm"},
+  howto2s: {zh:"不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等", vi:"Không cần tự tìm người, không cần chọn phòng — chỉ cần đủ ít nhất 2 người với vai trò khác nhau, hệ thống sẽ tự động bắt đầu (mỗi nhóm tối đa 4 người). Bảng chờ ở trên cho biết mỗi vai trò còn bao nhiêu người đang chờ"},
+  howto3b: {zh:"各自抽卡", vi:"Mỗi người rút một thẻ"},
+  howto3s: {zh:"每個角色隨機抽到一張任務卡，代表你這個角色的限制條件", vi:"Mỗi vai trò được rút ngẫu nhiên một thẻ nhiệm vụ, đại diện cho điều kiện giới hạn của vai trò đó"},
+  howto4b: {zh:"一起 blend 構想", vi:"Cùng nhau kết hợp ý tưởng"},
+  howto4s: {zh:"把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——建議一輪抓5-8分鐘：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串", vi:"Kết hợp thẻ của tất cả mọi người, dùng Gemini để thảo luận ra một ý tưởng trò chơi — mỗi vòng nên mất khoảng 5-8 phút: 2 phút xem thẻ + sao chép câu lệnh sang Gemini để khám phá, 3-5 phút chốt ý và dán lại vào khung thảo luận"},
+  howto5b: {zh:"下載設計文件", vi:"Tải tài liệu thiết kế"},
+  howto5s: {zh:"把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告", vi:"Tổng hợp ý tưởng thành file .md để tải về, mang sang Gemini/Claude Code để phát triển tiếp — không cần lên thuyết trình ở đây"},
+  howto6b: {zh:"重玩", vi:"Chơi lại"},
+  howto6s: {zh:"不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案", vi:"Nếu chưa hài lòng có thể ghép lại, đổi vai trò, rút lại thẻ, lặp lại bao nhiêu lần cũng được — nếu đủ thời gian nên chơi 2-3 vòng rồi mới chốt một hướng"},
+  envLabel: {zh:"你的編號（信封上那組，不是學號）", vi:"Mã số của bạn (ghi trên phong bì, không phải mã sinh viên)"},
+  envPh: {zh:"例如 17", vi:"Ví dụ: 17"},
+  nickLabel: {zh:"幫自己取個暱稱（選填）", vi:"Đặt biệt danh cho mình (không bắt buộc)"},
+  nickPh: {zh:"例如：芒果冰、隊長17號", vi:"Ví dụ: Đá xoài, Đội trưởng 17"},
+  hint1: {zh:"⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果", vi:"⚠️ Vui lòng không dùng tên thật — biệt danh cũng như mã số, các nhóm khác và giáo viên đều nhìn thấy được, phải ẩn danh mới có tác dụng"},
+  roleLabel: {zh:"這一輪想扮演的角色", vi:"Vai trò muốn đóng trong vòng này"},
+  joinBtn: {zh:"開始配對", vi:"Bắt đầu ghép nhóm"},
+  waitingText: {zh:"配對中…等其他角色的人加入（", vi:"Đang ghép nhóm… chờ người chơi vai trò khác tham gia ("},
+  waitingClose: {zh:"）", vi:")"},
+  cancelBtn: {zh:"取消配對／換角色", vi:"Hủy ghép nhóm / Đổi vai trò"},
+  doneBadge: {zh:"✅ 本輪已記錄", vi:"✅ Vòng này đã được lưu"},
+  closeDoneBtn: {zh:"✕ 截圖完了，關閉回去繼續討論", vi:"✕ Chụp màn hình xong, đóng để tiếp tục thảo luận"},
+  roundNoPrefix: {zh:"第 ", vi:"Vòng "},
+  roundNoMidGroup: {zh:" 輪 · 這組編號：", vi:" · Mã số nhóm này: "},
+  topRerollBtn: {zh:"🏠 回登入／選角色", vi:"🏠 Về trang đăng nhập / chọn vai trò"},
+  howToStartLabel: {zh:"不知道怎麼開始？先請 Gemini 幫忙探索", vi:"Chưa biết bắt đầu thế nào? Nhờ Gemini giúp khám phá trước"},
+  copyPromptBtn: {zh:"📋 複製一鍵探索指令，貼去 Gemini", vi:"📋 Sao chép câu lệnh khám phá, dán sang Gemini"},
+  feedLabel: {zh:"這組的即時討論串（輪流貼上，大家馬上看得到）", vi:"Chuỗi thảo luận trực tiếp của nhóm (lần lượt dán lên, mọi người thấy ngay)"},
+  feedEmpty: {zh:"還沒有人發言", vi:"Chưa có ai phát biểu"},
+  pasteLabel: {zh:"把你跟 Gemini 討論的心得貼上來", vi:"Dán lại nội dung bạn đã thảo luận với Gemini"},
+  promptBoxPh: {zh:"貼上這一組討論、跟 Gemini 交流的過程…", vi:"Dán vào quá trình thảo luận và trao đổi với Gemini…"},
+  saveBtn: {zh:"記錄這段", vi:"Lưu lại đoạn này"},
+  downloadBtn: {zh:"下載構想 .md", vi:"Tải ý tưởng .md"},
+  feedbackLabel: {zh:"對這個工具的意見（想加什麼、想改什麼）", vi:"Góp ý cho công cụ này (muốn thêm gì, muốn đổi gì)"},
+  feedbackPh: {zh:"例如：想要角色卡再多一點選項、想看到別組抽到什麼…", vi:"Ví dụ: muốn thẻ vai trò có nhiều lựa chọn hơn, muốn xem nhóm khác rút được gì…"},
+  feedbackBtn: {zh:"送出意見", vi:"Gửi góp ý"},
+  rerollBtn: {zh:"再玩一輪（可換角色）", vi:"Chơi vòng khác (có thể đổi vai trò)"},
+  footer: {zh:"編號僅供去識別化記錄，不會顯示或連結到姓名學號", vi:"Mã số chỉ dùng để ghi nhận ẩn danh, không hiển thị hoặc liên kết với tên/mã sinh viên"},
+};
+function t(key) { const e = I18N[key]; return e ? (e[currentLang] || e.zh) : key; }
+function applyLang(lang) {
+  currentLang = lang;
+  try { localStorage.setItem("designjam_lang", lang); } catch(_) {}
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  [...pickBox.children].forEach((b, i) => {
+    const r = ROLES[i];
+    const rn = b.querySelector(".rn");
+    if (rn) rn.innerHTML = `${rlabel(r)}<span class="rdesc">${rdesc(r)}</span>`;
+  });
+  $("langZh").classList.toggle("sel", lang === "zh");
+  $("langVi").classList.toggle("sel", lang === "vi");
+}
+$("langZh").onclick = () => applyLang("zh");
+$("langVi").onclick = () => applyLang("vi");
+let savedLang = "zh";
+try { savedLang = localStorage.getItem("designjam_lang") || "zh"; } catch(_) {}
+applyLang(savedLang);
 
 $("joinBtn").onclick = async () => {
   const raw = $("envInput").value;
@@ -862,7 +950,7 @@ function renderRound(round) {
     const div = document.createElement("div");
     div.className = "role-card " + r.cls + (mine ? " yours" : "");
     const statusHtml = mine ? "" : `<span id="statusTag_${env}" class="statusTag on">🟢 在線</span>`;
-    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${r.label} ${statusHtml}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${r.ask}</div>`;
+    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${rlabel(r)} ${statusHtml}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${rask(r)}</div>`;
     box.appendChild(div);
   });
   $("saveStatus").textContent = "";

@@ -212,7 +212,7 @@ const ROLE_TITLE = {producer:"🟢 執行製作人", engineer:"🔵 首席工程
 document.getElementById("lookupBtn").onclick = () => {
   const env = parseInt(document.getElementById("lookupEnv").value, 10);
   const resEl = document.getElementById("lookupResult");
-  if (!env || env < 1 || env > 60) { resEl.textContent = "請輸入 1-60 的編號"; return; }
+  if (Number.isNaN(env) || (env !== 0 && env !== 99 && (env < 1 || env > 60))) { resEl.textContent = "請輸入信封上的編號"; return; }
   const hits = [];
   Object.values(allRounds).forEach(r => {
     const p = (r.players || {})[env];
@@ -233,7 +233,7 @@ document.getElementById("addBtn").onclick = () => {
   const v = document.getElementById("addV").value.trim();
   const note = document.getElementById("addNote").value.trim();
   const statusEl = document.getElementById("addStatus");
-  if (!env || env < 1 || env > 60) { statusEl.textContent = "請輸入你的編號（1-60）"; return; }
+  if (Number.isNaN(env) || (env !== 0 && env !== 99 && (env < 1 || env > 60))) { statusEl.textContent = "請輸入你的編號"; return; }
   if (!v) { statusEl.textContent = "請輸入卡片內容"; return; }
   const dfl = SECTIONS.find(s => s.key === role).dfl;
   const data = {v, d: dfl, addedBy: env, t: Date.now()};

@@ -83,7 +83,8 @@ function renderAll() {
       return list.map(p => `<div class="discuss"><b>#${e}</b>　${escapeHtml(p.text)}</div>`).join("");
     }).join("");
     const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "")).join(" · ");
-    const isDemo = envs.some(e => parseInt(e, 10) > 52);
+    // env>52＝測試員/demo範圍；0與99是楊老師/駱老師本人測試用編號（2026-09-09起）
+    const isDemo = envs.some(e => { const n = parseInt(e, 10); return n === 0 || n === 99 || n > 52; });
     const div = document.createElement("div");
     div.className = "round" + (isDemo ? " demo" : "");
     div.innerHTML = `<div class="meta"><span class="envs">${isDemo ? '<span class="demo-badge">🧪 示範</span>' : ''}${whoLine}</span><span>${fmtTime(r.createdAt)}</span></div>

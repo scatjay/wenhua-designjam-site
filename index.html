@@ -295,6 +295,8 @@ const I18N = {
   errNoEnv: {zh:"請輸入信封上的編號", vi:"Vui lòng nhập mã số ghi trên phong bì"},
   errNoRole: {zh:"請選一個角色", vi:"Vui lòng chọn một vai trò"},
   waitingCountSuffix: {zh:"等待中", vi:" đang chờ"},
+  mergeAskText: {zh:"📎 有同學新增的卡片跟你的「{mine}」很像：「{other}」。要不要合併成一張？（需要雙方都同意才會真的合併；不同意的話兩張都會留著，互不影響）",
+                 vi:"📎 Có bạn học thêm một thẻ giống thẻ 「{mine}」 của bạn: 「{other}」. Bạn có muốn gộp thành một thẻ không? (cần cả hai bên đồng ý mới thực sự gộp; nếu không đồng ý thì cả hai thẻ vẫn giữ nguyên)"},
   onlyOneRolePrefix: {zh:"⚠️ 目前只有一種角色在等，配不到人！想加入的人請選：", vi:"⚠️ Hiện chỉ có một vai trò đang chờ, không ghép được nhóm! Ai muốn tham gia hãy chọn: "},
   waitedTooLongPrefix: {zh:"⏳ 已經等超過30秒——目前缺其他角色的人，建議按下面「換角色」改選：", vi:"⏳ Đã chờ hơn 30 giây — hiện đang thiếu người ở vai trò khác, hãy bấm 'Đổi vai trò' bên dưới để chọn: "},
   queueSummaryText: {zh:"目前等待中 {a} 人 · 配對中／進行中 {b} 人 · 進行中的討論 {c} 組",
@@ -579,9 +581,72 @@ function unlockEnvInput() {
 }
 $("envUnlockLink").onclick = (e) => { e.preventDefault(); unlockEnvInput(); };
 
+// 2026-09-09 楊老師：新增卡片如果跟已有的同學卡很像，問過雙方原創者都同意才合併成一張
+// （卡池 cards.html 新增時判斷相似度、建立mergeRequests；這裡是「原創者下次打開工具時
+// 被詢問」的那一半，兩個檔案都要有，因為學生下次可能是先開index.html而不是cards.html）。
+function normalizeForSim(s) {
+  return (s || "").replace(/[\s，。！？、,.!?～~\-—()（）「」『』"'“”:：;；]/g, "").toLowerCase();
+}
+function bigrams(s) { const out = []; for (let i = 0; i < s.length - 1; i++) out.push(s.slice(i, i + 2)); return out; }
+function cardSimilarity(a, b) {
+  const na = normalizeForSim(a), nb = normalizeForSim(b);
+  if (!na || !nb) return 0;
+  if (na === nb) return 1;
+  const ba = bigrams(na), bb = bigrams(nb);
+  if (!ba.length || !bb.length) return 0;
+  const pool = {}; bb.forEach(g => pool[g] = (pool[g] || 0) + 1);
+  let overlap = 0;
+  ba.forEach(g => { if (pool[g] > 0) { overlap++; pool[g]--; } });
+  return (2 * overlap) / (ba.length + bb.length);
+}
+function performMerge(reqId, r) {
+  const keepRef = db.ref(`${NS}/customCards/${r.role}/${r.cardAId}`);
+  keepRef.once("value").then(s => {
+    const keep = s.val();
+    if (!keep) return; // 已被刪過或資料異常，放棄這次合併
+    const mergedAddedBy = Array.isArray(keep.addedBy) ? keep.addedBy.slice() : [keep.addedBy];
+    if (!mergedAddedBy.includes(r.envB)) mergedAddedBy.push(r.envB);
+    keepRef.update({ addedBy: mergedAddedBy });
+    db.ref(`${NS}/customCards/${r.role}/${r.cardBId}`).remove();
+    db.ref(`${NS}/mergeRequests/${reqId}`).update({ status: "merged" });
+  }).catch(e => console.warn("合併執行失敗：", e));
+}
+let mergeCheckDone = false;
+function checkMergeRequests(env) {
+  if (mergeCheckDone || env === "" || env === null || typeof env === "undefined") return;
+  mergeCheckDone = true;
+  db.ref(`${NS}/mergeRequests`).orderByChild("status").equalTo("pending").once("value").then(snap => {
+    const reqs = snap.val() || {};
+    Object.entries(reqs).forEach(([reqId, r]) => {
+      if (!r) return;
+      const isA = String(r.envA) === String(env);
+      const isB = String(r.envB) === String(env);
+      if (!isA && !isB) return;
+      const myField = isA ? "consentA" : "consentB";
+      if (r[myField] !== null && typeof r[myField] !== "undefined") return; // 已經回答過
+      const myV = isA ? r.vA : r.vB;
+      const otherV = isA ? r.vB : r.vA;
+      const msg = t("mergeAskText").replace("{mine}", myV).replace("{other}", otherV);
+      const agree = window.confirm(msg);
+      const updates = { [myField]: agree };
+      if (!agree) {
+        updates.status = "rejected";
+        db.ref(`${NS}/mergeRequests/${reqId}`).update(updates).catch(e => console.warn("合併回覆寫入失敗：", e));
+      } else {
+        db.ref(`${NS}/mergeRequests/${reqId}`).update(updates).then(() => {
+          db.ref(`${NS}/mergeRequests/${reqId}`).once("value").then(s2 => {
+            const cur = s2.val();
+            if (cur && cur.consentA === true && cur.consentB === true && cur.status === "pending") performMerge(reqId, cur);
+          });
+        }).catch(e => console.warn("合併回覆寫入失敗：", e));
+      }
+    });
+  }).catch(e => console.warn("讀取合併建議失敗：", e));
+}
+
 try {
   const savedEnv = localStorage.getItem("designjam_env");
-  if (savedEnv) { $("envInput").value = savedEnv; lockEnvInput(); }
+  if (savedEnv) { $("envInput").value = savedEnv; lockEnvInput(); checkMergeRequests(savedEnv); }
   const savedNick = localStorage.getItem("designjam_nick");
   if (savedNick) $("nickInput").value = savedNick;
 } catch(_) {}
@@ -598,6 +663,7 @@ $("joinBtn").onclick = async () => {
   // 2026-09-09 楊老師：登入時就知道編號了，卡池頁不用再讓學生重打一次，存起來給那邊抓。
   try { localStorage.setItem("designjam_env", String(v)); } catch(_) {}
   lockEnvInput();
+  checkMergeRequests(v);
   const typed = $("nickInput").value.trim().slice(0, 20);
   const autoAssigned = !typed;
   $("joinBtn").disabled = true;

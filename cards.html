@@ -162,7 +162,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const NS = "whgm";
-const custom = {producer:[], engineer:[], marketing:[], creative:[]};
+const custom = {producer:{}, engineer:{}, marketing:{}, creative:{}}; // key=firebase push key, value=card
 
 const root = document.getElementById("sections");
 function escapeHtml(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
@@ -186,21 +186,22 @@ function recomputeUsage() {
 function renderAll() {
   root.innerHTML = "";
   SECTIONS.forEach(s => {
-    const customList = custom[s.key] || [];
-    const total = s.deck.length + customList.length;
+    const customEntries = Object.entries(custom[s.key] || {}); // [key, card]
+    const total = s.deck.length + customEntries.length;
     const sec = document.createElement("div");
     sec.className = "section";
     const badge = (v) => {
       const n = usageCount[s.key + "::" + v] || 0;
       return n > 0 ? `<div class="usebadge">🎲 ${t("usedTimes").replace("{n}", n)}</div>` : "";
     };
+    const byLine = (c) => Array.isArray(c.addedBy) ? c.addedBy.map(e => "#" + e).join(" & ") : "#" + c.addedBy;
     const baseHtml = s.deck.map(c =>
       `<div class="cardbox ${s.key}"><div class="v">${escapeHtml(cv(c))}</div><div class="d">${escapeHtml(cd(c))}</div><div class="note">💡 ${escapeHtml(cnote(c))}</div>${badge(c.v)}</div>`
     ).join("");
-    const customHtml = customList.map(c =>
-      `<div class="cardbox ${s.key} custom"><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div>${c.note ? `<div class="note">💡 ${escapeHtml(c.note)}</div>` : ""}<div class="by">✨ #${c.addedBy} ${t("addedByLabel")}</div>${badge(c.v)}</div>`
+    const customHtml = customEntries.map(([key, c]) =>
+      `<div class="cardbox ${s.key} custom"><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div>${c.note ? `<div class="note">💡 ${escapeHtml(c.note)}</div>` : ""}<div class="by">✨ ${byLine(c)} ${t("addedByLabel")}</div>${badge(c.v)}</div>`
     ).join("");
-    sec.innerHTML = `<h2>${stitle(s)}</h2><div class="n">${t("cardCountText").replace("{total}", total).replace("{custom}", customList.length)}</div>` +
+    sec.innerHTML = `<h2>${stitle(s)}</h2><div class="n">${t("cardCountText").replace("{total}", total).replace("{custom}", customEntries.length)}</div>` +
       `<div class="cardgrid">${baseHtml}${customHtml}</div>`;
     root.appendChild(sec);
   });
@@ -236,6 +237,8 @@ const I18N = {
   usedTimes: {zh:"全班已抽過 {n} 次", vi:"cả lớp đã rút {n} lần"},
   addedByLabel: {zh:"新增", vi:"đã thêm"},
   cardCountText: {zh:"{total} 張卡（含 {custom} 張同學新增）", vi:"{total} thẻ (gồm {custom} thẻ do bạn học thêm)"},
+  mergeAskText: {zh:"📎 有同學新增的卡片跟你的「{mine}」很像：「{other}」。要不要合併成一張？（需要雙方都同意才會真的合併；不同意的話兩張都會留著，互不影響）",
+                 vi:"📎 Có bạn học thêm một thẻ giống thẻ 「{mine}」 của bạn: 「{other}」. Bạn có muốn gộp thành một thẻ không? (cần cả hai bên đồng ý mới thực sự gộp; nếu không đồng ý thì cả hai thẻ vẫn giữ nguyên)"},
 };
 function t(key) { const e = I18N[key]; return e ? (e[currentLang] || e.zh) : key; }
 function applyLang(lang) {
@@ -252,7 +255,7 @@ document.getElementById("langVi").onclick = () => applyLang("vi");
 
 SECTIONS.forEach(s => {
   db.ref(`${NS}/customCards/${s.key}`).on("value", snap => {
-    custom[s.key] = Object.values(snap.val() || {});
+    custom[s.key] = snap.val() || {};
     renderAll();
   });
 });
@@ -272,8 +275,72 @@ try {
   if (savedEnv) {
     document.getElementById("addEnv").value = savedEnv;
     document.getElementById("lookupEnv").value = savedEnv;
+    checkMergeRequests(savedEnv);
   }
 } catch(_) {}
+
+// 2026-09-09 楊老師：新增卡片如果跟已有的同學卡很像，問過雙方原創者都同意才合併成一張
+// （跟index.html是同一套邏輯的複本——學生下次可能先開index.html也可能先開這頁，兩邊都要問）。
+function normalizeForSim(s) {
+  return (s || "").replace(/[\s，。！？、,.!?～~\-—()（）「」『』"'“”:：;；]/g, "").toLowerCase();
+}
+function bigrams(s) { const out = []; for (let i = 0; i < s.length - 1; i++) out.push(s.slice(i, i + 2)); return out; }
+function cardSimilarity(a, b) {
+  const na = normalizeForSim(a), nb = normalizeForSim(b);
+  if (!na || !nb) return 0;
+  if (na === nb) return 1;
+  const ba = bigrams(na), bb = bigrams(nb);
+  if (!ba.length || !bb.length) return 0;
+  const pool = {}; bb.forEach(g => pool[g] = (pool[g] || 0) + 1);
+  let overlap = 0;
+  ba.forEach(g => { if (pool[g] > 0) { overlap++; pool[g]--; } });
+  return (2 * overlap) / (ba.length + bb.length);
+}
+const SIMILARITY_THRESHOLD = 0.6;
+function performMerge(reqId, r) {
+  const keepRef = db.ref(`${NS}/customCards/${r.role}/${r.cardAId}`);
+  keepRef.once("value").then(s => {
+    const keep = s.val();
+    if (!keep) return; // 已被刪過或資料異常，放棄這次合併
+    const mergedAddedBy = Array.isArray(keep.addedBy) ? keep.addedBy.slice() : [keep.addedBy];
+    if (!mergedAddedBy.includes(r.envB)) mergedAddedBy.push(r.envB);
+    keepRef.update({ addedBy: mergedAddedBy });
+    db.ref(`${NS}/customCards/${r.role}/${r.cardBId}`).remove();
+    db.ref(`${NS}/mergeRequests/${reqId}`).update({ status: "merged" });
+  }).catch(e => console.warn("合併執行失敗：", e));
+}
+let mergeCheckDone = false;
+function checkMergeRequests(env) {
+  if (mergeCheckDone || env === "" || env === null || typeof env === "undefined") return;
+  mergeCheckDone = true;
+  db.ref(`${NS}/mergeRequests`).orderByChild("status").equalTo("pending").once("value").then(snap => {
+    const reqs = snap.val() || {};
+    Object.entries(reqs).forEach(([reqId, r]) => {
+      if (!r) return;
+      const isA = String(r.envA) === String(env);
+      const isB = String(r.envB) === String(env);
+      if (!isA && !isB) return;
+      const myField = isA ? "consentA" : "consentB";
+      if (r[myField] !== null && typeof r[myField] !== "undefined") return; // 已經回答過
+      const myV = isA ? r.vA : r.vB;
+      const otherV = isA ? r.vB : r.vA;
+      const msg = t("mergeAskText").replace("{mine}", myV).replace("{other}", otherV);
+      const agree = window.confirm(msg);
+      const updates = { [myField]: agree };
+      if (!agree) {
+        updates.status = "rejected";
+        db.ref(`${NS}/mergeRequests/${reqId}`).update(updates).catch(e => console.warn("合併回覆寫入失敗：", e));
+      } else {
+        db.ref(`${NS}/mergeRequests/${reqId}`).update(updates).then(() => {
+          db.ref(`${NS}/mergeRequests/${reqId}`).once("value").then(s2 => {
+            const cur = s2.val();
+            if (cur && cur.consentA === true && cur.consentB === true && cur.status === "pending") performMerge(reqId, cur);
+          });
+        }).catch(e => console.warn("合併回覆寫入失敗：", e));
+      }
+    });
+  }).catch(e => console.warn("讀取合併建議失敗：", e));
+}
 
 const SECTION_BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.key, s]));
 document.getElementById("lookupBtn").onclick = () => {
@@ -305,8 +372,28 @@ document.getElementById("addBtn").onclick = () => {
   const dfl = SECTIONS.find(s => s.key === role).dfl;
   const data = {v, d: dfl, addedBy: env, t: Date.now()};
   if (note) data.note = note;
+
+  // 2026-09-09 楊老師：新卡跟卡池裡已有的同學卡很像的話，先記下最相似的那張——
+  // 新卡照樣正常上架（不卡任何人抽卡），合併與否留給雙方原創者事後同意。
+  const pool = custom[role] || {};
+  let bestKey = null, bestScore = 0;
+  Object.entries(pool).forEach(([k, c]) => {
+    const score = cardSimilarity(v, c.v);
+    if (score > bestScore) { bestScore = score; bestKey = k; }
+  });
+  const matched = bestKey && bestScore >= SIMILARITY_THRESHOLD ? pool[bestKey] : null;
+
   db.ref(`${NS}/customCards/${role}`).push(data)
-    .then(() => {
+    .then(ref => {
+      if (matched && String(matched.addedBy) !== String(env)) {
+        db.ref(`${NS}/mergeRequests`).push({
+          role, cardAId: bestKey, cardBId: ref.key,
+          envA: matched.addedBy, envB: env,
+          vA: matched.v, vB: v,
+          status: "pending", consentA: null, consentB: null,
+          createdAt: Date.now(),
+        }).catch(e => console.warn("合併建議寫入失敗(不影響新卡上架)：", e));
+      }
       // 累計「新增過幾張卡片」——跟index.html的完成卡是同一份playerStats，
       // 讓學生截圖時看得到自己對卡池的貢獻累計，不用另外查。
       db.ref(`${NS}/playerStats/${env}`).transaction(cur => {

@@ -239,9 +239,8 @@ let currentLang = "zh"; // 2026-09-09 楊老師：加越南語切換（修課有
 // 帶入）。教訓：任何可能被Firebase監聽器callback用到的狀態，都要在第一個
 // db.ref(...).on(...)之前宣告好，不能想著「等一下再宣告反正照順序看得懂」。
 // ---- 2026-09-09 楊老師交辦：加越南語切換（修課有越南僑生）----
-// 範圍：靜態UI文字（說明、標籤、按鈕、角色名稱/引導問題）。卡片本身抽到的內容
-// （card.v/card.d/card.note，上百句台南文化限制條件）沒有翻譯——這批量太大，
-// 上課中臨時翻不精準風險太高，留給有空時再處理，不是漏掉。
+// 範圍：靜態UI文字、角色名稱/引導問題/描述，以及卡片內容本身(card.vVi/dVi/noteVi，
+// 見下方PRODUCER/ENGINEER/MARKETING/CREATIVE牌組)——用cv()/cd()/cnote()依語言取用。
 const I18N = {
   h1title: {zh:"文化遊戲松 Cultural Game Jam", vi:"Game Jam Văn Hóa 文化遊戲松"},
   kicker: {zh:"文化遊戲松實作 · 熱身", vi:"Thực hành Game Jam Văn Hóa · Khởi động"},
@@ -295,6 +294,7 @@ const I18N = {
   envUnlockLinkText: {zh:"不是你？點此重新輸入", vi:"Không phải bạn? Bấm vào đây để nhập lại"},
   errNoEnv: {zh:"請輸入信封上的編號", vi:"Vui lòng nhập mã số ghi trên phong bì"},
   errNoRole: {zh:"請選一個角色", vi:"Vui lòng chọn một vai trò"},
+  waitingCountSuffix: {zh:"等待中", vi:" đang chờ"},
   onlyOneRolePrefix: {zh:"⚠️ 目前只有一種角色在等，配不到人！想加入的人請選：", vi:"⚠️ Hiện chỉ có một vai trò đang chờ, không ghép được nhóm! Ai muốn tham gia hãy chọn: "},
   waitedTooLongPrefix: {zh:"⏳ 已經等超過30秒——目前缺其他角色的人，建議按下面「換角色」改選：", vi:"⏳ Đã chờ hơn 30 giây — hiện đang thiếu người ở vai trò khác, hãy bấm 'Đổi vai trò' bên dưới để chọn: "},
   queueSummaryText: {zh:"目前等待中 {a} 人 · 配對中／進行中 {b} 人 · 進行中的討論 {c} 組",
@@ -414,7 +414,7 @@ db.ref(`${NS}/queue`).on("value", snap => {
   const panel = document.getElementById("queuepanel");
   if (panel) {
     panel.innerHTML = ROLES.map(r =>
-      `<div class="qitem${latestQueueCounts[r.key] > 0 ? ' has' : ''}">${r.emoji} ${r.label}<b>${latestQueueCounts[r.key]}</b>等待中</div>`
+      `<div class="qitem${latestQueueCounts[r.key] > 0 ? ' has' : ''}">${r.emoji} ${rlabel(r)}<b>${latestQueueCounts[r.key]}</b>${t("waitingCountSuffix")}</div>`
     ).join("");
   }
   const total = Object.values(latestQueueCounts).reduce((a,b) => a+b, 0);
@@ -422,7 +422,7 @@ db.ref(`${NS}/queue`).on("value", snap => {
   const hintEl = document.getElementById("queuehint");
   if (hintEl) {
     if (total > 0 && distinctRoles < 2) {
-      const missing = ROLES.filter(r => latestQueueCounts[r.key] === 0).map(r => r.emoji + r.label).join("、");
+      const missing = ROLES.filter(r => latestQueueCounts[r.key] === 0).map(r => r.emoji + rlabel(r)).join("、");
       hintEl.hidden = false;
       hintEl.textContent = t("onlyOneRolePrefix") + missing;
     } else {
@@ -457,7 +457,7 @@ function updateWaitHint() {
   const waited = Date.now() - myWaitSince;
   const distinctRoles = Object.values(latestQueueCounts).filter(n => n > 0).length;
   if (waited > 30000 && distinctRoles < 2) {
-    const missing = ROLES.filter(r => r.key !== myRole).map(r => r.emoji + r.label).join("、");
+    const missing = ROLES.filter(r => r.key !== myRole).map(r => r.emoji + rlabel(r)).join("、");
     hintEl.hidden = false;
     hintEl.textContent = t("waitedTooLongPrefix") + missing;
   } else {
@@ -713,7 +713,7 @@ function showDoneCard() {
       const lines = Object.entries(round.players).map(([env, p]) => {
         const r = ROLE_BY_KEY[p.role];
         const card = round.cards[p.role];
-        return `${r.emoji} <b>${r.label}</b>：${card.v}`;
+        return `${r.emoji} <b>${rlabel(r)}</b>：${cv(card)}`;
       });
       const teammateNotes = Object.keys(round.players)
         .filter(env => env !== String(myEnv))
@@ -766,10 +766,10 @@ $("downloadBtn").onclick = () => {
       const r = ROLE_BY_KEY[p.role];
       const card = round.cards[p.role];
       const nick = p.nickname ? `（${p.nickname}）` : "";
-      lines.push(`## ${r.emoji} #${env}${nick} · ${r.label}`);
-      lines.push(`- 抽到：**${card.v}**（${card.d}）`);
-      if (card.note) lines.push(`- 提示：${card.note}`);
-      lines.push(`- 引導問題：${r.ask}`);
+      lines.push(`## ${r.emoji} #${env}${nick} · ${rlabel(r)}`);
+      lines.push(`- 抽到：**${cv(card)}**（${cd(card)}）`);
+      if (card.note) lines.push(`- 提示：${cnote(card)}`);
+      lines.push(`- 引導問題：${rask(r)}`);
       lines.push(``);
     });
     // pull EVERY group member's saved discussion, not just whoever is downloading
@@ -1032,7 +1032,7 @@ function renderRound(round) {
     const div = document.createElement("div");
     div.className = "role-card " + r.cls + (mine ? " yours" : "");
     const statusHtml = mine ? "" : `<span id="statusTag_${env}" class="statusTag on">🟢 在線</span>`;
-    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${rlabel(r)} ${statusHtml}</div><div class="rv">${card.v}</div><div class="rd">${card.d}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${card.note||""}</div><div class="rp">${rask(r)}</div>`;
+    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${rlabel(r)} ${statusHtml}</div><div class="rv">${cv(card)}</div><div class="rd">${cd(card)}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${cnote(card)}</div><div class="rp">${rask(r)}</div>`;
     box.appendChild(div);
   });
   $("saveStatus").textContent = "";

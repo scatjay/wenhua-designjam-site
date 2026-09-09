@@ -64,8 +64,8 @@
 
   <div class="addbox">
     <h2>➕ 新增一張你的卡片</h2>
-    <label>你的編號</label>
-    <input type="number" id="addEnv" min="1" max="60" placeholder="例如 17">
+    <label>你的編號（登入過的話會自動帶入，可以改）</label>
+    <input type="number" id="addEnv" min="0" max="99" placeholder="例如 17">
     <label>要加進哪個角色的卡池</label>
     <select id="addRole">
       <option value="producer">🟢 執行製作人（時程與資源）</option>
@@ -84,7 +84,7 @@
   <div class="lookupbox">
     <h2>🔍 查我抽過哪些卡</h2>
     <div class="row">
-      <input type="number" id="lookupEnv" min="1" max="60" placeholder="輸入你的編號">
+      <input type="number" id="lookupEnv" min="0" max="99" placeholder="輸入你的編號">
       <button id="lookupBtn">查詢</button>
     </div>
     <div class="result" id="lookupResult"></div>
@@ -207,6 +207,16 @@ db.ref(`${NS}/rounds`).on("value", snap => {
   renderAll();
 });
 renderAll();
+
+// 2026-09-09 楊老師：登入頁已經打過一次編號了，這裡不用再叫學生重打——
+// 有存過就自動帶入，但欄位還留著可以改（避免同一台裝置換人用、或編號記錯時卡住）。
+try {
+  const savedEnv = localStorage.getItem("designjam_env");
+  if (savedEnv) {
+    document.getElementById("addEnv").value = savedEnv;
+    document.getElementById("lookupEnv").value = savedEnv;
+  }
+} catch(_) {}
 
 const ROLE_TITLE = {producer:"🟢 執行製作人", engineer:"🔵 首席工程師", marketing:"🟣 行銷主管", creative:"🔴 創意總監"};
 document.getElementById("lookupBtn").onclick = () => {

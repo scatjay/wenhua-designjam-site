@@ -424,6 +424,8 @@ $("joinBtn").onclick = () => {
   if (!validEnv) { $("loginStatus").textContent = "請輸入信封上的編號"; return; }
   if (!myRole) { $("loginStatus").textContent = "請選一個角色"; return; }
   myEnv = v;
+  // 2026-09-09 楊老師：登入時就知道編號了，卡池頁不用再讓學生重打一次，存起來給那邊抓。
+  try { localStorage.setItem("designjam_env", String(v)); } catch(_) {}
   const typed = $("nickInput").value.trim().slice(0, 20);
   const autoAssigned = !typed;
   myNick = typed || randomNickname();

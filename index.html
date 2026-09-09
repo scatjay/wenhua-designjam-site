@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>文化遊戲松 Design Jam</title>
+<title>文化遊戲松 Cultural Game Jam</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -116,7 +116,7 @@
 <body>
 <div class="wrap">
   <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px">文化遊戲松實作 · 熱身</div>
-  <h1>文化遊戲松 Design Jam</h1>
+  <h1>文化遊戲松 Cultural Game Jam</h1>
   <p class="sub">改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。</p>
 
   <div class="topnav">
@@ -462,7 +462,7 @@ $("topRerollBtn").onclick = confirmAndReroll;
 
 function buildGeminiPrompt(round) {
   const lines = [];
-  lines.push("我們這組在玩「文化遊戲松」課堂的 Design Jam 暖身練習，抽到以下限制條件：");
+  lines.push("我們這組在玩「文化遊戲松」課堂的 Cultural Game Jam 暖身練習，抽到以下限制條件：");
   lines.push("");
   Object.entries(round.players).forEach(([env, p]) => {
     const r = ROLE_BY_KEY[p.role];
@@ -574,7 +574,7 @@ $("downloadBtn").onclick = () => {
     if (!round) return;
     const allPrompts = ps.val() || {};
     const lines = [];
-    lines.push(`# 文化遊戲松 Design Jam 構想卡`);
+    lines.push(`# 文化遊戲松 Cultural Game Jam 構想卡`);
     lines.push(``);
     lines.push(`第 ${roundCount + 1} 輪 · 編號 ${Object.keys(round.players).map(e=>"#"+e).join(" ")}`);
     lines.push(``);

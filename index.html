@@ -233,48 +233,53 @@ const NS = "whgm";
 let currentLang = "zh"; // 2026-09-09 楊老師：加越南語切換（修課有越南僑生）
 
 // ---- card data ----
+// 2026-09-09 楊老師：越南語版本要完整，卡片內容(v/d/note)也要有越南文——
+// vVi/dVi/noteVi是對應的越南文版本，用cv()/cd()/cnote()依currentLang取用。
 const PRODUCER = [
-  {v:"30分鐘／只能純聊天講故事／新手一人", d:"時程與資源", note:"沒有工具可用，只能用嘴巴把遊戲講成一個故事，逼你想清楚核心體驗是什麼。"},
-  {v:"1天／Gemini免費額度／新手一人", d:"時程與資源", note:"一天內只夠做出最小可玩雛形，別想著做完整內容。"},
-  {v:"3天／Gemini免費額度／兩個新手", d:"時程與資源", note:"多一個人手，但都沒經驗，分工比技術更重要。"},
-  {v:"1週／AI Studio額度／一個有經驗", d:"時程與資源", note:"有個懂AI工具的人帶路，一週足夠做出可以展示的prototype。"},
-  {v:"2週／Claude Code訂閱／兩個有經驗", d:"時程與資源", note:"資源最寬裕的組合，可以真的把功能做出來，不只是紙上談兵。"},
-  {v:"1學期／全部工具開放／團隊支援", d:"時程與資源", note:"這是這門課實際的資源規模——用這張卡想像最終成品可以做到多完整。"},
-  {v:"現場5分鐘／無限資源／傳說等級", d:"時程與資源", note:"故意荒謬的組合：資源無限但時間逼死人，練習「先講重點」的能力。"},
+  {v:"30分鐘／只能純聊天講故事／新手一人", vVi:"30 phút／chỉ được nói chuyện kể chuyện／một người mới", d:"時程與資源", dVi:"Tiến độ và nguồn lực", note:"沒有工具可用，只能用嘴巴把遊戲講成一個故事，逼你想清楚核心體驗是什麼。", noteVi:"Không có công cụ nào cả, chỉ có thể dùng lời nói kể trò chơi thành một câu chuyện, buộc bạn phải nghĩ rõ trải nghiệm cốt lõi là gì。"},
+  {v:"1天／Gemini免費額度／新手一人", vVi:"1 ngày／hạn mức miễn phí Gemini／một người mới", d:"時程與資源", dVi:"Tiến độ và nguồn lực", note:"一天內只夠做出最小可玩雛形，別想著做完整內容。", noteVi:"Trong một ngày chỉ đủ làm ra bản mẫu chơi được tối thiểu, đừng nghĩ đến việc làm nội dung hoàn chỉnh."},
+  {v:"3天／Gemini免費額度／兩個新手", vVi:"3 ngày／hạn mức miễn phí Gemini／hai người mới", d:"時程與資源", dVi:"Tiến độ và nguồn lực", note:"多一個人手，但都沒經驗，分工比技術更重要。", noteVi:"Có thêm người nhưng đều chưa có kinh nghiệm, phân công quan trọng hơn kỹ thuật."},
+  {v:"1週／AI Studio額度／一個有經驗", vVi:"1 tuần／hạn mức AI Studio／một người có kinh nghiệm", d:"時程與資源", dVi:"Tiến độ và nguồn lực", note:"有個懂AI工具的人帶路，一週足夠做出可以展示的prototype。", noteVi:"Có người hiểu công cụ AI dẫn đường, một tuần đủ để làm ra prototype có thể trình diễn."},
+  {v:"2週／Claude Code訂閱／兩個有經驗", vVi:"2 tuần／gói đăng ký Claude Code／hai người có kinh nghiệm", d:"時程與資源", dVi:"Tiến độ và nguồn lực", note:"資源最寬裕的組合，可以真的把功能做出來，不只是紙上談兵。", noteVi:"Tổ hợp nguồn lực dư dả nhất, có thể thực sự làm ra chức năng, không chỉ nói suông trên giấy."},
+  {v:"1學期／全部工具開放／團隊支援", vVi:"1 học kỳ／mở toàn bộ công cụ／có đội hỗ trợ", d:"時程與資源", dVi:"Tiến độ và nguồn lực", note:"這是這門課實際的資源規模——用這張卡想像最終成品可以做到多完整。", noteVi:"Đây là quy mô nguồn lực thực tế của môn học này — dùng thẻ này để tưởng tượng sản phẩm cuối cùng có thể hoàn chỉnh đến mức nào."},
+  {v:"現場5分鐘／無限資源／傳說等級", vVi:"Tại chỗ 5 phút／nguồn lực vô hạn／cấp độ huyền thoại", d:"時程與資源", dVi:"Tiến độ và nguồn lực", note:"故意荒謬的組合：資源無限但時間逼死人，練習「先講重點」的能力。", noteVi:"Tổ hợp cố tình phi lý: nguồn lực vô hạn nhưng thời gian dồn ép, luyện khả năng 'nói trọng tâm trước'."},
 ];
 const ENGINEER = [
-  {v:"手機直向 App", d:"形式／平台", note:"單手滑、通勤也能玩，介面要簡單、關卡要短。"},
-  {v:"網頁互動小說", d:"形式／平台", note:"純文字＋選擇分支，不用畫面資源就能做出敘事深度。"},
-  {v:"實境走讀 App（AR疊圖）", d:"形式／平台", note:"玩家要實際走到那個地點才能觸發內容，適合結合真實的台南場景。"},
-  {v:"桌遊 Print & Play", d:"形式／平台", note:"印出來就能玩，不用寫程式，考驗規則設計本身夠不夠有趣。"},
-  {v:"對話式聊天機器人", d:"形式／平台", note:"整個遊戲就是一場對話，玩法藏在你怎麼設計AI的回應邏輯裡。"},
-  {v:"短影音互動劇", d:"形式／平台", note:"像抖音一樣滑，每支影片是一個選擇點，適合快節奏的敘事。"},
-  {v:"語音導覽＋關卡", d:"形式／平台", note:"用耳朵玩的遊戲，畫面不重要，聲音設計跟節奏才是關鍵。"},
-  {v:"迷宮解謎印刷單張", d:"形式／平台", note:"一張紙搞定，適合在課堂現場立刻發下去測試。"},
-  {v:"教室黑板真人版", d:"形式／平台", note:"完全不用任何載具，靠肢體和口頭規則就要讓遊戲成立。"},
+  {v:"手機直向 App", vVi:"Ứng dụng điện thoại chiều dọc", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"單手滑、通勤也能玩，介面要簡單、關卡要短。", noteVi:"Vuốt một tay, đi lại cũng chơi được, giao diện phải đơn giản, màn chơi phải ngắn."},
+  {v:"網頁互動小說", vVi:"Tiểu thuyết tương tác trên web", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"純文字＋選擇分支，不用畫面資源就能做出敘事深度。", noteVi:"Thuần văn bản + rẽ nhánh lựa chọn, không cần tài nguyên hình ảnh vẫn tạo được chiều sâu tự sự."},
+  {v:"實境走讀 App（AR疊圖）", vVi:"Ứng dụng đi bộ thực địa (AR chồng hình)", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"玩家要實際走到那個地點才能觸發內容，適合結合真實的台南場景。", noteVi:"Người chơi phải thực sự đi đến địa điểm đó mới kích hoạt được nội dung, phù hợp kết hợp bối cảnh thật của Đài Nam."},
+  {v:"桌遊 Print & Play", vVi:"Board game in ra chơi (Print & Play)", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"印出來就能玩，不用寫程式，考驗規則設計本身夠不夠有趣。", noteVi:"In ra là chơi được, không cần viết code, thử thách bản thân thiết kế luật chơi có đủ thú vị không."},
+  {v:"對話式聊天機器人", vVi:"Chatbot dạng hội thoại", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"整個遊戲就是一場對話，玩法藏在你怎麼設計AI的回應邏輯裡。", noteVi:"Cả trò chơi là một cuộc hội thoại, cách chơi ẩn trong cách bạn thiết kế logic phản hồi của AI."},
+  {v:"短影音互動劇", vVi:"Kịch tương tác video ngắn", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"像抖音一樣滑，每支影片是一個選擇點，適合快節奏的敘事。", noteVi:"Vuốt như TikTok, mỗi video là một điểm lựa chọn, phù hợp tự sự nhịp độ nhanh."},
+  {v:"語音導覽＋關卡", vVi:"Hướng dẫn âm thanh + màn chơi", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"用耳朵玩的遊戲，畫面不重要，聲音設計跟節奏才是關鍵。", noteVi:"Trò chơi chơi bằng tai, hình ảnh không quan trọng, thiết kế âm thanh và nhịp điệu mới là then chốt."},
+  {v:"迷宮解謎印刷單張", vVi:"Tờ giấy in mê cung giải đố", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"一張紙搞定，適合在課堂現場立刻發下去測試。", noteVi:"Một tờ giấy là xong, phù hợp phát ngay tại lớp để thử nghiệm."},
+  {v:"教室黑板真人版", vVi:"Phiên bản người thật trên bảng lớp học", d:"形式／平台", dVi:"Hình thức／nền tảng", note:"完全不用任何載具，靠肢體和口頭規則就要讓遊戲成立。", noteVi:"Hoàn toàn không cần thiết bị nào, chỉ dựa vào cơ thể và luật chơi bằng lời để trò chơi thành hình."},
 ];
 const MARKETING = [
-  {v:"國小校外教學團 ／ 好奇心", d:"客群／情感訴求", note:"要讓沒有耐心的小朋友願意一直玩，規則要秒懂。"},
-  {v:"觀光客 ／ 打卡拍照慾", d:"客群／情感訴求", note:"玩家想要的是「拍出來好看」，遊戲要製造上鏡的瞬間。"},
-  {v:"在地阿公阿嬤 ／ 懷舊感", d:"客群／情感訴求", note:"要喚起記憶中的台南，而不是介紹一個陌生城市給他們認識。"},
-  {v:"大學生揪團 ／ 競爭好勝", d:"客群／情感訴求", note:"要有排行榜或PK機制，讓朋友之間可以互相比較。"},
-  {v:"家庭親子 ／ 溫馨陪伴", d:"客群／情感訴求", note:"大人小孩都要能一起玩，不能只顧一邊的程度。"},
-  {v:"恐怖片愛好者 ／ 驚嚇刺激", d:"客群／情感訴求", note:"要能把台南的老屋、傳說轉成真的會讓人心跳加速的東西。"},
-  {v:"美食愛好者 ／ 口水直流", d:"客群／情感訴求", note:"用視覺和描述勾起食慾，小吃不只是背景是主角。"},
-  {v:"歷史控 ／ 考據癖", d:"客群／情感訴求", note:"這群人會挑你的考據錯誤，內容細節要禁得起檢驗。"},
-  {v:"隨便路過的人 ／ 五分鐘殺時間", d:"客群／情感訴求", note:"完全沒有動機，遊戲要在前10秒就抓住他，不然直接關掉。"},
+  {v:"國小校外教學團 ／ 好奇心", vVi:"Đoàn tham quan học sinh tiểu học ／ Sự tò mò", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"要讓沒有耐心的小朋友願意一直玩，規則要秒懂。", noteVi:"Phải khiến các em nhỏ không kiên nhẫn muốn chơi mãi, luật chơi phải hiểu ngay lập tức."},
+  {v:"觀光客 ／ 打卡拍照慾", vVi:"Khách du lịch ／ Muốn check-in chụp ảnh", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"玩家想要的是「拍出來好看」，遊戲要製造上鏡的瞬間。", noteVi:"Người chơi muốn 'chụp ra đẹp', trò chơi phải tạo ra những khoảnh khắc lên hình."},
+  {v:"在地阿公阿嬤 ／ 懷舊感", vVi:"Ông bà địa phương ／ Cảm giác hoài niệm", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"要喚起記憶中的台南，而不是介紹一個陌生城市給他們認識。", noteVi:"Phải gợi lại Đài Nam trong ký ức, chứ không phải giới thiệu một thành phố xa lạ cho họ."},
+  {v:"大學生揪團 ／ 競爭好勝", vVi:"Nhóm sinh viên rủ nhau ／ Thích cạnh tranh", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"要有排行榜或PK機制，讓朋友之間可以互相比較。", noteVi:"Phải có bảng xếp hạng hoặc cơ chế đối đầu, để bạn bè có thể so sánh với nhau."},
+  {v:"家庭親子 ／ 溫馨陪伴", vVi:"Gia đình có con nhỏ ／ Đồng hành ấm áp", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"大人小孩都要能一起玩，不能只顧一邊的程度。", noteVi:"Cả người lớn và trẻ nhỏ đều phải chơi được cùng nhau, không thể chỉ chú trọng một bên."},
+  {v:"恐怖片愛好者 ／ 驚嚇刺激", vVi:"Người mê phim kinh dị ／ Kích thích hồi hộp", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"要能把台南的老屋、傳說轉成真的會讓人心跳加速的東西。", noteVi:"Phải biến nhà cổ, truyền thuyết của Đài Nam thành thứ thực sự khiến tim đập nhanh."},
+  {v:"美食愛好者 ／ 口水直流", vVi:"Người mê ẩm thực ／ Thèm chảy nước miếng", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"用視覺和描述勾起食慾，小吃不只是背景是主角。", noteVi:"Dùng hình ảnh và mô tả để kích thích thèm ăn, món ăn vặt không chỉ là bối cảnh mà là nhân vật chính."},
+  {v:"歷史控 ／ 考據癖", vVi:"Người mê lịch sử ／ Ám ảnh khảo cứu", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"這群人會挑你的考據錯誤，內容細節要禁得起檢驗。", noteVi:"Nhóm người này sẽ bắt lỗi khảo cứu của bạn, chi tiết nội dung phải chịu được kiểm chứng."},
+  {v:"隨便路過的人 ／ 五分鐘殺時間", vVi:"Người tình cờ đi ngang qua ／ Giết thời gian 5 phút", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", note:"完全沒有動機，遊戲要在前10秒就抓住他，不然直接關掉。", noteVi:"Hoàn toàn không có động lực, trò chơi phải thu hút họ trong 10 giây đầu, không thì họ tắt ngay."},
 ];
 const CREATIVE = [
-  {v:"解謎 × 五條港", d:"類型 × 台南文化元素", note:"用五條港的貿易路線、水道結構本身當謎題素材。"},
-  {v:"模擬經營 × 廟宇遶境", d:"類型 × 台南文化元素", note:"玩家要管理一場遶境活動的人力、路線、香火資源。"},
-  {v:"恐怖 × 老屋", d:"類型 × 台南文化元素", note:"老屋的歷史感本身就是恐怖素材，不用硬加鬼怪。"},
-  {v:"節奏音樂 × 度小月／小吃", d:"類型 × 台南文化元素", note:"配合打拍子動作模擬「做小吃」的節奏感（切、煮、擺盤）。"},
-  {v:"卡牌對戰 × 小封神神怪", d:"類型 × 台南文化元素", note:"把小封神裡的神怪角色設計成有屬性、技能的對戰卡片。"},
-  {v:"收集養成 × 運河生態", d:"類型 × 台南文化元素", note:"蒐集運河沿岸的生物或地景，養成/圖鑑式的長期黏著。"},
-  {v:"派對遊戲 × 孔廟／文昌祠", d:"類型 × 台南文化元素", note:"多人同樂、輕鬆競賽，用考生拜文昌帝君的情境包裝。"},
-  {v:"敘事抉擇 × 安平古堡", d:"類型 × 台南文化元素", note:"用古堡的歷史轉折（荷蘭/明鄭/清）設計玩家的分支選擇。"},
-  {v:"潛行動作 × 中西區巷弄", d:"類型 × 台南文化元素", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。"},
+  {v:"解謎 × 五條港", vVi:"Giải đố × Ngũ Điều Cảng", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"用五條港的貿易路線、水道結構本身當謎題素材。", noteVi:"Dùng tuyến đường mậu dịch, cấu trúc kênh rạch của Ngũ Điều Cảng làm chất liệu câu đố."},
+  {v:"模擬經營 × 廟宇遶境", vVi:"Mô phỏng kinh doanh × Rước kiệu miếu thờ", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"玩家要管理一場遶境活動的人力、路線、香火資源。", noteVi:"Người chơi phải quản lý nhân lực, lộ trình, nguồn lực hương khói của một lễ rước kiệu."},
+  {v:"恐怖 × 老屋", vVi:"Kinh dị × Nhà cổ", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"老屋的歷史感本身就是恐怖素材，不用硬加鬼怪。", noteVi:"Cảm giác lịch sử của nhà cổ tự nó đã là chất liệu kinh dị, không cần gượng ép thêm ma quỷ."},
+  {v:"節奏音樂 × 度小月／小吃", vVi:"Nhạc nhịp điệu × Độ Tiểu Nguyệt／món ăn vặt", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"配合打拍子動作模擬「做小吃」的節奏感（切、煮、擺盤）。", noteVi:"Kết hợp động tác đánh nhịp mô phỏng nhịp điệu 'làm món ăn vặt' (cắt, nấu, bày biện)."},
+  {v:"卡牌對戰 × 小封神神怪", vVi:"Đấu bài × Thần quái Tiểu Phong Thần", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"把小封神裡的神怪角色設計成有屬性、技能的對戰卡片。", noteVi:"Biến các nhân vật thần quái trong Tiểu Phong Thần thành thẻ bài đối chiến có thuộc tính, kỹ năng."},
+  {v:"收集養成 × 運河生態", vVi:"Sưu tầm nuôi dưỡng × Hệ sinh thái kênh đào", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"蒐集運河沿岸的生物或地景，養成/圖鑑式的長期黏著。", noteVi:"Sưu tầm sinh vật hoặc cảnh quan ven kênh đào, gắn kết lâu dài kiểu nuôi dưỡng/bách khoa."},
+  {v:"派對遊戲 × 孔廟／文昌祠", vVi:"Trò chơi tiệc tùng × Văn miếu／đền Văn Xương", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"多人同樂、輕鬆競賽，用考生拜文昌帝君的情境包裝。", noteVi:"Nhiều người cùng vui, thi đấu nhẹ nhàng, đóng gói bằng bối cảnh thí sinh bái Văn Xương Đế Quân."},
+  {v:"敘事抉擇 × 安平古堡", vVi:"Lựa chọn tự sự × Pháo đài An Bình", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"用古堡的歷史轉折（荷蘭/明鄭/清）設計玩家的分支選擇。", noteVi:"Dùng các bước ngoặt lịch sử của pháo đài cổ (Hà Lan/Minh Trịnh/Thanh) để thiết kế lựa chọn rẽ nhánh cho người chơi."},
+  {v:"潛行動作 × 中西區巷弄", vVi:"Hành động lén lút × Ngõ hẻm quận Trung Tây", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。", noteVi:"Tận dụng sự chật hẹp, góc rẽ, điểm mù tầm nhìn của ngõ hẻm để thiết kế màn trốn tránh/lén lút."},
 ];
+function cv(card) { return currentLang === "vi" && card.vVi ? card.vVi : card.v; }
+function cd(card) { return currentLang === "vi" && card.dVi ? card.dVi : card.d; }
+function cnote(card) { return currentLang === "vi" && card.noteVi ? card.noteVi : (card.note || ""); }
 const ROLES = [
   {key:"producer", label:"執行製作人", labelVi:"Nhà sản xuất điều hành", emoji:"🟢", cls:"rc-producer", deck:PRODUCER,
     ask:"要在什麼時程／資源下做出這個東西？", askVi:"Cần làm ra thứ này trong thời gian／nguồn lực nào?",
@@ -384,15 +389,26 @@ function updateWaitHint() {
 setInterval(updateWaitHint, 5000);
 
 // ---- QR code for easy phone join ----
+// 2026-09-09 楊老師回報「QR看不到、也不能選角色」——根因：qrcode()來自外部CDN
+// (jsdelivr)，該次上課網路連不到CDN時qrcode()直接ReferenceError，把這支IIFE
+// 整個炸掉、連帶讓後面所有頂層程式碼(角色按鈕/自動帶入編號/join按鈕綁定)
+// 全部沒執行到——一個裝飾性小功能(QR)不該有能力癱瘓整個頁面。加try/catch
+// 隔離，QR畫不出來就跳過，不影響其他功能。
 (function renderQR(){
   const url = location.href.split("#")[0].split("?")[0];
   const urlEl = document.getElementById("urlText");
   if (urlEl) urlEl.textContent = url;
-  const qr = qrcode(0, "M");
-  qr.addData(url);
-  qr.make();
-  const holder = document.getElementById("qrcanvas");
-  if (holder) holder.innerHTML = qr.createSvgTag({cellSize:4, margin:2});
+  try {
+    const qr = qrcode(0, "M");
+    qr.addData(url);
+    qr.make();
+    const holder = document.getElementById("qrcanvas");
+    if (holder) holder.innerHTML = qr.createSvgTag({cellSize:4, margin:2});
+  } catch (e) {
+    const holder = document.getElementById("qrcanvas");
+    if (holder) holder.innerHTML = "";
+    console.warn("QR code載入失敗(不影響其他功能)：", e);
+  }
 })();
 
 const AUTO_NICKS = [

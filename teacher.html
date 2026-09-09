@@ -56,7 +56,8 @@
   </div>
   <div class="rolebreak" id="rolebreak"></div>
   <div class="imbalance" id="imbalance" hidden></div>
-  <div id="testSummary" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:13px;color:var(--ink-soft);line-height:1.8"></div>
+  <div id="testSummary" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:6px;font-size:13px;color:var(--ink-soft);line-height:1.8"></div>
+  <div id="testNote" style="font-size:12px;color:var(--warn);margin-bottom:18px"></div>
 
   <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
     <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🎭 測試員persona設定 v2（編號56-58，測試用，非真實學生）</summary>
@@ -83,16 +84,34 @@
     </p>
   </details>
 
+  <h2 style="font-size:16px;margin:0 0 10px">🧑‍🎓 真實學生配對記錄</h2>
   <table>
     <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
     <tbody id="rows"></tbody>
   </table>
 
-  <h2 style="font-size:16px;margin:28px 0 10px">💬 學生對這個工具的意見</h2>
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試員／demo 配對記錄（編號0、53-60、99，不計入上方與統計數字）</summary>
+    <div id="testSummary2" style="font-size:12.5px;color:var(--ink-soft);margin:10px 0"></div>
+    <table>
+      <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
+      <tbody id="testRows"></tbody>
+    </table>
+  </details>
+
+  <h2 style="font-size:16px;margin:28px 0 10px">💬 真實學生對這個工具的意見</h2>
   <table>
     <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
     <tbody id="fbrows"></tbody>
   </table>
+
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試員／demo 意見（不計入上方）</summary>
+    <table style="margin-top:10px">
+      <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
+      <tbody id="fbrowsTest"></tbody>
+    </table>
+  </details>
   </div>
 </div>
 <script>
@@ -142,6 +161,15 @@ const TEACHER_PASSCODE = "0909";
 })();
 const ROLE_LABEL = {producer:"🎬製作人", engineer:"🔧工程師", marketing:"📣行銷", creative:"🎨創意總監"};
 
+// 2026-09-09 楊老師：後台的測試員(persona_harness機器人、楊老師本人00、駱老師99、
+// 55-60測試/demo保留段)跟真實學生記錄要分開顯示、清楚標明，不能混在一起讓班級
+// 統計數字失真。真人範圍＝文化遊戲松IRB編號1-52＋遊戲設計學共用系統的101-130；
+// 除此之外(0、53-60、99，理論上也涵蓋任何其他誤打的號碼)一律算測試/demo。
+function isRealEnv(env) {
+  const n = parseInt(env, 10);
+  return (n >= 1 && n <= 52) || (n >= 101 && n <= 130);
+}
+
 function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }
 
 const ROLE_KEYS = ["producer","engineer","marketing","creative"];
@@ -169,9 +197,10 @@ db.ref(`${NS}/queue`).on("value", snap => {
 let leftEnvs = new Set();
 db.ref(`${NS}/playerStatus`).on("value", snap => {
   const val = snap.val() || {};
-  const matched = Object.values(val).filter(p => p.state === "matched");
+  // 只算真實學生：測試員/demo編號留在playerStatus裡不該灌進「進行中」這種課堂即時數字
+  const matched = Object.entries(val).filter(([env,p]) => p.state === "matched" && isRealEnv(env));
   $("statMatched").textContent = matched.length;
-  $("statActiveGroups").textContent = new Set(matched.map(p => p.roundId)).size;
+  $("statActiveGroups").textContent = new Set(matched.map(([,p]) => p.roundId)).size;
   leftEnvs = new Set(Object.entries(val).filter(([,p]) => p.state === "left").map(([env]) => env));
   renderAll(latestRounds);
 });
@@ -179,37 +208,65 @@ function $(id){ return document.getElementById(id); }
 
 const promptCache = {}; // roundId -> {env -> [texts]}
 
+function buildRoundRow(id, r) {
+  const envs = Object.keys(r.players || {});
+  const tr = document.createElement("tr");
+  const cardHtml = Object.entries(r.cards || {}).map(([k,c]) =>
+    `<div class="cardline">${ROLE_LABEL[k]||k}：${c.v}</div>`).join("");
+  const promptsForRound = (promptCache[id] || {});
+  const promptHtml = envs.map(e => {
+    const list = promptsForRound[e] || [];
+    if (!list.length) return `<details><summary>#${e} 尚無記錄</summary></details>`;
+    return `<details><summary>#${e}（${list.length}則，點開看內容）</summary>` +
+      list.map(p => `<div class="prompt">${escapeHtml(p.text)}</div>`).join("") + `</details>`;
+  }).join("");
+  const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "") +
+    (leftEnvs.has(e) ? ' <span style="color:var(--warn);font-weight:800">⚠️離線</span>' : "")).join(" ↔ ");
+  tr.innerHTML = `<td>${fmtTime(r.createdAt)}</td><td class="pair">${whoLine}</td><td>${cardHtml}</td><td>${promptHtml}</td>`;
+  return tr;
+}
+
+// 2026-09-09 楊老師：測試員(persona機器人/00/99/55-60)的配對紀錄跟真實學生分開顯示——
+// 一輪只要有任何一個編號屬於測試範圍，整輪就算「測試記錄」（真實學生不太可能跟
+// 測試員配到同一組，但萬一發生，寧可保守地把整輪歸類到測試區，不要混進真人統計）。
+function roleCountSummary(ids, rounds) {
+  const roleCounts = {};
+  ids.forEach(id => Object.values(rounds[id].players || {}).forEach(p => {
+    roleCounts[p.role] = (roleCounts[p.role]||0) + 1;
+  }));
+  return ROLE_KEYS.map(k => `${ROLE_LABEL[k]} ${roleCounts[k]||0}次`).join("、");
+}
+
 function renderAll(rounds) {
-  const rows = $("rows");
-  rows.innerHTML = "";
+  const rows = $("rows"), testRows = $("testRows");
+  rows.innerHTML = ""; testRows.innerHTML = "";
   const ids = Object.keys(rounds || {}).sort((a,b) => rounds[b].createdAt - rounds[a].createdAt);
-  const seenPlayers = new Set();
+  const seenPlayers = new Set(), seenTestPlayers = new Set();
+  const realIds = [], testIds = [];
   ids.forEach(id => {
     const r = rounds[id];
     const envs = Object.keys(r.players || {});
-    envs.forEach(e => seenPlayers.add(e));
-    const tr = document.createElement("tr");
-    const cardHtml = Object.entries(r.cards || {}).map(([k,c]) =>
-      `<div class="cardline">${ROLE_LABEL[k]||k}：${c.v}</div>`).join("");
-    const promptsForRound = (promptCache[id] || {});
-    const promptHtml = envs.map(e => {
-      const list = promptsForRound[e] || [];
-      if (!list.length) return `<details><summary>#${e} 尚無記錄</summary></details>`;
-      return `<details><summary>#${e}（${list.length}則，點開看內容）</summary>` +
-        list.map(p => `<div class="prompt">${escapeHtml(p.text)}</div>`).join("") + `</details>`;
-    }).join("");
-    const whoLine = envs.map(e => "#" + e + (r.players[e].nickname ? "("+escapeHtml(r.players[e].nickname)+")" : "") +
-      (leftEnvs.has(e) ? ' <span style="color:var(--warn);font-weight:800">⚠️離線</span>' : "")).join(" ↔ ");
-    tr.innerHTML = `<td>${fmtTime(r.createdAt)}</td><td class="pair">${whoLine}</td><td>${cardHtml}</td><td>${promptHtml}</td>`;
-    rows.appendChild(tr);
+    const tr = buildRoundRow(id, r);
+    if (envs.some(e => !isRealEnv(e))) {
+      testIds.push(id);
+      envs.forEach(e => seenTestPlayers.add(e));
+      testRows.appendChild(tr);
+    } else {
+      realIds.push(id);
+      envs.forEach(e => seenPlayers.add(e));
+      rows.appendChild(tr);
+    }
   });
-  $("statRounds").textContent = ids.length;
+  $("statRounds").textContent = realIds.length;
   $("statPlayers").textContent = seenPlayers.size;
+  $("testNote").textContent = testIds.length
+    ? `🧪 另有 ${testIds.length} 輪測試／demo記錄（${seenTestPlayers.size}個測試編號），不計入以上統計，見下方收合區塊。`
+    : "";
 
   // 平均每輪花費時間：同一個編號連續兩輪的createdAt間隔，當作「上一輪玩了多久」
-  // 的估計值（沒有明確的「結束時間」欄位，用下一輪開始的時間點回推）。
+  // 的估計值（沒有明確的「結束時間」欄位，用下一輪開始的時間點回推）。只算真實學生。
   const byEnv = {};
-  ids.forEach(id => {
+  realIds.forEach(id => {
     Object.keys(rounds[id].players || {}).forEach(e => {
       (byEnv[e] = byEnv[e] || []).push(rounds[id].createdAt);
     });
@@ -226,17 +283,19 @@ function renderAll(rounds) {
     $("statAvgDuration").textContent = "--";
   }
 
-  // 測試概要
-  const roleCounts = {};
-  ids.forEach(id => Object.values(rounds[id].players || {}).forEach(p => {
-    roleCounts[p.role] = (roleCounts[p.role]||0) + 1;
-  }));
-  const times = ids.map(id => rounds[id].createdAt);
-  const span = times.length ? Math.round((Math.max(...times) - Math.min(...times))/1000/60) : 0;
-  const roleLine = ROLE_KEYS.map(k => `${ROLE_LABEL[k]} ${roleCounts[k]||0}次`).join("、");
-  $("testSummary").innerHTML = ids.length
-    ? `<b>測試概要</b>：累計 ${ids.length} 輪、${seenPlayers.size} 個不同編號、時間跨度約 ${span} 分鐘。各角色出現次數：${roleLine}。`
+  // 真實學生概要
+  const realTimes = realIds.map(id => rounds[id].createdAt);
+  const realSpan = realTimes.length ? Math.round((Math.max(...realTimes) - Math.min(...realTimes))/1000/60) : 0;
+  $("testSummary").innerHTML = realIds.length
+    ? `<b>真實學生概要</b>：累計 ${realIds.length} 輪、${seenPlayers.size} 個不同編號、時間跨度約 ${realSpan} 分鐘。各角色出現次數：${roleCountSummary(realIds, rounds)}。`
     : "";
+
+  // 測試員/demo概要（收合區塊內）
+  const testTimes = testIds.map(id => rounds[id].createdAt);
+  const testSpan = testTimes.length ? Math.round((Math.max(...testTimes) - Math.min(...testTimes))/1000/60) : 0;
+  $("testSummary2").innerHTML = testIds.length
+    ? `<b>測試概要</b>：累計 ${testIds.length} 輪、${seenTestPlayers.size} 個測試編號、時間跨度約 ${testSpan} 分鐘。各角色出現次數：${roleCountSummary(testIds, rounds)}。`
+    : "目前沒有測試/demo記錄。";
 }
 
 function escapeHtml(s){
@@ -245,12 +304,12 @@ function escapeHtml(s){
 
 db.ref(`${NS}/feedback`).on("value", snap => {
   const val = snap.val() || {};
-  const rows = $("fbrows");
-  rows.innerHTML = "";
+  const rows = $("fbrows"), rowsTest = $("fbrowsTest");
+  rows.innerHTML = ""; rowsTest.innerHTML = "";
   Object.values(val).sort((a,b) => b.t - a.t).forEach(f => {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td>${fmtTime(f.t)}</td><td class="pair">#${f.env}</td><td>${escapeHtml(f.text)}</td>`;
-    rows.appendChild(tr);
+    (isRealEnv(f.env) ? rows : rowsTest).appendChild(tr);
   });
 });
 

@@ -27,6 +27,8 @@
   .section .n{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px}
   .cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
   .cardbox{border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .cardbox .code{font-size:11px;font-weight:800;letter-spacing:.04em;opacity:.55;margin-bottom:4px;font-variant-numeric:tabular-nums}
+  .cardbox .junkflag{color:var(--red);opacity:1;font-weight:800}
   .cardbox .v{font-size:14.5px;font-weight:800;margin-bottom:4px;line-height:1.4}
   .cardbox .d{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;opacity:.75;margin-bottom:6px}
   .cardbox .note{font-size:13px;line-height:1.6;opacity:.9}
@@ -146,10 +148,10 @@ function cv(card) { return currentLang === "vi" && card.vVi ? card.vVi : card.v;
 function cd(card) { return currentLang === "vi" && card.dVi ? card.dVi : card.d; }
 function cnote(card) { return currentLang === "vi" && card.noteVi ? card.noteVi : (card.note || ""); }
 const SECTIONS = [
-  {key:"producer", title:"🟢 執行製作人", titleVi:"🟢 Nhà sản xuất điều hành", deck:PRODUCER, dfl:"時程與資源"},
-  {key:"engineer", title:"🔵 首席工程師", titleVi:"🔵 Kỹ sư trưởng", deck:ENGINEER, dfl:"形式／平台"},
-  {key:"marketing", title:"🟣 行銷主管", titleVi:"🟣 Trưởng phòng tiếp thị", deck:MARKETING, dfl:"客群／情感訴求"},
-  {key:"creative", title:"🔴 創意總監", titleVi:"🔴 Giám đốc sáng tạo", deck:CREATIVE, dfl:"類型 × 台南文化元素"},
+  {key:"producer", code:"P", title:"🟢 執行製作人", titleVi:"🟢 Nhà sản xuất điều hành", deck:PRODUCER, dfl:"時程與資源"},
+  {key:"engineer", code:"E", title:"🔵 首席工程師", titleVi:"🔵 Kỹ sư trưởng", deck:ENGINEER, dfl:"形式／平台"},
+  {key:"marketing", code:"M", title:"🟣 行銷主管", titleVi:"🟣 Trưởng phòng tiếp thị", deck:MARKETING, dfl:"客群／情感訴求"},
+  {key:"creative", code:"C", title:"🔴 創意總監", titleVi:"🔴 Giám đốc sáng tạo", deck:CREATIVE, dfl:"類型 × 台南文化元素"},
 ];
 const stitle = s => currentLang === "vi" ? s.titleVi : s.title;
 
@@ -195,12 +197,17 @@ function renderAll() {
       return n > 0 ? `<div class="usebadge">🎲 ${t("usedTimes").replace("{n}", n)}</div>` : "";
     };
     const byLine = (c) => Array.isArray(c.addedBy) ? c.addedBy.map(e => "#" + e).join(" & ") : "#" + c.addedBy;
+    // 2026-09-09 楊老師：每張卡加編號方便討論時指認（deck卡＋自訂卡在同一個區塊內連續編號，
+    // 格式如P01、P02…；自訂卡若被判定像測試/亂填內容，額外標警示，跟jamming pool的判斷同步）。
+    let codeIdx = 0;
+    const codeFor = () => `${s.code}${String(++codeIdx).padStart(2, "0")}`;
     const baseHtml = s.deck.map(c =>
-      `<div class="cardbox ${s.key}"><div class="v">${escapeHtml(cv(c))}</div><div class="d">${escapeHtml(cd(c))}</div><div class="note">💡 ${escapeHtml(cnote(c))}</div>${badge(c.v)}</div>`
+      `<div class="cardbox ${s.key}"><div class="code">${codeFor()}</div><div class="v">${escapeHtml(cv(c))}</div><div class="d">${escapeHtml(cd(c))}</div><div class="note">💡 ${escapeHtml(cnote(c))}</div>${badge(c.v)}</div>`
     ).join("");
-    const customHtml = customEntries.map(([key, c]) =>
-      `<div class="cardbox ${s.key} custom"><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div>${c.note ? `<div class="note">💡 ${escapeHtml(c.note)}</div>` : ""}<div class="by">✨ ${byLine(c)} ${t("addedByLabel")}</div>${badge(c.v)}</div>`
-    ).join("");
+    const customHtml = customEntries.map(([key, c]) => {
+      const junky = looksLikeJunk(c.v, c.note);
+      return `<div class="cardbox ${s.key} custom"><div class="code">${codeFor()}${junky ? ` <span class="junkflag">⚠️ ${t("junkFlagLabel")}</span>` : ""}</div><div class="v">${escapeHtml(c.v)}</div><div class="d">${escapeHtml(c.d)}</div>${c.note ? `<div class="note">💡 ${escapeHtml(c.note)}</div>` : ""}<div class="by">✨ ${byLine(c)} ${t("addedByLabel")}</div>${badge(c.v)}</div>`;
+    }).join("");
     sec.innerHTML = `<h2>${stitle(s)}</h2><div class="n">${t("cardCountText").replace("{total}", total).replace("{custom}", customEntries.length)}</div>` +
       `<div class="cardgrid">${baseHtml}${customHtml}</div>`;
     root.appendChild(sec);
@@ -239,6 +246,9 @@ const I18N = {
   cardCountText: {zh:"{total} 張卡（含 {custom} 張同學新增）", vi:"{total} thẻ (gồm {custom} thẻ do bạn học thêm)"},
   mergeAskText: {zh:"📎 有同學新增的卡片跟你的「{mine}」很像：「{other}」。要不要合併成一張？（需要雙方都同意才會真的合併；不同意的話兩張都會留著，互不影響）",
                  vi:"📎 Có bạn học thêm một thẻ giống thẻ 「{mine}」 của bạn: 「{other}」. Bạn có muốn gộp thành một thẻ không? (cần cả hai bên đồng ý mới thực sự gộp; nếu không đồng ý thì cả hai thẻ vẫn giữ nguyên)"},
+  junkDeleteAskText: {zh:"🗑️ 你之前新增的卡片「{v}」內容看起來像是測試或隨手打的，目前不會出現在正式抽卡池中。方便的話，同意把它從卡池刪除嗎？（不同意也沒關係，卡片會保留，但一樣不會被抽到）",
+                      vi:"🗑️ Thẻ 「{v}」 bạn đã thêm trước đây có vẻ như nội dung thử nghiệm hoặc gõ ngẫu nhiên, hiện không xuất hiện trong bộ thẻ chính thức. Nếu tiện, bạn có đồng ý xóa nó khỏi kho thẻ không? (nếu không đồng ý cũng không sao, thẻ vẫn giữ nguyên nhưng vẫn không được rút)"},
+  junkFlagLabel: {zh:"疑似測試，暫不進抽卡池", vi:"Nghi ngờ là thử nghiệm, tạm không vào bộ rút thẻ"},
 };
 function t(key) { const e = I18N[key]; return e ? (e[currentLang] || e.zh) : key; }
 function applyLang(lang) {
@@ -276,6 +286,7 @@ try {
     document.getElementById("addEnv").value = savedEnv;
     document.getElementById("lookupEnv").value = savedEnv;
     checkMergeRequests(savedEnv);
+    checkDeleteRequests(savedEnv);
   }
 } catch(_) {}
 
@@ -297,6 +308,25 @@ function cardSimilarity(a, b) {
   return (2 * overlap) / (ba.length + bb.length);
 }
 const SIMILARITY_THRESHOLD = 0.6;
+
+// 2026-09-09 楊老師：有些卡片內容幾乎是亂填/測試用的——先不讓它進正式抽卡池（jamming），
+// 再問原創者是否同意直接刪除；同意才真的刪，不同意就留著但一樣不會被抽到。
+function looksLikeJunk(v, note) {
+  const raw = (v || "").trim();
+  if (!raw) return true;
+  const s = normalizeForSim(v);
+  if (!s) return true;
+  if (s.length <= 1) return true;
+  if (/^(.)\1+$/.test(s)) return true; // 同一字元重複，如「啊啊啊啊」「1111」
+  if (/^[0-9]+$/.test(s)) return true; // 純數字
+  if (/^[a-z]+$/i.test(s) && s.length <= 4) return true; // 短的純英文亂打，如asdf/qwer
+  const junkWords = /test|測試|亂填|亂打|亂寫|随便|隨便|whatever/i;
+  if (junkWords.test(v) || junkWords.test(note || "")) return true; // 內容或備註坦承是測試
+  // 大量問號/斜線等鍵盤亂敲符號，扣掉這些幾乎沒剩內容（如「????????//ㄥ」）
+  const meaningful = raw.replace(/[?？!！./\\,，、~～\-_=+*#@$%^&()（）]/g, "");
+  if (meaningful.length <= 1) return true;
+  return false;
+}
 function performMerge(reqId, r) {
   const keepRef = db.ref(`${NS}/customCards/${r.role}/${r.cardAId}`);
   keepRef.once("value").then(s => {
@@ -341,6 +371,48 @@ function checkMergeRequests(env) {
     });
   }).catch(e => console.warn("讀取合併建議失敗：", e));
 }
+
+// 垃圾/測試卡刪除同意流程（跟合併同一套模式）：deleteRequests裡每張卡列出所有addedBy(通常
+// 只有一人)，consents全部同意true才真的從customCards刪除；任何一人不同意就標kept、不再問。
+let deleteCheckDone = false;
+function checkDeleteRequests(env) {
+  if (deleteCheckDone || env === "" || env === null || typeof env === "undefined") return;
+  deleteCheckDone = true;
+  db.ref(`${NS}/deleteRequests`).orderByChild("status").equalTo("pending").once("value").then(snap => {
+    const reqs = snap.val() || {};
+    Object.entries(reqs).forEach(([reqId, r]) => {
+      if (!r || !Array.isArray(r.addedBy) || !r.addedBy.some(e => String(e) === String(env))) return;
+      const consents = r.consents || {};
+      if (consents[String(env)] !== null && typeof consents[String(env)] !== "undefined") return; // 已經回答過
+      const msg = t("junkDeleteAskText").replace("{v}", r.v);
+      const agree = window.confirm(msg);
+      const newConsents = {...consents, [String(env)]: agree};
+      if (!agree) {
+        db.ref(`${NS}/deleteRequests/${reqId}`).update({consents: newConsents, status: "kept"})
+          .catch(e => console.warn("刪除回覆寫入失敗：", e));
+      } else {
+        db.ref(`${NS}/deleteRequests/${reqId}`).update({consents: newConsents}).then(() => {
+          db.ref(`${NS}/deleteRequests/${reqId}`).once("value").then(s2 => {
+            const cur = s2.val();
+            if (!cur || cur.status !== "pending") return;
+            const c2 = cur.consents || {};
+            const allAgree = (cur.addedBy || []).every(e => c2[String(e)] === true);
+            if (allAgree) {
+              db.ref(`${NS}/customCards/${cur.role}/${cur.cardId}`).remove();
+              db.ref(`${NS}/deleteRequests/${reqId}`).update({status: "deleted"});
+            }
+          });
+        }).catch(e => console.warn("刪除回覆寫入失敗：", e));
+      }
+    });
+  }).catch(e => console.warn("讀取刪除建議失敗：", e));
+}
+
+// 2026-09-09 楊老師：上線前就已存在的亂填/測試卡，不在頁面載入時對每個訪客都重跑回溯掃描
+// （每次都對同一批已知垃圾卡重複嘗試寫入deleteRequests，白白浪費流量；而且在deleteRequests
+// 還沒開寫入權限時，每個訪客的瀏覽器都會各自吃到一次permission_denied，沒有必要）——
+// 舊卡的回溯掃描改成我這邊手動跑一次性腳本（見_flipclass_rollcall或designjam工具目錄），
+// 這裡只保留「新增當下就判斷」這個最常態的路徑（見上面addBtn）。
 
 const SECTION_BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.key, s]));
 document.getElementById("lookupBtn").onclick = () => {
@@ -393,6 +465,14 @@ document.getElementById("addBtn").onclick = () => {
           status: "pending", consentA: null, consentB: null,
           createdAt: Date.now(),
         }).catch(e => console.warn("合併建議寫入失敗(不影響新卡上架)：", e));
+      }
+      // 2026-09-09 楊老師：新卡內容看起來像亂填/測試的話，當場就建立刪除建議問原創者
+      // （這張卡剛上架，不會被舊的回溯掃描重複抓到，因為cardId是全新的）。
+      if (looksLikeJunk(v, note)) {
+        db.ref(`${NS}/deleteRequests`).push({
+          role, cardId: ref.key, v, addedBy: [env], consents: {[String(env)]: null},
+          status: "pending", createdAt: Date.now(),
+        }).catch(e => console.warn("垃圾卡刪除建議寫入失敗(不影響新卡上架)：", e));
       }
       // 累計「新增過幾張卡片」——跟index.html的完成卡是同一份playerStats，
       // 讓學生截圖時看得到自己對卡池的貢獻累計，不用另外查。

@@ -297,6 +297,8 @@ const I18N = {
   waitingCountSuffix: {zh:"等待中", vi:" đang chờ"},
   mergeAskText: {zh:"📎 有同學新增的卡片跟你的「{mine}」很像：「{other}」。要不要合併成一張？（需要雙方都同意才會真的合併；不同意的話兩張都會留著，互不影響）",
                  vi:"📎 Có bạn học thêm một thẻ giống thẻ 「{mine}」 của bạn: 「{other}」. Bạn có muốn gộp thành một thẻ không? (cần cả hai bên đồng ý mới thực sự gộp; nếu không đồng ý thì cả hai thẻ vẫn giữ nguyên)"},
+  junkDeleteAskText: {zh:"🗑️ 你之前新增的卡片「{v}」內容看起來像是測試或隨手打的，目前不會出現在正式抽卡池中。方便的話，同意把它從卡池刪除嗎？（不同意也沒關係，卡片會保留，但一樣不會被抽到）",
+                      vi:"🗑️ Thẻ 「{v}」 bạn đã thêm trước đây có vẻ như nội dung thử nghiệm hoặc gõ ngẫu nhiên, hiện không xuất hiện trong bộ thẻ chính thức. Nếu tiện, bạn có đồng ý xóa nó khỏi kho thẻ không? (nếu không đồng ý cũng không sao, thẻ vẫn giữ nguyên nhưng vẫn không được rút)"},
   onlyOneRolePrefix: {zh:"⚠️ 目前只有一種角色在等，配不到人！想加入的人請選：", vi:"⚠️ Hiện chỉ có một vai trò đang chờ, không ghép được nhóm! Ai muốn tham gia hãy chọn: "},
   waitedTooLongPrefix: {zh:"⏳ 已經等超過30秒——目前缺其他角色的人，建議按下面「換角色」改選：", vi:"⏳ Đã chờ hơn 30 giây — hiện đang thiếu người ở vai trò khác, hãy bấm 'Đổi vai trò' bên dưới để chọn: "},
   queueSummaryText: {zh:"目前等待中 {a} 人 · 配對中／進行中 {b} 人 · 進行中的討論 {c} 組",
@@ -399,7 +401,9 @@ ROLES.forEach(r => {
   });
 });
 function deckFor(roleKey) {
-  return ROLE_BY_KEY[roleKey].deck.concat(customCards[roleKey] || []);
+  // 2026-09-09 楊老師：內容像亂填/測試的自訂卡先不進正式抽卡池——判斷式在下面
+  // looksLikeJunk，跟cards.html是同一套規則。卡片本身還在，只是不會被抽到。
+  return ROLE_BY_KEY[roleKey].deck.concat((customCards[roleKey] || []).filter(c => !looksLikeJunk(c.v, c.note)));
 }
 
 // 即時排隊看板——不用登入也看得到，讓大家知道現在還缺哪個角色的人。
@@ -599,6 +603,24 @@ function cardSimilarity(a, b) {
   ba.forEach(g => { if (pool[g] > 0) { overlap++; pool[g]--; } });
   return (2 * overlap) / (ba.length + bb.length);
 }
+// 2026-09-09 楊老師：有些卡片內容幾乎是亂填/測試用的——先不讓它進正式抽卡池（見上面
+// deckFor），再問原創者是否同意直接刪除；同意才真的刪，不同意就留著但一樣不會被抽到。
+// （跟cards.html是同一套判斷式複本，那邊也有新增卡片時的當場判斷＋回溯掃描。）
+function looksLikeJunk(v, note) {
+  const raw = (v || "").trim();
+  if (!raw) return true;
+  const s = normalizeForSim(v);
+  if (!s) return true;
+  if (s.length <= 1) return true;
+  if (/^(.)\1+$/.test(s)) return true; // 同一字元重複，如「啊啊啊啊」「1111」
+  if (/^[0-9]+$/.test(s)) return true; // 純數字
+  if (/^[a-z]+$/i.test(s) && s.length <= 4) return true; // 短的純英文亂打，如asdf/qwer
+  const junkWords = /test|測試|亂填|亂打|亂寫|随便|隨便|whatever/i;
+  if (junkWords.test(v) || junkWords.test(note || "")) return true; // 內容或備註坦承是測試
+  const meaningful = raw.replace(/[?？!！./\\,，、~～\-_=+*#@$%^&()（）]/g, "");
+  if (meaningful.length <= 1) return true;
+  return false;
+}
 function performMerge(reqId, r) {
   const keepRef = db.ref(`${NS}/customCards/${r.role}/${r.cardAId}`);
   keepRef.once("value").then(s => {
@@ -644,9 +666,47 @@ function checkMergeRequests(env) {
   }).catch(e => console.warn("讀取合併建議失敗：", e));
 }
 
+// 垃圾/測試卡刪除同意流程（跟合併同一套模式，複本見cards.html）：deleteRequests裡每張卡
+// 列出所有addedBy(通常只有一人)，consents全部同意true才真的從customCards刪除；任何一人
+// 不同意就標kept、不再問。建立deleteRequests只在cards.html那邊做(新增卡片/回溯掃描)，
+// 這裡只負責「原創者下次打開工具時被詢問」的那一半。
+let deleteCheckDone = false;
+function checkDeleteRequests(env) {
+  if (deleteCheckDone || env === "" || env === null || typeof env === "undefined") return;
+  deleteCheckDone = true;
+  db.ref(`${NS}/deleteRequests`).orderByChild("status").equalTo("pending").once("value").then(snap => {
+    const reqs = snap.val() || {};
+    Object.entries(reqs).forEach(([reqId, r]) => {
+      if (!r || !Array.isArray(r.addedBy) || !r.addedBy.some(e => String(e) === String(env))) return;
+      const consents = r.consents || {};
+      if (consents[String(env)] !== null && typeof consents[String(env)] !== "undefined") return; // 已經回答過
+      const msg = t("junkDeleteAskText").replace("{v}", r.v);
+      const agree = window.confirm(msg);
+      const newConsents = {...consents, [String(env)]: agree};
+      if (!agree) {
+        db.ref(`${NS}/deleteRequests/${reqId}`).update({consents: newConsents, status: "kept"})
+          .catch(e => console.warn("刪除回覆寫入失敗：", e));
+      } else {
+        db.ref(`${NS}/deleteRequests/${reqId}`).update({consents: newConsents}).then(() => {
+          db.ref(`${NS}/deleteRequests/${reqId}`).once("value").then(s2 => {
+            const cur = s2.val();
+            if (!cur || cur.status !== "pending") return;
+            const c2 = cur.consents || {};
+            const allAgree = (cur.addedBy || []).every(e => c2[String(e)] === true);
+            if (allAgree) {
+              db.ref(`${NS}/customCards/${cur.role}/${cur.cardId}`).remove();
+              db.ref(`${NS}/deleteRequests/${reqId}`).update({status: "deleted"});
+            }
+          });
+        }).catch(e => console.warn("刪除回覆寫入失敗：", e));
+      }
+    });
+  }).catch(e => console.warn("讀取刪除建議失敗：", e));
+}
+
 try {
   const savedEnv = localStorage.getItem("designjam_env");
-  if (savedEnv) { $("envInput").value = savedEnv; lockEnvInput(); checkMergeRequests(savedEnv); }
+  if (savedEnv) { $("envInput").value = savedEnv; lockEnvInput(); checkMergeRequests(savedEnv); checkDeleteRequests(savedEnv); }
   const savedNick = localStorage.getItem("designjam_nick");
   if (savedNick) $("nickInput").value = savedNick;
 } catch(_) {}
@@ -664,6 +724,7 @@ $("joinBtn").onclick = async () => {
   try { localStorage.setItem("designjam_env", String(v)); } catch(_) {}
   lockEnvInput();
   checkMergeRequests(v);
+  checkDeleteRequests(v);
   const typed = $("nickInput").value.trim().slice(0, 20);
   const autoAssigned = !typed;
   $("joinBtn").disabled = true;

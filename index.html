@@ -519,6 +519,15 @@ let savedLang = "zh";
 try { savedLang = localStorage.getItem("designjam_lang") || "zh"; } catch(_) {}
 applyLang(savedLang);
 
+// 2026-09-09 楊老師：登入頁自己打過編號/暱稱，之後回來不用再打一次——
+// 兩個欄位都自動帶入上次用過的值，但保留可以改（換裝置用的人、暱稱想換一下都不會卡住）。
+try {
+  const savedEnv = localStorage.getItem("designjam_env");
+  if (savedEnv) $("envInput").value = savedEnv;
+  const savedNick = localStorage.getItem("designjam_nick");
+  if (savedNick) $("nickInput").value = savedNick;
+} catch(_) {}
+
 $("joinBtn").onclick = async () => {
   const raw = $("envInput").value;
   const v = parseInt(raw, 10);
@@ -535,6 +544,7 @@ $("joinBtn").onclick = async () => {
   myNick = typed || await randomNickname();
   $("joinBtn").disabled = false;
   if (autoAssigned) $("nickInput").value = myNick;
+  try { localStorage.setItem("designjam_nick", myNick); } catch(_) {}
   $("waitNick").textContent = autoAssigned ? `🎲 幫你取了暱稱：${myNick}（下一輪想改就直接改暱稱那格）` : "";
   startQueue();
 };

@@ -232,6 +232,85 @@ const NS = "whgm";
 
 let currentLang = "zh"; // 2026-09-09 楊老師：加越南語切換（修課有越南僑生）
 
+// 🔴 2026-09-09踩過的bug：I18N跟myWaitSince原本宣告在檔案很後面，但下面的
+// db.ref(...).on("value",...)監聽器一開始註冊就可能被Firebase立刻回呼
+// （尤其本機已有快取資料時），呼叫到還在temporal dead zone的const/let會直接
+// ReferenceError、把整個頁面初始化炸斷（角色選不了、QR畫不出來、編號不會自動
+// 帶入）。教訓：任何可能被Firebase監聽器callback用到的狀態，都要在第一個
+// db.ref(...).on(...)之前宣告好，不能想著「等一下再宣告反正照順序看得懂」。
+// ---- 2026-09-09 楊老師交辦：加越南語切換（修課有越南僑生）----
+// 範圍：靜態UI文字（說明、標籤、按鈕、角色名稱/引導問題）。卡片本身抽到的內容
+// （card.v/card.d/card.note，上百句台南文化限制條件）沒有翻譯——這批量太大，
+// 上課中臨時翻不精準風險太高，留給有空時再處理，不是漏掉。
+const I18N = {
+  h1title: {zh:"文化遊戲松 Cultural Game Jam", vi:"Game Jam Văn Hóa 文化遊戲松"},
+  kicker: {zh:"文化遊戲松實作 · 熱身", vi:"Thực hành Game Jam Văn Hóa · Khởi động"},
+  sub: {zh:"改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。",
+        vi:"Chuyển thể từ Design Jam của Stone Librande (GDC). Nhập mã số ẩn danh của bạn, chọn vai trò muốn đóng trong vòng này, hệ thống sẽ ghép bạn với người chơi vai trò khác thành một nhóm, mỗi người rút một thẻ nhiệm vụ, rồi cùng dùng Gemini để kết hợp ý tưởng. Có thể ghép lại, rút lại thẻ, đổi vai trò bao nhiêu lần cũng được."},
+  navCards: {zh:"🗂️ 完整卡池（可自己新增卡片）", vi:"🗂️ Bộ thẻ đầy đủ (có thể tự thêm thẻ)"},
+  navGallery: {zh:"🖼️ 瀏覽大家的構想", vi:"🖼️ Xem ý tưởng của mọi người"},
+  navCards2: {zh:"完整卡池", vi:"Bộ thẻ đầy đủ"},
+  navGallery2: {zh:"瀏覽大家的構想", vi:"Xem ý tưởng của mọi người"},
+  howto1b: {zh:"輸入編號、選角色", vi:"Nhập mã số, chọn vai trò"},
+  howto1s: {zh:"用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）", vi:"Dùng mã số trên phong bì, chọn vai trò muốn đóng trong vòng này (Nhà sản xuất / Kỹ sư / Tiếp thị / Giám đốc sáng tạo)"},
+  howto2b: {zh:"系統自動配對", vi:"Hệ thống tự động ghép nhóm"},
+  howto2s: {zh:"不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等", vi:"Không cần tự tìm người, không cần chọn phòng — chỉ cần đủ ít nhất 2 người với vai trò khác nhau, hệ thống sẽ tự động bắt đầu (mỗi nhóm tối đa 4 người). Bảng chờ ở trên cho biết mỗi vai trò còn bao nhiêu người đang chờ"},
+  howto3b: {zh:"各自抽卡", vi:"Mỗi người rút một thẻ"},
+  howto3s: {zh:"每個角色隨機抽到一張任務卡，代表你這個角色的限制條件", vi:"Mỗi vai trò được rút ngẫu nhiên một thẻ nhiệm vụ, đại diện cho điều kiện giới hạn của vai trò đó"},
+  howto4b: {zh:"一起 blend 構想", vi:"Cùng nhau kết hợp ý tưởng"},
+  howto4s: {zh:"把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——建議一輪抓5-8分鐘：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串", vi:"Kết hợp thẻ của tất cả mọi người, dùng Gemini để thảo luận ra một ý tưởng trò chơi — mỗi vòng nên mất khoảng 5-8 phút: 2 phút xem thẻ + sao chép câu lệnh sang Gemini để khám phá, 3-5 phút chốt ý và dán lại vào khung thảo luận"},
+  howto5b: {zh:"下載設計文件", vi:"Tải tài liệu thiết kế"},
+  howto5s: {zh:"把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告", vi:"Tổng hợp ý tưởng thành file .md để tải về, mang sang Gemini/Claude Code để phát triển tiếp — không cần lên thuyết trình ở đây"},
+  howto6b: {zh:"重玩", vi:"Chơi lại"},
+  howto6s: {zh:"不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案", vi:"Nếu chưa hài lòng có thể ghép lại, đổi vai trò, rút lại thẻ, lặp lại bao nhiêu lần cũng được — nếu đủ thời gian nên chơi 2-3 vòng rồi mới chốt một hướng"},
+  envLabel: {zh:"你的編號（信封上那組，不是學號）", vi:"Mã số của bạn (ghi trên phong bì, không phải mã sinh viên)"},
+  envPh: {zh:"例如 17", vi:"Ví dụ: 17"},
+  nickLabel: {zh:"幫自己取個暱稱（選填）", vi:"Đặt biệt danh cho mình (không bắt buộc)"},
+  nickPh: {zh:"例如：芒果冰、隊長17號", vi:"Ví dụ: Đá xoài, Đội trưởng 17"},
+  hint1: {zh:"⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果", vi:"⚠️ Vui lòng không dùng tên thật — biệt danh cũng như mã số, các nhóm khác và giáo viên đều nhìn thấy được, phải ẩn danh mới có tác dụng"},
+  roleLabel: {zh:"這一輪想扮演的角色", vi:"Vai trò muốn đóng trong vòng này"},
+  joinBtn: {zh:"開始配對", vi:"Bắt đầu ghép nhóm"},
+  waitingText: {zh:"配對中…等其他角色的人加入（", vi:"Đang ghép nhóm… chờ người chơi vai trò khác tham gia ("},
+  waitingClose: {zh:"）", vi:")"},
+  cancelBtn: {zh:"取消配對／換角色", vi:"Hủy ghép nhóm / Đổi vai trò"},
+  doneBadge: {zh:"✅ 本輪已記錄", vi:"✅ Vòng này đã được lưu"},
+  closeDoneBtn: {zh:"✕ 截圖完了，關閉回去繼續討論", vi:"✕ Chụp màn hình xong, đóng để tiếp tục thảo luận"},
+  roundNoPrefix: {zh:"第 ", vi:"Vòng "},
+  roundNoMidGroup: {zh:" 輪 · 這組編號：", vi:" · Mã số nhóm này: "},
+  topRerollBtn: {zh:"🏠 回登入／選角色", vi:"🏠 Về trang đăng nhập / chọn vai trò"},
+  howToStartLabel: {zh:"不知道怎麼開始？先請 Gemini 幫忙探索", vi:"Chưa biết bắt đầu thế nào? Nhờ Gemini giúp khám phá trước"},
+  copyPromptBtn: {zh:"📋 複製一鍵探索指令，貼去 Gemini", vi:"📋 Sao chép câu lệnh khám phá, dán sang Gemini"},
+  feedLabel: {zh:"這組的即時討論串（輪流貼上，大家馬上看得到）", vi:"Chuỗi thảo luận trực tiếp của nhóm (lần lượt dán lên, mọi người thấy ngay)"},
+  feedEmpty: {zh:"還沒有人發言", vi:"Chưa có ai phát biểu"},
+  pasteLabel: {zh:"把你跟 Gemini 討論的心得貼上來", vi:"Dán lại nội dung bạn đã thảo luận với Gemini"},
+  promptBoxPh: {zh:"貼上這一組討論、跟 Gemini 交流的過程…", vi:"Dán vào quá trình thảo luận và trao đổi với Gemini…"},
+  saveBtn: {zh:"記錄這段", vi:"Lưu lại đoạn này"},
+  downloadBtn: {zh:"下載構想 .md", vi:"Tải ý tưởng .md"},
+  feedbackLabel: {zh:"對這個工具的意見（想加什麼、想改什麼）", vi:"Góp ý cho công cụ này (muốn thêm gì, muốn đổi gì)"},
+  feedbackPh: {zh:"例如：想要角色卡再多一點選項、想看到別組抽到什麼…", vi:"Ví dụ: muốn thẻ vai trò có nhiều lựa chọn hơn, muốn xem nhóm khác rút được gì…"},
+  feedbackBtn: {zh:"送出意見", vi:"Gửi góp ý"},
+  rerollBtn: {zh:"再玩一輪（可換角色）", vi:"Chơi vòng khác (có thể đổi vai trò)"},
+  footer: {zh:"編號僅供去識別化記錄，不會顯示或連結到姓名學號", vi:"Mã số chỉ dùng để ghi nhận ẩn danh, không hiển thị hoặc liên kết với tên/mã sinh viên"},
+  envLockHintText: {zh:"🔒 編號已鎖定，避免中途誤改", vi:"🔒 Mã số đã bị khóa để tránh sửa nhầm giữa chừng"},
+  envUnlockLinkText: {zh:"不是你？點此重新輸入", vi:"Không phải bạn? Bấm vào đây để nhập lại"},
+  errNoEnv: {zh:"請輸入信封上的編號", vi:"Vui lòng nhập mã số ghi trên phong bì"},
+  errNoRole: {zh:"請選一個角色", vi:"Vui lòng chọn một vai trò"},
+  onlyOneRolePrefix: {zh:"⚠️ 目前只有一種角色在等，配不到人！想加入的人請選：", vi:"⚠️ Hiện chỉ có một vai trò đang chờ, không ghép được nhóm! Ai muốn tham gia hãy chọn: "},
+  waitedTooLongPrefix: {zh:"⏳ 已經等超過30秒——目前缺其他角色的人，建議按下面「換角色」改選：", vi:"⏳ Đã chờ hơn 30 giây — hiện đang thiếu người ở vai trò khác, hãy bấm 'Đổi vai trò' bên dưới để chọn: "},
+  queueSummaryText: {zh:"目前等待中 {a} 人 · 配對中／進行中 {b} 人 · 進行中的討論 {c} 組",
+                     vi:"Đang chờ {a} người · Đang ghép/đang chơi {b} người · {c} nhóm đang thảo luận"},
+  copiedOk: {zh:"已複製，去 Gemini 貼上吧！", vi:"Đã sao chép, sang Gemini dán vào nhé!"},
+  copyFailPrefix: {zh:"自動複製失敗，請長按下面文字手動複製：", vi:"Sao chép tự động thất bại, hãy nhấn giữ đoạn văn bên dưới để tự sao chép:"},
+  savedOkPrefix: {zh:"已記錄 · ", vi:"Đã lưu · "},
+  saveFailPrefix: {zh:"記錄失敗：", vi:"Lưu thất bại: "},
+  feedbackOk: {zh:"謝謝，已送出！", vi:"Cảm ơn, đã gửi!"},
+  feedbackFailPrefix: {zh:"送出失敗：", vi:"Gửi thất bại: "},
+  autoNickPrefix: {zh:"🎲 幫你取了暱稱：", vi:"🎲 Đã đặt biệt danh cho bạn: "},
+  autoNickSuffix: {zh:"（下一輪想改就直接改暱稱那格）", vi:"（muốn đổi thì sửa trực tiếp ở ô biệt danh）"},
+};
+
+let myWaitSince = null;
+
 // ---- card data ----
 // 2026-09-09 楊老師：越南語版本要完整，卡片內容(v/d/note)也要有越南文——
 // vVi/dVi/noteVi是對應的越南文版本，用cv()/cd()/cnote()依currentLang取用。
@@ -372,7 +451,6 @@ renderQueueSummary();
 
 // 已經在等待畫面、且等超過30秒還配不到 → 主動提醒該換哪個角色，不要讓學生
 // 只能乾等、猜測是不是自己卡住了。
-let myWaitSince = null;
 function updateWaitHint() {
   const hintEl = document.getElementById("waitHint");
   if (!hintEl || !myWaitSince) return;
@@ -463,76 +541,6 @@ ROLES.forEach(r => {
   pickBox.appendChild(b);
 });
 
-// ---- 2026-09-09 楊老師交辦：加越南語切換（修課有越南僑生）----
-// 範圍：靜態UI文字（說明、標籤、按鈕、角色名稱/引導問題）。卡片本身抽到的內容
-// （card.v/card.d/card.note，上百句台南文化限制條件）沒有翻譯——這批量太大，
-// 上課中臨時翻不精準風險太高，留給有空時再處理，不是漏掉。
-const I18N = {
-  h1title: {zh:"文化遊戲松 Cultural Game Jam", vi:"Game Jam Văn Hóa 文化遊戲松"},
-  kicker: {zh:"文化遊戲松實作 · 熱身", vi:"Thực hành Game Jam Văn Hóa · Khởi động"},
-  sub: {zh:"改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。",
-        vi:"Chuyển thể từ Design Jam của Stone Librande (GDC). Nhập mã số ẩn danh của bạn, chọn vai trò muốn đóng trong vòng này, hệ thống sẽ ghép bạn với người chơi vai trò khác thành một nhóm, mỗi người rút một thẻ nhiệm vụ, rồi cùng dùng Gemini để kết hợp ý tưởng. Có thể ghép lại, rút lại thẻ, đổi vai trò bao nhiêu lần cũng được."},
-  navCards: {zh:"🗂️ 完整卡池（可自己新增卡片）", vi:"🗂️ Bộ thẻ đầy đủ (có thể tự thêm thẻ)"},
-  navGallery: {zh:"🖼️ 瀏覽大家的構想", vi:"🖼️ Xem ý tưởng của mọi người"},
-  navCards2: {zh:"完整卡池", vi:"Bộ thẻ đầy đủ"},
-  navGallery2: {zh:"瀏覽大家的構想", vi:"Xem ý tưởng của mọi người"},
-  howto1b: {zh:"輸入編號、選角色", vi:"Nhập mã số, chọn vai trò"},
-  howto1s: {zh:"用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）", vi:"Dùng mã số trên phong bì, chọn vai trò muốn đóng trong vòng này (Nhà sản xuất / Kỹ sư / Tiếp thị / Giám đốc sáng tạo)"},
-  howto2b: {zh:"系統自動配對", vi:"Hệ thống tự động ghép nhóm"},
-  howto2s: {zh:"不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等", vi:"Không cần tự tìm người, không cần chọn phòng — chỉ cần đủ ít nhất 2 người với vai trò khác nhau, hệ thống sẽ tự động bắt đầu (mỗi nhóm tối đa 4 người). Bảng chờ ở trên cho biết mỗi vai trò còn bao nhiêu người đang chờ"},
-  howto3b: {zh:"各自抽卡", vi:"Mỗi người rút một thẻ"},
-  howto3s: {zh:"每個角色隨機抽到一張任務卡，代表你這個角色的限制條件", vi:"Mỗi vai trò được rút ngẫu nhiên một thẻ nhiệm vụ, đại diện cho điều kiện giới hạn của vai trò đó"},
-  howto4b: {zh:"一起 blend 構想", vi:"Cùng nhau kết hợp ý tưởng"},
-  howto4s: {zh:"把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——建議一輪抓5-8分鐘：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串", vi:"Kết hợp thẻ của tất cả mọi người, dùng Gemini để thảo luận ra một ý tưởng trò chơi — mỗi vòng nên mất khoảng 5-8 phút: 2 phút xem thẻ + sao chép câu lệnh sang Gemini để khám phá, 3-5 phút chốt ý và dán lại vào khung thảo luận"},
-  howto5b: {zh:"下載設計文件", vi:"Tải tài liệu thiết kế"},
-  howto5s: {zh:"把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告", vi:"Tổng hợp ý tưởng thành file .md để tải về, mang sang Gemini/Claude Code để phát triển tiếp — không cần lên thuyết trình ở đây"},
-  howto6b: {zh:"重玩", vi:"Chơi lại"},
-  howto6s: {zh:"不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案", vi:"Nếu chưa hài lòng có thể ghép lại, đổi vai trò, rút lại thẻ, lặp lại bao nhiêu lần cũng được — nếu đủ thời gian nên chơi 2-3 vòng rồi mới chốt một hướng"},
-  envLabel: {zh:"你的編號（信封上那組，不是學號）", vi:"Mã số của bạn (ghi trên phong bì, không phải mã sinh viên)"},
-  envPh: {zh:"例如 17", vi:"Ví dụ: 17"},
-  nickLabel: {zh:"幫自己取個暱稱（選填）", vi:"Đặt biệt danh cho mình (không bắt buộc)"},
-  nickPh: {zh:"例如：芒果冰、隊長17號", vi:"Ví dụ: Đá xoài, Đội trưởng 17"},
-  hint1: {zh:"⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果", vi:"⚠️ Vui lòng không dùng tên thật — biệt danh cũng như mã số, các nhóm khác và giáo viên đều nhìn thấy được, phải ẩn danh mới có tác dụng"},
-  roleLabel: {zh:"這一輪想扮演的角色", vi:"Vai trò muốn đóng trong vòng này"},
-  joinBtn: {zh:"開始配對", vi:"Bắt đầu ghép nhóm"},
-  waitingText: {zh:"配對中…等其他角色的人加入（", vi:"Đang ghép nhóm… chờ người chơi vai trò khác tham gia ("},
-  waitingClose: {zh:"）", vi:")"},
-  cancelBtn: {zh:"取消配對／換角色", vi:"Hủy ghép nhóm / Đổi vai trò"},
-  doneBadge: {zh:"✅ 本輪已記錄", vi:"✅ Vòng này đã được lưu"},
-  closeDoneBtn: {zh:"✕ 截圖完了，關閉回去繼續討論", vi:"✕ Chụp màn hình xong, đóng để tiếp tục thảo luận"},
-  roundNoPrefix: {zh:"第 ", vi:"Vòng "},
-  roundNoMidGroup: {zh:" 輪 · 這組編號：", vi:" · Mã số nhóm này: "},
-  topRerollBtn: {zh:"🏠 回登入／選角色", vi:"🏠 Về trang đăng nhập / chọn vai trò"},
-  howToStartLabel: {zh:"不知道怎麼開始？先請 Gemini 幫忙探索", vi:"Chưa biết bắt đầu thế nào? Nhờ Gemini giúp khám phá trước"},
-  copyPromptBtn: {zh:"📋 複製一鍵探索指令，貼去 Gemini", vi:"📋 Sao chép câu lệnh khám phá, dán sang Gemini"},
-  feedLabel: {zh:"這組的即時討論串（輪流貼上，大家馬上看得到）", vi:"Chuỗi thảo luận trực tiếp của nhóm (lần lượt dán lên, mọi người thấy ngay)"},
-  feedEmpty: {zh:"還沒有人發言", vi:"Chưa có ai phát biểu"},
-  pasteLabel: {zh:"把你跟 Gemini 討論的心得貼上來", vi:"Dán lại nội dung bạn đã thảo luận với Gemini"},
-  promptBoxPh: {zh:"貼上這一組討論、跟 Gemini 交流的過程…", vi:"Dán vào quá trình thảo luận và trao đổi với Gemini…"},
-  saveBtn: {zh:"記錄這段", vi:"Lưu lại đoạn này"},
-  downloadBtn: {zh:"下載構想 .md", vi:"Tải ý tưởng .md"},
-  feedbackLabel: {zh:"對這個工具的意見（想加什麼、想改什麼）", vi:"Góp ý cho công cụ này (muốn thêm gì, muốn đổi gì)"},
-  feedbackPh: {zh:"例如：想要角色卡再多一點選項、想看到別組抽到什麼…", vi:"Ví dụ: muốn thẻ vai trò có nhiều lựa chọn hơn, muốn xem nhóm khác rút được gì…"},
-  feedbackBtn: {zh:"送出意見", vi:"Gửi góp ý"},
-  rerollBtn: {zh:"再玩一輪（可換角色）", vi:"Chơi vòng khác (có thể đổi vai trò)"},
-  footer: {zh:"編號僅供去識別化記錄，不會顯示或連結到姓名學號", vi:"Mã số chỉ dùng để ghi nhận ẩn danh, không hiển thị hoặc liên kết với tên/mã sinh viên"},
-  envLockHintText: {zh:"🔒 編號已鎖定，避免中途誤改", vi:"🔒 Mã số đã bị khóa để tránh sửa nhầm giữa chừng"},
-  envUnlockLinkText: {zh:"不是你？點此重新輸入", vi:"Không phải bạn? Bấm vào đây để nhập lại"},
-  errNoEnv: {zh:"請輸入信封上的編號", vi:"Vui lòng nhập mã số ghi trên phong bì"},
-  errNoRole: {zh:"請選一個角色", vi:"Vui lòng chọn một vai trò"},
-  onlyOneRolePrefix: {zh:"⚠️ 目前只有一種角色在等，配不到人！想加入的人請選：", vi:"⚠️ Hiện chỉ có một vai trò đang chờ, không ghép được nhóm! Ai muốn tham gia hãy chọn: "},
-  waitedTooLongPrefix: {zh:"⏳ 已經等超過30秒——目前缺其他角色的人，建議按下面「換角色」改選：", vi:"⏳ Đã chờ hơn 30 giây — hiện đang thiếu người ở vai trò khác, hãy bấm 'Đổi vai trò' bên dưới để chọn: "},
-  queueSummaryText: {zh:"目前等待中 {a} 人 · 配對中／進行中 {b} 人 · 進行中的討論 {c} 組",
-                     vi:"Đang chờ {a} người · Đang ghép/đang chơi {b} người · {c} nhóm đang thảo luận"},
-  copiedOk: {zh:"已複製，去 Gemini 貼上吧！", vi:"Đã sao chép, sang Gemini dán vào nhé!"},
-  copyFailPrefix: {zh:"自動複製失敗，請長按下面文字手動複製：", vi:"Sao chép tự động thất bại, hãy nhấn giữ đoạn văn bên dưới để tự sao chép:"},
-  savedOkPrefix: {zh:"已記錄 · ", vi:"Đã lưu · "},
-  saveFailPrefix: {zh:"記錄失敗：", vi:"Lưu thất bại: "},
-  feedbackOk: {zh:"謝謝，已送出！", vi:"Cảm ơn, đã gửi!"},
-  feedbackFailPrefix: {zh:"送出失敗：", vi:"Gửi thất bại: "},
-  autoNickPrefix: {zh:"🎲 幫你取了暱稱：", vi:"🎲 Đã đặt biệt danh cho bạn: "},
-  autoNickSuffix: {zh:"（下一輪想改就直接改暱稱那格）", vi:"（muốn đổi thì sửa trực tiếp ở ô biệt danh）"},
-};
 function t(key) { const e = I18N[key]; return e ? (e[currentLang] || e.zh) : key; }
 function applyLang(lang) {
   currentLang = lang;

@@ -580,6 +580,13 @@ function buildGeminiPrompt(round) {
   lines.push("");
   lines.push("請先幫我們探索 2-3 個可能的遊戲構想方向（不要一次給答案），每個方向簡短說明玩法核心跟台南文化元素怎麼融入。");
   lines.push("等我們告訴你選哪一個方向之後，再幫忙把它收斂成一段清楚的構想描述，包含：玩法核心、台南文化元素怎麼融入、大致的遊戲畫面或形式。");
+  // 2026-09-09 楊老師：組裡只要有人開越南語，貼回討論串的內容全組都要看得懂——
+  // 讓Gemini直接雙語回答，比另外接翻譯API簡單可靠，也不用擔心翻譯品質。
+  const hasVi = Object.values(round.players).some(p => p.lang === "vi");
+  if (hasVi) {
+    lines.push("");
+    lines.push("⚠️ 這組有越南語使用者，請每一段回覆都同時附中文和越南文兩個版本（先中文、後越南文，用小標題或分隔線區隔），確保全組都看得懂。");
+  }
   return lines.join("\n");
 }
 
@@ -751,6 +758,9 @@ function startQueue() {
   myQueueKey = qref.key;
   const entry = {env: myEnv, t: Date.now()};
   if (myNick) entry.nickname = myNick;
+  // 2026-09-09 楊老師：組裡只要有人開越南語，複製指令要自動變雙語，讓組員貼回來的
+  // 內容她也看得懂——先把每個人當下的語言設定存進queue，配對成round時才知道整組狀態。
+  if (currentLang !== "zh") entry.lang = currentLang;
   qref.set(entry);
   // 🔴 2026-09-08 抓到：等待中重整頁面／斷線，會留下永久的「幽靈排隊者」——
   // 之後可能被配對進一個房間但本人早就不在了，另一個人卡在空房間裡等。
@@ -867,7 +877,9 @@ function makeRound(group) {
     const players = {};
     const cards = {};
     won.forEach(g => {
-      players[g.env] = g.nickname ? { role: g.role, nickname: g.nickname } : { role: g.role };
+      players[g.env] = { role: g.role };
+      if (g.nickname) players[g.env].nickname = g.nickname;
+      if (g.lang) players[g.env].lang = g.lang; // 2026-09-09：組內任一人非中文，複製指令要變雙語
       if (!cards[g.role]) cards[g.role] = pick(deckFor(g.role));
     });
     const roundData = { createdAt: Date.now(), players, cards };

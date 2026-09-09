@@ -65,6 +65,7 @@
   <div style="display:flex;gap:8px;margin-bottom:10px">
     <button type="button" id="langZh" class="langbtn sel">中文</button>
     <button type="button" id="langVi" class="langbtn">Tiếng Việt</button>
+    <button type="button" id="langId" class="langbtn">Bahasa Indonesia</button>
   </div>
   <a class="back" href="index.html" data-i18n="back">← 回配對頁面</a>
   <h1 data-i18n="h1">完整卡池 · 文化遊戲松 Cultural Game Jam</h1>
@@ -144,16 +145,16 @@ const CREATIVE = [
   {v:"敘事抉擇 × 安平古堡", vVi:"Lựa chọn tự sự × Pháo đài An Bình", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"用古堡的歷史轉折（荷蘭/明鄭/清）設計玩家的分支選擇。", noteVi:"Dùng các bước ngoặt lịch sử của pháo đài cổ (Hà Lan/Minh Trịnh/Thanh) để thiết kế lựa chọn rẽ nhánh cho người chơi."},
   {v:"潛行動作 × 中西區巷弄", vVi:"Hành động lén lút × Ngõ hẻm quận Trung Tây", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。", noteVi:"Tận dụng sự chật hẹp, góc rẽ, điểm mù tầm nhìn của ngõ hẻm để thiết kế màn trốn tránh/lén lút."},
 ];
-function cv(card) { return currentLang === "vi" && card.vVi ? card.vVi : card.v; }
-function cd(card) { return currentLang === "vi" && card.dVi ? card.dVi : card.d; }
-function cnote(card) { return currentLang === "vi" && card.noteVi ? card.noteVi : (card.note || ""); }
+function cv(card) { return currentLang === "id" && card.vId ? card.vId : currentLang === "vi" && card.vVi ? card.vVi : card.v; }
+function cd(card) { return currentLang === "id" && card.dId ? card.dId : currentLang === "vi" && card.dVi ? card.dVi : card.d; }
+function cnote(card) { return currentLang === "id" && card.noteId ? card.noteId : currentLang === "vi" && card.noteVi ? card.noteVi : (card.note || ""); }
 const SECTIONS = [
-  {key:"producer", code:"P", title:"🎬 執行製作人", titleVi:"🎬 Nhà sản xuất điều hành", deck:PRODUCER, dfl:"時程與資源"},
-  {key:"engineer", code:"E", title:"🔧 首席工程師", titleVi:"🔧 Kỹ sư trưởng", deck:ENGINEER, dfl:"形式／平台"},
-  {key:"marketing", code:"M", title:"📣 行銷主管", titleVi:"📣 Trưởng phòng tiếp thị", deck:MARKETING, dfl:"客群／情感訴求"},
-  {key:"creative", code:"C", title:"🎨 創意總監", titleVi:"🎨 Giám đốc sáng tạo", deck:CREATIVE, dfl:"類型 × 台南文化元素"},
+  {key:"producer", code:"P", title:"🎬 執行製作人", titleVi:"🎬 Nhà sản xuất điều hành", titleId:"🎬 Produser Eksekutif", deck:PRODUCER, dfl:"時程與資源"},
+  {key:"engineer", code:"E", title:"🔧 首席工程師", titleVi:"🔧 Kỹ sư trưởng", titleId:"🔧 Insinyur Kepala", deck:ENGINEER, dfl:"形式／平台"},
+  {key:"marketing", code:"M", title:"📣 行銷主管", titleVi:"📣 Trưởng phòng tiếp thị", titleId:"📣 Kepala Pemasaran", deck:MARKETING, dfl:"客群／情感訴求"},
+  {key:"creative", code:"C", title:"🎨 創意總監", titleVi:"🎨 Giám đốc sáng tạo", titleId:"🎨 Direktur Kreatif", deck:CREATIVE, dfl:"類型 × 台南文化元素"},
 ];
-const stitle = s => currentLang === "vi" ? s.titleVi : s.title;
+const stitle = s => currentLang === "id" ? (s.titleId||s.title) : currentLang === "vi" ? s.titleVi : s.title;
 
 const firebaseConfig = {
   apiKey: "AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
@@ -215,40 +216,43 @@ function renderAll() {
 }
 
 const I18N = {
-  back: {zh:"← 回配對頁面", vi:"← Về trang ghép nhóm"},
-  h1: {zh:"完整卡池 · 文化遊戲松 Cultural Game Jam", vi:"Bộ thẻ đầy đủ · Game Jam Văn Hóa 文化遊戲松"},
+  back: {zh:"← 回配對頁面", vi:"← Về trang ghép nhóm", id:"← Kembali ke halaman pencocokan"},
+  h1: {zh:"完整卡池 · 文化遊戲松 Cultural Game Jam", vi:"Bộ thẻ đầy đủ · Game Jam Văn Hóa 文化遊戲松", id:"Kumpulan Kartu Lengkap · Game Jam Budaya 文化遊戲松"},
   sub: {zh:"目前遊戲裡所有角色的所有卡片內容，方便瀏覽全貌、也方便楊老師比對更新。虛線外框的是同學新增的自訂卡，會即時加進抽卡池裡增加多元性。",
-        vi:"Toàn bộ nội dung thẻ của tất cả vai trò trong trò chơi, để dễ xem tổng quan và giáo viên đối chiếu cập nhật. Thẻ viền nét đứt là thẻ do bạn học tự thêm, sẽ được đưa vào bộ rút thẻ ngay lập tức để tăng tính đa dạng."},
-  addH2: {zh:"➕ 新增一張你的卡片", vi:"➕ Thêm một thẻ của bạn"},
-  addEnvLabel: {zh:"你的編號（登入過的話會自動帶入，可以改）", vi:"Mã số của bạn (tự động điền nếu đã đăng nhập, có thể sửa)"},
-  addRoleLabel: {zh:"要加進哪個角色的卡池", vi:"Thêm vào bộ thẻ của vai trò nào"},
-  optProducer: {zh:"🎬 執行製作人（時程與資源）", vi:"🎬 Nhà sản xuất điều hành (Tiến độ và nguồn lực)"},
-  optEngineer: {zh:"🔧 首席工程師（形式／平台）", vi:"🔧 Kỹ sư trưởng (Hình thức／nền tảng)"},
-  optMarketing: {zh:"📣 行銷主管（客群／情感訴求）", vi:"📣 Trưởng phòng tiếp thị (Đối tượng／nhu cầu cảm xúc)"},
-  optCreative: {zh:"🎨 創意總監（類型 × 台南文化元素）", vi:"🎨 Giám đốc sáng tạo (Thể loại × Yếu tố văn hóa Đài Nam)"},
-  addVLabel: {zh:"卡片內容（例如：夜市攤販／獵奇感，或 直播互動遊戲）", vi:"Nội dung thẻ (VD: gian hàng chợ đêm／cảm giác kỳ lạ, hoặc trò chơi tương tác livestream)"},
-  addVPh: {zh:"卡片內容，60字以內", vi:"Nội dung thẻ, tối đa 60 ký tự"},
-  addNoteLabel: {zh:"一句補充說明（選填）", vi:"Một câu bổ sung (không bắt buộc)"},
-  addNotePh: {zh:"這張卡在提示什麼、怎麼用", vi:"Thẻ này gợi ý điều gì, dùng thế nào"},
-  addBtn: {zh:"加進卡池", vi:"Thêm vào bộ thẻ"},
-  lookupH2: {zh:"🔍 查我抽過哪些卡", vi:"🔍 Xem tôi đã rút những thẻ nào"},
-  lookupPh: {zh:"輸入你的編號", vi:"Nhập mã số của bạn"},
-  lookupBtn: {zh:"查詢", vi:"Tra cứu"},
-  errNoEnv: {zh:"請輸入信封上的編號", vi:"Vui lòng nhập mã số ghi trên phong bì"},
-  errNoV: {zh:"請輸入卡片內容", vi:"Vui lòng nhập nội dung thẻ"},
-  noCardsYet: {zh:"還沒有抽過任何卡", vi:"chưa rút thẻ nào"},
-  playedRounds: {zh:"總共玩過 {n} 輪：", vi:"đã chơi tổng cộng {n} vòng:"},
-  roundNth: {zh:"第{n}輪　", vi:"Vòng {n}　"},
-  addOk: {zh:"✅ 新卡已加入卡池，其他人可能會抽到囉！", vi:"✅ Thẻ mới đã được thêm vào bộ thẻ, người khác có thể rút được đấy!"},
-  addFailPrefix: {zh:"送出失敗：", vi:"Gửi thất bại: "},
-  usedTimes: {zh:"全班已抽過 {n} 次", vi:"cả lớp đã rút {n} lần"},
-  addedByLabel: {zh:"新增", vi:"đã thêm"},
-  cardCountText: {zh:"{total} 張卡（含 {custom} 張同學新增）", vi:"{total} thẻ (gồm {custom} thẻ do bạn học thêm)"},
+        vi:"Toàn bộ nội dung thẻ của tất cả vai trò trong trò chơi, để dễ xem tổng quan và giáo viên đối chiếu cập nhật. Thẻ viền nét đứt là thẻ do bạn học tự thêm, sẽ được đưa vào bộ rút thẻ ngay lập tức để tăng tính đa dạng.",
+        id:"Semua konten kartu dari semua peran dalam permainan saat ini, agar mudah dilihat secara keseluruhan dan memudahkan dosen membandingkan pembaruan. Kartu dengan garis putus-putus adalah kartu tambahan dari teman, akan langsung masuk ke kumpulan kartu untuk menambah keberagaman."},
+  addH2: {zh:"➕ 新增一張你的卡片", vi:"➕ Thêm một thẻ của bạn", id:"➕ Tambahkan satu kartu milikmu"},
+  addEnvLabel: {zh:"你的編號（登入過的話會自動帶入，可以改）", vi:"Mã số của bạn (tự động điền nếu đã đăng nhập, có thể sửa)", id:"Nomor Anda (akan terisi otomatis jika sudah login, bisa diubah)"},
+  addRoleLabel: {zh:"要加進哪個角色的卡池", vi:"Thêm vào bộ thẻ của vai trò nào", id:"Ingin ditambahkan ke kumpulan kartu peran mana"},
+  optProducer: {zh:"🎬 執行製作人（時程與資源）", vi:"🎬 Nhà sản xuất điều hành (Tiến độ và nguồn lực)", id:"🎬 Produser Eksekutif (Jadwal dan Sumber Daya)"},
+  optEngineer: {zh:"🔧 首席工程師（形式／平台）", vi:"🔧 Kỹ sư trưởng (Hình thức／nền tảng)", id:"🔧 Insinyur Kepala (Bentuk／Platform)"},
+  optMarketing: {zh:"📣 行銷主管（客群／情感訴求）", vi:"📣 Trưởng phòng tiếp thị (Đối tượng／nhu cầu cảm xúc)", id:"📣 Kepala Pemasaran (Target Audiens／Daya Tarik Emosional)"},
+  optCreative: {zh:"🎨 創意總監（類型 × 台南文化元素）", vi:"🎨 Giám đốc sáng tạo (Thể loại × Yếu tố văn hóa Đài Nam)", id:"🎨 Direktur Kreatif (Genre × Elemen Budaya Tainan)"},
+  addVLabel: {zh:"卡片內容（例如：夜市攤販／獵奇感，或 直播互動遊戲）", vi:"Nội dung thẻ (VD: gian hàng chợ đêm／cảm giác kỳ lạ, hoặc trò chơi tương tác livestream)", id:"Isi kartu (contoh: pedagang pasar malam／kesan aneh, atau game interaktif live streaming)"},
+  addVPh: {zh:"卡片內容，60字以內", vi:"Nội dung thẻ, tối đa 60 ký tự", id:"Isi kartu, maksimal 60 karakter"},
+  addNoteLabel: {zh:"一句補充說明（選填）", vi:"Một câu bổ sung (không bắt buộc)", id:"Satu kalimat penjelasan tambahan (opsional)"},
+  addNotePh: {zh:"這張卡在提示什麼、怎麼用", vi:"Thẻ này gợi ý điều gì, dùng thế nào", id:"Kartu ini memberi petunjuk apa, bagaimana menggunakannya"},
+  addBtn: {zh:"加進卡池", vi:"Thêm vào bộ thẻ", id:"Tambahkan ke kumpulan kartu"},
+  lookupH2: {zh:"🔍 查我抽過哪些卡", vi:"🔍 Xem tôi đã rút những thẻ nào", id:"🔍 Cek kartu apa saja yang sudah aku ambil"},
+  lookupPh: {zh:"輸入你的編號", vi:"Nhập mã số của bạn", id:"Masukkan nomor Anda"},
+  lookupBtn: {zh:"查詢", vi:"Tra cứu", id:"Cari"},
+  errNoEnv: {zh:"請輸入信封上的編號", vi:"Vui lòng nhập mã số ghi trên phong bì", id:"Silakan masukkan nomor yang ada di amplop"},
+  errNoV: {zh:"請輸入卡片內容", vi:"Vui lòng nhập nội dung thẻ", id:"Silakan masukkan isi kartu"},
+  noCardsYet: {zh:"還沒有抽過任何卡", vi:"chưa rút thẻ nào", id:"belum pernah mengambil kartu apapun"},
+  playedRounds: {zh:"總共玩過 {n} 輪：", vi:"đã chơi tổng cộng {n} vòng:", id:"total sudah main {n} putaran:"},
+  roundNth: {zh:"第{n}輪　", vi:"Vòng {n}　", id:"Putaran {n}　"},
+  addOk: {zh:"✅ 新卡已加入卡池，其他人可能會抽到囉！", vi:"✅ Thẻ mới đã được thêm vào bộ thẻ, người khác có thể rút được đấy!", id:"✅ Kartu baru sudah ditambahkan ke kumpulan kartu, orang lain mungkin akan mengambilnya!"},
+  addFailPrefix: {zh:"送出失敗：", vi:"Gửi thất bại: ", id:"Gagal mengirim: "},
+  usedTimes: {zh:"全班已抽過 {n} 次", vi:"cả lớp đã rút {n} lần", id:"sudah diambil {n} kali oleh kelas"},
+  addedByLabel: {zh:"新增", vi:"đã thêm", id:"menambahkan"},
+  cardCountText: {zh:"{total} 張卡（含 {custom} 張同學新增）", vi:"{total} thẻ (gồm {custom} thẻ do bạn học thêm)", id:"{total} kartu (termasuk {custom} kartu tambahan dari teman)"},
   mergeAskText: {zh:"📎 有同學新增的卡片跟你的「{mine}」很像：「{other}」。要不要合併成一張？（需要雙方都同意才會真的合併；不同意的話兩張都會留著，互不影響）",
-                 vi:"📎 Có bạn học thêm một thẻ giống thẻ 「{mine}」 của bạn: 「{other}」. Bạn có muốn gộp thành một thẻ không? (cần cả hai bên đồng ý mới thực sự gộp; nếu không đồng ý thì cả hai thẻ vẫn giữ nguyên)"},
+                 vi:"📎 Có bạn học thêm một thẻ giống thẻ 「{mine}」 của bạn: 「{other}」. Bạn có muốn gộp thành một thẻ không? (cần cả hai bên đồng ý mới thực sự gộp; nếu không đồng ý thì cả hai thẻ vẫn giữ nguyên)",
+                 id:"📎 Ada teman yang menambahkan kartu mirip dengan 「{mine}」 milikmu: 「{other}」. Mau digabung jadi satu kartu? (perlu persetujuan kedua pihak baru benar-benar digabung; kalau tidak setuju, kedua kartu tetap ada, tidak saling memengaruhi)"},
   junkDeleteAskText: {zh:"🗑️ 你之前新增的卡片「{v}」內容看起來像是測試或隨手打的，目前不會出現在正式抽卡池中。方便的話，同意把它從卡池刪除嗎？（不同意也沒關係，卡片會保留，但一樣不會被抽到）",
-                      vi:"🗑️ Thẻ 「{v}」 bạn đã thêm trước đây có vẻ như nội dung thử nghiệm hoặc gõ ngẫu nhiên, hiện không xuất hiện trong bộ thẻ chính thức. Nếu tiện, bạn có đồng ý xóa nó khỏi kho thẻ không? (nếu không đồng ý cũng không sao, thẻ vẫn giữ nguyên nhưng vẫn không được rút)"},
-  junkFlagLabel: {zh:"疑似測試，暫不進抽卡池", vi:"Nghi ngờ là thử nghiệm, tạm không vào bộ rút thẻ"},
+                      vi:"🗑️ Thẻ 「{v}」 bạn đã thêm trước đây có vẻ như nội dung thử nghiệm hoặc gõ ngẫu nhiên, hiện không xuất hiện trong bộ thẻ chính thức. Nếu tiện, bạn có đồng ý xóa nó khỏi kho thẻ không? (nếu không đồng ý cũng không sao, thẻ vẫn giữ nguyên nhưng vẫn không được rút)",
+                      id:"🗑️ Kartu 「{v}」 yang kamu tambahkan sebelumnya sepertinya konten uji coba atau asal ketik, saat ini tidak akan muncul di kumpulan kartu resmi. Kalau berkenan, apakah kamu setuju menghapusnya dari kumpulan kartu? (kalau tidak setuju juga tidak masalah, kartu akan tetap ada tapi tetap tidak akan diambil)"},
+  junkFlagLabel: {zh:"疑似測試，暫不進抽卡池", vi:"Nghi ngờ là thử nghiệm, tạm không vào bộ rút thẻ", id:"Diduga uji coba, sementara tidak masuk kumpulan kartu"},
 };
 function t(key) { const e = I18N[key]; return e ? (e[currentLang] || e.zh) : key; }
 function applyLang(lang) {
@@ -258,10 +262,12 @@ function applyLang(lang) {
   document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.getElementById("langZh").classList.toggle("sel", lang === "zh");
   document.getElementById("langVi").classList.toggle("sel", lang === "vi");
+  document.getElementById("langId").classList.toggle("sel", lang === "id");
   renderAll();
 }
 document.getElementById("langZh").onclick = () => applyLang("zh");
 document.getElementById("langVi").onclick = () => applyLang("vi");
+document.getElementById("langId").onclick = () => applyLang("id");
 
 SECTIONS.forEach(s => {
   db.ref(`${NS}/customCards/${s.key}`).on("value", snap => {

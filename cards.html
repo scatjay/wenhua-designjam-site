@@ -76,10 +76,10 @@
     <input type="number" id="addEnv" min="0" max="130" placeholder="例如 17">
     <label data-i18n="addRoleLabel">要加進哪個角色的卡池</label>
     <select id="addRole">
-      <option value="producer" data-i18n="optProducer">🟢 執行製作人（時程與資源）</option>
-      <option value="engineer" data-i18n="optEngineer">🔵 首席工程師（形式／平台）</option>
-      <option value="marketing" data-i18n="optMarketing">🟣 行銷主管（客群／情感訴求）</option>
-      <option value="creative" data-i18n="optCreative">🔴 創意總監（類型 × 台南文化元素）</option>
+      <option value="producer" data-i18n="optProducer">🎬 執行製作人（時程與資源）</option>
+      <option value="engineer" data-i18n="optEngineer">🔧 首席工程師（形式／平台）</option>
+      <option value="marketing" data-i18n="optMarketing">📣 行銷主管（客群／情感訴求）</option>
+      <option value="creative" data-i18n="optCreative">🎨 創意總監（類型 × 台南文化元素）</option>
     </select>
     <label data-i18n="addVLabel">卡片內容（例如：夜市攤販／獵奇感，或 直播互動遊戲）</label>
     <input type="text" id="addV" maxlength="60" placeholder="卡片內容，60字以內" data-i18n-ph="addVPh">
@@ -148,10 +148,10 @@ function cv(card) { return currentLang === "vi" && card.vVi ? card.vVi : card.v;
 function cd(card) { return currentLang === "vi" && card.dVi ? card.dVi : card.d; }
 function cnote(card) { return currentLang === "vi" && card.noteVi ? card.noteVi : (card.note || ""); }
 const SECTIONS = [
-  {key:"producer", code:"P", title:"🟢 執行製作人", titleVi:"🟢 Nhà sản xuất điều hành", deck:PRODUCER, dfl:"時程與資源"},
-  {key:"engineer", code:"E", title:"🔵 首席工程師", titleVi:"🔵 Kỹ sư trưởng", deck:ENGINEER, dfl:"形式／平台"},
-  {key:"marketing", code:"M", title:"🟣 行銷主管", titleVi:"🟣 Trưởng phòng tiếp thị", deck:MARKETING, dfl:"客群／情感訴求"},
-  {key:"creative", code:"C", title:"🔴 創意總監", titleVi:"🔴 Giám đốc sáng tạo", deck:CREATIVE, dfl:"類型 × 台南文化元素"},
+  {key:"producer", code:"P", title:"🎬 執行製作人", titleVi:"🎬 Nhà sản xuất điều hành", deck:PRODUCER, dfl:"時程與資源"},
+  {key:"engineer", code:"E", title:"🔧 首席工程師", titleVi:"🔧 Kỹ sư trưởng", deck:ENGINEER, dfl:"形式／平台"},
+  {key:"marketing", code:"M", title:"📣 行銷主管", titleVi:"📣 Trưởng phòng tiếp thị", deck:MARKETING, dfl:"客群／情感訴求"},
+  {key:"creative", code:"C", title:"🎨 創意總監", titleVi:"🎨 Giám đốc sáng tạo", deck:CREATIVE, dfl:"類型 × 台南文化元素"},
 ];
 const stitle = s => currentLang === "vi" ? s.titleVi : s.title;
 
@@ -222,10 +222,10 @@ const I18N = {
   addH2: {zh:"➕ 新增一張你的卡片", vi:"➕ Thêm một thẻ của bạn"},
   addEnvLabel: {zh:"你的編號（登入過的話會自動帶入，可以改）", vi:"Mã số của bạn (tự động điền nếu đã đăng nhập, có thể sửa)"},
   addRoleLabel: {zh:"要加進哪個角色的卡池", vi:"Thêm vào bộ thẻ của vai trò nào"},
-  optProducer: {zh:"🟢 執行製作人（時程與資源）", vi:"🟢 Nhà sản xuất điều hành (Tiến độ và nguồn lực)"},
-  optEngineer: {zh:"🔵 首席工程師（形式／平台）", vi:"🔵 Kỹ sư trưởng (Hình thức／nền tảng)"},
-  optMarketing: {zh:"🟣 行銷主管（客群／情感訴求）", vi:"🟣 Trưởng phòng tiếp thị (Đối tượng／nhu cầu cảm xúc)"},
-  optCreative: {zh:"🔴 創意總監（類型 × 台南文化元素）", vi:"🔴 Giám đốc sáng tạo (Thể loại × Yếu tố văn hóa Đài Nam)"},
+  optProducer: {zh:"🎬 執行製作人（時程與資源）", vi:"🎬 Nhà sản xuất điều hành (Tiến độ và nguồn lực)"},
+  optEngineer: {zh:"🔧 首席工程師（形式／平台）", vi:"🔧 Kỹ sư trưởng (Hình thức／nền tảng)"},
+  optMarketing: {zh:"📣 行銷主管（客群／情感訴求）", vi:"📣 Trưởng phòng tiếp thị (Đối tượng／nhu cầu cảm xúc)"},
+  optCreative: {zh:"🎨 創意總監（類型 × 台南文化元素）", vi:"🎨 Giám đốc sáng tạo (Thể loại × Yếu tố văn hóa Đài Nam)"},
   addVLabel: {zh:"卡片內容（例如：夜市攤販／獵奇感，或 直播互動遊戲）", vi:"Nội dung thẻ (VD: gian hàng chợ đêm／cảm giác kỳ lạ, hoặc trò chơi tương tác livestream)"},
   addVPh: {zh:"卡片內容，60字以內", vi:"Nội dung thẻ, tối đa 60 ký tự"},
   addNoteLabel: {zh:"一句補充說明（選填）", vi:"Một câu bổ sung (không bắt buộc)"},

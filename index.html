@@ -82,12 +82,10 @@
   .statusTag.idle{background:var(--accent-soft);color:var(--accent)}
   .statusTag.off{background:var(--red-soft);color:var(--red)}
 
-  .qrbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-  .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;flex:0 0 auto;line-height:0;border:1px solid var(--line)}
-  .qrbox #qrcanvas img,.qrbox #qrcanvas table{display:block}
-  .qrmeta{flex:1;min-width:180px}
-  .qrmeta .t{font-weight:800;font-size:15px;margin-bottom:4px}
-  .qrmeta .u{font-family:monospace;font-size:12px;color:var(--ink-soft);word-break:break-all}
+  .qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+  .qrbox .t{font-weight:800;font-size:15px}
+  .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line)}
+  .qrbox #qrcanvas img,.qrbox #qrcanvas table{display:block;margin:0 auto}
   .donecard{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
   .donecard-inner{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:2px solid var(--accent);border-radius:16px;padding:24px;text-align:center;max-width:480px;width:100%;margin:auto}
   .donecard .badge{display:inline-block;background:var(--accent);color:#fff;font-weight:800;font-size:13px;letter-spacing:.03em;padding:5px 14px;border-radius:999px;margin-bottom:10px}
@@ -135,11 +133,8 @@
   <div class="queuesummary" id="queuesummary"></div>
 
   <div class="card-box qrbox">
+    <div class="t">手機掃這裡加入</div>
     <div id="qrcanvas"></div>
-    <div class="qrmeta">
-      <div class="t">手機掃這裡加入</div>
-      <div class="u" id="urlText"></div>
-    </div>
   </div>
 
   <div class="card-box">
@@ -364,19 +359,19 @@ function cv(card) { return currentLang === "vi" && card.vVi ? card.vVi : card.v;
 function cd(card) { return currentLang === "vi" && card.dVi ? card.dVi : card.d; }
 function cnote(card) { return currentLang === "vi" && card.noteVi ? card.noteVi : (card.note || ""); }
 const ROLES = [
-  {key:"producer", label:"執行製作人", labelVi:"Nhà sản xuất điều hành", emoji:"🟢", cls:"rc-producer", deck:PRODUCER,
+  {key:"producer", label:"執行製作人", labelVi:"Nhà sản xuất điều hành", emoji:"🎬", cls:"rc-producer", deck:PRODUCER,
     ask:"要在什麼時程／資源下做出這個東西？", askVi:"Cần làm ra thứ này trong thời gian／nguồn lực nào?",
     desc:"管時程、預算、人力。負責提醒大家「這在現實中做得完嗎？」",
     descVi:"Quản lý tiến độ, ngân sách, nhân lực. Nhắc mọi người 'liệu có làm xong trong thực tế không?'"},
-  {key:"engineer", label:"首席工程師", labelVi:"Kỹ sư trưởng", emoji:"🔵", cls:"rc-engineer", deck:ENGINEER,
+  {key:"engineer", label:"首席工程師", labelVi:"Kỹ sư trưởng", emoji:"🔧", cls:"rc-engineer", deck:ENGINEER,
     ask:"這個構想要用什麼形式／平台做出來？", askVi:"Ý tưởng này sẽ được làm ra dưới hình thức／nền tảng nào?",
     desc:"管技術實現。負責決定「這個構想具體要用什麼形式做出來」",
     descVi:"Quản lý việc hiện thực hóa kỹ thuật. Quyết định 'ý tưởng này cụ thể sẽ làm bằng hình thức gì'"},
-  {key:"marketing", label:"行銷主管", labelVi:"Trưởng phòng tiếp thị", emoji:"🟣", cls:"rc-marketing", deck:MARKETING,
+  {key:"marketing", label:"行銷主管", labelVi:"Trưởng phòng tiếp thị", emoji:"📣", cls:"rc-marketing", deck:MARKETING,
     ask:"這是要做給誰玩、打中他們什麼感覺？", askVi:"Trò chơi này làm cho ai chơi, chạm đến cảm xúc gì của họ?",
     desc:"管客群與賣點。負責提醒大家「這個東西要吸引誰、憑什麼吸引他」",
     descVi:"Quản lý đối tượng khách hàng và điểm bán. Nhắc mọi người 'thứ này thu hút ai, vì sao thu hút được họ'"},
-  {key:"creative", label:"創意總監", labelVi:"Giám đốc sáng tạo", emoji:"🔴", cls:"rc-creative", deck:CREATIVE,
+  {key:"creative", label:"創意總監", labelVi:"Giám đốc sáng tạo", emoji:"🎨", cls:"rc-creative", deck:CREATIVE,
     ask:"遊戲類型和台南文化元素要怎麼結合？", askVi:"Thể loại trò chơi và yếu tố văn hóa Đài Nam sẽ kết hợp thế nào?",
     desc:"管整體願景。負責決定「這是一個什麼類型的遊戲、怎麼融入台南文化」",
     descVi:"Quản lý tầm nhìn tổng thể. Quyết định 'đây là thể loại trò chơi gì, làm sao đưa văn hóa Đài Nam vào'"},
@@ -480,8 +475,6 @@ setInterval(updateWaitHint, 5000);
 // 隔離，QR畫不出來就跳過，不影響其他功能。
 (function renderQR(){
   const url = location.href.split("#")[0].split("?")[0];
-  const urlEl = document.getElementById("urlText");
-  if (urlEl) urlEl.textContent = url;
   try {
     const qr = qrcode(0, "M");
     qr.addData(url);

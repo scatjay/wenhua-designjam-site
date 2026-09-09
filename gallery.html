@@ -56,7 +56,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const NS = "whgm";
-const ROLE_LABEL = {producer:"🟢 製作人", engineer:"🔵 工程師", marketing:"🟣 行銷", creative:"🔴 創意總監"};
+const ROLE_LABEL = {producer:"🎬 製作人", engineer:"🔧 工程師", marketing:"📣 行銷", creative:"🎨 創意總監"};
 function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }
 function escapeHtml(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
 function $(id){ return document.getElementById(id); }

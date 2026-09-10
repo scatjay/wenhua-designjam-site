@@ -89,6 +89,18 @@
     </p>
   </details>
 
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">📡 Vertex AI 用量監控（收斂視覺化即時生成用）</summary>
+    <div id="vertexUsagePanel" style="font-size:13px;color:var(--ink-soft);line-height:1.8;margin-top:10px">載入中…</div>
+    <p style="font-size:11px;opacity:.75;margin-top:10px">
+      2026-09-10新增：企劃收斂視覺化改用Vertex即時生成embedding，楊老師要求同步監控流量
+      （呼應之前東海中文工作坊舊服務意外燒錢的教訓，見<code>_GCP_預算風險防範.md</code>）。
+      跑<code>test_tools/vertex_usage_monitor.py</code>更新這裡的數字，只顯示次數/錯誤數，
+      <b>不換算金額</b>（帳單頁面不標幣別，換算容易出錯，見既有教訓）——要看實際費用請直接開
+      GCP Console帳單頁。目前手動執行，之後可以跟ena_pipeline.py排在同一個排程一起自動跑。
+    </p>
+  </details>
+
   <h2 style="font-size:16px;margin:0 0 10px">🧑‍🎓 真實學生配對記錄</h2>
   <table>
     <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
@@ -433,6 +445,27 @@ db.ref(`${NS}/analysis/ena`).on("value", snap => {
     html += `</tbody></table>`;
   }
 
+  el.innerHTML = html;
+});
+
+db.ref(`${NS}/analysis/vertexUsage`).on("value", snap => {
+  const d = snap.val();
+  const el = $("vertexUsagePanel");
+  if (!d) { el.textContent = "尚未產生監控資料（跑一次 test_tools/vertex_usage_monitor.py 之後會顯示在這裡）"; return; }
+  let html = `<p>最近 <b>${d.windowHours}</b> 小時，專案 <code>${d.project}</code> 共 ` +
+    `<b>${d.totalRequests}</b> 次呼叫、<b style="color:${d.totalErrors > 0 ? 'var(--warn)' : 'var(--ok)'}">${d.totalErrors}</b> 次錯誤` +
+    `（更新於 ${fmtTime(d.generatedAt)}）</p>`;
+  const models = (d.byModel || []).slice().sort((a, b) => b.requests - a.requests);
+  if (models.length) {
+    html += `<table style="margin-top:4px"><thead><tr><th>模型／端點</th><th style="width:70px">次數</th><th style="width:70px">錯誤</th></tr></thead><tbody>`;
+    models.forEach(m => {
+      const isEmbed = m.model.includes("embedding");
+      html += `<tr><td>${isEmbed ? "🎯 " : ""}${m.model}</td><td class="pair">${m.requests}</td>` +
+        `<td class="pair" style="color:${m.errors > 0 ? 'var(--warn)' : 'inherit'}">${m.errors}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+    html += `<p style="font-size:11px;opacity:.7;margin-top:4px">🎯＝企劃收斂視覺化用的embedding模型（text-multilingual-embedding-002），其餘是同一個EDU專案下其他既有用途（作業批改等）的Gemini呼叫，混在一起看是正常的——這個專案本來就共用。</p>`;
+  }
   el.innerHTML = html;
 });
 

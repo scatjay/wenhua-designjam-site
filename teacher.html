@@ -466,6 +466,22 @@ db.ref(`${NS}/analysis/vertexUsage`).on("value", snap => {
     html += `</tbody></table>`;
     html += `<p style="font-size:11px;opacity:.7;margin-top:4px">🎯＝企劃收斂視覺化用的embedding模型（text-multilingual-embedding-002），其餘是同一個EDU專案下其他既有用途（作業批改等）的Gemini呼叫，混在一起看是正常的——這個專案本來就共用。</p>`;
   }
+
+  const cr = d.credits;
+  if (cr && cr.ok && (cr.credits || []).length) {
+    html += `<p style="font-weight:700;margin-top:14px">💰 剩餘抵免額（移植自llm-ops，${cr.stale ? `<span style="color:var(--warn)">已${Math.round(cr.age_min)}分鐘沒更新，可能不是最新值</span>` : "最新"}）</p>`;
+    html += `<table style="margin-top:4px"><thead><tr><th>額度名稱</th><th style="width:110px">剩餘</th><th style="width:90px">燒錢速率</th><th style="width:80px">到期</th></tr></thead><tbody>`;
+    cr.credits.forEach(c => {
+      const left = `${c.sign || ""}${c.left.toLocaleString("zh-TW", {maximumFractionDigits: 2})} ${c.currency}`;
+      const burn = c.burn_per_hr ? `${c.sign || ""}${c.burn_per_hr.toLocaleString("zh-TW")}/hr` : "—";
+      html += `<tr><td style="font-size:12px">${c.name}</td><td class="pair">${left}</td><td class="pair">${burn}</td><td style="font-size:11px">${c.end || "—"}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+    html += `<p style="font-size:11px;opacity:.7;margin-top:4px">刻意不給「合計」——不同額度池子的適用範圍不一定都涵蓋Vertex，相加會顯示一個不對應真實可用預算的誤導數字（沿用llm-ops既有的設計原則）。要真的重新整理這裡的數字，需要一顆停在<code>console.cloud.google.com/billing/&lt;帳戶&gt;/</code>的登入分頁，跑<code>llm-ops/credits_api.py</code>。</p>`;
+  } else if (cr && !cr.ok) {
+    html += `<p style="font-size:12px;margin-top:10px">💰 抵免額資訊目前讀不到（${cr.error || cr.why || "llm-ops尚無記錄"}）——不影響上面的呼叫次數統計。</p>`;
+  }
+
   el.innerHTML = html;
 });
 

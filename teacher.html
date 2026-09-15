@@ -278,29 +278,70 @@ const TEACHER_PASSCODE = "0909";
 
   // --- Google 登入 ---
   const btn = document.getElementById("gGoogle");
+  // 白名單比對＋解鎖，popup 與 redirect 兩條路共用
+  function acceptUser(user){
+    const email = ((user && user.email) || "").toLowerCase();
+    if (TEACHER_EMAILS.map(x => x.toLowerCase()).indexOf(email) >= 0) { unlock(email); return true; }
+    try { firebase.auth().signOut(); } catch(_) {}
+    say("這個帳號（" + email + "）不在教師名單裡。<br>要加人請改 teacher.html 的 TEACHER_EMAILS，" +
+        "或直接用下面的備援密碼。");
+    return false;
+  }
+
+  function explain(err){
+    const c = (err && err.code) || "";
+    if (c === "auth/unauthorized-domain") {
+      say("🔴 這個網域還沒被 Firebase 授權。<br>Console → Authentication → Settings → " +
+          "Authorized domains 加上 <b>scatjay.github.io</b>。<br><b>現在先用下面的備援密碼。</b>");
+    } else if (c === "auth/operation-not-allowed") {
+      say("🔴 Firebase 專案還沒啟用 Google 登入。<br>Console → Authentication → Sign-in method → " +
+          "啟用 <b>Google</b>。<br><b>現在先用下面的備援密碼。</b>");
+    } else {
+      // 🔴 絕不吞掉錯誤訊息。之前 popup-closed 被 say("") 清成空字串，
+      //    使用者看到的就是「按了完全沒反應」，連要不要重試都判斷不了。
+      say("登入沒完成（" + (c || "unknown") + "）。<br><b>直接用下面的備援密碼最快。</b>");
+    }
+  }
+
+  function newProvider(){
+    const p = new firebase.auth.GoogleAuthProvider();
+    p.setCustomParameters({ prompt: "select_account" });
+    return p;
+  }
+
+  // 手機／平板一律走 redirect：手機瀏覽器普遍擋 popup，
+  // 而被擋掉的時候畫面上什麼都不會發生（2026-09-16 楊老師在手機上實際踩到）。
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(navigator.userAgent)
+                || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+
+  // 從 Google 導回來的那一次，要把結果接住
+  if (firebase.auth) {
+    firebase.auth().getRedirectResult().then(res => {
+      if (res && res.user) acceptUser(res.user);
+    }).catch(explain);
+  }
+
   if (btn) btn.onclick = () => {
     if (!firebase.auth) { say("這個瀏覽器載不到 Google 登入元件，請用下面的備援密碼。"); return; }
+    if (isMobile) {
+      say("轉到 Google 登入頁…（登入完會自動回來）");
+      firebase.auth().signInWithRedirect(newProvider()).catch(explain);
+      return;
+    }
     say("開啟 Google 登入視窗…");
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-    firebase.auth().signInWithPopup(provider).then(res => {
-      const email = ((res.user && res.user.email) || "").toLowerCase();
-      if (TEACHER_EMAILS.map(x => x.toLowerCase()).indexOf(email) >= 0) { unlock(email); return; }
-      firebase.auth().signOut();
-      say("這個帳號（" + email + "）不在教師名單裡。<br>要加人請改 teacher.html 的 TEACHER_EMAILS。");
-    }).catch(err => {
-      const c = err && err.code || "";
-      if (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") { say(""); return; }
-      if (c === "auth/unauthorized-domain") {
-        say("🔴 這個網域還沒被 Firebase 授權。<br>到 Firebase Console → Authentication → Settings →" +
-            " Authorized domains 加上 <b>scatjay.github.io</b>，然後重試。<br>現在可以先用下面的備援密碼。");
-      } else if (c === "auth/operation-not-allowed") {
-        say("🔴 Firebase 專案還沒開啟 Google 登入。<br>到 Console → Authentication → Sign-in method →" +
-            " 啟用 <b>Google</b>，然後重試。<br>現在可以先用下面的備援密碼。");
-      } else {
-        say("登入失敗：" + (err && err.message || c) + "<br>可以先用下面的備援密碼。");
-      }
-    });
+    firebase.auth().signInWithPopup(newProvider())
+      .then(res => acceptUser(res.user))
+      .catch(err => {
+        const c = (err && err.code) || "";
+        // popup 被瀏覽器擋掉／關掉 ⇒ 自動改走 redirect，不要讓使用者面對一片空白
+        if (c === "auth/popup-blocked" || c === "auth/popup-closed-by-user" ||
+            c === "auth/cancelled-popup-request" || c === "auth/operation-not-supported-in-this-environment") {
+          say("視窗被擋掉了，改用轉頁登入…");
+          firebase.auth().signInWithRedirect(newProvider()).catch(explain);
+          return;
+        }
+        explain(err);
+      });
   };
 
   // --- 備援密碼 ---

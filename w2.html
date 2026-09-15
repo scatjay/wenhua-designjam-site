@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>第2週 文化遊戲地圖｜文化遊戲松</title>
+<title>第2週 遊戲裡怎麼放進文化｜文化遊戲松</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -44,11 +44,13 @@
   .kicker{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
   .topnav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
   .topnav a{flex:1;min-width:190px;text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-size:13.5px;font-weight:700;color:var(--ink-soft)}
-  .howto{margin:0;padding-left:20px;counter-reset:h}
-  .howto li{margin-bottom:13px;padding-left:2px}
-  .howto li > b{display:block;font-size:15px;font-weight:800;margin-bottom:2px}
-  .howto li span{display:block;font-size:13px;color:var(--ink-soft);line-height:1.72}
-  .howto li span b{font-weight:800;color:var(--ink)}
+  .howto{list-style:none;margin:0;padding:0;counter-reset:step}
+  .howto li{counter-increment:step;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .howto li:last-child{border-bottom:none}
+  .howto li::before{content:counter(step);flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1.5px solid var(--accent);font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+  .howto .st{font-size:14px}
+  .howto .st b{display:block;margin-bottom:1px}
+  .howto .st span{color:var(--ink-soft);font-size:12.5px}
   .qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
   .qrbox .t{font-weight:800;font-size:15px}
   .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line)}
@@ -165,15 +167,15 @@
 
 <div class="unitnav">
   <a href="unit1.html" class="u u1"><b>第1週</b><span>四種角色，孵出一個點子</span></a>
-  <a href="w2.html" class="u u2 on"><b>第2週 · 本週</b><span>文化遊戲地圖</span></a>
+  <a href="w2.html" class="u u2 on"><b>第2週 · 本週</b><span>遊戲裡怎麼放進文化</span></a>
 </div>
 
 <!-- ========== 登入 ========== -->
 <div id="loginScreen">
   <div class="kicker">文化遊戲松實作 · 第2週</div>
-  <h1>文化遊戲地圖</h1>
+  <h1>遊戲裡怎麼放進文化</h1>
   <p class="sub">
-    <b>① 挑 4-6 款遊戲</b>，親手玩或看實況　→　<b>② 每玩完一款，在地圖上釘一個位置</b>　→　
+    <b>① 挑 4-6 款遊戲</b>，親手玩或看實況　→　<b>② 每玩完一款，在文化遊戲地圖上釘一個位置</b>　→　
     <b>③ 跟三個同學各疊一輪</b>，看你的提案在地圖上往哪邊移動。<br>
     用第 1 週同一個信封編號，不用重新註冊。
   </p>
@@ -186,12 +188,15 @@
   <div class="box">
     <label style="margin-bottom:12px">怎麼玩</label>
     <ol class="howto">
-      <li><b>規劃路線</b><span>從清單挑 4-6 款，決定哪些親手玩、哪些看實況。跟打電動的人「跑速通」一樣：先想好路線再開跑。時間有限，<b>決定什麼可以跳過</b>本身就是這堂課要練的事。</span></li>
-      <li><b>玩一款，做一張卡</b><span>每玩完一款就做一張卡，釘到地圖上。其中一格是「一個你沒玩過就講不出來的細節」——那一格沒有選項可以點，只有真的玩過的人寫得出來。</span></li>
-      <li><b>出牌到公共池</b><span>把一張玩法卡丟進池子，再從池子裡挑一張<b>別人的</b>牌來疊。不用等人、不用找人，隨時可以出、隨時可以接。</span></li>
-      <li><b>疊上文化卡</b><span>文化卡分五類。物件類（廟、小吃）最容易變成換皮；行為類（擲筊、辦桌）、禁忌類（不能踩門檻）常常機制自己就長出來了。挑哪一類是你的決定。</span></li>
-      <li><b>看箭頭</b><span>疊完再釘一次座標，系統會畫一支從原位置到新位置的箭頭。<b>箭頭沒動就是換皮</b>——地圖自己會告訴你，不用等老師講。</span></li>
-      <li><b>跑三輪</b><span>第一輪從你平常在玩的遊戲出發，第二輪從有文化要素的遊戲出發，第三輪自己平衡兩者，目標是把提案推到地圖<b>左上角</b>——那一區是「文化長在機制裡」，全班最空也最難做。</span></li>
+      <li><div class="st"><b>規劃路線</b><span>從清單挑 4-6 款，決定哪些親手玩、哪些看實況。跟打電動的人「快速通關」一樣：先想好路線再開跑。時間有限，<b>決定什麼可以跳過</b>本身就是這堂課要練的事。</span></div></li>
+      <li><div class="st"><b>玩一款，做一張卡</b><span>每玩完一款就做一張卡，釘到地圖上。其中一格是「一個你沒玩過就講不出來的細節」——那一格沒有選項可以點，只有真的玩過的人寫得出來。</span></div></li>
+      <li><div class="st"><b>出牌到公共池</b><span>把一張玩法卡丟進池子，再從池子裡挑一張<b>別人的</b>牌來疊。不用等人、不用找人，隨時可以出、隨時可以接。</span></div></li>
+      <li><div class="st"><b>疊上文化卡</b><span>文化卡分五類。物件類（廟、小吃）最容易變成換皮；行為類（擲筊、辦桌）、禁忌類（不能踩門檻）常常機制自己就長出來了。挑哪一類是你的決定。</span></div></li>
+      <li><div class="st"><b>卡住就丟給 Gemini</b><span>頁面最下面有 <b>六則可以直接複製的指令</b>，會自動帶入你剛剛寫的東西。
+      想不出文化元素、看不出遊戲的機制、疊不出來、要把構想變成具體玩法——各有一則。
+      這些指令<b>都被設計成不會直接給你答案</b>，它會反問你，或給你正反兩面讓你自己決定。</span></div></li>
+      <li><div class="st"><b>看箭頭</b><span>疊完再釘一次座標，系統會畫一支從原位置到新位置的箭頭。<b>箭頭沒動就是換皮</b>——地圖自己會告訴你，不用等老師講。</span></div></li>
+      <li><div class="st"><b>跑三輪</b><span>第一輪從你平常在玩的遊戲出發，第二輪從有文化要素的遊戲出發，第三輪自己平衡兩者，目標是把提案推到地圖<b>左上角</b>——那一區是「文化長在機制裡」，全班最空也最難做。</span></div></li>
     </ol>
   </div>
 
@@ -344,7 +349,7 @@
   <!-- ---------- ④ 地圖 ---------- -->
   <div id="pMap" class="hide">
     <div class="box">
-      <h2>全班的概念地圖</h2>
+      <h2>全班的文化遊戲地圖</h2>
       <div class="filters" id="mapFilters"></div>
       <div id="bigMapHolder"></div>
       <div id="mapDetail"></div>

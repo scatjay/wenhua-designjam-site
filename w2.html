@@ -95,15 +95,37 @@
 
   .timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:15px;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 12px}
 
+  .tapcue{background:var(--accent-soft);border:1.5px dashed var(--accent);color:var(--accent);
+          border-radius:10px;padding:9px 13px;font-size:13px;line-height:1.6;margin-bottom:8px}
+  .tapcue.done{background:var(--green-soft);border-color:var(--green);border-style:solid;color:var(--green)}
   .mapwrap{position:relative;width:100%;margin:14px 0}
   .mapsvg{display:block;width:100%;height:auto}
   /* 點的圖層要跟 SVG 的繪圖區完全對齊：左 13% 右 4% 上 5% 下 14% */
   .dotlayer{position:absolute;left:13%;right:4%;top:5%;bottom:14%;cursor:crosshair}
+  .dotlayer:hover{background:rgba(0,0,0,.02)}
   .endlab{position:absolute;font-size:10.5px;font-weight:700;color:var(--ink);opacity:.8;white-space:nowrap}
 
   .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
   .fbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700}
   .fbtn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+  /* 分類選擇器：跟卡片同色系、夠大、帶張數。選分類本身就是一個設計決定，不該藏在小藥丸裡 */
+  .kpick{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:4px 0 12px}
+  .kbtn{border:1.5px solid var(--line);background:var(--panel2);color:var(--ink-soft);border-radius:12px;
+        padding:10px 8px;font-size:13px;font-weight:800;font-family:inherit;text-align:center;line-height:1.35}
+  .kbtn .kn{display:block;font-size:11px;font-weight:700;opacity:.75;margin-top:2px}
+  .kbtn.on{outline:2px solid currentColor;outline-offset:1px}
+  .kbtn.k-all {background:var(--panel2);color:var(--ink-soft)}
+  .kbtn.k-obj {background:var(--panel2);color:var(--ink-soft);border-color:var(--line)}
+  .kbtn.k-act {background:var(--green-soft);color:var(--green);border-color:var(--green)}
+  .kbtn.k-rel {background:var(--purple-soft);color:var(--purple);border-color:var(--purple)}
+  .kbtn.k-tabu{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+  .kbtn.k-time{background:var(--blue-soft);color:var(--blue);border-color:var(--blue)}
+  .cardtypes{display:grid;gap:8px;margin-bottom:12px}
+  .cardtypes .ct{background:var(--panel2);border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.65}
+  .cardtypes .ct b{display:block;font-size:14px;margin-bottom:2px}
+  .cardtypes .ct span{color:var(--ink-soft)}
+  .khint{font-size:12.5px;line-height:1.7;padding:9px 13px;border-radius:10px;margin-bottom:10px;
+         background:var(--panel2);color:var(--ink-soft)}
 
   .cardpick{display:grid;gap:7px;margin-top:8px}
   /* 卡片幾何照抄第1週的 .role-card，避免兩週的卡看起來像兩個系統 */
@@ -113,6 +135,7 @@
   .cc .cd{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;opacity:.85;margin-bottom:4px}
   .cc .cnote{font-size:13px;opacity:.85;margin-top:8px;border-top:1px dashed rgba(30,25,10,.15);padding-top:6px;line-height:1.6}
   .cc.sel{outline:2px solid var(--accent);outline-offset:1px}
+  .cc.usedcard{opacity:.45;cursor:not-allowed;filter:grayscale(.5)}
   /* 五類文化卡各自一個色，跟第1週四個角色卡同一種做法 */
   .cc.k-obj {background:var(--panel2);border-color:var(--line)}
   .cc.k-act {background:var(--green-soft);border-color:var(--green)}
@@ -134,6 +157,16 @@
   .pi .pb{font-size:12.5px;color:var(--ink-soft);margin-top:4px;line-height:1.6}
   .pi .pf{font-size:11.5px;color:var(--ink-soft);margin-top:6px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 
+  .pairbar{background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--accent);
+           border-radius:12px;padding:10px 14px;font-size:14px;font-weight:800;margin-bottom:12px}
+  .pairbar span{font-weight:400;opacity:.85;font-size:12.5px;display:block;margin-top:2px}
+  .inbox{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--panel)}
+  .inbox .ih{font-size:13px;font-weight:800;margin-bottom:4px}
+  .inbox .ib{font-size:13px;color:var(--ink-soft);line-height:1.65}
+  .inbox .ir{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+  .rbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);
+        border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;font-family:inherit}
+  .rbtn.done{background:var(--green-soft);color:var(--green);border-color:var(--green)}
   .seedbox{background:var(--panel2);border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin-top:10px}
   .seedbox .st{font-size:12.5px;font-weight:800;color:var(--ink-soft);margin-bottom:5px}
   .seedbox .sp{font-size:13px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre-wrap}
@@ -146,6 +179,7 @@
   .chk.ok{border-color:var(--green);background:var(--green-soft)}
   .chk .ct{font-size:14.5px;font-weight:800}
   .chk.ok .ct{color:var(--green)}
+  .mins{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--ink-faint,var(--ink-soft));opacity:.8}
   .chk .cb{font-size:12.5px;color:var(--ink-soft);margin-top:5px;line-height:1.7}
   .stamp{font-family:ui-monospace,monospace;font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);
          display:inline-block;padding:3px 10px;border-radius:999px;margin-bottom:10px}
@@ -189,7 +223,7 @@
     <ol class="howto">
       <li><div class="st"><b>規劃路線</b><span>從清單挑 4-6 款，決定哪些親手玩、哪些看實況。跟打電動的人「快速通關」一樣：先想好路線再開跑。時間有限，<b>決定什麼可以跳過</b>本身就是這堂課要練的事。</span></div></li>
       <li><div class="st"><b>玩一款，做一張卡</b><span>每玩完一款就做一張卡，釘到地圖上。其中一格是「一個你沒玩過就講不出來的細節」——那一格沒有選項可以點，只有真的玩過的人寫得出來。</span></div></li>
-      <li><div class="st"><b>出牌到公共池</b><span>把一張玩法卡丟進池子，再從池子裡挑一張<b>別人的</b>牌來疊。不用等人、不用找人，隨時可以出、隨時可以接。</span></div></li>
+      <li><div class="st"><b>出牌到公共池</b><span>你出一張牌等人來接，或直接接一個正在等的同學——<b>兩人成一組</b>。不用當場找人、不用同時在線，出了牌就去做別的，有人接了會通知你。</span></div></li>
       <li><div class="st"><b>疊上文化卡</b><span>文化卡分五類。物件類（廟、小吃）最容易變成換皮；行為類（擲筊、辦桌）、禁忌類（不能踩門檻）常常機制自己就長出來了。挑哪一類是你的決定。</span></div></li>
       <li><div class="st"><b>卡住就丟給 Gemini</b><span>頁面最下面有 <b>六則可以直接複製的指令</b>，會自動帶入你剛剛寫的東西。
       想不出文化元素、看不出遊戲的機制、疊不出來、要把構想變成具體玩法——各有一則。
@@ -264,7 +298,8 @@
       <textarea id="cDetail" placeholder="只有真的玩過／看過的人才知道的東西"></textarea>
       <div class="hint">這一格<b>沒有選項可以點</b>——這是這張卡的靈魂，也是等一下辯論時最有力的武器。</div>
 
-      <label style="margin-top:14px">把它釘到地圖上</label>
+      <label style="margin-top:14px">把它釘到文化遊戲地圖上</label>
+      <div class="tapcue" id="scanCue">👇 <b>直接點地圖上的任一個位置</b>，把這款遊戲放上去。放錯了再點一次就會移動。</div>
       <div id="scanMapHolder"></div>
       <div class="status" id="scanStatus"></div>
       <button class="btn" id="saveCard">存成一張卡</button>
@@ -283,7 +318,7 @@
         <b>第三輪</b>　自己<b>平衡前兩輪</b>，目標是地圖左上角
       </div>
       <div class="hint">
-        規則：出牌到公共池，或從池子裡挑一張<b>別人的</b>來疊。
+        規則：<b>兩人一組</b>。你可以出一張牌等人來配，也可以直接接一個正在等的同學。
         三輪要挑<b>三個不同人</b>的牌。不用等別人上線，隨時可以出、隨時可以接。
       </div>
     </div>
@@ -295,18 +330,19 @@
       </div>
 
       <div id="jamStepA">
-        <label>A · 出一張玩法卡到池子裡</label>
-        <div class="hint" style="margin-bottom:6px">從你剛盤點的遊戲挑，或從下面五張裡挑一張。</div>
+        <label>A · 出一張玩法卡，等人來跟你配對</label>
+        <div class="hint" style="margin-bottom:6px">從你剛盤點的遊戲挑，或從下面五張裡挑一張。出牌之後，會有同學來接你的牌跟你配成一組。</div>
         <div class="cardpick" id="playPick"></div>
-        <button class="btn" id="postPlay">出牌</button>
+        <button class="btn" id="postPlay">出牌，等人來配對</button>
       </div>
 
       <div id="jamStepB" class="hide">
-        <label>B · 從池子裡挑一張別人的牌來疊</label>
+        <label>B · 或者，直接跟一個正在等的同學配對</label>
         <div class="pool" id="poolList"></div>
       </div>
 
       <div id="jamStepC" class="hide">
+        <div class="pairbar" id="pairBar"></div>
         <div class="box" style="background:var(--panel2);box-shadow:none;margin-bottom:12px">
           <div style="font-size:12px;color:var(--ink-soft);font-weight:700;margin-bottom:4px">你要疊的玩法</div>
           <div id="targetPlay" style="font-weight:800;font-size:15px"></div>
@@ -330,6 +366,12 @@
       </div>
 
       <div id="jamResult" class="hide"></div>
+    </div>
+
+    <div class="box" id="inboxBox">
+      <h2>你的牌，誰接走了</h2>
+      <div class="hint" style="margin-bottom:8px">有人接了你的牌跟你配成一組，會出現在這裡。<b>回應一句，這一輪對你也算完成。</b>看看他疊成什麼——通常跟你想的不一樣。</div>
+      <div id="inboxList"></div>
     </div>
 
     <div class="box">
@@ -370,6 +412,11 @@
         這是第2週在用的兩副牌，跟第1週 Design Jam 的四副角色牌<b>不是同一批</b>。
         文化卡全班都可以加，加進去之後所有人都抽得到。
       </p>
+      <div class="cardtypes">
+        <div class="ct"><b>🎮 遊戲卡</b><span>你自己做的。每玩完一款遊戲就產生一張，上面有你釘的座標跟「沒玩過講不出來的細節」。</span></div>
+        <div class="ct"><b>🕹 玩法卡</b><span>一個遊戲的核心玩法（翻牌配對、資源管理、躲避潛行…）。<b>抽掉主題還是成立</b>的那部分。</span></div>
+        <div class="ct"><b>🏮 文化卡</b><span>要疊上去的文化元素。分五類，<b>越往下越扛得起機制</b>——物件類最容易變貼圖，行為與禁忌類常常機制自己就長出來了。</span></div>
+      </div>
       <div id="deckStats" class="hint"></div>
       <h3 style="font-size:15px;font-weight:800;margin:18px 0 6px">玩法卡</h3>
       <div class="cardpick" id="deckPlay"></div>
@@ -511,15 +558,15 @@ const CULTURE_CARDS = [
 // ============ 地圖預放範例 ============
 // x: 0=規則說了算 → 1=故事說了算　｜　y: 0=換皮也能玩（下） → 1=抽掉就垮了（上）
 const SEED_DOTS = [
-  {x:.22,y:.80,t:"Universal Paperclips", by:"🎨創意總監", note:"增量機制本身就是那個寓言。抽掉「無限增長」這件事，遊戲不成立", kind:"agent"},
-  {x:.30,y:.86,t:"We Become What We Behold", by:"🔧首席工程師", note:"你的拍攝選擇＝新聞內容，機制就是論點本身", kind:"agent"},
-  {x:.78,y:.72,t:"膨風龜大冒險", by:"🎬執行製作人", note:"故事撐得很滿，臺語配音是真材實料；但玩法主要是讀與聽", kind:"agent"},
-  {x:.70,y:.60,t:"打鬼 PAGUI", by:"📣行銷主管", note:"考據非常紮實，但玩起來是通用 3D 動作。考據深不等於機制深", kind:"agent"},
-  {x:.55,y:.45,t:"打鬼 PAGUI", by:"🎨創意總監", note:"我不同意行銷主管。官將首的步法有進到動作設計裡，不只是皮", kind:"agent"},
-  {x:.42,y:.30,t:"Gartic Phone", by:"🎬執行製作人", note:"傳話變形的機制很純粹，但它跟任何特定文化都沒關係", kind:"agent"},
-  {x:.18,y:.14,t:"台南版大富翁", by:"⚠️ 反向範例", note:"擲骰買地的規則完全沒動，只把地名換成赤崁樓、安平古堡。抽掉台南照樣玩", kind:"bad"},
-  {x:.28,y:.10,t:"夜市小吃版記憶翻牌", by:"⚠️ 反向範例", note:"翻牌配對跟小吃無關，圖案換成什麼都一樣", kind:"bad"},
-  {x:.36,y:.16,t:"廟宇主題三消", by:"⚠️ 反向範例", note:"消除機制跟信仰毫無關係，神明只是貼圖", kind:"bad"},
+  {x:.22,y:.80,t:"Universal Paperclips", by:"老師放的", note:"增量機制本身就是那個寓言。抽掉「無限增長」這件事，遊戲不成立", kind:"agent"},
+  {x:.30,y:.86,t:"We Become What We Behold", by:"老師放的", note:"你的拍攝選擇＝新聞內容，機制就是論點本身", kind:"agent"},
+  {x:.78,y:.72,t:"膨風龜大冒險", by:"老師放的", note:"故事撐得很滿，臺語配音是真材實料；但玩法主要是讀與聽", kind:"agent"},
+  {x:.70,y:.60,t:"打鬼 PAGUI", by:"另一位老師放的", note:"考據非常紮實，但玩起來是通用 3D 動作。考據深不等於機制深", kind:"agent"},
+  {x:.55,y:.45,t:"打鬼 PAGUI", by:"老師放的", note:"這個位置有爭議——另一位老師放得比較低。官將首的步法有沒有真的進到動作設計裡？你玩過你來判斷", kind:"agent"},
+  {x:.42,y:.30,t:"Gartic Phone", by:"老師放的", note:"傳話變形的機制很純粹，但它跟任何特定文化都沒關係", kind:"agent"},
+  {x:.18,y:.14,t:"台南版大富翁", by:"反向範例", note:"擲骰買地的規則完全沒動，只把地名換成赤崁樓、安平古堡。抽掉台南照樣玩", kind:"bad"},
+  {x:.28,y:.10,t:"夜市小吃版記憶翻牌", by:"反向範例", note:"翻牌配對跟小吃無關，圖案換成什麼都一樣", kind:"bad"},
+  {x:.36,y:.16,t:"廟宇主題三消", by:"反向範例", note:"消除機制跟信仰毫無關係，神明只是貼圖", kind:"bad"},
 ];
 
 // ============ 狀態 ============
@@ -531,6 +578,8 @@ let customCulture = [];
 let jamRound = 1;
 let jamPartners = [];
 let scanStart = null;
+let roundStart = null;      // 這一輪從什麼時候開始
+let lastCardAt = null;      // 上一張盤點卡完成的時間
 let pendingXY = null, jamXY = null, jamFrom = null;
 let selPlay = null, selCult = null, targetPost = null;
 let cultFilter = "all";
@@ -584,8 +633,9 @@ function startWatching(){
     jamPartners = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.fromEnv);
     jamRound = Math.min(3, jamPartners.length + 1);
     $("jamRound").textContent = jamRound;
-    renderPool(); updateCounts(); renderRoundHint(); renderDone();
+    renderPool(); updateCounts(); renderRoundHint(); renderDone(); renderInbox();
   });
+  db.ref(`${W2}/reacts`).on("value", s => { allReacts = s.val() || {}; renderInbox(); renderDone(); updateCounts(); });
   db.ref(CULT_DECK).on("value", s => {
     const v = s.val() || {};
     // 濾掉 _ 開頭的鍵（部署前探針留下的，customCards 是 create-only 刪不掉）
@@ -596,7 +646,9 @@ function startWatching(){
   });
 }
 function updateCounts(){
-  const nJam = Object.values(allJams).filter(j => j.by === myEnv).length;
+  const reacted = new Set(Object.values(allReacts).filter(r => r.by === myEnv).map(r => r.jam));
+  const nJam = Object.entries(allJams)
+    .filter(([k, j]) => j.by === myEnv || (j.fromEnv === myEnv && reacted.has(k))).length;
   $("tnPlan").textContent = myRoute.length ? myRoute.length + " 款" : "";
   $("tnScan").textContent = myCards.length ? myCards.length + " 張" : "";
   $("tnJam").textContent = nJam + "/3";
@@ -719,8 +771,12 @@ ${sd.note}`));
   if (onPick) {
     map.onclick = ev => {
       const r = map.getBoundingClientRect();
+      // 🔴 地圖被隱藏（分頁沒切過來）時 rect 是 0x0，算出來會是 NaN。
+      // 沒有這個防護的話，畫面會說「位置已標記」但其實沒有座標——假成功。
+      if (!r.width || !r.height) return;
       const x = Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width));
       const y = Math.min(1, Math.max(0, 1 - (ev.clientY - r.top) / r.height));
+      if (!isFinite(x) || !isFinite(y)) return;
       map.querySelectorAll(".dot.mine").forEach(n => n.remove());
       addDot(map, x, y, "mine", "你放的位置");
       onPick(x, y);
@@ -728,7 +784,7 @@ ${sd.note}`));
   }
   return map;
 }
-const DOT_EMOJI = {seed:"🤖", bad:"🎲", mine:"⭐", other:"", agent:"🤖"};
+const DOT_EMOJI = {seed:"📌", bad:"🎲", mine:"⭐", other:"", agent:"📌"};
 function addDot(map, x, y, cls, title){
   const el = document.createElement("div");
   el.className = "dot " + cls;
@@ -743,7 +799,12 @@ function addDot(map, x, y, cls, title){
 makeMapForScan();
 function makeMapForScan(){
   if (!$("scanMapHolder")) return;
-  makeMap($("scanMapHolder"), (x, y) => { pendingXY = {x, y}; $("scanStatus").textContent = "位置已標記。"; });
+  makeMap($("scanMapHolder"), (x, y) => {
+    pendingXY = {x, y};
+    $("scanStatus").textContent = "";
+    const cue = $("scanCue");
+    if (cue) { cue.classList.add("done"); cue.innerHTML = "✅ <b>放好了</b>。想改位置再點一次就好。"; }
+  });
 }
 $("saveCard").onclick = () => {
   const game = $("cGame").value.trim();
@@ -751,14 +812,18 @@ $("saveCard").onclick = () => {
   const detail = $("cDetail").value.trim();
   if (!game) { $("scanStatus").textContent = "先寫遊戲名稱。"; return; }
   if (!detail) { $("scanStatus").textContent = "「沒玩過講不出來的細節」是必填——那是這張卡的靈魂。"; return; }
-  if (!pendingXY) { $("scanStatus").textContent = "還沒在地圖上點位置。"; return; }
+  if (!pendingXY || !isFinite(pendingXY.x) || !isFinite(pendingXY.y)) { $("scanStatus").textContent = "還沒在地圖上點位置。"; return; }
   const g = GAMES.find(x => x.n === game);
   db.ref(`${W2}/cards/${myEnv}`).push({
     game, line, detail, x: pendingXY.x, y: pendingXY.y,
-    mode: g ? g.mode : "play", t: Date.now()
+    mode: g ? g.mode : "play", t: Date.now(),
+    ms: Date.now() - (lastCardAt || scanStart || Date.now())
   }).then(() => {
+    lastCardAt = Date.now();
     $("cGame").value = ""; $("cLine").value = ""; $("cDetail").value = "";
     pendingXY = null; makeMapForScan();
+    const cue = $("scanCue");
+    if (cue) { cue.classList.remove("done"); cue.innerHTML = "👇 <b>直接點地圖上的任一個位置</b>，把這款遊戲放上去。放錯了再點一次就會移動。"; }
     $("scanStatus").textContent = "";
     renderScanTarget(); renderSeeds();
   }).catch(e => { $("scanStatus").textContent = "存不進去：" + e.message; });
@@ -777,13 +842,18 @@ function renderMyCards(){
 // ============ ③ Jam ============
 function renderPlayPick(){
   if (!$("playPick")) return;
-  const mine = myCards.map(c => ({v: c.game, note: c.line || "", src: "我盤點的"}));
+  // 一輪用一個 seed，用過的就標掉——下一輪從剩下的裡面繼續選
+  const used = new Set(Object.values(allJams).filter(j => j.by === myEnv || j.fromEnv === myEnv).map(j => j.play));
+  const mine = myCards.map(c => ({v: c.game, note: c.line || "", src: "你盤點的遊戲"}));
   const base = PLAY_CARDS.slice().sort(() => 0.5 - Math.random()).slice(0, 5).map(c => ({...c, src: "玩法卡"}));
   const all = mine.concat(base);
-  $("playPick").innerHTML = all.map((c, i) =>
-    `<button class="cc k-play" data-i="${i}"><div class="cd">${esc(c.src)}</div>
-     <div class="cv">${esc(c.v)}</div><div class="cnote">${esc(c.note)}</div></button>`).join("");
-  $("playPick").querySelectorAll(".cc").forEach(b => b.onclick = () => {
+  $("playPick").innerHTML = all.map((c, i) => {
+    const u = used.has(c.v);
+    return `<button class="cc k-play${u ? " usedcard" : ""}" data-i="${i}"${u ? " disabled" : ""}>
+      <div class="cd">${esc(c.src)}${u ? " · 這輪已用過" : ""}</div>
+      <div class="cv">${esc(c.v)}</div><div class="cnote">${esc(c.note)}</div></button>`;
+  }).join("");
+  $("playPick").querySelectorAll(".cc:not(.usedcard)").forEach(b => b.onclick = () => {
     $("playPick").querySelectorAll(".cc").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel");
     selPlay = all[+b.dataset.i];
@@ -791,6 +861,7 @@ function renderPlayPick(){
 }
 $("postPlay").onclick = () => {
   if (!selPlay) return;
+  if (!roundStart) roundStart = Date.now();
   db.ref(`${W2}/pool`).push({v: selPlay.v, note: selPlay.note || "", by: myEnv, t: Date.now()})
     .then(() => { $("jamStepA").classList.add("hide"); $("jamStepB").classList.remove("hide"); renderPool(); })
     .catch(()=>{});
@@ -810,39 +881,46 @@ function renderPool(){
       `<div class="pi" data-k="${p.k}">
         <div class="pt">${esc(p.v)}</div>
         <div class="pb">${esc(p.note)}</div>
-        <div class="pf"><span>來自 #${String(p.by).padStart(2,"0")}</span>
-        <button class="btn-ghost btn-sm">疊這張</button></div>
+        <div class="pf"><span>#${String(p.by).padStart(2,"0")} 正在等人配對</span>
+        <button class="btn-ghost btn-sm">跟他一組</button></div>
       </div>`).join("")
-      : `<div class="hint">池子裡還沒有別人的牌（或都疊過了）。先去 ② 盤點，等一下再回來。</div>`;
+      : `<div class="hint">目前沒有人在等配對（或你都配過了）。<b>那就先出一張牌</b>，會有人來接你的。</div>`;
     $("poolList").querySelectorAll(".pi").forEach(el => {
       const btn = el.querySelector("button"); if (!btn) return;
       btn.onclick = () => {
         const p = items.find(x => x.k === el.dataset.k);
         targetPost = p;
+        if (!roundStart) roundStart = Date.now();
         $("targetPlay").textContent = p.v;
         $("targetPlayNote").textContent = p.note || "";
         jamFrom = null;
         $("jamStepB").classList.add("hide");
         $("jamStepC").classList.remove("hide");
-        renderCultPick(); renderJamMap(); renderSeeds();
+        renderCultPick(); renderJamMap(); renderSeeds(); renderPairBar();
       };
     });
   });
 }
 function renderCultPick(){
   if (!$("cultPick")) return;
-  if (!$("cultFilters").innerHTML) {
-    $("cultFilters").innerHTML = `<button class="fbtn on" data-k="all">全部</button>` +
-      Object.entries(CULT_KINDS).map(([k, v]) => `<button class="fbtn" data-k="${k}">${v.label}</button>`).join("");
-    $("cultFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => {
-      $("cultFilters").querySelectorAll(".fbtn").forEach(x => x.classList.remove("on"));
-      b.classList.add("on"); cultFilter = b.dataset.k; renderCultPick();
+  {
+    const all0 = CULTURE_CARDS.concat(customCulture);
+    const cnt = k => all0.filter(c => (CULT_KINDS[c.k] ? c.k : "obj") === k).length;
+    $("cultFilters").className = "kpick";
+    $("cultFilters").innerHTML =
+      `<button class="kbtn k-all${cultFilter === "all" ? " on" : ""}" data-k="all">隨機幾張<span class="kn">先看看</span></button>` +
+      Object.entries(CULT_KINDS).map(([k, v]) =>
+        `<button class="kbtn k-${k}${cultFilter === k ? " on" : ""}" data-k="${k}">${esc(v.label)}<span class="kn">${cnt(k)} 張</span></button>`).join("");
+    $("cultFilters").querySelectorAll(".kbtn").forEach(b => b.onclick = () => {
+      cultFilter = b.dataset.k; renderCultPick();
     });
   }
   const all = CULTURE_CARDS.concat(customCulture);
   const list = (cultFilter === "all" ? all.slice().sort(() => 0.5 - Math.random()).slice(0, 8)
                                      : all.filter(c => c.k === cultFilter));
-  const hint = cultFilter !== "all" && CULT_KINDS[cultFilter] ? `<div class="hint">${esc(CULT_KINDS[cultFilter].hint)}</div>` : "";
+  const hint = cultFilter !== "all" && CULT_KINDS[cultFilter]
+    ? `<div class="khint"><b>${esc(CULT_KINDS[cultFilter].label)}</b>：${esc(CULT_KINDS[cultFilter].hint)}</div>`
+    : `<div class="khint">上面選一類再挑卡。<b>不同類別扛機制的能力差很多</b>——物件類最容易變成換皮，行為、禁忌類常常機制自己就長出來了。</div>`;
   $("cultPick").innerHTML = hint + list.map((c, i) => {
     const k = CULT_KINDS[c.k] ? c.k : "obj";
     const kd = CULT_KINDS[k];
@@ -856,24 +934,33 @@ function renderCultPick(){
   });
 }
 function renderJamMap(){
+  const cue0 = $("jamCue");
+  if (cue0) { cue0.classList.remove("done"); cue0.innerHTML = "👇 <b>點地圖放上你的提案</b>。紫色那點是原本的位置——疊完之後，它應該往哪邊移動？"; }
   const seedCard = myCards.find(c => c.game === (targetPost && targetPost.v));
   const extra = [];
   if (seedCard) { jamFrom = {x: seedCard.x, y: seedCard.y}; extra.push({x: seedCard.x, y: seedCard.y, cls: "other", title: "原本的位置"}); }
-  makeMap($("jamMapHolder"), (x, y) => { jamXY = {x, y}; $("jamStatus").textContent = "位置已標記。"; }, {extra});
+  makeMap($("jamMapHolder"), (x, y) => {
+    jamXY = {x, y};
+    $("jamStatus").textContent = "";
+    const cue = $("jamCue");
+    if (cue) { cue.classList.add("done"); cue.innerHTML = "✅ <b>放好了</b>。想改位置再點一次就好。"; }
+  }, {extra});
 }
 $("saveJam").onclick = () => {
   if (!targetPost) return;
   if (!selCult) { $("jamStatus").textContent = "還沒挑文化卡。"; return; }
   const line = $("jamLine").value.trim();
   if (!line) { $("jamStatus").textContent = "寫一句話講這兩張疊起來會變成什麼。"; return; }
-  if (!jamXY) { $("jamStatus").textContent = "還沒在地圖上點位置。"; return; }
+  if (!jamXY || !isFinite(jamXY.x) || !isFinite(jamXY.y)) { $("jamStatus").textContent = "還沒在地圖上點位置。"; return; }
   const from = jamFrom || {x: .5, y: .2};
   const dist = Math.hypot(jamXY.x - from.x, jamXY.y - from.y);
   db.ref(`${W2}/jams`).push({
     r: jamRound, by: myEnv, fromEnv: targetPost.by, postKey: targetPost.k,
     play: targetPost.v, cult: selCult.v, cultKind: selCult.k || "obj",
-    line, x: jamXY.x, y: jamXY.y, fx: from.x, fy: from.y, t: Date.now()
+    line, x: jamXY.x, y: jamXY.y, fx: from.x, fy: from.y, t: Date.now(),
+    ms: roundStart ? (Date.now() - roundStart) : null
   }).then(() => {
+    roundStart = null;
     const up = jamXY.y - from.y, left = from.x - jamXY.x;
     let msg;
     if (dist < .12) {
@@ -915,7 +1002,7 @@ $("addCult").onclick = () => {
 let mapFilter = "all";
 function renderBigMap(){
   if (!$("mapFilters").innerHTML) {
-    const fs = {all:"🗺 全部", mine:"⭐ 只看我的", others:"👥 別人的", agent:"🤖 代理人放的", bad:"🎲 反向範例", jams:"💡 疊出來的提案"};
+    const fs = {all:"🗺 全部", mine:"⭐ 只看我的", others:"👥 同學的", ex:"📌 老師放的範例", bad:"🎲 反向範例", jams:"💡 疊出來的提案"};
     $("mapFilters").innerHTML = Object.entries(fs).map(([k,v]) =>
       `<button class="fbtn${k==="all"?" on":""}" data-k="${k}">${v}</button>`).join("");
     $("mapFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => {
@@ -938,20 +1025,68 @@ function renderBigMap(){
       extra.push({x: j.x, y: j.y, cls: j.by === myEnv ? "mine" : "other",
                   title: `${j.play} × ${j.cult}（#${String(j.by).padStart(2,"0")} 接 #${String(j.fromEnv).padStart(2,"0")}）\n${j.line}`}));
   }
-  const showSeeds = (mapFilter === "all" || mapFilter === "agent" || mapFilter === "bad");
+  const showSeeds = (mapFilter === "all" || mapFilter === "ex" || mapFilter === "bad");
   makeMap($("bigMapHolder"), null, {seeds: showSeeds, extra});
   if (mapFilter === "bad") {
     $("bigMapHolder").querySelectorAll(".dot.seed").forEach(d => d.remove());
   }
   const nCards = Object.keys(allCards).reduce((a, e) => a + Object.keys(allCards[e]).length, 0);
   $("mapDetail").innerHTML = `<div class="hint">全班 <b>${nCards}</b> 張盤點卡 · <b>${Object.keys(allJams).length}</b> 組 Jam 提案。
-    滑到點上可以看內容。<b>左上角的稀有區</b>如果還很空——那就是還沒有人做到「文化長在機制裡」。</div>`;
+    滑到點上可以看內容。📌 是老師先放的範例，⭐ 是你自己的，👥 是同學的。<br><b>左上角的稀有區</b>如果還很空——那就是全班還沒有人做到「文化長在機制裡」。</div>`;
+}
+
+// ============ 配對顯示與回流 ============
+// 🔴 原本只有「出牌→挑別人的→疊完」，對方永遠不知道自己的牌被接走，
+// 兩邊都感覺不到有人在對面，體感等於各玩各的。這一段把回流補上。
+let allReacts = {};
+function renderPairBar(){
+  const el = $("pairBar");
+  if (!el) return;
+  if (!targetPost) { el.innerHTML = ""; return; }
+  el.innerHTML = `現在跟 #${String(targetPost.by).padStart(2,"0")} 一組
+    <span>你接了他出的「${esc(targetPost.v)}」。疊完他會看到你疊成什麼。</span>`;
+}
+function renderInbox(){
+  if (!$("inboxList")) return;
+  const taken = Object.entries(allJams)
+    .map(([k, j]) => ({k, ...j}))
+    .filter(j => j.fromEnv === myEnv && j.by !== myEnv)
+    .sort((a, b) => b.t - a.t);
+  if (!taken.length) {
+    $("inboxList").innerHTML = `<div class="hint">還沒有人接你的牌。先到上面出一張，等人來配對。</div>`;
+    return;
+  }
+  $("inboxList").innerHTML = taken.map(j => {
+    const moved = Math.hypot((j.x || 0) - (j.fx || 0), (j.y || 0) - (j.fy || 0));
+    const mv = moved < .12 ? "幾乎沒動" : (j.y > (j.fy || 0) + .1 ? "往上移了" : "有移動但沒往上");
+    const mine = Object.values(allReacts).find(r => r.jam === j.k && r.by === myEnv);
+    return `<div class="inbox" data-j="${j.k}">
+      <div class="ih">#${String(j.by).padStart(2,"0")} 接走了你的「${esc(j.play)}」</div>
+      <div class="ib">他疊上<b>${esc(j.cult)}</b>，說：${esc(j.line)}<br>
+        箭頭${mv}。</div>
+      <div class="ir">
+        ${mine ? `<button class="rbtn done" disabled>已回應：${esc(mine.r)}</button>`
+               : ["這個我沒想到","我覺得沒真的動到玩法","有意思，可以再推"]
+                 .map(t => `<button class="rbtn" data-r="${esc(t)}">${esc(t)}</button>`).join("")}
+      </div></div>`;
+  }).join("");
+  $("inboxList").querySelectorAll(".inbox").forEach(el => {
+    el.querySelectorAll(".rbtn[data-r]").forEach(b => b.onclick = () => {
+      db.ref(`${W2}/reacts`).push({jam: el.dataset.j, by: myEnv, r: b.dataset.r, t: Date.now()}).catch(()=>{});
+      roundStart = null;
+    });
+  });
 }
 
 // ============ 完成檢核（截圖用）============
 function renderDone(){
   if (!$("doneList")) return;
-  const jams = Object.values(allJams).filter(j => j.by === myEnv).sort((a,b) => a.t - b.t);
+  // 一個 jam ＝ 兩個人的共同產出。疊加方疊完就算；出牌方回應了也算。
+  // 兩邊各自獨立計數，所以誰都不會因為對方沒回來而卡住。
+  const reactedJams = new Set(Object.values(allReacts).filter(r => r.by === myEnv).map(r => r.jam));
+  const jams = Object.entries(allJams).map(([k, j]) => ({k, ...j}))
+    .filter(j => j.by === myEnv || (j.fromEnv === myEnv && reactedJams.has(j.k)))
+    .sort((a,b) => a.t - b.t);
   const mineCult = customCulture.filter(c => c.by === myEnv);
   const rows = [];
 
@@ -959,13 +1094,16 @@ function renderDone(){
   rows.push(`<div class="chk ${okJam ? "ok" : "no"}">
     <div class="ct">${okJam ? "✅" : "⬜"} 完成三輪疊加　<b>${jams.length}/3</b></div>
     ${jams.length ? `<div class="cb">` + jams.map((j, i) =>
-      `第 ${i + 1} 輪 · 跟 <b>#${String(j.fromEnv).padStart(2,"0")}</b> 協作　${esc(j.play)} × ${esc(j.cult)}`).join("<br>") + `</div>` : ""}
+      `第 ${i + 1} 輪 · 跟 <b>#${String(j.by === myEnv ? j.fromEnv : j.by).padStart(2,"0")}</b> 一組　${esc(j.play)} × ${esc(j.cult)}` +
+      (j.by === myEnv ? "（你疊的）" : "（你出的牌）") +
+      (j.ms ? `　<span class="mins">${Math.max(1, Math.round(j.ms / 60000))} 分</span>` : "")).join("<br>") + `</div>` : ""}
   </div>`);
 
   const okCards = myCards.length >= 3;
   rows.push(`<div class="chk ${okCards ? "ok" : "no"}">
     <div class="ct">${okCards ? "✅" : "⬜"} 盤點遊戲卡　<b>${myCards.length}</b> 張</div>
-    ${myCards.length ? `<div class="cb">` + myCards.map(c => esc(c.game)).join("、") + `</div>` : ""}
+    ${myCards.length ? `<div class="cb">` + myCards.map(c =>
+      esc(c.game) + (c.ms ? ` <span class="mins">${Math.max(1, Math.round(c.ms / 60000))}分</span>` : "")).join("、") + `</div>` : ""}
   </div>`);
 
   const okNew = mineCult.length >= 3;
@@ -975,7 +1113,7 @@ function renderDone(){
                       : `<div class="cb">還沒加。到 ③ Jam 分頁最下面「擴充卡池」加。</div>`}
   </div>`);
 
-  const partners = [...new Set(jams.map(j => j.fromEnv))];
+  const partners = [...new Set(jams.map(j => j.by === myEnv ? j.fromEnv : j.by))];
   if (jams.length >= 2 && partners.length < jams.length) {
     rows.push(`<div class="chk no"><div class="ct">⚠️ 三輪要跟三個<b>不同</b>的人</div>
       <div class="cb">目前只跟 ${partners.length} 個人協作過。</div></div>`);
@@ -997,18 +1135,20 @@ function renderDeck(){
   $("deckStats").innerHTML = `玩法卡 <b>${PLAY_CARDS.length}</b> 張 · 文化卡 <b>${all.length}</b> 張` +
     (customCulture.length ? `（其中 <b>${customCulture.length}</b> 張是同學加的）` : "");
 
-  if (!$("deckCultFilters").innerHTML) {
-    $("deckCultFilters").innerHTML = `<button class="fbtn on" data-k="all">全部</button>` +
+  {
+    const cnt = k => all.filter(c => (CULT_KINDS[c.k] ? c.k : "obj") === k).length;
+    $("deckCultFilters").className = "kpick";
+    $("deckCultFilters").innerHTML =
+      `<button class="kbtn k-all${deckFilter === "all" ? " on" : ""}" data-k="all">全部<span class="kn">${all.length} 張</span></button>` +
       Object.entries(CULT_KINDS).map(([k, v]) =>
-        `<button class="fbtn" data-k="${k}">${v.label}</button>`).join("");
-    $("deckCultFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => {
-      $("deckCultFilters").querySelectorAll(".fbtn").forEach(x => x.classList.remove("on"));
-      b.classList.add("on"); deckFilter = b.dataset.k; renderDeck();
+        `<button class="kbtn k-${k}${deckFilter === k ? " on" : ""}" data-k="${k}">${esc(v.label)}<span class="kn">${cnt(k)} 張</span></button>`).join("");
+    $("deckCultFilters").querySelectorAll(".kbtn").forEach(b => b.onclick = () => {
+      deckFilter = b.dataset.k; renderDeck();
     });
   }
   const list = deckFilter === "all" ? all : all.filter(c => (CULT_KINDS[c.k] ? c.k : "obj") === deckFilter);
   const kh = deckFilter !== "all" && CULT_KINDS[deckFilter]
-    ? `<div class="hint" style="margin-bottom:6px">${esc(CULT_KINDS[deckFilter].hint)}</div>` : "";
+    ? `<div class="khint"><b>${esc(CULT_KINDS[deckFilter].label)}</b>：${esc(CULT_KINDS[deckFilter].hint)}</div>` : "";
   $("deckCult").innerHTML = kh + list.map(c => {
     const k = CULT_KINDS[c.k] ? c.k : "obj";
     const by = c.by != null ? `<span class="kind">#${String(c.by).padStart(2,"0")} 加的</span>` : "";
@@ -1088,7 +1228,7 @@ function reEmoji(el){
   try { if (window.twemoji) twemoji.parse(el || document.body); } catch(_) {}
 }
 reEmoji();
-["renderGames","drawGames","renderDeck","renderPool","renderCultPick","renderPlayPick","renderSeeds","renderBigMap","renderMyCards","renderDone"]
+["renderGames","drawGames","renderDeck","renderPool","renderCultPick","renderPlayPick","renderSeeds","renderBigMap","renderMyCards","renderDone","renderInbox"]
   .forEach(fn => {
     const orig = window[fn];
     if (typeof orig !== "function") return;

@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文化遊戲松 Cultural Game Jam</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<style>
+  :root{
+    --bg:#faf8f2; --panel:#ffffff; --panel2:#f2efe4; --ink:#2b2820; --ink-soft:#5c5648;
+    --line:#ddd7c6; --accent:#e0821f; --accent-soft:#fbead2;
+    --green:#3f7a34; --green-soft:#e9f3e3;
+    --blue:#2f6690; --blue-soft:#e5eff6;
+    --purple:#7a3f92; --purple-soft:#f2e7f6;
+    --red:#b8452f; --red-soft:#fbe9e3;
+    --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
+  }
+  .unitnav{display:flex;gap:8px;margin-bottom:14px}
+  .unitnav .u{flex:1;text-decoration:none;background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:10px 13px;color:var(--ink-soft);display:block}
+  .unitnav .u b{display:block;font-size:14px;font-weight:800;color:var(--ink-soft)}
+  .unitnav .u span{display:block;font-size:11.5px;margin-top:2px;line-height:1.4;opacity:.9}
+  .unitnav .u.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .unitnav .u.on b{color:var(--accent)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;min-height:100vh;font-size:16px}
+  .wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wrap:balance}
+  .sub{color:var(--ink-soft);font-size:15px;margin:0 0 22px;line-height:1.7}
+  .card-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+  label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+  input[type=number]{width:100%;padding:14px 16px;font-size:22px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-weight:700;text-align:center}
+  input[type=number]:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;font-size:15px;padding:14px 20px;font-family:inherit}
+  .btn-primary{background:var(--accent-soft);color:var(--accent);border:1.5px solid var(--accent);width:100%;margin-top:16px}
+  .btn-primary:disabled{opacity:.4;cursor:not-allowed}
+  .btn-ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+  .status{font-size:13px;color:var(--ink-soft);text-align:center;margin-top:10px;min-height:18px}
+  .rolepick{display:grid;grid-template-columns:1fr;gap:10px;margin-top:6px}
+  .rolebtn{border-radius:12px;padding:14px 16px;text-align:left;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink)}
+  .rolebtn .rk{font-size:11px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;opacity:.85;display:block;margin-bottom:2px}
+  .rolebtn .rn{font-size:15px;font-weight:800}
+  .rolebtn .rdesc{display:block;font-size:12.5px;font-weight:400;opacity:.85;margin-top:3px;line-height:1.5}
+  .rolebtn.sel{border-width:2px;box-shadow:0 0 0 2px inset currentColor}
+  .rolebtn.rc-producer{color:var(--green)} .rolebtn.rc-producer.sel{background:var(--green-soft)}
+  .rolebtn.rc-engineer{color:var(--blue)} .rolebtn.rc-engineer.sel{background:var(--blue-soft)}
+  .rolebtn.rc-marketing{color:var(--purple)} .rolebtn.rc-marketing.sel{background:var(--purple-soft)}
+  .rolebtn.rc-creative{color:var(--red)} .rolebtn.rc-creative.sel{background:var(--red-soft)}
+  .role-card{border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow)}
+  .role-card .rk{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;opacity:.85;margin-bottom:4px}
+  .role-card .rv{font-size:18px;font-weight:800;line-height:1.35}
+  .role-card .rd{font-size:12.5px;opacity:.75;margin-top:4px}
+  .role-card .rp{font-size:13px;opacity:.85;margin-top:8px;border-top:1px dashed rgba(30,25,10,.15);padding-top:6px}
+  .rc-producer{background:var(--green-soft);border:1px solid var(--green)}
+  .rc-producer .rk{color:var(--green)}
+  .rc-engineer{background:var(--blue-soft);border:1px solid var(--blue)}
+  .rc-engineer .rk{color:var(--blue)}
+  .rc-marketing{background:var(--purple-soft);border:1px solid var(--purple)}
+  .rc-marketing .rk{color:var(--purple)}
+  .rc-creative{background:var(--red-soft);border:1px solid var(--red)}
+  .rc-creative .rk{color:var(--red)}
+  .yours{position:relative}
+  .yours::after{content:"YOU";position:absolute;top:12px;right:14px;font-size:10px;font-weight:800;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);padding:2px 8px;border-radius:999px}
+  .group-line{background:var(--panel2);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .group-line b{color:var(--accent)}
+  textarea{width:100%;min-height:110px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:14px;resize:vertical}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.6}
+  .row{display:flex;gap:10px;margin-top:12px}
+  .row button{flex:1}
+  [hidden]{display:none!important}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .envtag{font-family:monospace;background:var(--panel2);padding:2px 8px;border-radius:6px;font-weight:700}
+  footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:30px;opacity:.6}
+  .topnav{display:flex;gap:8px;margin-bottom:16px}
+  .topnav a{flex:1;text-align:center;padding:10px 8px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-size:13px;font-weight:700;text-decoration:none}
+  .topnav a:hover{background:var(--accent-soft);border-color:var(--accent)}
+  .queuepanel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;font-size:12.5px}
+  .queuepanel .qitem{flex:1;min-width:110px;text-align:center;padding:8px 6px;border-radius:10px;background:var(--panel);border:1px solid var(--line);opacity:.55;transition:opacity .2s}
+  .queuepanel .qitem b{display:block;font-size:16px;margin-top:2px}
+  .queuepanel .qitem.has{opacity:1;border-width:2px;animation:qpulse 1.6s ease-in-out infinite}
+  @keyframes qpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+  .queuepanel .qitem.rc-producer{background:var(--green-soft);border-color:var(--green)}
+  .queuepanel .qitem.rc-engineer{background:var(--blue-soft);border-color:var(--blue)}
+  .queuepanel .qitem.rc-marketing{background:var(--purple-soft);border-color:var(--purple)}
+  .queuepanel .qitem.rc-creative{background:var(--red-soft);border-color:var(--red)}
+  .queuehint{background:var(--red-soft);border:1.5px solid var(--red);color:var(--red);border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:700;margin:-8px 0 16px;text-align:center}
+  .queuesummary{text-align:center;font-size:11.5px;color:var(--ink-soft);margin:-10px 0 16px}
+  .leftTag{color:var(--red);font-size:11px;font-weight:800}
+  .statusTag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;margin-left:4px;vertical-align:middle}
+  .statusTag.on{background:var(--green-soft);color:var(--green)}
+  .statusTag.idle{background:var(--accent-soft);color:var(--accent)}
+  .statusTag.off{background:var(--red-soft);color:var(--red)}
+
+  .qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+  .qrbox .t{font-weight:800;font-size:15px}
+  .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line)}
+  .qrbox #qrcanvas img,.qrbox #qrcanvas table{display:block;margin:0 auto}
+  .donecard{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+  .donecard-inner{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:2px solid var(--accent);border-radius:16px;padding:24px;text-align:center;max-width:480px;width:100%;margin:auto}
+  .donecard .badge{display:inline-block;background:var(--accent);color:#fff;font-weight:800;font-size:13px;letter-spacing:.03em;padding:5px 14px;border-radius:999px;margin-bottom:10px}
+  .donecard .who{font-size:20px;font-weight:800;margin-bottom:4px}
+  .donecard .combo{font-size:13.5px;color:var(--ink-soft);line-height:1.7}
+  .donecard .combo b{color:var(--ink);font-weight:700}
+  .feed{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;margin-bottom:14px}
+  .feed .msg{background:var(--panel2);border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.6}
+  .feed .msg.mine{background:var(--accent-soft);border:1px solid var(--accent)}
+  .feed .msg .who{font-weight:800;font-size:12px;color:var(--accent);margin-bottom:2px}
+  .feed .msg .txt{white-space:pre-wrap}
+  .feed .empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:20px 0}
+  .howto{list-style:none;margin:0;padding:0;counter-reset:step}
+  .howto li{counter-increment:step;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .howto li:last-child{border-bottom:none}
+  .howto li::before{content:counter(step);flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1.5px solid var(--accent);font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+  .howto .st{font-size:14px}
+  .howto .st b{display:block;margin-bottom:1px}
+  .howto .st span{color:var(--ink-soft);font-size:12.5px}
+  @media (min-width: 720px){
+    .wrap{max-width:760px}
+    .rolepick{grid-template-columns:1fr 1fr}
+  }
+  .langbtn{background:var(--panel);border:1.5px solid var(--line);border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+  .langbtn.sel{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+  img.emoji{height:1.15em;width:1.15em;margin:0 .05em 0 .1em;vertical-align:-0.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langswitch" style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+    <button type="button" id="langZh" class="langbtn sel">🇹🇼 中文</button>
+    <button type="button" id="langVi" class="langbtn">🇻🇳 Tiếng Việt</button>
+    <button type="button" id="langId" class="langbtn">🇮🇩 Bahasa Indonesia</button>
+  </div>
+  <div class="unitnav">
+    <a href="unit1.html" class="u on"><b>單元一</b><span>Design Jam</span></a>
+    <a href="w2.html" class="u"><b>單元二 · 本週</b><span>速通盤點與卡牌疊加</span></a>
+  </div>
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px" data-i18n="kicker">文化遊戲松實作 · 熱身</div>
+  <h1 data-i18n="h1title">文化遊戲松 Cultural Game Jam</h1>
+  <p class="sub" data-i18n="sub">改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。</p>
+
+  <div class="topnav">
+    <a href="cards.html" data-i18n="navCards">🗂️ 完整卡池（可自己新增卡片）</a>
+    <a href="gallery.html" data-i18n="navGallery">🖼️ 瀏覽大家的構想</a>
+  </div>
+
+  <div class="queuepanel" id="queuepanel"></div>
+  <div class="queuehint" id="queuehint" hidden></div>
+  <div class="queuesummary" id="queuesummary"></div>
+
+  <div class="card-box qrbox">
+    <div class="t">手機掃這裡加入</div>
+    <div id="qrcanvas"></div>
+  </div>
+
+  <div class="card-box">
+    <label style="margin-bottom:12px">怎麼玩</label>
+    <ol class="howto">
+      <li><div class="st"><b data-i18n="howto1b">輸入編號、選角色</b><span data-i18n="howto1s">用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）</span></div></li>
+      <li><div class="st"><b data-i18n="howto2b">系統自動配對</b><span data-i18n="howto2s">不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等</span></div></li>
+      <li><div class="st"><b data-i18n="howto3b">各自抽卡</b><span data-i18n="howto3s">每個角色隨機抽到一張任務卡，代表你這個角色的限制條件</span></div></li>
+      <li><div class="st"><b data-i18n="howto4b">一起 blend 構想</b><span data-i18n="howto4s">把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——建議一輪抓5-8分鐘：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串</span></div></li>
+      <li><div class="st"><b data-i18n="howto5b">下載設計文件</b><span data-i18n="howto5s">把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告</span></div></li>
+      <li><div class="st"><b data-i18n="howto6b">重玩</b><span data-i18n="howto6s">不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案</span></div></li>
+    </ol>
+  </div>
+
+  <div id="login" class="card-box">
+    <label for="envInput" data-i18n="envLabel">你的編號（信封上那組，不是學號）</label>
+    <input type="number" id="envInput" min="0" max="130" placeholder="例如 17" data-i18n-ph="envPh" inputmode="numeric">
+    <div class="hint" id="envLockHint" hidden style="margin-top:4px"><span data-i18n="envLockHintText">🔒 編號已鎖定，避免中途誤改</span> · <a href="#" id="envUnlockLink" data-i18n="envUnlockLinkText" style="color:var(--accent);font-weight:700">不是你？點此重新輸入</a></div>
+    <label for="nickInput" style="margin-top:16px" data-i18n="nickLabel">幫自己取個暱稱（選填）</label>
+    <input type="text" id="nickInput" maxlength="20" placeholder="例如：芒果冰、隊長17號" data-i18n-ph="nickPh" style="width:100%;padding:12px 14px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)">
+    <div class="hint" data-i18n="hint1">⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果</div>
+    <label style="margin-top:16px" data-i18n="roleLabel">這一輪想扮演的角色</label>
+    <div class="rolepick" id="rolepick"></div>
+    <button class="btn-primary" id="joinBtn" disabled data-i18n="joinBtn">開始配對</button>
+    <div class="status" id="loginStatus"></div>
+  </div>
+
+  <div id="waiting" class="card-box" hidden>
+    <div class="status"><span class="spinner"></span><span data-i18n="waitingText">配對中…等其他角色的人加入（</span><span id="waitRole"></span><span data-i18n="waitingClose">）</span></div>
+    <div class="hint" id="waitNick" style="text-align:center"></div>
+    <div class="queuehint" id="waitHint" style="margin-top:10px" hidden></div>
+    <button class="btn-ghost" id="cancelBtn" style="width:100%;margin-top:14px" data-i18n="cancelBtn">取消配對／換角色</button>
+  </div>
+
+  <div id="playing" hidden>
+    <div id="doneCard" class="donecard" hidden>
+      <div class="donecard-inner">
+        <div class="badge" data-i18n="doneBadge">✅ 本輪已記錄</div>
+        <div class="who" id="doneWho">--</div>
+        <div class="combo" id="doneCombo"></div>
+        <button class="btn-ghost" id="closeDoneCardBtn" style="width:100%;margin-top:18px" data-i18n="closeDoneBtn">✕ 截圖完了，關閉回去繼續討論</button>
+      </div>
+    </div>
+    <div class="group-line"><span data-i18n="roundNoPrefix">第 </span><b id="roundNo">1</b><span data-i18n="roundNoMidGroup"> 輪 · 這組編號：</span><span id="groupEnvs" class="envtag">--</span>
+      <button class="btn-ghost" id="topRerollBtn" style="float:right;padding:4px 12px;font-size:12px" data-i18n="topRerollBtn">🏠 回登入／選角色</button>
+    </div>
+    <div id="cards"></div>
+    <div class="card-box">
+      <label data-i18n="howToStartLabel">不知道怎麼開始？先請 Gemini 幫忙探索</label>
+      <button class="btn-ghost" id="copyPromptBtn" style="width:100%" data-i18n="copyPromptBtn">📋 複製一鍵探索指令，貼去 Gemini</button>
+      <div class="hint" id="copyStatus"></div>
+    </div>
+    <div class="card-box">
+      <label data-i18n="feedLabel">這組的即時討論串（輪流貼上，大家馬上看得到）</label>
+      <div class="feed" id="feed"><div class="empty" data-i18n="feedEmpty">還沒有人發言</div></div>
+      <label data-i18n="pasteLabel">把你跟 Gemini 討論的心得貼上來</label>
+      <textarea id="promptBox" placeholder="貼上這一組討論、跟 Gemini 交流的過程…" data-i18n-ph="promptBoxPh"></textarea>
+      <div class="row">
+        <button class="btn-ghost" id="saveBtn" data-i18n="saveBtn">記錄這段</button>
+        <button class="btn-ghost" id="downloadBtn" data-i18n="downloadBtn">下載構想 .md</button>
+      </div>
+      <div class="hint" id="saveStatus"></div>
+    </div>
+    <div class="card-box">
+      <label data-i18n="feedbackLabel">對這個工具的意見（想加什麼、想改什麼）</label>
+      <textarea id="feedbackBox" style="min-height:70px" placeholder="例如：想要角色卡再多一點選項、想看到別組抽到什麼…" data-i18n-ph="feedbackPh"></textarea>
+      <div class="row">
+        <button class="btn-ghost" id="feedbackBtn" data-i18n="feedbackBtn">送出意見</button>
+      </div>
+      <div class="hint" id="feedbackStatus"></div>
+    </div>
+    <div class="row">
+      <button class="btn-primary" id="rerollBtn" data-i18n="rerollBtn">再玩一輪（可換角色）</button>
+    </div>
+  </div>
+
+  <footer><span data-i18n="footer">編號僅供去識別化記錄，不會顯示或連結到姓名學號</span> · <a href="gallery.html" style="color:var(--accent);font-weight:700" data-i18n="navGallery2">瀏覽大家的構想</a> · <a href="cards.html" style="color:var(--accent);font-weight:700" data-i18n="navCards2">完整卡池</a></footer>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
+  authDomain: "gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gen-lang-client-0929530380",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const NS = "whgm";
+
+let currentLang = "zh"; // 2026-09-09 楊老師：加越南語切換（修課有越南僑生），晚上再加印尼語（遊戲設計學班上有印尼學生，跟文化遊戲松共用這個網頁）
+
+// 🔴 2026-09-09踩過的bug：I18N跟myWaitSince原本宣告在檔案很後面，但下面的
+// db.ref(...).on("value",...)監聽器一開始註冊就可能被Firebase立刻回呼
+// （尤其本機已有快取資料時），呼叫到還在temporal dead zone的const/let會直接
+// ReferenceError、把整個頁面初始化炸斷（角色選不了、QR畫不出來、編號不會自動
+// 帶入）。教訓：任何可能被Firebase監聽器callback用到的狀態，都要在第一個
+// db.ref(...).on(...)之前宣告好，不能想著「等一下再宣告反正照順序看得懂」。
+// ---- 2026-09-09 楊老師交辦：加越南語切換（修課有越南僑生）----
+// 範圍：靜態UI文字、角色名稱/引導問題/描述，以及卡片內容本身(card.vVi/dVi/noteVi，
+// 見下方PRODUCER/ENGINEER/MARKETING/CREATIVE牌組)——用cv()/cd()/cnote()依語言取用。
+const I18N = {
+  h1title: {zh:"文化遊戲松 Cultural Game Jam", vi:"Game Jam Văn Hóa 文化遊戲松", id:"Game Jam Budaya 文化遊戲松"},
+  kicker: {zh:"文化遊戲松實作 · 熱身", vi:"Thực hành Game Jam Văn Hóa · Khởi động", id:"Praktik Game Jam Budaya · Pemanasan"},
+  sub: {zh:"改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。",
+        vi:"Chuyển thể từ Design Jam của Stone Librande (GDC). Nhập mã số ẩn danh của bạn, chọn vai trò muốn đóng trong vòng này, hệ thống sẽ ghép bạn với người chơi vai trò khác thành một nhóm, mỗi người rút một thẻ nhiệm vụ, rồi cùng dùng Gemini để kết hợp ý tưởng. Có thể ghép lại, rút lại thẻ, đổi vai trò bao nhiêu lần cũng được.",
+        id:"Diadaptasi dari Design Jam karya Stone Librande (GDC). Masukkan nomor anonim Anda, pilih peran yang ingin dimainkan di putaran ini, sistem akan mencocokkan Anda dengan pemain peran lain menjadi satu kelompok, masing-masing mengambil satu kartu misi, lalu bersama-sama menggunakan Gemini untuk menggabungkan ide. Bisa mencocokkan ulang, mengambil kartu ulang, dan berganti peran berkali-kali."},
+  navCards: {zh:"🗂️ 完整卡池（可自己新增卡片）", vi:"🗂️ Bộ thẻ đầy đủ (có thể tự thêm thẻ)", id:"🗂️ Kumpulan kartu lengkap (bisa menambah kartu sendiri)"},
+  navGallery: {zh:"🖼️ 瀏覽大家的構想", vi:"🖼️ Xem ý tưởng của mọi người", id:"🖼️ Lihat ide semua orang"},
+  navCards2: {zh:"完整卡池", vi:"Bộ thẻ đầy đủ", id:"Kumpulan kartu lengkap"},
+  navGallery2: {zh:"瀏覽大家的構想", vi:"Xem ý tưởng của mọi người", id:"Lihat ide semua orang"},
+  howto1b: {zh:"輸入編號、選角色", vi:"Nhập mã số, chọn vai trò", id:"Masukkan nomor, pilih peran"},
+  howto1s: {zh:"用信封上的編號，選這一輪想扮演的角色（製作人／工程師／行銷／創意總監）", vi:"Dùng mã số trên phong bì, chọn vai trò muốn đóng trong vòng này (Nhà sản xuất / Kỹ sư / Tiếp thị / Giám đốc sáng tạo)", id:"Gunakan nomor di amplop, pilih peran yang ingin dimainkan di putaran ini (Produser / Insinyur / Pemasaran / Direktur Kreatif)"},
+  howto2b: {zh:"系統自動配對", vi:"Hệ thống tự động ghép nhóm", id:"Sistem mencocokkan otomatis"},
+  howto2s: {zh:"不用自己找人、不用選房間——只要湊到至少2人、且選了不同角色，系統就會自動幫你們開局（每組最多4人）。上面「即時排隊看板」可以看到目前各角色還有幾人在等", vi:"Không cần tự tìm người, không cần chọn phòng — chỉ cần đủ ít nhất 2 người với vai trò khác nhau, hệ thống sẽ tự động bắt đầu (mỗi nhóm tối đa 4 người). Bảng chờ ở trên cho biết mỗi vai trò còn bao nhiêu người đang chờ", id:"Tidak perlu cari orang sendiri, tidak perlu pilih ruangan — cukup terkumpul minimal 2 orang dengan peran berbeda, sistem otomatis akan memulai (maksimal 4 orang per kelompok). Papan antrean di atas menunjukkan berapa orang masih menunggu untuk setiap peran"},
+  howto3b: {zh:"各自抽卡", vi:"Mỗi người rút một thẻ", id:"Masing-masing mengambil kartu"},
+  howto3s: {zh:"每個角色隨機抽到一張任務卡，代表你這個角色的限制條件", vi:"Mỗi vai trò được rút ngẫu nhiên một thẻ nhiệm vụ, đại diện cho điều kiện giới hạn của vai trò đó", id:"Setiap peran mengambil satu kartu misi secara acak, mewakili batasan untuk peran tersebut"},
+  howto4b: {zh:"一起 blend 構想", vi:"Cùng nhau kết hợp ý tưởng", id:"Menggabungkan ide bersama"},
+  howto4s: {zh:"把所有人抽到的卡片組合起來，用 Gemini 討論出一個遊戲構想——建議一輪抓5-8分鐘：2分鐘看卡片＋複製指令去Gemini探索，3-5分鐘收斂並把心得貼回討論串", vi:"Kết hợp thẻ của tất cả mọi người, dùng Gemini để thảo luận ra một ý tưởng trò chơi — mỗi vòng nên mất khoảng 5-8 phút: 2 phút xem thẻ + sao chép câu lệnh sang Gemini để khám phá, 3-5 phút chốt ý và dán lại vào khung thảo luận", id:"Gabungkan kartu yang diambil semua orang, gunakan Gemini untuk mendiskusikan sebuah ide permainan — disarankan satu putaran sekitar 5-8 menit: 2 menit melihat kartu + menyalin perintah ke Gemini untuk eksplorasi, 3-5 menit menyimpulkan dan menempel hasilnya kembali ke utas diskusi"},
+  howto5b: {zh:"下載設計文件", vi:"Tải tài liệu thiết kế", id:"Unduh dokumen desain"},
+  howto5s: {zh:"把構想整理成 .md 檔下載，帶去 Gemini／Claude Code 繼續發展——這裡不用上台報告", vi:"Tổng hợp ý tưởng thành file .md để tải về, mang sang Gemini/Claude Code để phát triển tiếp — không cần lên thuyết trình ở đây", id:"Rangkum ide menjadi file .md untuk diunduh, bawa ke Gemini/Claude Code untuk dikembangkan lebih lanjut — tidak perlu presentasi di sini"},
+  howto6b: {zh:"重玩", vi:"Chơi lại", id:"Main lagi"},
+  howto6s: {zh:"不滿意就重配對、換角色、重抽，可以一直迭代——時間夠的話建議玩2-3輪再選一個方向定案", vi:"Nếu chưa hài lòng có thể ghép lại, đổi vai trò, rút lại thẻ, lặp lại bao nhiêu lần cũng được — nếu đủ thời gian nên chơi 2-3 vòng rồi mới chốt một hướng", id:"Kalau belum puas bisa cocokkan ulang, ganti peran, ambil kartu ulang, bisa diulang terus — kalau waktu cukup disarankan main 2-3 putaran baru pilih satu arah untuk difinalkan"},
+  envLabel: {zh:"你的編號（信封上那組，不是學號）", vi:"Mã số của bạn (ghi trên phong bì, không phải mã sinh viên)", id:"Nomor Anda (yang ada di amplop, bukan NIM)"},
+  envPh: {zh:"例如 17", vi:"Ví dụ: 17", id:"Contoh: 17"},
+  nickLabel: {zh:"幫自己取個暱稱（選填）", vi:"Đặt biệt danh cho mình (không bắt buộc)", id:"Buat julukan untuk diri sendiri (opsional)"},
+  nickPh: {zh:"例如：芒果冰、隊長17號", vi:"Ví dụ: Đá xoài, Đội trưởng 17", id:"Contoh: Es Mangga, Kapten 17"},
+  hint1: {zh:"⚠️ 請勿使用真實姓名——暱稱跟編號一樣，其他組跟老師都看得到，去識別化才有效果", vi:"⚠️ Vui lòng không dùng tên thật — biệt danh cũng như mã số, các nhóm khác và giáo viên đều nhìn thấy được, phải ẩn danh mới có tác dụng", id:"⚠️ Jangan gunakan nama asli — julukan seperti nomor, terlihat oleh kelompok lain dan dosen, harus anonim agar efektif"},
+  roleLabel: {zh:"這一輪想扮演的角色", vi:"Vai trò muốn đóng trong vòng này", id:"Peran yang ingin dimainkan di putaran ini"},
+  joinBtn: {zh:"開始配對", vi:"Bắt đầu ghép nhóm", id:"Mulai mencocokkan"},
+  waitingText: {zh:"配對中…等其他角色的人加入（", vi:"Đang ghép nhóm… chờ người chơi vai trò khác tham gia (", id:"Sedang mencocokkan… menunggu pemain peran lain bergabung ("},
+  waitingClose: {zh:"）", vi:")", id:")"},
+  cancelBtn: {zh:"取消配對／換角色", vi:"Hủy ghép nhóm / Đổi vai trò", id:"Batalkan pencocokan / Ganti peran"},
+  doneBadge: {zh:"✅ 本輪已記錄", vi:"✅ Vòng này đã được lưu", id:"✅ Putaran ini sudah dicatat"},
+  closeDoneBtn: {zh:"✕ 截圖完了，關閉回去繼續討論", vi:"✕ Chụp màn hình xong, đóng để tiếp tục thảo luận", id:"✕ Sudah screenshot, tutup untuk lanjut diskusi"},
+  roundNoPrefix: {zh:"第 ", vi:"Vòng ", id:"Putaran "},
+  roundNoMidGroup: {zh:" 輪 · 這組編號：", vi:" · Mã số nhóm này: ", id:" · Nomor kelompok ini: "},
+  topRerollBtn: {zh:"🏠 回登入／選角色", vi:"🏠 Về trang đăng nhập / chọn vai trò", id:"🏠 Kembali ke login / pilih peran"},
+  howToStartLabel: {zh:"不知道怎麼開始？先請 Gemini 幫忙探索", vi:"Chưa biết bắt đầu thế nào? Nhờ Gemini giúp khám phá trước", id:"Belum tahu harus mulai dari mana? Minta bantuan Gemini untuk eksplorasi dulu"},
+  copyPromptBtn: {zh:"📋 複製一鍵探索指令，貼去 Gemini", vi:"📋 Sao chép câu lệnh khám phá, dán sang Gemini", id:"📋 Salin perintah eksplorasi, tempel ke Gemini"},
+  feedLabel: {zh:"這組的即時討論串（輪流貼上，大家馬上看得到）", vi:"Chuỗi thảo luận trực tiếp của nhóm (lần lượt dán lên, mọi người thấy ngay)", id:"Utas diskusi langsung kelompok ini (tempel bergiliran, semua langsung bisa lihat)"},
+  feedEmpty: {zh:"還沒有人發言", vi:"Chưa có ai phát biểu", id:"Belum ada yang berkomentar"},
+  pasteLabel: {zh:"把你跟 Gemini 討論的心得貼上來", vi:"Dán lại nội dung bạn đã thảo luận với Gemini", id:"Tempel hasil diskusi Anda dengan Gemini di sini"},
+  promptBoxPh: {zh:"貼上這一組討論、跟 Gemini 交流的過程…", vi:"Dán vào quá trình thảo luận và trao đổi với Gemini…", id:"Tempel proses diskusi kelompok ini dengan Gemini…"},
+  saveBtn: {zh:"記錄這段", vi:"Lưu lại đoạn này", id:"Simpan bagian ini"},
+  downloadBtn: {zh:"下載構想 .md", vi:"Tải ý tưởng .md", id:"Unduh ide .md"},
+  feedbackLabel: {zh:"對這個工具的意見（想加什麼、想改什麼）", vi:"Góp ý cho công cụ này (muốn thêm gì, muốn đổi gì)", id:"Masukan untuk alat ini (mau tambah apa, mau ubah apa)"},
+  feedbackPh: {zh:"例如：想要角色卡再多一點選項、想看到別組抽到什麼…", vi:"Ví dụ: muốn thẻ vai trò có nhiều lựa chọn hơn, muốn xem nhóm khác rút được gì…", id:"Contoh: ingin kartu peran punya lebih banyak pilihan, ingin lihat kelompok lain dapat kartu apa…"},
+  feedbackBtn: {zh:"送出意見", vi:"Gửi góp ý", id:"Kirim masukan"},
+  rerollBtn: {zh:"再玩一輪（可換角色）", vi:"Chơi vòng khác (có thể đổi vai trò)", id:"Main putaran lagi (bisa ganti peran)"},
+  footer: {zh:"編號僅供去識別化記錄，不會顯示或連結到姓名學號", vi:"Mã số chỉ dùng để ghi nhận ẩn danh, không hiển thị hoặc liên kết với tên/mã sinh viên", id:"Nomor hanya untuk pencatatan anonim, tidak ditampilkan atau dikaitkan dengan nama/NIM"},
+  envLockHintText: {zh:"🔒 編號已鎖定，避免中途誤改", vi:"🔒 Mã số đã bị khóa để tránh sửa nhầm giữa chừng", id:"🔒 Nomor sudah dikunci, untuk menghindari perubahan tidak sengaja"},
+  envUnlockLinkText: {zh:"不是你？點此重新輸入", vi:"Không phải bạn? Bấm vào đây để nhập lại", id:"Bukan Anda? Klik di sini untuk memasukkan ulang"},
+  errNoEnv: {zh:"請輸入信封上的編號", vi:"Vui lòng nhập mã số ghi trên phong bì", id:"Silakan masukkan nomor yang ada di amplop"},
+  errNoRole: {zh:"請選一個角色", vi:"Vui lòng chọn một vai trò", id:"Silakan pilih satu peran"},
+  waitingCountSuffix: {zh:"等待中", vi:" đang chờ", id:" sedang menunggu"},
+  mergeAskText: {zh:"📎 有同學新增的卡片跟你的「{mine}」很像：「{other}」。要不要合併成一張？（需要雙方都同意才會真的合併；不同意的話兩張都會留著，互不影響）",
+                 vi:"📎 Có bạn học thêm một thẻ giống thẻ 「{mine}」 của bạn: 「{other}」. Bạn có muốn gộp thành một thẻ không? (cần cả hai bên đồng ý mới thực sự gộp; nếu không đồng ý thì cả hai thẻ vẫn giữ nguyên)",
+                 id:"📎 Ada teman yang menambahkan kartu mirip dengan 「{mine}」 milikmu: 「{other}」. Mau digabung jadi satu kartu? (perlu persetujuan kedua pihak baru benar-benar digabung; kalau tidak setuju, kedua kartu tetap ada, tidak saling memengaruhi)"},
+  junkDeleteAskText: {zh:"🗑️ 你之前新增的卡片「{v}」內容看起來像是測試或隨手打的，目前不會出現在正式抽卡池中。方便的話，同意把它從卡池刪除嗎？（不同意也沒關係，卡片會保留，但一樣不會被抽到）",
+                      vi:"🗑️ Thẻ 「{v}」 bạn đã thêm trước đây có vẻ như nội dung thử nghiệm hoặc gõ ngẫu nhiên, hiện không xuất hiện trong bộ thẻ chính thức. Nếu tiện, bạn có đồng ý xóa nó khỏi kho thẻ không? (nếu không đồng ý cũng không sao, thẻ vẫn giữ nguyên nhưng vẫn không được rút)",
+                      id:"🗑️ Kartu 「{v}」 yang kamu tambahkan sebelumnya sepertinya konten uji coba atau asal ketik, saat ini tidak akan muncul di kumpulan kartu resmi. Kalau berkenan, apakah kamu setuju menghapusnya dari kumpulan kartu? (kalau tidak setuju juga tidak masalah, kartu akan tetap ada tapi tetap tidak akan diambil)"},
+  onlyOneRolePrefix: {zh:"⚠️ 目前只有一種角色在等，配不到人！想加入的人請選：", vi:"⚠️ Hiện chỉ có một vai trò đang chờ, không ghép được nhóm! Ai muốn tham gia hãy chọn: ", id:"⚠️ Saat ini hanya ada satu peran yang menunggu, tidak bisa dicocokkan! Yang ingin bergabung silakan pilih: "},
+  waitedTooLongPrefix: {zh:"⏳ 已經等超過30秒——目前缺其他角色的人，建議按下面「換角色」改選：", vi:"⏳ Đã chờ hơn 30 giây — hiện đang thiếu người ở vai trò khác, hãy bấm 'Đổi vai trò' bên dưới để chọn: ", id:"⏳ Sudah menunggu lebih dari 30 detik — saat ini kekurangan orang di peran lain, disarankan tekan 'Ganti Peran' di bawah untuk memilih: "},
+  queueSummaryText: {zh:"目前等待中 {a} 人 · 配對中／進行中 {b} 人 · 進行中的討論 {c} 組",
+                     vi:"Đang chờ {a} người · Đang ghép/đang chơi {b} người · {c} nhóm đang thảo luận",
+                     id:"Sedang menunggu {a} orang · Sedang mencocokkan/berlangsung {b} orang · {c} kelompok sedang berdiskusi"},
+  copiedOk: {zh:"已複製，去 Gemini 貼上吧！", vi:"Đã sao chép, sang Gemini dán vào nhé!", id:"Sudah disalin, tempel ke Gemini ya!"},
+  copyFailPrefix: {zh:"自動複製失敗，請長按下面文字手動複製：", vi:"Sao chép tự động thất bại, hãy nhấn giữ đoạn văn bên dưới để tự sao chép:", id:"Salin otomatis gagal, silakan tekan lama teks di bawah untuk menyalin manual:"},
+  savedOkPrefix: {zh:"已記錄 · ", vi:"Đã lưu · ", id:"Sudah dicatat · "},
+  saveFailPrefix: {zh:"記錄失敗：", vi:"Lưu thất bại: ", id:"Gagal menyimpan: "},
+  feedbackOk: {zh:"謝謝，已送出！", vi:"Cảm ơn, đã gửi!", id:"Terima kasih, sudah dikirim!"},
+  feedbackFailPrefix: {zh:"送出失敗：", vi:"Gửi thất bại: ", id:"Gagal mengirim: "},
+  autoNickPrefix: {zh:"🎲 幫你取了暱稱：", vi:"🎲 Đã đặt biệt danh cho bạn: ", id:"🎲 Sudah dibuatkan julukan untukmu: "},
+  autoNickSuffix: {zh:"（下一輪想改就直接改暱稱那格）", vi:"（muốn đổi thì sửa trực tiếp ở ô biệt danh）", id:"（kalau mau ganti di putaran berikutnya, langsung ubah di kolom julukan）"},
+};
+
+let myWaitSince = null;
+
+// ---- card data ----
+// 2026-09-09 楊老師：越南語版本要完整，卡片內容(v/d/note)也要有越南文——
+// vVi/dVi/noteVi是對應的越南文版本，用cv()/cd()/cnote()依currentLang取用。
+const PRODUCER = [
+  {v:"30分鐘／只能純聊天講故事／新手一人", vVi:"30 phút／chỉ được nói chuyện kể chuyện／một người mới", vId:"30 menit／hanya boleh mengobrol bercerita／satu pemula", d:"時程與資源", dVi:"Tiến độ và nguồn lực", dId:"Jadwal dan Sumber Daya", note:"沒有工具可用，只能用嘴巴把遊戲講成一個故事，逼你想清楚核心體驗是什麼。", noteVi:"Không có công cụ nào cả, chỉ có thể dùng lời nói kể trò chơi thành một câu chuyện, buộc bạn phải nghĩ rõ trải nghiệm cốt lõi là gì。", noteId:"Tidak ada alat yang bisa dipakai, hanya bisa menceritakan permainan lewat mulut sebagai sebuah kisah, memaksa Anda memikirkan dengan jelas apa pengalaman intinya."},
+  {v:"1天／Gemini免費額度／新手一人", vVi:"1 ngày／hạn mức miễn phí Gemini／một người mới", vId:"1 hari／kuota gratis Gemini／satu pemula", d:"時程與資源", dVi:"Tiến độ và nguồn lực", dId:"Jadwal dan Sumber Daya", note:"一天內只夠做出最小可玩雛形，別想著做完整內容。", noteVi:"Trong một ngày chỉ đủ làm ra bản mẫu chơi được tối thiểu, đừng nghĩ đến việc làm nội dung hoàn chỉnh.", noteId:"Dalam satu hari hanya cukup membuat prototipe minimal yang bisa dimainkan, jangan berpikir untuk membuat konten lengkap."},
+  {v:"3天／Gemini免費額度／兩個新手", vVi:"3 ngày／hạn mức miễn phí Gemini／hai người mới", vId:"3 hari／kuota gratis Gemini／dua pemula", d:"時程與資源", dVi:"Tiến độ và nguồn lực", dId:"Jadwal dan Sumber Daya", note:"多一個人手，但都沒經驗，分工比技術更重要。", noteVi:"Có thêm người nhưng đều chưa có kinh nghiệm, phân công quan trọng hơn kỹ thuật.", noteId:"Ada tambahan tenaga, tapi semuanya belum berpengalaman, pembagian tugas lebih penting daripada teknik."},
+  {v:"1週／AI Studio額度／一個有經驗", vVi:"1 tuần／hạn mức AI Studio／một người có kinh nghiệm", vId:"1 minggu／kuota AI Studio／satu orang berpengalaman", d:"時程與資源", dVi:"Tiến độ và nguồn lực", dId:"Jadwal dan Sumber Daya", note:"有個懂AI工具的人帶路，一週足夠做出可以展示的prototype。", noteVi:"Có người hiểu công cụ AI dẫn đường, một tuần đủ để làm ra prototype có thể trình diễn.", noteId:"Ada orang yang paham alat AI memandu, satu minggu cukup untuk membuat prototipe yang bisa dipresentasikan."},
+  {v:"2週／Claude Code訂閱／兩個有經驗", vVi:"2 tuần／gói đăng ký Claude Code／hai người có kinh nghiệm", vId:"2 minggu／langganan Claude Code／dua orang berpengalaman", d:"時程與資源", dVi:"Tiến độ và nguồn lực", dId:"Jadwal dan Sumber Daya", note:"資源最寬裕的組合，可以真的把功能做出來，不只是紙上談兵。", noteVi:"Tổ hợp nguồn lực dư dả nhất, có thể thực sự làm ra chức năng, không chỉ nói suông trên giấy.", noteId:"Kombinasi sumber daya paling leluasa, bisa benar-benar mewujudkan fitur, bukan cuma teori di atas kertas."},
+  {v:"1學期／全部工具開放／團隊支援", vVi:"1 học kỳ／mở toàn bộ công cụ／có đội hỗ trợ", vId:"1 semester／semua alat terbuka／didukung tim", d:"時程與資源", dVi:"Tiến độ và nguồn lực", dId:"Jadwal dan Sumber Daya", note:"這是這門課實際的資源規模——用這張卡想像最終成品可以做到多完整。", noteVi:"Đây là quy mô nguồn lực thực tế của môn học này — dùng thẻ này để tưởng tượng sản phẩm cuối cùng có thể hoàn chỉnh đến mức nào.", noteId:"Ini adalah skala sumber daya nyata mata kuliah ini — gunakan kartu ini untuk membayangkan seberapa lengkap produk akhirnya bisa jadi."},
+  {v:"現場5分鐘／無限資源／傳說等級", vVi:"Tại chỗ 5 phút／nguồn lực vô hạn／cấp độ huyền thoại", vId:"Di tempat 5 menit／sumber daya tak terbatas／level legendaris", d:"時程與資源", dVi:"Tiến độ và nguồn lực", dId:"Jadwal dan Sumber Daya", note:"故意荒謬的組合：資源無限但時間逼死人，練習「先講重點」的能力。", noteVi:"Tổ hợp cố tình phi lý: nguồn lực vô hạn nhưng thời gian dồn ép, luyện khả năng 'nói trọng tâm trước'.", noteId:"Kombinasi yang sengaja dibuat absurd: sumber daya tak terbatas tapi waktu sangat mepet, melatih kemampuan 'sampaikan intinya dulu'."},
+];
+const ENGINEER = [
+  {v:"手機直向 App", vVi:"Ứng dụng điện thoại chiều dọc", vId:"Aplikasi HP mode potret", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"單手滑、通勤也能玩，介面要簡單、關卡要短。", noteVi:"Vuốt một tay, đi lại cũng chơi được, giao diện phải đơn giản, màn chơi phải ngắn.", noteId:"Bisa digeser satu tangan, bisa dimainkan saat commuting, antarmuka harus simpel, level harus pendek."},
+  {v:"網頁互動小說", vVi:"Tiểu thuyết tương tác trên web", vId:"Novel interaktif berbasis web", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"純文字＋選擇分支，不用畫面資源就能做出敘事深度。", noteVi:"Thuần văn bản + rẽ nhánh lựa chọn, không cần tài nguyên hình ảnh vẫn tạo được chiều sâu tự sự.", noteId:"Murni teks + cabang pilihan, bisa menciptakan kedalaman naratif tanpa perlu aset visual."},
+  {v:"實境走讀 App（AR疊圖）", vVi:"Ứng dụng đi bộ thực địa (AR chồng hình)", vId:"Aplikasi jelajah lokasi nyata (AR overlay)", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"玩家要實際走到那個地點才能觸發內容，適合結合真實的台南場景。", noteVi:"Người chơi phải thực sự đi đến địa điểm đó mới kích hoạt được nội dung, phù hợp kết hợp bối cảnh thật của Đài Nam.", noteId:"Pemain harus benar-benar berjalan ke lokasi tersebut untuk memicu konten, cocok dipadukan dengan lokasi nyata di Tainan."},
+  {v:"桌遊 Print & Play", vVi:"Board game in ra chơi (Print & Play)", vId:"Board game Print & Play", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"印出來就能玩，不用寫程式，考驗規則設計本身夠不夠有趣。", noteVi:"In ra là chơi được, không cần viết code, thử thách bản thân thiết kế luật chơi có đủ thú vị không.", noteId:"Cukup dicetak lalu bisa dimainkan, tidak perlu coding, menguji apakah desain aturannya sendiri cukup menarik."},
+  {v:"對話式聊天機器人", vVi:"Chatbot dạng hội thoại", vId:"Chatbot berbasis percakapan", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"整個遊戲就是一場對話，玩法藏在你怎麼設計AI的回應邏輯裡。", noteVi:"Cả trò chơi là một cuộc hội thoại, cách chơi ẩn trong cách bạn thiết kế logic phản hồi của AI.", noteId:"Seluruh permainan adalah sebuah percakapan, cara bermainnya tersembunyi dalam bagaimana Anda merancang logika respons AI."},
+  {v:"短影音互動劇", vVi:"Kịch tương tác video ngắn", vId:"Drama interaktif video pendek", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"像抖音一樣滑，每支影片是一個選擇點，適合快節奏的敘事。", noteVi:"Vuốt như TikTok, mỗi video là một điểm lựa chọn, phù hợp tự sự nhịp độ nhanh.", noteId:"Digeser seperti TikTok, setiap video adalah satu titik pilihan, cocok untuk narasi berirama cepat."},
+  {v:"語音導覽＋關卡", vVi:"Hướng dẫn âm thanh + màn chơi", vId:"Panduan audio + level permainan", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"用耳朵玩的遊戲，畫面不重要，聲音設計跟節奏才是關鍵。", noteVi:"Trò chơi chơi bằng tai, hình ảnh không quan trọng, thiết kế âm thanh và nhịp điệu mới là then chốt.", noteId:"Permainan yang dimainkan dengan telinga, visual tidak penting, desain suara dan ritme adalah kuncinya."},
+  {v:"迷宮解謎印刷單張", vVi:"Tờ giấy in mê cung giải đố", vId:"Lembar cetak teka-teki labirin", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"一張紙搞定，適合在課堂現場立刻發下去測試。", noteVi:"Một tờ giấy là xong, phù hợp phát ngay tại lớp để thử nghiệm.", noteId:"Cukup satu lembar kertas, cocok dibagikan langsung di kelas untuk diuji coba."},
+  {v:"教室黑板真人版", vVi:"Phiên bản người thật trên bảng lớp học", vId:"Versi langsung di papan tulis kelas", d:"形式／平台", dVi:"Hình thức／nền tảng", dId:"Bentuk／Platform", note:"完全不用任何載具，靠肢體和口頭規則就要讓遊戲成立。", noteVi:"Hoàn toàn không cần thiết bị nào, chỉ dựa vào cơ thể và luật chơi bằng lời để trò chơi thành hình.", noteId:"Sama sekali tidak perlu perangkat apa pun, hanya mengandalkan gerak tubuh dan aturan lisan agar permainan bisa berjalan."},
+];
+const MARKETING = [
+  {v:"國小校外教學團 ／ 好奇心", vVi:"Đoàn tham quan học sinh tiểu học ／ Sự tò mò", vId:"Rombongan karyawisata SD ／ Rasa ingin tahu", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"要讓沒有耐心的小朋友願意一直玩，規則要秒懂。", noteVi:"Phải khiến các em nhỏ không kiên nhẫn muốn chơi mãi, luật chơi phải hiểu ngay lập tức.", noteId:"Harus membuat anak-anak yang tidak sabaran mau terus bermain, aturannya harus langsung dipahami."},
+  {v:"觀光客 ／ 打卡拍照慾", vVi:"Khách du lịch ／ Muốn check-in chụp ảnh", vId:"Wisatawan ／ Ingin check-in dan foto", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"玩家想要的是「拍出來好看」，遊戲要製造上鏡的瞬間。", noteVi:"Người chơi muốn 'chụp ra đẹp', trò chơi phải tạo ra những khoảnh khắc lên hình.", noteId:"Yang diinginkan pemain adalah 'hasil fotonya bagus', permainan harus menciptakan momen yang fotogenik."},
+  {v:"在地阿公阿嬤 ／ 懷舊感", vVi:"Ông bà địa phương ／ Cảm giác hoài niệm", vId:"Kakek-nenek lokal ／ Rasa nostalgia", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"要喚起記憶中的台南，而不是介紹一個陌生城市給他們認識。", noteVi:"Phải gợi lại Đài Nam trong ký ức, chứ không phải giới thiệu một thành phố xa lạ cho họ.", noteId:"Harus membangkitkan Tainan dalam ingatan mereka, bukan memperkenalkan kota asing kepada mereka."},
+  {v:"大學生揪團 ／ 競爭好勝", vVi:"Nhóm sinh viên rủ nhau ／ Thích cạnh tranh", vId:"Kelompok mahasiswa ／ Suka bersaing", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"要有排行榜或PK機制，讓朋友之間可以互相比較。", noteVi:"Phải có bảng xếp hạng hoặc cơ chế đối đầu, để bạn bè có thể so sánh với nhau.", noteId:"Harus ada papan peringkat atau mekanisme adu kekuatan, agar teman-teman bisa saling membandingkan."},
+  {v:"家庭親子 ／ 溫馨陪伴", vVi:"Gia đình có con nhỏ ／ Đồng hành ấm áp", vId:"Keluarga dengan anak ／ Kebersamaan hangat", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"大人小孩都要能一起玩，不能只顧一邊的程度。", noteVi:"Cả người lớn và trẻ nhỏ đều phải chơi được cùng nhau, không thể chỉ chú trọng một bên.", noteId:"Orang dewasa dan anak-anak harus bisa bermain bersama, tidak boleh hanya memperhatikan tingkat kesulitan satu pihak."},
+  {v:"恐怖片愛好者 ／ 驚嚇刺激", vVi:"Người mê phim kinh dị ／ Kích thích hồi hộp", vId:"Penggemar film horor ／ Sensasi menegangkan", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"要能把台南的老屋、傳說轉成真的會讓人心跳加速的東西。", noteVi:"Phải biến nhà cổ, truyền thuyết của Đài Nam thành thứ thực sự khiến tim đập nhanh.", noteId:"Harus bisa mengubah rumah tua dan legenda Tainan menjadi sesuatu yang benar-benar membuat jantung berdebar."},
+  {v:"美食愛好者 ／ 口水直流", vVi:"Người mê ẩm thực ／ Thèm chảy nước miếng", vId:"Pencinta kuliner ／ Bikin ngiler", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"用視覺和描述勾起食慾，小吃不只是背景是主角。", noteVi:"Dùng hình ảnh và mô tả để kích thích thèm ăn, món ăn vặt không chỉ là bối cảnh mà là nhân vật chính.", noteId:"Gunakan visual dan deskripsi untuk membangkitkan selera makan, jajanan bukan cuma latar belakang tapi tokoh utama."},
+  {v:"歷史控 ／ 考據癖", vVi:"Người mê lịch sử ／ Ám ảnh khảo cứu", vId:"Penggemar sejarah ／ Obsesi riset detail", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"這群人會挑你的考據錯誤，內容細節要禁得起檢驗。", noteVi:"Nhóm người này sẽ bắt lỗi khảo cứu của bạn, chi tiết nội dung phải chịu được kiểm chứng.", noteId:"Kelompok ini akan mencari kesalahan riset Anda, detail kontennya harus tahan uji."},
+  {v:"隨便路過的人 ／ 五分鐘殺時間", vVi:"Người tình cờ đi ngang qua ／ Giết thời gian 5 phút", vId:"Orang yang kebetulan lewat ／ Membunuh waktu 5 menit", d:"客群／情感訴求", dVi:"Đối tượng／nhu cầu cảm xúc", dId:"Target Audiens／Daya Tarik Emosional", note:"完全沒有動機，遊戲要在前10秒就抓住他，不然直接關掉。", noteVi:"Hoàn toàn không có động lực, trò chơi phải thu hút họ trong 10 giây đầu, không thì họ tắt ngay.", noteId:"Sama sekali tidak punya motivasi, permainan harus menarik perhatiannya dalam 10 detik pertama, kalau tidak langsung ditutup."},
+];
+const CREATIVE = [
+  {v:"解謎 × 五條港", vVi:"Giải đố × Ngũ Điều Cảng", vId:"Teka-teki × Wu Tiao Gang (Lima Pelabuhan)", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"用五條港的貿易路線、水道結構本身當謎題素材。", noteVi:"Dùng tuyến đường mậu dịch, cấu trúc kênh rạch của Ngũ Điều Cảng làm chất liệu câu đố.", noteId:"Menggunakan jalur perdagangan dan struktur kanal Wu Tiao Gang sendiri sebagai bahan teka-teki."},
+  {v:"模擬經營 × 廟宇遶境", vVi:"Mô phỏng kinh doanh × Rước kiệu miếu thờ", vId:"Simulasi manajemen × Prosesi kuil", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"玩家要管理一場遶境活動的人力、路線、香火資源。", noteVi:"Người chơi phải quản lý nhân lực, lộ trình, nguồn lực hương khói của một lễ rước kiệu.", noteId:"Pemain harus mengelola tenaga kerja, rute, dan sumber daya dupa dari sebuah prosesi kuil."},
+  {v:"恐怖 × 老屋", vVi:"Kinh dị × Nhà cổ", vId:"Horor × Rumah tua", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"老屋的歷史感本身就是恐怖素材，不用硬加鬼怪。", noteVi:"Cảm giác lịch sử của nhà cổ tự nó đã là chất liệu kinh dị, không cần gượng ép thêm ma quỷ.", noteId:"Kesan historis rumah tua itu sendiri sudah menjadi materi horor, tidak perlu memaksakan tambahan hantu."},
+  {v:"節奏音樂 × 度小月／小吃", vVi:"Nhạc nhịp điệu × Độ Tiểu Nguyệt／món ăn vặt", vId:"Musik ritme × Du Xiao Yue／jajanan kaki lima", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"配合打拍子動作模擬「做小吃」的節奏感（切、煮、擺盤）。", noteVi:"Kết hợp động tác đánh nhịp mô phỏng nhịp điệu 'làm món ăn vặt' (cắt, nấu, bày biện).", noteId:"Memakai gerakan mengetuk ritme untuk mensimulasikan rasa ritme 'membuat jajanan' (memotong, memasak, menata)."},
+  {v:"卡牌對戰 × 小封神神怪", vVi:"Đấu bài × Thần quái Tiểu Phong Thần", vId:"Pertarungan kartu × Dewa-dewi Xiao Feng Shen", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"把小封神裡的神怪角色設計成有屬性、技能的對戰卡片。", noteVi:"Biến các nhân vật thần quái trong Tiểu Phong Thần thành thẻ bài đối chiến có thuộc tính, kỹ năng.", noteId:"Mengubah karakter dewa-dewi dari Xiao Feng Shen menjadi kartu pertarungan dengan atribut dan skill."},
+  {v:"收集養成 × 運河生態", vVi:"Sưu tầm nuôi dưỡng × Hệ sinh thái kênh đào", vId:"Koleksi dan pengembangan × Ekosistem kanal", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"蒐集運河沿岸的生物或地景，養成/圖鑑式的長期黏著。", noteVi:"Sưu tầm sinh vật hoặc cảnh quan ven kênh đào, gắn kết lâu dài kiểu nuôi dưỡng/bách khoa.", noteId:"Mengumpulkan makhluk hidup atau pemandangan di sepanjang kanal, menciptakan keterikatan jangka panjang gaya koleksi/ensiklopedia."},
+  {v:"派對遊戲 × 孔廟／文昌祠", vVi:"Trò chơi tiệc tùng × Văn miếu／đền Văn Xương", vId:"Game pesta × Kuil Konfusius／Kuil Wenchang", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"多人同樂、輕鬆競賽，用考生拜文昌帝君的情境包裝。", noteVi:"Nhiều người cùng vui, thi đấu nhẹ nhàng, đóng gói bằng bối cảnh thí sinh bái Văn Xương Đế Quân.", noteId:"Kesenangan multipemain, kompetisi santai, dikemas dengan skenario pelajar berdoa kepada Dewa Wenchang."},
+  {v:"敘事抉擇 × 安平古堡", vVi:"Lựa chọn tự sự × Pháo đài An Bình", vId:"Pilihan naratif × Benteng Anping", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"用古堡的歷史轉折（荷蘭/明鄭/清）設計玩家的分支選擇。", noteVi:"Dùng các bước ngoặt lịch sử của pháo đài cổ (Hà Lan/Minh Trịnh/Thanh) để thiết kế lựa chọn rẽ nhánh cho người chơi.", noteId:"Menggunakan titik balik sejarah benteng tua (Belanda/Ming-Zheng/Qing) untuk merancang pilihan bercabang pemain."},
+  {v:"潛行動作 × 中西區巷弄", vVi:"Hành động lén lút × Ngõ hẻm quận Trung Tây", vId:"Aksi menyelinap × Gang-gang Distrik Zhongxi", d:"類型 × 台南文化元素", dVi:"Thể loại × Yếu tố văn hóa Đài Nam", dId:"Genre × Elemen Budaya Tainan", note:"利用巷弄的狹窄、轉角、視線死角設計躲避/潛行關卡。", noteVi:"Tận dụng sự chật hẹp, góc rẽ, điểm mù tầm nhìn của ngõ hẻm để thiết kế màn trốn tránh/lén lút.", noteId:"Memanfaatkan kesempitan, tikungan, dan titik buta pandangan gang untuk merancang level menghindar/menyelinap."},
+];
+function cv(card) { return currentLang === "id" && card.vId ? card.vId : currentLang === "vi" && card.vVi ? card.vVi : card.v; }
+function cd(card) { return currentLang === "id" && card.dId ? card.dId : currentLang === "vi" && card.dVi ? card.dVi : card.d; }
+function cnote(card) { return currentLang === "id" && card.noteId ? card.noteId : currentLang === "vi" && card.noteVi ? card.noteVi : (card.note || ""); }
+const ROLES = [
+  {key:"producer", label:"執行製作人", labelVi:"Nhà sản xuất điều hành", labelId:"Produser Eksekutif", emoji:"🎬", cls:"rc-producer", deck:PRODUCER,
+    ask:"要在什麼時程／資源下做出這個東西？", askVi:"Cần làm ra thứ này trong thời gian／nguồn lực nào?", askId:"Dalam jadwal／sumber daya seperti apa hal ini harus dibuat?",
+    desc:"管時程、預算、人力。負責提醒大家「這在現實中做得完嗎？」",
+    descVi:"Quản lý tiến độ, ngân sách, nhân lực. Nhắc mọi người 'liệu có làm xong trong thực tế không?'",
+    descId:"Mengelola jadwal, anggaran, tenaga kerja. Bertugas mengingatkan semua orang 'apakah ini bisa selesai secara nyata?'"},
+  {key:"engineer", label:"首席工程師", labelVi:"Kỹ sư trưởng", labelId:"Insinyur Kepala", emoji:"🔧", cls:"rc-engineer", deck:ENGINEER,
+    ask:"這個構想要用什麼形式／平台做出來？", askVi:"Ý tưởng này sẽ được làm ra dưới hình thức／nền tảng nào?", askId:"Ide ini akan dibuat dalam bentuk／platform apa?",
+    desc:"管技術實現。負責決定「這個構想具體要用什麼形式做出來」",
+    descVi:"Quản lý việc hiện thực hóa kỹ thuật. Quyết định 'ý tưởng này cụ thể sẽ làm bằng hình thức gì'",
+    descId:"Mengelola realisasi teknis. Bertugas memutuskan 'ide ini secara konkret akan dibuat dalam bentuk apa'"},
+  {key:"marketing", label:"行銷主管", labelVi:"Trưởng phòng tiếp thị", labelId:"Kepala Pemasaran", emoji:"📣", cls:"rc-marketing", deck:MARKETING,
+    ask:"這是要做給誰玩、打中他們什麼感覺？", askVi:"Trò chơi này làm cho ai chơi, chạm đến cảm xúc gì của họ?", askId:"Ini dibuat untuk dimainkan oleh siapa, menyentuh perasaan apa pada mereka?",
+    desc:"管客群與賣點。負責提醒大家「這個東西要吸引誰、憑什麼吸引他」",
+    descVi:"Quản lý đối tượng khách hàng và điểm bán. Nhắc mọi người 'thứ này thu hút ai, vì sao thu hút được họ'",
+    descId:"Mengelola target audiens dan daya jual. Bertugas mengingatkan semua orang 'siapa yang harus tertarik pada hal ini, dan kenapa mereka akan tertarik'"},
+  {key:"creative", label:"創意總監", labelVi:"Giám đốc sáng tạo", labelId:"Direktur Kreatif", emoji:"🎨", cls:"rc-creative", deck:CREATIVE,
+    ask:"遊戲類型和台南文化元素要怎麼結合？", askVi:"Thể loại trò chơi và yếu tố văn hóa Đài Nam sẽ kết hợp thế nào?", askId:"Bagaimana genre permainan dan elemen budaya Tainan akan digabungkan?",
+    desc:"管整體願景。負責決定「這是一個什麼類型的遊戲、怎麼融入台南文化」",
+    descVi:"Quản lý tầm nhìn tổng thể. Quyết định 'đây là thể loại trò chơi gì, làm sao đưa văn hóa Đài Nam vào'",
+    descId:"Mengelola visi keseluruhan. Bertugas memutuskan 'ini genre permainan apa, bagaimana memasukkan budaya Tainan ke dalamnya'"},
+];
+const rlabel = r => currentLang === "id" ? (r.labelId||r.label) : currentLang === "vi" ? r.labelVi : r.label;
+const rask = r => currentLang === "id" ? (r.askId||r.ask) : currentLang === "vi" ? r.askVi : r.ask;
+const rdesc = r => currentLang === "id" ? (r.descId||r.desc) : currentLang === "vi" ? r.descVi : r.desc;
+const ROLE_BY_KEY = Object.fromEntries(ROLES.map(r => [r.key, r]));
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+// 2026-09-08 楊老師抓到的問題：整堂課(50人上限)同時排隊時，原本「把queue裡
+// 所有人一次打包成一組」會變成全班擠進同一組。加人數上限，讓短時間內大量
+// 排隊會自動拆成多個2-4人小隊，不是手動開房間、是全自動配對變聰明一點。
+const MAX_GROUP_SIZE = 4;
+
+// custom, student-submitted cards — kept separate from the base deck,
+// merged in at draw time. Live-synced so new cards show up without reload.
+const customCards = {producer:[], engineer:[], marketing:[], creative:[]};
+ROLES.forEach(r => {
+  db.ref(`${NS}/customCards/${r.key}`).on("value", snap => {
+    customCards[r.key] = Object.values(snap.val() || {});
+  });
+});
+function deckFor(roleKey) {
+  // 2026-09-09 楊老師：內容像亂填/測試的自訂卡先不進正式抽卡池——判斷式在下面
+  // looksLikeJunk，跟cards.html是同一套規則。卡片本身還在，只是不會被抽到。
+  return ROLE_BY_KEY[roleKey].deck.concat((customCards[roleKey] || []).filter(c => !looksLikeJunk(c.v, c.note)));
+}
+
+// 即時排隊看板——不用登入也看得到，讓大家知道現在還缺哪個角色的人。
+// 這不是「房間列表」：配對還是全自動的，這裡純粹是「目前狀態」的參考資訊。
+//
+// 🔴 2026-09-08 楊老師抓到的死鎖風險：如果同時間大家都只選同一個角色，
+// 「至少2種不同角色」的配對條件永遠不成立，會卡住而且畫面上不會有任何錯誤。
+// 這裡把「目前哪個角色掛零」算出來，主動提示——不是等學生自己盯著看板猜。
+let latestQueueCounts = {};
+db.ref(`${NS}/queue`).on("value", snap => {
+  const val = snap.val() || {};
+  latestQueueCounts = {};
+  ROLES.forEach(r => { latestQueueCounts[r.key] = Object.keys(val[r.key] || {}).length; });
+  const panel = document.getElementById("queuepanel");
+  if (panel) {
+    panel.innerHTML = ROLES.map(r =>
+      `<div class="qitem ${r.cls}${latestQueueCounts[r.key] > 0 ? ' has' : ''}">${r.emoji} ${rlabel(r)}<b>${latestQueueCounts[r.key]}</b>${t("waitingCountSuffix")}</div>`
+    ).join("");
+  }
+  const total = Object.values(latestQueueCounts).reduce((a,b) => a+b, 0);
+  const distinctRoles = Object.values(latestQueueCounts).filter(n => n > 0).length;
+  const hintEl = document.getElementById("queuehint");
+  if (hintEl) {
+    if (total > 0 && distinctRoles < 2) {
+      const missing = ROLES.filter(r => latestQueueCounts[r.key] === 0).map(r => r.emoji + rlabel(r)).join("、");
+      hintEl.hidden = false;
+      hintEl.textContent = t("onlyOneRolePrefix") + missing;
+    } else {
+      hintEl.hidden = true;
+    }
+  }
+  updateWaitHint();
+});
+
+let matchedCount = 0;
+let activeGroupCount = 0;
+db.ref(`${NS}/playerStatus`).on("value", snap => {
+  const val = snap.val() || {};
+  const matched = Object.values(val).filter(p => p.state === "matched");
+  matchedCount = matched.length;
+  activeGroupCount = new Set(matched.map(p => p.roundId)).size;
+  renderQueueSummary();
+});
+function renderQueueSummary() {
+  const el = document.getElementById("queuesummary");
+  if (!el) return;
+  const waiting = Object.values(latestQueueCounts).reduce((a,b) => a+b, 0);
+  el.textContent = t("queueSummaryText").replace("{a}", waiting).replace("{b}", matchedCount).replace("{c}", activeGroupCount);
+}
+renderQueueSummary();
+
+// 已經在等待畫面、且等超過30秒還配不到 → 主動提醒該換哪個角色，不要讓學生
+// 只能乾等、猜測是不是自己卡住了。
+function updateWaitHint() {
+  const hintEl = document.getElementById("waitHint");
+  if (!hintEl || !myWaitSince) return;
+  const waited = Date.now() - myWaitSince;
+  const distinctRoles = Object.values(latestQueueCounts).filter(n => n > 0).length;
+  if (waited > 30000 && distinctRoles < 2) {
+    const missing = ROLES.filter(r => r.key !== myRole).map(r => r.emoji + rlabel(r)).join("、");
+    hintEl.hidden = false;
+    hintEl.textContent = t("waitedTooLongPrefix") + missing;
+  } else {
+    hintEl.hidden = true;
+  }
+}
+setInterval(updateWaitHint, 5000);
+
+// ---- QR code for easy phone join ----
+// 2026-09-09 楊老師回報「QR看不到、也不能選角色」——根因：qrcode()來自外部CDN
+// (jsdelivr)，該次上課網路連不到CDN時qrcode()直接ReferenceError，把這支IIFE
+// 整個炸掉、連帶讓後面所有頂層程式碼(角色按鈕/自動帶入編號/join按鈕綁定)
+// 全部沒執行到——一個裝飾性小功能(QR)不該有能力癱瘓整個頁面。加try/catch
+// 隔離，QR畫不出來就跳過，不影響其他功能。
+(function renderQR(){
+  const url = location.href.split("#")[0].split("?")[0];
+  try {
+    const qr = qrcode(0, "M");
+    qr.addData(url);
+    qr.make();
+    const holder = document.getElementById("qrcanvas");
+    if (holder) holder.innerHTML = qr.createSvgTag({cellSize:4, margin:2});
+  } catch (e) {
+    const holder = document.getElementById("qrcanvas");
+    if (holder) holder.innerHTML = "";
+    console.warn("QR code載入失敗(不影響其他功能)：", e);
+  }
+})();
+
+const AUTO_NICKS = [
+  "度小月忍者","擔仔麵騎士","虱目魚戰士","蝦仁飯俠","意麵刺客","碗粿法師",
+  "鹹粥女王","棺材板隊長","米糕大魔王","牛肉湯勇者","鱔魚意麵王","土魠魚焿神",
+  "椪餅獵人","黑輪特攻隊","蜜餞精靈","肉燥飯君主","蚵仔煎術士","芒果冰巨龍",
+  "豆花聖騎士","鹽水意麵刺客","麻豆文旦法師","關廟麵大祭司","鱔魚炒麵劍聖","度小月大祭司",
+];
+// 2026-09-09 楊老師：測試員（自動取暱稱的人）不要撞名——查一下目前排隊中已經有誰用了
+// 哪個暱稱，優先挑沒被用過的；24個都被用光這種少見狀況才加兩位數尾碼保底。
+async function randomNickname() {
+  let used = new Set();
+  try {
+    const snap = await db.ref(`${NS}/queue`).once("value");
+    const val = snap.val() || {};
+    Object.values(val).forEach(roleQ => {
+      Object.values(roleQ || {}).forEach(g => { if (g && g.nickname) used.add(g.nickname); });
+    });
+  } catch(_) {}
+  const free = AUTO_NICKS.filter(n => !used.has(n));
+  if (free.length) return free[Math.floor(Math.random() * free.length)];
+  const base = AUTO_NICKS[Math.floor(Math.random() * AUTO_NICKS.length)];
+  return base + (10 + Math.floor(Math.random() * 90));
+}
+
+let myEnv = null;
+let myRole = null;
+let myNick = "";
+let myQueueKey = null;
+let statusRef = null;
+let currentRoundId = null;
+let roundCount = 0;
+let feedUnsub = null;
+let feedRoundPlayers = {};
+
+const $ = (id) => document.getElementById(id);
+
+// build role picker
+const pickBox = $("rolepick");
+ROLES.forEach(r => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "rolebtn " + r.cls;
+  b.dataset.role = r.key;
+  b.innerHTML = `<span class="rk">${r.emoji} ${r.key}</span><span class="rn">${rlabel(r)}<span class="rdesc">${rdesc(r)}</span></span>`;
+  b.onclick = () => {
+    [...pickBox.children].forEach(c => c.classList.remove("sel"));
+    b.classList.add("sel");
+    myRole = r.key;
+    $("joinBtn").disabled = false;
+  };
+  pickBox.appendChild(b);
+});
+
+function t(key) { const e = I18N[key]; return e ? (e[currentLang] || e.zh) : key; }
+function applyLang(lang) {
+  currentLang = lang;
+  try { localStorage.setItem("designjam_lang", lang); } catch(_) {}
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  [...pickBox.children].forEach((b, i) => {
+    const r = ROLES[i];
+    const rn = b.querySelector(".rn");
+    if (rn) rn.innerHTML = `${rlabel(r)}<span class="rdesc">${rdesc(r)}</span>`;
+  });
+  $("langZh").classList.toggle("sel", lang === "zh");
+  $("langVi").classList.toggle("sel", lang === "vi");
+  $("langId").classList.toggle("sel", lang === "id");
+  // 2026-09-09 楊老師：Windows許多環境的emoji字型沒有國旗圖案，只會顯示字母代碼
+  // （如[TW]），改用twemoji把畫面上所有emoji轉成圖片，不依賴系統字型。
+  try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
+}
+$("langZh").onclick = () => applyLang("zh");
+$("langVi").onclick = () => applyLang("vi");
+$("langId").onclick = () => applyLang("id");
+let savedLang = "zh";
+try { savedLang = localStorage.getItem("designjam_lang") || "zh"; } catch(_) {}
+applyLang(savedLang);
+
+// 2026-09-09 楊老師：登入頁自己打過編號/暱稱，之後回來不用再打一次——都自動帶入上次的值。
+// 暱稱可以隨時改；編號一旦輸入過就鎖起來不給改（避免中途誤觸改掉，identity只認這個編號），
+// 只留一個小小的「不是你？」連結當例外出口（借用裝置、打錯的情況才用得到）。
+function lockEnvInput() {
+  $("envInput").readOnly = true;
+  $("envInput").style.background = "var(--panel2, #f2efe4)";
+  $("envLockHint").hidden = false;
+}
+function unlockEnvInput() {
+  $("envInput").readOnly = false;
+  $("envInput").style.background = "";
+  $("envInput").value = "";
+  $("envLockHint").hidden = true;
+  try { localStorage.removeItem("designjam_env"); } catch(_) {}
+  $("envInput").focus();
+}
+$("envUnlockLink").onclick = (e) => { e.preventDefault(); unlockEnvInput(); };
+
+// 2026-09-09 楊老師：新增卡片如果跟已有的同學卡很像，問過雙方原創者都同意才合併成一張
+// （卡池 cards.html 新增時判斷相似度、建立mergeRequests；這裡是「原創者下次打開工具時
+// 被詢問」的那一半，兩個檔案都要有，因為學生下次可能是先開index.html而不是cards.html）。
+function normalizeForSim(s) {
+  return (s || "").replace(/[\s，。！？、,.!?～~\-—()（）「」『』"'“”:：;；]/g, "").toLowerCase();
+}
+function bigrams(s) { const out = []; for (let i = 0; i < s.length - 1; i++) out.push(s.slice(i, i + 2)); return out; }
+function cardSimilarity(a, b) {
+  const na = normalizeForSim(a), nb = normalizeForSim(b);
+  if (!na || !nb) return 0;
+  if (na === nb) return 1;
+  const ba = bigrams(na), bb = bigrams(nb);
+  if (!ba.length || !bb.length) return 0;
+  const pool = {}; bb.forEach(g => pool[g] = (pool[g] || 0) + 1);
+  let overlap = 0;
+  ba.forEach(g => { if (pool[g] > 0) { overlap++; pool[g]--; } });
+  return (2 * overlap) / (ba.length + bb.length);
+}
+// 2026-09-09 楊老師：有些卡片內容幾乎是亂填/測試用的——先不讓它進正式抽卡池（見上面
+// deckFor），再問原創者是否同意直接刪除；同意才真的刪，不同意就留著但一樣不會被抽到。
+// （跟cards.html是同一套判斷式複本，那邊也有新增卡片時的當場判斷＋回溯掃描。）
+function looksLikeJunk(v, note) {
+  const raw = (v || "").trim();
+  if (!raw) return true;
+  const s = normalizeForSim(v);
+  if (!s) return true;
+  if (s.length <= 1) return true;
+  if (/^(.)\1+$/.test(s)) return true; // 同一字元重複，如「啊啊啊啊」「1111」
+  if (/^[0-9]+$/.test(s)) return true; // 純數字
+  if (/^[a-z]+$/i.test(s) && s.length <= 4) return true; // 短的純英文亂打，如asdf/qwer
+  const junkWords = /test|測試|亂填|亂打|亂寫|随便|隨便|whatever/i;
+  if (junkWords.test(v) || junkWords.test(note || "")) return true; // 內容或備註坦承是測試
+  const meaningful = raw.replace(/[?？!！./\\,，、~～\-_=+*#@$%^&()（）]/g, "");
+  if (meaningful.length <= 1) return true;
+  return false;
+}
+function performMerge(reqId, r) {
+  const keepRef = db.ref(`${NS}/customCards/${r.role}/${r.cardAId}`);
+  keepRef.once("value").then(s => {
+    const keep = s.val();
+    if (!keep) return; // 已被刪過或資料異常，放棄這次合併
+    const mergedAddedBy = Array.isArray(keep.addedBy) ? keep.addedBy.slice() : [keep.addedBy];
+    if (!mergedAddedBy.includes(r.envB)) mergedAddedBy.push(r.envB);
+    keepRef.update({ addedBy: mergedAddedBy });
+    db.ref(`${NS}/customCards/${r.role}/${r.cardBId}`).remove();
+    db.ref(`${NS}/mergeRequests/${reqId}`).update({ status: "merged" });
+  }).catch(e => console.warn("合併執行失敗：", e));
+}
+let mergeCheckDone = false;
+function checkMergeRequests(env) {
+  if (mergeCheckDone || env === "" || env === null || typeof env === "undefined") return;
+  mergeCheckDone = true;
+  db.ref(`${NS}/mergeRequests`).orderByChild("status").equalTo("pending").once("value").then(snap => {
+    const reqs = snap.val() || {};
+    Object.entries(reqs).forEach(([reqId, r]) => {
+      if (!r) return;
+      const isA = String(r.envA) === String(env);
+      const isB = String(r.envB) === String(env);
+      if (!isA && !isB) return;
+      const myField = isA ? "consentA" : "consentB";
+      if (r[myField] !== null && typeof r[myField] !== "undefined") return; // 已經回答過
+      const myV = isA ? r.vA : r.vB;
+      const otherV = isA ? r.vB : r.vA;
+      const msg = t("mergeAskText").replace("{mine}", myV).replace("{other}", otherV);
+      const agree = window.confirm(msg);
+      const updates = { [myField]: agree };
+      if (!agree) {
+        updates.status = "rejected";
+        db.ref(`${NS}/mergeRequests/${reqId}`).update(updates).catch(e => console.warn("合併回覆寫入失敗：", e));
+      } else {
+        db.ref(`${NS}/mergeRequests/${reqId}`).update(updates).then(() => {
+          db.ref(`${NS}/mergeRequests/${reqId}`).once("value").then(s2 => {
+            const cur = s2.val();
+            if (cur && cur.consentA === true && cur.consentB === true && cur.status === "pending") performMerge(reqId, cur);
+          });
+        }).catch(e => console.warn("合併回覆寫入失敗：", e));
+      }
+    });
+  }).catch(e => console.warn("讀取合併建議失敗：", e));
+}
+
+// 垃圾/測試卡刪除同意流程（跟合併同一套模式，複本見cards.html）：deleteRequests裡每張卡
+// 列出所有addedBy(通常只有一人)，consents全部同意true才真的從customCards刪除；任何一人
+// 不同意就標kept、不再問。建立deleteRequests只在cards.html那邊做(新增卡片/回溯掃描)，
+// 這裡只負責「原創者下次打開工具時被詢問」的那一半。
+let deleteCheckDone = false;
+function checkDeleteRequests(env) {
+  if (deleteCheckDone || env === "" || env === null || typeof env === "undefined") return;
+  deleteCheckDone = true;
+  db.ref(`${NS}/deleteRequests`).orderByChild("status").equalTo("pending").once("value").then(snap => {
+    const reqs = snap.val() || {};
+    Object.entries(reqs).forEach(([reqId, r]) => {
+      if (!r || !Array.isArray(r.addedBy) || !r.addedBy.some(e => String(e) === String(env))) return;
+      const consents = r.consents || {};
+      if (consents[String(env)] !== null && typeof consents[String(env)] !== "undefined") return; // 已經回答過
+      const msg = t("junkDeleteAskText").replace("{v}", r.v);
+      const agree = window.confirm(msg);
+      const newConsents = {...consents, [String(env)]: agree};
+      if (!agree) {
+        db.ref(`${NS}/deleteRequests/${reqId}`).update({consents: newConsents, status: "kept"})
+          .catch(e => console.warn("刪除回覆寫入失敗：", e));
+      } else {
+        db.ref(`${NS}/deleteRequests/${reqId}`).update({consents: newConsents}).then(() => {
+          db.ref(`${NS}/deleteRequests/${reqId}`).once("value").then(s2 => {
+            const cur = s2.val();
+            if (!cur || cur.status !== "pending") return;
+            const c2 = cur.consents || {};
+            const allAgree = (cur.addedBy || []).every(e => c2[String(e)] === true);
+            if (allAgree) {
+              db.ref(`${NS}/customCards/${cur.role}/${cur.cardId}`).remove();
+              db.ref(`${NS}/deleteRequests/${reqId}`).update({status: "deleted"});
+            }
+          });
+        }).catch(e => console.warn("刪除回覆寫入失敗：", e));
+      }
+    });
+  }).catch(e => console.warn("讀取刪除建議失敗：", e));
+}
+
+try {
+  const savedEnv = localStorage.getItem("designjam_env");
+  if (savedEnv) { $("envInput").value = savedEnv; lockEnvInput(); checkMergeRequests(savedEnv); checkDeleteRequests(savedEnv); }
+  const savedNick = localStorage.getItem("designjam_nick");
+  if (savedNick) $("nickInput").value = savedNick;
+} catch(_) {}
+
+$("joinBtn").onclick = async () => {
+  const raw = $("envInput").value;
+  const v = parseInt(raw, 10);
+  // 2026-09-09 楊老師：老師本人測試用編號00、駱老師用99（不是打錯，00不能用!v判斷）。
+  // 2026-09-09 楊老師：遊戲設計學(17位)共用這套系統，編號101起編，跟文化遊戲松(1-52)區隔。
+  const validEnv = raw !== "" && !Number.isNaN(v) && (v === 0 || (v >= 1 && v <= 60) || v === 99 || (v >= 101 && v <= 130));
+  if (!validEnv) { $("loginStatus").textContent = t("errNoEnv"); return; }
+  if (!myRole) { $("loginStatus").textContent = t("errNoRole"); return; }
+  myEnv = v;
+  // 2026-09-09 楊老師：登入時就知道編號了，卡池頁不用再讓學生重打一次，存起來給那邊抓。
+  try { localStorage.setItem("designjam_env", String(v)); } catch(_) {}
+  lockEnvInput();
+  checkMergeRequests(v);
+  checkDeleteRequests(v);
+  const typed = $("nickInput").value.trim().slice(0, 20);
+  const autoAssigned = !typed;
+  $("joinBtn").disabled = true;
+  myNick = typed || await randomNickname();
+  $("joinBtn").disabled = false;
+  if (autoAssigned) $("nickInput").value = myNick;
+  try { localStorage.setItem("designjam_nick", myNick); } catch(_) {}
+  $("waitNick").textContent = autoAssigned ? (t("autoNickPrefix") + myNick + t("autoNickSuffix")) : "";
+  startQueue();
+};
+
+$("cancelBtn").onclick = () => {
+  leaveQueue();
+  show("login");
+};
+
+function doReroll() {
+  if (feedUnsub) { feedUnsub(); feedUnsub = null; }
+  presenceUnsubs.forEach(u => u());
+  presenceUnsubs = [];
+  if (presenceTickTimer) { clearInterval(presenceTickTimer); presenceTickTimer = null; }
+  currentRoundId = null;
+  roundCount++;
+  db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().cancel();
+  db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"idle", t: Date.now()});
+  show("login");
+}
+// 🔴 2026-09-09 楊老師：已經加入這輪討論的話，離開前要跟學生確認一次——
+// 避免不小心點到「回登入」把正在進行的討論弄丟（尤其現在頂部也多了一個
+// 隨手可點的捷徑按鈕，更容易誤觸）。
+function confirmAndReroll() {
+  if (currentRoundId) {
+    if (!confirm("你正在這一輪的討論中，確定要離開、回到登入畫面重新配對嗎？\n（已經記錄過的討論內容不會不見，但這一輪就結束了）")) return;
+  }
+  doReroll();
+}
+$("rerollBtn").onclick = confirmAndReroll;
+$("topRerollBtn").onclick = confirmAndReroll;
+
+function buildGeminiPrompt(round) {
+  const lines = [];
+  lines.push("我們這組在玩「文化遊戲松」課堂的 Cultural Game Jam 暖身練習，抽到以下限制條件：");
+  lines.push("");
+  Object.entries(round.players).forEach(([env, p]) => {
+    const r = ROLE_BY_KEY[p.role];
+    const card = round.cards[p.role];
+    const who = p.nickname ? `#${env} ${p.nickname}` : `#${env}`;
+    lines.push(`- ${r.emoji} ${who} · ${r.label}（${card.d}）：${card.v}`);
+  });
+  lines.push("");
+  lines.push("請先幫我們探索 2-3 個可能的遊戲構想方向（不要一次給答案），每個方向簡短說明玩法核心跟台南文化元素怎麼融入。");
+  lines.push("等我們告訴你選哪一個方向之後，再幫忙把它收斂成一段清楚的構想描述，包含：玩法核心、台南文化元素怎麼融入、大致的遊戲畫面或形式。");
+  // 2026-09-09 楊老師：組裡只要有人開越南語，貼回討論串的內容全組都要看得懂——
+  // 讓Gemini直接雙語回答，比另外接翻譯API簡單可靠，也不用擔心翻譯品質。
+  const hasVi = Object.values(round.players).some(p => p.lang === "vi");
+  if (hasVi) {
+    lines.push("");
+    lines.push("⚠️ 這組有越南語使用者，請每一段回覆都同時附中文和越南文兩個版本（先中文、後越南文，用小標題或分隔線區隔），確保全組都看得懂。");
+  }
+  return lines.join("\n");
+}
+
+$("copyPromptBtn").onclick = () => {
+  if (!currentRoundId) return;
+  db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => {
+    const round = rs.val();
+    if (!round) return;
+    const text = buildGeminiPrompt(round);
+    markActive();
+    const done = () => { $("copyStatus").textContent = t("copiedOk"); };
+    const fail = (e) => {
+      // fallback: select a temporary textarea for manual copy
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); }
+      catch(_) { $("copyStatus").textContent = t("copyFailPrefix") + "\n\n" + text; }
+      ta.remove();
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fail);
+    } else {
+      fail();
+    }
+  });
+};
+
+$("saveBtn").onclick = () => {
+  const text = $("promptBox").value.trim();
+  if (!text || !currentRoundId) return;
+  db.ref(`${NS}/prompts/${currentRoundId}/${myEnv}`).push({text, t: Date.now(), role: myRole})
+    .then(() => {
+      $("saveStatus").textContent = t("savedOkPrefix") + new Date().toLocaleTimeString();
+      $("promptBox").value = "";
+      markActive();
+      showDoneCard();
+    })
+    .catch(e => { $("saveStatus").textContent = t("saveFailPrefix") + e.message; });
+};
+
+// 這輪算不算「完成一次」只commit一次，同一輪按多次「記錄這段」不會重複累計。
+let roundStatsCommitted = false;
+
+// 🔴 2026-09-08 楊老師定案：截圖上傳的完成卡**不放編號**——編號雖然是去識別化
+// 用的，但截圖一旦透過flipclass等有登入的管道繳交，編號就會被綁回真實身份，
+// 反而破壞了信封編號的去識別化設計。這裡只用暱稱，不用編號。
+function showDoneCard() {
+  db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => {
+    const round = rs.val();
+    if (!round) return;
+    const finish = (stats) => {
+      $("doneWho").textContent = (myNick || "（沒有暱稱）") + " · 第 " + (roundCount + 1) + " 輪";
+      const lines = Object.entries(round.players).map(([env, p]) => {
+        const r = ROLE_BY_KEY[p.role];
+        const card = round.cards[p.role];
+        return `${r.emoji} <b>${rlabel(r)}</b>：${cv(card)}`;
+      });
+      const teammateNotes = Object.keys(round.players)
+        .filter(env => env !== String(myEnv))
+        .map(env => {
+          const st = statusOf(teammateRaw[env]);
+          return st.cls === "on" ? null : `${ROLE_BY_KEY[round.players[env].role].emoji} ${round.players[env].nickname || "隊友"}：${st.label}`;
+        }).filter(Boolean);
+      let html = lines.join("<br>");
+      if (teammateNotes.length) html += "<br><br>" + teammateNotes.join("<br>");
+      if (stats) {
+        html += `<br><br>📊 累計玩過 <b>${stats.roundCount}</b> 輪 · 累積投入約 <b>${Math.round(stats.totalMs/60000)}</b> 分鐘` +
+          (stats.cardsAdded ? ` · 新增過 <b>${stats.cardsAdded}</b> 張卡片` : "");
+      }
+      html += "<br><br>📸 直接把整個畫面截圖，就是這一輪去識別化的完成紀錄";
+      $("doneCombo").innerHTML = html;
+      $("doneCard").hidden = false;
+    };
+    if (roundStatsCommitted) { finish(null); return; }
+    roundStatsCommitted = true;
+    const durationMs = Date.now() - round.createdAt;
+    db.ref(`${NS}/playerStats/${myEnv}`).transaction(cur => {
+      cur = cur || {roundCount: 0, totalMs: 0, cardsAdded: 0};
+      return {
+        roundCount: (cur.roundCount||0) + 1,
+        totalMs: (cur.totalMs||0) + Math.max(0, durationMs),
+        cardsAdded: cur.cardsAdded || 0,
+        lastSeen: Date.now(),
+      };
+    }).then(res => finish(res.snapshot.val()));
+  });
+}
+
+$("closeDoneCardBtn").onclick = () => { $("doneCard").hidden = true; };
+
+$("downloadBtn").onclick = () => {
+  if (!currentRoundId) return;
+  Promise.all([
+    db.ref(`${NS}/rounds/${currentRoundId}`).once("value"),
+    db.ref(`${NS}/prompts/${currentRoundId}`).once("value"),
+  ]).then(([rs, ps]) => {
+    const round = rs.val();
+    if (!round) return;
+    const allPrompts = ps.val() || {};
+    const lines = [];
+    lines.push(`# 文化遊戲松 Cultural Game Jam 構想卡`);
+    lines.push(``);
+    lines.push(`第 ${roundCount + 1} 輪 · 編號 ${Object.keys(round.players).map(e=>"#"+e).join(" ")}`);
+    lines.push(``);
+    Object.entries(round.players).forEach(([env, p]) => {
+      const r = ROLE_BY_KEY[p.role];
+      const card = round.cards[p.role];
+      const nick = p.nickname ? `（${p.nickname}）` : "";
+      lines.push(`## ${r.emoji} #${env}${nick} · ${rlabel(r)}`);
+      lines.push(`- 抽到：**${cv(card)}**（${cd(card)}）`);
+      if (card.note) lines.push(`- 提示：${cnote(card)}`);
+      lines.push(`- 引導問題：${rask(r)}`);
+      lines.push(``);
+    });
+    // pull EVERY group member's saved discussion, not just whoever is downloading
+    const unsavedMine = $("promptBox").value.trim();
+    let anyDiscuss = false;
+    lines.push(`## 這組記錄下來的討論`);
+    lines.push(``);
+    Object.keys(round.players).forEach(env => {
+      const list = Object.values(allPrompts[env] || {}).sort((a,b) => a.t - b.t);
+      list.forEach(p => { anyDiscuss = true; lines.push(`**#${env}**：${p.text}`); lines.push(``); });
+    });
+    if (unsavedMine) {
+      anyDiscuss = true;
+      lines.push(`**#${myEnv}（尚未按「記錄這段」，抓的是目前文字框內容）**：${unsavedMine}`);
+      lines.push(``);
+    }
+    if (!anyDiscuss) { lines.push(`_（這組還沒有人記錄討論內容——記得先跟 Gemini 討論、貼回來按「記錄這段」再下載，才會是完整的構想）_`); lines.push(``); }
+    lines.push(`---`);
+    lines.push(`把這份帶去 Gemini 繼續發展這個遊戲構想。`);
+    const blob = new Blob([lines.join("\n")], {type: "text/markdown;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `designjam_${Object.keys(round.players).join("-")}_r${roundCount+1}.md`;
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+};
+
+$("feedbackBtn").onclick = () => {
+  const text = $("feedbackBox").value.trim();
+  if (!text) return;
+  db.ref(`${NS}/feedback`).push({env: myEnv, text, t: Date.now()})
+    .then(() => { $("feedbackStatus").textContent = t("feedbackOk"); $("feedbackBox").value=""; markActive(); })
+    .catch(e => { $("feedbackStatus").textContent = t("feedbackFailPrefix") + e.message; });
+};
+
+function show(which) {
+  ["login","waiting","playing"].forEach(id => $(id).hidden = (id !== which));
+}
+
+function leaveQueue() {
+  if (myQueueKey && myRole) {
+    const ref = db.ref(`${NS}/queue/${myRole}/${myQueueKey}`);
+    ref.onDisconnect().cancel();
+    ref.remove();
+    myQueueKey = null;
+  }
+  myWaitSince = null;
+}
+
+function startQueue() {
+  $("waitRole").textContent = ROLE_BY_KEY[myRole].label;
+  $("waitHint").hidden = true;
+  myWaitSince = Date.now();
+  show("waiting");
+  const qref = db.ref(`${NS}/queue/${myRole}`).push();
+  myQueueKey = qref.key;
+  const entry = {env: myEnv, t: Date.now()};
+  if (myNick) entry.nickname = myNick;
+  // 2026-09-09 楊老師：組裡只要有人開越南語，複製指令要自動變雙語，讓組員貼回來的
+  // 內容她也看得懂——先把每個人當下的語言設定存進queue，配對成round時才知道整組狀態。
+  if (currentLang !== "zh") entry.lang = currentLang;
+  qref.set(entry);
+  // 🔴 2026-09-08 抓到：等待中重整頁面／斷線，會留下永久的「幽靈排隊者」——
+  // 之後可能被配對進一個房間但本人早就不在了，另一個人卡在空房間裡等。
+  // 用RTDB的onDisconnect：這個分頁真的斷線時，伺服器端自動清掉這筆排隊紀錄。
+  qref.onDisconnect().remove();
+  db.ref(`${NS}/playerStatus/${myEnv}`).set({state:"queued", t: Date.now()});
+  watchMatch();
+  watchQueueForMatching();
+}
+
+function watchMatch() {
+  if (statusRef) statusRef.off();
+  statusRef = db.ref(`${NS}/playerStatus/${myEnv}`);
+  statusRef.on("value", (snap) => {
+    const d = snap.val();
+    if (d && d.state === "matched" && d.roundId && d.roundId !== currentRoundId) {
+      currentRoundId = d.roundId;
+      myQueueKey = null;
+      myWaitSince = null;
+      // 🔴 2026-09-08 抓到：配對成功後如果有人手機沒電/斷線/離開教室，
+      // 其他組員的畫面完全看不出來，還是靜靜顯示那個人的卡片、以為他還在。
+      // 用onDisconnect：真的斷線時自動把自己的playerStatus標成"left"，
+      // 其他組員訂閱這個路徑就能顯示「⚠️已離線」。
+      db.ref(`${NS}/playerStatus/${myEnv}`).onDisconnect().update({state: "left", leftAt: firebase.database.ServerValue.TIMESTAMP});
+      db.ref(`${NS}/rounds/${currentRoundId}`).once("value").then(rs => renderRound(rs.val()));
+    }
+  });
+}
+
+// Any waiting client watches all 4 role-queues; as soon as >=2 people are
+// waiting in total (any role mix, repeats allowed), try to claim a bounded
+// slice of the waiting pool so only one client actually forms the round.
+//
+// 🔴 2026-09-08 修：整班50人同時排隊時，不能把queue裡所有人打包成同一組
+// （那樣一整班會擠成一組，角色卡變成50人共用4張）。改成每組最多
+// MAX_GROUP_SIZE人：先確保現有的每個不同角色各挑最早排隊的一位（保證
+// 角色多樣性），剩下名額才依排隊時間先後補滿（同一角色可以補到不只一位，
+// 這個既有規則保留）。這樣短時間大量排隊會自動、立刻拆成很多組小隊，
+// 不是手動開房間——學生體驗完全不變，還是「選角色→等一下→自動配對成功」。
+//
+// 🔴 2026-09-09 抓到更嚴重的問題：原本用「衍生出來的lockKey」搶
+// matchLocks/{lockKey}，同一時間3人以上湧入時，不同client讀到queue的
+// 時間點差幾毫秒、算出的picked組合就不一樣，各自的lockKey互不相同、
+// 全部搶鎖成功——結果同一個編號同時出現在好幾個不同round裡，playerStatus
+// 只會存最後一次寫入，其他round變成幽靈房間。實測(3人同時排隊)直接重現：
+// 短短100ms內生出4個互相重疊的round，編號56/58/60都被重複配對。
+// ⚠ 第一次修法（對queue整體做transaction）實測仍然不夠——換成3人burst
+// 重跑一次，還是在20ms內生出兩個重疊的round（57、58同時進了兩組）。
+// 真正的修法不是想辦法讓「挑選」這個動作變成atomic（挑選邏輯本身很難完美
+// atomic，因為要跨好幾個queue節點判斷角色多樣性），而是讓「每一個人」有
+// 獨立、簡單、Firebase transaction保證絕對安全的專屬鎖——即playerStatus
+// /{env}本身。挑選階段維持單純讀快照就好（可能挑到已經被搶走的人也沒關係），
+// 真正的把關在makeRound()：每個人各自搶自己的playerStatus，搶輸的人自動
+// 被踢出這組，只有真正搶到手的人才會寫進round。這是Firebase transaction
+// 最基本、最不會出錯的用法（單一路徑的read-modify-write），比對一整個
+// collection做transaction可靠得多。
+function watchQueueForMatching() {
+  db.ref(`${NS}/queue`).on("value", (snap) => {
+    const val = snap.val() || {};
+    const all = [];
+    ROLES.forEach(r => {
+      const roleQ = val[r.key];
+      if (!roleQ) return;
+      Object.entries(roleQ).forEach(([key, v]) => all.push({key, role:r.key, ...v}));
+    });
+    const distinctRoles = new Set(all.map(g => g.role)).size;
+    if (all.length < 2 || distinctRoles < 2) return; // need >=2 people AND >=2 different roles to open a round
+    all.sort((a,b) => a.t - b.t);
+
+    const byRole = {};
+    all.forEach(g => { (byRole[g.role] = byRole[g.role] || []).push(g); });
+    const picked = [];
+    const pickedKeys = new Set();
+    Object.values(byRole).forEach(list => {
+      picked.push(list[0]);
+      pickedKeys.add(list[0].role + ":" + list[0].key);
+    });
+    picked.sort((a,b) => a.t - b.t);
+    for (const g of all) {
+      if (picked.length >= MAX_GROUP_SIZE) break;
+      const k = g.role + ":" + g.key;
+      if (pickedKeys.has(k)) continue;
+      picked.push(g);
+      pickedKeys.add(k);
+    }
+    makeRound(picked);
+  });
+}
+
+function makeRound(group) {
+  const roundId = db.ref(`${NS}/rounds`).push().key;
+  // 每個人各自搶自己的playerStatus——這是真正防止「同一人被配進兩個round」
+  // 的關鍵：只有目前不是"matched"狀態的人才搶得到，搶輸(已被別的並發makeRound
+  // 搶先配走)的人會被自動排除在這組之外，不會出現在最終round裡。
+  const claims = group.map(g =>
+    db.ref(`${NS}/playerStatus/${g.env}`).transaction(cur => {
+      // "matched"＝已經在別的round裡；"claimed"＝正有另一個並發的makeRound
+      // 在搶這個人（毫秒級的中繼狀態）——兩種都要abort，不然retry進來的
+      // transaction只擋"matched"沒擋"claimed"，還是會被搶到手兩次。
+      // 卡住超過5秒的"claimed"視為異常(例如同組另一人搶輸中斷)，放行重搶。
+      if (cur && cur.state === "matched") return;
+      if (cur && cur.state === "claimed" && Date.now() - (cur.t||0) < 5000) return;
+      return {state: "claimed", roundId, t: Date.now(), lastActive: Date.now()};
+    }).then(res => res.committed ? g : null)
+  );
+  Promise.all(claims).then(results => {
+    const won = results.filter(Boolean);
+    const distinctRoles = new Set(won.map(g => g.role)).size;
+    if (won.length < 2 || distinctRoles < 2) {
+      // 這組大部分人被搶走、湊不成隊了——搶到手的那幾位退回idle，讓他們被下一輪配對撿走
+      won.forEach(g => db.ref(`${NS}/playerStatus/${g.env}`).set({state:"idle", t: Date.now()}));
+      return;
+    }
+    const players = {};
+    const cards = {};
+    won.forEach(g => {
+      players[g.env] = { role: g.role };
+      if (g.nickname) players[g.env].nickname = g.nickname;
+      if (g.lang) players[g.env].lang = g.lang; // 2026-09-09：組內任一人非中文，複製指令要變雙語
+      if (!cards[g.role]) cards[g.role] = pick(deckFor(g.role));
+    });
+    const roundData = { createdAt: Date.now(), players, cards };
+    const updates = {};
+    updates[`${NS}/rounds/${roundId}`] = roundData;
+    won.forEach(g => {
+      updates[`${NS}/playerStatus/${g.env}`] = {state:"matched", roundId, t: Date.now(), lastActive: Date.now()};
+      updates[`${NS}/queue/${g.role}/${g.key}`] = null;
+    });
+    db.ref().update(updates);
+  });
+}
+
+// 標記「我剛做了一件事」——存了討論、複製了指令、送了意見，都算。
+// 沒有做這件事超過IDLE_MS，隊友畫面上會顯示「暫無動作」，跟真的斷線分開。
+const IDLE_MS = 4 * 60 * 1000;
+function markActive() {
+  if (myEnv && currentRoundId) {
+    db.ref(`${NS}/playerStatus/${myEnv}`).update({lastActive: Date.now()});
+  }
+}
+
+let presenceUnsubs = [];
+let teammateRaw = {};
+let presenceTickTimer = null;
+function statusOf(raw) {
+  if (!raw) return {label: "🟢 在線", cls: "on"};
+  if (raw.state === "left") {
+    const t = raw.leftAt ? new Date(raw.leftAt).toLocaleTimeString("zh-TW", {hour12:false}) : "";
+    return {label: `🔴 已離線${t ? "（"+t+"）" : ""}`, cls: "off"};
+  }
+  if (raw.lastActive && Date.now() - raw.lastActive > IDLE_MS) {
+    return {label: "🟡 暫無動作", cls: "idle"};
+  }
+  return {label: "🟢 在線", cls: "on"};
+}
+function renderPresenceTags() {
+  Object.keys(teammateRaw).forEach(env => {
+    const tag = document.getElementById("statusTag_" + env);
+    if (!tag) return;
+    const st = statusOf(teammateRaw[env]);
+    tag.textContent = st.label;
+    tag.className = "statusTag " + st.cls;
+  });
+}
+function watchTeammatePresence(round) {
+  presenceUnsubs.forEach(u => u());
+  presenceUnsubs = [];
+  teammateRaw = {};
+  if (presenceTickTimer) clearInterval(presenceTickTimer);
+  const myKey = String(myEnv);
+  Object.keys(round.players || {}).forEach(env => {
+    if (env === myKey) return;
+    const ref = db.ref(`${NS}/playerStatus/${env}`);
+    const handler = (snap) => { teammateRaw[env] = snap.val(); renderPresenceTags(); };
+    ref.on("value", handler);
+    presenceUnsubs.push(() => ref.off("value", handler));
+  });
+  // 定時重算——idle是「多久沒動作」，光靠Firebase change事件抓不到「純粹時間流逝」這件事。
+  presenceTickTimer = setInterval(renderPresenceTags, 15000);
+}
+
+function renderRound(round) {
+  if (!round) return;
+  roundStatsCommitted = false;
+  const myKey = String(myEnv);
+  const envs = Object.keys(round.players || {});
+  $("groupEnvs").textContent = envs.map(e => {
+    const nick = round.players[e].nickname;
+    return "#" + e + (nick ? "("+nick+")" : "");
+  }).join(" · ");
+  $("roundNo").textContent = roundCount + 1;
+  const box = $("cards");
+  box.innerHTML = "";
+  Object.entries(round.players).forEach(([env, p]) => {
+    const r = ROLE_BY_KEY[p.role];
+    const card = round.cards[p.role];
+    const mine = env === myKey;
+    const who = "#" + env + (p.nickname ? "　" + p.nickname : "");
+    const div = document.createElement("div");
+    div.className = "role-card " + r.cls + (mine ? " yours" : "");
+    const statusHtml = mine ? "" : `<span id="statusTag_${env}" class="statusTag on">🟢 在線</span>`;
+    div.innerHTML = `<div class="rk">${r.emoji} ${who} · ${rlabel(r)} ${statusHtml}</div><div class="rv">${cv(card)}</div><div class="rd">${cd(card)}</div><div class="rp" style="border-top:none;padding-top:0;opacity:.9">💡 ${cnote(card)}</div><div class="rp">${rask(r)}</div>`;
+    box.appendChild(div);
+  });
+  $("saveStatus").textContent = "";
+  $("doneCard").hidden = true;
+  feedRoundPlayers = round.players;
+  watchFeed(currentRoundId);
+  watchTeammatePresence(round);
+  show("playing");
+}
+
+function watchFeed(roundId) {
+  if (feedUnsub) { feedUnsub(); feedUnsub = null; }
+  const ref = db.ref(`${NS}/prompts/${roundId}`);
+  const handler = (snap) => {
+    const val = snap.val() || {};
+    const all = [];
+    Object.entries(val).forEach(([env, obj]) => {
+      Object.values(obj).forEach(p => all.push({env, ...p}));
+    });
+    all.sort((a,b) => a.t - b.t);
+    const box = $("feed");
+    if (!all.length) { box.innerHTML = '<div class="empty">還沒有人發言</div>'; return; }
+    box.innerHTML = all.map(p => {
+      const nick = (feedRoundPlayers[p.env] && feedRoundPlayers[p.env].nickname) || "";
+      const roleInfo = ROLE_BY_KEY[p.role];
+      const who = `#${p.env}${nick ? " "+nick : ""} · ${roleInfo ? roleInfo.emoji+roleInfo.label : ""}`;
+      const mine = String(p.env) === String(myEnv);
+      return `<div class="msg${mine ? " mine":""}"><div class="who">${who}</div><div class="txt">${escapeHtml(p.text)}</div></div>`;
+    }).join("");
+    box.scrollTop = box.scrollHeight;
+  };
+  ref.on("value", handler);
+  feedUnsub = () => ref.off("value", handler);
+}
+
+function escapeHtml(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+
+window.addEventListener("beforeunload", () => { leaveQueue(); });
+</script>
+</body>
+</html>

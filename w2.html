@@ -6,6 +6,7 @@
 <title>W2 速通盤點與卡牌疊加｜文化遊戲松</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
   :root{
     --bg:#faf8f2; --panel:#ffffff; --panel2:#f2efe4; --ink:#2b2820; --ink-soft:#5c5648;
@@ -36,6 +37,26 @@
   .status{font-size:13px;color:var(--ink-soft);text-align:center;margin-top:9px;min-height:18px}
   .hide{display:none!important}
 
+  .kicker{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+  .topnav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+  .topnav a{flex:1;min-width:190px;text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-size:13.5px;font-weight:700;color:var(--ink-soft)}
+  .howto{margin:0;padding-left:20px;counter-reset:h}
+  .howto li{margin-bottom:13px;padding-left:2px}
+  .howto li > b{display:block;font-size:15px;font-weight:800;margin-bottom:2px}
+  .howto li span{display:block;font-size:13px;color:var(--ink-soft);line-height:1.72}
+  .howto li span b{font-weight:800;color:var(--ink)}
+  .qrbox{display:flex;align-items:center;gap:16px}
+  .qrwrap{flex:0 0 auto;background:#fff;border-radius:8px;padding:4px;line-height:0}
+  .qrwrap svg{display:block;width:104px;height:104px}
+  .qrtext .qrt{font-weight:800;font-size:15px;margin-bottom:4px}
+  .qrtext .qrd{font-size:12.5px;color:var(--ink-soft);line-height:1.7}
+  .qrtext code{font-size:11.5px;background:var(--panel2);padding:1px 5px;border-radius:4px;word-break:break-all}
+  .unitnav{display:flex;gap:8px;margin-bottom:14px}
+  .unitnav .u{flex:1;text-decoration:none;background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:10px 13px;color:var(--ink-soft);display:block}
+  .unitnav .u b{display:block;font-size:14px;font-weight:800;color:var(--ink-soft)}
+  .unitnav .u span{display:block;font-size:11.5px;margin-top:2px;line-height:1.4;opacity:.9}
+  .unitnav .u.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .unitnav .u.on b{color:var(--accent)}
   .tabs{display:flex;gap:6px;margin-bottom:14px;position:sticky;top:0;background:var(--bg);padding:10px 0 8px;z-index:20;flex-wrap:wrap}
   .tab{flex:1;min-width:72px;background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);border-radius:10px;padding:9px 6px;font-size:13.5px;font-weight:700;text-align:center}
   .tab.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
@@ -116,13 +137,49 @@
 <body>
 <div class="wrap">
 
+<div class="unitnav">
+  <a href="unit1.html" class="u"><b>單元一</b><span>Design Jam</span></a>
+  <a href="w2.html" class="u on"><b>單元二 · 本週</b><span>速通盤點與卡牌疊加</span></a>
+</div>
+
 <!-- ========== 登入 ========== -->
 <div id="loginScreen">
-  <h1>W2 · 速通盤點與卡牌疊加</h1>
-  <p class="sub">用你的信封編號進來。跟上週 Design Jam 是同一個編號。</p>
+  <div class="kicker">文化遊戲松實作 · 單元二</div>
+  <h1>速通盤點與卡牌疊加</h1>
+  <p class="sub">
+    這週不聽案例賞析，改成你自己去玩。挑幾款遊戲快速試玩或看實況，
+    把每一款釘到一張「文化地圖」上，再跟同學兩人一組，把玩法卡和文化卡疊在一起，
+    看能不能疊出比原本更有意思的東西。用上週同一個信封編號，不用重新註冊。
+  </p>
+
+  <div class="topnav">
+    <a href="cards.html">🗂️ 完整卡池（可自己新增卡片）</a>
+    <a href="gallery.html">🖼️ 瀏覽大家的構想</a>
+  </div>
+
+  <div class="box qrbox">
+    <div class="qrwrap"><div id="qrcanvas"></div></div>
+    <div class="qrtext">
+      <div class="qrt">手機掃這裡加入</div>
+      <div class="qrd">或直接開<br><code>scatjay.github.io/wenhua-designjam-site</code></div>
+    </div>
+  </div>
+
   <div class="box">
-    <label>信封編號</label>
-    <input type="number" id="envInput" placeholder="例如 17" inputmode="numeric">
+    <label style="margin-bottom:12px">怎麼玩</label>
+    <ol class="howto">
+      <li><b>規劃路線</b><span>從清單挑 4-6 款，決定哪些親手玩、哪些看實況。像 speedrun 一樣，先想好路線再開跑——時間有限，「決定什麼可以跳過」本身就是這堂課要練的事。</span></li>
+      <li><b>速通盤點</b><span>每玩完一款就做一張卡，釘到地圖上。其中一格是「一個你沒玩過就講不出來的細節」——那一格沒有選項可以點，只有真的玩過的人寫得出來。</span></li>
+      <li><b>出牌到公共池</b><span>把一張玩法卡丟進池子，再從池子裡挑一張<b>別人的</b>牌來疊。不用等人、不用找人，隨時可以出、隨時可以接。</span></li>
+      <li><b>疊上文化卡</b><span>文化卡分五類。物件類（廟、小吃）最容易變成換皮；行為類（擲筊、辦桌）、禁忌類（不能踩門檻）常常機制自己就長出來了。挑哪一類是你的決定。</span></li>
+      <li><b>看箭頭</b><span>疊完再釘一次座標，系統會畫一支從原位置到新位置的箭頭。<b>箭頭沒動就是換皮</b>——地圖自己會告訴你，不用等老師講。</span></li>
+      <li><b>跑三輪</b><span>第一輪從你平常在玩的遊戲出發，第二輪從有文化要素的遊戲出發，第三輪自己平衡兩者，目標是把提案推到地圖<b>左上角</b>——那一區是「文化長在機制裡」，全班最空也最難做。</span></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <label for="envInput">你的編號（信封上那組，不是學號）</label>
+    <input type="number" id="envInput" min="0" max="130" placeholder="例如 17" inputmode="numeric">
     <button class="btn" id="joinBtn">進入</button>
     <div class="status" id="loginStatus"></div>
   </div>
@@ -846,6 +903,28 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   show(b.dataset.p);
   if (b.dataset.p === "jam") { renderPlayPick(); renderPool(); }
 });
+
+// ============ QR（放最後，且整段包 try/catch）============
+// 🔴 2026-09-09 事故：W1 那次上課教室連不到 jsdelivr，qrcode() 直接 ReferenceError，
+// 把整支 IIFE 炸掉，連帶角色按鈕／編號帶入／join 綁定全部沒執行到。
+// 一個裝飾性的 QR 不該有能力癱瘓整頁 ⇒ 包 try/catch，而且放在所有綁定之後。
+// 另外網址寫死正式站，不用 location.href——老師在本機預覽時會產出 file:// 的 QR，學生掃了打不開。
+(function renderQR(){
+  const SITE = "https://scatjay.github.io/wenhua-designjam-site/w2.html";
+  const holder = document.getElementById("qrcanvas");
+  if (!holder) return;
+  try {
+    const qr = qrcode(0, "M");
+    qr.addData(SITE);
+    qr.make();
+    holder.innerHTML = qr.createSvgTag({cellSize: 4, margin: 2});
+  } catch (e) {
+    holder.innerHTML = "";
+    const box = holder.closest(".qrbox");
+    if (box) box.style.display = "none";   // 畫不出來就整塊收起來，不留空白框
+    console.warn("QR 載入失敗（不影響其他功能）：", e);
+  }
+})();
 </script>
 </body>
 </html>

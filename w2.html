@@ -1725,15 +1725,35 @@ const I18N = {"#56 × #58（有你）": {"id": "#56 × #58（ada kamu）", "vi":
 //    字典的 key 是**畫面上實際出現的文字節點**（用 CDP 從渲染後的畫面抽出來的），
 //    所以連被 <b> 切開的碎片也對得上。翻譯由 Vertex Gemini 批次產出
 //    （test_tools/translate_worksheet_vertex.py），不燒 Claude 週用量。
+//
+// 🔴 這個檔是 I18N 區塊的**原始正本**。inject_i18n.py 會拿它整段覆蓋 w2.html 裡的
+//    I18N-BEGIN/END 之間。**不要直接改 w2.html 裡那一段**——下次注入就會被蓋掉。
+//    （2026-09-16 01:33 我就這樣把切語言不登出的修正弄丟過一次，而且已經推上線了。）
 // ============================================================
 let curLang = "zh";
 const I18N_SKIP = new Set(["SCRIPT", "STYLE", "TEXTAREA", "CODE", "INPUT"]);
+
+// 記住每個被換掉的文字節點的中文原文——這樣切回中文／換另一種語言
+// 都只是把原文放回去，不用 reload、學生不會被登出、沒存的欄位不會消失。
+// WeakMap 不能列舉，所以另外用一個陣列記住動過哪些節點（頁面不大，幾百個而已）。
+const ZH_TEXT = new WeakMap();
+const ZH_TOUCHED = [];
 
 function i18nHit(s, lang) {
   const row = I18N[s];
   if (!row) return null;
   const v = row[lang];
   return (typeof v === "string" && v !== "") ? v : null;
+}
+
+function restoreZh() {
+  ZH_TOUCHED.forEach(node => {
+    if (!node.parentNode) return;
+    const zh = ZH_TEXT.get(node);
+    if (zh !== undefined) node.nodeValue = zh;
+  });
+  document.querySelectorAll("[data-ph-zh]").forEach(el => { el.placeholder = el.dataset.phZh; });
+  document.querySelectorAll("[data-title-zh]").forEach(el => { el.title = el.dataset.titleZh; });
 }
 
 function localizeDOM(root) {
@@ -1751,11 +1771,14 @@ function localizeDOM(root) {
   while ((n = w.nextNode())) hits.push(n);
   hits.forEach(node => {
     const raw = node.nodeValue;
-    const hit = i18nHit(raw.trim(), curLang);
+    // 第一次換之前先把中文原文記起來；之後再換語言都以原文為準，不會二次翻譯
+    const zh = ZH_TEXT.has(node) ? ZH_TEXT.get(node) : raw;
+    const hit = i18nHit(zh.trim(), curLang);
     if (hit === null) return;
+    if (!ZH_TEXT.has(node)) { ZH_TEXT.set(node, raw); ZH_TOUCHED.push(node); }
     // 保住原本的前後空白，不然相鄰的行會黏在一起
-    const lead = (raw.match(/^\s*/) || [""])[0];
-    const tail = (raw.match(/\s*$/) || [""])[0];
+    const lead = (zh.match(/^\s*/) || [""])[0];
+    const tail = (zh.match(/\s*$/) || [""])[0];
     node.nodeValue = lead + hit + tail;
   });
   scope.querySelectorAll("[placeholder]").forEach(el => {
@@ -1772,7 +1795,7 @@ function localizeDOM(root) {
 
 // 每一次動態渲染之後都要再翻一次，否則新畫出來的字會是中文。
 // 不靠「記得在每個 render 後面加一行」——那種靠自律的機制一定會漏；
-// 用 MutationObserver 保證覆蓋率 100%（跟 twemoji 同一個問題、同一種解法）。
+// 用 MutationObserver 保證覆蓋率 100%（跟 twemoji 是同一個問題、同一種解法）。
 let _i18nPending = false;
 function startI18nObserver() {
   const mo = new MutationObserver(() => {
@@ -1787,10 +1810,14 @@ function startI18nObserver() {
 }
 
 function setLang(lang) {
-  const prev = curLang;
   try { localStorage.setItem("designjam_w2_lang", lang); } catch (_) {}
-  // 已經就地換過字之後，原文就不在 DOM 裡了——換到別的語言只能重載
-  if (prev !== "zh" && lang !== prev) { location.reload(); return; }
+  // 🔴 不 reload。先把中文原文放回去，再套新語言——
+  //    切回中文對照原文是外籍生最常做的動作，不能每做一次就被登出一次、
+  //    也不能讓填到一半的欄位消失。
+  //    （2026-09-16 情境 B 測試員抓到：vi→id 與 id→zh 都會退回登入畫面，
+  //      而外語版的提示語自己就在叫人點 🇹🇼 看中文原文。）
+  curLang = "zh";
+  try { restoreZh(); } catch (_) {}
   curLang = lang;
   ["Zh", "Vi", "Id"].forEach(k => {
     const b = $("w2Lang" + k);

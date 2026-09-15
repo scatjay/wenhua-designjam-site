@@ -6,6 +6,7 @@
 <title>文化遊戲松 Cultural Game Jam · 教師後台</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <style>
   :root{
     --bg:#faf8f2; --panel:#ffffff; --ink:#2b2820; --ink-soft:#5c5648; --line:#ddd7c6;
@@ -62,15 +63,23 @@
 </head>
 <body>
 <div class="wrap">
-  <div id="gate" class="card-box" style="max-width:360px;margin:60px auto;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 24px">
-    <div style="font-weight:800;font-size:16px;margin-bottom:14px">🔒 教師後台通關密碼</div>
-    <input type="password" id="gatePass" placeholder="輸入密碼" style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px;text-align:center">
-    <button id="gateBtn" style="width:100%;margin-top:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer">進入</button>
-    <div id="gateStatus" style="font-size:12px;color:var(--warn);margin-top:8px;min-height:16px"></div>
+  <div id="gate" class="card-box" style="max-width:380px;margin:60px auto;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 24px">
+    <div style="font-weight:800;font-size:16px;margin-bottom:4px">🔒 教師後台</div>
+    <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:16px">用老師的 Google 帳號登入就好，不用記密碼</div>
+    <button id="gGoogle" style="width:100%;background:#fff;color:#3c4043;border:1.5px solid var(--line);border-radius:8px;padding:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;font-size:14.5px">
+      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45 24c0-1.6-.1-2.7-.4-4H24v7.5h12c-.2 2-1.5 5-4.4 7l6.7 5.2C42.2 36 45 30.6 45 24z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.3l-6.7-5.2c-1.8 1.3-4.3 2.2-7.8 2.2-5.9 0-11-4-12.8-9.4l-7 5.4C7.9 41 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.2 28.3c-.5-1.4-.8-2.8-.8-4.3s.3-3 .8-4.3l-7-5.4C2.8 17.2 2 20.5 2 24s.8 6.8 2.2 9.7l7-5.4z"/><path fill="#EA4335" d="M24 10.4c3.3 0 5.6 1.4 6.9 2.6l5.9-5.8C33.2 3.9 29.9 2 24 2 15.4 2 7.9 7 4.2 14.3l7 5.4C13 14.3 18.1 10.4 24 10.4z"/></svg>
+      用 Google 帳號登入
+    </button>
+    <div id="gateStatus" style="font-size:12.5px;color:var(--warn);margin-top:10px;min-height:16px;line-height:1.6"></div>
+    <details style="margin-top:14px;text-align:left">
+      <summary style="cursor:pointer;font-size:12px;color:var(--ink-soft)">Google 登入不能用時，改用備援密碼</summary>
+      <input type="password" id="gatePass" placeholder="輸入密碼" style="width:100%;margin-top:8px;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px;text-align:center">
+      <button id="gateBtn" style="width:100%;margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer">用密碼進入</button>
+    </details>
   </div>
   <div id="dashboard" hidden>
   <h1>文化遊戲松 Cultural Game Jam · 教師後台</h1>
-  <p class="sub">即時顯示配對紀錄與每輪學生貼上的討論內容 · 編號僅供去識別化，不含姓名學號 · <a href="#" id="logoutLink" style="color:var(--accent);font-weight:700">登出</a></p>
+  <p class="sub">即時顯示配對紀錄與每輪學生貼上的討論內容 · 編號僅供去識別化，不含姓名學號 <span id="whoami" style="color:var(--ink-soft)"></span> · <a href="#" id="logoutLink" style="color:var(--accent);font-weight:700">登出</a></p>
   <div class="unitnav">
     <button class="u u1 on" data-t="W1"><b>第1週 · Design Jam</b><span>四種角色，孵出一個點子</span></button>
     <button class="u u2" data-t="W2"><b>第2週 · 本週</b><span>文化怎麼放進遊戲裡</span></button>
@@ -226,39 +235,83 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const NS = "whgm";
 
-// 🔒 教師後台通關密碼——只是前端字串比對，不是真正的伺服器驗證，
-// 看原始碼(檢視網頁原始碼/F12)還是找得到，但足夠擋掉學生隨手點進來逛。
-// 楊老師要改密碼：直接改這裡這一行的字串就好，改完重新部署即可生效。
+// 🔒 教師後台的門
+// 楊老師 2026-09-16：「能不能先讓我綁 gmail 就好，記一堆密碼我很頭大。」
+// ⇒ 主要走 Google 登入（Firebase Auth），比對白名單 email。
+// 🔴 但這仍然是**前端**驗證：白名單看得到、擋不住真的想繞的人。
+//    它的用途跟原本的密碼一樣——擋學生隨手點進來逛，不是資料的存取控制。
+//    （真正的存取控制要把 Firebase Database rules 綁 auth.uid，那是另一件事，
+//      現在 whgm 的 write 是全開的，已記在待辦。）
+const TEACHER_EMAILS = [
+  "scatjay@gmail.com",        // 楊老師
+  // 要加人就加在這裡（例如駱老師的 Google 帳號），改完 push 即可
+];
+// 備援密碼：Google 登入沒設定好、或人在沒登入 Google 的電腦前時用
 const TEACHER_PASSCODE = "0909";
+
 (function gateInit(){
   const KEY = "designjam_teacher_unlocked";
-  // 用localStorage不是sessionStorage——楊老師要「真的登入過一次，這台裝置
-  // 就記住」，不要每次重開分頁/瀏覽器都要再輸入一次。
+  const st = document.getElementById("gateStatus");
+  const say = (m) => { if (st) st.innerHTML = m; };
+
+  function unlock(who){
+    try { localStorage.setItem(KEY, "1"); } catch(_) {}
+    document.getElementById("gate").hidden = true;
+    document.getElementById("dashboard").hidden = false;
+    const tag = document.getElementById("whoami");
+    if (tag) tag.textContent = who ? "（" + who + "）" : "";
+  }
+
   document.getElementById("logoutLink").onclick = (e) => {
     e.preventDefault();
     try { localStorage.removeItem(KEY); } catch(_) {}
-    document.getElementById("gatePass").value = "";
+    try { if (firebase.auth) firebase.auth().signOut(); } catch(_) {}
+    const p = document.getElementById("gatePass"); if (p) p.value = "";
     document.getElementById("gate").hidden = false;
     document.getElementById("dashboard").hidden = true;
   };
+
+  // 這台裝置登入過就直接進（楊老師要的：不要每次重開都問）
   let already = false;
   try { already = localStorage.getItem(KEY) === "1"; } catch(_) {}
   if (already) { unlock(); return; }
-  document.getElementById("gateBtn").onclick = tryUnlock;
-  document.getElementById("gatePass").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+
+  // --- Google 登入 ---
+  const btn = document.getElementById("gGoogle");
+  if (btn) btn.onclick = () => {
+    if (!firebase.auth) { say("這個瀏覽器載不到 Google 登入元件，請用下面的備援密碼。"); return; }
+    say("開啟 Google 登入視窗…");
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    firebase.auth().signInWithPopup(provider).then(res => {
+      const email = ((res.user && res.user.email) || "").toLowerCase();
+      if (TEACHER_EMAILS.map(x => x.toLowerCase()).indexOf(email) >= 0) { unlock(email); return; }
+      firebase.auth().signOut();
+      say("這個帳號（" + email + "）不在教師名單裡。<br>要加人請改 teacher.html 的 TEACHER_EMAILS。");
+    }).catch(err => {
+      const c = err && err.code || "";
+      if (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") { say(""); return; }
+      if (c === "auth/unauthorized-domain") {
+        say("🔴 這個網域還沒被 Firebase 授權。<br>到 Firebase Console → Authentication → Settings →" +
+            " Authorized domains 加上 <b>scatjay.github.io</b>，然後重試。<br>現在可以先用下面的備援密碼。");
+      } else if (c === "auth/operation-not-allowed") {
+        say("🔴 Firebase 專案還沒開啟 Google 登入。<br>到 Console → Authentication → Sign-in method →" +
+            " 啟用 <b>Google</b>，然後重試。<br>現在可以先用下面的備援密碼。");
+      } else {
+        say("登入失敗：" + (err && err.message || c) + "<br>可以先用下面的備援密碼。");
+      }
+    });
+  };
+
+  // --- 備援密碼 ---
+  const pw = document.getElementById("gatePass");
   function tryUnlock(){
-    const val = document.getElementById("gatePass").value;
-    if (val === TEACHER_PASSCODE) {
-      try { localStorage.setItem(KEY, "1"); } catch(_) {}
-      unlock();
-    } else {
-      document.getElementById("gateStatus").textContent = "密碼不對，再試一次";
-    }
+    if (pw && pw.value === TEACHER_PASSCODE) unlock("備援密碼");
+    else say("密碼不對，再試一次");
   }
-  function unlock(){
-    document.getElementById("gate").hidden = true;
-    document.getElementById("dashboard").hidden = false;
-  }
+  const pb = document.getElementById("gateBtn");
+  if (pb) pb.onclick = tryUnlock;
+  if (pw) pw.addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
 })();
 const ROLE_LABEL = {producer:"🎬製作人", engineer:"🔧工程師", marketing:"📣行銷", creative:"🎨創意總監"};
 

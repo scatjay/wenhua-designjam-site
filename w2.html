@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>第2週 遊戲裡怎麼放進文化｜文化遊戲松</title>
+<title>第2週 文化怎麼放進遊戲裡｜文化遊戲松</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -18,6 +18,7 @@
     --blue:#2f6690; --blue-soft:#e5eff6;
     --purple:#7a3f92; --purple-soft:#f2e7f6;
     --red:#b8452f; --red-soft:#fbe9e3;
+    --amber:#8a6a1f; --amber-soft:#f5eeda;
     --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
   }
   img.emoji{height:1.15em;width:1.15em;margin:0 .05em 0 .1em;vertical-align:-0.2em}
@@ -105,16 +106,27 @@
   .fbtn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
 
   .cardpick{display:grid;gap:7px;margin-top:8px}
-  .cc{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel);text-align:left;font-family:inherit;width:100%}
-  .cc.sel{border-color:var(--accent);background:var(--accent-soft)}
-  .cc .cv{font-weight:800;font-size:14.5px}
-  .cc .cd{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
-  .cc .cnote{font-size:12px;color:var(--ink-soft);margin-top:4px;line-height:1.55}
-  .kind{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;background:var(--panel2);color:var(--ink-soft);margin-left:5px}
-  .kind.act{background:var(--green-soft);color:var(--green)}
-  .kind.rel{background:var(--purple-soft);color:var(--purple)}
-  .kind.tabu{background:var(--red-soft);color:var(--red)}
-  .kind.time{background:var(--blue-soft);color:var(--blue)}
+  /* 卡片幾何照抄第1週的 .role-card，避免兩週的卡看起來像兩個系統 */
+  .cc{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--panel);
+      text-align:left;font-family:inherit;width:100%;box-shadow:var(--shadow);margin-bottom:0}
+  .cc .cv{font-size:18px;font-weight:800;line-height:1.35}
+  .cc .cd{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;opacity:.85;margin-bottom:4px}
+  .cc .cnote{font-size:13px;opacity:.85;margin-top:8px;border-top:1px dashed rgba(30,25,10,.15);padding-top:6px;line-height:1.6}
+  .cc.sel{outline:2px solid var(--accent);outline-offset:1px}
+  /* 五類文化卡各自一個色，跟第1週四個角色卡同一種做法 */
+  .cc.k-obj {background:var(--panel2);border-color:var(--line)}
+  .cc.k-act {background:var(--green-soft);border-color:var(--green)}
+  .cc.k-rel {background:var(--purple-soft);border-color:var(--purple)}
+  .cc.k-tabu{background:var(--red-soft);border-color:var(--red)}
+  .cc.k-time{background:var(--blue-soft);border-color:var(--blue)}
+  .cc.k-act .cv,.cc.k-act .cd{color:var(--green)}
+  .cc.k-rel .cv,.cc.k-rel .cd{color:var(--purple)}
+  .cc.k-tabu .cv,.cc.k-tabu .cd{color:var(--red)}
+  .cc.k-time .cv,.cc.k-time .cd{color:var(--blue)}
+  .cc.k-obj .cd{color:var(--ink-soft)}
+  .cc.k-play{background:var(--amber-soft);border-color:var(--amber)}
+  .cc.k-play .cv,.cc.k-play .cd{color:var(--amber)}
+  .kind{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;background:rgba(255,255,255,.6);color:inherit;margin-left:5px;opacity:.85}
 
   .pool{display:grid;gap:8px;margin-top:8px}
   .pi{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--panel)}
@@ -154,13 +166,13 @@
 
 <div class="unitnav">
   <a href="unit1.html" class="u u1"><b>第1週</b><span>四種角色，孵出一個點子</span></a>
-  <a href="w2.html" class="u u2 on"><b>第2週 · 本週</b><span>遊戲裡怎麼放進文化</span></a>
+  <a href="w2.html" class="u u2 on"><b>第2週 · 本週</b><span>文化怎麼放進遊戲裡</span></a>
 </div>
 
 <!-- ========== 登入 ========== -->
 <div id="loginScreen">
   <div class="kicker">文化遊戲松實作 · 第2週</div>
-  <h1>遊戲裡怎麼放進文化</h1>
+  <h1>文化怎麼放進遊戲裡</h1>
   <p class="sub">
     <b>① 挑 4-6 款遊戲</b>，親手玩或看實況　→　<b>② 每玩完一款，在文化遊戲地圖上釘一個位置</b>　→　
     <b>③ 跟三個同學各疊一輪</b>，看你的提案在地圖上往哪邊移動。<br>
@@ -769,8 +781,8 @@ function renderPlayPick(){
   const base = PLAY_CARDS.slice().sort(() => 0.5 - Math.random()).slice(0, 5).map(c => ({...c, src: "玩法卡"}));
   const all = mine.concat(base);
   $("playPick").innerHTML = all.map((c, i) =>
-    `<button class="cc" data-i="${i}"><div class="cv">${esc(c.v)}<span class="kind">${esc(c.src)}</span></div>
-     <div class="cnote">${esc(c.note)}</div></button>`).join("");
+    `<button class="cc k-play" data-i="${i}"><div class="cd">${esc(c.src)}</div>
+     <div class="cv">${esc(c.v)}</div><div class="cnote">${esc(c.note)}</div></button>`).join("");
   $("playPick").querySelectorAll(".cc").forEach(b => b.onclick = () => {
     $("playPick").querySelectorAll(".cc").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel");
@@ -832,8 +844,10 @@ function renderCultPick(){
                                      : all.filter(c => c.k === cultFilter));
   const hint = cultFilter !== "all" && CULT_KINDS[cultFilter] ? `<div class="hint">${esc(CULT_KINDS[cultFilter].hint)}</div>` : "";
   $("cultPick").innerHTML = hint + list.map((c, i) => {
-    const kd = CULT_KINDS[c.k] || CULT_KINDS.obj;
-    return `<button class="cc" data-i="${i}"><div class="cv">${esc(c.v)}<span class="kind ${kd.cls}">${esc(kd.label)}</span></div>
+    const k = CULT_KINDS[c.k] ? c.k : "obj";
+    const kd = CULT_KINDS[k];
+    return `<button class="cc k-${k}" data-i="${i}"><div class="cd">${esc(kd.label)}</div>
+      <div class="cv">${esc(c.v)}</div>
       <div class="cnote">${esc(c.note || "")}</div></button>`;
   }).join("");
   $("cultPick").querySelectorAll(".cc").forEach(b => b.onclick = () => {
@@ -974,7 +988,8 @@ let deckFilter = "all";
 function renderDeck(){
   if (!$("deckPlay")) return;
   $("deckPlay").innerHTML = PLAY_CARDS.map(c =>
-    `<div class="cc"><div class="cv">${esc(c.v)}</div><div class="cnote">${esc(c.note)}</div></div>`).join("");
+    `<div class="cc k-play"><div class="cd">玩法</div><div class="cv">${esc(c.v)}</div>
+     <div class="cnote">${esc(c.note)}</div></div>`).join("");
 
   const all = CULTURE_CARDS.concat(customCulture);
   const counts = {};
@@ -995,9 +1010,10 @@ function renderDeck(){
   const kh = deckFilter !== "all" && CULT_KINDS[deckFilter]
     ? `<div class="hint" style="margin-bottom:6px">${esc(CULT_KINDS[deckFilter].hint)}</div>` : "";
   $("deckCult").innerHTML = kh + list.map(c => {
-    const kd = CULT_KINDS[c.k] || CULT_KINDS.obj;
+    const k = CULT_KINDS[c.k] ? c.k : "obj";
     const by = c.by != null ? `<span class="kind">#${String(c.by).padStart(2,"0")} 加的</span>` : "";
-    return `<div class="cc"><div class="cv">${esc(c.v)}<span class="kind ${kd.cls}">${esc(kd.label)}</span>${by}</div>
+    return `<div class="cc k-${k}"><div class="cd">${esc(CULT_KINDS[k].label)}${by}</div>
+      <div class="cv">${esc(c.v)}</div>
       <div class="cnote">${esc(c.note || "")}</div></div>`;
   }).join("");
 }

@@ -83,7 +83,7 @@
   .glist{display:grid;gap:8px}
   .g{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--panel);display:flex;gap:10px;align-items:flex-start}
   .g.sel{outline:2px solid var(--accent);outline-offset:1px}
-  /* A/B/C 三組各自一個色：會吵的（紅）／好判斷的（綠）／冷門的（紫） */
+  /* A/B/C 三組各自一個色：你可能玩過（紅）／一看就知道（綠）／沒聽過的（紫） */
   .g.g-A{background:var(--red-soft);border-color:var(--red)}
   .g.g-B{background:var(--green-soft);border-color:var(--green)}
   .g.g-C{background:var(--purple-soft);border-color:var(--purple)}
@@ -152,6 +152,15 @@
   .dotlayer:hover{background:rgba(0,0,0,.02)}
   .endlab{position:absolute;font-size:10.5px;font-weight:700;color:var(--ink);opacity:.8;white-space:nowrap}
 
+  .g .gtags{margin-top:5px}
+  .htag{background:transparent;border:1px solid var(--line);color:var(--ink-soft);
+        border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;margin:0 4px 4px 0}
+  .fsep{align-self:center;font-size:11px;font-weight:800;color:var(--ink-soft);opacity:.65;padding:0 2px}
+  .fbtn .fn{font-weight:600;opacity:.7}
+  .glossary{margin-bottom:10px}
+  .glossary summary{font-size:12.5px;font-weight:700;color:var(--accent);cursor:pointer;padding:4px 0}
+  .gle{font-size:12.5px;line-height:1.75;padding:3px 0;border-bottom:1px solid var(--line)}
+  .gle b{display:inline-block;min-width:118px;margin-right:6px}
   .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
   .fbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700}
   .fbtn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
@@ -324,7 +333,10 @@
         像 speedrun 一樣：開跑前先決定要盤點哪幾款、哪些<b>親手玩</b>、哪些<b>看實況</b>。
         挑 <b>4-6 款</b>。看實況的通常 3-5 分鐘就抓得到重點，可以混搭。
       </p>
+      <label style="margin-bottom:6px">先篩一下，再挑</label>
       <div class="filters" id="gFilters"></div>
+      <div class="khint hide" id="gFilterHint"></div>
+      <details class="glossary"><summary>這些標籤是什麼意思？</summary><div id="tagGlossary"></div></details>
       <div class="glist" id="gameList"></div>
       <div class="status" id="planStatus"></div>
       <button class="btn" id="planDone">路線確定，開始盤點</button>
@@ -556,37 +568,37 @@ let myEnv = null;
 // ============ 遊戲清單（2026-09-15 查證） ============
 // mode: play=瀏覽器直開免安裝 / watch=要安裝或付費，改看實況
 const GAMES = [
-  // --- A 組：會吵的（他們真的在玩／知道的）。實況連結皆 2026-09-15 oembed 實測 200 ---
-  {g:"A", n:"神明便利商店", mode:"watch", zh:1, min:5, note:"台灣神明 IP 外皮 ＋ 通用「合併」休閒玩法。文化在美術還是在機制？", url:"https://www.youtube.com/watch?v=r0jbiNAti2o"},
-  {g:"A", n:"打鬼 PAGUI", mode:"watch", zh:1, min:7, note:"官將首、乩童考據由道長與宮廟指導，紮實；但玩法是通用 3D 動作。考據深≠機制深。⚠️ 恐怖遊戲", url:"https://www.youtube.com/watch?v=OkTKEaYmAwc"},
-  {g:"A", n:"九日 Nine Sols", mode:"watch", zh:1, min:5, note:"「道龐克」＝道教＋科幻。彈反機制跟道家思想有關係嗎，還是 Sekiro 換皮？", url:"https://www.youtube.com/watch?v=qQovkMyA7sc&t=34s"},
-  {g:"A", n:"黑神話：鍾馗", mode:"watch", zh:1, min:5, note:"鍾馗＝抓鬼神，跟《小封神》同一母題。誰有資格講、講成什麼樣？", url:"https://www.youtube.com/watch?v=iK9c6mXD7KA&t=39s"},
-  {g:"A", n:"異環 NTE", mode:"watch", zh:1, min:5, note:"台灣 2026 上半年聲量第一。都市超自然是核心還是裝飾？", url:"https://www.youtube.com/watch?v=nmBwoqGFNiM"},
-  {g:"A", n:"Cult of the Lamb（咩咩啟示錄）", mode:"watch", zh:1, min:5, note:"可愛畫風＋邪教經營。製作人明說「機制本身在輕推你變壞」", url:"https://www.youtube.com/watch?v=ORTCph4tG3U"},
-  {g:"A", n:"返校 Detention", mode:"watch", zh:1, min:6, note:"白色恐怖＋台灣民間信仰。⚠️ 恐怖遊戲，有驚嚇畫面", url:"https://www.youtube.com/watch?v=Dm3z0MbyiTc"},
-  {g:"A", n:"還願 Devotion", mode:"watch", zh:1, min:10, note:"1980年代台灣家庭＋民間信仰／邪教。⚠️ 恐怖遊戲，有驚嚇畫面", url:"https://www.youtube.com/watch?v=edZPxP9UJW4"},
+  // --- A 組：你可能玩過（他們真的在玩／知道的）。實況連結皆 2026-09-15 oembed 實測 200 ---
+  {g:"A", n:"神明便利商店", mode:"watch", t:["熟","台灣","民俗信仰"], zh:1, min:5, note:"台灣神明 IP 外皮 ＋ 通用「合併」休閒玩法。文化在美術還是在機制？", url:"https://www.youtube.com/watch?v=r0jbiNAti2o"},
+  {g:"A", n:"打鬼 PAGUI", mode:"watch", t:["熟","明顯","台灣","民俗信仰","恐怖"], zh:1, min:7, note:"官將首、乩童考據由道長與宮廟指導，紮實；但玩法是通用 3D 動作。考據深≠機制深。⚠️ 恐怖遊戲", url:"https://www.youtube.com/watch?v=OkTKEaYmAwc"},
+  {g:"A", n:"九日 Nine Sols", mode:"watch", t:["熟","台灣","道教","動作"], zh:1, min:5, note:"「道龐克」＝道教＋科幻。彈反機制跟道家思想有關係嗎，還是 Sekiro 換皮？", url:"https://www.youtube.com/watch?v=qQovkMyA7sc&t=34s"},
+  {g:"A", n:"黑神話：鍾馗", mode:"watch", t:["熟","華語","民俗信仰","動作"], zh:1, min:5, note:"鍾馗＝抓鬼神，跟《小封神》同一母題。誰有資格講、講成什麼樣？", url:"https://www.youtube.com/watch?v=iK9c6mXD7KA&t=39s"},
+  {g:"A", n:"異環 NTE", mode:"watch", t:["熟","華語","現代城市有鬼神"], zh:1, min:5, note:"台灣 2026 上半年聲量第一。都市超自然是核心還是裝飾？", url:"https://www.youtube.com/watch?v=nmBwoqGFNiM"},
+  {g:"A", n:"Cult of the Lamb（咩咩啟示錄）", mode:"watch", t:["熟","明顯","經營","邪教"], zh:1, min:5, note:"可愛畫風＋邪教經營。製作人明說「機制本身在輕推你變壞」", url:"https://www.youtube.com/watch?v=ORTCph4tG3U"},
+  {g:"A", n:"返校 Detention", mode:"watch", t:["熟","台灣","歷史","民俗信仰","恐怖"], zh:1, min:6, note:"白色恐怖＋台灣民間信仰。⚠️ 恐怖遊戲，有驚嚇畫面", url:"https://www.youtube.com/watch?v=Dm3z0MbyiTc"},
+  {g:"A", n:"還願 Devotion", mode:"watch", t:["熟","台灣","民俗信仰","恐怖"], zh:1, min:10, note:"1980年代台灣家庭＋民間信仰／邪教。⚠️ 恐怖遊戲，有驚嚇畫面", url:"https://www.youtube.com/watch?v=edZPxP9UJW4"},
 
-  // --- B 組：校準用（一面倒、好判斷） ---
-  {g:"B", n:"膨風龜大冒險", mode:"play", zh:2, min:15, note:"🔴《小封神》官方改編正本。赤崁樓九贔屭吹牛引發天界大戰。臺語／華語字幕可切換", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/picture_book.html"},
-  {g:"B", n:"Gartic Phone（傳話畫畫）", mode:"play", zh:1, min:12, note:"一句話→畫→猜→再畫。訊息在傳遞中變形——這就是「改編」的體感模型", url:"https://garticphone.com/zh-TW"},
-  {g:"B", n:"We Become What We Behold（我們成為我們所注視的）", mode:"play", zh:0, min:4, note:"你拿相機拍什麼，新聞就變成什麼。機制即訊息的教科書案例", url:"https://ncase.itch.io/wbwwb"},
-  {g:"B", n:"The Password Game（密碼遊戲）", mode:"play", zh:0, min:12, note:"規則不斷疊加直到荒謬——規則設計本身就是笑點與論點", url:"https://neal.fun/password-game/"},
-  {g:"B", n:"Absurd Trolley Problems（荒謬電車難題）", mode:"play", zh:0, min:5, note:"電車難題推到荒謬，最後拿你的選擇對照全體玩家", url:"https://neal.fun/absurd-trolley-problems/"},
-  {g:"B", n:"Dark Patterns（黑暗模式）", mode:"play", zh:0, min:7, note:"讓你親身被黑暗模式坑一次。介面即權力", url:"https://neal.fun/dark-patterns/"},
-  {g:"B", n:"Every Day the Same Dream（每天都是同一個夢）", mode:"play", zh:0, min:5, note:"重複同一天，唯一的玩法是「拒絕」", url:"https://molleindustria.org/everydaythesamedream/everydaythesamedream.html"},
-  {g:"B", n:"Queers in Love at the End of the World（世界末日的戀人）", mode:"play", zh:0, min:1, note:"全場最短：倒數 10 秒，你來不及讀完就結束。時間限制本身就是情感設計", url:"https://w.itch.io/end-of-the-world"},
-  {g:"B", n:"Parable of the Polygons（多邊形的寓言）", mode:"play", zh:0, min:10, note:"每個人只有一點點偏好，拖一拖就拖出整片隔離", url:"https://ncase.me/polygons/"},
+  // --- B 組：一看就知道（一面倒，拿來校準判準） ---
+  {g:"B", n:"膨風龜大冒險", mode:"play", t:["明顯","台南","小封神","臺語"], zh:2, min:15, note:"🔴《小封神》官方改編正本。赤崁樓九贔屭吹牛引發天界大戰。臺語／華語字幕可切換", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/picture_book.html"},
+  {g:"B", n:"Gartic Phone（傳話畫畫）", mode:"play", t:["明顯","多人一起玩","轉手就會變形"], zh:1, min:12, note:"一句話→畫→猜→再畫。訊息在傳遞中變形——這就是「改編」的體感模型", url:"https://garticphone.com/zh-TW"},
+  {g:"B", n:"We Become What We Behold（我們成為我們所注視的）", mode:"play", t:["明顯","玩法自己在講話","社會議題","五分鐘玩完"], zh:0, min:4, note:"你拿相機拍什麼，新聞就變成什麼。機制即訊息的教科書案例", url:"https://ncase.itch.io/wbwwb"},
+  {g:"B", n:"The Password Game（密碼遊戲）", mode:"play", t:["明顯","規則越加越多"], zh:0, min:12, note:"規則不斷疊加直到荒謬——規則設計本身就是笑點與論點", url:"https://neal.fun/password-game/"},
+  {g:"B", n:"Absurd Trolley Problems（荒謬電車難題）", mode:"play", t:["明顯","社會議題","五分鐘玩完"], zh:0, min:5, note:"電車難題推到荒謬，最後拿你的選擇對照全體玩家", url:"https://neal.fun/absurd-trolley-problems/"},
+  {g:"B", n:"Dark Patterns（黑暗模式）", mode:"play", t:["明顯","介面在坑你","社會議題"], zh:0, min:7, note:"讓你親身被黑暗模式坑一次。介面即權力", url:"https://neal.fun/dark-patterns/"},
+  {g:"B", n:"Every Day the Same Dream（每天都是同一個夢）", mode:"play", t:["明顯","社會議題","五分鐘玩完"], zh:0, min:5, note:"重複同一天，唯一的玩法是「拒絕」", url:"https://molleindustria.org/everydaythesamedream/everydaythesamedream.html"},
+  {g:"B", n:"Queers in Love at the End of the World（世界末日的戀人）", mode:"play", t:["明顯","玩法自己在講話","五分鐘玩完"], zh:0, min:1, note:"全場最短：倒數 10 秒，你來不及讀完就結束。時間限制本身就是情感設計", url:"https://w.itch.io/end-of-the-world"},
+  {g:"B", n:"Parable of the Polygons（多邊形的寓言）", mode:"play", t:["明顯","玩法自己在講話","社會議題"], zh:0, min:10, note:"每個人只有一點點偏好，拖一拖就拖出整片隔離", url:"https://ncase.me/polygons/"},
 
   // --- C 組：挖寶用 ---
-  {g:"C", n:"小封神藏寶圖：雷震子遇難記", mode:"play", zh:1, min:5, note:"臺文館實境解謎。萬福庵→大天后宮→普濟殿→風神廟→藥王廟，另備教案", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/index2.html"},
-  {g:"C", n:"小封神藏寶圖：九贔屭失蹤之謎", mode:"play", zh:1, min:5, note:"赤崁樓、祀典武廟、台灣文學館、孔廟。用搜尋欄推進章回", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/game1.html"},
-  {g:"C", n:"媽祖 MAZU", mode:"watch", zh:1, min:5, note:"你扮演媽祖救漁民，從少女到神格化。台南團隊做的（找不到實況，請直接看 itch.io 頁面的截圖與說明）", url:"https://knowledge-point.itch.io/mazu"},
-  {g:"C", n:"神農街漫遊", mode:"watch", zh:1, min:5, note:"台南神農街古蹟收集。台南團隊做的（只有 42 秒宣傳片，請直接看 itch.io 頁面）", url:"https://knowledge-point.itch.io/shennong-street"},
-  {g:"C", n:"A Dark Room（黑暗的房間）", mode:"play", zh:0, min:15, note:"從一行純文字慢慢長出整個世界。漸進揭露的極致", url:"https://adarkroom.doublespeakgames.com"},
-  {g:"C", n:"Universal Paperclips（迴紋針宇宙）", mode:"play", zh:0, min:15, note:"點擊做迴紋針，一路做到吞噬宇宙。增量機制承載 AI 寓言", url:"https://www.decisionproblem.com/paperclips/"},
-  {g:"C", n:"Adventures with Anxiety（與焦慮同行）", mode:"play", zh:0, min:15, note:"你扮演的是「焦慮」本人，不是被焦慮困住的人。視角翻轉", url:"https://ncase.me/anxiety/"},
-  {g:"C", n:"Lichenia（苔蘚之城）", mode:"play", zh:0, min:15, note:"反 SimCity：城市規劃的目標不是成長", url:"https://molleindustria.org/lichenia/"},
-  {g:"C", n:"Democratic Socialism Simulator（民主社會主義模擬器）", mode:"play", zh:0, min:15, note:"刷卡式治國，每個決定都有反作用力", url:"https://molleindustria.org/demsocsim/"},
+  {g:"C", n:"小封神藏寶圖：雷震子遇難記", mode:"play", t:["冷","台南","小封神","實境解謎","五分鐘玩完"], zh:1, min:5, note:"臺文館實境解謎。萬福庵→大天后宮→普濟殿→風神廟→藥王廟，另備教案", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/index2.html"},
+  {g:"C", n:"小封神藏寶圖：九贔屭失蹤之謎", mode:"play", t:["冷","台南","小封神","實境解謎","五分鐘玩完"], zh:1, min:5, note:"赤崁樓、祀典武廟、台灣文學館、孔廟。用搜尋欄推進章回", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/game1.html"},
+  {g:"C", n:"媽祖 MAZU", mode:"watch", t:["冷","台灣","台南","民俗信仰"], zh:1, min:5, note:"你扮演媽祖救漁民，從少女到神格化。台南團隊做的（找不到實況，請直接看 itch.io 頁面的截圖與說明）", url:"https://knowledge-point.itch.io/mazu"},
+  {g:"C", n:"神農街漫遊", mode:"watch", t:["冷","台南","古蹟"], zh:1, min:5, note:"台南神農街古蹟收集。台南團隊做的（只有 42 秒宣傳片，請直接看 itch.io 頁面）", url:"https://knowledge-point.itch.io/shennong-street"},
+  {g:"C", n:"A Dark Room（黑暗的房間）", mode:"play", t:["冷","慢慢長出來","文字"], zh:0, min:15, note:"從一行純文字慢慢長出整個世界。漸進揭露的極致", url:"https://adarkroom.doublespeakgames.com"},
+  {g:"C", n:"Universal Paperclips（迴紋針宇宙）", mode:"play", t:["冷","玩法自己在講話","經營"], zh:0, min:15, note:"點擊做迴紋針，一路做到吞噬宇宙。增量機制承載 AI 寓言", url:"https://www.decisionproblem.com/paperclips/"},
+  {g:"C", n:"Adventures with Anxiety（與焦慮同行）", mode:"play", t:["冷","換一邊當","社會議題"], zh:0, min:15, note:"你扮演的是「焦慮」本人，不是被焦慮困住的人。視角翻轉", url:"https://ncase.me/anxiety/"},
+  {g:"C", n:"Lichenia（苔蘚之城）", mode:"play", t:["冷","經營","故意反著做"], zh:0, min:15, note:"反 SimCity：城市規劃的目標不是成長", url:"https://molleindustria.org/lichenia/"},
+  {g:"C", n:"Democratic Socialism Simulator（民主社會主義模擬器）", mode:"play", t:["冷","經營","社會議題"], zh:0, min:15, note:"刷卡式治國，每個決定都有反作用力", url:"https://molleindustria.org/demsocsim/"},
 ];
 
 // 🔴 第2週沒有「抽象玩法卡」。種子只有兩種來源：
@@ -757,37 +769,125 @@ function renderRoundHint(){
 }
 
 // ============ ① 路線 ============
+// 用途標籤：講清楚「這一組拿來幹嘛」。
+// 🔴 本週要判斷的問題自始至終只有一個：把文化抽掉，這遊戲還玩得下去嗎？
+//    所以標籤不能只寫「好判斷」——要講出答案明不明顯。（楊老師 2026-09-15 指出看不懂）
+// 🔴 每一個標籤都要有一句白話解釋——不要預期學生看得懂我們寫的詞
+//    （楊老師 2026-09-15：「不要預期每個你列的詞，學生都懂」）
+const TAG_DESC = {
+  "社會議題":"講的是社會上真的在吵的事——貧富、歧視、政治、環境那一類。",
+  "台灣":"台灣團隊做的，或講台灣的事。",
+  "台南":"場景或題材就在台南，你走得到現場。",
+  "華語":"中國或華語圈做的作品。",
+  "民俗信仰":"拜拜、宮廟、神明、繞境那一類。",
+  "道教":"道士、法術、修行那一套。",
+  "邪教":"用信仰去控制人的組織。",
+  "歷史":"取材自真實發生過的事。",
+  "古蹟":"老建築、老街這類真實地點。",
+  "小封神":"許丙丁寫的台南神明小說，<b>就是這學期要改編的那本</b>。",
+  "臺語":"有臺語語音或字幕。",
+  "恐怖":"⚠️ 有驚嚇畫面，會怕的請跳過，不影響你完成這節課。",
+  "動作":"要操作、要反應，打或閃。",
+  "經營":"管資源、排順序，把一個東西慢慢弄起來。",
+  "文字":"幾乎只有文字，沒什麼圖。",
+  "實境解謎":"要配合真實地點或搜尋才解得開。",
+  "多人一起玩":"要有其他人一起才好玩，適合現場揪人。",
+  "五分鐘玩完":"很短，一次就玩得完，適合先拿來熱身。",
+  "玩法自己在講話":"它想講的事，是靠<b>你做的動作</b>傳達的，不是靠劇情講給你聽。",
+  "介面在坑你":"畫面怎麼排、按鈕放哪裡，本身就在影響你的選擇。",
+  "慢慢長出來":"一開始只有幾行字，玩下去世界才一點一點打開。",
+  "換一邊當":"讓你扮演平常不會扮演的那一邊。",
+  "故意反著做":"把大家習慣的規則反過來，你才會發現原本的規則只是假設。",
+  "規則越加越多":"規則一條一條疊上去，疊到荒謬——規則本身就是內容。",
+  "現代城市有鬼神":"故事在現代都市，但有超自然的東西混在裡面。",
+  "轉手就會變形":"同一個東西被一個一個人傳下去，就會走樣——改編就是這回事。",
+};
+const USE_TAGS = {
+  "熟":   {label:"🔥 你可能玩過", hint:"台灣／華語的話題作，多數人聽過或正在玩。<b>從你已經有感覺的遊戲開始，比較講得出話。</b>"},
+  "明顯": {label:"🎯 答案很明顯", hint:"這一組「<b>把文化抽掉還玩得下去嗎</b>」答案很明顯——不是明顯的「抽掉照樣玩」，就是明顯的「抽掉整個垮掉」。<b>先用這組把標準抓出來，再去看難判斷的。</b>"},
+  "冷":   {label:"💎 沒聽過的",   hint:"小眾實驗作，通常很短。<b>你沒有預設印象</b>，最適合練自己判斷，而不是複述別人的評價。"},
+};
+const FORM_TAGS = {
+  play:  {label:"🖱 可以玩",  hint:"瀏覽器直接開，<b>免安裝</b>——E204 的電腦跑得動，也帶得回家。"},
+  watch: {label:"📺 看實況",  hint:"要安裝或付費的，改看 YouTube 實況。<b>3-5 分鐘就抓得到重點</b>，不用看完整場。"},
+  zh:    {label:"🀄 中文",    hint:"有中文介面或中文字幕（臺語的另外標）。"},
+};
+let gFilter = "all";
+// 一款遊戲可以掛好幾個標籤，像 hashtag 一樣——不是只能屬於一組（楊老師 2026-09-15）
+function gTags(g){
+  const t = (g.t || []).filter(x => !USE_TAGS[x]);
+  return [g.mode, g.zh > 0 ? "zh" : null].filter(Boolean).concat(t);
+}
+function tagHint(f){
+  if (USE_TAGS[f]) return USE_TAGS[f].hint;
+  if (FORM_TAGS[f]) return FORM_TAGS[f].hint;
+  if (f === "all") return "";
+  const n = GAMES.filter(g => (g.t || []).includes(f)).length;
+  const d = TAG_DESC[f] ? TAG_DESC[f] + "<br>" : "";
+  return `${d}標到 <b>#${f}</b> 的有 <b>${n}</b> 款。一款遊戲可以同時掛好幾個標籤。`;
+}
+function matchFilter(g, f){
+  if (f === "all") return true;
+  if (USE_TAGS[f]) return (g.t || []).includes(f);
+  if (f === "play" || f === "watch") return g.mode === f;
+  if (f === "zh") return g.zh > 0;
+  return (g.t || []).includes(f);
+}
 function renderGames(){
-  const groups = {all:"全部", A:"🔥 會吵的", B:"✅ 好判斷", C:"💎 冷門", play:"🖱 可以玩", watch:"📺 看實況", zh:"🀄 中文"};
-  $("gFilters").innerHTML = Object.entries(groups)
-    .map(([k,v]) => `<button class="fbtn${k==="all"?" on":""}" data-f="${k}">${v}</button>`).join("");
-  $("gFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => {
-    $("gFilters").querySelectorAll(".fbtn").forEach(x => x.classList.remove("on"));
-    b.classList.add("on"); drawGames(b.dataset.f);
-  });
-  drawGames("all");
+  const themes = [];
+  GAMES.forEach(g => (g.t || []).forEach(x => { if (!USE_TAGS[x] && !themes.includes(x)) themes.push(x); }));
+  themes.sort((a, b) => GAMES.filter(g => (g.t||[]).includes(b)).length - GAMES.filter(g => (g.t||[]).includes(a)).length);
+  const btn = (k, label) => `<button class="fbtn${k === gFilter ? " on" : ""}" data-f="${esc(k)}">${label}</button>`;
+  $("gFilters").innerHTML =
+    btn("all", `全部 <span class="fn">${GAMES.length}</span>`) +
+    Object.entries(USE_TAGS).map(([k, v]) => btn(k, v.label)).join("") +
+    Object.entries(FORM_TAGS).map(([k, v]) => btn(k, v.label)).join("") +
+    `<span class="fsep">主題</span>` +
+    themes.slice(0, 8).map(x => btn(x, "#" + esc(x))).join("") +
+    (themes.includes(gFilter) && themes.indexOf(gFilter) >= 8 ? btn(gFilter, "#" + esc(gFilter)) : "") +
+    `<span class="fsep">其他標籤在每張卡片下面，點了就能篩</span>`;
+  $("gFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => pickFilter(b.dataset.f));
+  const gl = $("tagGlossary");
+  if (gl) gl.innerHTML =
+    Object.entries(USE_TAGS).map(([k, v]) => `<div class="gle"><b>${v.label}</b>${v.hint.replace(/<[^>]+>/g, "")}</div>`).join("") +
+    Object.entries(FORM_TAGS).map(([k, v]) => `<div class="gle"><b>${v.label}</b>${v.hint.replace(/<[^>]+>/g, "")}</div>`).join("") +
+    themes.map(x => `<div class="gle"><b>#${esc(x)}</b>${TAG_DESC[x] || ""}</div>`).join("");
+  drawGames(gFilter);
+}
+function pickFilter(f){
+  gFilter = f;
+  $("gFilters").querySelectorAll(".fbtn").forEach(x => x.classList.toggle("on", x.dataset.f === f));
+  const h = $("gFilterHint");
+  if (h) { h.innerHTML = tagHint(f); h.classList.toggle("hide", !tagHint(f)); }
+  drawGames(f);
+  if (f !== "all") $("gFilters").scrollIntoView({block:"nearest"});
 }
 function drawGames(f){
-  const list = GAMES.filter(g =>
-    f === "all" || g.g === f || (f === "play" && g.mode === "play") ||
-    (f === "watch" && g.mode === "watch") || (f === "zh" && g.zh > 0));
+  const list = GAMES.filter(g => matchFilter(g, f));
   $("gameList").innerHTML = list.map(g => {
     const on = myRoute.includes(g.n);
     const tag = g.mode === "play" ? '<span class="gtag tag-play">🖱 可以玩</span>' : '<span class="gtag tag-watch">📺 看實況</span>';
     const zh = g.zh === 2 ? '<span class="gtag tag-zh">臺語</span>' : g.zh === 1 ? '<span class="gtag tag-zh">中文</span>' : "";
     const link = g.url ? ` <a href="${esc(g.url)}" target="_blank" rel="noopener">開啟 ↗</a>` : "";
-    const GRP = {A:"🔥 會吵的", B:"✅ 好判斷", C:"💎 冷門"};
+    const uses = (g.t || []).filter(x => USE_TAGS[x])
+      .map(x => `<span class="grp">${USE_TAGS[x].label}</span>`).join("");
+    const hash = (g.t || []).filter(x => !USE_TAGS[x])
+      .map(x => `<button class="htag" data-t="${esc(x)}" title="${esc((TAG_DESC[x]||"").replace(/<[^>]+>/g,""))}">#${esc(x)}</button>`).join("");
     return `<div class="g g-${g.g}${on?" sel":""}" data-n="${esc(g.n)}">
       <div class="gi">
-        <div class="gn"><span class="grp">${GRP[g.g] || ""}</span>${esc(g.n)}</div>
+        <div class="gn">${uses}${esc(g.n)}</div>
         <div class="gm">${tag}${zh}約 ${g.min} 分${link}</div>
         <div class="gm">${esc(g.note)}</div>
+        <div class="gm gtags">${hash}</div>
       </div>
       <div class="pick"><button class="btn-ghost btn-sm">${on ? "移除" : "加入"}</button></div>
     </div>`;
   }).join("");
+  $("gameList").querySelectorAll(".htag").forEach(b => b.onclick = ev => {
+    ev.stopPropagation(); pickFilter(b.dataset.t);
+  });
   $("gameList").querySelectorAll(".g").forEach(el => {
-    el.querySelector("button").onclick = () => {
+    el.querySelector(".pick button").onclick = () => {
       const n = el.dataset.n;
       const i = myRoute.indexOf(n);
       if (i >= 0) myRoute.splice(i, 1);

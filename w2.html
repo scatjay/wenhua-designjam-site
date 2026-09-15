@@ -94,23 +94,10 @@
 
   .timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:15px;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 12px}
 
-  .mapwrap{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:30px 30px 34px 34px;margin:12px 0}
-  .map{position:relative;width:100%;aspect-ratio:1/.82;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:crosshair}
-  .map .q{position:absolute;font-size:10.5px;color:var(--ink-soft);opacity:.7;pointer-events:none;line-height:1.4}
-  .map .rare{position:absolute;left:0;top:0;width:50%;height:50%;background:var(--accent-soft);opacity:.5;pointer-events:none}
-  .map .junk{position:absolute;left:0;bottom:0;width:50%;height:50%;background:var(--red-soft);opacity:.35;pointer-events:none}
-  .map .ax{position:absolute;background:var(--line);pointer-events:none}
-  .map .axv{left:50%;top:0;width:1px;height:100%}
-  .map .axh{left:0;top:50%;width:100%;height:1px}
-  .dot{position:absolute;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--panel);cursor:pointer}
-  .dot.mine{background:var(--accent);width:16px;height:16px;z-index:5}
-  .dot.seed{background:var(--ink-soft);opacity:.45}
-  .dot.bad{background:var(--red);opacity:.6}
-  .dot.other{background:var(--purple);opacity:.5}
-  .dot.agent{background:var(--green);opacity:.55}
-  .axlab{position:absolute;font-size:11px;font-weight:700;color:var(--ink-soft)}
-  .axlab.l{left:-2px;bottom:8px;transform:rotate(-90deg);transform-origin:left bottom;white-space:nowrap}
-  .axlab.b{bottom:8px;left:34px;right:30px;text-align:center}
+  .mapwrap{position:relative;width:100%;margin:14px 0}
+  .mapsvg{display:block;width:100%;height:auto}
+  /* 點的圖層要跟 SVG 的繪圖區完全對齊：左 13% 右 4% 上 5% 下 14% */
+  .dotlayer{position:absolute;left:13%;right:4%;top:5%;bottom:14%;cursor:crosshair}
   .endlab{position:absolute;font-size:10.5px;font-weight:700;color:var(--ink);opacity:.8;white-space:nowrap}
 
   .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
@@ -673,23 +660,48 @@ function makeMap(holder, onPick, opts){
   const d = document.createElement("div");
   d.className = "mapwrap";
   d.innerHTML = `
-    <div class="map">
-      <div class="rare"></div><div class="junk"></div>
-      <div class="ax axv"></div><div class="ax axh"></div>
-      <div class="q" style="left:6px;top:6px;width:44%">稀有區<br>文化長在機制裡</div>
-      <div class="q" style="right:6px;top:6px;width:42%;text-align:right">文化撐住故事</div>
-      <div class="q" style="left:6px;bottom:6px;width:44%">⚠️ 換皮區</div>
-      <div class="q" style="right:6px;bottom:6px;width:42%;text-align:right">換個地方照樣玩</div>
-    </div>
-    <div class="endlab" style="left:2px;top:24px">抽掉就垮了</div>
-    <div class="endlab" style="left:2px;bottom:34px">換皮也能玩</div>
-    <div class="endlab" style="left:34px;bottom:12px">規則說了算</div>
-    <div class="endlab" style="right:26px;bottom:12px">故事說了算</div>`;
+  <svg class="mapsvg" viewBox="0 0 560 470" xmlns="http://www.w3.org/2000/svg" role="img"
+       aria-label="文化遊戲地圖：橫軸從規則說了算到故事說了算，縱軸從換皮也能玩到抽掉就垮了">
+    <defs>
+      <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ink)"/>
+      </marker>
+    </defs>
+    <rect x="73" y="24" width="466" height="380" rx="6" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="73" y="24" width="233" height="190" fill="var(--accent)" opacity="0.10"/>
+    <rect x="73" y="214" width="233" height="190" fill="var(--red)" opacity="0.07"/>
+    <line x1="306" y1="24" x2="306" y2="404" stroke="var(--line)" stroke-dasharray="5 5"/>
+    <line x1="73" y1="214" x2="539" y2="214" stroke="var(--line)" stroke-dasharray="5 5"/>
+
+    <text x="88" y="48" font-size="14" font-weight="700" fill="var(--accent)">💎 稀有區</text>
+    <text x="88" y="67" font-size="11.5" fill="var(--ink-soft)">文化長在機制裡</text>
+    <text x="88" y="83" font-size="11.5" fill="var(--ink-soft)">抽掉它，玩法就垮了</text>
+    <text x="524" y="48" font-size="13" font-weight="700" fill="var(--ink-soft)" text-anchor="end">📖 文化撐住故事</text>
+    <text x="524" y="66" font-size="11" fill="var(--ink-soft)" text-anchor="end">多數文化遊戲在這一區</text>
+    <text x="88" y="384" font-size="13" font-weight="700" fill="var(--red)">🎲 換皮區</text>
+    <text x="88" y="399" font-size="11" fill="var(--ink-soft)">規則沒變，只換了外觀</text>
+    <text x="524" y="384" font-size="13" font-weight="700" fill="var(--ink-soft)" text-anchor="end">🌍 換個地方照樣玩</text>
+
+    <line x1="73" y1="404" x2="73" y2="16" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#ah)"/>
+    <line x1="73" y1="404" x2="547" y2="404" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#ah)"/>
+
+    <text x="66" y="30" font-size="12" font-weight="700" fill="var(--ink)" text-anchor="end">抽掉就垮了</text>
+    <text x="66" y="404" font-size="12" font-weight="700" fill="var(--ink)" text-anchor="end">換皮也能玩</text>
+    <text x="24" y="214" font-size="12" font-weight="700" fill="var(--accent)" text-anchor="middle"
+          transform="rotate(-90 24 214)">把文化抽掉，還成立嗎？</text>
+
+    <text x="78" y="425" font-size="12" font-weight="700" fill="var(--ink)">規則說了算</text>
+    <text x="539" y="425" font-size="12" font-weight="700" fill="var(--ink)" text-anchor="end">故事說了算</text>
+    <text x="306" y="452" font-size="12" font-weight="700" fill="var(--accent)" text-anchor="middle">這款是規則好玩，還是故事好玩？</text>
+  </svg>
+  <div class="dotlayer"></div>`;
   holder.innerHTML = "";
   holder.appendChild(d);
-  const map = d.querySelector(".map");
+  const map = d.querySelector(".dotlayer");
   if (opts.seeds !== false) {
-    SEED_DOTS.forEach(s => addDot(map, s.x, s.y, s.kind === "bad" ? "bad" : "seed", `${s.t}（${s.by}）\n${s.note}`));
+    SEED_DOTS.forEach(sd => addDot(map, sd.x, sd.y, sd.kind === "bad" ? "bad" : "seed",
+      `${sd.t}（${sd.by}）
+${sd.note}`));
   }
   if (opts.extra) opts.extra.forEach(e => addDot(map, e.x, e.y, e.cls, e.title));
   if (onPick) {
@@ -704,9 +716,12 @@ function makeMap(holder, onPick, opts){
   }
   return map;
 }
+const DOT_EMOJI = {seed:"🤖", bad:"🎲", mine:"⭐", other:"", agent:"🤖"};
 function addDot(map, x, y, cls, title){
   const el = document.createElement("div");
   el.className = "dot " + cls;
+  const em = DOT_EMOJI[cls];
+  if (em) { el.textContent = em; el.classList.add("dot-em"); }
   el.style.left = (x * 100) + "%";
   el.style.top = ((1 - y) * 100) + "%";
   el.title = title || "";
@@ -886,7 +901,7 @@ $("addCult").onclick = () => {
 let mapFilter = "all";
 function renderBigMap(){
   if (!$("mapFilters").innerHTML) {
-    const fs = {all:"全部", mine:"只看我的", others:"別人的", agent:"代理人放的", bad:"⚠️ 反向範例", jams:"Jam 提案"};
+    const fs = {all:"🗺 全部", mine:"⭐ 只看我的", others:"👥 別人的", agent:"🤖 代理人放的", bad:"🎲 反向範例", jams:"💡 疊出來的提案"};
     $("mapFilters").innerHTML = Object.entries(fs).map(([k,v]) =>
       `<button class="fbtn${k==="all"?" on":""}" data-k="${k}">${v}</button>`).join("");
     $("mapFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => {

@@ -161,6 +161,7 @@
   .glossary summary{font-size:12.5px;font-weight:700;color:var(--accent);cursor:pointer;padding:4px 0}
   .gle{font-size:12.5px;line-height:1.75;padding:3px 0;border-bottom:1px solid var(--line)}
   .gle b{display:inline-block;min-width:118px;margin-right:6px}
+  .mapsw{display:flex;gap:6px;margin-bottom:8px}
   .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
   .mapsvg svg{display:block;width:100%;height:auto}
   .zones{display:grid;gap:8px;margin-bottom:12px}
@@ -1223,67 +1224,85 @@ $("addCult").onclick = () => {
 
 // ============ ④ 看大家混的 ============
 let mapFilter = "all";
+let mapMode = "plain";
 function renderBigMap(){
   // 🔴 沿用規格 artifact 裡那張 SVG（楊老師 2026-09-15 指定），
   //    四個象限各塞「一個種子遊戲 ＋ 一個文化要素」，形式跟學生等一下要做的事一樣。
-  $("bigMapHolder").innerHTML = `
-  <div class="mapsvg"><svg viewBox="0 0 640 420" role="img"
-    aria-label="兩條軸的座標圖：橫軸從規則說了算到故事說了算，縱軸從換皮也能玩到抽掉就垮了，左上角是稀有區">
-    <rect x="90" y="46" width="470" height="300" fill="var(--panel2)" stroke="var(--line)" stroke-width="1" rx="4"/>
+  // 兩段切換：plain＝跟規格 artifact 一模一樣的概念圖；cases＝四區各放一個例子。
+  // 🔴 兩版分開畫，例子框與 ①②③ 紅圈永遠不會疊在一起（楊老師 2026-09-15）。
+  const MAP_FRAME = `    <rect x="90" y="46" width="470" height="300" fill="var(--panel2)" stroke="var(--line)" stroke-width="1" rx="4"/>
     <line x1="325" y1="46" x2="325" y2="346" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 4"/>
     <line x1="90" y1="196" x2="560" y2="196" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 4"/>
-
-    <rect x="90" y="46" width="235" height="150" fill="var(--accent-soft)" opacity="0.75"/>
-    <text x="207" y="74" text-anchor="middle" font-size="16" font-weight="700" fill="var(--accent)">稀有區</text>
-    <text x="207" y="94" text-anchor="middle" font-size="12.5" fill="var(--accent)">文化長在機制裡</text>
-    <text x="207" y="112" text-anchor="middle" font-size="12.5" fill="var(--accent)">不是長在故事或美術裡</text>
-    <rect x="110" y="122" width="178" height="48" rx="8" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="4 3"/>
-    <text x="199" y="141" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--accent)">返校 ＋ 擲筊</text>
-    <text x="199" y="158" text-anchor="middle" font-size="10" fill="var(--ink-soft)">進門要擲到聖杯才開得了（想像的）</text>
-    <text x="207" y="187" text-anchor="middle" font-size="11" fill="var(--ink-soft)">← 改造要往這裡推</text>
-
-    <text x="443" y="94" text-anchor="middle" font-size="12.5" fill="var(--ink-soft)">文化撐住故事</text>
-    <text x="443" y="112" text-anchor="middle" font-size="11" fill="var(--ink-soft)">多數文化遊戲在這</text>
-    <rect x="337" y="122" width="166" height="48" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="1.2"/>
-    <text x="420" y="141" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--ink)">打鬼 ＋ 官將首</text>
-    <text x="420" y="158" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)">抽掉考據，動作照樣打得下去</text>
-
-    <text x="207" y="222" text-anchor="middle" font-size="12.5" fill="var(--ink-soft)">純機制取向</text>
-    <rect x="112" y="234" width="190" height="48" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="1.2"/>
-    <text x="207" y="253" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--ink)">傳話畫畫 ＋ 臺語詞</text>
-    <text x="207" y="270" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)">換成華語，傳話照樣好玩</text>
-
-    <text x="443" y="222" text-anchor="middle" font-size="12.5" fill="var(--red)">換皮也能玩</text>
-    <text x="443" y="240" text-anchor="middle" font-size="11" fill="var(--red)">換個國家照樣玩</text>
-    <rect x="337" y="250" width="166" height="48" rx="8" fill="var(--red-soft)" stroke="var(--red)" stroke-width="1.2"/>
-    <text x="420" y="269" text-anchor="middle" font-size="12" font-weight="800" fill="var(--red)">神明便利商店 ＋ 神明</text>
-    <text x="420" y="286" text-anchor="middle" font-size="10" fill="var(--red)">換成貓咪，合併玩法一模一樣</text>
-
-    <circle cx="532" cy="274" r="15" fill="var(--red)" opacity="0.14"/>
-    <circle cx="532" cy="274" r="6" fill="var(--red)"/>
-    <text x="532" y="278" text-anchor="middle" font-size="9" font-weight="600" fill="var(--panel)">1</text>
-    <circle cx="532" cy="146" r="15" fill="var(--red)" opacity="0.14"/>
-    <circle cx="532" cy="146" r="6" fill="var(--red)"/>
-    <text x="532" y="150" text-anchor="middle" font-size="9" font-weight="600" fill="var(--panel)">2</text>
-    <circle cx="306" cy="146" r="8" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="3 3"/>
-    <text x="306" y="150" text-anchor="middle" font-size="9" font-weight="600" fill="var(--red)">3</text>
-    <path d="M 532 258 Q 552 202 534 163" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.6"/>
-    <path d="M 516 138 Q 412 102 320 138" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.6"/>
-    <polygon points="312,144 324,136 323,147" fill="var(--red)" opacity="0.85"/>
-    <text x="600" y="30" text-anchor="end" font-size="10.5" fill="var(--ink-soft)">①②③ 三輪 Jam 的典型落點</text>
-
-    <line x1="90" y1="46" x2="90" y2="346" stroke="var(--ink)" stroke-width="2"/>
+    <rect x="90" y="46" width="235" height="150" fill="var(--accent-soft)" opacity="0.75"/>`;
+  const MAP_AXES = `    <line x1="90" y1="46" x2="90" y2="346" stroke="var(--ink)" stroke-width="2"/>
     <polygon points="90,38 85,50 95,50" fill="var(--ink)"/>
     <text x="76" y="62" text-anchor="end" font-size="13" font-weight="700" fill="var(--ink)">抽掉就垮了</text>
     <text x="76" y="340" text-anchor="end" font-size="13" font-weight="700" fill="var(--ink)">換皮也能玩</text>
     <text x="30" y="200" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)" transform="rotate(-90 30 200)">把文化抽掉，還成立嗎？</text>
-
     <line x1="90" y1="346" x2="560" y2="346" stroke="var(--ink)" stroke-width="2"/>
     <polygon points="568,346 556,341 556,351" fill="var(--ink)"/>
     <text x="96" y="370" font-size="13" font-weight="700" fill="var(--ink)">規則說了算</text>
     <text x="554" y="370" text-anchor="end" font-size="13" font-weight="700" fill="var(--ink)">故事說了算</text>
-    <text x="325" y="398" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)">這款是規則好玩，還是故事好玩？</text>
+    <text x="325" y="398" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)">這款是規則好玩，還是故事好玩？</text>`;
+  const MAP_PLAIN = `
+    <text x="207" y="104" text-anchor="middle" font-size="16" font-weight="700" fill="var(--accent)">稀有區</text>
+    <text x="207" y="128" text-anchor="middle" font-size="12.5" fill="var(--accent)">文化長在機制裡</text>
+    <text x="207" y="148" text-anchor="middle" font-size="12.5" fill="var(--accent)">不是長在故事或美術裡</text>
+    <text x="207" y="172" text-anchor="middle" font-size="11" fill="var(--ink-soft)">← 改造要往這裡推</text>
+    <text x="443" y="112" text-anchor="middle" font-size="12.5" fill="var(--ink-soft)">文化撐住故事</text>
+    <text x="443" y="132" text-anchor="middle" font-size="11" fill="var(--ink-soft)">多數文化遊戲在這</text>
+    <text x="207" y="272" text-anchor="middle" font-size="12.5" fill="var(--ink-soft)">純機制取向</text>
+    <text x="443" y="272" text-anchor="middle" font-size="12.5" fill="var(--red)">換皮也能玩</text>
+    <text x="443" y="292" text-anchor="middle" font-size="11" fill="var(--red)">換個國家照樣玩</text>
+    <circle cx="508" cy="300" r="15" fill="var(--red)" opacity="0.14"/>
+    <circle cx="508" cy="300" r="6" fill="var(--red)"/>
+    <text x="508" y="305" text-anchor="middle" font-size="9" font-weight="600" fill="var(--panel)">1</text>
+    <circle cx="508" cy="120" r="15" fill="var(--red)" opacity="0.14"/>
+    <circle cx="508" cy="120" r="6" fill="var(--red)"/>
+    <text x="508" y="124" text-anchor="middle" font-size="9" font-weight="600" fill="var(--panel)">2</text>
+    <circle cx="207" cy="196" r="8" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="207" y="200" text-anchor="middle" font-size="9" font-weight="600" fill="var(--red)">3</text>
+    <path d="M 506 285 Q 532 200 508 137" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.6"/>
+    <path d="M 491 118 Q 340 132 222 188" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.6"/>
+    <polygon points="214,192 226,184 225,195" fill="var(--red)" opacity="0.8"/>
+    <text x="600" y="30" text-anchor="end" font-size="10.5" fill="var(--ink-soft)">①②③ 三輪 Jam 的典型落點</text>`;
+  const MAP_CASES = `
+    <text x="207" y="74" text-anchor="middle" font-size="16" font-weight="700" fill="var(--accent)">稀有區</text>
+    <text x="207" y="94" text-anchor="middle" font-size="12" fill="var(--accent)">文化長在機制裡</text>
+    <text x="207" y="112" text-anchor="middle" font-size="12" fill="var(--accent)">不是長在故事或美術裡</text>
+    <rect x="102" y="122" width="210" height="48" rx="8" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <text x="207" y="141" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--accent)">返校 ＋ 擲筊</text>
+    <text x="207" y="158" text-anchor="middle" font-size="10" fill="var(--ink-soft)">進門要擲到聖杯才開得了（想像的）</text>
+    <text x="207" y="185" text-anchor="middle" font-size="11" fill="var(--ink-soft)">← 改造要往這裡推</text>
+    <text x="443" y="94" text-anchor="middle" font-size="12" fill="var(--ink-soft)">文化撐住故事</text>
+    <text x="443" y="112" text-anchor="middle" font-size="11" fill="var(--ink-soft)">多數文化遊戲在這</text>
+    <rect x="338" y="122" width="210" height="48" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="1.2"/>
+    <text x="443" y="141" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--ink)">打鬼 ＋ 官將首</text>
+    <text x="443" y="158" text-anchor="middle" font-size="10" fill="var(--ink-soft)">抽掉考據，動作照樣打得下去</text>
+    <text x="207" y="224" text-anchor="middle" font-size="12" fill="var(--ink-soft)">純機制取向</text>
+    <rect x="102" y="236" width="210" height="48" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="1.2"/>
+    <text x="207" y="255" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--ink)">傳話畫畫 ＋ 臺語詞</text>
+    <text x="207" y="272" text-anchor="middle" font-size="10" fill="var(--ink-soft)">換成華語，傳話照樣好玩</text>
+    <text x="443" y="224" text-anchor="middle" font-size="12" fill="var(--red)">換皮也能玩</text>
+    <rect x="338" y="236" width="210" height="48" rx="8" fill="var(--red-soft)" stroke="var(--red)" stroke-width="1.2"/>
+    <text x="443" y="255" text-anchor="middle" font-size="12" font-weight="800" fill="var(--red)">神明便利商店 ＋ 神明</text>
+    <text x="443" y="272" text-anchor="middle" font-size="10" fill="var(--red)">換成貓咪，合併玩法一模一樣</text>
+    <text x="443" y="300" text-anchor="middle" font-size="10" fill="var(--red)">換個國家照樣玩</text>
+    <text x="600" y="30" text-anchor="end" font-size="10.5" fill="var(--ink-soft)">每一區一個「遊戲 ＋ 文化要素」的例子</text>`;
+  $("bigMapHolder").innerHTML = `
+  <div class="mapsw">
+    <button class="fbtn${mapMode === "plain" ? " on" : ""}" data-m="plain">概念圖</button>
+    <button class="fbtn${mapMode === "cases" ? " on" : ""}" data-m="cases">加上例子</button>
+  </div>
+  <div class="mapsvg"><svg viewBox="0 0 640 420" role="img"
+    aria-label="兩條軸的座標圖：橫軸從規則說了算到故事說了算，縱軸從換皮也能玩到抽掉就垮了，左上角是稀有區">
+    ${MAP_FRAME}
+    ${mapMode === "cases" ? MAP_CASES : MAP_PLAIN}
+    ${MAP_AXES}
   </svg></div>`;
+  $("bigMapHolder").querySelectorAll(".mapsw .fbtn").forEach(b => b.onclick = () => {
+    mapMode = b.dataset.m; renderBigMap();
+  });
 
   const cards = [];
   Object.values(allCards).forEach(byEnv => Object.values(byEnv).forEach(c => cards.push(c)));

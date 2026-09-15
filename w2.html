@@ -3,29 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>W2 速通盤點與卡牌疊加｜文化遊戲松</title>
+<title>第2週 文化遊戲地圖｜文化遊戲松</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <style>
   :root{
-    --bg:#faf8f2; --panel:#ffffff; --panel2:#f2efe4; --ink:#2b2820; --ink-soft:#5c5648;
-    --line:#ddd7c6; --accent:#e0821f; --accent-soft:#fbead2;
+    /* 第2週＝藍色系。版型與第1週完全一致，只換主色，讓學生一眼知道自己在哪一週。
+       第1週是橘色 #e0821f，這裡是藍色 #2f6690。 */
+    --bg:#f7f9fa; --panel:#ffffff; --panel2:#eaf0f3; --ink:#202a30; --ink-soft:#54646e;
+    --line:#cfdae1; --accent:#2f6690; --accent-soft:#e0ecf4;
     --green:#3f7a34; --green-soft:#e9f3e3;
     --blue:#2f6690; --blue-soft:#e5eff6;
     --purple:#7a3f92; --purple-soft:#f2e7f6;
     --red:#b8452f; --red-soft:#fbe9e3;
     --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
   }
+  img.emoji{height:1.15em;width:1.15em;margin:0 .05em 0 .1em;vertical-align:-0.2em}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
-  .wrap{max-width:680px;margin:0 auto;padding:18px 14px 80px}
-  h1{font-size:22px;font-weight:800;margin:4px 0 2px}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wrap:balance}
   h2{font-size:17px;font-weight:800;margin:0 0 10px}
-  .sub{color:var(--ink-soft);font-size:14.5px;margin:0 0 18px;line-height:1.7}
-  .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
-  label{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px;font-weight:700}
-  input[type=number],input[type=text],textarea{width:100%;padding:12px 14px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit}
+  .sub{color:var(--ink-soft);font-size:15px;margin:0 0 22px;line-height:1.7}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+  label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+  input[type=number],input[type=text],textarea{width:100%;padding:14px 16px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit}
   input[type=number]{font-size:22px;font-weight:700;text-align:center}
   input:focus,textarea:focus{outline:2px solid var(--accent);border-color:var(--accent)}
   textarea{resize:vertical;min-height:62px;line-height:1.6}
@@ -45,17 +49,25 @@
   .howto li > b{display:block;font-size:15px;font-weight:800;margin-bottom:2px}
   .howto li span{display:block;font-size:13px;color:var(--ink-soft);line-height:1.72}
   .howto li span b{font-weight:800;color:var(--ink)}
-  .qrbox{display:flex;align-items:center;gap:16px}
-  .qrwrap{flex:0 0 auto;background:#fff;border-radius:8px;padding:4px;line-height:0}
-  .qrwrap svg{display:block;width:104px;height:104px}
-  .qrtext .qrt{font-weight:800;font-size:15px;margin-bottom:4px}
-  .qrtext .qrd{font-size:12.5px;color:var(--ink-soft);line-height:1.7}
-  .qrtext code{font-size:11.5px;background:var(--panel2);padding:1px 5px;border-radius:4px;word-break:break-all}
+  .qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+  .qrbox .t{font-weight:800;font-size:15px}
+  .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line)}
+  .qrbox #qrcanvas svg{display:block;margin:0 auto;width:200px;height:200px}
+  .langswitch{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+  .langbtn{background:var(--panel);border:1.5px solid var(--line);border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+  .langbtn.sel{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+  .langbtn.soon{opacity:.55;border-style:dashed}
+  .langnote{font-size:12px;color:var(--ink-soft)}
+  .langnote:empty{display:none}
   .unitnav{display:flex;gap:8px;margin-bottom:14px}
   .unitnav .u{flex:1;text-decoration:none;background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:10px 13px;color:var(--ink-soft);display:block}
   .unitnav .u b{display:block;font-size:14px;font-weight:800;color:var(--ink-soft)}
   .unitnav .u span{display:block;font-size:11.5px;margin-top:2px;line-height:1.4;opacity:.9}
+  .unitnav .u1{border-left:5px solid #e0821f}
+  .unitnav .u2{border-left:5px solid #2f6690}
   .unitnav .u.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .unitnav .u.on.u1{border-left-color:#e0821f}
+  .unitnav .u.on.u2{border-left-color:#2f6690}
   .unitnav .u.on b{color:var(--accent)}
   .tabs{display:flex;gap:6px;margin-bottom:14px;position:sticky;top:0;background:var(--bg);padding:10px 0 8px;z-index:20;flex-wrap:wrap}
   .tab{flex:1;min-width:72px;background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);border-radius:10px;padding:9px 6px;font-size:13.5px;font-weight:700;text-align:center}
@@ -73,9 +85,9 @@
   .g .gm{font-size:12px;color:var(--ink-soft);margin-top:3px;line-height:1.55}
   .g .gtag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;margin-right:5px;vertical-align:middle}
   .tag-play{background:var(--green-soft);color:var(--green)}
-  .tag-watch{background:var(--blue-soft);color:var(--blue)}
+  .tag-watch{background:var(--purple-soft);color:var(--purple)}
   .tag-zh{background:var(--accent-soft);color:var(--accent)}
-  .g a{color:var(--blue);font-size:12px;text-decoration:none;font-weight:700}
+  .g a{color:var(--accent);font-size:12px;text-decoration:none;font-weight:700}
   .g .pick{white-space:nowrap}
 
   .timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:15px;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 12px}
@@ -92,8 +104,8 @@
   .dot.mine{background:var(--accent);width:16px;height:16px;z-index:5}
   .dot.seed{background:var(--ink-soft);opacity:.45}
   .dot.bad{background:var(--red);opacity:.6}
-  .dot.other{background:var(--blue);opacity:.5}
-  .dot.agent{background:var(--purple);opacity:.6}
+  .dot.other{background:var(--purple);opacity:.5}
+  .dot.agent{background:var(--green);opacity:.55}
   .axlab{position:absolute;font-size:11px;font-weight:700;color:var(--ink-soft)}
   .axlab.l{left:-2px;bottom:8px;transform:rotate(-90deg);transform-origin:left bottom;white-space:nowrap}
   .axlab.b{bottom:8px;left:34px;right:30px;text-align:center}
@@ -129,6 +141,13 @@
   .arrowbox b{color:var(--accent)}
   .warnbox{background:var(--red-soft);border:1px solid var(--red);border-radius:12px;padding:13px 15px;margin-top:10px;font-size:14px;line-height:1.7;color:var(--red)}
 
+  .chk{border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:9px;background:var(--panel)}
+  .chk.ok{border-color:var(--green);background:var(--green-soft)}
+  .chk .ct{font-size:14.5px;font-weight:800}
+  .chk.ok .ct{color:var(--green)}
+  .chk .cb{font-size:12.5px;color:var(--ink-soft);margin-top:5px;line-height:1.7}
+  .stamp{font-family:ui-monospace,monospace;font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);
+         display:inline-block;padding:3px 10px;border-radius:999px;margin-bottom:10px}
   .hint{font-size:12.5px;color:var(--ink-soft);line-height:1.65;margin-top:6px}
   .done{background:var(--green-soft);color:var(--green);border:1px solid var(--green);border-radius:10px;padding:10px 13px;font-size:13.5px;font-weight:700;margin-top:10px}
   .counter{font-size:12.5px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
@@ -137,39 +156,38 @@
 <body>
 <div class="wrap">
 
+<div class="langswitch">
+  <button type="button" class="langbtn sel" id="w2LangZh">🇹🇼 中文</button>
+  <button type="button" class="langbtn soon" id="w2LangVi">🇻🇳 Tiếng Việt</button>
+  <button type="button" class="langbtn soon" id="w2LangId">🇮🇩 Bahasa Indonesia</button>
+</div>
+<div class="langnote" id="w2LangNote"></div>
+
 <div class="unitnav">
-  <a href="unit1.html" class="u"><b>單元一</b><span>Design Jam</span></a>
-  <a href="w2.html" class="u on"><b>單元二 · 本週</b><span>速通盤點與卡牌疊加</span></a>
+  <a href="unit1.html" class="u u1"><b>第1週</b><span>四種角色，孵出一個點子</span></a>
+  <a href="w2.html" class="u u2 on"><b>第2週 · 本週</b><span>文化遊戲地圖</span></a>
 </div>
 
 <!-- ========== 登入 ========== -->
 <div id="loginScreen">
-  <div class="kicker">文化遊戲松實作 · 單元二</div>
-  <h1>速通盤點與卡牌疊加</h1>
+  <div class="kicker">文化遊戲松實作 · 第2週</div>
+  <h1>文化遊戲地圖</h1>
   <p class="sub">
-    這週不聽案例賞析，改成你自己去玩。挑幾款遊戲快速試玩或看實況，
-    把每一款釘到一張「文化地圖」上，再跟同學兩人一組，把玩法卡和文化卡疊在一起，
-    看能不能疊出比原本更有意思的東西。用上週同一個信封編號，不用重新註冊。
+    <b>① 挑 4-6 款遊戲</b>，親手玩或看實況　→　<b>② 每玩完一款，在地圖上釘一個位置</b>　→　
+    <b>③ 跟三個同學各疊一輪</b>，看你的提案在地圖上往哪邊移動。<br>
+    用第 1 週同一個信封編號，不用重新註冊。
   </p>
 
-  <div class="topnav">
-    <a href="cards.html">🗂️ 完整卡池（可自己新增卡片）</a>
-    <a href="gallery.html">🖼️ 瀏覽大家的構想</a>
-  </div>
-
   <div class="box qrbox">
-    <div class="qrwrap"><div id="qrcanvas"></div></div>
-    <div class="qrtext">
-      <div class="qrt">手機掃這裡加入</div>
-      <div class="qrd">或直接開<br><code>scatjay.github.io/wenhua-designjam-site</code></div>
-    </div>
+    <div class="t">手機掃這裡加入</div>
+    <div id="qrcanvas"></div>
   </div>
 
   <div class="box">
     <label style="margin-bottom:12px">怎麼玩</label>
     <ol class="howto">
-      <li><b>規劃路線</b><span>從清單挑 4-6 款，決定哪些親手玩、哪些看實況。像 speedrun 一樣，先想好路線再開跑——時間有限，「決定什麼可以跳過」本身就是這堂課要練的事。</span></li>
-      <li><b>速通盤點</b><span>每玩完一款就做一張卡，釘到地圖上。其中一格是「一個你沒玩過就講不出來的細節」——那一格沒有選項可以點，只有真的玩過的人寫得出來。</span></li>
+      <li><b>規劃路線</b><span>從清單挑 4-6 款，決定哪些親手玩、哪些看實況。跟打電動的人「跑速通」一樣：先想好路線再開跑。時間有限，<b>決定什麼可以跳過</b>本身就是這堂課要練的事。</span></li>
+      <li><b>玩一款，做一張卡</b><span>每玩完一款就做一張卡，釘到地圖上。其中一格是「一個你沒玩過就講不出來的細節」——那一格沒有選項可以點，只有真的玩過的人寫得出來。</span></li>
       <li><b>出牌到公共池</b><span>把一張玩法卡丟進池子，再從池子裡挑一張<b>別人的</b>牌來疊。不用等人、不用找人，隨時可以出、隨時可以接。</span></li>
       <li><b>疊上文化卡</b><span>文化卡分五類。物件類（廟、小吃）最容易變成換皮；行為類（擲筊、辦桌）、禁忌類（不能踩門檻）常常機制自己就長出來了。挑哪一類是你的決定。</span></li>
       <li><b>看箭頭</b><span>疊完再釘一次座標，系統會畫一支從原位置到新位置的箭頭。<b>箭頭沒動就是換皮</b>——地圖自己會告訴你，不用等老師講。</span></li>
@@ -180,6 +198,10 @@
   <div class="box">
     <label for="envInput">你的編號（信封上那組，不是學號）</label>
     <input type="number" id="envInput" min="0" max="130" placeholder="例如 17" inputmode="numeric">
+    <div class="hint" style="margin-top:8px">
+      🔸 <b>忘記自己的編號</b>：到台前找老師拿信封確認一下。<br>
+      🔸 <b>上週還沒抽號碼</b>：先跟老師抽一個號碼，再開始這週的活動。
+    </div>
     <button class="btn" id="joinBtn">進入</button>
     <div class="status" id="loginStatus"></div>
   </div>
@@ -194,9 +216,10 @@
 
   <div class="tabs">
     <button class="tab on" data-p="plan">① 路線<span class="n" id="tnPlan"></span></button>
-    <button class="tab" data-p="scan">② 盤點<span class="n" id="tnScan"></span></button>
-    <button class="tab" data-p="jam">③ Jam<span class="n" id="tnJam"></span></button>
+    <button class="tab" data-p="scan">② 玩<span class="n" id="tnScan"></span></button>
+    <button class="tab" data-p="jam">③ 疊<span class="n" id="tnJam"></span></button>
     <button class="tab" data-p="map">④ 地圖<span class="n" id="tnMap"></span></button>
+    <button class="tab" data-p="deck">⑤ 卡池<span class="n" id="tnDeck"></span></button>
   </div>
 
   <!-- ---------- ① 路線規劃 ---------- -->
@@ -214,11 +237,11 @@
     </div>
   </div>
 
-  <!-- ---------- ② 速通盤點 ---------- -->
+  <!-- ---------- ② 快速盤點 ---------- -->
   <div id="pScan" class="hide">
     <div class="box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <h2 style="margin:0">速通盤點</h2>
+        <h2 style="margin:0">玩一款，做一張卡</h2>
         <span class="timer" id="scanTimer">00:00</span>
       </div>
       <p class="sub" style="margin-bottom:10px">
@@ -248,7 +271,7 @@
   <!-- ---------- ③ Jam ---------- -->
   <div id="pJam" class="hide">
     <div class="box" id="jamIntro">
-      <h2>三輪卡牌疊加</h2>
+      <h2>跟同學一起把文化放進去（三輪）</h2>
       <p class="sub" style="margin-bottom:6px">每一輪的起點不一樣，難度是一層一層上去的：</p>
       <div style="font-size:14px;line-height:1.9;margin-bottom:8px">
         <b>第一輪</b>　從你<b>平常真的在玩</b>的娛樂遊戲出發<br>
@@ -328,6 +351,34 @@
     </div>
   </div>
 
+  <!-- ---------- 完成檢核（截圖用）---------- -->
+  <div class="box" id="doneCard">
+    <h2>完成檢核 · 截這一張交作業</h2>
+    <div class="hint" style="margin-bottom:10px">三項都出現 ✅ 才算完成。把這一塊連同下面的地圖一起截圖上傳。</div>
+    <div id="doneList"></div>
+  </div>
+
+  <!-- ---------- ⑤ 卡池 ---------- -->
+  <div id="pDeck" class="hide">
+    <div class="box">
+      <h2>第2週的卡池</h2>
+      <p class="sub" style="margin-bottom:10px">
+        這是第2週在用的兩副牌，跟第1週 Design Jam 的四副角色牌<b>不是同一批</b>。
+        文化卡全班都可以加，加進去之後所有人都抽得到。
+      </p>
+      <div id="deckStats" class="hint"></div>
+      <h3 style="font-size:15px;font-weight:800;margin:18px 0 6px">玩法卡</h3>
+      <div class="cardpick" id="deckPlay"></div>
+      <h3 style="font-size:15px;font-weight:800;margin:20px 0 6px">文化卡</h3>
+      <div class="hint" style="margin-bottom:8px">
+        🔴 分類本身就是重點：<b>物件類最容易變成換皮</b>（貼個圖就好），
+        行為、關係、禁忌、時間這幾類常常<b>機制自己就長出來了</b>。挑哪一類是你的決定。
+      </div>
+      <div class="filters" id="deckCultFilters"></div>
+      <div class="cardpick" id="deckCult"></div>
+    </div>
+  </div>
+
   <!-- ---------- 種子指令 ---------- -->
   <div class="box">
     <h2>卡住的時候，拿去問 Gemini</h2>
@@ -363,13 +414,15 @@ let myEnv = null;
 // ============ 遊戲清單（2026-09-15 查證） ============
 // mode: play=瀏覽器直開免安裝 / watch=要安裝或付費，改看實況
 const GAMES = [
-  // --- A 組：會吵的（他們真的在玩／知道的） ---
-  {g:"A", n:"神明便利商店", mode:"watch", zh:1, min:5, note:"台灣神明 IP 外皮 ＋ 通用「合併」休閒玩法。文化在美術還是在機制？", url:""},
-  {g:"A", n:"打鬼 PAGUI", mode:"watch", zh:1, min:5, note:"官將首、乩童考據由道長與宮廟指導，紮實；但玩法是通用 3D 動作。考據深≠機制深", url:"https://store.steampowered.com/app/986680"},
-  {g:"A", n:"九日 Nine Sols", mode:"watch", zh:1, min:5, note:"「道龐克」＝道教＋科幻。彈反機制跟道家思想有關係嗎，還是 Sekiro 換皮？", url:""},
-  {g:"A", n:"黑神話：鍾馗", mode:"watch", zh:1, min:5, note:"鍾馗＝抓鬼神，跟《小封神》同一母題。誰有資格講、講成什麼樣？", url:""},
-  {g:"A", n:"異環 NTE", mode:"watch", zh:1, min:5, note:"台灣 2026 上半年聲量第一。都市超自然是核心還是裝飾？", url:""},
-  {g:"A", n:"Cult of the Lamb", mode:"watch", zh:0, min:5, note:"可愛畫風＋邪教經營。製作人明說「機制本身在輕推你變壞」", url:""},
+  // --- A 組：會吵的（他們真的在玩／知道的）。實況連結皆 2026-09-15 oembed 實測 200 ---
+  {g:"A", n:"神明便利商店", mode:"watch", zh:1, min:5, note:"台灣神明 IP 外皮 ＋ 通用「合併」休閒玩法。文化在美術還是在機制？", url:"https://www.youtube.com/watch?v=r0jbiNAti2o"},
+  {g:"A", n:"打鬼 PAGUI", mode:"watch", zh:1, min:7, note:"官將首、乩童考據由道長與宮廟指導，紮實；但玩法是通用 3D 動作。考據深≠機制深。⚠️ 恐怖遊戲", url:"https://www.youtube.com/watch?v=OkTKEaYmAwc"},
+  {g:"A", n:"九日 Nine Sols", mode:"watch", zh:1, min:5, note:"「道龐克」＝道教＋科幻。彈反機制跟道家思想有關係嗎，還是 Sekiro 換皮？", url:"https://www.youtube.com/watch?v=qQovkMyA7sc&t=34s"},
+  {g:"A", n:"黑神話：鍾馗", mode:"watch", zh:1, min:5, note:"鍾馗＝抓鬼神，跟《小封神》同一母題。誰有資格講、講成什麼樣？", url:"https://www.youtube.com/watch?v=iK9c6mXD7KA&t=39s"},
+  {g:"A", n:"異環 NTE", mode:"watch", zh:1, min:5, note:"台灣 2026 上半年聲量第一。都市超自然是核心還是裝飾？", url:"https://www.youtube.com/watch?v=nmBwoqGFNiM"},
+  {g:"A", n:"Cult of the Lamb", mode:"watch", zh:1, min:5, note:"可愛畫風＋邪教經營。製作人明說「機制本身在輕推你變壞」", url:"https://www.youtube.com/watch?v=ORTCph4tG3U"},
+  {g:"A", n:"返校 Detention", mode:"watch", zh:1, min:6, note:"白色恐怖＋台灣民間信仰。⚠️ 恐怖遊戲，有驚嚇畫面", url:"https://www.youtube.com/watch?v=Dm3z0MbyiTc"},
+  {g:"A", n:"還願 Devotion", mode:"watch", zh:1, min:10, note:"1980年代台灣家庭＋民間信仰／邪教。⚠️ 恐怖遊戲，有驚嚇畫面", url:"https://www.youtube.com/watch?v=edZPxP9UJW4"},
 
   // --- B 組：校準用（一面倒、好判斷） ---
   {g:"B", n:"膨風龜大冒險", mode:"play", zh:2, min:15, note:"🔴《小封神》官方改編正本。赤崁樓九贔屭吹牛引發天界大戰。臺語／華語字幕可切換", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/picture_book.html"},
@@ -385,8 +438,8 @@ const GAMES = [
   // --- C 組：挖寶用 ---
   {g:"C", n:"小封神藏寶圖：雷震子遇難記", mode:"play", zh:1, min:5, note:"臺文館實境解謎。萬福庵→大天后宮→普濟殿→風神廟→藥王廟，另備教案", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/index2.html"},
   {g:"C", n:"小封神藏寶圖：九贔屭失蹤之謎", mode:"play", zh:1, min:5, note:"赤崁樓、祀典武廟、台灣文學館、孔廟。用搜尋欄推進章回", url:"https://tlvm.nmtl.gov.tw/thecrazygodsshow_ot/game1.html"},
-  {g:"C", n:"媽祖 MAZU", mode:"watch", zh:1, min:5, note:"你扮演媽祖救漁民，從少女到神格化。台南團隊做的", url:"https://knowledge-point.itch.io/mazu"},
-  {g:"C", n:"神農街漫遊", mode:"watch", zh:1, min:5, note:"台南神農街古蹟收集。台南團隊做的", url:"https://knowledge-point.itch.io/shennong-street"},
+  {g:"C", n:"媽祖 MAZU", mode:"watch", zh:1, min:5, note:"你扮演媽祖救漁民，從少女到神格化。台南團隊做的（找不到實況，請直接看 itch.io 頁面的截圖與說明）", url:"https://knowledge-point.itch.io/mazu"},
+  {g:"C", n:"神農街漫遊", mode:"watch", zh:1, min:5, note:"台南神農街古蹟收集。台南團隊做的（只有 42 秒宣傳片，請直接看 itch.io 頁面）", url:"https://knowledge-point.itch.io/shennong-street"},
   {g:"C", n:"A Dark Room", mode:"play", zh:0, min:15, note:"從一行純文字慢慢長出整個世界。漸進揭露的極致", url:"https://adarkroom.doublespeakgames.com"},
   {g:"C", n:"Universal Paperclips", mode:"play", zh:0, min:15, note:"點擊做迴紋針，一路做到吞噬宇宙。增量機制承載 AI 寓言", url:"https://www.decisionproblem.com/paperclips/"},
   {g:"C", n:"Adventures with Anxiety", mode:"play", zh:0, min:15, note:"你扮演的是「焦慮」本人，不是被焦慮困住的人。視角翻轉", url:"https://ncase.me/anxiety/"},
@@ -481,11 +534,12 @@ let cultFilter = "all";
 // ============ 工具 ============
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function show(p){
-  ["plan","scan","jam","map"].forEach(k => {
+  ["plan","scan","jam","map","deck"].forEach(k => {
     $("p" + k.charAt(0).toUpperCase() + k.slice(1)).classList.toggle("hide", k !== p);
   });
   document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.p === p));
   if (p === "map") renderBigMap();
+  if (p === "deck") renderDeck();
   window.scrollTo(0, 0);
 }
 function fmtTime(ms){
@@ -520,19 +574,21 @@ $("joinBtn").onclick = () => {
 
 // ============ 資料訂閱 ============
 function startWatching(){
-  db.ref(`${W2}/cards`).on("value", s => { allCards = s.val() || {}; myCards = Object.values(allCards[myEnv] || {}); renderMyCards(); updateCounts(); });
+  db.ref(`${W2}/cards`).on("value", s => { allCards = s.val() || {}; myCards = Object.values(allCards[myEnv] || {}); renderMyCards(); updateCounts(); renderDone(); });
   db.ref(`${W2}/jams`).on("value", s => {
     allJams = s.val() || {};
     jamPartners = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.fromEnv);
     jamRound = Math.min(3, jamPartners.length + 1);
     $("jamRound").textContent = jamRound;
-    renderPool(); updateCounts(); renderRoundHint();
+    renderPool(); updateCounts(); renderRoundHint(); renderDone();
   });
   db.ref(CULT_DECK).on("value", s => {
     const v = s.val() || {};
     // 濾掉 _ 開頭的鍵（部署前探針留下的，customCards 是 create-only 刪不掉）
     customCulture = Object.entries(v).filter(([k]) => !k.startsWith("_")).map(([,c]) => ({v:c.v, k:c.d || "obj", note:c.note || "", by:c.addedBy}));
     renderCultPick();
+    if (!$('pDeck').classList.contains('hide')) renderDeck();
+    updateCounts(); renderDone();
   });
 }
 function updateCounts(){
@@ -541,6 +597,7 @@ function updateCounts(){
   $("tnScan").textContent = myCards.length ? myCards.length + " 張" : "";
   $("tnJam").textContent = nJam + "/3";
   $("tnMap").textContent = (Object.keys(allCards).reduce((a,e) => a + Object.keys(allCards[e]).length, 0)) + " 點";
+  if ($("tnDeck")) $("tnDeck").textContent = (PLAY_CARDS.length + CULTURE_CARDS.length + customCulture.length) + " 張";
   $("meProgress").textContent = `盤點 ${myCards.length} 張 · Jam ${nJam}/3`;
 }
 function renderRoundHint(){
@@ -857,6 +914,74 @@ function renderBigMap(){
     滑到點上可以看內容。<b>左上角的稀有區</b>如果還很空——那就是還沒有人做到「文化長在機制裡」。</div>`;
 }
 
+// ============ 完成檢核（截圖用）============
+function renderDone(){
+  if (!$("doneList")) return;
+  const jams = Object.values(allJams).filter(j => j.by === myEnv).sort((a,b) => a.t - b.t);
+  const mineCult = customCulture.filter(c => c.by === myEnv);
+  const rows = [];
+
+  const okJam = jams.length >= 3;
+  rows.push(`<div class="chk ${okJam ? "ok" : "no"}">
+    <div class="ct">${okJam ? "✅" : "⬜"} 完成三輪疊加　<b>${jams.length}/3</b></div>
+    ${jams.length ? `<div class="cb">` + jams.map((j, i) =>
+      `第 ${i + 1} 輪 · 跟 <b>#${String(j.fromEnv).padStart(2,"0")}</b> 協作　${esc(j.play)} × ${esc(j.cult)}`).join("<br>") + `</div>` : ""}
+  </div>`);
+
+  const okCards = myCards.length >= 3;
+  rows.push(`<div class="chk ${okCards ? "ok" : "no"}">
+    <div class="ct">${okCards ? "✅" : "⬜"} 盤點遊戲卡　<b>${myCards.length}</b> 張</div>
+    ${myCards.length ? `<div class="cb">` + myCards.map(c => esc(c.game)).join("、") + `</div>` : ""}
+  </div>`);
+
+  const okNew = mineCult.length >= 3;
+  rows.push(`<div class="chk ${okNew ? "ok" : "no"}">
+    <div class="ct">${okNew ? "✅" : "⬜"} 新增文化卡　<b>${mineCult.length}/3</b> 張</div>
+    ${mineCult.length ? `<div class="cb">` + mineCult.map(c => esc(c.v)).join("、") + `</div>`
+                      : `<div class="cb">還沒加。到 ③ Jam 分頁最下面「擴充卡池」加。</div>`}
+  </div>`);
+
+  const partners = [...new Set(jams.map(j => j.fromEnv))];
+  if (jams.length >= 2 && partners.length < jams.length) {
+    rows.push(`<div class="chk no"><div class="ct">⚠️ 三輪要跟三個<b>不同</b>的人</div>
+      <div class="cb">目前只跟 ${partners.length} 個人協作過。</div></div>`);
+  }
+  $("doneList").innerHTML = `<div class="stamp">編號 #${String(myEnv).padStart(2,"0")}</div>` + rows.join("");
+}
+
+// ============ ⑤ 卡池 ============
+let deckFilter = "all";
+function renderDeck(){
+  if (!$("deckPlay")) return;
+  $("deckPlay").innerHTML = PLAY_CARDS.map(c =>
+    `<div class="cc"><div class="cv">${esc(c.v)}</div><div class="cnote">${esc(c.note)}</div></div>`).join("");
+
+  const all = CULTURE_CARDS.concat(customCulture);
+  const counts = {};
+  all.forEach(c => { const k = CULT_KINDS[c.k] ? c.k : "obj"; counts[k] = (counts[k] || 0) + 1; });
+  $("deckStats").innerHTML = `玩法卡 <b>${PLAY_CARDS.length}</b> 張 · 文化卡 <b>${all.length}</b> 張` +
+    (customCulture.length ? `（其中 <b>${customCulture.length}</b> 張是同學加的）` : "");
+
+  if (!$("deckCultFilters").innerHTML) {
+    $("deckCultFilters").innerHTML = `<button class="fbtn on" data-k="all">全部</button>` +
+      Object.entries(CULT_KINDS).map(([k, v]) =>
+        `<button class="fbtn" data-k="${k}">${v.label}</button>`).join("");
+    $("deckCultFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => {
+      $("deckCultFilters").querySelectorAll(".fbtn").forEach(x => x.classList.remove("on"));
+      b.classList.add("on"); deckFilter = b.dataset.k; renderDeck();
+    });
+  }
+  const list = deckFilter === "all" ? all : all.filter(c => (CULT_KINDS[c.k] ? c.k : "obj") === deckFilter);
+  const kh = deckFilter !== "all" && CULT_KINDS[deckFilter]
+    ? `<div class="hint" style="margin-bottom:6px">${esc(CULT_KINDS[deckFilter].hint)}</div>` : "";
+  $("deckCult").innerHTML = kh + list.map(c => {
+    const kd = CULT_KINDS[c.k] || CULT_KINDS.obj;
+    const by = c.by != null ? `<span class="kind">#${String(c.by).padStart(2,"0")} 加的</span>` : "";
+    return `<div class="cc"><div class="cv">${esc(c.v)}<span class="kind ${kd.cls}">${esc(kd.label)}</span>${by}</div>
+      <div class="cnote">${esc(c.note || "")}</div></div>`;
+  }).join("");
+}
+
 // ============ 種子指令 ============
 function renderSeeds(){
   if (!$("seedList")) return;
@@ -903,6 +1028,36 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   show(b.dataset.p);
   if (b.dataset.p === "jam") { renderPlayPick(); renderPool(); }
 });
+
+// 語言切換：越南文／印尼文的翻譯還沒補，先把按鈕放上去讓兩個單元版面高度一致。
+// 🔴 但不能讓它看起來能按卻沒反應——學生會以為頁面壞了。點了就明講還沒好。
+(function langButtons(){
+  const note = $("w2LangNote");
+  const msg = {
+    w2LangVi: "Bản tiếng Việt đang được chuẩn bị. Hiện tại xin dùng bản tiếng Trung.（越南文版準備中，目前請先用中文版）",
+    w2LangId: "Versi Bahasa Indonesia sedang disiapkan. Untuk saat ini silakan gunakan versi Mandarin.（印尼文版準備中，目前請先用中文版）",
+  };
+  Object.keys(msg).forEach(id => {
+    const b = $(id);
+    if (b) b.onclick = () => { if (note) note.textContent = "⏳ " + msg[id]; };
+  });
+  const zh = $("w2LangZh");
+  if (zh) zh.onclick = () => { if (note) note.textContent = ""; };
+})();
+
+// 🔴 2026-09-09 楊老師回報：Windows 很多環境的 emoji 字型沒有國旗圖案，
+// 只會顯示 [TW] 這種字母代碼。用 twemoji 轉成圖片，不依賴系統字型。
+// 動態渲染（卡片、清單、地圖）之後都要再跑一次，不然新畫的 emoji 又變回代碼。
+function reEmoji(el){
+  try { if (window.twemoji) twemoji.parse(el || document.body); } catch(_) {}
+}
+reEmoji();
+["renderGames","drawGames","renderDeck","renderPool","renderCultPick","renderPlayPick","renderSeeds","renderBigMap","renderMyCards","renderDone"]
+  .forEach(fn => {
+    const orig = window[fn];
+    if (typeof orig !== "function") return;
+    window[fn] = function(){ const r = orig.apply(this, arguments); reEmoji(); return r; };
+  });
 
 // ============ QR（放最後，且整段包 try/catch）============
 // 🔴 2026-09-09 事故：W1 那次上課教室連不到 jsdelivr，qrcode() 直接 ReferenceError，

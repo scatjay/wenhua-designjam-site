@@ -98,6 +98,7 @@
   .qrbox .t{font-weight:800;font-size:15px}
   .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line)}
   .qrbox #qrcanvas img,.qrbox #qrcanvas table{display:block;margin:0 auto}
+  .qrbox #qrcanvas svg{display:block;margin:0 auto;width:200px;height:200px}
   .donecard{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
   .donecard-inner{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:2px solid var(--accent);border-radius:16px;padding:24px;text-align:center;max-width:480px;width:100%;margin:auto}
   .donecard .badge{display:inline-block;background:var(--accent);color:#fff;font-weight:800;font-size:13px;letter-spacing:.03em;padding:5px 14px;border-radius:999px;margin-bottom:10px}
@@ -134,11 +135,11 @@
     <button type="button" id="langId" class="langbtn">🇮🇩 Bahasa Indonesia</button>
   </div>
   <div class="unitnav">
-    <a href="unit1.html" class="u on"><b>單元一</b><span>Design Jam</span></a>
-    <a href="w2.html" class="u"><b>單元二 · 本週</b><span>速通盤點與卡牌疊加</span></a>
+    <a href="unit1.html" class="u u1 on"><b>第1週</b><span>四種角色，孵出一個點子</span></a>
+    <a href="w2.html" class="u u2"><b>第2週 · 本週</b><span>文化遊戲地圖</span></a>
   </div>
-  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px" data-i18n="kicker">文化遊戲松實作 · 熱身</div>
-  <h1 data-i18n="h1title">文化遊戲松 Cultural Game Jam</h1>
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px" data-i18n="kicker">文化遊戲松實作 · 第1週</div>
+  <h1 data-i18n="h1title">四種角色，孵出一個點子</h1>
   <p class="sub" data-i18n="sub">改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。</p>
 
   <div class="topnav">
@@ -255,8 +256,8 @@ let currentLang = "zh"; // 2026-09-09 楊老師：加越南語切換（修課有
 // 範圍：靜態UI文字、角色名稱/引導問題/描述，以及卡片內容本身(card.vVi/dVi/noteVi，
 // 見下方PRODUCER/ENGINEER/MARKETING/CREATIVE牌組)——用cv()/cd()/cnote()依語言取用。
 const I18N = {
-  h1title: {zh:"文化遊戲松 Cultural Game Jam", vi:"Game Jam Văn Hóa 文化遊戲松", id:"Game Jam Budaya 文化遊戲松"},
-  kicker: {zh:"文化遊戲松實作 · 熱身", vi:"Thực hành Game Jam Văn Hóa · Khởi động", id:"Praktik Game Jam Budaya · Pemanasan"},
+  h1title: {zh:"四種角色，孵出一個點子", vi:"Bốn vai trò, ươm ra một ý tưởng", id:"Empat peran, menetaskan satu ide"},
+  kicker: {zh:"文化遊戲松實作 · 第1週", vi:"Thực hành Game Jam Văn Hóa · Tuần 1", id:"Praktik Game Jam Budaya · Minggu 1"},
   sub: {zh:"改編自 Stone Librande（GDC）的 Design Jam。輸入你的去識別化編號，選這一輪想扮演的角色，系統會找不同角色的人跟你配成一組，各自抽到任務卡，一起用 Gemini 把構想 blend 出來。可以一直重配、重抽、換角色玩。",
         vi:"Chuyển thể từ Design Jam của Stone Librande (GDC). Nhập mã số ẩn danh của bạn, chọn vai trò muốn đóng trong vòng này, hệ thống sẽ ghép bạn với người chơi vai trò khác thành một nhóm, mỗi người rút một thẻ nhiệm vụ, rồi cùng dùng Gemini để kết hợp ý tưởng. Có thể ghép lại, rút lại thẻ, đổi vai trò bao nhiêu lần cũng được.",
         id:"Diadaptasi dari Design Jam karya Stone Librande (GDC). Masukkan nomor anonim Anda, pilih peran yang ingin dimainkan di putaran ini, sistem akan mencocokkan Anda dengan pemain peran lain menjadi satu kelompok, masing-masing mengambil satu kartu misi, lalu bersama-sama menggunakan Gemini untuk menggabungkan ide. Bisa mencocokkan ulang, mengambil kartu ulang, dan berganti peran berkali-kali."},

@@ -462,6 +462,9 @@
       <p class="sub" style="margin-bottom:8px">加一張新的文化卡進去，之後所有人都抽得到。</p>
       <label>文化要素</label>
       <input type="text" id="newCultV" placeholder="例如：擲筊、辦桌座位、欠人情" maxlength="60">
+      <label style="margin-top:12px">它是哪一類？</label>
+      <div class="hint" style="margin-bottom:6px">🔴 選錯沒關係，但<b>要自己選</b>——哪一類扛得起機制，差很多。</div>
+      <div class="kpick" id="newCultKind"></div>
       <label style="margin-top:12px">它為什麼能改變玩法？</label>
       <textarea id="newCultNote" placeholder="寫不出來的話，它就只是一個名詞，還不是一張卡" maxlength="200"></textarea>
       <div class="hint">🔴 這一格是門檻：<b>講不出它會怎麼改變玩法，就不算一張卡。</b></div>
@@ -1212,13 +1215,29 @@ $("saveJam").onclick = () => {
 };
 
 // 擴充卡池
+// 🔴 學生自己加的卡也要自己選分類。原本寫死 d:"act"，等於每張新卡都被標成
+//    「行為・儀式」——而分類本身就是這週的教學內容，寫死就是教錯。（2026-09-15 修）
+let newCultKind = null;
+function renderNewCultKind(){
+  const el = $("newCultKind");
+  if (!el) return;
+  el.innerHTML = Object.entries(CULT_KINDS).map(([k, v]) =>
+    `<button class="kbtn k-${k}${newCultKind === k ? " on" : ""}" data-k="${k}">${esc(v.label)}</button>`).join("");
+  el.querySelectorAll(".kbtn").forEach(b => b.onclick = () => { newCultKind = b.dataset.k; renderNewCultKind(); });
+}
+renderNewCultKind();
 $("addCult").onclick = () => {
   const v = $("newCultV").value.trim();
   const note = $("newCultNote").value.trim();
   if (!v) { $("cultStatus").textContent = "先寫文化要素。"; return; }
+  if (!newCultKind) { $("cultStatus").textContent = "先選它是哪一類。"; return; }
   if (note.length < 8) { $("cultStatus").textContent = "要寫清楚它怎麼改變玩法——這是門檻，不是形式。"; return; }
-  db.ref(CULT_DECK).push({v, d: "act", addedBy: myEnv, t: Date.now(), note})
-    .then(() => { $("newCultV").value = ""; $("newCultNote").value = ""; $("cultStatus").textContent = "加進去了，全班都抽得到。"; })
+  db.ref(CULT_DECK).push({v, d: newCultKind, addedBy: myEnv, t: Date.now(), note})
+    .then(() => {
+      $("newCultV").value = ""; $("newCultNote").value = "";
+      newCultKind = null; renderNewCultKind();
+      $("cultStatus").textContent = "加進去了，全班都抽得到。";
+    })
     .catch(e => { $("cultStatus").textContent = "加不進去：" + e.message; });
 };
 

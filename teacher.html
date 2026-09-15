@@ -32,6 +32,31 @@
   .queuecount{color:var(--warn)}
   .rolebreak{display:flex;gap:8px;flex-wrap:wrap;margin:-8px 0 18px;font-size:12px}
   .rolebreak span{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 10px}
+  /* 單元分頁：跟學生端 unit1/w2 同一套視覺語彙（第1週橘、第2週藍） */
+  .unitnav{display:flex;gap:8px;margin:0 0 18px;flex-wrap:wrap}
+  .unitnav .u{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);
+    border-left:4px solid var(--line);border-radius:10px;padding:9px 13px;cursor:pointer;text-align:left}
+  .unitnav .u b{display:block;font-size:13.5px;font-weight:800;color:var(--ink)}
+  .unitnav .u span{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:1px}
+  .unitnav .u.on.u1{border-left-color:#e0821f;background:#fdf3e6}
+  .unitnav .u.on.u1 b{color:#c2711f}
+  .unitnav .u.on.u2{border-left-color:#2f6690;background:#eaf1f6}
+  .unitnav .u.on.u2 b{color:#2f6690}
+  .unitnav .u.on.u3{border-left-color:#5c5648;background:#f2f0ea}
+  /* 第2週面板整體改用藍色主色，跟學生端 w2.html 對齊 */
+  #tabW2{--accent:#2f6690}
+  #tabW2 .stat .n{color:#2f6690}
+  .w2alert{border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;margin-bottom:10px}
+  .w2alert.warn{background:#fbe9e3;border:1.5px solid #b8452f;color:#b8452f}
+  .w2alert.ok{background:#e9f3e3;border:1.5px solid #3f7a34;color:#3f7a34}
+  .vbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .vbar .v{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 13px;font-size:12.5px}
+  .vbar .v b{font-size:17px;margin-left:5px}
+  .vbar .v.skin b{color:#b8452f} .vbar .v.story b{color:#8a6a1f}
+  .vbar .v.mech b{color:#3f7a34} .vbar .v.unsure b{color:#5c5648}
+  .mini{font-size:11.5px;color:var(--ink-soft)}
+  .chipk{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;
+    background:var(--bg);border:1px solid var(--line);margin-right:4px}
   .imbalance{background:#fbe9e3;border:1.5px solid var(--warn);color:var(--warn);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;margin:-6px 0 18px}
 </style>
 </head>
@@ -46,6 +71,13 @@
   <div id="dashboard" hidden>
   <h1>文化遊戲松 Cultural Game Jam · 教師後台</h1>
   <p class="sub">即時顯示配對紀錄與每輪學生貼上的討論內容 · 編號僅供去識別化，不含姓名學號 · <a href="#" id="logoutLink" style="color:var(--accent);font-weight:700">登出</a></p>
+  <div class="unitnav">
+    <button class="u u1 on" data-t="W1"><b>第1週 · Design Jam</b><span>四種角色，孵出一個點子</span></button>
+    <button class="u u2" data-t="W2"><b>第2週 · 本週</b><span>文化怎麼放進遊戲裡</span></button>
+    <button class="u u3" data-t="Tools"><b>研究與工具</b><span>persona／ENA／Vertex 用量</span></button>
+  </div>
+
+  <div id="tabW1">
   <div class="stats">
     <div class="stat"><div class="n" id="statRounds">0</div><div class="l">累計配對輪次</div></div>
     <div class="stat"><div class="n" id="statPlayers">0</div><div class="l">出現過的編號數</div></div>
@@ -59,6 +91,85 @@
   <div id="testSummary" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:6px;font-size:13px;color:var(--ink-soft);line-height:1.8"></div>
   <div id="testNote" style="font-size:12px;color:var(--warn);margin-bottom:18px"></div>
 
+  <h2 style="font-size:16px;margin:0 0 10px">🧑‍🎓 真實學生配對記錄</h2>
+  <table>
+    <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試員／demo 配對記錄（編號0、53-60、99，不計入上方與統計數字）</summary>
+    <div id="testSummary2" style="font-size:12.5px;color:var(--ink-soft);margin:10px 0"></div>
+    <table>
+      <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
+      <tbody id="testRows"></tbody>
+    </table>
+  </details>
+
+  <h2 style="font-size:16px;margin:28px 0 10px">💬 真實學生對這個工具的意見</h2>
+  <table>
+    <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
+    <tbody id="fbrows"></tbody>
+  </table>
+
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試員／demo 意見（不計入上方）</summary>
+    <table style="margin-top:10px">
+      <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
+      <tbody id="fbrowsTest"></tbody>
+    </table>
+  </details>
+  </div><!-- /tabW1 -->
+
+  <div id="tabW2" hidden>
+    <div class="stats">
+      <div class="stat"><div class="n" id="w2People">0</div><div class="l">進來過的編號</div></div>
+      <div class="stat"><div class="n" id="w2Cards">0</div><div class="l">盤點的遊戲卡</div></div>
+      <div class="stat"><div class="n" id="w2Jams">0</div><div class="l">完成的混合輪</div></div>
+      <div class="stat"><div class="n" id="w2Waiting">0</div><div class="l">出牌等人接</div></div>
+      <div class="stat"><div class="n" id="w2Avg">--</div><div class="l">平均每輪</div></div>
+      <div class="stat"><div class="n" id="w2NewCult">0</div><div class="l">新增的文化卡</div></div>
+    </div>
+    <div id="w2Alerts"></div>
+    <h2 style="font-size:16px;margin:22px 0 8px">⚖️ 全班的判斷分佈</h2>
+    <p class="mini" style="margin:0 0 8px">判斷的是同一個問題：<b>把文化抽掉，這遊戲還玩得下去嗎</b>。
+      「玩法本身就垮了」＝文化長進規則裡，那一格是全班最難到的地方。</p>
+    <div class="vbar" id="w2Verdicts"></div>
+
+    <h2 style="font-size:16px;margin:22px 0 8px">🧬 混出來的（真實學生）</h2>
+    <table>
+      <thead><tr><th style="width:80px">時間</th><th style="width:110px">兩人一組</th><th>遊戲 × 文化</th>
+        <th>他寫的那句話</th><th style="width:130px">判斷</th></tr></thead>
+      <tbody id="w2JamRows"></tbody>
+    </table>
+
+    <h2 style="font-size:16px;margin:22px 0 8px">🎮 盤點的遊戲卡（真實學生）</h2>
+    <table>
+      <thead><tr><th style="width:80px">時間</th><th style="width:60px">編號</th><th style="width:170px">遊戲</th>
+        <th>沒看過講不出來的細節</th><th style="width:110px">判斷</th></tr></thead>
+      <tbody id="w2CardRows"></tbody>
+    </table>
+
+    <h2 style="font-size:16px;margin:22px 0 8px">🏮 學生加進卡池的文化卡</h2>
+    <p class="mini" style="margin:0 0 8px">門檻是要講得出「它為什麼能改變玩法」。
+      <b>只寫得出名詞的，就是這週要抓出來講的例子。</b></p>
+    <table>
+      <thead><tr><th style="width:80px">時間</th><th style="width:60px">編號</th><th style="width:150px">文化要素</th>
+        <th>它為什麼能改變玩法</th></tr></thead>
+      <tbody id="w2CultRows"></tbody>
+    </table>
+
+    <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
+      <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試／demo 的第2週記錄（編號 0、53-60、99，不計入上方）</summary>
+      <div id="w2TestSummary" class="mini" style="margin:10px 0"></div>
+      <table style="margin-top:6px">
+        <thead><tr><th style="width:80px">時間</th><th style="width:110px">配對</th><th>遊戲 × 文化</th><th>判斷</th></tr></thead>
+        <tbody id="w2TestRows"></tbody>
+      </table>
+    </details>
+  </div><!-- /tabW2 -->
+
+  <div id="tabTools" hidden>
   <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
     <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🎭 測試員persona設定 v4（編號56-59，測試用，非真實學生）</summary>
     <div style="font-size:13px;color:var(--ink-soft);line-height:1.8;margin-top:10px">
@@ -101,35 +212,8 @@
     </p>
   </details>
 
-  <h2 style="font-size:16px;margin:0 0 10px">🧑‍🎓 真實學生配對記錄</h2>
-  <table>
-    <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
-
-  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
-    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試員／demo 配對記錄（編號0、53-60、99，不計入上方與統計數字）</summary>
-    <div id="testSummary2" style="font-size:12.5px;color:var(--ink-soft);margin:10px 0"></div>
-    <table>
-      <thead><tr><th style="width:90px">時間</th><th style="width:110px">配對</th><th>抽到的卡</th><th>記錄的討論</th></tr></thead>
-      <tbody id="testRows"></tbody>
-    </table>
-  </details>
-
-  <h2 style="font-size:16px;margin:28px 0 10px">💬 真實學生對這個工具的意見</h2>
-  <table>
-    <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
-    <tbody id="fbrows"></tbody>
-  </table>
-
-  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
-    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試員／demo 意見（不計入上方）</summary>
-    <table style="margin-top:10px">
-      <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
-      <tbody id="fbrowsTest"></tbody>
-    </table>
-  </details>
-  </div>
+  </div><!-- /tabTools -->
+  </div><!-- /dashboard -->
 </div>
 <script>
 const firebaseConfig = {
@@ -329,6 +413,143 @@ db.ref(`${NS}/feedback`).on("value", snap => {
     (isRealEnv(f.env) ? rows : rowsTest).appendChild(tr);
   });
 });
+
+// ============================================================
+// 分頁切換（第1週／第2週／研究與工具）
+// ============================================================
+document.querySelectorAll(".unitnav .u").forEach(b => b.onclick = () => {
+  const t = b.dataset.t;
+  document.querySelectorAll(".unitnav .u").forEach(x => x.classList.toggle("on", x === b));
+  ["W1","W2","Tools"].forEach(k => { const el = $("tab" + k); if (el) el.hidden = (k !== t); });
+  try { localStorage.setItem("designjam_teacher_tab", t); } catch(_) {}
+  window.scrollTo(0, 0);
+});
+try {
+  const savedTab = localStorage.getItem("designjam_teacher_tab");
+  if (savedTab) { const b = document.querySelector('.unitnav .u[data-t="' + savedTab + '"]'); if (b) b.click(); }
+} catch(_) {}
+
+// ============================================================
+// 第2週：文化怎麼放進遊戲裡
+// 資料在 whgm/analysis/w2/*（cards / jams / pool / reacts / routes）
+// 與 whgm/customCards/w2culture（學生加的文化卡，create-only）
+// ============================================================
+const W2 = NS + "/analysis/w2";
+const W2_CULT = NS + "/customCards/w2culture";
+const W2V = {
+  skin:  {label:"照樣玩",            short:"換皮",     cls:"skin"},
+  story: {label:"故事垮了，玩法還在", short:"撐住故事", cls:"story"},
+  mech:  {label:"玩法本身就垮了",     short:"長進機制", cls:"mech"},
+  unsure:{label:"說不準",            short:"說不準",   cls:"unsure"},
+};
+const W2K = {obj:"物件・地點", act:"行為・儀式", rel:"人際關係", tabu:"禁忌・規矩", time:"時間節奏"};
+let w2 = {cards:{}, jams:{}, pool:{}, reacts:{}, cult:{}};
+
+["cards","jams","pool","reacts"].forEach(k =>
+  db.ref(W2 + "/" + k).on("value", sn => { w2[k] = sn.val() || {}; renderW2(); }));
+db.ref(W2_CULT).on("value", sn => { w2.cult = sn.val() || {}; renderW2(); });
+
+function w2env(e){ return "#" + String(e).padStart(2, "0"); }
+function w2vchip(v, fv){
+  if (!v || !W2V[v]) return '<span class="chipk">沒判斷</span>';
+  const now = '<span class="chipk" style="font-weight:800">' + W2V[v].label + '</span>';
+  if (fv && W2V[fv] && fv !== v) return '<span class="mini">' + W2V[fv].short + ' →</span> ' + now;
+  return now;
+}
+function w2mins(ms){ return ms ? Math.max(1, Math.round(ms / 60000)) + " 分" : "—"; }
+
+function renderW2(){
+  if (!$("w2JamRows")) return;
+  const cards = [];
+  Object.entries(w2.cards).forEach(([env, obj]) =>
+    Object.entries(obj || {}).forEach(([k, c]) => cards.push(Object.assign({k, env}, c))));
+  const jams = Object.entries(w2.jams).map(([k, j]) => Object.assign({k}, j));
+  const pool = Object.entries(w2.pool).map(([k, p]) => Object.assign({k}, p));
+  const cult = Object.entries(w2.cult).filter(([k]) => !k.startsWith("_"))
+    .map(([k, c]) => Object.assign({k}, c));
+
+  const realCards = cards.filter(c => isRealEnv(c.env));
+  const realJams  = jams.filter(j => isRealEnv(j.by) && isRealEnv(j.fromEnv));
+  const testJams  = jams.filter(j => !(isRealEnv(j.by) && isRealEnv(j.fromEnv)));
+  const realCult  = cult.filter(c => isRealEnv(c.addedBy));
+  const people = new Set();
+  realCards.forEach(c => people.add(String(c.env)));
+  realJams.forEach(j => { people.add(String(j.by)); people.add(String(j.fromEnv)); });
+  pool.filter(p => isRealEnv(p.by)).forEach(p => people.add(String(p.by)));
+
+  // 還在等人接的牌＝配對卡關的人，這是課堂上最需要當場處理的事
+  const takenPosts = new Set(realJams.map(j => j.postKey));
+  const waiting = pool.filter(p => isRealEnv(p.by) && !takenPosts.has(p.k));
+
+  $("w2People").textContent = people.size;
+  $("w2Cards").textContent = realCards.length;
+  $("w2Jams").textContent = realJams.length;
+  $("w2Waiting").textContent = waiting.length;
+  $("w2NewCult").textContent = realCult.length;
+  const durs = realJams.map(j => j.ms).filter(Boolean);
+  $("w2Avg").textContent = durs.length
+    ? Math.round(durs.reduce((a, b) => a + b, 0) / durs.length / 60000 * 10) / 10 + " 分" : "--";
+
+  const nowT = Date.now();
+  const stuck = waiting.filter(p => nowT - p.t > 6 * 60000).sort((a, b) => a.t - b.t);
+  const noCard = [...people].filter(e => !realCards.some(c => String(c.env) === e));
+  const alerts = [];
+  if (stuck.length) alerts.push('<div class="w2alert warn">⚠️ 有 <b>' + stuck.length +
+    '</b> 張牌超過 6 分鐘沒人接：' +
+    stuck.slice(0, 8).map(p => w2env(p.by) + "「" + escapeHtml(p.v) + "」").join("、") +
+    '——這幾位在等配對，可以口頭請還沒出手的同學去接。</div>');
+  if (noCard.length) alerts.push('<div class="w2alert warn">⚠️ <b>' + noCard.length +
+    '</b> 位進來了但還沒存過遊戲卡：' + noCard.slice(0, 12).map(w2env).join("、") +
+    '——他們卡在「② 看實況」那一步。</div>');
+  const mech = realJams.filter(j => j.v === "mech").length;
+  if (realJams.length >= 5 && mech === 0) alerts.push('<div class="w2alert warn">⚠️ 已經 ' +
+    realJams.length + ' 輪，<b>還沒有任何一輪判斷是「玩法本身就垮了」</b>——' +
+    '全班都停在換皮與故事層。這正是可以當場拿出來講的點。</div>');
+  if (mech > 0) alerts.push('<div class="w2alert ok">✅ 已經有 <b>' + mech +
+    '</b> 輪判斷「玩法本身就垮了」——那幾組值得叫起來講，是全班的校準點。</div>');
+  const carried = realJams.filter(j => j.carry).length;
+  alerts.push('<div class="w2alert ' + (carried ? "ok" : "warn") + '">' +
+    (carried ? "✅" : "⬜") + ' 接別人混出來的再往下做：<b>' + carried + '</b> 次' +
+    (carried ? "" : "——作業要求每人至少一次，還沒有人做到。") + '</div>');
+  $("w2Alerts").innerHTML = alerts.join("");
+
+  $("w2Verdicts").innerHTML = Object.entries(W2V).map(([k, v]) => {
+    const c = realCards.filter(x => x.v === k).length;
+    const j = realJams.filter(x => x.v === k).length;
+    return '<div class="v ' + v.cls + '">' + v.label + '　盤點 <b>' + c + '</b>　混出來 <b>' + j + '</b></div>';
+  }).join("");
+
+  $("w2JamRows").innerHTML = realJams.sort((a, b) => b.t - a.t).map(j =>
+    '<tr><td>' + fmtTime(j.t) + '</td>' +
+    '<td class="pair">' + w2env(j.fromEnv) + ' ↔ ' + w2env(j.by) +
+      (j.carry ? '<br><span class="mini">接別人混過的</span>' : "") + '</td>' +
+    '<td><b>' + escapeHtml(j.play || "") + '</b><br><span class="mini">＋ ' + escapeHtml(j.cult || "") +
+      ' <span class="chipk">' + (W2K[j.cultKind] || "—") + '</span></span></td>' +
+    '<td>' + escapeHtml(j.line || "") + '</td>' +
+    '<td>' + w2vchip(j.v, j.fv) + '<br><span class="mini">' + w2mins(j.ms) + '</span></td></tr>').join("")
+    || '<tr><td colspan="5" class="mini">還沒有人完成任何一輪。</td></tr>';
+
+  $("w2CardRows").innerHTML = realCards.sort((a, b) => b.t - a.t).map(c =>
+    '<tr><td>' + fmtTime(c.t) + '</td><td class="pair">' + w2env(c.env) + '</td>' +
+    '<td><b>' + escapeHtml(c.game || "") + '</b><br><span class="mini">' + escapeHtml(c.line || "") + '</span></td>' +
+    '<td>' + escapeHtml(c.detail || "") + '</td>' +
+    '<td>' + w2vchip(c.v) + '<br><span class="mini">' + w2mins(c.ms) + '</span></td></tr>').join("")
+    || '<tr><td colspan="5" class="mini">還沒有人存遊戲卡。</td></tr>';
+
+  $("w2CultRows").innerHTML = realCult.sort((a, b) => b.t - a.t).map(c =>
+    '<tr><td>' + fmtTime(c.t) + '</td><td class="pair">' + w2env(c.addedBy) + '</td>' +
+    '<td><b>' + escapeHtml(c.v || "") + '</b> <span class="chipk">' + (W2K[c.d] || "—") + '</span></td>' +
+    '<td>' + escapeHtml(c.note || "") + '</td></tr>').join("")
+    || '<tr><td colspan="4" class="mini">還沒有人加文化卡。</td></tr>';
+
+  $("w2TestSummary").textContent = testJams.length
+    ? "測試／demo 共 " + testJams.length + " 輪，不計入上方數字。"
+    : "目前沒有測試/demo記錄。";
+  $("w2TestRows").innerHTML = testJams.sort((a, b) => b.t - a.t).map(j =>
+    '<tr><td>' + fmtTime(j.t) + '</td><td class="pair">' + w2env(j.fromEnv) + ' ↔ ' + w2env(j.by) + '</td>' +
+    '<td>' + escapeHtml(j.play || "") + ' ＋ ' + escapeHtml(j.cult || "") + '</td>' +
+    '<td>' + w2vchip(j.v, j.fv) + '</td></tr>').join("");
+}
 
 const ENA_LABELS = {
   game_S1_imitate: "遊戲設計 S1 模仿", game_S2_experiment: "遊戲設計 S2 嘗試",

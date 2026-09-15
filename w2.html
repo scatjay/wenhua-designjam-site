@@ -161,6 +161,16 @@
   .glossary summary{font-size:12.5px;font-weight:700;color:var(--accent);cursor:pointer;padding:4px 0}
   .gle{font-size:12.5px;line-height:1.75;padding:3px 0;border-bottom:1px solid var(--line)}
   .gle b{display:inline-block;min-width:118px;margin-right:6px}
+  .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
+  .mapsvg svg{display:block;width:100%;height:auto}
+  .zones{display:grid;gap:8px;margin-bottom:12px}
+  .zone{border:1px solid var(--line);border-left-width:4px;border-radius:10px;padding:9px 12px;background:var(--panel2)}
+  .zone b{display:block;font-size:12px;font-weight:800;margin-bottom:2px}
+  .zone span{display:block;font-size:14px;font-weight:800;color:var(--ink)}
+  .zone em{display:block;font-size:12.5px;font-style:normal;color:var(--ink-soft);line-height:1.65;margin-top:2px}
+  .zone.k-skin{border-left-color:var(--red)} .zone.k-skin b{color:var(--red)}
+  .zone.k-story{border-left-color:var(--amber)} .zone.k-story b{color:var(--amber)}
+  .zone.k-mech{border-left-color:var(--green)} .zone.k-mech b{color:var(--green)}
   .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
   .fbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700}
   .fbtn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
@@ -479,7 +489,6 @@
         這是一張<b>概念說明圖</b>，不用在上面點。隨時可以回來看：
         範例放在哪、為什麼放在那裡，用來校準自己的判斷。
       </p>
-      <div class="filters" id="mapFilters"></div>
       <div id="bigMapHolder"></div>
       <div id="mapDetail"></div>
     </div>
@@ -650,29 +659,21 @@ const CULTURE_CARDS = [
 // ============ 地圖預放範例 ============
 // x: 0=規則說了算 → 1=故事說了算　｜　y: 0=換皮也能玩（下） → 1=抽掉就垮了（上）
 const SEED_DOTS = [
-  // 每一顆都實際套過兩條軸，註解就是推理過程——學生要看得懂為什麼在這裡。
+  // 🔴 每一區只留 1-2 個例子，而且例子一律寫成「種子遊戲 ＋ 文化要素」的形式
+  //    ——跟學生等一下要做的事長得一樣（楊老師 2026-09-15：不要列一堆）。
   // x: 0=規則說了算 → 1=故事說了算　｜　y: 0=換皮也能玩 → 1=抽掉就垮了
-  {x:.20,y:.05,t:"Gartic Phone（傳話畫畫）", by:"老師放的", kind:"seed",
-   note:"你在做的事＝傳話、畫、猜。它根本沒有文化元素可以抽掉，所以最底。放這裡是當基準點：這就是「純機制、零文化」長什麼樣。"},
-  {x:.25,y:.10,t:"神明便利商店", by:"老師放的", kind:"seed",
-   note:"玩法是合併升級的經營。把神明換成貓、換成上班族——合併機制完全不變。神明是它的美術與 IP，不是它的規則。文化濃度高，但還是在換皮區。"},
-  {x:.45,y:.35,t:"打鬼 PAGUI", by:"老師放的", kind:"seed",
-   note:"官將首、乩童的考據是道長指導的，非常紮實。但抽掉這些，它還是一款可以玩的 3D 恐怖動作——垮掉的是氣氛，不是玩法。考據深≠機制深。"},
-  {x:.55,y:.55,t:"打鬼 PAGUI", by:"另一位老師放的", kind:"seed",
-   note:"這一顆跟上面那顆是同一款遊戲，位置不一樣——因為有人認為官將首的步法有真的進到動作設計裡。你玩過（或看過）你來判斷，地圖上本來就可以有爭議。"},
-  {x:.80,y:.75,t:"返校 Detention", by:"老師放的", kind:"seed",
-   note:"故事說了算。抽掉白色恐怖與台灣民間信仰，走路解謎的玩法還在，但整件事就沒有意義了——文化撐住的是故事，不是機制。"},
-  {x:.92,y:.85,t:"膨風龜大冒險", by:"老師放的", kind:"seed",
-   note:"《小封神》官方改編，臺語有聲繪本。幾乎是純故事，抽掉文本就什麼都不剩。這是「文化撐住故事」的極端值。"},
-  {x:.15,y:.80,t:"We Become What We Behold（我們成為我們所注視的）", by:"老師放的", kind:"seed",
-   note:"你拿相機拍什麼，新聞就變成什麼——它承載的東西長在規則裡，抽掉就不成立。⚠️ 但它承載的是媒體議題不是文化。這一區目前沒有真正的文化案例，那正是你們這學期要做的事。"},
-  {x:.15,y:.05,t:"台南版大富翁", by:"反向範例", kind:"bad",
-   note:"擲骰、買地、收租——規則一個字都沒改，只把地名換成赤崁樓、安平古堡。抽掉台南照樣玩。"},
-  {x:.24,y:.03,t:"夜市小吃版記憶翻牌", by:"反向範例", kind:"bad",
-   note:"翻牌配對跟小吃沒有任何關係，圖案換成動物、換成國旗，玩起來一模一樣。"},
-  {x:.33,y:.07,t:"廟宇主題三消", by:"反向範例", kind:"bad",
-   note:"消除三個同色跟信仰毫無關係。神明在這裡只是貼圖，而且是可以隨時換掉的貼圖。"},
+  {x:.25,y:.08,t:"神明便利商店 ＋ 神明", by:"換皮區", kind:"seed",
+   note:"把神明換成貓、換成上班族，合併升級的玩法一個字都不用改。神明是它的美術，不是它的規則。"},
+  {x:.15,y:.03,t:"大富翁 ＋ 赤崁樓", by:"換皮區 · 反向範例", kind:"bad",
+   note:"擲骰、買地、收租完全沒動，只把地名換掉。這就是敷衍長什麼樣子。"},
+  {x:.55,y:.45,t:"打鬼 ＋ 官將首", by:"文化撐住故事", kind:"seed",
+   note:"考據是道長指導的，很紮實。但抽掉官將首，它還是一款可以玩的 3D 動作——垮的是氣氛，不是玩法。"},
+  {x:.82,y:.75,t:"返校 ＋ 白色恐怖", by:"文化撐住故事", kind:"seed",
+   note:"抽掉那個年代，走路解謎照樣跑，但整件事就沒有意義了。文化撐住的是故事。"},
+  {x:.18,y:.82,t:"返校 ＋ 擲筊（想像的）", by:"稀有區", kind:"seed",
+   note:"🔴 這一顆還沒有人真的做出來。想像：進每一道門要先擲筊，聖杯才開得了，笑杯重擲、陰杯要繞路。這時候把擲筊拿掉，「開門」這條規則就不存在了——這才叫文化長在機制裡。"},
 ];
+
 
 // ============ 狀態 ============
 let myRoute = [];
@@ -813,6 +814,7 @@ const FORM_TAGS = {
   zh:    {label:"🀄 中文",    hint:"有中文介面或中文字幕（臺語的另外標）。"},
 };
 let gFilter = "all";
+let showTags = false;
 // 一款遊戲可以掛好幾個標籤，像 hashtag 一樣——不是只能屬於一組（楊老師 2026-09-15）
 function gTags(g){
   const t = (g.t || []).filter(x => !USE_TAGS[x]);
@@ -845,8 +847,11 @@ function renderGames(){
     `<span class="fsep">主題</span>` +
     themes.slice(0, 8).map(x => btn(x, "#" + esc(x))).join("") +
     (themes.includes(gFilter) && themes.indexOf(gFilter) >= 8 ? btn(gFilter, "#" + esc(gFilter)) : "") +
-    `<span class="fsep">其他標籤在每張卡片下面，點了就能篩</span>`;
-  $("gFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => pickFilter(b.dataset.f));
+    `<button class="fbtn tagtoggle${showTags ? " on" : ""}" id="tagToggle">${showTags ? "▾ 收起標籤" : "▸ 顯示每張卡的標籤"}</button>`;
+
+  $("gFilters").querySelectorAll(".fbtn[data-f]").forEach(b => b.onclick = () => pickFilter(b.dataset.f));
+  const tt = $("tagToggle");
+  if (tt) tt.onclick = () => { showTags = !showTags; renderGames(); };
   const gl = $("tagGlossary");
   if (gl) gl.innerHTML =
     Object.entries(USE_TAGS).map(([k, v]) => `<div class="gle"><b>${v.label}</b>${v.hint.replace(/<[^>]+>/g, "")}</div>`).join("") +
@@ -878,7 +883,7 @@ function drawGames(f){
         <div class="gn">${uses}${esc(g.n)}</div>
         <div class="gm">${tag}${zh}約 ${g.min} 分${link}</div>
         <div class="gm">${esc(g.note)}</div>
-        <div class="gm gtags">${hash}</div>
+        ${showTags && hash ? `<div class="gm gtags">${hash}</div>` : ""}
       </div>
       <div class="pick"><button class="btn-ghost btn-sm">${on ? "移除" : "加入"}</button></div>
     </div>`;
@@ -1219,48 +1224,90 @@ $("addCult").onclick = () => {
 // ============ ④ 看大家混的 ============
 let mapFilter = "all";
 function renderBigMap(){
-  if (!$("mapFilters").innerHTML) {
-    const fs = {ex:"📌 老師放的範例", bad:"🎲 反向範例", all:"🗺 全部"};
-    $("mapFilters").innerHTML = Object.entries(fs).map(([k,v]) =>
-      `<button class="fbtn${k==="all"?" on":""}" data-k="${k}">${v}</button>`).join("");
-    $("mapFilters").querySelectorAll(".fbtn").forEach(b => b.onclick = () => {
-      $("mapFilters").querySelectorAll(".fbtn").forEach(x => x.classList.remove("on"));
-      b.classList.add("on"); mapFilter = b.dataset.k; renderBigMap();
-    });
-  }
-  // 🔴 地圖是概念說明圖，不放學生的點——學生給的是三選一的判斷，不是座標。
-  // 硬把三選一畫成座標會製造假精確。全班的判斷改用分佈統計呈現。
-  const seedsOnly = SEED_DOTS.filter(d =>
-    mapFilter === "all" ? true : (mapFilter === "bad" ? d.kind === "bad" : d.kind !== "bad"));
-  makeMap($("bigMapHolder"), null, {seeds: false, extra: seedsOnly.map(d => ({
-    x: d.x, y: d.y, cls: d.kind === "bad" ? "bad" : "seed", title: `${d.t}（${d.by}）
-${d.note}`
-  }))});
+  // 🔴 沿用規格 artifact 裡那張 SVG（楊老師 2026-09-15 指定），
+  //    四個象限各塞「一個種子遊戲 ＋ 一個文化要素」，形式跟學生等一下要做的事一樣。
+  $("bigMapHolder").innerHTML = `
+  <div class="mapsvg"><svg viewBox="0 0 640 420" role="img"
+    aria-label="兩條軸的座標圖：橫軸從規則說了算到故事說了算，縱軸從換皮也能玩到抽掉就垮了，左上角是稀有區">
+    <rect x="90" y="46" width="470" height="300" fill="var(--panel2)" stroke="var(--line)" stroke-width="1" rx="4"/>
+    <line x1="325" y1="46" x2="325" y2="346" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 4"/>
+    <line x1="90" y1="196" x2="560" y2="196" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 4"/>
 
-  // 全班的判斷分佈
+    <rect x="90" y="46" width="235" height="150" fill="var(--accent-soft)" opacity="0.75"/>
+    <text x="207" y="74" text-anchor="middle" font-size="16" font-weight="700" fill="var(--accent)">稀有區</text>
+    <text x="207" y="94" text-anchor="middle" font-size="12.5" fill="var(--accent)">文化長在機制裡</text>
+    <text x="207" y="112" text-anchor="middle" font-size="12.5" fill="var(--accent)">不是長在故事或美術裡</text>
+    <rect x="110" y="122" width="178" height="48" rx="8" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <text x="199" y="141" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--accent)">返校 ＋ 擲筊</text>
+    <text x="199" y="158" text-anchor="middle" font-size="10" fill="var(--ink-soft)">進門要擲到聖杯才開得了（想像的）</text>
+    <text x="207" y="187" text-anchor="middle" font-size="11" fill="var(--ink-soft)">← 改造要往這裡推</text>
+
+    <text x="443" y="94" text-anchor="middle" font-size="12.5" fill="var(--ink-soft)">文化撐住故事</text>
+    <text x="443" y="112" text-anchor="middle" font-size="11" fill="var(--ink-soft)">多數文化遊戲在這</text>
+    <rect x="337" y="122" width="166" height="48" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="1.2"/>
+    <text x="420" y="141" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--ink)">打鬼 ＋ 官將首</text>
+    <text x="420" y="158" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)">抽掉考據，動作照樣打得下去</text>
+
+    <text x="207" y="222" text-anchor="middle" font-size="12.5" fill="var(--ink-soft)">純機制取向</text>
+    <rect x="112" y="234" width="190" height="48" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="1.2"/>
+    <text x="207" y="253" text-anchor="middle" font-size="12.5" font-weight="800" fill="var(--ink)">傳話畫畫 ＋ 臺語詞</text>
+    <text x="207" y="270" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)">換成華語，傳話照樣好玩</text>
+
+    <text x="443" y="222" text-anchor="middle" font-size="12.5" fill="var(--red)">換皮也能玩</text>
+    <text x="443" y="240" text-anchor="middle" font-size="11" fill="var(--red)">換個國家照樣玩</text>
+    <rect x="337" y="250" width="166" height="48" rx="8" fill="var(--red-soft)" stroke="var(--red)" stroke-width="1.2"/>
+    <text x="420" y="269" text-anchor="middle" font-size="12" font-weight="800" fill="var(--red)">神明便利商店 ＋ 神明</text>
+    <text x="420" y="286" text-anchor="middle" font-size="10" fill="var(--red)">換成貓咪，合併玩法一模一樣</text>
+
+    <circle cx="532" cy="274" r="15" fill="var(--red)" opacity="0.14"/>
+    <circle cx="532" cy="274" r="6" fill="var(--red)"/>
+    <text x="532" y="278" text-anchor="middle" font-size="9" font-weight="600" fill="var(--panel)">1</text>
+    <circle cx="532" cy="146" r="15" fill="var(--red)" opacity="0.14"/>
+    <circle cx="532" cy="146" r="6" fill="var(--red)"/>
+    <text x="532" y="150" text-anchor="middle" font-size="9" font-weight="600" fill="var(--panel)">2</text>
+    <circle cx="306" cy="146" r="8" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="306" y="150" text-anchor="middle" font-size="9" font-weight="600" fill="var(--red)">3</text>
+    <path d="M 532 258 Q 552 202 534 163" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.6"/>
+    <path d="M 516 138 Q 412 102 320 138" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.6"/>
+    <polygon points="312,144 324,136 323,147" fill="var(--red)" opacity="0.85"/>
+    <text x="600" y="30" text-anchor="end" font-size="10.5" fill="var(--ink-soft)">①②③ 三輪 Jam 的典型落點</text>
+
+    <line x1="90" y1="46" x2="90" y2="346" stroke="var(--ink)" stroke-width="2"/>
+    <polygon points="90,38 85,50 95,50" fill="var(--ink)"/>
+    <text x="76" y="62" text-anchor="end" font-size="13" font-weight="700" fill="var(--ink)">抽掉就垮了</text>
+    <text x="76" y="340" text-anchor="end" font-size="13" font-weight="700" fill="var(--ink)">換皮也能玩</text>
+    <text x="30" y="200" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)" transform="rotate(-90 30 200)">把文化抽掉，還成立嗎？</text>
+
+    <line x1="90" y1="346" x2="560" y2="346" stroke="var(--ink)" stroke-width="2"/>
+    <polygon points="568,346 556,341 556,351" fill="var(--ink)"/>
+    <text x="96" y="370" font-size="13" font-weight="700" fill="var(--ink)">規則說了算</text>
+    <text x="554" y="370" text-anchor="end" font-size="13" font-weight="700" fill="var(--ink)">故事說了算</text>
+    <text x="325" y="398" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)">這款是規則好玩，還是故事好玩？</text>
+  </svg></div>`;
+
   const cards = [];
   Object.values(allCards).forEach(byEnv => Object.values(byEnv).forEach(c => cards.push(c)));
   const jams = Object.values(allJams);
-  const tally = k => ({
-    c: cards.filter(c => c.v === k).length,
-    j: jams.filter(j => j.v === k).length,
-  });
+  const tally = k => ({c: cards.filter(c => c.v === k).length, j: jams.filter(j => j.v === k).length});
   const rows = VERDICTS.filter(v => v.k !== "unsure").map(v => {
     const t = tally(v.k);
     return `<div class="tally-row k-${v.k}">
       <div class="tl"><b>${esc(v.label)}</b><span>${esc(v.zone)}</span></div>
-      <div class="tn">盤點 <b>${t.c}</b>　疊出來 <b>${t.j}</b></div></div>`;
+      <div class="tn">盤點 <b>${t.c}</b>　混出來 <b>${t.j}</b></div></div>`;
   }).join("");
   const unsure = tally("unsure");
   $("mapDetail").innerHTML = `
-    <div class="hint" style="margin:10px 0 8px">📌 是老師先放的範例，🎲 是反向範例。滑到點上可以看為什麼放在那裡。</div>
+    <div class="hint" style="margin:10px 0 12px">
+      每一區只放<b>一個</b>例子，形式都是「<b>遊戲 ＋ 文化要素</b>」——跟你在 ③ 要做的事一模一樣。
+      判斷的方法只有一個：<b>把那個文化要素拿掉，這遊戲還玩不玩得下去。</b>
+    </div>
     <label>全班目前的判斷</label>
     <div class="tally">${rows}
       <div class="tally-row k-unsure"><div class="tl"><b>說不準</b><span>還沒把握</span></div>
-        <div class="tn">盤點 <b>${unsure.c}</b>　疊出來 <b>${unsure.j}</b></div></div>
+        <div class="tn">盤點 <b>${unsure.c}</b>　混出來 <b>${unsure.j}</b></div></div>
     </div>
     <div class="hint" style="margin-top:8px">
-      <b>稀有區那一格如果一直是 0</b>——那就是全班還沒有人做到「文化長在機制裡」。
+      <b>稀有區那一格如果一直是 0</b>——那就是全班還沒有人做到「文化長在規則裡」。
       那正是這學期要往的方向。
     </div>`;
 }

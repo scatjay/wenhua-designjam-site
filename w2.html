@@ -331,6 +331,7 @@
     <span class="counter" id="meProgress"></span>
   </div>
 
+  <datalist id="gamelist"></datalist>
   <div class="tabs">
     <button class="tab on" data-p="plan">① 選構想種子<span class="n" id="tnPlan"></span></button>
     <button class="tab" data-p="scan">② 看實況<span class="n" id="tnScan"></span></button>
@@ -372,7 +373,7 @@
       <div id="scanTarget"></div>
 
       <label style="margin-top:14px">這是哪一款</label>
-      <input type="text" id="cGame" placeholder="遊戲名稱">
+      <input type="text" id="cGame" list="gamelist" placeholder="遊戲名稱">
 
       <label style="margin-top:12px">它的核心玩法是什麼？</label>
       <textarea id="cLine" placeholder="玩家從頭到尾主要在做什麼動作？例如：合併同類物件升級／照節奏按鍵／躲開視線前進"></textarea>
@@ -901,6 +902,9 @@ function drawGames(f){
       <div class="pick"><button class="btn-ghost btn-sm">${on ? "移除" : "加入"}</button></div>
     </div>`;
   }).join("");
+  // 讓 ② 的遊戲名欄位可以直接選，不用把「膨風龜大冒險」一個字一個字打出來
+  const dl = $("gamelist");
+  if (dl && !dl.children.length) dl.innerHTML = GAMES.map(g => `<option value="${esc(g.n)}"></option>`).join("");
   $("gameList").querySelectorAll(".htag").forEach(b => b.onclick = ev => {
     ev.stopPropagation(); pickFilter(b.dataset.t);
   });
@@ -1708,20 +1712,34 @@ function renderSeeds(){
     {t:"把它變成具體玩法", p:`我的玩法是「${play}」，疊上「${cult}」。\n我想把它變成三條規則以內、三分鐘玩得完的東西。\n請先<b>反問我三個問題</b>——玩家第一個動作是什麼、什麼時候算輸、「${cult}」是哪一條規則在管——\n等我回答完你再幫我整理，不要現在就把規則寫給我。`.replace(/<[^>]+>/g, "")},
     {t:"想加一張新卡", p:`我想把「${cult}」做成一張卡。這張卡要能改變遊戲玩法，不能只是一個名詞。\n請反問我三個問題，幫我想清楚它到底會改變什麼。`},
   ];
-  $("seedList").innerHTML = seeds.map((s, i) =>
+  // 🔴 指令本文一定是中文（帶了學生自己填的內容，插值組合無法進字典）。
+  //    與其硬翻，不如解掉真正的阻斷點：讓 Gemini 用他的語言回。
+  const askBack = {vi: "Trả lời bằng tiếng Việt.", id: "Jawab dalam Bahasa Indonesia."};
+  // 這段說明本身要用學生的語言寫死，不走字典——它是在講「為什麼下面是中文」，
+  // 如果它自己也是中文就等於沒說。
+  const NOTE_BY_LANG = {
+    vi: "Các câu lệnh bên dưới là tiếng Trung. Khi bạn bấm sao chép, hệ thống tự thêm một câu " +
+        "yêu cầu Gemini trả lời bằng tiếng Việt — cứ dán thẳng vào là được.",
+    id: "Perintah di bawah berbahasa Mandarin. Saat kamu menyalin, sistem otomatis menambahkan " +
+        "permintaan agar Gemini menjawab dalam Bahasa Indonesia — tinggal tempel saja.",
+  };
+  const langNote = (typeof curLang !== "undefined" && NOTE_BY_LANG[curLang])
+    ? `<div class="khint">${NOTE_BY_LANG[curLang]}</div>` : "";
+  $("seedList").innerHTML = langNote + seeds.map((s, i) =>
     `<div class="seedbox"><div class="st">${esc(s.t)}</div><div class="sp" id="sp${i}">${esc(s.p)}</div>
      <button class="btn-ghost btn-sm" style="margin-top:8px" data-i="${i}">複製這則</button></div>`).join("");
   $("seedList").querySelectorAll("button").forEach(b => b.onclick = () => {
     const txt = seeds[+b.dataset.i].p;
     // 🔴 還有［佔位符］就不給複製：測試實證 Gemini 會把空缺自己補完，
     //    回一份完整、權威、而且完全錯誤的答案——那正好打死這份學習單唯一的 AI 抗性條件。
+    const suffix = (typeof curLang !== "undefined" && askBack[curLang]) ? "\n" + askBack[curLang] : "";
     if (txt.indexOf("［") >= 0) {
       const keep = b.textContent;
       b.textContent = "先把上面填一填再複製";
       setTimeout(() => b.textContent = keep, 2200);
       return;
     }
-    navigator.clipboard.writeText(txt).then(() => {
+    navigator.clipboard.writeText(txt + suffix).then(() => {
       b.textContent = "已複製 ✓";
       db.ref(`${W2}/seedUse`).push({env: myEnv, i: +b.dataset.i, t: Date.now()}).catch(()=>{});
       setTimeout(() => b.textContent = "複製這則", 1600);
@@ -1859,6 +1877,9 @@ function setLang(lang) {
         ? "⚠️ Bản dịch do AI tạo, có thể chưa chuẩn. Bấm 🇹🇼 để xem bản gốc tiếng Trung."
         : "⚠️ Terjemahan dibuat AI, mungkin kurang pas. Klik 🇹🇼 untuk versi Mandarin.");
   }
+  // 種子指令會依語言決定要不要附「用你的語言回答」——那段是 render 時算的，
+  // 只翻譯既有 DOM 不會讓它出現，所以切語言之後要重畫一次。
+  try { if (typeof renderSeeds === "function") renderSeeds(); } catch (_) {}
   localizeDOM();
   reEmoji();
 }

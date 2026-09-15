@@ -560,7 +560,8 @@ function renderW2(){
     '全班都停在換皮與故事層。這正是可以當場拿出來講的點。</div>');
   if (mech > 0) alerts.push('<div class="w2alert ok">✅ 已經有 <b>' + mech +
     '</b> 輪判斷「玩法本身就垮了」——那幾組值得叫起來講，是全班的校準點。</div>');
-  const carried = realJams.filter(j => j.carry).length;
+  // 接自己前一輪的不算——作業要的是接別人的（2026-09-16 測試員實跑抓到）
+  const carried = realJams.filter(j => j.carry && j.fromEnv !== j.by).length;
   alerts.push('<div class="w2alert ' + (carried ? "ok" : "warn") + '">' +
     (carried ? "✅" : "⬜") + ' 接別人混出來的再往下做：<b>' + carried + '</b> 次' +
     (carried ? "" : "——作業要求每人至少一次，還沒有人做到。") + '</div>');

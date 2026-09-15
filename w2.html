@@ -711,6 +711,7 @@ function show(p){
   document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.p === p));
   if (p === "map") renderMixGrid();
   if (p === "cmap") renderBigMap();
+  if (p === "scan") renderScanTarget();
   if (p === "jam") { renderPlayPick(); renderPool(); }
   if (p === "deck") renderDeck();
   window.scrollTo(0, 0);
@@ -916,7 +917,7 @@ function drawGames(f){
   });
 }
 $("planDone").onclick = () => {
-  if (myRoute.length < 3) { $("planStatus").textContent = "至少挑 3 款才跑得起來。"; return; }
+  if (myRoute.length < 3) { $("planStatus").textContent = "至少要 3 款才開始得了（建議 4-6 款，看得完就好）。"; return; }
   db.ref(`${W2}/routes/${myEnv}`).set({picks: myRoute, t: Date.now()}).catch(()=>{});
   scanStart = Date.now();
   renderScanTarget();
@@ -926,6 +927,12 @@ $("planDone").onclick = () => {
 // ============ ② 盤點 ============
 setInterval(() => { if (scanStart) $("scanTimer").textContent = fmtTime(Date.now() - scanStart); }, 1000);
 function renderScanTarget(){
+  // 🔴 路線還沒選的時候 left 會是空陣列，原本會走到「路線跑完了」那一支，
+  //    等於一登入就給一個綠色的假完成訊號。（2026-09-16 三份測試報告都抓到）
+  if (!myRoute.length) {
+    $("scanTarget").innerHTML = `<div class="arrowbox">還沒選路線。先回 <b>① 選構想種子</b> 挑 4-6 款，再回來這裡。</div>`;
+    return;
+  }
   const doneNames = myCards.map(c => c.game);
   const left = myRoute.filter(n => !doneNames.includes(n));
   $("scanTarget").innerHTML = left.length
@@ -1106,7 +1113,9 @@ $("postPlay").onclick = () => {
 };
 function renderPool(){
   if (!$("poolList")) return;
-  db.ref(`${W2}/pool`).once("value").then(s => {
+  // 🔴 這裡原本是 .once——開場前還沒有人完成任何一輪 jam 時，池子不會自己更新，
+  //    坐在 ③ 的人看到的是凍結畫面。改成 .on（重複呼叫會覆蓋同一個 listener）。
+  db.ref(`${W2}/pool`).on("value", s => {
     const v = s.val() || {};
     const used = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.postKey);
     const items = Object.entries(v)
@@ -1153,8 +1162,10 @@ function renderCultPick(){
     });
   }
   const all = CULTURE_CARDS.concat(customCulture);
+  // 全班 40 人各加 3 張之後，點一個分類會一次畫上百個按鈕 ⇒ 選了分類也要限量
   const list = (cultFilter === "all" ? all.slice().sort(() => 0.5 - Math.random()).slice(0, 8)
-                                     : all.filter(c => c.k === cultFilter));
+                                     : all.filter(c => c.k === cultFilter)
+                                          .sort(() => 0.5 - Math.random()).slice(0, 12));
   const hint = cultFilter !== "all" && CULT_KINDS[cultFilter]
     ? `<div class="khint"><b>${esc(CULT_KINDS[cultFilter].label)}</b>：${esc(CULT_KINDS[cultFilter].hint)}</div>`
     : `<div class="khint">上面選一類再挑卡。<b>不同類別扛機制的能力差很多</b>——物件類最容易變成換皮，行為、禁忌類常常機制自己就長出來了。</div>`;
@@ -1217,11 +1228,15 @@ $("saveJam").onclick = () => {
              想一下：<b>要動哪一條規則，把這個文化元素拿掉之後就玩不下去？</b></div>`;
     }
     if (moved > 0) msg += `<div class="hint" style="margin-top:6px">比起你原本對這款遊戲的判斷，這次<b>往機制層推了一格</b>。</div>`;
-    $("jamResult").innerHTML = msg + `<button class="btn" id="nextRound">${jamRound >= 3 ? "看全班地圖" : "下一輪"}</button>`;
+    // 🔴 用 jamPartners.length（已完成輪數）判斷，不要用 jamRound——
+    //    jamRound 在 push 之後已經被 listener 推到下一輪的號碼了。
+    //    （2026-09-16 三個獨立測試者都卡在「完成第 2 輪就跳去看地圖，第 3 輪永遠開不了」）
+    const doneRounds = jamPartners.length;
+    $("jamResult").innerHTML = msg + `<button class="btn" id="nextRound">${doneRounds >= 3 ? "看全班地圖" : "下一輪"}</button>`;
     $("jamResult").classList.remove("hide");
     $("jamStepC").classList.add("hide");
     $("nextRound").onclick = () => {
-      if (jamRound >= 3) { show("map"); return; }
+      if (jamPartners.length >= 3) { show("map"); return; }
       selPlay = null; selCult = null; targetPost = null; jamV = null;
       $("jamLine").value = "";
       jamV = null; jamFromV = null;
@@ -1523,7 +1538,11 @@ function renderDone(){
       <div class="cb">${partners.map(e => "#" + String(e).padStart(2,"0")).join("、")}
       ${partners.length < jams.length ? "　（跟同一個人配過不只一次也沒關係）" : ""}</div></div>`);
   }
-  $("doneList").innerHTML = `<div class="stamp">編號 #${String(myEnv).padStart(2,"0")}</div>` + rows.join("");
+  // 🔴 不要在截圖上印自己的信封編號（unit1.html 為同樣理由拿掉過，楊老師 2026-09-08 定案）：
+  //    截圖透過 flipclass 繳交，而 flipclass 知道每份繳交屬於誰——印上去等於學生自己
+  //    幫全班建好「編號 → 真實身份」的對照表，IRB 的去識別化設計會當場失效且不可逆。
+  //    夥伴編號保留，作業本來就要求截圖看得到跟誰一組。
+  $("doneList").innerHTML = rows.join("");
 }
 
 // ============ 下載企劃 .md（跟第1週同一個做法）============
@@ -1619,8 +1638,10 @@ function renderDeck(){
   });
   $("deckPlay").innerHTML = gcards.length ? gcards.map(c => {
     const vv = c.v && VERDICT_BY[c.v] ? VERDICT_BY[c.v].label : "";
+    // 🔴 fallback 絕不能退到 detail——那一格的提示語在誘導學生寫親身經驗，
+    //    卻會被攤到全班看得到的卡池上。（2026-09-16 測試波抓到）
     return `<div class="cc k-play"><div class="cd">${c.mineCard ? "你做的" : "#" + String(c.env).padStart(2,"0") + " 做的"}${vv ? " · " + esc(vv) : ""}</div>
-     <div class="cv">${esc(c.game)}</div><div class="cnote">${esc(c.line || c.detail || "")}</div></div>`;
+     <div class="cv">${esc(c.game)}</div><div class="cnote">${esc(c.line || "")}</div></div>`;
   }).join("") : `<div class="hint">還沒有人存遊戲卡。到 <b>② 看實況</b> 挑一款、存成一張，這一區就會長出來。</div>`;
 
   const all = CULTURE_CARDS.concat(customCulture);
@@ -1683,7 +1704,7 @@ function renderSeeds(){
     {t:"看不出它的核心機制", p:`我剛玩了《${g}》大約十分鐘。我看到的是：${l}。\n請用三個問題幫我確認我有沒有看漏它的核心機制。不要直接告訴我答案。`},
     {t:"判斷不出來", p:`這款遊戲是《${g}》。我要判斷一件事：把文化元素抽掉，它還玩不玩得下去。\n請給我一個支持的理由跟一個反對的理由，我自己決定。不要幫我下結論。`},
     {t:"找文化素材", p:`我想在遊戲裡放「${cult}」。\n請給我三個一般人不知道、但跟日常生活有關的具體細節。不要給我觀光簡介式的介紹。`},
-    {t:"疊加卡住了", p:`我有一個玩法：${play}。我想疊上「${cult}」。\n請幫我想三種疊法：一種最表面（只換外觀）、一種中等（改故事）、一種最深（改規則本身）。\n然後告訴我第三種為什麼比較難做。`},
+    {t:"疊加卡住了", p:`我有一個玩法：${play}。我想疊上「${cult}」。\n請幫我想三種疊法：一種最表面（只換外觀）、一種中等（改故事）、一種最深（改規則本身）。\n然後告訴我第三種為什麼比較難做。\n這三種都不要直接用——挑一種，我告訴你我要改哪裡。`},
     {t:"把它變成具體玩法", p:`我的玩法是「${play}」，疊上「${cult}」。\n我想把它變成三條規則以內、三分鐘玩得完的東西。\n請先<b>反問我三個問題</b>——玩家第一個動作是什麼、什麼時候算輸、「${cult}」是哪一條規則在管——\n等我回答完你再幫我整理，不要現在就把規則寫給我。`.replace(/<[^>]+>/g, "")},
     {t:"想加一張新卡", p:`我想把「${cult}」做成一張卡。這張卡要能改變遊戲玩法，不能只是一個名詞。\n請反問我三個問題，幫我想清楚它到底會改變什麼。`},
   ];
@@ -1692,6 +1713,14 @@ function renderSeeds(){
      <button class="btn-ghost btn-sm" style="margin-top:8px" data-i="${i}">複製這則</button></div>`).join("");
   $("seedList").querySelectorAll("button").forEach(b => b.onclick = () => {
     const txt = seeds[+b.dataset.i].p;
+    // 🔴 還有［佔位符］就不給複製：測試實證 Gemini 會把空缺自己補完，
+    //    回一份完整、權威、而且完全錯誤的答案——那正好打死這份學習單唯一的 AI 抗性條件。
+    if (txt.indexOf("［") >= 0) {
+      const keep = b.textContent;
+      b.textContent = "先把上面填一填再複製";
+      setTimeout(() => b.textContent = keep, 2200);
+      return;
+    }
     navigator.clipboard.writeText(txt).then(() => {
       b.textContent = "已複製 ✓";
       db.ref(`${W2}/seedUse`).push({env: myEnv, i: +b.dataset.i, t: Date.now()}).catch(()=>{});

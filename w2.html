@@ -199,6 +199,22 @@
   .solohot{background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--accent);
     border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.75;margin-bottom:12px}
   .btn-sm{padding:5px 12px;font-size:13px}
+  /* 種子指令的分類配色——跟它對應的步驟一致 */
+  .fbtn.sc-scan.on{background:var(--purple-soft);color:var(--purple);border-color:var(--purple)}
+  .fbtn.sc-mix.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+  .fbtn.sc-deep.on{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+  .fbtn.sc-plan.on{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
+  .seedbox{border-left-width:4px}
+  .seedbox.sb-scan{border-left-color:var(--purple)}
+  .seedbox.sb-mix{border-left-color:var(--accent)}
+  .seedbox.sb-deep{border-left-color:var(--green)}
+  .seedbox.sb-plan{border-left-color:var(--amber)}
+  .sbtag{display:inline-block;font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:999px;
+    margin-right:6px;background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft)}
+  .sb-scan .sbtag{background:var(--purple-soft);color:var(--purple);border-color:var(--purple)}
+  .sb-mix .sbtag{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+  .sb-deep .sbtag{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+  .sb-plan .sbtag{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
   .mapsw{display:flex;gap:6px;margin-bottom:8px}
   .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
   .mapsvg svg{display:block;width:100%;height:auto}
@@ -2022,14 +2038,15 @@ function renderSeeds(){
   };
   const langNote = (typeof curLang !== "undefined" && NOTE_BY_LANG[curLang])
     ? `<div class="khint">${NOTE_BY_LANG[curLang]}</div>` : "";
+  // 分類配色跟它對應的步驟一致：② 看實況＝紫、③ 混＝藍、想推深＝綠、變成企劃＝琥珀
   const CATS = {all:"全部", scan:"② 看實況卡住", mix:"③ 混的時候卡住",
                 deep:"想推深一層", plan:"要變成企劃"};
   const shown = seeds.map((x, i) => ({...x, i})).filter(x => seedCat === "all" || x.c === seedCat);
   const tabs = `<div class="filters" style="margin-bottom:8px">` +
     Object.entries(CATS).map(([k, v]) =>
-      `<button class="fbtn${seedCat === k ? " on" : ""}" data-sc="${k}">${v}</button>`).join("") + `</div>`;
+      `<button class="fbtn sc-${k}${seedCat === k ? " on" : ""}" data-sc="${k}">${v}</button>`).join("") + `</div>`;
   $("seedList").innerHTML = langNote + tabs + shown.map(x =>
-    `<div class="seedbox"><div class="st">${esc(x.t)}</div><div class="sp" id="sp${x.i}">${esc(x.p)}</div>
+    `<div class="seedbox sb-${x.c}"><div class="st"><span class="sbtag">${esc({scan:"② 看實況",mix:"③ 混",deep:"推深一層",plan:"變成企劃"}[x.c] || "")}</span>${esc(x.t)}</div><div class="sp" id="sp${x.i}">${esc(x.p)}</div>
      <button class="btn-ghost btn-sm" style="margin-top:8px" data-i="${x.i}">複製這則</button></div>`).join("");
   $("seedList").querySelectorAll("[data-sc]").forEach(b => b.onclick = () => {
     seedCat = b.dataset.sc; renderSeeds();

@@ -194,6 +194,11 @@
   .dc-stats b{color:var(--accent);font-size:15px}
   .dc-foot{margin-top:11px;padding-top:9px;border-top:1px solid var(--line);
     font-size:11.5px;color:var(--ink-soft)}
+  .solobox{background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--ink);
+    border-radius:10px;padding:11px 14px;font-size:13.5px;line-height:1.8}
+  .solohot{background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--accent);
+    border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.75;margin-bottom:12px}
+  .btn-sm{padding:5px 12px;font-size:13px}
   .mapsw{display:flex;gap:6px;margin-bottom:8px}
   .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
   .mapsvg svg{display:block;width:100%;height:auto}
@@ -523,7 +528,9 @@
       <h2>看大家混出來的，接一個往下做</h2>
       <p class="sub" style="margin-bottom:12px">
         只看得到去識別化編號，看不到姓名學號。
-        看到有意思的，可以<b>接著往下混</b>——從別人的結果開始，是站在別人的肩膀上，不是抄。
+        看到有意思的，可以<b>接著往下混</b>——從別人的結果開始，是站在別人的肩膀上，不是抄。<br>
+        <b>👤 配不到人的時候，這裡就是你的路</b>：接一個<b>算你一輪</b>，對方不用在線上，
+        而且剛好滿足作業的「接過別人混出來的」。
       </p>
       <div class="grid" id="mixGrid"></div>
     </div>
@@ -1210,7 +1217,8 @@ function renderPool(){
       banner.innerHTML = items.length
         ? `<div class="pairhot">🔥 現在有 <b>${items.length}</b> 個人出了牌在等人接。
            <b>直接接一張，比等別人來接你快得多</b>——往下捲到「<b>B · 直接接一個正在等的同學</b>」。</div>`
-        : "";
+        : `<div class="solohot">👤 沒有人在等配對也沒關係——<b>一個人做得完三輪</b>：
+           到「<b>④ 看大家混的</b>」按「接著往下混」，對方不用在線上。</div>`;
     }
     try { updateCounts(); } catch (_) {}
     $("poolList").innerHTML = items.length ? items.map(p =>
@@ -1220,7 +1228,15 @@ function renderPool(){
         <div class="pf"><span>#${String(p.by).padStart(2,"0")} 正在等人配對</span>
         <button class="btn-ghost btn-sm">跟他一組</button></div>
       </div>`).join("")
-      : `<div class="hint">目前沒有人在等配對（或你都配過了）。<b>那就先出一張牌</b>，會有人來接你的。</div>`;
+      : `<div class="solobox">
+          <b>現在沒有人在等配對</b>——沒關係，<b>一個人也做得完</b>。<br>
+          到「<b>④ 看大家混的</b>」挑一個別人已經混出來的，按「<b>接著往下混</b>」：
+          <b>一樣算你一輪</b>，而且剛好就是作業要求的「接過別人混出來的」那一項。
+          對方不用在線上。
+          <button class="btn btn-sm" id="goGallery" style="margin-top:8px">去 ④ 挑一個接著混</button>
+        </div>`;
+    const gg = $("goGallery");
+    if (gg) gg.onclick = () => { show("map"); };
     $("poolList").querySelectorAll(".pi").forEach(el => {
       const btn = el.querySelector("button"); if (!btn) return;
       btn.onclick = () => {
@@ -1609,6 +1625,7 @@ function renderDone(){
   const okJam = jams.length >= 3;
   rows.push(`<div class="chk ${okJam ? "ok" : "no"}">
     <div class="ct">${okJam ? "✅" : "⬜"} 完成三輪疊加　<b>${jams.length}/3</b></div>
+    ${jams.length < 3 ? `<div class="cb">還差 ${3 - jams.length} 輪。<b>配不到人就到「④ 看大家混的」按「接著往下混」</b>——一樣算一輪，對方不用在線上。</div>` : ""}
     ${jams.length ? `<div class="cb">` + jams.map((j, i) =>
       `第 ${i + 1} 輪 · 跟 <b>#${String(j.by === myEnv ? j.fromEnv : j.by).padStart(2,"0")}</b> 一組　${esc(j.play)} × ${esc(j.cult)}` +
       (j.by === myEnv ? "（你疊的）" : "（你出的牌）") +

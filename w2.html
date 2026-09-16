@@ -162,6 +162,8 @@
   .gle{font-size:12.5px;line-height:1.75;padding:3px 0;border-bottom:1px solid var(--line)}
   .gle b{display:inline-block;min-width:118px;margin-right:6px}
   .selfnote{display:block;font-size:10.5px;font-weight:600;opacity:.75;margin-top:1px}
+  .pairhot{background:var(--red-soft);border:1.5px solid var(--red);color:var(--red);
+    border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.75;margin-bottom:12px}
   .mapsw{display:flex;gap:6px;margin-bottom:8px}
   .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
   .mapsvg svg{display:block;width:100%;height:auto}
@@ -393,6 +395,7 @@
 
   <!-- ---------- ③ Jam ---------- -->
   <div id="pJam" class="hide">
+    <div id="jamPairBanner"></div>
     <div class="box" id="jamIntro">
       <h2>把一個文化要素混進去</h2>
       <p class="sub" style="margin-bottom:6px">
@@ -424,7 +427,7 @@
       </div>
 
       <div id="jamStepB">
-        <label style="margin-top:18px">B · 或者，直接接一個正在等的同學</label>
+        <label style="margin-top:18px" id="jamBLabel">B · 直接接一個正在等的同學<b style="color:var(--red)"> ← 最快的一條路</b></label>
         <div class="hint" style="margin-bottom:6px">下面是<b>已經出牌、還在等人接</b>的同學。接了就是你們兩個一組。</div>
         <div class="pool" id="poolList"></div>
       </div>
@@ -787,7 +790,11 @@ function updateCounts(){
     .filter(([k, j]) => j.by === myEnv || (j.fromEnv === myEnv && reacted.has(k))).length;
   $("tnPlan").textContent = myRoute.length ? myRoute.length + " 款" : "";
   $("tnScan").textContent = myCards.length ? myCards.length + " 張" : "";
-  $("tnJam").textContent = nJam + "/3";
+  // 上課實況：大家出完牌就在等，沒人主動接 ⇒ 把「有幾個人在等」放到分頁徽章上，
+  // 不管學生停在哪一頁都看得到。（2026-09-16 09:55 現場加的）
+  const waiting = Object.entries(poolCache)
+    .filter(([k, p]) => p.by !== myEnv && !takenPostKeys().includes(k) && !jamPartners.includes(p.by)).length;
+  $("tnJam").textContent = nJam + "/3" + (waiting ? " · " + waiting + " 人等你接" : "");
   $("tnMap").textContent = Object.keys(allJams).length + " 個";
   if ($("tnDeck")) $("tnDeck").textContent = (Object.values(allCards).reduce((n,o)=>n+Object.keys(o||{}).length,0) + CULTURE_CARDS.length + customCulture.length + Object.keys(allJams).length) + " 張";
   $("meProgress").textContent = `盤點 ${myCards.length} 張 · Jam ${nJam}/3`;
@@ -1126,22 +1133,40 @@ $("postPlay").onclick = () => {
   if (!selPlay) return;
   if (!roundStart) roundStart = Date.now();
   db.ref(`${W2}/pool`).push({v: selPlay.v, note: selPlay.note || "", by: myEnv, t: Date.now()})
-    .then(() => { $("jamStepA").classList.add("hide"); $("jamStepB").classList.remove("hide"); renderPool(); })
+    .then(() => {
+      $("jamStepA").classList.add("hide");
+      $("jamStepB").classList.remove("hide");
+      renderPool();
+      // 出完牌不要讓人停在原地等——直接把他帶到「接別人的牌」那一區
+      try { $("jamStepB").scrollIntoView({behavior: "smooth", block: "center"}); } catch (_) {}
+    })
     .catch(()=>{});
 };
+let poolCache = {};
+function takenPostKeys(){ return Object.values(allJams).map(j => j.postKey).filter(Boolean); }
 function renderPool(){
   if (!$("poolList")) return;
   // 🔴 這裡原本是 .once——開場前還沒有人完成任何一輪 jam 時，池子不會自己更新，
   //    坐在 ③ 的人看到的是凍結畫面。改成 .on（重複呼叫會覆蓋同一個 listener）。
   db.ref(`${W2}/pool`).on("value", s => {
     const v = s.val() || {};
-    const used = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.postKey);
+    poolCache = v;
+    // 已經被別人接走的牌不要再列——兩個人接同一張會有人白做工
+    const taken = takenPostKeys();
     const items = Object.entries(v)
       .map(([k, p]) => ({k, ...p}))
       .filter(p => p.by !== myEnv)
-      .filter(p => !used.includes(p.k))
+      .filter(p => !taken.includes(p.k))
       .filter(p => !jamPartners.includes(p.by))
       .sort((a, b) => b.t - a.t).slice(0, 12);
+    const banner = $("jamPairBanner");
+    if (banner) {
+      banner.innerHTML = items.length
+        ? `<div class="pairhot">🔥 現在有 <b>${items.length}</b> 個人出了牌在等人接。
+           <b>直接接一張，比等別人來接你快得多</b>——往下捲到「<b>B · 直接接一個正在等的同學</b>」。</div>`
+        : "";
+    }
+    try { updateCounts(); } catch (_) {}
     $("poolList").innerHTML = items.length ? items.map(p =>
       `<div class="pi" data-k="${p.k}">
         <div class="pt">${esc(p.v)}</div>

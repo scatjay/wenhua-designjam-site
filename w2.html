@@ -164,6 +164,11 @@
   .selfnote{display:block;font-size:10.5px;font-weight:600;opacity:.75;margin-top:1px}
   .pairhot{background:var(--red-soft);border:1.5px solid var(--red);color:var(--red);
     border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.75;margin-bottom:12px}
+  .cultbar{display:flex;justify-content:space-between;align-items:center;gap:8px;
+    font-size:12.5px;color:var(--ink-soft);margin:0 0 8px}
+  .cno{display:inline-block;font-weight:800;color:var(--ink);background:var(--panel2);
+    border:1px solid var(--line);border-radius:999px;padding:0 6px;margin-right:5px}
+  .byenv{font-weight:700;opacity:.85}
   .mapsw{display:flex;gap:6px;margin-bottom:8px}
   .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
   .mapsvg svg{display:block;width:100%;height:auto}
@@ -781,6 +786,8 @@ function startWatching(){
     const v = s.val() || {};
     // 濾掉 _ 開頭的鍵（部署前探針留下的，customCards 是 create-only 刪不掉）
     customCulture = Object.entries(v).filter(([k]) => !k.startsWith("_")).map(([,c]) => ({v:c.v, k:c.d || "obj", note:c.note || "", by:c.addedBy}));
+    // 🔴 別人加卡不要把正在挑卡的人洗掉——只在他還沒選的時候才換一批
+    if (!selCult) { reshuffleCult(); }
     renderCultPick();
     if (!$('pDeck').classList.contains('hide')) renderDeck();
     updateCounts(); renderDone();
@@ -1204,6 +1211,24 @@ function renderPool(){
     });
   });
 }
+// 整副文化卡的統一編號——課堂上可以直接喊「第 31 號那張」。
+// 老師原本的 24 張是 #1-24，學生加的依加入時間往後排（push key 是時間序，所以號碼不會跳動）。
+function cultDeck(){
+  return CULTURE_CARDS.concat(customCulture).map((c, i) => ({...c, no: i + 1}));
+}
+let cultShown = null;      // 目前顯示的那一批（不是每次 render 都重抽）
+let cultShownFor = null;   // 這一批是哪個分類抽的
+function reshuffleCult(force){
+  // 🔴 已經選好卡了就不要動他——正在挑的人被洗掉最惱人
+  if (selCult && !force) return false;
+  const all = cultDeck();
+  cultShown = (cultFilter === "all"
+    ? all.slice().sort(() => 0.5 - Math.random()).slice(0, 8)
+    : all.filter(c => (CULT_KINDS[c.k] ? c.k : "obj") === cultFilter)
+         .sort(() => 0.5 - Math.random()).slice(0, 12));
+  cultShownFor = cultFilter;
+  return true;
+}
 function renderCultPick(){
   if (!$("cultPick")) return;
   {
@@ -1218,21 +1243,30 @@ function renderCultPick(){
       cultFilter = b.dataset.k; renderCultPick();
     });
   }
-  const all = CULTURE_CARDS.concat(customCulture);
-  // 全班 40 人各加 3 張之後，點一個分類會一次畫上百個按鈕 ⇒ 選了分類也要限量
-  const list = (cultFilter === "all" ? all.slice().sort(() => 0.5 - Math.random()).slice(0, 8)
-                                     : all.filter(c => c.k === cultFilter)
-                                          .sort(() => 0.5 - Math.random()).slice(0, 12));
+  // 只有在「還沒抽過」或「換了分類」時才重抽——有人加卡就全班重洗會把正在挑的人洗掉
+  if (!cultShown || cultShownFor !== cultFilter) reshuffleCult(true);
+  const list = cultShown || [];
+  const total = cultDeck().length;
   const hint = cultFilter !== "all" && CULT_KINDS[cultFilter]
     ? `<div class="khint"><b>${esc(CULT_KINDS[cultFilter].label)}</b>：${esc(CULT_KINDS[cultFilter].hint)}</div>`
     : `<div class="khint">上面選一類再挑卡。<b>不同類別扛機制的能力差很多</b>——物件類最容易變成換皮，行為、禁忌類常常機制自己就長出來了。</div>`;
-  $("cultPick").innerHTML = hint + list.map((c, i) => {
+  const bar = `<div class="cultbar">
+    <span>卡池共 <b>${total}</b> 張，這裡隨機給你看 <b>${list.length}</b> 張</span>
+    <button class="btn-ghost btn-sm" id="cultReshuffle">🔄 換一批</button>
+  </div>`;
+  $("cultPick").innerHTML = hint + bar + list.map((c, i) => {
     const k = CULT_KINDS[c.k] ? c.k : "obj";
     const kd = CULT_KINDS[k];
-    return `<button class="cc k-${k}" data-i="${i}"><div class="cd">${esc(kd.label)}</div>
+    // 學生自己加的卡標出是誰加的——課堂上找得到人問「你這張是什麼意思」
+    const who = c.by !== undefined && c.by !== null
+      ? ` · <span class="byenv">#${String(c.by).padStart(2, "0")} 加的</span>` : "";
+    return `<button class="cc k-${k}" data-i="${i}">
+      <div class="cd"><span class="cno">#${c.no}</span>${esc(kd.label)}${who}</div>
       <div class="cv">${esc(c.v)}</div>
       <div class="cnote">${esc(c.note || "")}</div></button>`;
   }).join("");
+  const rb = $("cultReshuffle");
+  if (rb) rb.onclick = () => { selCult = null; reshuffleCult(true); renderCultPick(); };
   $("cultPick").querySelectorAll(".cc").forEach(b => b.onclick = () => {
     $("cultPick").querySelectorAll(".cc").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel"); selCult = list[+b.dataset.i]; renderSeeds();
@@ -1617,6 +1651,17 @@ if ($("feedbackBtn")) $("feedbackBtn").onclick = () => {
     })
     .catch(e => { $("feedbackStatus").textContent = "送不出去：" + e.message; });
 };
+
+// 每隔一段時間換一批文化卡——全班一直在加新卡，不換的話後面加的永遠沒人看得到。
+// 🔴 只在「人在 ③、而且還沒選卡」的時候換，不會把正在挑的人洗掉。（楊老師 2026-09-16 上課中要的）
+setInterval(() => {
+  try {
+    if (selCult) return;
+    const p = $("pJam");
+    if (!p || p.classList.contains("hide")) return;
+    if (reshuffleCult()) renderCultPick();
+  } catch (_) {}
+}, 45000);
 
 // ============ 下載企劃 .md（跟第1週同一個做法）============
 if ($("downloadBtn")) $("downloadBtn").onclick = () => {

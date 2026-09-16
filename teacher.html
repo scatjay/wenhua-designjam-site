@@ -117,14 +117,14 @@
 
   <h2 style="font-size:16px;margin:28px 0 10px">💬 真實學生對這個工具的意見</h2>
   <table>
-    <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
+    <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th style="width:62px">單元</th><th>意見</th></tr></thead>
     <tbody id="fbrows"></tbody>
   </table>
 
   <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0">
     <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🧪 測試員／demo 意見（不計入上方）</summary>
     <table style="margin-top:10px">
-      <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th>意見</th></tr></thead>
+      <thead><tr><th style="width:90px">時間</th><th style="width:70px">編號</th><th style="width:62px">單元</th><th>意見</th></tr></thead>
       <tbody id="fbrowsTest"></tbody>
     </table>
   </details>
@@ -503,7 +503,10 @@ db.ref(`${NS}/feedback`).on("value", snap => {
   rows.innerHTML = ""; rowsTest.innerHTML = "";
   Object.values(val).sort((a,b) => b.t - a.t).forEach(f => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${fmtTime(f.t)}</td><td class="pair">#${f.env}</td><td>${escapeHtml(f.text)}</td>`;
+    // 第1週的意見沒有 unit 欄位（那時還沒加），沒帶就當第1週
+    const u = f.unit === "w2" ? "第2週" : "第1週";
+    tr.innerHTML = `<td>${fmtTime(f.t)}</td><td class="pair">#${f.env}</td>` +
+      `<td><span class="chipk">${u}</span></td><td>${escapeHtml(f.text)}</td>`;
     (isRealEnv(f.env) ? rows : rowsTest).appendChild(tr);
   });
 });

@@ -564,6 +564,20 @@
     </p>
     <div id="seedList"></div>
   </div>
+
+  <div class="box">
+    <h2>這個工具哪裡卡卡的？</h2>
+    <p class="sub" style="margin-bottom:8px">
+      跟這週的內容無關也沒關係——<b>哪裡看不懂、哪裡按了沒反應、哪裡讓你想放棄</b>，寫下來。
+      老師看得到，下一週會改。不記名，只帶你的編號。
+    </p>
+    <textarea id="feedbackBox" style="min-height:70px"
+      placeholder="例如：配對等太久、看不懂「文化抽掉還成立嗎」在問什麼、手機上某個按鈕點不到…"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="btn-ghost" id="feedbackBtn">送出意見</button>
+    </div>
+    <div class="hint" id="feedbackStatus"></div>
+  </div>
 </div>
 
 </div>
@@ -1548,6 +1562,22 @@ function renderDone(){
   //    夥伴編號保留，作業本來就要求截圖看得到跟誰一組。
   $("doneList").innerHTML = rows.join("");
 }
+
+// ============ 學生對這個工具的意見（第1週就有，第2週補上）============
+// 🔴 寫進跟第1週同一個 whgm/feedback，多帶一個 unit 欄位讓後台分得開。
+//    規則是 hasChildren(['env','text','t']) —— 沒有禁止額外欄位，加 unit 是安全的
+//    （2026-09-16 上課前查過部署中的 database.rules.json 才動手）。
+if ($("feedbackBtn")) $("feedbackBtn").onclick = () => {
+  const text = $("feedbackBox").value.trim();
+  if (!text) { $("feedbackStatus").textContent = "寫一句再送出。"; return; }
+  if (myEnv === null || myEnv === undefined) { $("feedbackStatus").textContent = "先輸入編號進來。"; return; }
+  db.ref(`${NS}/feedback`).push({env: myEnv, text, t: Date.now(), unit: "w2"})
+    .then(() => {
+      $("feedbackBox").value = "";
+      $("feedbackStatus").textContent = "收到了，謝謝——老師看得到。";
+    })
+    .catch(e => { $("feedbackStatus").textContent = "送不出去：" + e.message; });
+};
 
 // ============ 下載企劃 .md（跟第1週同一個做法）============
 if ($("downloadBtn")) $("downloadBtn").onclick = () => {

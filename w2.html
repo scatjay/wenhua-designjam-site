@@ -799,6 +799,7 @@ let cultFilter = "all";
 
 // ============ 工具 ============
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+let curPage = "plan";
 function show(p){
   ["plan","scan","jam","map","cmap","deck"].forEach(k => {
     $("p" + k.charAt(0).toUpperCase() + k.slice(1)).classList.toggle("hide", k !== p);
@@ -810,10 +811,70 @@ function show(p){
   if (p === "jam") { renderPlayPick(); renderPool(); renderOthersCards(); }
   if (p === "deck") renderDeck();
   window.scrollTo(0, 0);
+  curPage = p;
+  queueDraftSave();
 }
 function fmtTime(ms){
   const s = Math.floor(ms / 1000);
   return String(Math.floor(s / 60)).padStart(2,"0") + ":" + String(s % 60).padStart(2,"0");
+}
+
+// ============ 草稿自動暫存（同裝置切頁保留 ＋ 跨裝置同步）============
+// 2026-09-16 楊老師提出：切換學習單再切回來，填到一半的東西不能不見；
+// 手機跟電腦同時用同一個編號時，也要接得到對方剛存的草稿。
+// 只存「正在打但還沒送出」的東西（選的路線、目前在哪一頁、還沒存卡/送出的文字），
+// 已經送出的 cards/jams 本來就在各自的節點裡，不重複存。
+// 寫法用 .set()（整份覆蓋）不是 .push()——這是「目前狀態」，不是事件記錄。
+// 別人正在打字的欄位不蓋掉（document.activeElement 判斷），避免搶著打字互相干擾。
+const DRAFT_FIELDS = ["cGame", "cLine", "cDetail", "cCultureElement", "jamLine"];
+let draftTimer = null;
+let draftRef = null;
+let lastDraftWriteAt = 0;
+
+function collectDraft(){
+  const d = {page: curPage, route: myRoute.slice(), t: Date.now()};
+  DRAFT_FIELDS.forEach(id => { const el = $(id); if (el) d[id] = el.value; });
+  return d;
+}
+function saveDraftLocal(d){
+  if (myEnv === null || myEnv === undefined) return;
+  try { localStorage.setItem("designjam_w2_draft_" + myEnv, JSON.stringify(d)); } catch(_) {}
+}
+function queueDraftSave(){
+  if (myEnv === null || myEnv === undefined) return;
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => {
+    const d = collectDraft();
+    lastDraftWriteAt = d.t;
+    saveDraftLocal(d);
+    if (draftRef) draftRef.set(d).catch(() => {});
+  }, 500);
+}
+function applyDraft(d){
+  if (!d) return;
+  if (Array.isArray(d.route)) { myRoute = d.route.slice(); renderGames(); }
+  DRAFT_FIELDS.forEach(id => {
+    const el = $(id);
+    if (!el || document.activeElement === el) return;
+    if (typeof d[id] === "string" && el.value !== d[id]) el.value = d[id];
+  });
+  if (d.page && d.page !== curPage) show(d.page); else updateCounts();
+  renderSeeds();
+}
+function startDraftSync(){
+  // 先用本機存的立刻還原（不用等網路），跨裝置的版本隨後由 Firebase 覆蓋（比較新才蓋）。
+  try {
+    const raw = localStorage.getItem("designjam_w2_draft_" + myEnv);
+    if (raw) applyDraft(JSON.parse(raw));
+  } catch(_) {}
+  draftRef = db.ref(`${W2}/drafts/${myEnv}`);
+  draftRef.on("value", s => {
+    const d = s.val();
+    if (!d || !d.t) return;
+    if (d.t <= lastDraftWriteAt) return; // 這就是我們自己剛存的那筆，不要蓋自己
+    applyDraft(d);
+    lastDraftWriteAt = d.t;
+  });
 }
 
 // ============ 登入 ============
@@ -839,7 +900,14 @@ $("joinBtn").onclick = () => {
   startWatching();
   renderGames();
   renderSeeds();
+  startDraftSync();
 };
+
+DRAFT_FIELDS.forEach(id => {
+  const el = $(id);
+  if (!el) return;
+  el.addEventListener("input", queueDraftSave);
+});
 
 // ============ 資料訂閱 ============
 function startWatching(){
@@ -1027,6 +1095,7 @@ function drawGames(f){
       else myRoute.push(n);
       $("planStatus").textContent = `已選 ${myRoute.length} 款`;
       drawGames(f); updateCounts();
+      queueDraftSave();
     };
   });
 }
@@ -1036,6 +1105,7 @@ $("planDone").onclick = () => {
   scanStart = Date.now();
   renderScanTarget();
   show("scan");
+  queueDraftSave();
 };
 
 // ============ ② 盤點 ============
@@ -1203,6 +1273,7 @@ $("saveCard").onclick = () => {
     updateScanVerdictQ();
     $("scanStatus").textContent = "";
     renderScanTarget(); renderSeeds();
+    queueDraftSave();
   }).catch(e => { $("scanStatus").textContent = "存不進去：" + e.message; });
 };
 function renderMyCards(){
@@ -1518,6 +1589,7 @@ $("saveJam").onclick = () => {
       $("jamResult").classList.add("hide");
       $("jamStepA").classList.remove("hide");
       renderPlayPick(); window.scrollTo(0, 0);
+      queueDraftSave();
     };
   }).catch(e => {
     jamSaving = false;

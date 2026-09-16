@@ -440,7 +440,10 @@
       <textarea id="cDetail" placeholder="只有真的看過／玩過的人才知道的東西，不是查得到的介紹"></textarea>
       <div class="hint">這一格<b>沒有選項可以點</b>——AI 沒看過，只有你有。這是這張卡的靈魂。</div>
 
-      <label style="margin-top:14px">這款的文化抽掉還成立嗎？</label>
+      <label style="margin-top:14px">試玩或看完實況之後，你覺得<b>這款遊戲裡的文化要素</b>是什麼？</label>
+      <textarea id="cCultureElement" placeholder="例如：某個信仰儀式、某種禁忌、某段歷史情節、某樣傳統物件…"></textarea>
+
+      <label style="margin-top:14px" id="scanVerdictQ">如果把遊戲裡的文化要素抽掉，這還是一個文化遊戲嗎？</label>
       <div class="vpick" id="scanVerdict"></div>
       <div class="status" id="scanStatus"></div>
       <button class="btn" id="saveCard">存成一張遊戲卡</button>
@@ -1146,10 +1149,21 @@ function renderVerdictPick(id, onPick, getCur){
     renderVerdictPick(id, onPick, getCur);
   });
 }
+function updateScanVerdictQ(){
+  const el = $("scanVerdictQ");
+  if (!el) return;
+  const ce = ($("cCultureElement") && $("cCultureElement").value.trim()) || "";
+  el.innerHTML = ce
+    ? `如果把「${esc(ce)}」抽掉，這還是一個文化遊戲嗎？`
+    : "如果把遊戲裡的文化要素抽掉，這還是一個文化遊戲嗎？";
+}
+if ($("cCultureElement")) $("cCultureElement").addEventListener("input", updateScanVerdictQ);
+
 $("saveCard").onclick = () => {
   const game = $("cGame").value.trim();
   const line = $("cLine").value.trim();
   const detail = $("cDetail").value.trim();
+  const cultureElement = $("cCultureElement").value.trim();
   if (!game) { $("scanStatus").textContent = "先寫遊戲名稱。"; return; }
   // 🔴 同一款只能盤點一次——盤點三張的意思是看三款，不是同一款存三次。
   //    （現場有同學把「傳話畫畫」跟「Gartic Phone（傳話畫畫）」分開存，算成兩張）
@@ -1169,17 +1183,19 @@ $("saveCard").onclick = () => {
       : "「沒看過講不出來的細節」是必填——那是這張卡的靈魂。";
     return;
   }
+  if (!cultureElement) { $("scanStatus").textContent = "先寫「這款遊戲裡的文化要素是什麼」，再判斷抽掉之後還成不成立。"; return; }
   if (!pendingV) { $("scanStatus").textContent = "還沒選「把文化抽掉還成不成立」。"; return; }
   const g = GAMES.find(x => x.n === game);
   db.ref(`${W2}/cards/${myEnv}`).push({
-    game, line, detail, v: pendingV,
+    game, line, detail, cultureElement, v: pendingV,
     mode: g ? g.mode : "play", t: Date.now(),
     ms: Date.now() - (lastCardAt || scanStart || Date.now())
   }).then(() => {
     lastCardAt = Date.now();
-    $("cGame").value = ""; $("cLine").value = ""; $("cDetail").value = "";
+    $("cGame").value = ""; $("cLine").value = ""; $("cDetail").value = ""; $("cCultureElement").value = "";
     pendingV = null;
     renderVerdictPick("scanVerdict", v => { pendingV = v; }, () => pendingV);
+    updateScanVerdictQ();
     $("scanStatus").textContent = "";
     renderScanTarget(); renderSeeds();
   }).catch(e => { $("scanStatus").textContent = "存不進去：" + e.message; });
@@ -1189,7 +1205,8 @@ function renderMyCards(){
   $("myCards").innerHTML = myCards.length
     ? `<label>你做過的卡（${myCards.length}）</label>` + myCards.map(c =>
         `<div class="pi"><div class="pt">${esc(c.game)}</div><div class="pb">${esc(c.line || "")}</div>
-         <div class="pf"><span>🔑 ${esc(c.detail || "")}</span></div></div>`).join("")
+         <div class="pf"><span>🔑 ${esc(c.detail || "")}</span></div>
+         ${c.cultureElement ? `<div class="pf"><span>🎎 文化要素：${esc(c.cultureElement)}</span></div>` : ""}</div>`).join("")
     : "";
   renderScanTarget();
   renderPlayPick();
@@ -1903,7 +1920,8 @@ if ($("downloadBtn")) $("downloadBtn").onclick = () => {
     L.push(`### ${c.game}`);
     if (c.line) L.push(`- 一句話講玩法：${c.line}`);
     if (c.detail) L.push(`- 沒看過講不出來的細節：${c.detail}`);
-    L.push(`- 把文化抽掉還成立嗎：**${vlabel(c.v)}** ${mins(c.ms)}`);
+    if (c.cultureElement) L.push(`- 遊戲裡的文化要素：${c.cultureElement}`);
+    L.push(`- 把文化要素抽掉還成立嗎：**${vlabel(c.v)}** ${mins(c.ms)}`);
     L.push(``);
   });
   L.push(`## 二、混出來的結果`);

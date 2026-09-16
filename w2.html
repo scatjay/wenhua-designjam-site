@@ -440,8 +440,9 @@
       <textarea id="cDetail" placeholder="只有真的看過／玩過的人才知道的東西，不是查得到的介紹"></textarea>
       <div class="hint">這一格<b>沒有選項可以點</b>——AI 沒看過，只有你有。這是這張卡的靈魂。</div>
 
-      <label style="margin-top:14px">試玩或看完實況之後，你覺得<b>這款遊戲裡的文化要素</b>是什麼？</label>
-      <textarea id="cCultureElement" placeholder="例如：某個信仰儀式、某種禁忌、某段歷史情節、某樣傳統物件…"></textarea>
+      <label style="margin-top:14px">具體來說，是<b>哪一個畫面、物件、台詞或動作</b>，讓你覺得這款遊戲有文化要素？</label>
+      <textarea id="cCultureElement" placeholder="不是「信仰」「禁忌」這種抽象詞——要具體：例如主角上香的動作、某句台詞裡的地名、牆上貼的符咒…"></textarea>
+      <div class="hint">跟上面那格一樣：<b>寫得出具體畫面才算數</b>，寫抽象的類別詞（信仰、傳統、文化）等於沒寫。</div>
 
       <label style="margin-top:14px" id="scanVerdictQ">如果把遊戲裡的文化要素抽掉，這還是一個文化遊戲嗎？</label>
       <div class="vpick" id="scanVerdict"></div>
@@ -517,7 +518,7 @@
         <label style="margin-top:14px">疊出來是什麼？一句話</label>
         <textarea id="jamLine" placeholder="這兩張加在一起，會變成什麼玩法？"></textarea>
         <div class="hint" id="jamSeed" style="margin-top:6px">
-          卡住的話，<b>把這一頁拉到最下面</b>，那裡有六則可以直接複製去問 Gemini 的指令，
+          <b>不知道怎麼混</b>的話，<b>把這一頁拉到最下面</b>，那裡有六則可以直接複製去問 Gemini 的指令，
           會自動帶入你剛剛選的遊戲跟文化要素。
         </div>
 
@@ -863,7 +864,7 @@ function updateCounts(){
   const nJam = Object.entries(allJams)
     .filter(([k, j]) => j.by === myEnv || (j.fromEnv === myEnv && reacted.has(k))).length;
   $("tnPlan").textContent = myRoute.length ? myRoute.length + " 款" : "";
-  $("tnScan").textContent = myCards.length ? myCards.length + " 張" : "";
+  $("tnScan").textContent = myCards.length + "/3 張";
   // 上課實況：大家出完牌就在等，沒人主動接 ⇒ 把「有幾個人在等」放到分頁徽章上，
   // 不管學生停在哪一頁都看得到。（2026-09-16 09:55 現場加的）
   const waiting = Object.entries(poolCache)
@@ -881,7 +882,7 @@ function updateCounts(){
     (waiting ? " · " + waiting + " 人等你接" : (ready ? " · " + ready + " 張可直接混" : ""));
   $("tnMap").textContent = Object.keys(allJams).length + " 個";
   if ($("tnDeck")) $("tnDeck").textContent = (Object.values(allCards).reduce((n,o)=>n+Object.keys(o||{}).length,0) + CULTURE_CARDS.length + customCulture.length + Object.keys(allJams).length) + " 張";
-  $("meProgress").textContent = `盤點 ${myCards.length} 張 · Jam ${nJam}/3`;
+  $("meProgress").textContent = `盤點 ${myCards.length}/3 張 · Jam ${nJam}/3`;
 }
 function renderRoundHint(){
   const h = {1:"從你平常真的在玩的遊戲出發", 2:"從有文化要素的遊戲出發", 3:"平衡前兩輪，目標是文化遊戲地圖的左上角"};
@@ -1203,7 +1204,7 @@ $("saveCard").onclick = () => {
 function renderMyCards(){
   if (!$("myCards")) return;
   $("myCards").innerHTML = myCards.length
-    ? `<label>你做過的卡（${myCards.length}）</label>` + myCards.map(c =>
+    ? `<label>你做過的卡（${myCards.length}/3）</label>` + myCards.map(c =>
         `<div class="pi"><div class="pt">${esc(c.game)}</div><div class="pb">${esc(c.line || "")}</div>
          <div class="pf"><span>🔑 ${esc(c.detail || "")}</span></div>
          ${c.cultureElement ? `<div class="pf"><span>🎎 文化要素：${esc(c.cultureElement)}</span></div>` : ""}</div>`).join("")
@@ -1777,7 +1778,7 @@ function renderDone(){
 
   const okCards = myCards.length >= 3;
   rows.push(`<div class="chk ${okCards ? "ok" : "no"}">
-    <div class="ct">${okCards ? "✅" : "⬜"} 盤點遊戲卡　<b>${myCards.length}</b> 張</div>
+    <div class="ct">${okCards ? "✅" : "⬜"} 盤點遊戲卡　<b>${myCards.length}/3</b> 張</div>
     ${myCards.length ? `<div class="cb">` + myCards.map(c =>
       esc(c.game) + (c.v && VERDICT_BY[c.v] ? `（${esc(VERDICT_BY[c.v].label)}）` : "") +
       (c.ms ? ` <span class="mins">${Math.max(1, Math.round(c.ms / 60000))}分</span>` : "")).join("、") + `</div>` : ""}
@@ -1797,7 +1798,7 @@ function renderDone(){
   const selfCarried = jams.filter(j => j.by === myEnv && j.carry && j.fromEnv === myEnv).length;
   const okCarry = carried.length >= 1;
   rows.push(`<div class="chk ${okCarry ? "ok" : "no"}">
-    <div class="ct">${okCarry ? "✅" : "⬜"} 接過別人混出來的　<b>${carried.length}</b> 次</div>
+    <div class="ct">${okCarry ? "✅" : "⬜"} 接過別人混出來的　<b>${carried.length}/1</b> 次</div>
     <div class="cb">${carried.length
       ? carried.map(j => `接 #${String(j.fromEnv).padStart(2,"0")} 的「${esc(j.play)}」再混上 ${esc(j.cult)}`).join("<br>")
       : (selfCarried
@@ -1845,9 +1846,9 @@ function renderDone(){
       <div class="dc-sec">三輪混出來的</div>
       ${rounds}
       <div class="dc-stats">
-        <span>盤點 <b>${myCards.length}</b> 張</span>
-        <span>新增文化卡 <b>${mineCult.length}</b> 張</span>
-        <span>接別人的 <b>${carried.length}</b> 次</span>
+        <span>盤點 <b>${myCards.length}/3</b> 張</span>
+        <span>新增文化卡 <b>${mineCult.length}/3</b> 張</span>
+        <span>接別人的 <b>${carried.length}/1</b> 次</span>
         <span>夥伴 <b>${partners.length}</b> 位</span>
       </div>
       <div class="dc-foot">${stamp}　·　截這一張上傳到 flipclass W2-2</div>

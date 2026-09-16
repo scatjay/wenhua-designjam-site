@@ -1325,12 +1325,23 @@ function renderJamMap(){
   }
   renderVerdictPick("jamVerdict", v => { jamV = v; }, () => jamV);
 }
+let jamSaving = false;
+let lastJamSig = "";
 $("saveJam").onclick = () => {
   if (!targetPost) return;
+  // 🔴 push 是非同步的，回來之前可以一直按 ⇒ 同一輪被送出好幾筆。
+  //    （2026-09-16 現場：一位同學送出 10 筆一模一樣的）
+  if (jamSaving) return;
   if (!selCult) { $("jamStatus").textContent = "還沒挑文化卡。"; return; }
   const line = $("jamLine").value.trim();
   if (!line) { $("jamStatus").textContent = "寫一句話講這兩張疊起來會變成什麼。"; return; }
   if (!jamV) { $("jamStatus").textContent = "還沒選疊完之後的判斷。"; return; }
+  // 同一個組合在短時間內只收一次——連點與誤觸都擋掉
+  const sig = [myEnv, targetPost.k, targetPost.v, selCult.v, line].join("|");
+  if (sig === lastJamSig) { $("jamStatus").textContent = "這一輪已經送出去了，不用再按。"; return; }
+  jamSaving = true;
+  $("saveJam").disabled = true;
+  $("saveJam").textContent = "送出中…";
   const RANK = {skin:0, story:1, mech:2, unsure:-1};
   const before = jamFromV, after = jamV;
   const moved = (RANK[after] ?? -1) - (RANK[before] ?? 0);
@@ -1341,6 +1352,10 @@ $("saveJam").onclick = () => {
     line, v: after, fv: before || null, t: Date.now(),
     ms: roundStart ? (Date.now() - roundStart) : null
   }).then(() => {
+    lastJamSig = sig;
+    jamSaving = false;
+    $("saveJam").disabled = false;
+    $("saveJam").textContent = "完成這一輪 Mix";
     roundStart = null;
     let msg;
     if (after === "unsure") {
@@ -1376,7 +1391,12 @@ $("saveJam").onclick = () => {
       $("jamStepA").classList.remove("hide");
       renderPlayPick(); window.scrollTo(0, 0);
     };
-  }).catch(e => { $("jamStatus").textContent = "存不進去：" + e.message; });
+  }).catch(e => {
+    jamSaving = false;
+    $("saveJam").disabled = false;
+    $("saveJam").textContent = "完成這一輪 Mix";
+    $("jamStatus").textContent = "存不進去：" + e.message;
+  });
 };
 
 // 擴充卡池
@@ -1894,6 +1914,7 @@ function renderDeck(){
 }
 
 // ============ 種子指令 ============
+let seedCat = "all";
 function renderSeeds(){
   if (!$("seedList")) return;
   // 依序回退：正在打的 → 最後存的那張卡 → 佔位符。
@@ -1903,14 +1924,30 @@ function renderSeeds(){
   const l = ($("cLine") && $("cLine").value.trim()) || (last && last.line) || "［你對它的一句話］";
   const play = targetPost ? targetPost.v : (selPlay ? selPlay.v : (last ? last.game : "［你的玩法］"));
   const cult = selCult ? selCult.v : "［你的文化元素］";
+  // 依今天現場的實際卡點設計（2026-09-16）：
+  //  · 「看不出核心機制」佔了所有複製次數的 11/18 → 這一類要多給幾種問法
+  //  · 21 筆判斷是「照樣玩」、只有 2 筆到機制層 → 要有一則專門把換皮推深
+  //  · 很多人那句話只寫得出「變得更刺激」 → 要有一則把形容詞換成規則
+  //  · 細節欄 12 張太短 → 要有一則幫他把細節寫具體
+  //  · 有同學直接回報「不知道混是什麼意思」 → 要有一則從頭解釋
   const seeds = [
-    {t:"看不出它的核心機制", p:`我剛玩了《${g}》大約十分鐘。我看到的是：${l}。\n請用三個問題幫我確認我有沒有看漏它的核心機制。不要直接告訴我答案。`},
-    {t:"判斷不出來", p:`這款遊戲是《${g}》。我要判斷一件事：把文化元素抽掉，它還玩不玩得下去。\n請給我一個支持的理由跟一個反對的理由，我自己決定。不要幫我下結論。`},
-    {t:"找文化素材", p:`我想在遊戲裡放「${cult}」。\n請給我三個一般人不知道、但跟日常生活有關的具體細節。不要給我觀光簡介式的介紹。`},
-    {t:"疊加卡住了", p:`我有一個玩法：${play}。我想疊上「${cult}」。\n請幫我想三種疊法：一種最表面（只換外觀）、一種中等（改故事）、一種最深（改規則本身）。\n然後告訴我第三種為什麼比較難做。\n這三種都不要直接用——挑一種，我告訴你我要改哪裡。`},
-    {t:"把它變成具體玩法", p:`我的玩法是「${play}」，疊上「${cult}」。\n我想把它變成三條規則以內、三分鐘玩得完的東西。\n請先<b>反問我三個問題</b>——玩家第一個動作是什麼、什麼時候算輸、「${cult}」是哪一條規則在管——\n等我回答完你再幫我整理，不要現在就把規則寫給我。`.replace(/<[^>]+>/g, "")},
-    {t:"想加一張新卡", p:`我想把「${cult}」做成一張卡。這張卡要能改變遊戲玩法，不能只是一個名詞。\n請反問我三個問題，幫我想清楚它到底會改變什麼。`},
+    {c:"scan", t:"看不出它的核心機制", p:`我剛看了《${g}》的實況大約十分鐘。我看到的是：${l}。\n請用三個問題幫我確認我有沒有看漏它的核心機制。不要直接告訴我答案。`},
+    {c:"scan", t:"分不清「畫面在幹嘛」跟「玩家在決定什麼」", p:`我在看《${g}》的實況。我寫下來的是：${l}。\n請你判斷：這句話寫的是「畫面上發生什麼」還是「玩家要做什麼決定」？\n如果是前者，請反問我三個問題，幫我找出玩家真正在決定的是什麼。不要幫我改寫。`},
+    {c:"scan", t:"「沒看過講不出來的細節」寫不出來", p:`我看了《${g}》的實況。這一格要寫「一個沒看過就講不出來的細節」，但我寫出來的東西查一下就查得到。\n請反問我五個問題，問的方向是：畫面上有什麼、聲音有什麼、實況主當下的反應是什麼、什麼地方跟我預期不一樣。\n不要幫我編，我自己回答。`},
+    {c:"scan", t:"判斷不出來", p:`這款遊戲是《${g}》。我要判斷一件事：把文化元素抽掉，它還玩不玩得下去。\n請給我一個支持的理由跟一個反對的理由，我自己決定。不要幫我下結論。`},
+
+    {c:"mix", t:"我不知道「混」要做什麼", p:`我在做一個練習：拿一款遊戲《${g}》，加一個文化要素「${cult}」進去。\n請用最白話的方式，舉三個「別的遊戲加了別的文化要素」的例子給我看，每個例子講清楚：加了什麼、玩法哪裡變了。\n先不要幫我想我的，我要先看懂這件事在幹嘛。`},
+    {c:"mix", t:"想不到要混什麼文化要素", p:`我想在《${g}》裡放「${cult}」。\n請給我三個一般人不知道、但跟日常生活有關的具體細節。不要給我觀光簡介式的介紹。`},
+    {c:"mix", t:"疊起來想不出會變成什麼", p:`我有一個玩法：${play}。我想疊上「${cult}」。\n請幫我想三種疊法：一種最表面（只換外觀）、一種中等（改故事）、一種最深（改規則本身）。\n然後告訴我第三種為什麼比較難做。\n這三種都不要直接用——挑一種，我告訴你我要改哪裡。`},
+    {c:"mix", t:"我只寫得出「變得更刺激」這種一句話", p:`我把《${play}》加上「${cult}」，我寫的是：${$("jamLine") && $("jamLine").value.trim() ? $("jamLine").value.trim() : "［你剛剛寫的那一句］"}。\n這句話是形容詞，不是規則。請反問我三個問題，幫我把它變成一條「玩家會做的動作 ＋ 做了會怎樣」的規則。\n不要幫我寫那條規則。`},
+
+    {c:"deep", t:"我判斷是「照樣玩」，想推到機制層", p:`我把《${play}》加上「${cult}」，但我自己判斷這只是換皮——把「${cult}」拿掉，遊戲照樣玩得下去。\n請告訴我：要動「${play}」的哪一條規則，才會變成「拿掉${cult}就玩不下去」？\n給我三個方向，每個方向都要指名是哪一條規則被改了。不要給我美術或劇情上的建議。`},
+    {c:"deep", t:"我的文化卡只寫得出名詞", p:`我想把「${cult}」做成一張卡。這張卡要能改變遊戲玩法，不能只是一個名詞。\n請反問我三個問題，幫我想清楚它到底會改變什麼。`},
+
+    {c:"plan", t:"把它變成具體玩法", p:`我的玩法是「${play}」，疊上「${cult}」。\n我想把它變成三條規則以內、三分鐘玩得完的東西。\n請先反問我三個問題——玩家第一個動作是什麼、什麼時候算輸、「${cult}」是哪一條規則在管——\n等我回答完你再幫我整理，不要現在就把規則寫給我。`},
+    {c:"plan", t:"要做成期末企劃（Deep Research 兩輪）", p:`第一輪：我做一個通識課練習，把《${play}》的玩法，跟「${cult}」這個文化要素結合。\n幫我找一下跟「${cult}」相關的真實事件或具體背景，然後完整盤點一下這類玩法在 2D 遊戲上可以做到哪些。我之後要用 AI 去把遊戲原型做出來。\n\n（拿到之後，再貼第二輪：）\n第二輪：幫我修正到用 Claude Pro 或 Google AI Studio 做得出來的企劃，不要太唬爛，給我 AAA 那種這學期末做不出來。`},
   ];
+
   // 🔴 指令本文一定是中文（帶了學生自己填的內容，插值組合無法進字典）。
   //    與其硬翻，不如解掉真正的阻斷點：讓 Gemini 用他的語言回。
   const askBack = {vi: "Trả lời bằng tiếng Việt.", id: "Jawab dalam Bahasa Indonesia."};
@@ -1924,10 +1961,21 @@ function renderSeeds(){
   };
   const langNote = (typeof curLang !== "undefined" && NOTE_BY_LANG[curLang])
     ? `<div class="khint">${NOTE_BY_LANG[curLang]}</div>` : "";
-  $("seedList").innerHTML = langNote + seeds.map((s, i) =>
-    `<div class="seedbox"><div class="st">${esc(s.t)}</div><div class="sp" id="sp${i}">${esc(s.p)}</div>
-     <button class="btn-ghost btn-sm" style="margin-top:8px" data-i="${i}">複製這則</button></div>`).join("");
-  $("seedList").querySelectorAll("button").forEach(b => b.onclick = () => {
+  const CATS = {all:"全部", scan:"② 看實況卡住", mix:"③ 混的時候卡住",
+                deep:"想推深一層", plan:"要變成企劃"};
+  const shown = seeds.map((x, i) => ({...x, i})).filter(x => seedCat === "all" || x.c === seedCat);
+  const tabs = `<div class="filters" style="margin-bottom:8px">` +
+    Object.entries(CATS).map(([k, v]) =>
+      `<button class="fbtn${seedCat === k ? " on" : ""}" data-sc="${k}">${v}</button>`).join("") + `</div>`;
+  $("seedList").innerHTML = langNote + tabs + shown.map(x =>
+    `<div class="seedbox"><div class="st">${esc(x.t)}</div><div class="sp" id="sp${x.i}">${esc(x.p)}</div>
+     <button class="btn-ghost btn-sm" style="margin-top:8px" data-i="${x.i}">複製這則</button></div>`).join("");
+  $("seedList").querySelectorAll("[data-sc]").forEach(b => b.onclick = () => {
+    seedCat = b.dataset.sc; renderSeeds();
+  });
+  // 🔴 只綁「複製」那些按鈕——用 querySelectorAll("button") 會把分類鈕的 onclick 也蓋掉，
+  //    分類就永遠篩不動（2026-09-16 上課中踩到，而且是靜默失效）
+  $("seedList").querySelectorAll("button[data-i]").forEach(b => b.onclick = () => {
     const txt = seeds[+b.dataset.i].p;
     // 🔴 還有［佔位符］就不給複製：測試實證 Gemini 會把空缺自己補完，
     //    回一份完整、權威、而且完全錯誤的答案——那正好打死這份學習單唯一的 AI 抗性條件。

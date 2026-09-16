@@ -169,6 +169,31 @@
   .cno{display:inline-block;font-weight:800;color:var(--ink);background:var(--panel2);
     border:1px solid var(--line);border-radius:999px;padding:0 6px;margin-right:5px}
   .byenv{font-weight:700;opacity:.85}
+  /* 完成卡：學生要截的就是這一張，所以要一眼看完、不跑版 */
+  .donecard{border:2px solid var(--accent);border-radius:14px;padding:18px 20px 14px;
+    margin:0 0 16px;background:linear-gradient(160deg,var(--accent-soft) 0%,var(--panel) 55%)}
+  .dc-head{border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+  .dc-kicker{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--accent);opacity:.9}
+  .dc-title{font-size:20px;font-weight:900;color:var(--ink);margin-top:2px}
+  .dc-badge{display:inline-block;background:var(--green-soft);color:var(--green);
+    border:1.5px solid var(--green);border-radius:999px;padding:3px 13px;
+    font-size:13px;font-weight:800;margin-bottom:12px}
+  .dc-sec{font-size:11.5px;font-weight:800;color:var(--ink-soft);letter-spacing:.06em;margin-bottom:6px}
+  .dc-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    padding:6px 0;border-bottom:1px dashed var(--line)}
+  .dc-n{flex:none;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .dc-mix{font-size:14px;color:var(--ink)}
+  .dc-who{font-size:12px;color:var(--ink-soft);font-weight:700}
+  .dc-v{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft)}
+  .dc-v.v-mech{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+  .dc-v.v-story{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
+  .dc-v.v-skin{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+  .dc-stats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:11px;font-size:12.5px;color:var(--ink-soft)}
+  .dc-stats b{color:var(--accent);font-size:15px}
+  .dc-foot{margin-top:11px;padding-top:9px;border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--ink-soft)}
   .mapsw{display:flex;gap:6px;margin-bottom:8px}
   .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
   .mapsvg svg{display:block;width:100%;height:auto}
@@ -520,7 +545,7 @@
   <!-- ---------- 完成檢核（截圖用）---------- -->
   <div class="box" id="doneCard">
     <h2>完成檢核 · 截這一張交作業</h2>
-    <div class="hint" style="margin-bottom:10px">四項都出現 ✅ 才算完成。把這一塊截圖上傳。</div>
+    <div class="hint" id="doneHint" style="margin-bottom:10px">四項都出現 ✅ 才算完成。完成之後這裡會出現一張<b>專門給你截圖的卡</b>。</div>
     <div id="doneList"></div>
     <div class="row" style="margin-top:12px">
       <button class="btn-ghost" id="downloadBtn">下載企劃 .md</button>
@@ -1633,7 +1658,50 @@ function renderDone(){
   //    截圖透過 flipclass 繳交，而 flipclass 知道每份繳交屬於誰——印上去等於學生自己
   //    幫全班建好「編號 → 真實身份」的對照表，IRB 的去識別化設計會當場失效且不可逆。
   //    夥伴編號保留，作業本來就要求截圖看得到跟誰一組。
-  $("doneList").innerHTML = rows.join("");
+  // ===== 四項全綠 → 給一張一眼看完、適合截圖的完成卡 =====
+  const allOk = okJam && okCards && okNew && okCarry;
+  let card = "";
+  if (allOk) {
+    const d = new Date();
+    const stamp = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" +
+                  String(d.getDate()).padStart(2, "0") + " " +
+                  String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+    const rounds = jams.slice(0, 3).map((j, i) => {
+      const other = j.by === myEnv ? j.fromEnv : j.by;
+      const vd = j.v && VERDICT_BY[j.v] ? VERDICT_BY[j.v].label : "";
+      return `<div class="dc-row">
+        <span class="dc-n">${i + 1}</span>
+        <span class="dc-mix"><b>${esc(j.play)}</b> ＋ ${esc(j.cult)}</span>
+        <span class="dc-who">跟 #${String(other).padStart(2, "0")}</span>
+        ${vd ? `<span class="dc-v v-${j.v}">${esc(vd)}</span>` : ""}
+      </div>`;
+    }).join("");
+    card = `<div class="donecard">
+      <div class="dc-head">
+        <div class="dc-kicker">文化遊戲松實作 · 第2週</div>
+        <div class="dc-title">文化怎麼放進遊戲裡</div>
+      </div>
+      <div class="dc-badge">✅ 四項都完成了</div>
+      <div class="dc-sec">三輪混出來的</div>
+      ${rounds}
+      <div class="dc-stats">
+        <span>盤點 <b>${myCards.length}</b> 張</span>
+        <span>新增文化卡 <b>${mineCult.length}</b> 張</span>
+        <span>接別人的 <b>${carried.length}</b> 次</span>
+        <span>夥伴 <b>${partners.length}</b> 位</span>
+      </div>
+      <div class="dc-foot">${stamp}　·　截這一張上傳到 flipclass W2-2</div>
+    </div>`;
+  }
+  // 🔴 不要在截圖上印自己的信封編號（unit1.html 為同樣理由拿掉過，楊老師 2026-09-08 定案）：
+  //    截圖透過 flipclass 繳交，而 flipclass 知道每份繳交屬於誰——印上去等於學生自己
+  //    幫全班建好「編號 → 真實身份」的對照表，IRB 的去識別化設計會當場失效且不可逆。
+  //    夥伴編號保留，作業本來就要求截圖看得到跟誰一組。
+  $("doneList").innerHTML = card + rows.join("");
+  const hintEl = $("doneHint");
+  if (hintEl) hintEl.innerHTML = allOk
+    ? "✅ 都完成了——<b>截上面那張卡</b>就可以了，下面的明細不用一起截。"
+    : "四項都出現 ✅ 才算完成。完成之後這裡會出現一張<b>專門給你截圖的卡</b>。";
 }
 
 // ============ 學生對這個工具的意見（第1週就有，第2週補上）============

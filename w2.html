@@ -421,9 +421,11 @@
 
       <div id="jamStepA">
         <label>A · 出一張你的遊戲卡，等人來跟你配對</label>
-        <div class="hint" style="margin-bottom:6px">從你剛剛看實況盤點出來的遊戲裡挑一款。出牌之後，會有同學來接你的牌跟你配成一組。<b>一輪用一張，用過的會標掉。</b></div>
+        <div class="hint" style="margin-bottom:6px">從你剛剛看實況盤點出來的遊戲裡挑一款。出牌之後，會有同學來接你的牌跟你配成一組。<br>
+        <b>可以一次出好幾張</b>——掛在池子裡的牌越多，越快有人來接你。</div>
         <div class="cardpick" id="playPick"></div>
         <button class="btn" id="postPlay">出牌，等人來配對</button>
+        <div class="hint" id="jamPostStatus"></div>
       </div>
 
       <div id="jamStepB">
@@ -1112,15 +1114,20 @@ function renderPlayPick(){
   if (!$("playPick")) return;
   // 一輪用一個 seed，用過的就標掉——下一輪從剩下的裡面繼續選
   const used = new Set(Object.values(allJams).filter(j => j.by === myEnv || j.fromEnv === myEnv).map(j => j.play));
+  // 已經掛在池子裡等人接的，不要讓他重複出同一張
+  const taken = takenPostKeys();
+  const posted = new Set(Object.entries(poolCache)
+    .filter(([k, p]) => p.by === myEnv && !taken.includes(k)).map(([, p]) => p.v));
   const all = myCards.map(c => ({v: c.game, note: c.line || "", src: "你盤點的遊戲"}));
   if (!all.length) {
     $("playPick").innerHTML = `<div class="hint">你還沒有遊戲卡。先回 <b>② 看實況</b> 挑一款看實況、存成一張遊戲卡，再回來出牌。</div>`;
     return;
   }
   $("playPick").innerHTML = all.map((c, i) => {
-    const u = used.has(c.v);
+    const u = used.has(c.v) || posted.has(c.v);
+    const why = used.has(c.v) ? " · 已經混過了" : (posted.has(c.v) ? " · 已在等人接" : "");
     return `<button class="cc k-play${u ? " usedcard" : ""}" data-i="${i}"${u ? " disabled" : ""}>
-      <div class="cd">${esc(c.src)}${u ? " · 這輪已用過" : ""}</div>
+      <div class="cd">${esc(c.src)}${why}</div>
       <div class="cv">${esc(c.v)}</div><div class="cnote">${esc(c.note)}</div></button>`;
   }).join("");
   $("playPick").querySelectorAll(".cc:not(.usedcard)").forEach(b => b.onclick = () => {
@@ -1134,13 +1141,20 @@ $("postPlay").onclick = () => {
   if (!roundStart) roundStart = Date.now();
   db.ref(`${W2}/pool`).push({v: selPlay.v, note: selPlay.note || "", by: myEnv, t: Date.now()})
     .then(() => {
-      $("jamStepA").classList.add("hide");
+      // 🔴 出完一張不要把出牌區收起來——同時掛好幾張牌在池子裡，
+      //    全班配對成功率才上得來（楊老師 2026-09-16 上課中提的）。
+      selPlay = null;
       $("jamStepB").classList.remove("hide");
+      renderPlayPick();
       renderPool();
-      // 出完牌不要讓人停在原地等——直接把他帶到「接別人的牌」那一區
+      const st = $("jamPostStatus");
+      if (st) st.textContent = "出去了。可以再出一張，也可以直接去下面接別人的牌。";
       try { $("jamStepB").scrollIntoView({behavior: "smooth", block: "center"}); } catch (_) {}
     })
-    .catch(()=>{});
+    .catch(e => {
+      const st = $("jamPostStatus");
+      if (st) st.textContent = "出不去：" + e.message;
+    });
 };
 let poolCache = {};
 function takenPostKeys(){ return Object.values(allJams).map(j => j.postKey).filter(Boolean); }

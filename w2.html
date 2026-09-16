@@ -301,7 +301,11 @@
         border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;font-family:inherit}
   .rbtn.done{background:var(--green-soft);color:var(--green);border-color:var(--green)}
   .seedbox{background:var(--panel2);border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin-top:10px}
-  .seedbox .st{font-size:12.5px;font-weight:800;color:var(--ink-soft);margin-bottom:5px}
+  .seedbox .st{font-size:12.5px;font-weight:800;color:var(--ink-soft);margin-bottom:5px;
+    display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .seedbox .st .stl{flex:1 1 auto;min-width:0}
+  .seedbox .sbnum{color:var(--ink);margin-right:3px}
+  .seedbox .st .btn-ghost.btn-sm{flex-shrink:0;margin:0}
   .seedbox .sp{font-size:13px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre-wrap}
 
   .arrowbox{background:var(--panel2);border-radius:12px;padding:13px 15px;margin-top:10px;font-size:14px;line-height:1.7}
@@ -2094,8 +2098,10 @@ function renderSeeds(){
     Object.entries(CATS).map(([k, v]) =>
       `<button class="fbtn sc-${k}${seedCat === k ? " on" : ""}" data-sc="${k}">${v}</button>`).join("") + `</div>`;
   $("seedList").innerHTML = langNote + tabs + shown.map(x =>
-    `<div class="seedbox sb-${x.c}"><div class="st"><span class="sbtag">${esc({scan:"② 看實況",mix:"③ 混",deep:"推深一層",plan:"變成企劃"}[x.c] || "")}</span>${esc(x.t)}</div><div class="sp" id="sp${x.i}">${esc(x.p)}</div>
-     <button class="btn-ghost btn-sm" style="margin-top:8px" data-i="${x.i}">複製這則</button></div>`).join("");
+    `<div class="seedbox sb-${x.c}"><div class="st">
+       <span class="stl"><span class="sbnum">#${x.i + 1}</span><span class="sbtag">${esc({scan:"② 看實況",mix:"③ 混",deep:"推深一層",plan:"變成企劃"}[x.c] || "")}</span>${esc(x.t)}</span>
+       <button class="btn-ghost btn-sm" data-i="${x.i}">複製這則</button>
+     </div><div class="sp" id="sp${x.i}">${esc(x.p)}</div></div>`).join("");
   $("seedList").querySelectorAll("[data-sc]").forEach(b => b.onclick = () => {
     seedCat = b.dataset.sc; renderSeeds();
   });

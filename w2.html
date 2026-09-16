@@ -469,6 +469,14 @@
         <div class="pool" id="poolList"></div>
       </div>
 
+      <div id="jamStepBB">
+        <label style="margin-top:18px">C · 沒有人在線？<b style="color:var(--accent)">直接拿別人盤點過的遊戲來混</b></label>
+        <div class="hint" style="margin-bottom:6px">
+          全班每個人看完實況都會留下一張遊戲卡。<b>不用等對方在線上</b>，挑一張就能開始混，一樣算你一輪。
+        </div>
+        <div class="pool" id="othersCards"></div>
+      </div>
+
       <div id="jamStepC" class="hide">
         <div class="pairbar" id="pairBar"></div>
         <div class="box" style="background:var(--panel2);box-shadow:none;margin-bottom:12px">
@@ -769,7 +777,7 @@ function show(p){
   if (p === "map") renderMixGrid();
   if (p === "cmap") renderBigMap();
   if (p === "scan") renderScanTarget();
-  if (p === "jam") { renderPlayPick(); renderPool(); }
+  if (p === "jam") { renderPlayPick(); renderPool(); renderOthersCards(); }
   if (p === "deck") renderDeck();
   window.scrollTo(0, 0);
 }
@@ -805,7 +813,7 @@ $("joinBtn").onclick = () => {
 
 // ============ 資料訂閱 ============
 function startWatching(){
-  db.ref(`${W2}/cards`).on("value", s => { allCards = s.val() || {}; myCards = Object.values(allCards[myEnv] || {}); renderMyCards(); updateCounts(); renderDone(); });
+  db.ref(`${W2}/cards`).on("value", s => { allCards = s.val() || {}; myCards = Object.values(allCards[myEnv] || {}); renderMyCards(); updateCounts(); renderDone(); try { renderOthersCards(); } catch(_) {} });
   db.ref(`${W2}/jams`).on("value", s => {
     allJams = s.val() || {};
     jamPartners = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.fromEnv);
@@ -1111,6 +1119,13 @@ $("saveCard").onclick = () => {
   const line = $("cLine").value.trim();
   const detail = $("cDetail").value.trim();
   if (!game) { $("scanStatus").textContent = "先寫遊戲名稱。"; return; }
+  // 🔴 同一款只能盤點一次——盤點三張的意思是看三款，不是同一款存三次。
+  //    （現場有同學把「傳話畫畫」跟「Gartic Phone（傳話畫畫）」分開存，算成兩張）
+  const norm = x => String(x || "").toLowerCase().replace(/[\s　·・:：\-—（）()\[\]【】]/g, "");
+  if (myCards.some(c => norm(c.game) === norm(game))) {
+    $("scanStatus").textContent = "這一款你已經盤點過了。換一款看——三張卡的意思是看三款不同的遊戲。";
+    return;
+  }
   // 🔴 這一格是整份學習單的 AI 抗性條件：AI 沒看過實況，寫不出這種東西。
   //    沒有門檻的話填一個字母就過去了（2026-09-16 測試員實跑時就這樣過關）。
   // 門檻只擋「a」這種明顯敷衍的，不擋短而真的答案——
@@ -1197,6 +1212,52 @@ $("postPlay").onclick = () => {
 };
 let poolCache = {};
 function takenPostKeys(){ return Object.values(allJams).map(j => j.postKey).filter(Boolean); }
+// 別人盤點過的遊戲卡——現場沒人在線時，這是最穩的一條路：
+// 卡是已經存在的資料，對方早就離開也接得到。（楊老師 2026-09-16 11:20 要的）
+function renderOthersCards(){
+  const el = $("othersCards");
+  if (!el) return;
+  const mixedKeys = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.postKey);
+  const mixedGames = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.play);
+  const rows = [];
+  Object.entries(allCards).forEach(([env, obj]) => {
+    if (String(env) === String(myEnv)) return;
+    Object.entries(obj || {}).forEach(([k, c]) => {
+      if (!c || !c.game) return;
+      if (mixedKeys.includes("card:" + k)) return;     // 我混過這張了
+      if (mixedGames.includes(c.game)) return;         // 同一款我混過了
+      rows.push({k: "card:" + k, v: c.game, note: c.line || "", by: env, detail: c.detail || ""});
+    });
+  });
+  const pick = rows.sort(() => 0.5 - Math.random()).slice(0, 10);
+  el.innerHTML = pick.length ? pick.map(p =>
+    `<div class="pi" data-k="${esc(p.k)}">
+      <div class="pt">${esc(p.v)}</div>
+      <div class="pb">${esc(p.note)}</div>
+      <div class="pf"><span>#${String(p.by).padStart(2,"0")} 盤點的</span>
+      <button class="btn-ghost btn-sm">用這張來混</button></div>
+    </div>`).join("") + `<div class="hint" style="margin-top:6px">
+      全班共 <b>${rows.length}</b> 張可以拿來混，這裡隨機給你 <b>${pick.length}</b> 張。
+      <button class="btn-ghost btn-sm" id="othersReshuffle">🔄 換一批</button></div>`
+    : `<div class="hint">目前沒有別人的遊戲卡可以用（或你都混過了）。到 <b>④ 看大家混的</b> 接一個也算一輪。</div>`;
+  const rb = $("othersReshuffle");
+  if (rb) rb.onclick = () => renderOthersCards();
+  el.querySelectorAll(".pi").forEach(d => {
+    const btn = d.querySelector("button");
+    if (!btn) return;
+    btn.onclick = () => {
+      const p = pick.find(x => x.k === d.dataset.k);
+      if (!p) return;
+      targetPost = {k: p.k, v: p.v, by: p.by, note: p.note};
+      if (!roundStart) roundStart = Date.now();
+      jamFromV = null;
+      $("jamStepC").classList.remove("hide");
+      renderCultPick(); renderJamMap(); renderSeeds(); renderPairBar();
+      try { $("jamStepC").scrollIntoView({behavior: "smooth", block: "start"}); } catch (_) {}
+    };
+  });
+}
+
 function renderPool(){
   if (!$("poolList")) return;
   // 🔴 這裡原本是 .once——開場前還沒有人完成任何一輪 jam 時，池子不會自己更新，
@@ -1229,10 +1290,10 @@ function renderPool(){
         <button class="btn-ghost btn-sm">跟他一組</button></div>
       </div>`).join("")
       : `<div class="solobox">
-          <b>現在沒有人在等配對</b>——沒關係，<b>一個人也做得完</b>。<br>
-          到「<b>④ 看大家混的</b>」挑一個別人已經混出來的，按「<b>接著往下混</b>」：
-          <b>一樣算你一輪</b>，而且剛好就是作業要求的「接過別人混出來的」那一項。
-          對方不用在線上。
+          <b>現在沒有人在等配對</b>——沒關係，<b>一個人也做得完</b>，有兩條路：<br>
+          <b>① 往下看「C · 直接拿別人盤點過的遊戲來混」</b>（同一頁就能做，最快）<br>
+          <b>② 到「④ 看大家混的」按「接著往下混」</b>——這條同時滿足作業的「接過別人混出來的」<br>
+          兩條都<b>不需要對方在線上</b>。
           <button class="btn btn-sm" id="goGallery" style="margin-top:8px">去 ④ 挑一個接著混</button>
         </div>`;
     const gg = $("goGallery");

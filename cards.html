@@ -429,7 +429,7 @@ const SECTION_BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.key, s]));
 document.getElementById("lookupBtn").onclick = () => {
   const env = parseInt(document.getElementById("lookupEnv").value, 10);
   const resEl = document.getElementById("lookupResult");
-  if (Number.isNaN(env) || (env !== 0 && env !== 99 && !(env >= 1 && env <= 60) && !(env >= 101 && env <= 130))) { resEl.textContent = t("errNoEnv"); return; }
+  if (Number.isNaN(env) || (env !== 0 && env !== 99 && !(env >= 1 && env <= 98) && !(env >= 101 && env <= 130))) { resEl.textContent = t("errNoEnv"); return; }
   const hits = [];
   Object.values(allRounds).forEach(r => {
     const p = (r.players || {})[env];
@@ -450,7 +450,7 @@ document.getElementById("addBtn").onclick = () => {
   const v = document.getElementById("addV").value.trim();
   const note = document.getElementById("addNote").value.trim();
   const statusEl = document.getElementById("addStatus");
-  if (Number.isNaN(env) || (env !== 0 && env !== 99 && !(env >= 1 && env <= 60) && !(env >= 101 && env <= 130))) { statusEl.textContent = t("errNoEnv"); return; }
+  if (Number.isNaN(env) || (env !== 0 && env !== 99 && !(env >= 1 && env <= 98) && !(env >= 101 && env <= 130))) { statusEl.textContent = t("errNoEnv"); return; }
   if (!v) { statusEl.textContent = t("errNoV"); return; }
   const dfl = SECTIONS.find(s => s.key === role).dfl;
   const data = {v, d: dfl, addedBy: env, t: Date.now()};

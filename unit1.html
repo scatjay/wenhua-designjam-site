@@ -741,7 +741,7 @@ $("joinBtn").onclick = async () => {
   const v = parseInt(raw, 10);
   // 2026-09-09 楊老師：老師本人測試用編號00、駱老師用99（不是打錯，00不能用!v判斷）。
   // 2026-09-09 楊老師：遊戲設計學(17位)共用這套系統，編號101起編，跟文化遊戲松(1-52)區隔。
-  const validEnv = raw !== "" && !Number.isNaN(v) && (v === 0 || (v >= 1 && v <= 60) || v === 99 || (v >= 101 && v <= 130));
+  const validEnv = raw !== "" && !Number.isNaN(v) && (v === 0 || (v >= 1 && v <= 98) || v === 99 || (v >= 101 && v <= 130));
   if (!validEnv) { $("loginStatus").textContent = t("errNoEnv"); return; }
   if (!myRole) { $("loginStatus").textContent = t("errNoRole"); return; }
   myEnv = v;

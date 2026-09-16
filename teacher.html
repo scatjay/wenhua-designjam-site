@@ -362,7 +362,9 @@ const ROLE_LABEL = {producer:"🎬製作人", engineer:"🔧工程師", marketin
 // 除此之外(0、53-60、99，理論上也涵蓋任何其他誤打的號碼)一律算測試/demo。
 function isRealEnv(env) {
   const n = parseInt(env, 10);
-  return (n >= 1 && n <= 52) || (n >= 101 && n <= 130);
+  // 2026-09-16 上課中：信封發到 61 號，編號範圍往上開到 98。
+  // 53-60 仍然算測試/demo（persona_harness 與今天的驗證都用那一段），不要收進課堂統計。
+  return (n >= 1 && n <= 52) || (n >= 61 && n <= 98) || (n >= 101 && n <= 130);
 }
 
 function fmtTime(t){ return new Date(t).toLocaleTimeString("zh-TW",{hour12:false}); }

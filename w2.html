@@ -821,7 +821,7 @@ $("joinBtn").onclick = () => {
   const v = parseInt(raw, 10);
   // 🔴 00 是數字 0，不能用 !v 判斷（楊老師 2026-09-09 踩過）
   const ok = raw !== "" && !Number.isNaN(v) &&
-             (v === 0 || (v >= 1 && v <= 60) || v === 99 || (v >= 101 && v <= 130));
+             (v === 0 || (v >= 1 && v <= 98) || v === 99 || (v >= 101 && v <= 130));
   if (!ok) { $("loginStatus").textContent = "這個編號不在範圍內。學生是 1-52，老師是 00 或 99。"; return; }
   myEnv = v;
   try { localStorage.setItem("designjam_env", String(v)); } catch(_) {}

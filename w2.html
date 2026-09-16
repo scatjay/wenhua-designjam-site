@@ -215,6 +215,10 @@
   .sb-mix .sbtag{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
   .sb-deep .sbtag{background:var(--green-soft);color:var(--green);border-color:var(--green)}
   .sb-plan .sbtag{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
+  .nowaitbar{background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--ink);
+    border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.8;margin-bottom:12px}
+  .nowaitbar:empty{display:none}
+  .nowaitbar b{color:var(--accent)}
   .mapsw{display:flex;gap:6px;margin-bottom:8px}
   .mapsvg{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 10px}
   .mapsvg svg{display:block;width:100%;height:auto}
@@ -469,6 +473,8 @@
         <h2 style="margin:0">第 <span id="jamRound">1</span> 輪</h2>
         <span class="counter" id="jamRoundHint"></span>
       </div>
+
+      <div class="nowaitbar" id="nowaitBar"></div>
 
       <div id="jamStepA">
         <label>A · 出一張你的遊戲卡，等人來跟你配對</label>
@@ -859,7 +865,17 @@ function updateCounts(){
   // 不管學生停在哪一頁都看得到。（2026-09-16 09:55 現場加的）
   const waiting = Object.entries(poolCache)
     .filter(([k, p]) => p.by !== myEnv && !takenPostKeys().includes(k) && !jamPartners.includes(p.by)).length;
-  $("tnJam").textContent = nJam + "/3" + (waiting ? " · " + waiting + " 人等你接" : "");
+  // 沒有人在等的時候，改成顯示「有幾張現成的可以混」——那條路一樣算一輪
+  let ready = 0;
+  try {
+    const mixedGames = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.play);
+    Object.entries(allCards).forEach(([env, obj]) => {
+      if (String(env) === String(myEnv)) return;
+      Object.values(obj || {}).forEach(c => { if (c && c.game && !mixedGames.includes(c.game)) ready++; });
+    });
+  } catch (_) {}
+  $("tnJam").textContent = nJam + "/3" +
+    (waiting ? " · " + waiting + " 人等你接" : (ready ? " · " + ready + " 張可直接混" : ""));
   $("tnMap").textContent = Object.keys(allJams).length + " 個";
   if ($("tnDeck")) $("tnDeck").textContent = (Object.values(allCards).reduce((n,o)=>n+Object.keys(o||{}).length,0) + CULTURE_CARDS.length + customCulture.length + Object.keys(allJams).length) + " 張";
   $("meProgress").textContent = `盤點 ${myCards.length} 張 · Jam ${nJam}/3`;
@@ -1233,6 +1249,9 @@ function takenPostKeys(){ return Object.values(allJams).map(j => j.postKey).filt
 function renderOthersCards(){
   const el = $("othersCards");
   if (!el) return;
+  // 固定提示：現場沒人也做得完。池子裡常常是離線同學留下的舊牌（不算空），
+  // 所以「池子空才提示」那條路永遠不會觸發——這一條要一直在。（楊老師 2026-09-16 11:31）
+  const nw = $("nowaitBar");
   const mixedKeys = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.postKey);
   const mixedGames = Object.values(allJams).filter(j => j.by === myEnv).map(j => j.play);
   const rows = [];
@@ -1246,6 +1265,16 @@ function renderOthersCards(){
     });
   });
   const pick = rows.sort(() => 0.5 - Math.random()).slice(0, 10);
+  if (nw) nw.innerHTML = rows.length
+    ? `<b>👤 不用等人也做得完。</b>全班已經有 <b>${rows.length}</b> 張盤點好的遊戲卡，
+       <b>直接拿來混就算你一輪</b>，對方在不在線上都沒差。
+       <button class="btn btn-sm" id="jumpC">往下看那 ${Math.min(10, rows.length)} 張</button>`
+    : "";
+  const jc = $("jumpC");
+  if (jc) jc.onclick = () => {
+    const c = $("jamStepBB");
+    if (c) { c.scrollIntoView({behavior:"smooth", block:"start"}); }
+  };
   el.innerHTML = pick.length ? pick.map(p =>
     `<div class="pi" data-k="${esc(p.k)}">
       <div class="pt">${esc(p.v)}</div>

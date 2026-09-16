@@ -826,13 +826,20 @@ function fmtTime(ms){
 // 已經送出的 cards/jams 本來就在各自的節點裡，不重複存。
 // 寫法用 .set()（整份覆蓋）不是 .push()——這是「目前狀態」，不是事件記錄。
 // 別人正在打字的欄位不蓋掉（document.activeElement 判斷），避免搶著打字互相干擾。
+// 2026-09-16 楊老師加碼：不只打字的內容，「選過的選項」（哪一個判斷、選了哪張culture
+// 卡、正在跟誰的牌混）也要一起存——不然切頁/換裝置回來，字都在，選項卻要重選一次。
 const DRAFT_FIELDS = ["cGame", "cLine", "cDetail", "cCultureElement", "jamLine"];
 let draftTimer = null;
 let draftRef = null;
 let lastDraftWriteAt = 0;
 
 function collectDraft(){
-  const d = {page: curPage, route: myRoute.slice(), t: Date.now()};
+  // 🔴 這幾個是 <script> 頂層 let 宣告，不會掛到 window 上，不能用 window[k] 動態讀，
+  //    只能一個一個列（2026-09-16 寫的時候一開始寫錯，CDP 測試才抓到值永遠是 null）。
+  const d = {
+    page: curPage, route: myRoute.slice(), t: Date.now(),
+    pendingV, jamV, jamFromV, selPlay, selCult, targetPost
+  };
   DRAFT_FIELDS.forEach(id => { const el = $(id); if (el) d[id] = el.value; });
   return d;
 }
@@ -858,6 +865,22 @@ function applyDraft(d){
     if (!el || document.activeElement === el) return;
     if (typeof d[id] === "string" && el.value !== d[id]) el.value = d[id];
   });
+  pendingV = d.pendingV || null;
+  jamFromV = d.jamFromV || null;
+  jamV = d.jamV || null;
+  selPlay = d.selPlay || null;
+  selCult = d.selCult || null;
+  if ($("scanVerdict")) { renderVerdictPick("scanVerdict", v => { pendingV = v; }, () => pendingV); updateScanVerdictQ(); }
+  if (d.targetPost) {
+    targetPost = d.targetPost;
+    if ($("jamStepC")) $("jamStepC").classList.remove("hide");
+    if ($("targetPlay")) $("targetPlay").textContent = targetPost.v || "";
+    if ($("targetPlayNote")) $("targetPlayNote").textContent = targetPost.note || "";
+    renderCultPick();
+    renderVerdictPick("jamVerdict", v => { jamV = v; }, () => jamV);
+  } else {
+    targetPost = null;
+  }
   if (d.page && d.page !== curPage) show(d.page); else updateCounts();
   renderSeeds();
 }
@@ -1222,6 +1245,7 @@ function renderVerdictPick(id, onPick, getCur){
   el.querySelectorAll(".vbtn").forEach(b => b.onclick = () => {
     onPick(b.dataset.v);
     renderVerdictPick(id, onPick, getCur);
+    queueDraftSave();
   });
 }
 function updateScanVerdictQ(){
@@ -1305,7 +1329,8 @@ function renderPlayPick(){
   $("playPick").innerHTML = all.map((c, i) => {
     const u = used.has(c.v) || posted.has(c.v);
     const why = used.has(c.v) ? " · 已經混過了" : (posted.has(c.v) ? " · 已在等人接" : "");
-    return `<button class="cc k-play${u ? " usedcard" : ""}" data-i="${i}"${u ? " disabled" : ""}>
+    const isSel = selPlay && selPlay.v === c.v;
+    return `<button class="cc k-play${u ? " usedcard" : ""}${isSel ? " sel" : ""}" data-i="${i}"${u ? " disabled" : ""}>
       <div class="cd">${esc(c.src)}${why}</div>
       <div class="cv">${esc(c.v)}</div><div class="cnote">${esc(c.note)}</div></button>`;
   }).join("");
@@ -1313,6 +1338,7 @@ function renderPlayPick(){
     $("playPick").querySelectorAll(".cc").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel");
     selPlay = all[+b.dataset.i];
+    queueDraftSave();
   });
 }
 $("postPlay").onclick = () => {
@@ -1391,6 +1417,7 @@ function renderOthersCards(){
       jamFromV = null;
       $("jamStepC").classList.remove("hide");
       renderCultPick(); renderJamMap(); renderSeeds(); renderPairBar();
+      queueDraftSave();
       try { $("jamStepC").scrollIntoView({behavior: "smooth", block: "start"}); } catch (_) {}
     };
   });
@@ -1447,6 +1474,7 @@ function renderPool(){
         $("jamStepB").classList.add("hide");
         $("jamStepC").classList.remove("hide");
         renderCultPick(); renderJamMap(); renderSeeds(); renderPairBar();
+        queueDraftSave();
       };
     });
   });
@@ -1466,6 +1494,11 @@ function reshuffleCult(force){
     ? all.slice().sort(() => 0.5 - Math.random()).slice(0, 8)
     : all.filter(c => (CULT_KINDS[c.k] ? c.k : "obj") === cultFilter)
          .sort(() => 0.5 - Math.random()).slice(0, 12));
+  // 🔴 草稿還原時（切頁/換裝置回來）selCult 已經有值，但這次重抽是隨機的——
+  //    已經選的那張卡沒理由憑空消失在畫面上，硬塞進來確保看得到、按得到「已選」的樣子。
+  if (selCult && !cultShown.some(c => c.v === selCult.v && c.k === selCult.k)) {
+    cultShown.unshift(selCult);
+  }
   cultShownFor = cultFilter;
   return true;
 }
@@ -1500,7 +1533,8 @@ function renderCultPick(){
     // 學生自己加的卡標出是誰加的——課堂上找得到人問「你這張是什麼意思」
     const who = c.by !== undefined && c.by !== null
       ? ` · <span class="byenv">#${String(c.by).padStart(2, "0")} 加的</span>` : "";
-    return `<button class="cc k-${k}" data-i="${i}">
+    const isSel = selCult && selCult.v === c.v && selCult.k === c.k;
+    return `<button class="cc k-${k}${isSel ? " sel" : ""}" data-i="${i}">
       <div class="cd"><span class="cno">#${c.no}</span>${esc(kd.label)}${who}</div>
       <div class="cv">${esc(c.v)}</div>
       <div class="cnote">${esc(c.note || "")}</div></button>`;
@@ -1510,6 +1544,7 @@ function renderCultPick(){
   $("cultPick").querySelectorAll(".cc").forEach(b => b.onclick = () => {
     $("cultPick").querySelectorAll(".cc").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel"); selCult = list[+b.dataset.i]; renderSeeds();
+    queueDraftSave();
   });
 }
 function renderJamMap(){
@@ -1657,7 +1692,7 @@ function renderBigMap(){
     <text x="443" y="132" text-anchor="middle" font-size="11" fill="var(--ink-soft)">多數文化遊戲在這</text>
     <text x="207" y="272" text-anchor="middle" font-size="12.5" fill="var(--ink-soft)">純機制取向</text>
     <text x="443" y="272" text-anchor="middle" font-size="12.5" fill="var(--red)">換皮也能玩</text>
-    <text x="443" y="292" text-anchor="middle" font-size="11" fill="var(--red)">換個國家照樣玩</text>
+    <text x="443" y="292" text-anchor="middle" font-size="11" fill="var(--red)">只換美術外皮，其他都沒變</text>
     <circle cx="508" cy="300" r="15" fill="var(--red)" opacity="0.14"/>
     <circle cx="508" cy="300" r="6" fill="var(--red)"/>
     <text x="508" y="305" text-anchor="middle" font-size="9" font-weight="600" fill="var(--panel)">1</text>
@@ -1691,12 +1726,12 @@ function renderBigMap(){
     <rect x="338" y="236" width="210" height="48" rx="8" fill="var(--red-soft)" stroke="var(--red)" stroke-width="1.2"/>
     <text x="443" y="255" text-anchor="middle" font-size="12" font-weight="800" fill="var(--red)">神明便利商店 ＋ 神明</text>
     <text x="443" y="272" text-anchor="middle" font-size="10" fill="var(--red)">換成貓咪，合併玩法一模一樣</text>
-    <text x="443" y="300" text-anchor="middle" font-size="10" fill="var(--red)">換個國家照樣玩</text>
+    <text x="443" y="300" text-anchor="middle" font-size="10" fill="var(--red)">只換美術外皮，其他都沒變</text>
     <text x="600" y="30" text-anchor="end" font-size="10.5" fill="var(--ink-soft)">每一區一個「遊戲 ＋ 文化要素」的例子</text>`;
   $("bigMapHolder").innerHTML = `
   <div class="mapsw">
     <button class="fbtn${mapMode === "plain" ? " on" : ""}" data-m="plain">概念圖</button>
-    <button class="fbtn${mapMode === "cases" ? " on" : ""}" data-m="cases">加上例子</button>
+    <button class="fbtn${mapMode === "cases" ? " on" : ""}" data-m="cases">案例說明</button>
   </div>
   <div class="mapsvg"><svg viewBox="0 0 640 420" role="img"
     aria-label="兩條軸的座標圖：橫軸從規則說了算到故事說了算，縱軸從換皮也能玩到抽掉就垮了，左上角是稀有區">
@@ -1723,6 +1758,8 @@ function renderBigMap(){
     <div class="hint" style="margin:10px 0 12px">
       每一區只放<b>一個</b>例子，形式都是「<b>遊戲 ＋ 文化要素</b>」——跟你在 ③ 要做的事一模一樣。
       判斷的方法只有一個：<b>把那個文化要素拿掉，這遊戲還玩不玩得下去。</b>
+      <br>這份學習單裡的「<b>機制</b>」「<b>規則</b>」「<b>玩法</b>」講的是同一件事——玩家實際會做的動作、
+      系統怎麼判定輸贏，是跟故事、美術分開的另一層，別因為用字不同就當成三種不一樣的東西。
     </div>
     <label>全班目前的判斷</label>
     <div class="tally">${rows}

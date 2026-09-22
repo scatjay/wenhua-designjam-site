@@ -134,7 +134,7 @@
       patch: { modRoles: true }, desc: '開局配角色：硬皮／尖牙／煽動者／縮頭／替死鬼／路人，各有被動。',
       mda: '⚠ 這是學生最常提的一類（12 次），也是最典型的「內容加法」：加東西很爽，但底層動態常常沒變。值得當反例討論。' },
     { id: 'range2', name: '射程限制', dim: 'B', kind: '結構', online: true, from: 'student', seen: 4,
-      patch: { attackRange: 2 }, desc: '只能攻擊座位距離 2 以內的人，遠的打不到。',
+      patch: { attackRange: 2, maxRounds: 20 }, desc: '只能攻擊座位距離 2 以內的人，遠的打不到。',
       mda: '把社交距離換成物理距離——問學生：這樣還是 SissyFight 嗎？' },
     { id: 'factions', name: '暗分兩隊', dim: 'H', kind: '結構', online: true, from: 'student', seen: 8,
       patch: { modFactions: true, winnersRemaining: 1 }, desc: '開局秘密分成 A／B 兩隊，最後場上只剩一隊時該隊全員獲勝。',

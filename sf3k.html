@@ -170,6 +170,9 @@ table.st.tl td.tzero{color:var(--ink-soft);background:var(--panel2);font-weight:
 .tlbars i{flex:1 1 auto;min-width:4px;border:1px solid transparent;border-bottom:none;
   border-radius:3px 3px 0 0}
 .tlname .swatch{margin-right:4px}
+/* 場次編號 */
+.seqno{display:inline-block;font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:999px;
+  background:var(--blue-soft);color:var(--blue);border:1.5px solid var(--blue);margin-right:3px}
 /* 按讚 */
 .likebtn{flex:0 0 auto;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;
   background:var(--panel2);border:1.5px solid var(--line);color:var(--ink-soft);cursor:pointer;
@@ -639,9 +642,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222344"></script>
-<script src="js/sf3k_cards.js?v=202609222344"></script>
-<script src="js/sf3k_stats.js?v=202609222344"></script>
+<script src="js/sf3k_engine.js?v=202609230002"></script>
+<script src="js/sf3k_cards.js?v=202609230002"></script>
+<script src="js/sf3k_stats.js?v=202609230002"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -937,7 +940,8 @@ function enterLobby(){
             + '" style="margin:2px 4px 0 0">'+esc(c.name)+'</span>'; }).join('')
         : '<span class="pill" style="margin-top:2px">原版規則，沒有改動</span>';
       var played = comboCount[comboKey(m.cards||[])] || 0;
-      var head = '<span class="sub">代號</span> <b class="mono">'+esc(code)+'</b>';
+      var head = (m.no ? '<b class="seqno">第 '+m.no+' 場</b> ' : '')
+        + '<span class="sub">代號</span> <b class="mono">'+esc(code)+'</b>';
 
       if (m.phase === 'lobby') {
         open_.push('<div class="roomrow"><div class="top"><span>'+head
@@ -1183,9 +1187,19 @@ $('btn-clear').onclick = function(){
 function currentCfg(n){ return E.cfg(CARDS.merge(selected)); }
 function renderSetupState(){
   $('setup-count').textContent = selected.length ? '已選：'+((CARDS.byId(selected[0])||{}).name||selected[0]) : '還沒選（＝原版）';
-  var c = currentCfg(), v = E.validate(c, 6), cf = CARDS.conflicts(selected);
+  var c = currentCfg(), cf = CARDS.conflicts(selected);
+  /* 🔴 原本寫死 6 人驗證，但開局是用真實人數驗——於是「敗者陪審團」這種需要多一點人的卡，
+     在選卡畫面顯示「✅ 可以玩」，三個人按下開始才失敗，學生只會覺得系統壞了。
+     這裡改成把 3-6 人全部驗一遍，明白標出這張卡幾個人才玩得動。 */
+  var okAt = [];
+  for (var np = 3; np <= 6; np++) if (E.validate(c, np).ok) okAt.push(np);
+  var v = E.validate(c, okAt.length ? okAt[0] : 6);
   var out = '';
   v.problems.forEach(function(p){ out += '<p class="err">⛔ '+esc(p)+'</p>'; });
+  if (okAt.length && okAt.length < 4) {
+    out += '<p class="err">👥 這個組合要 <b>' + okAt.join('／') + ' 人</b>才玩得動'
+         + (okAt[0] > 3 ? '——人不夠的話開始鍵會按不下去。' : '。') + '</p>';
+  }
   cf.forEach(function(p){ out += '<p class="err">⚠ '+esc(p)+'</p>'; });
   if (!out) out = '<p class="okmsg">✅ 這個組合可以玩</p>';
   $('setup-problems').innerHTML = out;
@@ -1198,12 +1212,20 @@ function renderSetupState(){
 /* ═════ 建立／加入房間 ═════ */
 function createRoom(){
   var c = currentCfg();
-  if (!E.validate(c, 6).ok) return;
+  var okAny = false;
+  for (var np = 3; np <= 6; np++) if (E.validate(c, np).ok) { okAny = true; break; }
+  if (!okAny) { toast('這個組合 3-6 人都玩不動，換一張卡', 'err'); return; }
   var codeStr = code4();
   var meta = { host: me.uid||('env'+me.env), hostEnv: me.env, sess: SESS, phase:'lobby', round:1,
                cards: selected.slice(), cfg: CARDS.merge(selected),
                seed: Math.random(), createdAt: nowTs() };
   ROOT.child('rooms/'+codeStr+'/meta').set(meta).then(function(){
+    /* 這一節課的第幾場 —— 楊老師要一眼看得出全班跑了幾場。
+       用 transaction 取號，兩個人同時開場也不會撞號。 */
+    ROOT.child('seq/'+SESS).transaction(function(v){ return (v || 0) + 1; },
+      function(err, committed, snap){
+        if (!err && committed && snap) ROOT.child('rooms/'+codeStr+'/meta/no').set(snap.val());
+      });
     ROOT.child('hosts/'+SESS+'/'+me.env).transaction(function(v){
       v = v || { count:0 }; v.count = (v.count||0)+1; return v;
     });
@@ -1283,7 +1305,8 @@ function leaveRoom(){
 }
 function enterRoom(){
   show('scr-room');
-  $('room-code').textContent = '場次代號 ' + room;
+  $('room-code').textContent = ((state.meta && state.meta.no) ? ('第 ' + state.meta.no + ' 場　') : '')
+    + '場次代號 ' + room;
   try { localStorage.setItem('designjam_sf3k_room', room); } catch(e) {}
   // 佔住這個編號在本場的位置；分頁關掉／斷線時 Firebase 會自動幫我們清掉
   presenceRef = roomRef.child('presence/'+me.env+'/'+myDevice);
@@ -1670,7 +1693,13 @@ function renderBar(c, P){
       ? '<span class="sub">人到齊就開始（'+P.length+' 人）</span>'
       : '<span class="sub">等 GM 開始（'+P.length+' 人）</span>';
     $('btn-submit').textContent = '開始遊戲';
-    $('btn-submit').disabled = !isHost() || P.length < 3 || P.length > 6;
+    var vnow = E.validate(c, P.length);
+    $('btn-submit').disabled = !isHost() || P.length < 3 || P.length > 6 || !vnow.ok;
+    if (isHost() && P.length >= 3 && P.length <= 6 && !vnow.ok) {
+      // 這一場選的卡在目前人數下玩不動 —— 要講出來，不然 GM 只會看到按鈕是灰的
+      $('bar-actions').innerHTML = '<span class="err">目前 ' + P.length + ' 人玩不動這個組合：'
+        + esc(vnow.problems.join('；')) + '　再找人進來，或回大廳換一張卡。</span>';
+    }
     if (P.length > 6) $('bar-actions').innerHTML =
       '<span class="err">一場最多 6 人（原版只有 6 張顏色目標卡），請有人去開別的場次</span>';
     $('btn-submit').onclick = startGame;
@@ -1727,7 +1756,10 @@ function renderBar(c, P){
   }
   var acts = [['SOLO',L.solo],['TEAM',L.team],['DEFEND',L.defend]];
   var html = acts.map(function(a){
-    var dis = (c.noRepeatAction && meP && meP.lastAction===a[0]) ? ' disabled title="不可連續出同一張"' : '';
+    /* 🔴 理由不能只放 title —— 那是 hover 提示，手機上根本不存在。
+       學生點了沒反應、畫面上又沒有任何說明，只會以為當掉了（2026-09-22 實測抓到）。 */
+    var noRep = (c.noRepeatAction && meP && meP.lastAction===a[0]);
+    var dis = noRep ? ' disabled' : '';
     return '<button class="ac'+(pick.action===a[0]?' pri':'')+'" data-a="'+a[0]+'"'+dis+'>'+esc(a[1])+'</button>';
   }).join('');
   // 🔴 「固定打右鄰」只自動決定**攻擊**的目標；DEFEND 系列（嫁禍/反擊/協防）的目標欄是另一回事，
@@ -1757,6 +1789,11 @@ function renderBar(c, P){
               + '" data-t="'+esc(q.env)+'">#'+esc(q.env)+'</button>';
       });
     }
+  }
+  if (c.noRepeatAction && meP && meP.lastAction) {
+    html += '<span class="status">上一回合出過 <b>' + esc(
+      meP.lastAction==='SOLO'?L.solo:meP.lastAction==='TEAM'?L.team:L.defend)
+      + '</b>，這回合不能再出（這一場加了「不可連續出同一張」）</span>';
   }
   $('bar-actions').innerHTML = html + waitingHtml(c, P);
   syncBarHeight();
@@ -2189,7 +2226,8 @@ function watchOthers(){
         : (m.sess === SESS ? '' : '<span class="pill">' + esc(sessLabel(m.sess)) + '那一批</span>');
       rows.push({ tier: tier, html:
         '<div class="otherrow"><div class="hd">'
-        + '<span><span class="sub">代號</span> <b class="mono">'+esc(code)+'</b> '
+        + '<span>' + (m.no ? '<b class="seqno">第 '+m.no+' 場</b> ' : '')
+        + '<span class="sub">代號</span> <b class="mono">'+esc(code)+'</b> '
         + '<span class="pill">'+(m.round||1)+' 回合</span> '
         + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span> '+tag+'</span></div>'
         + '<div style="margin-bottom:8px">'+feat+'</div>'
@@ -2272,7 +2310,8 @@ function openReplay(code){
            rns:rns, cut:cut, steps:steps, i:0, timer:null, spd:0, watched:false };
     $('rp-range').max = String(steps.length - 1);
     $('rp-range').value = '0';
-    $('rp-head').innerHTML = '場次 <b class="mono">'+esc(code)+'</b>　GM #'+esc(v.meta.hostEnv)
+    $('rp-head').innerHTML = (v.meta.no ? '<b class="seqno">第 '+v.meta.no+' 場</b>　' : '')
+      + '場次 <b class="mono">'+esc(code)+'</b>　GM '+esc(nickOf(v.meta.hostEnv))
       + '　' + (rns.length) + ' 回合　'
       + ((v.meta.cards||[]).length
           ? '這一場改了：' + (v.meta.cards||[]).map(function(id){ var x=CARDS.byId(id);
@@ -2538,7 +2577,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222344"></script>
-<script src="js/bind_gate.js?v=202609222344"></script>
+<script src="js/gate_i18n.js?v=202609230002"></script>
+<script src="js/bind_gate.js?v=202609230002"></script>
 </body>
 </html>

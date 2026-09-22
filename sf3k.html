@@ -111,6 +111,62 @@ table.st th:first-child,table.st td:first-child{text-align:left}
 table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
 .bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
+/* 排行榜與徽章 */
+.bdgrid{display:grid;gap:9px;grid-template-columns:1fr}
+@media (min-width:560px){.bdgrid{grid-template-columns:1fr 1fr}}
+@media (min-width:880px){.bdgrid{grid-template-columns:repeat(4,1fr)}}
+.bdcard{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel)}
+.bdh{font-weight:800;font-size:14.5px}
+.bdhint{font-size:12px;color:var(--ink-soft);line-height:1.6;margin:3px 0 7px}
+.bdlist{margin:0;padding-left:1.3em;font-size:13.5px;line-height:1.75}
+.bdlist li.me{font-weight:800;color:var(--accent)}
+.bdnone{font-size:12.5px;color:var(--ink-soft);margin:0}
+.bdme{margin-top:12px;padding:12px 13px;border-radius:12px;background:var(--panel2);
+  border:1.5px solid var(--line);font-size:14px}
+.bdstats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:13.5px;color:var(--ink-soft)}
+.bdstats b{color:var(--ink);font-size:15px}
+.bdbadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.bdbadge{font-size:12.5px;font-weight:800;padding:5px 11px;border-radius:999px;
+  background:var(--amber-soft);color:var(--amber);border:1.5px solid var(--amber)}
+/* QR 與「這一節課要做的事」：數值照抄 w2.html，四頁要真的一樣 */
+.qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qrbox .t{font-weight:800;font-size:15px}
+.qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line)}
+.qrbox #qrcanvas svg{display:block;margin:0 auto;width:200px;height:200px}
+.howto{list-style:none;margin:0;padding:0;counter-reset:step}
+.howto li{counter-increment:step;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.howto li:last-child{border-bottom:none}
+.howto li::before{content:counter(step);flex:0 0 auto;width:24px;height:24px;border-radius:50%;
+  background:var(--accent-soft);color:var(--accent);border:1.5px solid var(--accent);
+  font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.howto .st{font-size:14px}
+.howto .st b{display:block;margin-bottom:1px}
+.howto .st span{color:var(--ink-soft);font-size:12.5px}
+label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+/* 回放 */
+.rpbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.rpbar button{padding:9px 13px;font-size:14px;border-radius:9px}
+.rpbar .now{font-weight:800;font-size:14px;margin-left:auto;white-space:nowrap}
+.rpslider{width:100%;margin:2px 0 10px}
+.rpstep{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel);
+  margin-bottom:10px}
+.rpstep .hd{font-weight:800;font-size:15px;margin-bottom:8px}
+.rptalk{max-height:190px;overflow:auto;border:1px dashed var(--line);border-radius:10px;
+  padding:9px 11px;background:var(--panel2);font-size:13.5px;line-height:1.75}
+.rptalk .m{margin:2px 0}
+.rptalk .who{font-weight:800}
+.rpreveal{display:grid;gap:6px;grid-template-columns:1fr;margin-bottom:9px}
+@media (min-width:620px){.rpreveal{grid-template-columns:1fr 1fr}}
+.rpact{border:1.5px solid var(--line);border-left-width:4px;border-radius:9px;padding:7px 10px;
+  font-size:13.5px;background:var(--panel)}
+.rpact.SOLO{border-left-color:var(--red)}
+.rpact.TEAM{border-left-color:var(--blue)}
+.rpact.DEFEND{border-left-color:var(--green)}
+.rpact b{font-weight:800}
+.rpwatch{padding:11px 13px;border-radius:11px;background:var(--amber-soft);
+  border:1.5px solid var(--amber);font-size:13.5px;line-height:1.7;margin-bottom:10px}
+.rpdone{background:var(--green-soft);border-color:var(--green)}
 /* 規則教學：照原始教學簡報的段落結構重講一遍 */
 .rsum{cursor:pointer;font-weight:800;font-size:15.5px;list-style:none}
 .rsum::-webkit-details-marker{display:none}
@@ -192,6 +248,29 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       </div>
       <div id="open-rooms" style="margin-top:10px"></div>
     </div>
+
+    <div class="box qrbox">
+      <div class="t">手機掃這裡加入</div>
+      <div id="qrcanvas"></div>
+    </div>
+
+    <div class="box">
+      <label style="margin-bottom:12px">這一節課要做的事</label>
+      <ol class="howto">
+        <li><div class="st"><b>先看規則，玩一場原版</b><span>三張行動卡就這麼多。第一場<b>不要改任何東西</b>——沒玩過原版，等一下改了也看不出差別在哪。</span></div></li>
+        <li><div class="st"><b>出牌前一定要講話</b><span>聯手要兩個人以上打同一個人才算數，所以你得先說服別人。<b>不講話這個遊戲就沒東西了</b>，公開討論區就是遊戲本體。</span></div></li>
+        <li><div class="st"><b>第二場只改一個地方</b><span>GM 從卡池挑<b>一張</b>卡。只動一個變因，因果才看得清楚——這是這門課之後每一週都會用到的做法。</span></div></li>
+        <li><div class="st"><b>第三場整組改</b><span>一次挑好幾張，玩起來會跟原版差很多。重點是體會<b>改動之間會互相作用</b>，不是把效果加總那麼簡單。</span></div></li>
+        <li><div class="st"><b>看兩場別人的回放</b><span>別組玩的規則跟你不一樣。看完他們的回放（可以快轉、倒轉、一步一步走），寫下你觀察到的差別。</span></div></li>
+      </ol>
+    </div>
+
+    <details class="box" id="board-box">
+      <summary class="rsum">排行榜與徽章</summary>
+      <div id="board-body" style="margin-top:12px">
+        <p class="sub" style="margin:0">還沒有人玩完第一場。</p>
+      </div>
+    </details>
 
     <div id="resume-box"></div>
 
@@ -279,8 +358,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
     </details>
 
     <div class="box">
-      <h3>看別人那一場（要留 2 則評論）</h3>
-      <p class="sub" style="margin-bottom:10px">別組玩的規則跟你不一樣。看看他們的結果，說說跟你玩到的有什麼不同。</p>
+      <h3>看別人那一場的回放（要留 2 則觀察）</h3>
+      <p class="sub" style="margin-bottom:10px">別組玩的規則跟你不一樣。
+      <b>回放可以快轉、倒轉、一步一步走</b>——出牌前的討論、每個人出了什麼、怎麼結算，全部看得到。
+      看完才會出現留言框。</p>
       <div id="others"></div>
     </div>
 
@@ -305,6 +386,30 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       <div id="setup-colocate" style="margin-top:6px"></div>
     </div>
     <div id="pool"></div>
+  </section>
+
+  <!-- ══ 回放 ══ -->
+  <section id="scr-replay" class="hide">
+    <div class="row" style="justify-content:space-between">
+      <h1 style="margin:0">看別人那一場</h1>
+      <button class="sm" id="btn-rp-back">回大廳</button>
+    </div>
+    <p class="sub" id="rp-head"></p>
+    <div class="box">
+      <div class="rpbar">
+        <button class="sm" id="rp-first" title="回到最前">⏮</button>
+        <button class="sm" id="rp-prev" title="上一步（倒轉）">◀ 上一步</button>
+        <button class="pri" id="rp-play">▶ 播放</button>
+        <button class="sm" id="rp-next">下一步 ▶</button>
+        <button class="sm" id="rp-last" title="跳到最後">⏭</button>
+        <button class="sm" id="rp-speed" title="播放速度">1×</button>
+        <span class="now" id="rp-now"></span>
+      </div>
+      <input type="range" class="rpslider" id="rp-range" min="0" max="0" value="0">
+      <div id="rp-seats" class="seats"></div>
+    </div>
+    <div id="rp-body"></div>
+    <div class="box" id="rp-comment"></div>
   </section>
 
   <!-- ══ 房間 ══ -->
@@ -416,10 +521,11 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222223"></script>
-<script src="js/sf3k_cards.js?v=202609222223"></script>
-<script src="js/sf3k_stats.js?v=202609222223"></script>
+<script src="js/sf3k_engine.js?v=202609222236"></script>
+<script src="js/sf3k_cards.js?v=202609222236"></script>
+<script src="js/sf3k_stats.js?v=202609222236"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -473,7 +579,7 @@ function syncBarHeight(){
   document.documentElement.style.setProperty('--barh', h + 'px');
 }
 window.addEventListener('resize', syncBarHeight);
-function show(id){ ['scr-lobby','scr-setup','scr-room'].forEach(function(s){
+function show(id){ ['scr-lobby','scr-setup','scr-room','scr-replay'].forEach(function(s){
   $(s).classList.toggle('hide', s!==id); }); }
 function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g,function(c){
   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
@@ -519,7 +625,7 @@ function dropNull(o){
 var progressWatched = false;
 function enterLobby(){
   show('scr-lobby');
-  if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); }
+  if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); watchBoards(); }
   renderChecklist();
   ROOT.child('comboStats').on('value', function(s){
     var v = s.val()||{}; comboCount = {};
@@ -889,14 +995,10 @@ function renderRoom(){
   } else $('over-box').style.display='none';
 }
 
-function renderResult(c, P){
-  var r = state.result;
-  if (!r || !r.log) { $('result-box').style.display='none'; return; }
-  $('result-box').style.display='';
-  var nameOf = function(id){ var p=state.players[id]; var isMe=String(id)===String(me.env);
-    return esc(c.anonymous&&!isMe ? ('#'+id) : (p&&p.name)||('#'+id)); };
-  var L = E.label(c);
-  var lines = r.log.map(function(e){
+/* 結算文案抽出來給回放共用——同一場戲在房間裡和回放裡要講一樣的話，
+   不要維護兩套字（兩套一定會走鐘）。 */
+function fmtLog(log, c, nameOf){
+  var lines = log.map(function(e){
     switch(e.t){
       case 'solo': return c.revealTargets ? nameOf(e.from)+' 單挑 '+nameOf(e.to)+' <span class="dmgpos">-'+e.dmg+'</span>'
                                           : '有人被單挑了';
@@ -926,8 +1028,17 @@ function renderResult(c, P){
       default: return null;
     }
   }).filter(Boolean);
-  var dec = r.log.filter(function(e){ return e.t==='decay'; });
+  var dec = log.filter(function(e){ return e.t==='decay'; });
   if (dec.length) lines.push('🌊 縮圈：全體各扣 '+dec[0].dmg);
+  return lines;
+}
+function renderResult(c, P){
+  var r = state.result;
+  if (!r || !r.log) { $('result-box').style.display='none'; return; }
+  $('result-box').style.display='';
+  var nameOf = function(id){ var p=state.players[id]; var isMe=String(id)===String(me.env);
+    return esc(c.anonymous&&!isMe ? ('#'+id) : (p&&p.name)||('#'+id)); };
+  var lines = fmtLog(r.log, c, nameOf);
   $('result-log').innerHTML = lines.map(function(x){ return '<div class="logline">'+x+'</div>'; }).join('')
     + '<div class="row" style="margin-top:8px">' + (isHost() && state.meta.phase==='reveal'
         ? '<button class="pri" id="btn-next">下一回合</button>' : '<span class="sub">等 GM 開下一回合</span>') + '</div>';
@@ -1184,12 +1295,38 @@ function nextRound(){
 /* 記錄每位同學：選過哪些要素、這場輸贏 */
 function recordPlays(after, oc){
   var m = state.meta;
+  /* 每個人是第幾回合倒的——「最早掛掉」這個榜需要順位，原本只存 alive 布林值算不出來。
+     倒的那一回合＝第一個讓他的累積傷害吃掉全部籌碼的回合。 */
+  var c0 = E.cfg(m.cfg||{});
+  var died = {}, acc = {};
+  Object.keys(dropNull(normObj(state.rounds))).map(Number)
+    .filter(function(x){ return !isNaN(x); }).sort(function(a,b){ return a-b; })
+    .forEach(function(n){
+      var dm = dropNull(normObj((state.rounds[n]||{}).result && state.rounds[n].result.damage));
+      Object.keys(dm).forEach(function(e){
+        acc[e] = (acc[e]||0) + (dm[e]||0);
+        if (died[e] == null && acc[e] >= c0.startChips) died[e] = n;
+      });
+    });
+  /* 出牌統計不要重寫一套，直接用 sf3k_stats 那支（房間裡的統計表也是用它） */
+  var tal = {};
+  try {
+    if (window.SF3K_STATS && state.rounds) {
+      SF3K_STATS.tally(state.rounds, after).list.forEach(function(x){ tal[String(x.id)] = x; });
+    }
+  } catch (e) { console.warn('[plays] 統計算不出來，只記基本欄位', e); }
   after.forEach(function(p){
     var won = oc.winners.indexOf(String(p.env))>=0 || oc.winners.indexOf(p.env)>=0;
+    var s = tal[String(p.env)] || {};
     ROOT.child('plays/'+p.env).push({
       room: room, cards: m.cards||[], role: p.role||null, faction: p.faction||null,
       chips: p.chips, alive: !!p.alive, won: won, rounds: m.round||1,
-      wasHost: String(m.hostEnv)===String(p.env), ts: nowTs()
+      wasHost: String(m.hostEnv)===String(p.env),
+      diedRound: died[String(p.env)] || null,
+      players: after.length,
+      solo: s.solo||0, team: s.team||0, defend: s.defend||0,
+      dealt: s.dealt||0, taken: s.taken||0,
+      sess: SESS, ts: nowTs()
     });
   });
 }
@@ -1228,7 +1365,7 @@ function renderChecklist(){
     { ok: myStats.feedback >= 3, n: myStats.feedback, need: 3,
       t: '3 則各輪回饋', h: '每輪結束後回答那三個問題。目前 ' + myStats.feedback + ' / 3 則' },
     { ok: myStats.comments >= 2, n: myStats.comments, need: 2,
-      t: '2 則看別場次的評論', h: '在下面「看別人那一場」留言。目前 ' + myStats.comments + ' / 2 則' },
+      t: '2 則別場回放的觀察', h: '看完別人那一場的回放再留言。目前 ' + myStats.comments + ' / 2 則' },
     { ok: myStats.essay, n: myStats.essay?1:0, need: 1,
       t: '1 段短文（100 字以內）', h: '用 M／D／A 講今天整體感覺，自己寫、不要用 AI' }
   ];
@@ -1240,6 +1377,134 @@ function renderChecklist(){
   }).join('');
   var all = items.every(function(x){ return x.ok; });
   if (all) box.innerHTML += '<p class="okmsg" style="margin-top:10px">四項都完成了！去 flipclass 交一張結束畫面的截圖就收工。</p>';
+}
+
+/* ═════ 排行榜與徽章 ═════
+   全部是讀原始紀錄現算的，不另存排名——排名一存就會跟真實資料脫鉤。
+   榜的挑法刻意不只獎勵「贏」：最早掛掉、最多話、看最多回放、設計最多版本
+   都上榜，這樣不同玩法的人都有東西可以追，也剛好對上這週要學的
+   「同一組機制，不同的玩法會長出不同的動態」。 */
+var BOARDS = [
+  { k:'win',    icon:'🥇', t:'最後的贏家',   unit:'勝',   hint:'贏過最多場',
+    badge:'常勝軍', f:function(s){ return s.won; } },
+  { k:'died',   icon:'💀', t:'第一個倒下',   unit:'次',   hint:'最常最早出局——敢打的人才會被集火',
+    badge:'眾矢之的', f:function(s){ return s.firstOut; } },
+  { k:'talk',   icon:'📣', t:'大聲公',       unit:'句',   hint:'公開討論區講最多話。這個遊戲不講話就沒東西了',
+    badge:'大聲公', f:function(s){ return s.talk; } },
+  { k:'design', icon:'🧪', t:'改造狂',       unit:'種',   hint:'當 GM 設計過最多不同的規則組合',
+    badge:'改造狂', f:function(s){ return s.designs; } },
+  { k:'replay', icon:'🎬', t:'觀察者',       unit:'場',   hint:'看完最多別人的回放',
+    badge:'觀察者', f:function(s){ return s.replays; } },
+  { k:'turtle', icon:'🐢', t:'龜王',         unit:'次',   hint:'畏縮出最多次',
+    badge:'龜王', f:function(s){ return s.defend; } },
+  { k:'ally',   icon:'🤝', t:'最佳隊友',     unit:'次',   hint:'參與聯手最多次',
+    badge:'最佳隊友', f:function(s){ return s.team; } },
+  { k:'host',   icon:'🎩', t:'常任 GM',      unit:'場',   hint:'當過最多次 GM',
+    badge:'常任 GM', f:function(s){ return s.host; } }
+];
+var BD = { plays:null, talk:null, replays:null };
+
+function watchBoards(){
+  ['plays', 'talk', 'replays'].forEach(function(key){
+    var ref = (key === 'plays') ? ROOT.child('plays') : ROOT.child(key + '/' + SESS);
+    ref.on('value', function(s){ BD[key] = dropNull(normObj(s.val())); renderBoards(); });
+  });
+}
+function boardStats(){
+  var S = {};
+  var get = function(e){
+    if (!S[e]) S[e] = { env:e, won:0, games:0, firstOut:0, talk:0, replays:0,
+                        designs:0, defend:0, team:0, solo:0, host:0, kinds:{} };
+    return S[e];
+  };
+  var plays = BD.plays || {};
+  Object.keys(plays).forEach(function(env){
+    var mine = dropNull(normObj(plays[env]));
+    var combos = {};
+    Object.keys(mine).forEach(function(k){
+      var p = mine[k]; if (!p) return;
+      if (p.sess && p.sess !== SESS) return;      // 別班／別天的不要混進這一場的榜
+      var x = get(env);
+      x.games++;
+      if (p.won) x.won++;
+      if (p.wasHost) { x.host++; combos[comboKey(p.cards||[])] = true; }
+      x.defend += (p.defend||0); x.team += (p.team||0); x.solo += (p.solo||0);
+      var n = (p.cards||[]).length;
+      x.kinds[n===0?'orig':(n===1?'one':'many')] = true;
+      // 「第一個倒下」＝這場最早出局的人之一（同回合倒的算並列）
+      if (p.diedRound) {
+        x._died = x._died || [];
+        x._died.push({ room:p.room, r:p.diedRound });
+      }
+    });
+    get(env).designs = Object.keys(combos).length;
+  });
+  // 每一場裡最小的 diedRound 才算「第一個倒下」
+  var earliest = {};
+  Object.keys(S).forEach(function(e){
+    (S[e]._died||[]).forEach(function(d){
+      if (earliest[d.room] == null || d.r < earliest[d.room]) earliest[d.room] = d.r;
+    });
+  });
+  Object.keys(S).forEach(function(e){
+    (S[e]._died||[]).forEach(function(d){ if (d.r === earliest[d.room]) S[e].firstOut++; });
+  });
+  Object.keys(BD.talk || {}).forEach(function(e){ get(e).talk = ((BD.talk[e]||{}).n)||0; });
+  Object.keys(BD.replays || {}).forEach(function(e){ get(e).replays = ((BD.replays[e]||{}).n)||0; });
+  return S;
+}
+function renderBoards(){
+  var box = $('board-body'); if (!box) return;
+  var S = boardStats();
+  var ids = Object.keys(S);
+  if (!ids.length) {
+    box.innerHTML = '<p class="sub" style="margin:0">還沒有人玩完第一場。'
+      + '打完一場、講幾句話、看一場別人的回放，這裡就會開始長東西。</p>';
+    return;
+  }
+  var myBadges = [];
+  var html = '<div class="bdgrid">';
+  BOARDS.forEach(function(B){
+    var rank = ids.map(function(e){ return { env:e, v:B.f(S[e])||0 }; })
+                  .filter(function(x){ return x.v > 0; })
+                  .sort(function(a,b){ return b.v - a.v; });
+    var top = rank.slice(0, 3);
+    if (rank.length && String(rank[0].env) === String(me.env)) myBadges.push(B);
+    html += '<div class="bdcard"><div class="bdh">'+B.icon+' '+esc(B.t)+'</div>'
+      + '<div class="bdhint">'+esc(B.hint)+'</div>'
+      + (top.length
+          ? '<ol class="bdlist">' + top.map(function(x){
+              var meMark = String(x.env) === String(me.env) ? ' class="me"' : '';
+              return '<li'+meMark+'>#'+esc(x.env)+' <b>'+x.v+'</b>'+esc(B.unit)+'</li>';
+            }).join('') + '</ol>'
+          : '<p class="bdnone">還沒有人上榜</p>')
+      + '</div>';
+  });
+  html += '</div>';
+
+  var mine = S[String(me.env)];
+  html += '<div class="bdme"><b>你的成績（#'+esc(me.env)+'）</b>';
+  if (!mine) {
+    html += '<div class="bdhint" style="margin-top:5px">還沒有紀錄。玩一場就會出現。</div>';
+  } else {
+    var kn = Object.keys(mine.kinds||{}).length;
+    html += '<div class="bdstats">'
+      + '<span>玩過 <b>'+mine.games+'</b> 場</span>'
+      + '<span>贏 <b>'+mine.won+'</b> 場</span>'
+      + '<span>當 GM <b>'+mine.host+'</b> 次</span>'
+      + '<span>設計 <b>'+mine.designs+'</b> 種規則</span>'
+      + '<span>講 <b>'+mine.talk+'</b> 句</span>'
+      + '<span>看完 <b>'+mine.replays+'</b> 場回放</span>'
+      + '<span>三種玩法 <b>'+kn+'</b>/3</span></div>';
+    html += myBadges.length
+      ? '<div class="bdbadges">' + myBadges.map(function(B){
+          return '<span class="bdbadge">'+B.icon+' '+esc(B.badge)+'</span>'; }).join('') + '</div>'
+      : '<div class="bdhint" style="margin-top:6px">還沒拿到徽章——'
+        + '每個榜的第一名就有一個。<b>不一定要贏</b>：講最多話、看最多回放、'
+        + '設計最多種規則，都各有一個。</div>';
+  }
+  html += '</div>';
+  box.innerHTML = html;
 }
 
 /* ═════ 看別人那一場：列出已結束的場次，可留評論 ═════ */
@@ -1260,28 +1525,211 @@ function watchOthers(){
         + '<span><b class="mono">'+esc(code)+'</b> <span class="pill">'+(m.round||1)+' 回合</span> '
         + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span></span></div>'
         + '<div style="margin-bottom:8px">'+feat+'</div>'
-        + '<div class="row"><div class="grow"><input class="cm" data-code="'+esc(code)+'" '
-        + 'placeholder="他們那場跟你玩到的有什麼不一樣？" maxlength="200"></div>'
-        + '<button class="cmb sm pri" data-code="'+esc(code)+'">留言</button></div>'
-        + '<div class="ckhint" id="cm-'+esc(code)+'"></div></div>');
+        + '<div class="row"><button class="cmb sm pri" data-code="'+esc(code)+'">'
+        + '▶ 看這一場的回放</button>'
+        + '<span class="sub">看完才留觀察</span></div></div>');
     });
     $('others').innerHTML = out.length ? out.join('')
       : '<p class="sub" style="margin:0">還沒有別人玩完。等其他組打完一場就會出現在這裡。</p>';
     Array.prototype.forEach.call($('others').querySelectorAll('.cmb'), function(b){
-      b.onclick = function(){
-        var code = b.dataset.code;
-        var inp = $('others').querySelector('.cm[data-code="'+code+'"]');
-        var v2 = (inp.value||'').trim();
-        if (v2.length < 5) { $('cm-'+code).textContent = '再多寫一點（至少 5 個字）'; return; }
-        ROOT.child('comments/'+code+'/'+me.env).set({ text: v2, env: me.env, ts: nowTs() })
-          .then(function(){ inp.value=''; $('cm-'+code).textContent = '已送出 ✓'; })
-          .catch(function(e){ $('cm-'+code).textContent = '送不出去：'+(e.message||e); });
-      };
+      b.onclick = function(){ openReplay(b.dataset.code); };
     });
   });
 }
 
+/* ═════ 回放：把一場已結束的遊戲一步一步重播 ═════
+   不需要新存任何東西——rounds/{n}/choices 有誰出什麼打誰，rounds/{n}/result.damage
+   有那回合每人扣多少，cfg.startChips 有起始值，所以任一回合開始時的籌碼都算得出來。 */
+var RP = null;
+var RP_SPEEDS = [1, 2, 4];
+
+function openReplay(code){
+  ROOT.child('rooms/'+code).once('value').then(function(s){
+    var v = s.val();
+    if (!v || !v.meta) { alert('讀不到場次 '+code); return; }
+    var rounds = dropNull(normObj(v.rounds));
+    var c = E.cfg(v.meta.cfg||{});
+    var players = dropNull(normObj(v.players));
+    var chat = dropNull(normObj(v.chat));
+    var rns = Object.keys(rounds).map(Number).filter(function(x){ return !isNaN(x); }).sort(function(a,b){return a-b;});
+    if (!rns.length) { alert('這一場沒有可以回放的回合'); return; }
+
+    /* 每一回合的「出牌時間上限」＝該回合最後一個人送出的時間。
+       用它把 chat 切回所屬回合——出牌前的喊話才是這個遊戲的本體，回放一定要看得到。 */
+    var cut = {};
+    rns.forEach(function(n){
+      var ch = dropNull(normObj(rounds[n].choices));
+      var mx = 0;
+      Object.keys(ch).forEach(function(e){ if (ch[e] && ch[e].ts > mx) mx = ch[e].ts; });
+      cut[n] = mx || 0;
+    });
+
+    var steps = [];
+    rns.forEach(function(n){
+      steps.push({ r:n, k:'talk' });
+      if (rounds[n].result && rounds[n].result.log) steps.push({ r:n, k:'reveal' });
+    });
+
+    RP = { code:code, meta:v.meta, cfg:c, players:players, rounds:rounds, chat:chat,
+           rns:rns, cut:cut, steps:steps, i:0, timer:null, spd:0, watched:false };
+    $('rp-range').max = String(steps.length - 1);
+    $('rp-range').value = '0';
+    $('rp-head').innerHTML = '場次 <b class="mono">'+esc(code)+'</b>　GM #'+esc(v.meta.hostEnv)
+      + '　' + (rns.length) + ' 回合　'
+      + ((v.meta.cards||[]).length
+          ? '這一場改了：' + (v.meta.cards||[]).map(function(id){ var x=CARDS.byId(id);
+              return '<span class="pill on">'+esc(x?x.name:id)+'</span>'; }).join(' ')
+          : '<span class="pill">原版規則，沒有改動</span>');
+    show('scr-replay');
+    rpRender();
+  }).catch(function(e){ alert('讀不到這一場：'+(e.message||e)); });
+}
+
+/* 第 r 回合「開始時」每個人的籌碼＝起始 − 前面所有回合的傷害 */
+function rpChipsAt(r){
+  var out = {};
+  Object.keys(RP.players).forEach(function(e){ out[e] = RP.cfg.startChips; });
+  RP.rns.forEach(function(n){
+    if (n >= r) return;
+    var dm = (RP.rounds[n].result && RP.rounds[n].result.damage) || {};
+    Object.keys(dropNull(normObj(dm))).forEach(function(e){
+      if (out[e] == null) out[e] = RP.cfg.startChips;
+      out[e] = Math.max(0, out[e] - (dropNull(normObj(dm))[e] || 0));
+    });
+  });
+  return out;
+}
+function rpName(id){
+  var p = RP.players[id];
+  return esc(RP.cfg.anonymous ? ('#'+id) : ((p&&p.name)||('#'+id)));
+}
+function rpRender(){
+  if (!RP) return;
+  var st = RP.steps[RP.i], L = E.label(RP.cfg);
+  $('rp-now').textContent = '第 '+st.r+' 回合 · ' + (st.k==='talk' ? '出牌前' : '結算')
+    + '　（'+(RP.i+1)+' / '+RP.steps.length+'）';
+  $('rp-range').value = String(RP.i);
+  $('rp-speed').textContent = RP_SPEEDS[RP.spd] + '×';
+  $('rp-play').textContent = RP.timer ? '⏸ 暫停' : '▶ 播放';
+  $('rp-prev').disabled = (RP.i === 0);
+  $('rp-next').disabled = (RP.i >= RP.steps.length - 1);
+
+  // 座位：這一回合開始時的狀態
+  var chips = rpChipsAt(st.r);
+  var ids = Object.keys(RP.players).sort(function(a,b){
+    return (RP.players[a].seat||0) - (RP.players[b].seat||0); });
+  var ch = dropNull(normObj(RP.rounds[st.r].choices));
+  $('rp-seats').innerHTML = ids.map(function(e, i){
+    var hp = chips[e] == null ? RP.cfg.startChips : chips[e];
+    var out = hp <= 0;
+    var mark = (st.k === 'reveal' && ch[e]) ? ' ✔' : '';
+    return '<div class="seat'+(out?' dead':'')+'">'
+      + '<div class="nm"><span class="swatch" style="background:'+COLORS[i%COLORS.length]+'"></span>'
+      + rpName(e) + mark + '</div>'
+      + '<div class="hp">'+hp+' <span class="sub">'+esc(L.chip)+'</span></div></div>';
+  }).join('');
+
+  // 內容
+  var html = '';
+  if (st.k === 'talk') {
+    var lo = st.r === RP.rns[0] ? 0 : (RP.cut[st.r - 1] || 0);
+    var hi = RP.cut[st.r] || Number.MAX_SAFE_INTEGER;
+    var msgs = Object.keys(RP.chat).map(function(k){ return RP.chat[k]; })
+      .filter(function(m){ return m && m.ts > lo && m.ts <= hi && !m.to; })
+      .sort(function(a,b){ return (a.ts||0) - (b.ts||0); });
+    html += '<div class="rpstep"><div class="hd">第 '+st.r+' 回合 · 出牌前的公開討論</div>'
+      + (msgs.length
+          ? '<div class="rptalk">' + msgs.map(function(m){
+              return '<div class="m">' + (m.sys ? '<i>'+esc(m.text)+'</i>'
+                : '<span class="who">'+rpName(m.env)+'：</span>'+esc(m.text)) + '</div>'; }).join('') + '</div>'
+          : '<p class="sub" style="margin:0">這一回合沒有人講話——聯手打不出來，'
+            + '通常就是因為沒人開口。這件事本身就值得寫進你的觀察。</p>')
+      + '</div>';
+  } else {
+    var res = RP.rounds[st.r].result;
+    var acts = Object.keys(ch).map(function(e){
+      var x = ch[e], a = x.action || '—';
+      return '<div class="rpact '+esc(a)+'"><b>'+rpName(e)+'</b>　'+esc(
+          a==='SOLO' ? L.solo : a==='TEAM' ? L.team : a==='DEFEND' ? L.defend : a)
+        + (x.target ? '　→ '+rpName(x.target) : '')
+        + (x.item ? '　＋道具' : '') + '</div>';
+    }).join('');
+    var lines = fmtLog(res.log || [], RP.cfg, rpName);
+    html += '<div class="rpstep"><div class="hd">第 '+st.r+' 回合 · 揭曉</div>'
+      + '<div class="rpreveal">' + (acts || '<span class="sub">沒有出牌紀錄</span>') + '</div>'
+      + lines.map(function(x){ return '<div class="logline">'+x+'</div>'; }).join('')
+      + '</div>';
+  }
+  $('rp-body').innerHTML = html;
+
+  if (RP.i >= RP.steps.length - 1 && !RP.watched) {
+    RP.watched = true;
+    // 看到最後才算「看過一場」——中途離開不算，不然這個榜會變成「點開最多次」
+    ROOT.child('replays/'+SESS+'/'+me.env).transaction(function(v){
+      v = v || { n: 0, rooms: {} }; v.n = (v.n||0) + 1;
+      v.rooms = v.rooms || {}; v.rooms[RP.code] = true; return v;
+    });
+  }
+  rpComment();
+}
+function rpComment(){
+  var box = $('rp-comment');
+  if (!RP.watched) {
+    box.innerHTML = '<div class="rpwatch">看完這一場再留觀察——把回放走到最後（或按 ⏭），'
+      + '下面就會出現留言框。<b>先看完再寫，寫出來的東西才是你真的看到的。</b></div>';
+    return;
+  }
+  box.innerHTML = '<div class="rpwatch rpdone">✓ 看完了。這一場跟你自己玩到的有什麼不一樣？</div>'
+    + '<div class="row"><div class="grow"><input id="rp-cm" maxlength="200" '
+    + 'placeholder="例：他們那場沒人敢出聯手，因為…"></div>'
+    + '<button class="pri" id="rp-send">送出觀察</button></div>'
+    + '<div class="ckhint" id="rp-msg"></div>';
+  $('rp-send').onclick = function(){
+    var v = ($('rp-cm').value||'').trim();
+    if (v.length < 8) { $('rp-msg').textContent = '再多寫一點（至少 8 個字）'; return; }
+    ROOT.child('comments/'+RP.code+'/'+me.env)
+      .set({ text:v, env:me.env, watched:true, ts:nowTs() })
+      .then(function(){ $('rp-msg').textContent = '已送出 ✓　回大廳可以再看另一場。'; $('rp-cm').value=''; })
+      .catch(function(e){ $('rp-msg').textContent = '送不出去：'+(e.message||e); });
+  };
+}
+function rpGo(i){
+  if (!RP) return;
+  RP.i = Math.max(0, Math.min(RP.steps.length - 1, i));
+  rpRender();
+}
+function rpStop(){ if (RP && RP.timer) { clearInterval(RP.timer); RP.timer = null; } }
+function rpPlay(){
+  if (!RP) return;
+  if (RP.timer) { rpStop(); rpRender(); return; }
+  var ms = Math.round(2600 / RP_SPEEDS[RP.spd]);
+  RP.timer = setInterval(function(){
+    if (RP.i >= RP.steps.length - 1) { rpStop(); rpRender(); return; }
+    rpGo(RP.i + 1);
+  }, ms);
+  rpRender();
+}
+$('btn-rp-back').onclick = function(){ rpStop(); RP = null; enterLobby(); };
+$('rp-first').onclick = function(){ rpStop(); rpGo(0); };
+$('rp-prev').onclick  = function(){ rpStop(); rpGo(RP.i - 1); };
+$('rp-next').onclick  = function(){ rpStop(); rpGo(RP.i + 1); };
+$('rp-last').onclick  = function(){ rpStop(); rpGo(RP.steps.length - 1); };
+$('rp-play').onclick  = rpPlay;
+$('rp-speed').onclick = function(){
+  RP.spd = (RP.spd + 1) % RP_SPEEDS.length;
+  if (RP.timer) { rpStop(); rpPlay(); } else rpRender();
+};
+$('rp-range').oninput = function(){ rpStop(); rpGo(parseInt(this.value, 10) || 0); };
+
 /* ═════ 討論區 ═════ */
+/* 「最多話」那個榜的計數器。放在 say() 裡＝每一句公開發言都算到，
+   不用事後去掃整個 chat（那會隨場次數量線性變慢）。 */
+function bumpTalk(){
+  if (me.env == null) return;
+  ROOT.child('talk/'+SESS+'/'+me.env).transaction(function(v){
+    v = v || { n: 0 }; v.n = (v.n||0) + 1; return v;
+  });
+}
 function say(text, sys){
   if (!roomRef) return;
   var to = sys ? '' : ($('chat-to').value||'');
@@ -1349,6 +1797,27 @@ $('btn-report-send').onclick = function(){
 };
 $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'); };
 
+/* 🔴 照 w2.html 的做法：包 try/catch，網址寫死正式站。
+   ① 2026-09-09 上課教室連不到 CDN，qrcode() 直接 ReferenceError 把整支 IIFE 炸掉；
+      一個裝飾性的 QR 不該有能力癱瘓整頁。
+   ② 不要用 location.href——老師本機預覽時會產出 file:// 的 QR，學生掃了打不開。
+   ③ qrcode-generator 的全域是小寫 qrcode，不要包 if(window.QRCode) 守衛（那會永遠是 false）。 */
+(function renderQR(){
+  var SITE = 'https://scatjay.github.io/wenhua-designjam-site/sf3k.html';
+  var holder = $('qrcanvas');
+  if (!holder) return;
+  try {
+    var qr = qrcode(0, 'M');
+    qr.addData(SITE); qr.make();
+    holder.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2 });
+  } catch (e) {
+    holder.innerHTML = '';
+    var box = holder.closest('.qrbox');
+    if (box) box.style.display = 'none';   // 畫不出來就整塊收起來，不留空白框
+    console.warn('QR 載入失敗（不影響其他功能）：', e);
+  }
+})();
+
 /* 起手：綁過就直接進大廳；沒綁的話 bind_gate 會接手 */
 (function(){
   if (pickUpIdentity()) { enterLobby(); return; }
@@ -1359,7 +1828,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222223"></script>
-<script src="js/bind_gate.js?v=202609222223"></script>
+<script src="js/gate_i18n.js?v=202609222236"></script>
+<script src="js/bind_gate.js?v=202609222236"></script>
 </body>
 </html>

@@ -16,7 +16,10 @@
   var UNIT = window.DJ_BIND_UNIT || 'unknown';
   var LS_ENV = 'designjam_env', LS_MAIL = 'designjam_email', LS_UID = 'designjam_uid';
   var QR_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js';
-  var st = { email: null, uid: null, name: null, env: null, busy: false };
+  var st = { email: null, uid: null, name: null, env: null, busy: false, bound: null, unlocked: false };
+  /* 楊老師＝00、駱老師＝99（harness 2026-09-09 定案）。老師要能現場示範、也要能替學生改，不受鎖限制。 */
+  function isTeacher(v) { return String(v) === '0' || String(v) === '99'; }
+  var TEACHER_CODE = '0909';   // 跟 teacher.html 的備援密碼同一組，老師本來就記得
 
   /* 🔴 合法編號範圍必須跟 unit1.html / w2.html 的 validEnv 完全一致，否則某一班會整班進不來。
      0＝楊老師｜1-52 文化遊戲松學生（實體信封）｜53-61 測試/demo｜99＝駱老師｜101-130 遊戲設計學。
@@ -132,6 +135,18 @@
 '#dj-gate .dj-gatelang button:disabled{opacity:.45;cursor:not-allowed}',
 '#dj-gate .dj-gatelang .dj-note{display:none}',
 /* 每頁頂端的語言列（登入之後）。位置固定在最上面，樣式四頁一致。 */
+'.dj-lock{position:fixed;right:12px;top:52px;z-index:9999;background:#fff;border:1.5px solid #cfdae1;',
+'  border-radius:12px;box-shadow:0 6px 20px rgba(32,42,48,.16);padding:13px 15px;max-width:300px;',
+'  font:700 14px/1.5 -apple-system,"PingFang TC",sans-serif;color:#37414a}',
+'@media (max-width:560px){.dj-lock{right:10px;left:10px;max-width:none}}',
+'.dj-lock .lk{font-weight:400;font-size:12.5px;color:#54646e;line-height:1.7;margin-top:6px}',
+'.dj-lock .lkerr{font-size:12px;color:#b8452f;font-weight:700;margin-top:6px;min-height:1em}',
+'.dj-lock input{width:100%;padding:8px 11px;font-size:14px;border-radius:8px;',
+'  border:1.5px solid #cfdae1;font-family:inherit}',
+'.dj-lock button{padding:8px 13px;font-size:13px;border-radius:8px;background:#f7f9fa;',
+'  border:1.5px solid #cfdae1;color:#54646e;font-weight:700;cursor:pointer;font-family:inherit}',
+'.dj-lock .row{display:flex;gap:8px;align-items:center}',
+'.dj-lock .grow{flex:1 1 auto;min-width:0}',
 '.dj-langrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}',
 '.dj-langrow button{flex:0 0 auto;background:#fff;border:1.5px solid #cfdae1;color:#54646e;',
 '  border-radius:999px;padding:5px 12px;font:700 12.5px/1.4 -apple-system,"PingFang TC",sans-serif;',
@@ -226,6 +241,7 @@
           '<div class="grow"><input id="dj-env" type="number" inputmode="numeric" min="0" max="130" ' +
             'placeholder="文化遊戲松 1-52 ／ 遊戲設計學 101 起"></div>' +
         '</div>' +
+        '<p class="tiny" id="dj-bound" style="display:none;margin:8px 0 0"></p>' +
       '</div>' +
 
       '<div class="qrwrap"><div class="qrbox"><div id="dj-qr"></div></div>' +
@@ -298,6 +314,12 @@
     var envI = document.getElementById('dj-env');
     var v = envI ? parseInt(envI.value, 10) : NaN;
     if (!validEnv(v)) { showErr('這個編號不在名單範圍內。文化遊戲松是 1-52，遊戲設計學是 101 以上。'); return; }
+    /* 伺服器上已經有綁定、又不是老師、也沒解鎖 ⇒ 不准改成別的號碼。
+       前面已經把輸入框設成 readOnly，這裡是第二道——readOnly 在 devtools 裡兩秒就能拿掉。 */
+    if (st.bound != null && !isTeacher(st.bound) && !st.unlocked && String(v) !== String(st.bound)) {
+      showErr('這個帳號已經綁定 #' + st.bound + '，不能自己改。要換編號請找老師。');
+      return;
+    }
     if (!skipMail && !st.email) { showErr('請先用 Google 登入'); return; }
     st.busy = true; refresh();
     lset(LS_ENV, String(v));
@@ -391,9 +413,9 @@
       return '<button type="button" data-lang="' + L.k + '"'
         + (off ? ' disabled title="這一頁還沒有翻譯"' : '')
         + ' class="' + (L.k === cur ? 'sel' : '') + '">'
-        + L.flag + ' ' + (onGate ? L.label : L.label + (off ? '（還沒翻）' : '')) + '</button>';
+        + L.flag + ' ' + L.label + '</button>';
     }).join('');
-    if (!can) h += '<div class="dj-note">這一頁還沒有翻譯，但你選的語言會被記住。</div>';
+    // 楊老師 2026-09-22：不能選的語系不要寫字解釋，直接不能按＋灰掉就好。
     return h;
   }
   function wireLangButtons(scope) {
@@ -553,8 +575,44 @@
     b.title = '點一下可以重新綁定';
     b.textContent = '#' + env + (mail ? ' · ' + mail : ' · 未綁 Gmail');
     b.onclick = function () {
-      b.remove();
-      openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補綁。');
+      /* 沒綁 Google 的人要補綁，這條路要留著（跳過登入只用編號進來的情況）。
+         已經綁好的人就不能自己改編號了——整學期的紀錄要接得起來，號碼就不能浮動。 */
+      if (!mail || isTeacher(env)) {
+        b.remove();
+        openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補綁。');
+        return;
+      }
+      var old = document.getElementById('dj-locked');
+      if (old) { old.remove(); return; }
+      var p = document.createElement('div');
+      p.id = 'dj-locked';
+      p.className = 'dj-lock';
+      p.innerHTML = '<b>你的編號是 #' + env + '</b>'
+        + '<div class="lk">這個編號綁在 ' + (mail || '') + ' 上面，<b>整學期都不會變</b>——'
+        + '之前幾週留下的紀錄才接得起來。<br><b>要換編號請找老師。</b></div>'
+        + '<div class="row" style="margin-top:9px"><div class="grow">'
+        + '<input id="dj-unlock" type="password" inputmode="numeric" placeholder="老師解鎖碼"></div>'
+        + '<button class="sm" id="dj-unlock-go">解鎖</button></div>'
+        + '<div class="lkerr" id="dj-unlock-err"></div>';
+      document.body.appendChild(p);
+      document.getElementById('dj-unlock-go').onclick = function () {
+        var v = (document.getElementById('dj-unlock').value || '').trim();
+        if (v !== TEACHER_CODE) {
+          document.getElementById('dj-unlock-err').textContent = '解鎖碼不對。要換編號請找老師。';
+          return;
+        }
+        st.unlocked = true;
+        p.remove(); b.remove();
+        openGate('老師已解鎖，可以改編號了。');
+      };
+      setTimeout(function () {
+        document.addEventListener('click', function close(ev) {
+          var pp = document.getElementById('dj-locked');
+          if (pp && !pp.contains(ev.target) && ev.target !== b) {
+            pp.remove(); document.removeEventListener('click', close);
+          }
+        });
+      }, 0);
     };
     document.body.appendChild(b);
     // 🔴 固定定位會蓋住頁面最上緣（實測蓋掉單元導覽的「第3週」）。
@@ -580,6 +638,28 @@
         if (!u) return;
         st.uid = u.uid; st.email = u.email; st.name = u.displayName || (u.email || '').split('@')[0];
         refresh();
+        /* 🔴 這個帳號以前綁過哪個編號？以伺服器為準，不是以這台裝置的 localStorage 為準。
+           不讀這一筆的話，同一個人在不同裝置／不同週可以綁成不同號碼，
+           而整學期的紀錄就再也接不起來了（而且不會有任何錯誤訊息）。 */
+        root().child('identity/' + u.uid).once('value').then(function (s) {
+          var rec = s.val();
+          if (!rec || rec.env == null) return;
+          st.bound = rec.env;
+          var envI = document.getElementById('dj-env');
+          if (!envI) return;
+          envI.value = String(rec.env);
+          if (!isTeacher(rec.env) && !st.unlocked) {
+            envI.readOnly = true;
+            envI.style.background = '#eef1f3';
+            var note = document.getElementById('dj-bound');
+            if (note) {
+              note.style.display = '';
+              note.innerHTML = '這個 Google 帳號已經綁定 <b>#' + rec.env + '</b>，'
+                + '整學期都用這個編號。<b>要換請找老師。</b>';
+            }
+          }
+          refresh();
+        }).catch(function (e) { console.warn('[bind_gate] 讀不到既有綁定', e); });
       });
       auth.getRedirectResult().then(function (r) {
         if (r && r.user) {

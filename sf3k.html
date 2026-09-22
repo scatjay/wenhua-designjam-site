@@ -732,10 +732,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230047"></script>
-<script src="js/sf3k_verified.js?v=202609230047"></script>
-<script src="js/sf3k_cards.js?v=202609230047"></script>
-<script src="js/sf3k_stats.js?v=202609230047"></script>
+<script src="js/sf3k_engine.js?v=202609230058"></script>
+<script src="js/sf3k_verified.js?v=202609230058"></script>
+<script src="js/sf3k_cards.js?v=202609230058"></script>
+<script src="js/sf3k_stats.js?v=202609230058"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -2804,6 +2804,12 @@ function say(text, sys){
   var to = sys ? '' : ($('chat-to').value||'');
   roomRef.child('chat').push({ env: me.env, name: me.name||('#'+me.env),
     text: text, to: to||null, sys: !!sys, ts: Date.now() });
+  /* 🔴 2026-09-23 會發言的測試員第一輪就抓到：bumpTalk() 有定義、上面的註解還寫著
+     「放在 say() 裡」，但從來沒有被呼叫過 ⇒「大聲公」那個榜永遠是 0，而且不報錯。
+     先前 139 場測試一句話都沒講，所以這個 bug 不可能被發現——
+     沉默的測試員測不出靠講話運作的功能。
+     只算公開發言：系統訊息（「#55 進來了」）與悄悄話都不算，榜的名稱就是「公開討論區講最多話」。*/
+  if (!sys && !to) bumpTalk();
 }
 $('btn-say').onclick = function(){
   var t = ($('chat-in').value||'').trim(); if (!t) return;
@@ -2901,7 +2907,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230047"></script>
-<script src="js/bind_gate.js?v=202609230047"></script>
+<script src="js/gate_i18n.js?v=202609230058"></script>
+<script src="js/bind_gate.js?v=202609230058"></script>
 </body>
 </html>

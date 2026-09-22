@@ -621,9 +621,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222335"></script>
-<script src="js/sf3k_cards.js?v=202609222335"></script>
-<script src="js/sf3k_stats.js?v=202609222335"></script>
+<script src="js/sf3k_engine.js?v=202609222336"></script>
+<script src="js/sf3k_cards.js?v=202609222336"></script>
+<script src="js/sf3k_stats.js?v=202609222336"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1393,8 +1393,9 @@ function renderRoom(){
     if (c.modFactions && (isMe||ph==='over')) extra.push('隊'+p.faction);
     if (c.modJury && p.juryScore) extra.push('陪審 '+p.juryScore);
     var done = state.choices && state.choices[p.env] ? ' ✔' : '';
+    var col = COLORS[((typeof p.seat==='number'?p.seat:i)%COLORS.length)];
     return '<div class="seat'+(isMe?' me':'')+(p.alive?'':' dead')+'">'
-      + '<div class="nm"><span class="swatch" style="background:'+COLORS[i%COLORS.length]+'"></span>'+nm+done+'</div>'
+      + '<div class="nm"><span class="swatch" style="background:'+col+'"></span>'+nm+done+'</div>'
       + '<div class="hp">'+hp+' <span class="sub">'+esc(L.chip)+'</span></div>'
       + (extra.length?'<div class="sub">'+esc(extra.join(' · '))+'</div>':'')
       + (p.alive?'':'<div class="sub">'+esc(L.out)+'</div>')
@@ -1481,8 +1482,15 @@ function renderStats(c, P){
   var nameOf = function(p){ var isMe=String(p.id)===String(me.env);
     return esc(c.anonymous&&!isMe ? ('#'+p.id) : nickOf(p.id, p.name)); };
   var mix = T.actionMix;
+  /* 顏色＝身分：座位、統計表、時序圖三個地方要用同一組色，
+     才有辦法一眼把「那個一直挨打的藍色」從頭追到尾。
+     色是依座位順序配的，所以要用 st.list 原本的順序去查，不能用排序後的位置。 */
+  var seatIx = {};
+  st.list.forEach(function(p, i){ seatIx[String(p.id)] = i; });
   var rows = st.list.slice().sort(function(a,b){ return b.dealt - a.dealt; }).map(function(p){
-    return '<tr><td>'+nameOf(p)+'</td><td>'+p.solo+'</td><td>'+p.team+'</td><td>'+p.defend+'</td>'
+    var col = COLORS[(seatIx[String(p.id)] || 0) % COLORS.length];
+    return '<tr><td><span class="swatch" style="background:'+col+'"></span>'+nameOf(p)+'</td>'
+      + '<td>'+p.solo+'</td><td>'+p.team+'</td><td>'+p.defend+'</td>'
       + '<td>'+p.dealt+'</td><td>'+p.taken+'</td><td>'+p.targetedBy+'</td></tr>';
   }).join('');
   box.innerHTML = '<div class="stat"><h4>目前的遊玩統計（累計 '+T.roundsPlayed+' 回合）</h4>'
@@ -1533,13 +1541,20 @@ function chipTimeline(rounds, cfg, ids){
   });
   return { rounds: used, series: series, max: cfg.startChips };
 }
+/* 配色依「座位順序」，不是依陣列迭代順序——不然統計表與時序圖會配到不同色，
+   兩張表就對不起來了。有 players 就用 seat，沒有就退回陣列位置。 */
+function tlSeat(e, ids){
+  var p = (state.players && state.players[e]) || (RP && RP.players && RP.players[e]);
+  if (p && typeof p.seat === 'number') return p.seat;
+  return ids.indexOf(e);
+}
 function timelineHtml(rounds, cfg, ids, nameOf){
   var tl = chipTimeline(rounds, cfg, ids);
   if (!tl.rounds.length) return '';
   var head = '<tr><th>玩家</th><th>開局</th>'
     + tl.rounds.map(function(n){ return '<th>R'+n+'</th>'; }).join('') + '</tr>';
   var body = ids.map(function(e, ri){
-    var s = tl.series[e], col = COLORS[ri % COLORS.length];
+    var s = tl.series[e], col = COLORS[(tlSeat(e, ids)) % COLORS.length];
     return '<tr><td><span class="swatch" style="background:'+col+'"></span>'+nameOf(e)+'</td>'
       + s.map(function(v, i){
       var prev = i ? s[i-1] : v, d = v - prev;
@@ -1551,7 +1566,7 @@ function timelineHtml(rounds, cfg, ids, nameOf){
   /* 顏色＝身分，而且要跟座位上那顆小方塊同一組色——同一個人在座位、結算、時序圖裡
      都是同一個顏色，才有辦法一眼追著某個人看他怎麼被打下去的。 */
   var spark = ids.map(function(e, i){
-    var s = tl.series[e], col = COLORS[i % COLORS.length];
+    var s = tl.series[e], col = COLORS[(tlSeat(e, ids)) % COLORS.length];
     return '<div class="tlrow">'
       + '<span class="tlname"><span class="swatch" style="background:'+col+'"></span>'+nameOf(e)+'</span>'
       + '<span class="tlbars">' + s.map(function(v, j){
@@ -2388,7 +2403,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222335"></script>
-<script src="js/bind_gate.js?v=202609222335"></script>
+<script src="js/gate_i18n.js?v=202609222336"></script>
+<script src="js/bind_gate.js?v=202609222336"></script>
 </body>
 </html>

@@ -138,7 +138,7 @@
 '  cursor:pointer;white-space:nowrap}',
 '.dj-langrow button.sel{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
 '.dj-langrow button:disabled{opacity:.45;cursor:not-allowed}',
-'.dj-langrow .dj-note{flex:1 1 100%;font-size:11.5px;font-weight:400;color:#7b8892;',
+'.dj-langrow .dj-note{flex:1 1 100%;font-size:11px;font-weight:400;color:#7b8892;',
 '  line-height:1.5;margin:1px 0 0}',
 /* 總入口的單元清單：本週一張大卡，其餘一行一週——十幾週也不會變成十幾張大卡 */
 '.dj-hubnow{display:block;text-decoration:none;color:inherit;background:#fff;',
@@ -393,8 +393,7 @@
         + ' class="' + (L.k === cur ? 'sel' : '') + '">'
         + L.flag + ' ' + (onGate ? L.label : L.label + (off ? '（還沒翻）' : '')) + '</button>';
     }).join('');
-    if (!can) h += '<div class="dj-note">這一頁還沒有翻譯版本，'
-                 + '但你選的語言會被記住——有翻的單元會自動套用。</div>';
+    if (!can) h += '<div class="dj-note">這一頁還沒有翻譯，但你選的語言會被記住。</div>';
     return h;
   }
   function wireLangButtons(scope) {
@@ -428,6 +427,18 @@
     var host = document.querySelector('.wrap') || document.body;
     host.insertBefore(row, host.firstChild);   // 排在導覽之前 ⇒ 永遠在最上面
     renderLangUI();
+    /* 🔴 身分列是 fixed 的，它讓開的方式是把 body 往下推——但那個補償不是每一頁都生效
+       （2026-09-22 實測：w2/sf3k 的語言列 top=70/68 沒事，index 是 22 就跟帳號疊在一起）。
+       與其去猜哪一頁的 padding 沒套上，直接量兩個矩形有沒有相交，相交才推開。 */
+    var fix = function () {
+      var bar = document.getElementById('dj-bar');
+      if (!bar) return;
+      var a = bar.getBoundingClientRect(), c = row.getBoundingClientRect();
+      var hit = !(a.right <= c.left || c.right <= a.left || a.bottom <= c.top || c.bottom <= a.top);
+      if (hit) row.style.marginTop = Math.round(a.bottom - c.top + 10) + 'px';
+    };
+    requestAnimationFrame(function () { requestAnimationFrame(fix); });
+    window.addEventListener('resize', function () { row.style.marginTop = ''; setTimeout(fix, 60); });
     var saved = getLang(), fn = pageTranslator();
     if (saved !== 'zh' && fn) { try { fn(saved); } catch (e) {} }
   }

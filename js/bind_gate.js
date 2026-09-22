@@ -118,17 +118,41 @@
 'button.sm,.langbtn,.dj-lang button{padding:7px 12px;font-size:13px;border-radius:8px;',
 '  border-width:1.5px;border-style:solid;line-height:1.35}',
 /* ── 語言切換：收進右上角身分列，不要每頁再擺一排國旗大按鈕 ── */
-'#dj-langchip{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;',
-'  border:1.5px solid #cfdae1;border-radius:999px;padding:6px 11px;cursor:pointer;',
-'  font:800 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
-'  box-shadow:0 2px 12px rgba(32,42,48,.14)}',
-'@media (max-width:560px){#dj-langchip{padding:5px 9px;font-size:12px}}',
-'.dj-gatelang{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}',
-'.dj-gatelang button{flex:1 1 auto;background:#f7f9fa;border:1.5px solid #cfdae1;color:#54646e;',
-'  border-radius:999px;padding:6px 12px;font:700 12.5px/1.4 inherit;cursor:pointer;white-space:nowrap}',
-'.dj-gatelang button.sel{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
-'.dj-gatelang button:disabled{opacity:.45;cursor:not-allowed}',
-'.dj-gatelang .dj-note{flex:1 1 100%;font-size:11.5px;font-weight:400;color:#7b8892;line-height:1.5}',
+/* 🔴 登入畫面的語言列一定要用 #dj-gate .dj-gatelang button（權重 1,1,1）——
+   低於 #dj-gate button（1,0,1）的寫法會被套上大按鈕樣式：實測三顆變成 155/317/479px、
+   折三行吃掉 134px，把 910px 高的綁定框頂出手機畫面外（clipped:true）。
+   ⇒ 小膠囊、只放語言名、絕不換行。 */
+'#dj-gate .dj-gatelang{display:flex;gap:5px;margin:0 0 10px;overflow-x:auto;',
+'  -webkit-overflow-scrolling:touch;scrollbar-width:none}',
+'#dj-gate .dj-gatelang::-webkit-scrollbar{display:none}',
+'#dj-gate .dj-gatelang button{flex:0 0 auto;background:#f7f9fa;border:1.5px solid #cfdae1;',
+'  color:#54646e;border-radius:999px;padding:4px 10px;font:700 12px/1.35 inherit;',
+'  cursor:pointer;white-space:nowrap;min-height:0}',
+'#dj-gate .dj-gatelang button.sel{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
+'#dj-gate .dj-gatelang button:disabled{opacity:.45;cursor:not-allowed}',
+'#dj-gate .dj-gatelang .dj-note{display:none}',
+/* 每頁頂端的語言列（登入之後）。位置固定在最上面，樣式四頁一致。 */
+'.dj-langrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}',
+'.dj-langrow button{flex:0 0 auto;background:#fff;border:1.5px solid #cfdae1;color:#54646e;',
+'  border-radius:999px;padding:5px 12px;font:700 12.5px/1.4 -apple-system,"PingFang TC",sans-serif;',
+'  cursor:pointer;white-space:nowrap}',
+'.dj-langrow button.sel{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
+'.dj-langrow button:disabled{opacity:.45;cursor:not-allowed}',
+'.dj-langrow .dj-note{flex:1 1 100%;font-size:11.5px;font-weight:400;color:#7b8892;',
+'  line-height:1.5;margin:1px 0 0}',
+/* 總入口的單元清單：本週一張大卡，其餘一行一週——十幾週也不會變成十幾張大卡 */
+'.dj-hubnow{display:block;text-decoration:none;color:inherit;background:#fff;',
+'  border:1.5px solid #cfdae1;border-left-width:5px;border-radius:14px;padding:14px 16px;margin:0 0 10px}',
+'.dj-hubnow .k{font-size:12.5px;font-weight:800;letter-spacing:.02em;margin-bottom:4px}',
+'.dj-hubnow .n{font-size:17px;font-weight:800;margin:0 0 5px}',
+'.dj-hubnow .d{font-size:14px;color:#54646e;line-height:1.7}',
+'.dj-hublist{border:1.5px solid #cfdae1;border-radius:12px;overflow:hidden;background:#fff}',
+'.dj-hublist a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:#54646e;',
+'  padding:11px 14px;border-bottom:1px solid #eef2f4;border-left:5px solid transparent;',
+'  font:700 14px/1.5 -apple-system,"PingFang TC",sans-serif}',
+'.dj-hublist a:last-child{border-bottom:none}',
+'.dj-hublist a i{flex:1 1 auto;font-style:normal;font-weight:400;font-size:13px;color:#7b8892}',
+'.dj-hubcap{font-size:13px;color:#7b8892;margin:14px 0 6px;font-weight:700}',
 '.dj-lang{position:fixed;right:12px;top:52px;z-index:9998;background:#fff;',
 '  border:1.5px solid #cfdae1;border-radius:12px;box-shadow:0 6px 20px rgba(32,42,48,.14);',
 '  padding:6px;min-width:172px}',
@@ -137,13 +161,13 @@
 '.dj-lang button.sel{background:#eef1f3;border-color:#cfdae1;color:#2f6690}',
 '.dj-lang .dj-note{font-size:11.5px;font-weight:400;color:#7b8892;padding:5px 12px 3px;line-height:1.5}',
 '@media (max-width:560px){.dj-lang{right:10px;left:auto;max-width:calc(100vw - 20px)}}',
-'#dj-bar{position:fixed;right:66px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
+'#dj-bar{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
 '  border-radius:999px;padding:6px 13px;font:700 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
-'  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:calc(100vw - 90px);overflow:hidden;',
+'  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:72vw;overflow:hidden;',
 '  text-overflow:ellipsis;white-space:nowrap}',
 /* 🔴 media query 不加權重：這條一定要排在上面 #dj-bar 基準規則之後，
    排前面的話 right:66px 會在手機上照樣贏，覆寫等於沒寫（2026-09-22 當場量到）。 */
-'@media (max-width:560px){#dj-bar{right:56px;max-width:calc(100vw - 76px);font-size:12px;padding:5px 11px}}'
+'@media (max-width:560px){#dj-bar{max-width:calc(100vw - 24px);font-size:12px;padding:5px 11px}}'
 ].join('\n');
 
   function injectCss() {
@@ -357,17 +381,20 @@
   }
   /* 語言選單：登入畫面直接把三個選項攤開（那是第一個畫面，要一眼看到）；
      綁定之後收進右上角身分列旁邊的 🌐，點開才展開。位置固定，不隨週次跑。 */
-  function langMenuHtml() {
-    var cur = getLang(), can = !!pageTranslator();
+  /* onGate=true 時代表畫在登入畫面上。
+     🔴 登入畫面是 bind_gate 自己畫的、自己有字典（gate_i18n.js），所以它永遠翻得動——
+        不可以因為「這一頁的內容還沒翻」就把登入畫面的語言選項也停用（2026-09-22 犯過）。 */
+  function langMenuHtml(onGate) {
+    var cur = getLang(), can = onGate || !!pageTranslator();
     var h = LANGS.map(function (L) {
       var off = (L.k !== 'zh' && !can);
       return '<button type="button" data-lang="' + L.k + '"'
         + (off ? ' disabled title="這一頁還沒有翻譯"' : '')
         + ' class="' + (L.k === cur ? 'sel' : '') + '">'
-        + L.flag + ' ' + L.label + (off ? '　（這頁還沒翻）' : '') + '</button>';
+        + L.flag + ' ' + (onGate ? L.label : L.label + (off ? '（還沒翻）' : '')) + '</button>';
     }).join('');
-    if (!can) h += '<div class="dj-note">這一頁還沒有翻譯版本。其他單元有翻的話，'
-                 + '你選的語言會被記住，過去就會自動套用。</div>';
+    if (!can) h += '<div class="dj-note">這一頁還沒有翻譯版本，'
+                 + '但你選的語言會被記住——有翻的單元會自動套用。</div>';
     return h;
   }
   function wireLangButtons(scope) {
@@ -378,21 +405,31 @@
   }
   function renderLangUI() {
     var inGate = document.getElementById('dj-gate-lang');
-    if (inGate) { inGate.innerHTML = langMenuHtml(); wireLangButtons(inGate); }
-    var chip = document.getElementById('dj-langchip');
-    if (chip) {
-      var cur = getLang(), L = LANGS.filter(function (x) { return x.k === cur; })[0] || LANGS[0];
-      chip.textContent = '🌐 ' + L.short;
-    }
-    var menu = document.getElementById('dj-langmenu');
-    if (menu) { menu.innerHTML = langMenuHtml(); wireLangButtons(menu); }
-    /* 各頁原本那排國旗按鈕藏掉——留著就會有兩個控制項、而且它們讀的是舊的鍵。 */
+    if (inGate) { inGate.innerHTML = langMenuHtml(true); wireLangButtons(inGate); }
+    var row = document.getElementById('dj-langrow');
+    if (row) { row.innerHTML = langMenuHtml(false); wireLangButtons(row); }
+    /* 各頁原本那排國旗按鈕藏掉——留著就會有兩個控制項，而且它們讀的是舊的鍵。
+       功能不是拿掉，是搬到共用的那一列去（每個單元都有，位置樣式一致）。 */
     ['.langswitch', '#w2LangZh', '#w2LangNote'].forEach(function (sel) {
       Array.prototype.forEach.call(document.querySelectorAll(sel), function (o) {
         var box = (sel === '#w2LangZh') ? o.parentNode : o;
         if (box && box.style) box.style.display = 'none';
       });
     });
+  }
+  /* 每頁頂端的語言列。楊老師 2026-09-22：「每個單元還是要留切換語言的版本」——
+     所以不是收成一顆浮動小圖示，是每一頁都看得到的一列；但只有一份實作、一個位置。 */
+  function renderLangRow() {
+    injectCss();
+    if (document.getElementById('dj-langrow')) return;
+    var row = document.createElement('div');
+    row.id = 'dj-langrow';
+    row.className = 'dj-langrow';
+    var host = document.querySelector('.wrap') || document.body;
+    host.insertBefore(row, host.firstChild);   // 排在導覽之前 ⇒ 永遠在最上面
+    renderLangUI();
+    var saved = getLang(), fn = pageTranslator();
+    if (saved !== 'zh' && fn) { try { fn(saved); } catch (e) {} }
   }
   window.DJ_setLang = setLangShared;
   window.DJ_getLang = getLang;
@@ -408,7 +445,9 @@
     { key: 'hub',  href: 'index.html', name: '總入口', desc: '每一週的學習單都在這裡', tone: 'slate' },
     { key: 'w1',   href: 'unit1.html', wk: 1, desc: '四種角色，孵出一個點子' },
     { key: 'w2',   href: 'w2.html',    wk: 2, desc: '文化怎麼放進遊戲裡' },
-    { key: 'sf3k', href: 'sf3k.html',  wk: 3, desc: 'SiSSYFiGHT 三輪試玩' }
+    { key: 'sf3k', href: 'sf3k.html',  wk: 3, desc: 'SiSSYFiGHT 三輪試玩',
+      long: '同一個遊戲玩三輪：原版 → 只改一個地方 → 整組改。一場 3-6 人，'
+          + '出牌前在公開討論區串通，玩完寫下你看到的差別。' }
   ];
   UNITS.forEach(function (u) {
     if (u.wk) {
@@ -463,6 +502,36 @@
     });
   }
 
+  /* 總入口的單元清單：從 UNITS 生成，所以加一週不用動 index.html。
+     本週給一張大卡（學生真正要點的），其餘週次收成一行一列——
+     十幾週的時候，十幾張大卡會讓總入口變成要捲三螢幕才看得完的東西。 */
+  function renderHub() {
+    var box = document.getElementById('hub-units');
+    if (!box) return;
+    injectCss();
+    var weeks = UNITS.filter(function (u) { return u.wk; });
+    var now = null;
+    weeks.forEach(function (u) { if (u.key === NOW_KEY) now = u; });
+    var html = '';
+    if (now) {
+      html += '<a class="dj-hubnow" data-tone="' + now.tone + '" href="' + now.href + '"'
+        + ' style="border-color:transparent">'
+        + '<div class="k">第 ' + now.wk + ' 週 · 本週</div>'
+        + '<div class="n">' + now.desc + '</div>'
+        + '<div class="d">' + (now.long || '') + '</div></a>';
+    }
+    var rest = weeks.filter(function (u) { return u.key !== NOW_KEY; })
+                    .sort(function (a, b) { return b.wk - a.wk; });
+    if (rest.length) {
+      html += '<div class="dj-hubcap">前面幾週（隨時可以回來看）</div><div class="dj-hublist">'
+        + rest.map(function (u) {
+            return '<a data-tone="' + u.tone + '" href="' + u.href + '">'
+              + '<b>第 ' + u.wk + ' 週</b><i>' + u.desc + '</i></a>';
+          }).join('') + '</div>';
+    }
+    box.innerHTML = html;
+  }
+
   /* ── 已綁定時的小列 ── */
   function showBar() {
     injectCss();
@@ -474,40 +543,9 @@
     b.textContent = '#' + env + (mail ? ' · ' + mail : ' · 未綁 Gmail');
     b.onclick = function () {
       b.remove();
-      var lc = document.getElementById('dj-langchip');
-      if (lc) lc.remove();
-      var lm = document.getElementById('dj-langmenu');
-      if (lm) lm.remove();
       openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補綁。');
     };
     document.body.appendChild(b);
-
-    /* 語言切換：每一頁都在同一個地方（身分列左邊），不隨週次搬家。
-       沒翻譯的頁面仍然看得到這顆，點開才知道「這頁還沒翻」——比整顆消失清楚。 */
-    var chip = document.createElement('div');
-    chip.id = 'dj-langchip';
-    chip.title = '切換語言 / Language';
-    chip.onclick = function (e) {
-      e.stopPropagation();
-      var m = document.getElementById('dj-langmenu');
-      if (m) { m.remove(); return; }
-      m = document.createElement('div');
-      m.id = 'dj-langmenu';
-      m.className = 'dj-lang';
-      document.body.appendChild(m);
-      renderLangUI();
-      setTimeout(function () {
-        document.addEventListener('click', function close(ev) {
-          var mm = document.getElementById('dj-langmenu');
-          if (mm && !mm.contains(ev.target)) { mm.remove(); document.removeEventListener('click', close); }
-        });
-      }, 0);
-    };
-    document.body.appendChild(chip);
-    renderLangUI();
-    // 這一頁有自己的翻譯器的話，把記住的語言套上去（原本各頁只讀自己那把鍵）
-    var saved = getLang(), fn = pageTranslator();
-    if (saved !== 'zh' && fn) { try { fn(saved); } catch (e) {} }
     // 🔴 固定定位會蓋住頁面最上緣（實測蓋掉單元導覽的「第3週」）。
     //    顯示時把 body 往下推讓出它的高度——不要只調 z-index，那只是決定誰蓋誰，內容還是被擋。
     requestAnimationFrame(function () {
@@ -541,6 +579,8 @@
       });
     }
     renderNav();
+    renderLangRow();
+    renderHub();
     var env = ls(LS_ENV), mail = ls(LS_MAIL);
     if (env != null && env !== '' && mail) showBar();
     else openGate();

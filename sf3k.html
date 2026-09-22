@@ -122,26 +122,6 @@ table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:
 <div class="wrap">
 <div class="unitnav"><a href="index.html">總入口</a><a href="unit1.html">第1週</a><a href="w2.html">第2週</a><a class="on" href="sf3k.html">第3週 · SiSSYFiGHT</a></div>
 
-  <!-- ══ 登入 ══ -->
-  <section id="scr-login">
-    <h1>SiSSYFiGHT 線上版</h1>
-    <p class="sub">改編自 SiSSYFiGHT 3000（GDC Game Design Workshop 簡化版）。原作 Eric Zimmerman。</p>
-    <div class="box">
-      <h3>先確認你是誰</h3>
-      <p class="sub">用學校 Google 帳號登入，並綁定你的信封編號。綁定後，你之前在學習單留下的紀錄都會跟著這個帳號。</p>
-      <div class="row" style="margin-bottom:8px">
-        <button class="pri" id="btn-google">用 Google 帳號登入</button>
-        <span id="who" class="pill"></span>
-      </div>
-      <div class="row">
-        <div class="grow"><input id="env" type="number" inputmode="numeric" min="0" max="99" placeholder="信封編號（0-99）"></div>
-        <button class="ok" id="btn-bind">綁定並進入</button>
-      </div>
-      <p class="err hide" id="login-err"></p>
-      <p class="sub" id="login-note"></p>
-    </div>
-  </section>
-
   <!-- ══ 大廳 ══ -->
   <section id="scr-lobby" class="hide">
     <h1>選一個場次</h1>
@@ -281,7 +261,6 @@ firebase.initializeApp({
   projectId:"gen-lang-client-0929530380"
 });
 var db = firebase.database();
-var auth = firebase.auth();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 var ROOT = db.ref('whgm/analysis/w3game');
 var E = window.SF3K, CARDS = window.SF3K_CARDS;
@@ -295,7 +274,7 @@ var hostResolving = false;   // 結算中，擋重入
 var blitzTimer = null, blitzLeft = 0, lastTimerRound = null;
 
 var $ = function(id){ return document.getElementById(id); };
-function show(id){ ['scr-login','scr-lobby','scr-setup','scr-room'].forEach(function(s){
+function show(id){ ['scr-lobby','scr-setup','scr-room'].forEach(function(s){
   $(s).classList.toggle('hide', s!==id); }); }
 function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g,function(c){
   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
@@ -304,55 +283,22 @@ function code4(){ var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<
   s+=A[Math.floor(Math.random()*A.length)]; return s; }
 var COLORS=['#c0392b','#27ae60','#2980b9','#2c3e50','#e67e22','#8e44ad','#16a085','#d35400'];
 
-/* ═════ 登入與綁定 ═════ */
-function setWho(){
-  $('who').textContent = me.email ? me.email : '尚未登入';
-  $('who').className = 'pill' + (me.email ? ' on' : '');
+/* ═════ 身分：交給共用的 bind_gate.js ═════
+   綁定只做一次（在學生第一次落地的那一頁），之後每一頁都只剩右上角小圓標。
+   這裡只負責把已經綁好的編號讀進來；還沒綁的話 bind_gate 會蓋上綁定畫面，綁完 reload。 */
+function pickUpIdentity(){
+  var e = null, mail = null;
+  try {
+    var raw = localStorage.getItem('designjam_env');
+    if (raw != null && raw !== '') e = parseInt(raw, 10);   // ⚠ 0 是合法編號
+    mail = localStorage.getItem('designjam_email');
+  } catch (x) {}
+  if (e == null || isNaN(e)) return false;
+  me.env = e;
+  me.email = mail || null;
+  me.name = mail ? mail.split('@')[0] : ('#' + e);
+  return true;
 }
-auth.onAuthStateChanged(function(u){
-  if(!u) { setWho(); return; }
-  me.uid = u.uid; me.email = u.email; me.name = u.displayName || (u.email||'').split('@')[0];
-  setWho();
-  ROOT.child('identity/'+u.uid).once('value').then(function(s){
-    var v = s.val();
-    if (v && v.env != null) { $('env').value = v.env; $('login-note').textContent = '你之前綁的是編號 '+v.env+'，可以直接進入。'; }
-  });
-});
-$('btn-google').onclick = function(){
-  var p = new firebase.auth.GoogleAuthProvider();
-  var mobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
-  $('login-err').classList.add('hide');
-  if (mobile) return auth.signInWithRedirect(p);     // 🔴 手機一律 redirect，popup 會被擋
-  auth.signInWithPopup(p).catch(function(e){
-    // 🔴 不要把錯誤吞成空字串：使用者要知道發生什麼事、要不要重試
-    if (e && /popup/i.test(e.code||'')) return auth.signInWithRedirect(p);
-    $('login-err').textContent = '登入失敗：' + (e && (e.message||e.code) || '不明原因');
-    $('login-err').classList.remove('hide');
-  });
-};
-auth.getRedirectResult().catch(function(e){
-  if (!e) return;
-  $('login-err').textContent = '登入失敗：' + (e.message||e.code);
-  $('login-err').classList.remove('hide');
-});
-$('btn-bind').onclick = function(){
-  var v = parseInt($('env').value, 10);
-  if (isNaN(v) || v < 0 || v > 99) {         // ⚠ 0 是合法編號，不能用 !v 判斷
-    $('login-err').textContent = '請輸入 0-99 的編號'; $('login-err').classList.remove('hide'); return;
-  }
-  me.env = v;
-  me.name = me.name || ('#'+v);
-  localStorage.setItem('designjam_env', String(v));
-  var rec = { env:v, name:me.name, ts:nowTs() };
-  if (me.uid) { rec.uid = me.uid; rec.email = me.email;
-    ROOT.child('identity/'+me.uid).update(rec);
-    ROOT.child('envIndex/'+v).update({ uid:me.uid, email:me.email, name:me.name, ts:nowTs() });
-  } else {
-    ROOT.child('envIndex/'+v).update({ name:me.name, ts:nowTs() });
-  }
-  enterLobby();
-};
-(function(){ var s = localStorage.getItem('designjam_env'); if (s!=null && s!=='') $('env').value = s; })();
 
 /* ═════ 大廳 ═════ */
 var comboCount = {};
@@ -1012,12 +958,16 @@ $('btn-report-send').onclick = function(){
 };
 $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'); };
 
-/* 起手：已綁過就直接進大廳 */
+/* 起手：綁過就直接進大廳；沒綁的話 bind_gate 會接手 */
 (function(){
-  var s = localStorage.getItem('designjam_env');
-  if (s!=null && s!=='') { me.env = parseInt(s,10); me.name = '#'+me.env; }
-  show('scr-login');
+  if (pickUpIdentity()) { enterLobby(); return; }
+  // 還沒綁 → bind_gate.js 會蓋上綁定畫面。它綁完會 reload，那時就走上面那條。
+  document.querySelector('.wrap').insertAdjacentHTML('beforeend',
+    '<div class="box"><h3>先綁定一次</h3><p class="sub" style="margin:0">' +
+    '確認 Google 帳號與信封編號之後就能進來。綁一次就好，之後所有單元都認得你。</p></div>');
 })();
+window.DJ_BIND_UNIT = 'sf3k';
 </script>
+<script src="js/bind_gate.js"></script>
 </body>
 </html>

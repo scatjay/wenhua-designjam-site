@@ -1966,10 +1966,11 @@ window.SF3K_VERIFIED = {
   "defend_strong",
   "defend_weak",
   "drain",
-  "draw_target",
   "elements",
   "events",
+  "fog",
   "ghost",
+  "guard",
   "items",
   "last_one",
   "no_repeat",
@@ -1977,6 +1978,7 @@ window.SF3K_VERIFIED = {
   "redirect",
   "roles",
   "round_cap",
+  "seat_ring",
   "solo_hard",
   "stack",
   "team_diminish",
@@ -1987,6 +1989,7 @@ window.SF3K_VERIFIED = {
   "theme_charm",
   "theme_mol",
   "theme_money",
+  "theme_office",
   "timed_talk",
   "vampire",
   "whisper"
@@ -2153,17 +2156,85 @@ window.SF3K_VERIFIED = {
    "n": 3
   }
  },
- "quirky": [],
+ "quirky": [
+  "draw_target"
+ ],
  "needs4p": [
-  "seat_ring",
-  "range2",
+  "factions",
   "jury",
-  "factions"
+  "range2",
+  "seat_ring"
  ],
  "roundCapPending": [
   "fog",
   "guard",
   "theme_office"
  ],
- "note_20260923": "theme_office 是純換皮（patch 只有 theme），機制等同原版，卻三場都打不完 30 回合 ⇒ roundCapPending 這三張不算卡片問題，是測試員隨機出牌不會協調 TEAM。needs4p 那四張是遊戲自己的人數驗證擋下來的（正確行為），要 4 個測試視窗才測得到。 ⚠ 先前 quirky 寫成 seat_right，那個 id 在卡池裡不存在（真正的是 draw_target）⇒ 那個 ⚠ 標記從來沒有真的顯示過。憑記憶寫 id 不對資料，跟 QR 選擇器事故同一型。"
+ "note_20260923": "theme_office 是純換皮（patch 只有 theme），機制等同原版，卻三場都打不完 30 回合 ⇒ roundCapPending 這三張不算卡片問題，是測試員隨機出牌不會協調 TEAM。needs4p 那四張是遊戲自己的人數驗證擋下來的（正確行為），要 4 個測試視窗才測得到。 ⚠ 先前 quirky 寫成 seat_right，那個 id 在卡池裡不存在（真正的是 draw_target）⇒ 那個 ⚠ 標記從來沒有真的顯示過。憑記憶寫 id 不對資料，跟 QR 選擇器事故同一型。",
+ "needs4pVerified": [
+  "seat_ring"
+ ],
+ "uiPairs": {
+  "team_penalty": [
+   "anonymous",
+   "ghost",
+   "stack",
+   "theme_mol",
+   "whisper"
+  ],
+  "anonymous": [
+   "decay",
+   "defend_weak",
+   "ghost",
+   "stack",
+   "team_penalty",
+   "whisper"
+  ],
+  "whisper": [
+   "anonymous",
+   "decay",
+   "defend_weak",
+   "team_penalty"
+  ],
+  "stack": [
+   "anonymous",
+   "decay",
+   "defend_weak",
+   "team_penalty"
+  ],
+  "ghost": [
+   "anonymous",
+   "decay",
+   "defend_weak",
+   "team_penalty"
+  ],
+  "theme_mol": [
+   "decay",
+   "defend_weak",
+   "team_penalty"
+  ],
+  "defend_weak": [
+   "anonymous",
+   "decay",
+   "ghost",
+   "stack",
+   "theme_mol",
+   "whisper"
+  ],
+  "decay": [
+   "anonymous",
+   "defend_weak",
+   "ghost",
+   "last_one",
+   "stack",
+   "theme_mol",
+   "whisper"
+  ],
+  "last_one": [
+   "decay"
+  ]
+ },
+ "note_20260923_persona": "改用會發言的 persona 測試員重跑之後：先前隨機出牌測不完的卡（fog/guard/theme_office）全部三場過關——那從來不是卡片的問題，是測試員不會社交。沉默的測試員測不出靠講話運作的功能，這個結論已經證實。",
+ "note_20260923_final": "人工核定（自動腳本的粗糙分類已覆寫）：theme_charm/last_one 補測後排除嫌疑，回到已實測；draw_target 維持⚠（8場6過，機制可解釋但仍偶發）；range2需6人以上才有意義（設計如此，今晚測不到）；jury卡在R5是測試腳本沒做陪審團猜測介面、非卡片問題；factions在1v1殘局大概率跟last_one同一種限制（TEAM需2個攻擊者），但沒有重新用SOLO邏輯驗證過，如實列未確認，不宣稱已驗證。",
+ "note_20260923_uipairs_bug": "2026-09-23 上課前總驗收抓到：uiPairs 從頭到尾是空的（之前只算給楊老師看數字，沒有真的寫回檔案），matesOf() 因此退回讀 mates（引擎層 755 組寬鬆清單），導致「🔗 可配」標籤顯示幾乎所有卡都能配，跟只有 20 組真正 UI 驗證過的事實完全不符。已修正為只用 uiPairs 這 20 組。另注意：13 張兩兩組合測試（234場）的 persona 發言數是 0——跟 40 張單卡測試不同，這批沒有真的驗證到需要協調講話才會出現的問題，20 組的可信度比單卡測試低。"
 };

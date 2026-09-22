@@ -111,6 +111,17 @@ table.st th:first-child,table.st td:first-child{text-align:left}
 table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
 .bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
+/* 13 個設計維度各一個色。挑的是在米色底上都看得出差別、而且彼此相鄰不會混淆的 13 個色相；
+   卡片本身不塗滿（塗滿會蓋掉「選中」的狀態），只染左邊粗邊＋維度標籤。 */
+.dimhead{--dc:#54646e;border-left:5px solid var(--dc);padding-left:9px;color:var(--dc)}
+.mcard{--dc:var(--line);border-left-width:5px;border-left-color:var(--dc)}
+.mcard .dimtag{font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:999px;
+  background:color-mix(in srgb, var(--dc) 14%, #fff);color:var(--dc);border:1px solid var(--dc)}
+[data-dim=A]{--dc:#c0392b} [data-dim=B]{--dc:#d2691e} [data-dim=C]{--dc:#a8791b}
+[data-dim=D]{--dc:#6b8e23} [data-dim=E]{--dc:#2e8b57} [data-dim=F]{--dc:#00806b}
+[data-dim=G]{--dc:#157a8c} [data-dim=H]{--dc:#2f6690} [data-dim=I]{--dc:#4b5fa8}
+[data-dim=J]{--dc:#7a3f92} [data-dim=K]{--dc:#a63a7a} [data-dim=L]{--dc:#b8455f}
+[data-dim=M]{--dc:#8a6d3b}
 /* 排行榜與徽章 */
 .bdgrid{display:grid;gap:9px;grid-template-columns:1fr}
 @media (min-width:560px){.bdgrid{grid-template-columns:1fr 1fr}}
@@ -489,6 +500,15 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       <textarea id="fb4" rows="3" maxlength="200" placeholder="100 字以內，自己寫"></textarea>
       <div class="sub" id="fb4-count">0 / 100 字</div>
       <div class="row" style="margin-top:8px"><button class="ok" id="btn-fb">送出回饋</button><span id="fb-msg"></span></div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
+        <p style="margin:0 0 6px"><b>剛剛有哪裡怪怪的嗎？</b></p>
+        <p class="sub" style="margin:0 0 7px">bug、看不懂的地方、規則怪怪的、想到更好的做法——
+          都可以寫。<b>老師今天晚上就會看到</b>，明天之後的版本會直接改。</p>
+        <div class="row"><div class="grow">
+          <input id="over-report" maxlength="220" placeholder="例：畏縮明明沒人打我卻沒扣血"></div>
+          <button class="sm" id="btn-over-report">送出</button></div>
+        <div class="ckhint" id="over-report-msg"></div>
+      </div>
       <div class="row" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
         <button class="pri" id="btn-back-lobby">回大廳，開下一場 →</button>
       </div>
@@ -525,9 +545,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222251"></script>
-<script src="js/sf3k_cards.js?v=202609222251"></script>
-<script src="js/sf3k_stats.js?v=202609222251"></script>
+<script src="js/sf3k_engine.js?v=202609222254"></script>
+<script src="js/sf3k_cards.js?v=202609222254"></script>
+<script src="js/sf3k_stats.js?v=202609222254"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -730,6 +750,22 @@ $('btn-leave').onclick = function(){
       && !confirm('這一場還沒打完，離開之後要用場次代號才能再進來。確定離開？')) return;
   leaveRoom();
 };
+/* 玩完當下的回報最有價值，但「怪怪的」三個字我修不了——
+   把這一場的代號、用了哪張卡、打了幾回合、幾個人一起送出去，才有辦法定位。 */
+$('btn-over-report').onclick = function(){
+  var v = ($('over-report').value||'').trim();
+  if (v.length < 4) { $('over-report-msg').textContent = '再多寫幾個字'; return; }
+  var m = state.meta || {};
+  ROOT.child('reports').push({
+    env: me.env, name: me.name, room: room||null, text: v,
+    phase: 'over', cards: m.cards||[], rounds: m.round||null,
+    players: Object.keys(dropNull(normObj(state.players))).length,
+    sess: SESS, ua: navigator.userAgent.slice(0,120), ts: nowTs()
+  }).then(function(){
+    $('over-report').value = '';
+    $('over-report-msg').textContent = '收到了，謝謝！老師看得到。';
+  }).catch(function(e){ $('over-report-msg').textContent = '送不出去：'+(e.message||e); });
+};
 $('btn-back-lobby').onclick = leaveRoom;
 $('btn-join').onclick = function(){ joinRoom(($('join-code').value||'').trim().toUpperCase()); };
 var hostedBefore = 0;
@@ -779,14 +815,16 @@ function renderPool(){
   CARDS.CARDS.forEach(function(c){ (byDim[c.dim]=byDim[c.dim]||[]).push(c); });
   var html = '';
   Object.keys(byDim).sort().forEach(function(d){
-    html += '<div class="dimhead">'+d+'　'+esc(CARDS.DIM_NAMES[d])+'</div><div class="cardgrid">';
+    html += '<div class="dimhead" data-dim="'+d+'">'+d+'　'+esc(CARDS.DIM_NAMES[d])+'</div><div class="cardgrid">';
     byDim[d].forEach(function(c){
       var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
                 : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
                 : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
       var colo = /手勢|坐在|實體/.test(c.desc) ? '<span class="pill warn">要坐在一起</span>' : '';
-      html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" data-id="'+c.id+'">'
-        + '<div class="nm">'+esc(c.name)+' '+badge+' '+colo+'</div>'
+      html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
+        + 'data-id="'+c.id+'" data-dim="'+c.dim+'">'
+        + '<div class="nm">'+esc(c.name)
+        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+badge+' '+colo+'</div>'
         + '<div class="ds">'+esc(c.desc)+'</div>'
         + '<div class="md">'+esc(c.mda)+'</div></div>';
     });
@@ -1016,8 +1054,8 @@ function renderRoom(){
   if (picked.length) {
     peek.style.display = '';
     $('cardpeek-body').innerHTML = '<div class="cardgrid">' + picked.map(function(x){
-      return '<div class="mcard ro"><div class="nm">'+esc(x.name)
-        + ' <span class="pill">'+esc(CARDS.DIM_NAMES[x.dim]||x.dim)+'</span></div>'
+      return '<div class="mcard ro" data-dim="'+esc(x.dim)+'"><div class="nm">'+esc(x.name)
+        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[x.dim]||x.dim)+'</span></div>'
         + '<div class="ds">'+esc(x.desc)+'</div>'
         + '<div class="md">'+esc(x.mda)+'</div></div>';
     }).join('') + '</div>';
@@ -1907,7 +1945,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222251"></script>
-<script src="js/bind_gate.js?v=202609222251"></script>
+<script src="js/gate_i18n.js?v=202609222254"></script>
+<script src="js/bind_gate.js?v=202609222254"></script>
 </body>
 </html>

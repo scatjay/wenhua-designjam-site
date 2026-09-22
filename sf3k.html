@@ -667,10 +667,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230027"></script>
-<script src="js/sf3k_verified.js?v=202609230027"></script>
-<script src="js/sf3k_cards.js?v=202609230027"></script>
-<script src="js/sf3k_stats.js?v=202609230027"></script>
+<script src="js/sf3k_engine.js?v=202609230038"></script>
+<script src="js/sf3k_verified.js?v=202609230038"></script>
+<script src="js/sf3k_cards.js?v=202609230038"></script>
+<script src="js/sf3k_stats.js?v=202609230038"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -683,15 +683,42 @@ var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
-   文化遊戲松 09:10-12:00（通識，約 44 人）／遊戲設計學 19:05-21:30（夜四技，20 人）。
-   不分區的話，晚上那班一進大廳就看到早上留下的九間死房，GM 次數也會算在一起。
-   以「當地日期＋上下午」當分區鍵；14:00 是兩班中間的安全切點。 */
-function sessionKey(){
+   文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
+
+   🔴 2026-09-23 改：分區鍵從「日期＋上下午」加上**課程代碼**。舊版有兩個洞：
+   ① 半夜跑的測試（00:xx）跟當天早上 09:10 那班落在同一個 am 桶 ——
+      今晚 139 場測試就是這樣全部寫進 20260923am，早上那班一進去會看到 139 間死房。
+   ② 兩班靠 14:00 切點分開是「剛好」不是設計：補課、調課、或有人 13:50 開一場就破了。
+      harness 早就寫過「編號範圍不重疊是巧合不是設計」，時段切點是同一類的巧合。
+   ⚠ 舊鍵（純日期格式）底下的資料**刻意不動也不刪** —— 那是跑了一整晚的測試紀錄，
+      之後還要拿來跑兩張卡的組合測試。改鍵之後它們自然對不上，不用刪就看不到。*/
+function courseKey(env){
+  var m = /[?&]c=(\d{4,6})/.exec(location.search);
+  if (m && (m[1] === '47602' || m[1] === '46582')) return m[1];   // ① 當週 QR 帶的，老師可控
+  if (env != null && env >= 55 && env <= 60) return 'test';       // ② 測試員專用段，永遠不混進任何一班
+  if (env != null && env >= 101) return '46582';                  // ③ 信封編號範圍（實體發放時就分好）
+  if (env != null && env >= 1 && env <= 52) return '47602';
+  /* 老師編號（00／99）不綁課 —— 他兩班都要進，看時段決定 */
+  return (new Date()).getHours() < 14 ? '47602' : '46582';
+}
+function sessionKey(env){
   var d = new Date();
   var p = function(x){ return (x<10?'0':'')+x; };
-  return '' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + (d.getHours() < 14 ? 'am' : 'pm');
+  return courseKey(env) + '-' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate())
+       + (d.getHours() < 14 ? 'am' : 'pm');
 }
-var SESS = sessionKey();
+var SESS = sessionKey(null);   // ⚠ 這時還不知道編號，綁定後在 pickUpIdentity 重算
+
+/* 這一節看得到哪些場次的回放／觀戰。
+   🔴 刻意不對稱（楊老師 2026-09-23 定）：
+      早上那班（44 人）要從空白開始 —— 場次要他們自己打出來。
+      晚上那班只有 20 人，自己打不出足夠的場次可看 ⇒ 額外看得到早上那批。反過來不行。*/
+function visibleSessions(){
+  var out = [SESS];
+  var m = /^(\d{5})-(\d{8})(am|pm)$/.exec(SESS);
+  if (m && m[1] === '46582') out.push('47602-' + m[2] + 'am');   // 晚上那班看得到同一天早上的
+  return out;
+}
 var E = window.SF3K, CARDS = window.SF3K_CARDS;
 
 var me = { env:null, name:null, email:null, uid:null };
@@ -813,6 +840,9 @@ function pickUpIdentity(){
   } catch (x) {}
   if (e == null || isNaN(e)) return false;
   me.env = e;
+  /* 🔴 SESS 在檔案載入時就算過一次，但那時還不知道編號（courseKey 要靠編號分班）
+     ⇒ 這裡一定要重算。enterLobby() 在本函式之後才跑，所以來得及。*/
+  SESS = sessionKey(e);
   me.email = mail || null;
   /* 🔴 原本是 mail.split('@')[0]，學生信箱是 {學號}@office.stust.edu.tw
      ⇒ 座位、聊天室、統計表上全部都是學號，去識別化整個白做。
@@ -2286,20 +2316,34 @@ function renderBoards(){
 }
 
 /* ═════ 看別人那一場：列出已結束的場次，可留評論 ═════ */
+/* ⚠ 新格式是 `47602-20260923am`，舊格式是 `20260923am`（今晚測試留下的）。
+   兩種都要認得，不然舊場次的標籤會印出一串原始鍵值。
+   原本用 slice(0,8) 取日期，加了課程前綴之後會切到 '47602-20' —— 改用 regex 取。*/
+function sessParts(s){
+  var m = /^(?:(\w+)-)?(\d{4})(\d{2})(\d{2})(am|pm)$/.exec(String(s||''));
+  return m ? { course:m[1]||null, y:m[2], mo:m[3], d:m[4], half:m[5] } : null;
+}
 function sessLabel(s){
-  if (!s) return '';
-  var m = /^(\d{4})(\d{2})(\d{2})(am|pm)$/.exec(String(s));
-  if (!m) return String(s);
-  var sameDay = String(s).slice(0, 8) === SESS.slice(0, 8);
-  var half = m[4] === 'am' ? '上午' : '晚上';
-  return sameDay ? half : (m[2] + '/' + m[3] + ' ' + half);
+  var a = sessParts(s), b = sessParts(SESS);
+  if (!a) return String(s||'');
+  var half = a.half === 'am' ? '上午' : '晚上';
+  if (b && a.y+a.mo+a.d === b.y+b.mo+b.d) {
+    /* 同一天：晚上那班看到早上那批時，講「早上那班」比講「上午」清楚 */
+    return (a.course && b.course && a.course !== b.course) ? '早上那班' : half;
+  }
+  return a.mo + '/' + a.d + ' ' + half;
 }
 function watchOthers(){
-  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(40).on('value', function(s){
+  /* 40 → 80：晚上那班要看得到早上那批，太小的視窗會被自己的場次擠掉。
+     ⚠ 這個查詢會把整間房（含每回合與聊天）抓下來，不要再往上加。*/
+  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(80).on('value', function(s){
     var v = dropNull(normObj(s.val())), rows = [];
     Object.keys(v).reverse().forEach(function(code){
       if (/^ZZ/.test(code)) return;
       var m = v[code].meta; if (!m || m.phase !== 'over') return;
+      /* 🔴 原本這裡沒有場次篩選，40 場全列出來只是排序不同 ——
+         那會讓早上那班一開場就看到今晚 139 場測試，違反「空白開始」。*/
+      if (!m.demo && visibleSessions().indexOf(m.sess) < 0) return;
       var mine = !!(dropNull(normObj(v[code].players))[me.env]);
       if (mine) return;                       // 自己那場不算「別人的」
       var cards = (m.cards||[]).map(CARDS.byId).filter(Boolean);
@@ -2309,7 +2353,7 @@ function watchOthers(){
       var wn = (m.winners||[]).length;
       /* 示範場次排最前（學生還沒打完之前就有東西可以看）、
          再排本節課的（看同學的比看陌生人的有意義）、最後才是別的時段。 */
-      var tier = m.demo ? 0 : (m.sess === SESS ? 1 : 2);
+      var tier = m.demo ? 0 : (m.sess === SESS ? 1 : 2);   // 2 ＝ 晚上那班看到的早上那批
       var tag = m.demo
         ? '<span class="pill amber">老師的示範場次</span>'
         : (m.sess === SESS ? '' : '<span class="pill">' + esc(sessLabel(m.sess)) + '那一批</span>');
@@ -2666,7 +2710,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230027"></script>
-<script src="js/bind_gate.js?v=202609230027"></script>
+<script src="js/gate_i18n.js?v=202609230038"></script>
+<script src="js/bind_gate.js?v=202609230038"></script>
 </body>
 </html>

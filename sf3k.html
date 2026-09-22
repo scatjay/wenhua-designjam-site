@@ -757,10 +757,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230748"></script>
-<script src="js/sf3k_verified.js?v=202609230748"></script>
-<script src="js/sf3k_cards.js?v=202609230748"></script>
-<script src="js/sf3k_stats.js?v=202609230748"></script>
+<script src="js/sf3k_engine.js?v=202609230750"></script>
+<script src="js/sf3k_verified.js?v=202609230750"></script>
+<script src="js/sf3k_cards.js?v=202609230750"></script>
+<script src="js/sf3k_stats.js?v=202609230750"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1007,8 +1007,13 @@ function setNick(v){
 }
 function renderMeRow(){
   var el = $('lobby-me'); if (!el) return;
+  /* 楊老師 2026-09-23：「帳號上面顯示發言次數」——BD.talk 是 watchBoards() 從
+     talk/{SESS} 讀回來的即時資料，key 是 env。這裡直接讀，讀不到就先不顯示
+     （還沒開始講話，或 watchBoards 還沒回來），不要顯示 0 造成誤會成「講了0句」。 */
+  var myTalk = BD.talk && BD.talk[me.env] && BD.talk[me.env].n;
+  var talkChip = myTalk ? ' <span class="pill">📣 已發言 ' + myTalk + ' 句</span>' : '';
   el.innerHTML = '你是 <span class="av">' + avatarOf(me.env) + '</span><b>' + esc(me.name) + '</b>'
-    + ' <span class="pill">#' + me.env + '</span>'
+    + ' <span class="pill">#' + me.env + '</span>' + talkChip
     + ' <button class="sm" id="btn-nick">改暱稱</button>'
     + '<span class="sub" style="display:block;margin-top:4px">'
     + '編號是你整學期的紀錄用的，不會變；暱稱只是遊戲裡顯示的名字，隨時可以改。</span>'
@@ -2478,6 +2483,11 @@ var BOARDS = [
     badge:'眾矢之的', f:function(s){ return s.firstOut; } },
   { k:'talk',   icon:'📣', t:'大聲公',       unit:'句',   hint:'公開討論區講最多話。這個遊戲不講話就沒東西了',
     badge:'大聲公', f:function(s){ return s.talk; } },
+  /* 楊老師 2026-09-23：跟大聲公相反方向的成就——玩完場次卻幾乎沒講話。
+     asc:true 讓 renderBoards() 走「games>0 才算數、由小到大排」那條路，
+     不是「v>0 才算數」——不然真正的 0 句永遠上不了榜（0 會被 v>0 濾掉）。 */
+  { k:'quiet',  icon:'🤫', t:'最寡言',       unit:'句',   hint:'玩完場次但講話講最少——這個遊戲不講話很難玩得動喔',
+    badge:'最寡言', f:function(s){ return s.talk; }, asc:true },
   { k:'design', icon:'🧪', t:'改造狂',       unit:'種',   hint:'當 GM 設計過最多不同的規則組合',
     badge:'改造狂', f:function(s){ return s.designs; } },
   { k:'replay', icon:'🎬', t:'觀察者',       unit:'場',   hint:'看完最多別人的回放',
@@ -2500,7 +2510,10 @@ var BD = { plays:null, talk:null, replays:null, leaves:null };
 function watchBoards(){
   ['plays', 'talk', 'replays', 'leaves'].forEach(function(key){
     var ref = (key === 'plays') ? ROOT.child('plays') : ROOT.child(key + '/' + SESS);
-    ref.on('value', function(s){ BD[key] = dropNull(normObj(s.val())); renderBoards(); });
+    ref.on('value', function(s){
+      BD[key] = dropNull(normObj(s.val())); renderBoards();
+      if (key === 'talk') renderMeRow();   // 帳號列的發言次數要跟著即時更新
+    });
   });
 }
 function boardStats(){
@@ -2562,9 +2575,11 @@ function renderBoards(){
   var myBadges = [];
   var html = '<div class="bdgrid">';
   BOARDS.forEach(function(B){
+    /* asc 榜（目前只有「最寡言」）：門檻不能用 v>0（那樣真正的 0 句會被濾掉，
+       整個榜的意義就沒了），改成「至少玩過一場」才算數，由小到大排。 */
     var rank = ids.map(function(e){ return { env:e, v:B.f(S[e])||0 }; })
-                  .filter(function(x){ return x.v > 0; })
-                  .sort(function(a,b){ return b.v - a.v; });
+                  .filter(function(x){ return B.asc ? S[x.env].games > 0 : x.v > 0; })
+                  .sort(function(a,b){ return B.asc ? a.v - b.v : b.v - a.v; });
     var top = rank.slice(0, 3);
     if (rank.length && String(rank[0].env) === String(me.env)) myBadges.push(B);
     html += '<div class="bdcard'+(B.shame?' shame':'')+'"><div class="bdh">'+B.icon+' '+esc(B.t)+'</div>'
@@ -3019,7 +3034,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230748"></script>
-<script src="js/bind_gate.js?v=202609230748"></script>
+<script src="js/gate_i18n.js?v=202609230750"></script>
+<script src="js/bind_gate.js?v=202609230750"></script>
 </body>
 </html>

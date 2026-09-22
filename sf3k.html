@@ -127,7 +127,6 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 </head>
 <body>
 <div class="wrap">
-<div class="unitnav"><a href="index.html">總入口</a><a href="unit1.html">第1週</a><a href="w2.html">第2週</a><a class="on" href="sf3k.html">第3週 · SiSSYFiGHT</a></div>
 
   <!-- ══ 大廳 ══ -->
   <section id="scr-lobby" class="hide">
@@ -256,9 +255,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222133"></script>
-<script src="js/sf3k_cards.js?v=202609222133"></script>
-<script src="js/sf3k_stats.js?v=202609222133"></script>
+<script src="js/sf3k_engine.js?v=202609222141"></script>
+<script src="js/sf3k_cards.js?v=202609222141"></script>
+<script src="js/sf3k_stats.js?v=202609222141"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -278,6 +277,19 @@ var state = { meta:null, players:{}, choices:{}, result:null, rounds:{}, phase:'
 var pick = { action:null, target:null, item:null, itemTarget:null, juryPick:null };
 var selected = [];   // GM 選的卡 id
 var hostResolving = false;   // 結算中，擋重入
+/* 每台裝置一個 id：同一個編號可以在手機＋電腦各自登入（Firebase Auth 不像 flipclass 會互踢），
+   但**不能用兩台同時進同一場**——那會變成一個玩家兩個螢幕搶著出牌，後送的蓋掉先送的。
+   所以用 presence 在進房前就擋掉，不要讓人進去了才出錯。 */
+var myDevice = (function(){
+  var k = 'designjam_device', v = null;
+  try { v = localStorage.getItem(k); } catch(e) {}
+  if (!v) {
+    v = 'd' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+    try { localStorage.setItem(k, v); } catch(e) {}
+  }
+  return v;
+})();
+var presenceRef = null;
 var blitzTimer = null, blitzLeft = 0, lastTimerRound = null;
 
 var $ = function(id){ return document.getElementById(id); };
@@ -459,7 +471,16 @@ function joinRoom(codeStr){
     if (!s.exists()) { alert('找不到場次 '+codeStr); return; }
     room = codeStr; roomRef = ROOT.child('rooms/'+codeStr);
     var m = s.val();
-    roomRef.child('players').once('value').then(function(ps){
+    roomRef.child('presence/'+me.env).once('value').then(function(pr){
+      var others = Object.keys(dropNull(normObj(pr.val())))
+                         .filter(function(d){ return d !== myDevice; });
+      if (others.length) {
+        alert('這個編號（#' + me.env + '）已經在這一場裡了，而且是別的裝置開著。\n\n'
+            + '同一個編號不能用兩台裝置進同一場——會變成一個人兩個螢幕搶著出牌。\n'
+            + '請把另一台的頁面關掉，或用那台繼續玩。');
+        return;
+      }
+      return roomRef.child('players').once('value').then(function(ps){
       var cur = dropNull(normObj(ps.val()));
       var already = !!cur[me.env];
       var inProgress = m.phase && m.phase !== 'lobby';
@@ -485,12 +506,17 @@ function joinRoom(codeStr){
                  alive: true, inGame: false, spectator: false,
                  lastAction: null, juryScore: 0, joinedAt: Date.now() };
       }).then(enterRoom);
+      });
     });
   });
 }
 function enterRoom(){
   show('scr-room');
   $('room-code').textContent = room;
+  // 佔住這個編號在本場的位置；分頁關掉／斷線時 Firebase 會自動幫我們清掉
+  presenceRef = roomRef.child('presence/'+me.env+'/'+myDevice);
+  presenceRef.onDisconnect().remove();
+  presenceRef.set({ at: Date.now(), ua: navigator.userAgent.slice(0,60) });
   bindRoom();
   say('#'+me.env+' 進來了', true);
 }
@@ -975,6 +1001,6 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/bind_gate.js?v=202609222133"></script>
+<script src="js/bind_gate.js?v=202609222141"></script>
 </body>
 </html>

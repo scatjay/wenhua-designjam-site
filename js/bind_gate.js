@@ -74,6 +74,22 @@
 '#dj-gate .tiny{font-size:13px;color:#54646e;margin-top:14px;line-height:1.7}',
 '#dj-gate .tiny a{color:#2f6690}',
 '@media (max-width:560px){#dj-bar{max-width:calc(100vw - 24px);font-size:12px;padding:5px 11px}}',
+'.dj-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}',
+'.dj-nav a{flex:1 1 150px;min-width:140px;text-decoration:none;background:#eaf0f3;',
+'  border:1.5px solid #cfdae1;border-left-width:5px;border-radius:12px;padding:9px 12px;',
+'  color:#54646e;font:700 13.5px/1.45 -apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;display:block}',
+'.dj-nav a b{display:block;font-size:14px}',
+'.dj-nav a span{display:block;font-weight:400;font-size:12px;color:#7b8892;margin-top:2px}',
+'.dj-nav a.hub{border-left-color:#9aa8b2}',
+'.dj-nav a.u1{border-left-color:#e0821f}',
+'.dj-nav a.u2{border-left-color:#2f6690}',
+'.dj-nav a.u3{border-left-color:#7a3f92}',
+'.dj-nav a.on.hub{background:#eef1f3;border-color:#9aa8b2;color:#465059}',
+'.dj-nav a.on.u1{background:#fbead2;border-color:#e0821f;color:#a35f14}',
+'.dj-nav a.on.u2{background:#e5eff6;border-color:#2f6690;color:#2f6690}',
+'.dj-nav a.on.u3{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
+'@media (max-width:560px){.dj-nav a{flex:1 1 calc(50% - 4px);min-width:0}',
+'  .dj-nav a span{display:none}}',
 '#dj-bar{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
 '  border-radius:999px;padding:6px 13px;font:700 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
 '  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:72vw;overflow:hidden;',
@@ -220,6 +236,34 @@
     }).then(function () { location.reload(); });
   }
 
+
+  /* ── 共用單元導覽：一個定義，四頁共用 ──
+     原本 unit1/w2 各寫一份（只有兩週、而且 w2 還標著過期的「本週」），sf3k 又是第三套。
+     這裡注入 .dj-nav 並把各頁原本的 .unitnav 藏起來，之後換週只要改這個陣列。 */
+  var UNITS = [
+    { key: 'hub',  cls: 'hub', href: 'index.html', name: '總入口',   desc: '三週都在這裡' },
+    { key: 'w1',   cls: 'u1',  href: 'unit1.html', name: '第1週',    desc: '四種角色，孵出一個點子' },
+    { key: 'w2',   cls: 'u2',  href: 'w2.html',    name: '第2週',    desc: '文化怎麼放進遊戲裡' },
+    { key: 'sf3k', cls: 'u3',  href: 'sf3k.html',  name: '第3週',    desc: 'SiSSYFiGHT 三輪試玩', now: true }
+  ];
+  function renderNav() {
+    injectCss();
+    if (document.querySelector('.dj-nav')) return;
+    var html = UNITS.map(function (u) {
+      var on = (u.key === UNIT) ? ' on' : '';
+      return '<a class="' + u.cls + on + '" href="' + u.href + '">'
+        + '<b>' + u.name + (u.now ? ' · 本週' : '') + '</b>'
+        + '<span>' + u.desc + '</span></a>';
+    }).join('');
+    var nav = document.createElement('nav');
+    nav.className = 'dj-nav';
+    nav.innerHTML = html;
+    // 各頁原本自己那份導覽藏掉，避免兩排
+    Array.prototype.forEach.call(document.querySelectorAll('.unitnav'), function (o) { o.style.display = 'none'; });
+    var host = document.querySelector('.wrap') || document.body;
+    host.insertBefore(nav, host.firstChild);
+  }
+
   /* ── 已綁定時的小列 ── */
   function showBar() {
     injectCss();
@@ -266,6 +310,7 @@
         if (e) showErr('登入失敗：' + (e.message || e.code));
       });
     }
+    renderNav();
     var env = ls(LS_ENV), mail = ls(LS_MAIL);
     if (env != null && env !== '' && mail) showBar();
     else openGate();

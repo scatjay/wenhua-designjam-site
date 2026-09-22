@@ -5,111 +5,128 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>SiSSYFiGHT 線上版</title>
 <style>
+/* 對齊 unit1/w2 的設計語言：冷灰藍底、16px、-apple-system/PingFang TC、圓角 16、淺底彩邊按鈕。
+   🔴 配色要跟其他週次有區隔：W1 橘 #e0821f、W2 藍 #2f6690 → W3 用紫 #7a3f92。
+      （原本想用紅 #b8452f，但紅跟橘在小色塊上分不出來，紫才真的一眼有別。） */
 :root{
-  --bg:#f4f2ea; --surface:#fffdf8; --surface2:#efecdf; --ink:#211e1a; --muted:#6f685d;
-  --hair:#ded9cb; --accent:#b4552c; --accent2:#e08a5a; --soft:#f6e3d7;
-  --ok:#3f8f80; --warn:#b4552c; --info:#3763a8;
-  --shadow:0 1px 2px rgba(30,25,15,.06),0 6px 18px rgba(30,25,15,.05);
-  --sans:"Noto Sans TC",system-ui,-apple-system,"Microsoft JhengHei",sans-serif;
-  --mono:ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --bg:#f8f7fa; --panel:#ffffff; --panel2:#efebf3; --ink:#241f2a; --ink-soft:#5d5566;
+  --line:#dbd3e2; --accent:#7a3f92; --accent-soft:#f2e7f6;
+  --green:#3f7a34; --green-soft:#e9f3e3;
+  --blue:#2f6690; --blue-soft:#e5eff6;
+  --red:#b8452f; --red-soft:#fbe9e3;
+  --amber:#8a6a1f; --amber-soft:#f5eeda;
+  --shadow:0 1px 2px rgba(36,31,42,.06), 0 6px 18px rgba(36,31,42,.08);
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#16150f; --surface:#1f1d18; --surface2:#28251e; --ink:#ece6d9; --muted:#a49b8b;
-  --hair:#37332a; --accent:#e0824f; --accent2:#f0a878; --soft:#3a2a20;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35);
-}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
-  -webkit-text-size-adjust:100%}
-.wrap{max-width:860px;margin:0 auto;padding:12px 14px 120px}
-h1{font-size:1.25rem;margin:.2em 0 .1em;letter-spacing:.02em}
-h2{font-size:1.02rem;margin:1.1em 0 .4em;padding-bottom:.25em;border-bottom:2px solid var(--hair)}
-h3{font-size:.94rem;margin:.9em 0 .3em}
-p,li{font-size:.92rem}
-.sub{color:var(--muted);font-size:.84rem;margin:.2em 0 .8em}
-.card{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 13px;
-  margin:10px 0;box-shadow:var(--shadow)}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.grow{flex:1 1 auto;min-width:0}
-button,.btn{font-family:inherit;font-size:.9rem;padding:9px 14px;border-radius:9px;border:1px solid var(--hair);
-  background:var(--surface2);color:var(--ink);cursor:pointer;line-height:1.2}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
+.wrap{max-width:860px;margin:0 auto;padding:18px 16px 130px}
+h1{font-size:22px;font-weight:800;margin:0 0 6px;letter-spacing:.01em}
+h2{font-size:17px;font-weight:800;margin:20px 0 8px}
+h3{font-size:15px;font-weight:800;margin:0 0 8px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 18px;line-height:1.7}
+.kicker{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;
+  box-shadow:var(--shadow);margin-bottom:16px}
+.box.tight{padding:14px 16px}
+label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);
+  margin-bottom:8px;font-weight:600}
+input,select,textarea{width:100%;padding:13px 15px;font-size:16px;border-radius:10px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+textarea{resize:vertical;line-height:1.6}
+button{cursor:pointer;border-radius:10px;font-weight:700;font-size:15px;padding:12px 18px;
+  font-family:inherit;background:var(--panel2);color:var(--ink);border:1.5px solid var(--line)}
 button:active{transform:translateY(1px)}
-button.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
-button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
-button:disabled{opacity:.45;cursor:not-allowed}
-input,select,textarea{font-family:inherit;font-size:.92rem;padding:9px 10px;border-radius:9px;
-  border:1px solid var(--hair);background:var(--surface);color:var(--ink);width:100%}
-textarea{resize:vertical}
-.pill{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;background:var(--surface2);
-  border:1px solid var(--hair);color:var(--muted);white-space:nowrap}
-.pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.pill.warn{background:var(--soft);color:var(--warn);border-color:var(--accent2)}
+button.pri{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+button.ok{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+button.wide{width:100%}
+button.sm{padding:7px 12px;font-size:13px;border-radius:8px}
+button:disabled{opacity:.42;cursor:not-allowed}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.grow{flex:1 1 auto;min-width:0}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;
+  background:var(--panel2);border:1.5px solid var(--line);color:var(--ink-soft);white-space:nowrap}
+.pill.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.pill.blue{background:var(--blue-soft);color:var(--blue);border-color:var(--blue)}
+.pill.amber{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
+.pill.green{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+.pill.red{background:var(--red-soft);color:var(--red);border-color:var(--red)}
 .hide{display:none!important}
-.mono{font-family:var(--mono)}
-.err{color:var(--warn);font-size:.85rem;margin:.4em 0}
-.okmsg{color:var(--ok);font-size:.85rem;margin:.4em 0}
-
+.mono{font-family:ui-monospace,Menlo,monospace}
+.err{color:var(--red);font-size:13.5px;margin:6px 0 0;font-weight:600}
+.okmsg{color:var(--green);font-size:13.5px;margin:6px 0 0;font-weight:600}
+.status{font-size:13px;color:var(--ink-soft)}
+/* 單元導覽（跟 w2 的 unitnav 同形） */
+.unitnav{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.unitnav a{flex:1;min-width:140px;text-decoration:none;background:var(--panel2);border:1.5px solid var(--line);
+  border-radius:12px;padding:9px 12px;color:var(--ink-soft);font-size:13.5px;font-weight:700}
+.unitnav a.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 /* 卡池 */
-.dimhead{margin:14px 0 4px;font-size:.8rem;color:var(--muted);letter-spacing:.06em}
-.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
-.mcard{border:1px solid var(--hair);border-radius:10px;padding:9px 10px;background:var(--surface);cursor:pointer;
-  transition:border-color .12s,background .12s}
-.mcard[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent)}
-.mcard .nm{font-weight:700;font-size:.9rem;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.mcard .ds{font-size:.8rem;color:var(--muted);margin-top:3px}
-.mcard .md{font-size:.76rem;color:var(--info);margin-top:5px;border-top:1px dashed var(--hair);padding-top:5px}
-
-/* 玩家 */
-.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:8px 0}
-.seat{border:1px solid var(--hair);border-radius:10px;padding:8px;background:var(--surface);text-align:center;font-size:.84rem}
-.seat.me{border-color:var(--accent);background:var(--soft)}
-.seat.dead{opacity:.45}
-.seat .nm{font-weight:700}
-.seat .hp{font-family:var(--mono);font-size:1.02rem}
-.swatch{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:4px;border:1px solid rgba(0,0,0,.2)}
-
+.dimhead{margin:18px 0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);font-weight:700}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.mcard{border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;background:var(--panel);
+  cursor:pointer;transition:border-color .12s,background .12s}
+.mcard[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.mcard .nm{font-weight:800;font-size:14.5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.mcard .ds{font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.mcard .md{font-size:13px;color:var(--blue);margin-top:7px;border-top:1px solid var(--line);padding-top:7px;line-height:1.6}
+.mcard.ro{cursor:default}
+/* 場次列表 */
+.roomrow{background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px}
+.roomrow .top{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.roomrow .feat{font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.7}
+/* 座位 */
+.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:9px;margin:10px 0}
+.seat{border:1.5px solid var(--line);border-radius:12px;padding:10px;background:var(--panel);text-align:center;font-size:13.5px}
+.seat.me{border-color:var(--accent);background:var(--accent-soft)}
+.seat.dead{opacity:.42}
+.seat .nm{font-weight:800}
+.seat .hp{font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:700;margin:2px 0}
+.swatch{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.18)}
 /* 討論區 */
-.chat{height:210px;overflow-y:auto;border:1px solid var(--hair);border-radius:10px;padding:8px;
-  background:var(--surface2);font-size:.86rem}
-.msg{margin:2px 0}
-.msg .who{font-weight:700}
-.msg.sys{color:var(--muted);font-style:italic}
-.msg.whis{color:var(--info)}
-
+.chat{height:220px;overflow-y:auto;border:1.5px solid var(--line);border-radius:12px;padding:10px;
+  background:var(--bg);font-size:14px;line-height:1.65}
+.msg{margin:3px 0}
+.msg .who{font-weight:800}
+.msg.sys{color:var(--ink-soft);font-style:italic}
+.msg.whis{color:var(--accent)}
 /* 結算 */
-.logline{font-size:.84rem;padding:3px 0;border-bottom:1px dashed var(--hair)}
-.dmgpos{color:var(--warn);font-weight:700}
-.dmgneg{color:var(--ok);font-weight:700}
-
+.logline{font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--line);line-height:1.6}
+.dmgpos{color:var(--red);font-weight:800}
+.dmgneg{color:var(--green);font-weight:800}
 /* 統計 */
-.stat{margin-top:10px;border-top:2px solid var(--hair);padding-top:8px}
-.stat h4{margin:.2em 0 .4em;font-size:.88rem}
-.statline{font-size:.84rem;color:var(--muted);margin:2px 0}
-.hl{display:inline-block;font-size:.76rem;padding:2px 9px;border-radius:99px;background:var(--surface2);
-  border:1px solid var(--hair);margin:3px 4px 0 0}
+.stat{margin-top:14px;border-top:2px solid var(--line);padding-top:12px}
+.stat h4{margin:0 0 8px;font-size:14.5px;font-weight:800}
+.statline{font-size:13.5px;color:var(--ink-soft);margin:3px 0;line-height:1.65}
+.hl{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;
+  background:var(--panel2);border:1.5px solid var(--line);margin:4px 5px 0 0;color:var(--ink-soft)}
 .hl b{color:var(--ink)}
-table.st{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:6px}
-table.st th,table.st td{padding:3px 5px;border-bottom:1px dashed var(--hair);text-align:right}
+table.st{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+table.st th,table.st td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right}
 table.st th:first-child,table.st td:first-child{text-align:left}
-table.st th{color:var(--muted);font-weight:600}
-.bar3{display:flex;height:9px;border-radius:5px;overflow:hidden;margin:5px 0 2px;border:1px solid var(--hair)}
+table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
+.bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
-/* 底部列 */
-.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--hair);
-  padding:8px 12px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.06);z-index:20}
-.bar .wrap2{max-width:860px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.fab{position:fixed;right:12px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:21;
-  border-radius:99px;padding:8px 13px;background:var(--surface);border:1px solid var(--hair);box-shadow:var(--shadow);font-size:.82rem}
+/* 底部出牌列 */
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1.5px solid var(--line);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 14px rgba(36,31,42,.10);z-index:20}
+.bar .wrap2{max-width:860px;margin:0 auto;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.fab{position:fixed;right:14px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:21;
+  border-radius:999px;padding:9px 15px;background:var(--panel);border:1.5px solid var(--line);
+  box-shadow:var(--shadow);font-size:13px;font-weight:700;color:var(--ink-soft)}
 </style>
 </head>
 <body>
 <div class="wrap">
+<div class="unitnav"><a href="index.html">總入口</a><a href="unit1.html">第1週</a><a href="w2.html">第2週</a><a class="on" href="sf3k.html">第3週 · SiSSYFiGHT</a></div>
 
   <!-- ══ 登入 ══ -->
   <section id="scr-login">
     <h1>SiSSYFiGHT 線上版</h1>
     <p class="sub">改編自 SiSSYFiGHT 3000（GDC Game Design Workshop 簡化版）。原作 Eric Zimmerman。</p>
-    <div class="card">
+    <div class="box">
       <h3>先確認你是誰</h3>
       <p class="sub">用學校 Google 帳號登入，並綁定你的信封編號。綁定後，你之前在學習單留下的紀錄都會跟著這個帳號。</p>
       <div class="row" style="margin-bottom:8px">
@@ -130,8 +147,9 @@ table.st th{color:var(--muted);font-weight:600}
     <h1>選一個場次</h1>
     <p class="sub" id="lobby-me"></p>
 
-    <div class="card">
+    <div class="box">
       <h3>加入別人的場次</h3>
+      <p class="sub" style="margin-bottom:12px">一場 <b>3-6 人</b>（原版就是 6 張顏色目標卡）。4-6 人最好玩——人太少，聯手就沒意義了。</p>
       <div class="row">
         <div class="grow"><input id="join-code" placeholder="四碼場次代號" maxlength="4" style="text-transform:uppercase"></div>
         <button class="pri" id="btn-join">加入</button>
@@ -139,7 +157,7 @@ table.st th{color:var(--muted);font-weight:600}
       <div id="open-rooms" style="margin-top:10px"></div>
     </div>
 
-    <div class="card">
+    <div class="box">
       <h3>當 GM，開一場</h3>
       <p class="sub" id="host-turn"></p>
       <button class="ok" id="btn-host">我來當 GM</button>
@@ -150,7 +168,7 @@ table.st th{color:var(--muted);font-weight:600}
   <section id="scr-setup" class="hide">
     <h1>這一場要改什麼？</h1>
     <p class="sub">選到的每一張卡都會<b>立刻改變規則</b>。不選就是原版。</p>
-    <div class="card">
+    <div class="box">
       <div class="row">
         <span class="pill" id="setup-code"></span>
         <span class="pill" id="setup-count">已選 0 張</span>
@@ -169,8 +187,12 @@ table.st th{color:var(--muted);font-weight:600}
       <span class="pill" id="room-code"></span>
     </div>
     <p class="sub" id="room-cards"></p>
+    <details class="box tight" id="cardpeek" style="display:none">
+      <summary style="cursor:pointer;font-weight:800;font-size:14.5px">這一場改了什麼？（點開看每張卡）</summary>
+      <div id="cardpeek-body" style="margin-top:10px"></div>
+    </details>
 
-    <div class="card">
+    <div class="box">
       <div class="row" style="justify-content:space-between;margin-bottom:6px">
         <b id="phase-label">等待開始</b>
         <span class="pill" id="round-label"></span>
@@ -181,7 +203,7 @@ table.st th{color:var(--muted);font-weight:600}
     </div>
 
     <!-- 公開討論：SissyFight 的本體 -->
-    <div class="card">
+    <div class="box">
       <h3 style="margin-top:0">公開討論
         <span class="pill" id="whisper-pill" style="display:none">私訊已開放</span>
       </h3>
@@ -194,13 +216,13 @@ table.st th{color:var(--muted);font-weight:600}
       </div>
     </div>
 
-    <div class="card" id="result-box" style="display:none">
+    <div class="box" id="result-box" style="display:none">
       <h3 style="margin-top:0">上一回合結算</h3>
       <div id="result-log"></div>
       <div id="stats-box"></div>
     </div>
 
-    <div class="card" id="over-box" style="display:none">
+    <div class="box" id="over-box" style="display:none">
       <h3 style="margin-top:0">結束了</h3>
       <div id="over-text"></div>
       <h3>玩完了，回答三個問題</h3>
@@ -319,8 +341,22 @@ $('btn-bind').onclick = function(){
 (function(){ var s = localStorage.getItem('designjam_env'); if (s!=null && s!=='') $('env').value = s; })();
 
 /* ═════ 大廳 ═════ */
+var comboCount = {};
+function comboKey(ids){ return (ids||[]).slice().sort().join('_') || 'ORIGINAL'; }
+/* Firebase 對數字 key 會回 array 不是 object（players 用 0-99 編號當 key 正好踩到）*/
+function normObj(v){
+  if (v == null) return {};
+  if (Object.prototype.toString.call(v) === '[object Array]') {
+    var o = {}; v.forEach(function(x,i){ if (x!=null) o[String(i)] = x; }); return o;
+  }
+  return v;
+}
 function enterLobby(){
   show('scr-lobby');
+  ROOT.child('comboStats').on('value', function(s){
+    var v = s.val()||{}; comboCount = {};
+    Object.keys(v).forEach(function(k){ comboCount[k] = (v[k]&&v[k].count)||0; });
+  });
   $('lobby-me').innerHTML = '你是 <b>#'+me.env+'</b>' + (me.email ? '（'+esc(me.email)+'）' : '（未綁 Google 帳號）');
   ROOT.child('hosts').once('value').then(function(s){
     var h = s.val()||{}, mine = (h[me.env]&&h[me.env].count)||0;
@@ -335,13 +371,22 @@ function enterLobby(){
   ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(12).on('value', function(s){
     var v = s.val()||{}, out=[];
     Object.keys(v).reverse().forEach(function(code){
+      if (/^ZZ/.test(code)) return;                 // 跳過整合測試用的房
       var m = v[code].meta; if(!m) return;
-      var n = Object.keys(v[code].players||{}).length;
+      var n = Object.keys(normObj(v[code].players)).length;
       var ph = m.phase==='lobby'?'招募中':(m.phase==='over'?'已結束':'進行中 R'+(m.round||1));
-      out.push('<div class="row" style="justify-content:space-between;border-bottom:1px dashed var(--hair);padding:5px 0">'
-        +'<span><b class="mono">'+esc(code)+'</b> <span class="pill">'+esc(ph)+'</span> '
-        +n+' 人 · GM #'+esc(m.hostEnv)+'</span>'
-        +'<button data-code="'+esc(code)+'" class="j">加入</button></div>');
+      var phCls = m.phase==='lobby'?'green':(m.phase==='over'?'':'amber');
+      var cards = (m.cards||[]).map(function(id){ return CARDS.byId(id); }).filter(Boolean);
+      var feat = cards.length
+        ? cards.map(function(c){ return '<span class="pill on" style="margin:2px 4px 0 0">'+esc(c.name)+'</span>'; }).join('')
+        : '<span class="pill" style="margin-top:2px">原版規則，沒有改動</span>';
+      var played = comboCount[comboKey(m.cards||[])] || 0;
+      out.push('<div class="roomrow"><div class="top">'
+        +'<span><b class="mono">'+esc(code)+'</b> <span class="pill '+phCls+'">'+esc(ph)+'</span> '
+        +'<span class="pill">'+n+'/6 人</span> <span class="pill">GM #'+esc(m.hostEnv)+'</span></span>'
+        +'<button data-code="'+esc(code)+'" class="j sm">加入</button></div>'
+        +'<div class="feat">'+feat
+        +'<div style="margin-top:5px">這個組合已經被玩過 <b>'+played+'</b> 次</div></div></div>');
     });
     $('open-rooms').innerHTML = out.length ? '<h3 style="margin:.6em 0 .2em">目前開著的場次</h3>'+out.join('')
       : '<p class="sub">還沒有人開場次。</p>';
@@ -425,6 +470,10 @@ function createRoom(){
     ROOT.child('hosts/'+me.env).transaction(function(v){
       v = v || { count:0 }; v.count = (v.count||0)+1; return v;
     });
+    ROOT.child('comboStats/'+comboKey(selected)).transaction(function(v){
+      v = v || { count:0, cards:selected.slice() };
+      v.count = (v.count||0)+1; v.last = Date.now(); return v;
+    });
     joinRoom(codeStr);
   });
 }
@@ -453,7 +502,7 @@ function bindRoom(){
   detach();
   var h1 = roomRef.child('meta').on('value', function(s){ state.meta = s.val()||{}; renderRoom(); });
   unsub.push(function(){ roomRef.child('meta').off('value', h1); });
-  var h2 = roomRef.child('players').on('value', function(s){ state.players = s.val()||{}; renderRoom(); });
+  var h2 = roomRef.child('players').on('value', function(s){ state.players = normObj(s.val()); renderRoom(); });
   unsub.push(function(){ roomRef.child('players').off('value', h2); });
   var h3 = roomRef.child('chat').limitToLast(60).on('value', function(s){ renderChat(s.val()||{}); });
   unsub.push(function(){ roomRef.child('chat').off('value', h3); });
@@ -483,6 +532,23 @@ function renderRoom(){
     ? '這一場加了：' + names.map(function(n){ return '<span class="pill on">'+esc(n)+'</span>'; }).join(' ')
     : '<span class="pill">原版規則，沒有改動</span>';
   $('whisper-pill').style.display = c.modWhisper ? '' : 'none';
+
+  // 遊戲中隨時看得到每張卡實際做了什麼（不用回大廳）
+  var picked = (m.cards||[]).map(function(id){ return CARDS.byId(id); }).filter(Boolean);
+  var peek = $('cardpeek');
+  if (picked.length) {
+    peek.style.display = '';
+    $('cardpeek-body').innerHTML = '<div class="cardgrid">' + picked.map(function(x){
+      return '<div class="mcard ro"><div class="nm">'+esc(x.name)
+        + ' <span class="pill">'+esc(CARDS.DIM_NAMES[x.dim]||x.dim)+'</span></div>'
+        + '<div class="ds">'+esc(x.desc)+'</div>'
+        + '<div class="md">'+esc(x.mda)+'</div></div>';
+    }).join('') + '</div>';
+  } else {
+    peek.style.display = '';
+    $('cardpeek-body').innerHTML = '<p class="sub" style="margin:0">這一場是<b>原版規則</b>，'
+      + '沒有加任何卡。先把原版玩熟，等一下才看得出改動造成什麼差別。</p>';
+  }
 
   var ph = m.phase;
   $('phase-label').textContent = ph==='lobby' ? '等待開始'
@@ -593,9 +659,9 @@ function renderStats(c, P){
   box.innerHTML = '<div class="stat"><h4>目前的遊玩統計（累計 '+T.roundsPlayed+' 回合）</h4>'
     + SF3K_STATS.readOut(st, L).map(function(x){ return '<div class="statline">'+esc(x)+'</div>'; }).join('')
     + '<div class="bar3" title="出牌比例">'
-      + '<i style="width:'+mix.solo+'%;background:var(--warn)"></i>'
-      + '<i style="width:'+mix.team+'%;background:var(--info)"></i>'
-      + '<i style="width:'+mix.defend+'%;background:var(--ok)"></i></div>'
+      + '<i style="width:'+mix.solo+'%;background:var(--red)"></i>'
+      + '<i style="width:'+mix.team+'%;background:var(--blue)"></i>'
+      + '<i style="width:'+mix.defend+'%;background:var(--green)"></i></div>'
     + '<div class="statline">'+esc(L.solo)+' ／ '+esc(L.team)+' ／ '+esc(L.defend)+'</div>'
     + st.highlights.map(function(h){
         return '<span class="hl">'+esc(h.label)+'：<b>'+esc(h.who)+'</b> '+h.value+h.unit+'</span>'; }).join('')
@@ -614,7 +680,9 @@ function renderBar(c, P){
       ? '<span class="sub">人到齊就開始（'+P.length+' 人）</span>'
       : '<span class="sub">等 GM 開始（'+P.length+' 人）</span>';
     $('btn-submit').textContent = '開始遊戲';
-    $('btn-submit').disabled = !isHost() || P.length < 3;
+    $('btn-submit').disabled = !isHost() || P.length < 3 || P.length > 6;
+    if (P.length > 6) $('bar-actions').innerHTML =
+      '<span class="err">一場最多 6 人（原版只有 6 張顏色目標卡），請有人去開別的場次</span>';
     $('btn-submit').onclick = startGame;
     return;
   }
@@ -781,7 +849,7 @@ function renderChat(v){
     var n = ta.value.trim().length;
     var el = $('fb4-count');
     el.textContent = n + ' / 100 字' + (n>100 ? '　← 太長了，剪掉一些' : '');
-    el.style.color = n>100 ? 'var(--warn)' : 'var(--muted)';
+    el.style.color = n>100 ? 'var(--red)' : 'var(--ink-soft)';
   });
 })();
 $('btn-fb').onclick = function(){

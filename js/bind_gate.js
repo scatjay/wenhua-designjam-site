@@ -26,46 +26,41 @@
   function root() { return firebase.database().ref('whgm/analysis/w3game'); }
 
   /* ── 樣式 ── */
-  var CSS = '\
-#dj-gate{position:fixed;inset:0;z-index:99999;background:rgba(20,18,14,.72);backdrop-filter:blur(3px);\
-  display:flex;align-items:center;justify-content:center;padding:14px;overflow-y:auto}\
-#dj-gate .box{background:#fffdf8;color:#211e1a;max-width:520px;width:100%;border-radius:14px;padding:18px 18px 16px;\
-  box-shadow:0 10px 40px rgba(0,0,0,.35);font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;line-height:1.6}\
-#dj-gate h2{margin:0 0 .2em;font-size:1.12rem}\
-#dj-gate .sub{color:#6f685d;font-size:.85rem;margin:.1em 0 .9em}\
-#dj-gate .step{border:1px solid #ded9cb;border-radius:10px;padding:10px 11px;margin:8px 0;background:#fff}\
-#dj-gate .step.done{border-color:#3f8f80;background:#f2f8f6}\
-#dj-gate .stitle{font-weight:700;font-size:.92rem;display:flex;gap:6px;align-items:center}\
-#dj-gate .tick{color:#3f8f80;font-weight:700}\
-#dj-gate input{font:inherit;font-size:1rem;padding:9px 10px;border:1px solid #ded9cb;border-radius:8px;width:100%;\
-  background:#fff;color:#211e1a}\
-#dj-gate button{font:inherit;font-size:.92rem;padding:9px 14px;border-radius:8px;border:1px solid #ded9cb;\
-  background:#efecdf;color:#211e1a;cursor:pointer}\
-#dj-gate button.pri{background:#b4552c;color:#fff;border-color:#b4552c}\
-#dj-gate button.ok{background:#3f8f80;color:#fff;border-color:#3f8f80}\
-#dj-gate button:disabled{opacity:.45;cursor:not-allowed}\
-#dj-gate .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}\
-#dj-gate .grow{flex:1 1 auto;min-width:0}\
-#dj-gate .err{color:#b4552c;font-size:.85rem;margin:.4em 0 0}\
-#dj-gate .qrwrap{text-align:center;margin:10px 0 2px}\
-#dj-gate .qrbox{display:inline-block;padding:8px;background:#fff;border:1px solid #ded9cb;border-radius:10px}\
-/* 🔴 寫死尺寸：容器 id 要跟下面 innerHTML 的 id 完全一致，選擇器打錯的話規則從加進去那刻就是死的 */\
-#dj-gate #dj-qr svg{display:block;width:132px;height:132px}\
-#dj-gate .qrcap{font-size:.76rem;color:#6f685d;margin-top:5px}\
-#dj-gate .tiny{font-size:.78rem;color:#6f685d;margin-top:10px}\
-#dj-gate .tiny a{color:#3763a8}\
-#dj-bar{position:fixed;right:10px;top:10px;z-index:9998;background:#fffdf8;border:1px solid #ded9cb;border-radius:99px;\
-  padding:5px 11px;font:400 .78rem/1.4 "Noto Sans TC",system-ui,sans-serif;color:#6f685d;box-shadow:0 2px 10px rgba(0,0,0,.12);\
-  cursor:pointer;max-width:70vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}\
-@media (prefers-color-scheme:dark){\
-  #dj-gate .box{background:#1f1d18;color:#ece6d9}\
-  #dj-gate .step{background:#28251e;border-color:#37332a}\
-  #dj-gate .step.done{background:#22302c;border-color:#3f8f80}\
-  #dj-gate input,#dj-gate button{background:#28251e;color:#ece6d9;border-color:#37332a}\
-  #dj-gate button.pri{background:#e0824f;color:#16130f;border-color:#e0824f}\
-  #dj-gate button.ok{background:#3f8f80;color:#fff;border-color:#3f8f80}\
-  #dj-gate .qrbox{background:#fff}\
-  #dj-bar{background:#1f1d18;color:#a49b8b;border-color:#37332a}}';
+  var CSS = [
+'#dj-gate{position:fixed;inset:0;z-index:99999;background:rgba(32,42,48,.62);backdrop-filter:blur(3px);',
+'  display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}',
+'#dj-gate .box{background:#fff;color:#202a30;max-width:520px;width:100%;border-radius:16px;padding:22px 20px 18px;',
+'  box-shadow:0 10px 44px rgba(32,42,48,.28);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;',
+'  font-size:16px;line-height:1.7}',
+'#dj-gate h2{margin:0 0 4px;font-size:20px;font-weight:800}',
+'#dj-gate .sub{color:#54646e;font-size:14.5px;margin:0 0 16px;line-height:1.7}',
+'#dj-gate .step{border:1.5px solid #cfdae1;border-radius:12px;padding:13px 14px;margin:10px 0;background:#f7f9fa}',
+'#dj-gate .step.done{border-color:#3f7a34;background:#e9f3e3}',
+'#dj-gate .stitle{font-weight:800;font-size:14.5px;display:flex;gap:7px;align-items:center}',
+'#dj-gate .tick{color:#3f7a34;font-weight:800}',
+'#dj-gate input{font:inherit;font-size:16px;padding:13px 15px;border:1.5px solid #cfdae1;border-radius:10px;',
+'  width:100%;background:#fff;color:#202a30}',
+'#dj-gate input:focus{outline:2px solid #7a3f92;border-color:#7a3f92}',
+'#dj-gate button{font:inherit;font-weight:700;font-size:15px;padding:12px 18px;border-radius:10px;',
+'  border:1.5px solid #cfdae1;background:#eaf0f3;color:#202a30;cursor:pointer}',
+'#dj-gate button.pri{background:#f2e7f6;color:#7a3f92;border-color:#7a3f92}',
+'#dj-gate button.ok{background:#e9f3e3;color:#3f7a34;border-color:#3f7a34}',
+'#dj-gate button:disabled{opacity:.42;cursor:not-allowed}',
+'#dj-gate .row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}',
+'#dj-gate .grow{flex:1 1 auto;min-width:0}',
+'#dj-gate .err{color:#b8452f;font-size:13.5px;font-weight:600;margin:8px 0 0}',
+'#dj-gate .qrwrap{text-align:center;margin:14px 0 2px}',
+'#dj-gate .qrbox{display:inline-block;padding:9px;background:#fff;border:1.5px solid #cfdae1;border-radius:12px;line-height:0}',
+/* 容器 id 要跟 innerHTML 裡的 id 完全一致，打錯的話這條規則從加進去那一刻就是死的 */
+'#dj-gate #dj-qr svg{display:block;width:132px;height:132px}',
+'#dj-gate .qrcap{font-size:13px;color:#54646e;margin-top:7px;line-height:1.6}',
+'#dj-gate .tiny{font-size:13px;color:#54646e;margin-top:14px;line-height:1.7}',
+'#dj-gate .tiny a{color:#2f6690}',
+'#dj-bar{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
+'  border-radius:999px;padding:6px 13px;font:700 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
+'  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:72vw;overflow:hidden;',
+'  text-overflow:ellipsis;white-space:nowrap}'
+].join('\n');
 
   function injectCss() {
     if (document.getElementById('dj-gate-css')) return;
@@ -86,7 +81,7 @@
     withQr(function (err) {
       var el = document.getElementById(elId);
       if (!el) return;
-      if (err) { el.innerHTML = '<span style="font-size:.76rem;color:#b4552c">QR 載入失敗，請直接用網址</span>'; return; }
+      if (err) { el.innerHTML = '<span style="font-size:13px;color:#b8452f">QR 載入失敗，請直接用網址</span>'; return; }
       var q = window.qrcode(0, 'M');
       q.addData(text);
       q.make();
@@ -110,7 +105,7 @@
         '<div class="stitle"><span id="dj-t1">①</span> 確認 Google 帳號</div>' +
         '<div class="row" style="margin-top:7px">' +
           '<button class="pri" id="dj-google">用 Google 登入</button>' +
-          '<span class="grow" id="dj-mail" style="font-size:.86rem;color:#6f685d">尚未登入</span>' +
+          '<span class="grow" id="dj-mail" style="font-size:14px;color:#54646e">尚未登入</span>' +
         '</div>' +
       '</div>' +
 

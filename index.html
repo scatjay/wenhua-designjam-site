@@ -5,45 +5,47 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>學習單總入口 · 文化遊戲松／遊戲設計學</title>
 <style>
+/* 跟 unit1/w2/sf3k 同一套：冷灰藍底、16px、-apple-system/PingFang TC、圓角 16。
+   三週各有專屬色，總入口保持中性藍灰，讓三個單元卡自己說話。
+   W1 橘 #e0821f ｜ W2 藍 #2f6690 ｜ W3 紫 #7a3f92 */
 :root{
-  --bg:#f4f2ea; --surface:#fffdf8; --surface2:#efecdf; --ink:#211e1a; --muted:#6f685d;
-  --hair:#ded9cb; --w1:#e0821f; --w2:#2f6690; --w3:#b4552c;
-  --shadow:0 1px 2px rgba(30,25,15,.06),0 6px 18px rgba(30,25,15,.05);
-  --sans:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --bg:#f7f9fa; --panel:#ffffff; --panel2:#eaf0f3; --ink:#202a30; --ink-soft:#54646e;
+  --line:#cfdae1; --accent:#2f6690;
+  --w1:#e0821f; --w1-soft:#fbead2;
+  --w2:#2f6690; --w2-soft:#e5eff6;
+  --w3:#7a3f92; --w3-soft:#f2e7f6;
+  --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#16150f; --surface:#1f1d18; --surface2:#28251e; --ink:#ece6d9; --muted:#a49b8b;
-  --hair:#37332a; --w1:#f0a04b; --w2:#6fa8cf; --w3:#e0824f;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35);
-}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;
-  -webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
 .wrap{max-width:660px;margin:0 auto;padding:22px 16px 60px}
-h1{font-size:1.3rem;margin:.1em 0 .1em;letter-spacing:.01em}
-.sub{color:var(--muted);font-size:.86rem;margin:.2em 0 1.2em}
-.unit{display:block;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--hair);
-  border-left:5px solid var(--hair);border-radius:12px;padding:13px 15px;margin:10px 0;box-shadow:var(--shadow);
-  transition:transform .1s,box-shadow .1s}
+h1{font-size:22px;font-weight:800;margin:0 0 6px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 20px;line-height:1.7}
+.kicker{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:5px}
+.unit{display:block;text-decoration:none;color:inherit;background:var(--panel);
+  border:1.5px solid var(--line);border-left-width:6px;border-radius:16px;padding:16px 18px;
+  margin:11px 0;box-shadow:var(--shadow)}
 .unit:active{transform:translateY(1px)}
-.unit .tag{font-size:.74rem;letter-spacing:.08em;font-weight:700;color:var(--muted)}
-.unit .nm{font-size:1.02rem;font-weight:800;margin:.1em 0 .15em}
-.unit .ds{font-size:.85rem;color:var(--muted)}
-.unit.w1{border-left-color:var(--w1)} .unit.w1 .tag{color:var(--w1)}
-.unit.w2{border-left-color:var(--w2)} .unit.w2 .tag{color:var(--w2)}
-.unit.w3{border-left-color:var(--w3)} .unit.w3 .tag{color:var(--w3)}
-.unit.now{box-shadow:0 0 0 2px var(--w3),var(--shadow)}
-.badge{display:inline-block;font-size:.7rem;padding:1px 8px;border-radius:99px;background:var(--w3);color:#fff;
-  margin-left:6px;vertical-align:1px}
-.qrrow{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--hair);
-  border-radius:12px;padding:12px 14px;margin:16px 0 6px;box-shadow:var(--shadow)}
-.qrbox{flex:0 0 auto;padding:7px;background:#fff;border:1px solid var(--hair);border-radius:9px}
-/* 🔴 寫死尺寸：容器 id 要跟下面 HTML 完全一致 */
-.qrbox #hub-qr svg{display:block;width:104px;height:104px}
-.qrcap{font-size:.82rem;color:var(--muted)}
+.unit .nm{font-size:17px;font-weight:800;margin:0 0 5px}
+.unit .ds{font-size:14px;color:var(--ink-soft);line-height:1.7}
+.unit.w1{border-left-color:var(--w1)} .unit.w1 .kicker{color:var(--w1)}
+.unit.w2{border-left-color:var(--w2)} .unit.w2 .kicker{color:var(--w2)}
+.unit.w3{border-left-color:var(--w3)} .unit.w3 .kicker{color:var(--w3)}
+.unit.now{border-color:var(--w3);background:var(--w3-soft)}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;
+  background:var(--w3);color:#fff;margin-left:7px;vertical-align:1px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+  box-shadow:var(--shadow);margin:18px 0 8px;display:flex;gap:16px;align-items:center}
+.qrbox{flex:0 0 auto;padding:8px;background:#fff;border:1.5px solid var(--line);border-radius:12px;line-height:0}
+/* 🔴 寫死尺寸：容器 id 要跟下面 HTML 完全一致，選擇器打錯的話規則從加進去那刻就是死的 */
+.qrbox #hub-qr svg{display:block;width:112px;height:112px}
+.qrcap{font-size:14px;color:var(--ink-soft);line-height:1.7}
 .qrcap b{color:var(--ink)}
-.foot{font-size:.78rem;color:var(--muted);margin-top:22px;border-top:1px solid var(--hair);padding-top:10px}
-code{font-family:ui-monospace,Menlo,monospace;font-size:.82em;background:var(--surface2);padding:1px 5px;border-radius:5px}
+.foot{font-size:13px;color:var(--ink-soft);margin-top:24px;border-top:1px solid var(--line);
+  padding-top:12px;line-height:1.8}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.86em;background:var(--panel2);
+  padding:2px 6px;border-radius:6px}
 </style>
 </head>
 <body>
@@ -51,7 +53,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.82em;background:var(--s
   <h1>學習單總入口</h1>
   <p class="sub">文化遊戲松實作／遊戲設計學　·　授課 楊智傑 · 多媒體與電腦娛樂科學系</p>
 
-  <div class="qrrow">
+  <div class="box">
     <div class="qrbox"><div id="hub-qr"></div></div>
     <div class="qrcap">
       <b>用手機掃這個 QR</b><br>
@@ -60,19 +62,19 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.82em;background:var(--s
   </div>
 
   <a class="unit w3 now" href="sf3k.html">
-    <div class="tag">第 3 週　本週</div>
+    <div class="kicker">第 3 週 · 本週</div>
     <div class="nm">SiSSYFiGHT 三輪試玩<span class="badge">今天做完</span></div>
-    <div class="ds">同一個遊戲玩三輪：原版 → 只改一個地方 → 整組改。出牌前在公開討論區串通，玩完寫下你看到的差別。</div>
+    <div class="ds">同一個遊戲玩三輪：原版 → 只改一個地方 → 整組改。一場 3-6 人，出牌前在公開討論區串通，玩完寫下你看到的差別。</div>
   </a>
 
   <a class="unit w2" href="w2.html">
-    <div class="tag">第 2 週</div>
+    <div class="kicker">第 2 週</div>
     <div class="nm">文化怎麼放進遊戲裡</div>
-    <div class="ds">挑遊戲當種子、看實況做卡、混進文化要素，再跟別人的混過的接著做。隨時可以回來看全班卡池。</div>
+    <div class="ds">挑遊戲當種子、看實況做卡、混進文化要素，再接著別人混過的往下做。隨時可以回來看全班卡池。</div>
   </a>
 
   <a class="unit w1" href="unit1.html">
-    <div class="tag">第 1 週</div>
+    <div class="kicker">第 1 週</div>
     <div class="nm">四種角色，孵出一個點子</div>
     <div class="ds">Design Jam：抽角色、出點子、互相接力。隨時可以回來重玩。</div>
   </a>

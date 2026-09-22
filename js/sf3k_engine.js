@@ -240,15 +240,22 @@
     // ⓪ 道具「搗嘴」：讓指定對象本回合行動作廢（先於所有結算）
     var shielded = {}, healed = {}, doubled = {};
     if (c.modItems) {
-      Object.keys(ch).slice().forEach(function (id) {
+      // 🔴 先把要搗嘴的對象算完再一次刪。邊迭代邊 delete 會讓後面的 ch[id] 變 undefined 直接當機
+      //    （2026-09-22 線上整合測試抓到，道具卡一開就爆）
+      var toSilence = [];
+      Object.keys(ch).forEach(function (id) {
         var x = ch[id];
-        if (x.item === 'silence' && x.itemTarget && ch[x.itemTarget]) {
-          delete ch[x.itemTarget];
-          log.push({ t: 'item-silence', from: id, to: x.itemTarget });
+        if (x && x.item === 'silence' && x.itemTarget && ch[x.itemTarget] && x.itemTarget !== id) {
+          toSilence.push([id, x.itemTarget]);
         }
       });
+      toSilence.forEach(function (pair) {
+        if (!ch[pair[1]]) return;                 // 已被別人搗過就不重複
+        delete ch[pair[1]];
+        log.push({ t: 'item-silence', from: pair[0], to: pair[1] });
+      });
       Object.keys(ch).forEach(function (id) {
-        var it = ch[id].item;
+        var it = ch[id] && ch[id].item;
         if (it === 'shield') { shielded[id] = true; log.push({ t: 'item-shield', to: id }); }
         if (it === 'heal') { healed[id] = true; log.push({ t: 'item-heal', to: id }); }
         if (it === 'double') { doubled[id] = true; log.push({ t: 'item-double', to: id }); }

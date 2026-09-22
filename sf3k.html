@@ -416,7 +416,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
   <section id="scr-room" class="hide">
     <div class="row" style="justify-content:space-between">
       <h1 style="margin:0" id="room-title">場次</h1>
-      <span><span class="pill" id="room-code"></span>
+      <span><span class="pill blue" id="room-code"></span>
         <button class="sm" id="btn-leave" style="margin-left:6px">離開這場</button></span>
     </div>
     <div id="takeover-box"></div>
@@ -434,6 +434,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
           誰要聯手打誰就在那裡喊。不准私下講。這一場如果改過規則，上面「這一場改了什麼」會寫。</p>
       </div>
     </details>
+    <p class="sub" id="room-invite" style="margin:2px 0 8px"></p>
     <p class="sub" id="room-cards"></p>
     <details class="box tight" id="cardpeek" style="display:none">
       <summary style="cursor:pointer;font-weight:800;font-size:14.5px">這一場改了什麼？（點開看每張卡）</summary>
@@ -523,9 +524,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222248"></script>
-<script src="js/sf3k_cards.js?v=202609222248"></script>
-<script src="js/sf3k_stats.js?v=202609222248"></script>
+<script src="js/sf3k_engine.js?v=202609222250"></script>
+<script src="js/sf3k_cards.js?v=202609222250"></script>
+<script src="js/sf3k_stats.js?v=202609222250"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -669,7 +670,7 @@ function enterLobby(){
         : '<span class="pill" style="margin-top:2px">原版規則，沒有改動</span>';
       var played = comboCount[comboKey(m.cards||[])] || 0;
       out.push('<div class="roomrow"><div class="top">'
-        +'<span><b class="mono">'+esc(code)+'</b> <span class="pill '+phCls+'">'+esc(ph)+'</span> '
+        +'<span><span class="sub">代號</span> <b class="mono">'+esc(code)+'</b> <span class="pill '+phCls+'">'+esc(ph)+'</span> '
         +'<span class="pill">'+n+'/6 人</span> <span class="pill">GM #'+esc(m.hostEnv)+'</span></span>'
         +'<button data-code="'+esc(code)+'" class="j sm">加入</button></div>'
         +'<div class="feat">'+feat
@@ -874,7 +875,7 @@ function leaveRoom(){
 }
 function enterRoom(){
   show('scr-room');
-  $('room-code').textContent = room;
+  $('room-code').textContent = '場次代號 ' + room;
   try { localStorage.setItem('designjam_sf3k_room', room); } catch(e) {}
   // 佔住這個編號在本場的位置；分頁關掉／斷線時 Firebase 會自動幫我們清掉
   presenceRef = roomRef.child('presence/'+me.env+'/'+myDevice);
@@ -940,6 +941,11 @@ function renderRoom(){
   if (!state.meta) return;
   var m = state.meta, c = E.cfg(m.cfg||{}), L = E.label(c), P = playersArr();
   $('room-title').textContent = L.name;
+  // 四個英數字母單獨擺著沒有人看得懂那是什麼。講清楚它是什麼、要拿它做什麼。
+  $('room-invite').innerHTML = (m.phase === 'lobby')
+    ? '要找人一起玩：把代號 <b class="mono">' + esc(room) + '</b> 報給同學，'
+      + '他們在大廳輸入這四個字就會進到這一場。'
+    : '這一場的代號是 <b class="mono">' + esc(room) + '</b>。';
   var names = (m.cards||[]).map(function(id){ var x=CARDS.byId(id); return x?x.name:id; });
   $('room-cards').innerHTML = names.length
     ? '這一場加了：' + names.map(function(n){ return '<span class="pill on">'+esc(n)+'</span>'; }).join(' ')
@@ -1843,7 +1849,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222248"></script>
-<script src="js/bind_gate.js?v=202609222248"></script>
+<script src="js/gate_i18n.js?v=202609222250"></script>
+<script src="js/bind_gate.js?v=202609222250"></script>
 </body>
 </html>

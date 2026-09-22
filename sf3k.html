@@ -84,7 +84,14 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 .mcard[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .mcard .nm{font-weight:800;font-size:14.5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
 .mcard .ds{font-size:13.5px;color:var(--ink-soft);line-height:1.6}
-.mcard .md{font-size:13px;color:var(--blue);margin-top:7px;border-top:1px solid var(--line);padding-top:7px;line-height:1.6}
+.mcard .md{font-size:13px;color:var(--blue);margin-top:5px;line-height:1.6}
+.mdbox{margin-top:7px;border-top:1px solid var(--line);padding-top:6px}
+.mdbox summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--ink-soft);
+  list-style:none;user-select:none}
+.mdbox summary::-webkit-details-marker{display:none}
+.mdbox summary::before{content:'▸ ';font-size:10px;opacity:.6}
+.mdbox[open] summary::before{content:'▾ '}
+.mdbox summary:hover{color:var(--blue)}
 .mcard.ro{cursor:default}
 /* 場次列表 */
 .roomrow{background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px}
@@ -1110,14 +1117,22 @@ function renderPool(){
         + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+badge+' '+colo
         + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製</button></div>'
         + '<div class="ds">'+esc(c.desc)+'</div>'
-        + '<div class="md">'+esc(c.mda)+'</div></div>';
+        /* 40 張卡每張都攤開 desc＋MDA 的話，選卡畫面要捲很久。
+           「改什麼」是選卡當下要看的，留著；MDA 分析是寫回饋時才細讀的，收起來。
+           🔴 summary 的點擊要 stopPropagation，不然點「看 MDA」會順便把卡選掉。 */
+        + '<details class="mdbox"><summary>MDA 分析</summary>'
+        + '<div class="md">'+esc(c.mda)+'</div></details></div>';
     });
     html += '</div>';
   });
   $('pool').innerHTML = html;
+  Array.prototype.forEach.call($('pool').querySelectorAll('.mcard summary'), function(s){
+    s.onclick = function(e){ e.stopPropagation(); };     // 展開 MDA 不要順便選卡
+  });
   Array.prototype.forEach.call($('pool').querySelectorAll('.mcard'), function(el){
     el.onclick = function(e){
       if (e.target && e.target.classList.contains('copybtn')) return;   // 按複製不要順便選卡
+      if (e.target && e.target.closest && e.target.closest('details')) return;
       toggleCard(el.dataset.id, el);
     };
     el.onkeydown = function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); el.click(); } };
@@ -1380,7 +1395,8 @@ function renderRoom(){
       return '<div class="mcard ro" data-dim="'+esc(x.dim)+'"><div class="nm">'+esc(x.name)
         + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[x.dim]||x.dim)+'</span></div>'
         + '<div class="ds">'+esc(x.desc)+'</div>'
-        + '<div class="md">'+esc(x.mda)+'</div></div>';
+        + '<details class="mdbox"><summary>MDA 分析</summary>'
+        + '<div class="md">'+esc(x.mda)+'</div></details></div>';
     }).join('') + '</div>';
   } else {
     peek.style.display = '';

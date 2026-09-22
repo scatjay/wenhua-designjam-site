@@ -73,6 +73,10 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
    body scrollWidth=628 vs clientWidth=390——這個 class 專門給長文字用，不動一般 .pill。 */
 .pill.wrap{white-space:normal;display:block;max-width:100%;line-height:1.6;text-align:left}
 .cardno{color:var(--ink-soft);font-weight:800;font-size:.9em}
+/* 楊老師 2026-09-23：只顯示有搭配的卡／按編號排序，這兩顆是選卡畫面上的篩選/排序切換 */
+#pool.onlypairs .mcard[data-haspair="0"]{display:none}
+#btn-onlypairs[aria-pressed="true"],#btn-sortno[aria-pressed="true"]{
+  background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
 .hide{display:none!important}
 .mono{font-family:ui-monospace,Menlo,monospace}
 .err{color:var(--red);font-size:13.5px;margin:6px 0 0;font-weight:600}
@@ -265,7 +269,10 @@ table.st.tl td.tzero{color:var(--ink-soft);background:var(--panel2);font-weight:
   background:var(--accent-soft);color:var(--accent);border:1.5px solid var(--accent);
   font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
 .howto .st{font-size:14px}
-.howto .st b{display:block;margin-bottom:1px}
+/* 🔴 2026-09-23 楊老師截圖抓到：這條原本沒限定層級，連 <span> 裡面用來強調語氣的
+   <b>（例如「GM 從卡池挑<b>一張</b>卡」）也被打成整行獨立區塊，把一句話從中間斷開、
+   提早換行。只有標題那個 <b>（.st 的直接子元素）該是獨立區塊，span 裡的要跟著文字流動。 */
+.howto .st > b{display:block;margin-bottom:1px}
 .howto .st span{color:var(--ink-soft);font-size:12.5px}
 label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
   color:var(--ink-soft);margin-bottom:8px;font-weight:600}
@@ -574,6 +581,8 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
         <span class="pill" id="setup-code"></span>
         <span class="pill" id="setup-count">已選 0 張</span>
         <button id="btn-clear">全部取消</button>
+        <button id="btn-onlypairs" aria-pressed="false">只顯示有搭配的卡</button>
+        <button id="btn-sortno" aria-pressed="false">按編號排序</button>
       </div>
       <div id="pair-hint" class="pairhint"></div>
       <div id="setup-problems" style="margin-top:8px"></div>
@@ -748,10 +757,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230741"></script>
-<script src="js/sf3k_verified.js?v=202609230741"></script>
-<script src="js/sf3k_cards.js?v=202609230741"></script>
-<script src="js/sf3k_stats.js?v=202609230741"></script>
+<script src="js/sf3k_engine.js?v=202609230748"></script>
+<script src="js/sf3k_verified.js?v=202609230748"></script>
+<script src="js/sf3k_cards.js?v=202609230748"></script>
+<script src="js/sf3k_stats.js?v=202609230748"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1258,9 +1267,24 @@ function wireCopy(scope){
 }
 
 /* ═════ 選卡 ═════ */
+/* 只掛一次——startSetup() 每次進選卡畫面都會呼叫，按鈕重掛監聽沒事，
+   但用 onclick（不是 addEventListener）就天然只有最後一次生效，不會疊加。 */
+function wirePoolControls(){
+  $('btn-onlypairs').onclick = function(){
+    window.POOL_ONLYPAIRS = !window.POOL_ONLYPAIRS;
+    $('btn-onlypairs').setAttribute('aria-pressed', window.POOL_ONLYPAIRS ? 'true' : 'false');
+    $('pool').classList.toggle('onlypairs', !!window.POOL_ONLYPAIRS);
+  };
+  $('btn-sortno').onclick = function(){
+    window.POOL_SORT = window.POOL_SORT === 'no' ? 'dim' : 'no';
+    $('btn-sortno').setAttribute('aria-pressed', window.POOL_SORT === 'no' ? 'true' : 'false');
+    renderPool(); paintPool();
+  };
+}
 function startSetup(){
   show('scr-setup'); selected = [];
   $('setup-code').textContent = '待開場';
+  wirePoolControls();
   renderPool();
   paintPool(); renderSetupState();
   $('bar').classList.remove('hide');
@@ -1269,57 +1293,73 @@ function startSetup(){
   $('btn-submit').onclick = createRoom;
 }
 function renderPool(){
+  /* 楊老師 2026-09-23（推翻今晚稍早的決定，以這句為準）：
+     「單張不用顯示已實測了，沒測過的根本不要放」——選卡池只留 uiSingles
+     （真的三場全過的），quirky（⚠ draw_target）跟 needs4p 裡還沒確認過的
+     （jury/range2/factions）都不出現在池子裡。全部留在池子裡的卡本來就是測過的，
+     ✅ 已實測標記變成永遠是 true、沒有資訊量，一起拿掉。
+     seat_ring 留著（uiSingles 也有它）——4人下已經驗證過3/3全過，
+     👥 需要4人以上那個標記本來就講清楚了限制是什麼。 */
   var byDim = {};
-  CARDS.CARDS.forEach(function(c){ (byDim[c.dim]=byDim[c.dim]||[]).push(c); });
-  var html = '';
-  Object.keys(byDim).sort().forEach(function(d){
-    html += '<div class="dimhead" data-dim="'+d+'">'+d+'　'+esc(CARDS.DIM_NAMES[d])+'</div><div class="cardgrid">';
-    byDim[d].forEach(function(c){
-      /* 實測標記。🔴 措辭刻意不說破——寫出症狀就等於把答案給學生，
-         而「自己找出哪裡怪」正是這週要練的 playtesting。 */
-      var tested = (VER_DATA.uiSingles||[]).indexOf(c.id) >= 0;
-      var quirky = (VER_DATA.quirky||[]).indexOf(c.id) >= 0;
-      var tbadge = quirky
-        ? '<span class="pill red" title="">⚠ 這張有人回報過怪怪的</span>'
-        : (tested ? '<span class="pill green">✅ 已實測</span>'
-                  : '<span class="pill">🔍 還沒測過</span>');
-      /* 🔴 2026-09-23 上課前根據整晚測試結果新增的兩個標籤（楊老師交辦）：
-         ① 需要4人——座位權力環/敗者陪審團/射程限制/暗分兩隊，選了才會看到一句
-            「目前3人玩不動」，選之前完全看不出來。選卡前先講清楚比選了才噴錯好。
-         ② 已驗證搭配數——直接用 matesOf()（跟配對閘門同一份資料），
-            让學生看得出「選這張，還配不配得到第二張」，不然 elements/draw_target/
-            solo_hard/seat_ring 這四張目前 0 組配對，選了會覺得系統卡住、其實是設計如此
-            （還沒測過而已，不是壞掉）。 */
-      var need4 = (VER_DATA.needs4p||[]).indexOf(c.id) >= 0;
-      var n4badge = need4 ? '<span class="pill warn">👥 需要 4 人以上</span>' : '';
-      /* 楊老師 2026-09-23：「還沒選的時候，標籤就要顯示可和幾號卡片組合」——
-         改列編號（用上面的 CARD_NO），不列全名：短很多，手機也不會撐爆版面。
-         🔴 不用 title——手機沒有 hover，這條 harness 教訓已經踩過不只一次。 */
-      /* 楊老師 2026-09-23：「還沒驗證過就不用寫了，正向顯示」——沒有就不顯示這個標籤，
-         不寫負面說法（不寫「還沒有驗證過的搭配」）。有才講，用正向的「可配」講清楚是誰。 */
-      var mateNos = matesOf(c.id).map(function(id){ return CARD_NO[id] || '?'; }).sort(function(a,b){ return a-b; });
-      var pairBadge = mateNos.length
-        ? '<span class="pill wrap">🔗 可配：#' + mateNos.join('、#') + '</span>' : '';
-      var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
-                : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
-                : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
-      var colo = /手勢|坐在|實體/.test(c.desc) ? '<span class="pill warn">要坐在一起</span>' : '';
-      html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
-        + 'data-id="'+c.id+'" data-dim="'+c.dim+'">'
-        + '<div class="nm"><span class="cardno">#'+CARD_NO[c.id]+'</span> '+esc(c.name)
-        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+tbadge+' '+n4badge+' '+pairBadge+' '+badge+' '+colo
-        + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製指令</button>'
-        + ' ' + likeBtn('card', c.id) + '</div>'
-        + '<div class="ds">'+esc(c.desc)+'</div>'
-        /* 40 張卡每張都攤開 desc＋MDA 的話，選卡畫面要捲很久。
-           「改什麼」是選卡當下要看的，留著；MDA 分析是寫回饋時才細讀的，收起來。
-           🔴 summary 的點擊要 stopPropagation，不然點「看 MDA」會順便把卡選掉。 */
-        + '<details class="mdbox"><summary>MDA 分析</summary>'
-        + '<div class="md">'+esc(c.mda)+'</div></details></div>';
-    });
-    html += '</div>';
+  var pool = [];
+  CARDS.CARDS.forEach(function(c){
+    if ((VER_DATA.uiSingles||[]).indexOf(c.id) < 0) return;
+    pool.push(c);
+    (byDim[c.dim]=byDim[c.dim]||[]).push(c);
   });
+
+  /* 楊老師 2026-09-23：「增加按照分類或編號排序卡片」——「按分類」本來就是預設的
+     照維度分組（byDim，上面那段），缺的是「按編號」：拿掉維度分組、單一列表按
+     CARD_NO 排序。用 POOL_SORT 切換，只影響怎麼排版，不影響 uiSingles 過濾。 */
+  function cardHtml(c){
+    /* 🔴 2026-09-23 上課前根據整晚測試結果新增的兩個標籤（楊老師交辦）：
+       ① 需要4人——座位權力環/敗者陪審團/射程限制/暗分兩隊，選了才會看到一句
+          「目前3人玩不動」，選之前完全看不出來。選卡前先講清楚比選了才噴錯好。
+       ② 已驗證搭配數——直接用 matesOf()（跟配對閘門同一份資料），
+          让學生看得出「選這張，還配不配得到第二張」。 */
+    var need4 = (VER_DATA.needs4p||[]).indexOf(c.id) >= 0;
+    var n4badge = need4 ? '<span class="pill warn">👥 需要 4 人以上</span>' : '';
+    /* 楊老師 2026-09-23：「還沒選的時候，標籤就要顯示可和幾號卡片組合」——改列編號
+       （CARD_NO），不列全名：短很多，手機也不會撐爆版面。「還沒驗證過就不用寫了，
+       正向顯示」——沒有就不顯示這個標籤，不寫負面說法。
+       🔴 不用 title——手機沒有 hover，這條 harness 教訓已經踩過不只一次。 */
+    var mateNos = matesOf(c.id).map(function(id){ return CARD_NO[id] || '?'; }).sort(function(a,b){ return a-b; });
+    var pairBadge = mateNos.length
+      ? '<span class="pill wrap">🔗 可配：#' + mateNos.join('、#') + '</span>' : '';
+    var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
+              : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
+              : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
+    var colo = /手勢|坐在|實體/.test(c.desc) ? '<span class="pill warn">要坐在一起</span>' : '';
+    return '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
+      + 'data-id="'+c.id+'" data-dim="'+c.dim+'" data-haspair="'+(mateNos.length?'1':'0')+'">'
+      + '<div class="nm"><span class="cardno">#'+CARD_NO[c.id]+'</span> '+esc(c.name)
+      + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+n4badge+' '+pairBadge+' '+badge+' '+colo
+      + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製指令</button>'
+      + ' ' + likeBtn('card', c.id) + '</div>'
+      + '<div class="ds">'+esc(c.desc)+'</div>'
+      /* 40 張卡每張都攤開 desc＋MDA 的話，選卡畫面要捲很久。
+         「改什麼」是選卡當下要看的，留著；MDA 分析是寫回饋時才細讀的，收起來。
+         🔴 summary 的點擊要 stopPropagation，不然點「看 MDA」會順便把卡選掉。 */
+      + '<details class="mdbox"><summary>MDA 分析</summary>'
+      + '<div class="md">'+esc(c.mda)+'</div></details></div>';
+  }
+
+  var html = '';
+  if (window.POOL_SORT === 'no') {
+    html += '<div class="cardgrid">';
+    pool.slice().sort(function(a,b){ return CARD_NO[a.id]-CARD_NO[b.id]; })
+      .forEach(function(c){ html += cardHtml(c); });
+    html += '</div>';
+  } else {
+    Object.keys(byDim).sort().forEach(function(d){
+      if (!byDim[d].length) return;
+      html += '<div class="dimhead" data-dim="'+d+'">'+d+'　'+esc(CARDS.DIM_NAMES[d])+'</div><div class="cardgrid">';
+      byDim[d].forEach(function(c){ html += cardHtml(c); });
+      html += '</div>';
+    });
+  }
   $('pool').innerHTML = html;
+  $('pool').classList.toggle('onlypairs', !!window.POOL_ONLYPAIRS);
   Array.prototype.forEach.call($('pool').querySelectorAll('.mcard summary'), function(s){
     s.onclick = function(e){ e.stopPropagation(); };     // 展開 MDA 不要順便選卡
   });
@@ -2979,7 +3019,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230741"></script>
-<script src="js/bind_gate.js?v=202609230741"></script>
+<script src="js/gate_i18n.js?v=202609230748"></script>
+<script src="js/bind_gate.js?v=202609230748"></script>
 </body>
 </html>

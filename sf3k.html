@@ -606,9 +606,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222331"></script>
-<script src="js/sf3k_cards.js?v=202609222331"></script>
-<script src="js/sf3k_stats.js?v=202609222331"></script>
+<script src="js/sf3k_engine.js?v=202609222333"></script>
+<script src="js/sf3k_cards.js?v=202609222333"></script>
+<script src="js/sf3k_stats.js?v=202609222333"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -898,7 +898,7 @@ function enterLobby(){
             ? '<button data-code="'+esc(code)+'" class="rp sm">看回放</button>'
             : (m.phase==='lobby'
                 ? '<button data-code="'+esc(code)+'" class="j sm pri">加入</button>'
-                : '<button data-code="'+esc(code)+'" class="j sm">旁觀</button>'))+'</div>'
+                : '<button data-code="'+esc(code)+'" class="j sm">📺 旁觀（看得到完整數據）</button>'))+'</div>'
         +'<div class="feat">'+feat
         +'<div style="margin-top:5px">這個組合已經被玩過 <b>'+played+'</b> 次</div></div></div>');
     });
@@ -1238,6 +1238,12 @@ function syncChoices(){
   state.result  = (r[n-1] && r[n-1].result) || (r[n] && r[n].result) || null;
 }
 function isHost(){ return state.meta && String(state.meta.hostEnv) === String(me.env); }
+/* 我是不是在「看別人打」而不是「自己在打」。
+   旁觀者看得到的東西比玩家多——這是刻意的，不是漏洞（轉播視角）。 */
+function amSpectating(){
+  var p = state.players && state.players[me.env];
+  return !!(p && (p.spectator || p.inGame === false));
+}
 /* 🔴 hostEnv 只在建房那一刻寫一次，全檔沒有任何重新指派——GM 一關分頁，
    「結算」和「下一回合」就再也沒有人按得動，整場永久停在等待畫面。
    44 個學生同時開七到九場，一定會發生。
@@ -1450,7 +1456,9 @@ function renderStats(c, P){
     /* 🔴 時序只在打完之後給。玩到一半就看得到完整軌跡，等於把「誰被打過、誰剩多少」
        全部攤開，學生會改用算的取代談判——而出牌前的公開談判才是這個遊戲的本體。
        結束畫面上要，因為那是寫回饋的地方，時序是回答「局勢怎麼演變」最好的證據。 */
-    + ((state.meta && state.meta.phase === 'over')
+    /* 旁觀者是「轉播視角」（楊老師 2026-09-22）：他不在這一場裡，看到全部數據不會影響
+       這一場的談判，反而讓等下一輪的人有觀戰的樂趣、也看得比玩家更清楚。 */
+    + ((state.meta && (state.meta.phase === 'over' || amSpectating()))
         ? timelineHtml(state.rounds, c, playersArr().map(function(p){ return String(p.env); }),
             function(e){ var p = state.players[e]; var isMe = String(e)===String(me.env);
               return esc(c.anonymous && !isMe ? ('#'+e) : nickOf(e, p&&p.name)); })
@@ -1571,6 +1579,13 @@ function renderBar(c, P){
     pick = { action:null, target:null, item:null, itemTarget:null, juryPick:null };
   }
   var meP = state.players[me.env];
+  if (amSpectating()) {
+    $('bar').classList.remove('hide');
+    $('bar-actions').innerHTML = '<span class="okmsg">📺 轉播視角</span>'
+      + '<span class="sub">這一場你沒下場，所以看得到完整的統計與自尊變化——'
+      + '正在玩的人看不到這些。下一場就能一起玩。</span>';
+    $('btn-submit').classList.add('hide'); return;
+  }
   var iAmGhost = meP && !meP.alive;
   if (iAmGhost && !c.modGhost && !c.modJury) {
     $('bar').classList.remove('hide');
@@ -2300,7 +2315,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222331"></script>
-<script src="js/bind_gate.js?v=202609222331"></script>
+<script src="js/gate_i18n.js?v=202609222333"></script>
+<script src="js/bind_gate.js?v=202609222333"></script>
 </body>
 </html>

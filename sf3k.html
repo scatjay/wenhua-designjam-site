@@ -111,6 +111,12 @@ table.st th:first-child,table.st td:first-child{text-align:left}
 table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
 .bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
+/* 一鍵複製 */
+.copybtn{flex:0 0 auto;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;
+  background:var(--panel2);border:1.5px solid var(--line);color:var(--ink-soft);cursor:pointer;
+  font-family:inherit;line-height:1.4}
+.copybtn:hover{border-color:var(--accent);color:var(--accent)}
+.copybtn.done{background:var(--green-soft);border-color:var(--green);color:var(--green)}
 /* 13 個設計維度各一個色。挑的是在米色底上都看得出差別、而且彼此相鄰不會混淆的 13 個色相；
    卡片本身不塗滿（塗滿會蓋掉「選中」的狀態），只染左邊粗邊＋維度標籤。 */
 .dimhead{--dc:#54646e;border-left:5px solid var(--dc);padding-left:9px;color:var(--dc)}
@@ -139,6 +145,8 @@ table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:
 .bdbadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
 .bdbadge{font-size:12.5px;font-weight:800;padding:5px 11px;border-radius:999px;
   background:var(--amber-soft);color:var(--amber);border:1.5px solid var(--amber)}
+.bdcard.shame{border-color:var(--red);background:var(--red-soft)}
+.bdcard.shame .bdh{color:var(--red)}
 /* QR 與「這一節課要做的事」：數值照抄 w2.html，四頁要真的一樣 */
 .qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
 .qrbox .t{font-weight:800;font-size:15px}
@@ -285,8 +293,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 
     <div id="resume-box"></div>
 
-    <details class="box" id="rules-box" open>
-      <summary class="rsum">遊戲規則（第一次玩先看這裡）</summary>
+    <details class="box" id="rules-box" open data-wirecopy="1">
+      <summary class="rsum">遊戲規則（第一次玩先看這裡）
+        <button class="copybtn" data-copy="__rules__" style="margin-left:8px">複製規則</button></summary>
       <div class="rbody">
       <p class="rlead">SiSSYFiGHT 模擬的是<b>小學女生在操場上的社交鬥爭</b>。
       每個人一開始有 <b>10 點自尊</b>，目標是把別人的自尊扣到 0。
@@ -380,6 +389,8 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       <h3>當 GM，開一場</h3>
       <p class="sub" id="host-turn"></p>
       <button class="ok" id="btn-host">我來當 GM</button>
+      <p class="sub" style="margin:7px 0 0"><b>GM 也是一起玩的玩家</b>——
+      你只是多負責「挑一張卡、按開始、按下一回合」，一樣有座位、一樣出牌、一樣可能輸。</p>
     </div>
   </section>
 
@@ -545,9 +556,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222254"></script>
-<script src="js/sf3k_cards.js?v=202609222254"></script>
-<script src="js/sf3k_stats.js?v=202609222254"></script>
+<script src="js/sf3k_engine.js?v=202609222305"></script>
+<script src="js/sf3k_cards.js?v=202609222305"></script>
+<script src="js/sf3k_stats.js?v=202609222305"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -590,7 +601,7 @@ var myDevice = (function(){
   return v;
 })();
 var presenceRef = null;
-var blitzTimer = null, blitzLeft = 0, lastTimerRound = null;
+var blitzTimer = null, blitzLeft = 0, lastTimerRound = null, lastPickRound = null;
 
 var $ = function(id){ return document.getElementById(id); };
 /* 出牌列會換行（三張行動卡＋六個目標＋道具＋等待中名單），高度是變動的。
@@ -695,6 +706,7 @@ function enterLobby(){
     Object.keys(v).forEach(function(k){ comboCount[k] = (v[k]&&v[k].count)||0; });
   });
   renderResume();
+  wireCopy(document);   // 規則區塊的複製鈕（大廳一載入就要能按）
   renderMeRow();
   ROOT.child('hosts/'+SESS).once('value').then(function(s){
     var h = dropNull(normObj(s.val()));            // 同一個數字 key 陷阱
@@ -800,6 +812,61 @@ function renderResume(){
   }).catch(function(){ box.innerHTML = ''; });
 }
 
+/* ═════ 一鍵複製：把卡片／規則整理成可以直接貼進別的 AI 的文字 ═════
+   學生下一步是拿這個去跟 AI 做企劃，所以複製出去的東西要自己講得清楚脈絡，
+   不能只有卡片名字——貼過去對方看不懂就白做了。 */
+function cardText(id){
+  var c = CARDS.byId(id);
+  if (!c) return '';
+  return '【SiSSYFiGHT 改動卡：' + c.name + '】' + NLC
+    + '設計維度：' + (CARDS.DIM_NAMES[c.dim] || c.dim) + '（' + c.kind + '型）' + NLC
+    + '改什麼：' + c.desc + NLC
+    + 'MDA 分析：' + c.mda + NLC
+    + (c.from === 'student' ? '來源：歷屆學長姐提過 ' + c.seen + ' 次' :
+       c.from === 'gap' ? '來源：學生幾乎沒碰過的設計維度，這張是補強用的' : '來源：官方改編版') + NLC + NLC
+    + RULES_TEXT;
+}
+var RULES_TEXT =
+  '【原版規則：SiSSYFiGHT 3000】' + NLC
+  + '3-6 人。每人 10 點自尊，把別人扣到 0 就出局，場上剩 1-2 人時那些人獲勝。' + NLC
+  + '每回合同時祕密選一張行動卡 ＋ 一個目標，然後一起翻開結算：' + NLC
+  + '・SOLO 單挑：目標扣 1 點。一個人就做得到。' + NLC
+  + '・TEAM 聯手：至少兩人同時選同一個目標才算數，目標每個攻擊者扣 2 點；只有一人出則完全無效。' + NLC
+  + '・DEFEND 畏縮：這回合自己的目標卡不生效，受到的傷害減半（無條件捨去）；'
+  + '但如果沒有任何人指定你，反而要自扣 1 點。' + NLC
+  + '溝通限制：只能用公開的言語和手勢，不准耳語、不准傳紙條、不准比別人看不到的手勢。' + NLC
+  + '設計重點：TEAM 的威力來自協調，而協調只能靠講話；DEFEND 的自扣讓「什麼都不做」不安全。' + NLC
+  + '（原作 Eric Zimmerman／gameLab，SF3K 為 GDC Game Design Workshop 的簡化版）';
+
+function copyText(txt, btn){
+  var done = function(){
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = '已複製 ✓'; btn.classList.add('done');
+    setTimeout(function(){ btn.textContent = old; btn.classList.remove('done'); }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(done).catch(function(){ fallback(); });
+  } else fallback();
+  function fallback(){
+    // iOS Safari 與非 https 情境下 clipboard API 會失效，要留一條退路
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { alert('複製失敗，請手動選取'); }
+    document.body.removeChild(ta);
+  }
+}
+function wireCopy(scope){
+  Array.prototype.forEach.call(scope.querySelectorAll('.copybtn'), function(b){
+    b.onclick = function(e){
+      e.stopPropagation(); e.preventDefault();
+      var id = b.dataset.copy;
+      copyText(id === '__rules__' ? RULES_TEXT : cardText(id), b);
+    };
+  });
+}
+
 /* ═════ 選卡 ═════ */
 function startSetup(){
   show('scr-setup'); selected = [];
@@ -824,7 +891,8 @@ function renderPool(){
       html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
         + 'data-id="'+c.id+'" data-dim="'+c.dim+'">'
         + '<div class="nm">'+esc(c.name)
-        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+badge+' '+colo+'</div>'
+        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+badge+' '+colo
+        + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製</button></div>'
         + '<div class="ds">'+esc(c.desc)+'</div>'
         + '<div class="md">'+esc(c.mda)+'</div></div>';
     });
@@ -832,9 +900,13 @@ function renderPool(){
   });
   $('pool').innerHTML = html;
   Array.prototype.forEach.call($('pool').querySelectorAll('.mcard'), function(el){
-    el.onclick = function(){ toggleCard(el.dataset.id, el); };
+    el.onclick = function(e){
+      if (e.target && e.target.classList.contains('copybtn')) return;   // 按複製不要順便選卡
+      toggleCard(el.dataset.id, el);
+    };
     el.onkeydown = function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); el.click(); } };
   });
+  wireCopy($('pool'));
 }
 /* 🔴 一次只能選一張（楊老師 2026-09-22 定案）。
    理由是可驗證性：40 張單張全部窮舉測過都能打完；兩張是 780 組、三張以上是上萬組，
@@ -942,6 +1014,16 @@ function joinRoom(codeStr){
   });
 }
 function leaveRoom(){
+  /* 中離統計（楊老師：「中離最多次也設成成就，抑制大家隨便中離」）。
+     只算「遊戲進行中就走人」——玩完了回大廳不算，那是正常動線。 */
+  try {
+    var ph = state.meta && state.meta.phase;
+    if (room && (ph === 'choose' || ph === 'reveal')) {
+      ROOT.child('leaves/'+SESS+'/'+me.env).transaction(function(v){
+        v = v || { n: 0 }; v.n = (v.n||0) + 1; return v;
+      });
+    }
+  } catch (e) {}
   /* 離開＝斷開這場的所有監聽＋放掉 presence 佔位，讓同一個編號可以換裝置再進來。
      不刪 players 裡的自己——那是這場的戰績，刪掉統計就不對了。 */
   try { if (presenceRef) presenceRef.remove(); } catch(e) {}
@@ -967,23 +1049,36 @@ function enterRoom(){
 function detach(){ unsub.forEach(function(f){ try{f();}catch(e){} }); unsub=[]; }
 function bindRoom(){
   detach();
-  var h1 = roomRef.child('meta').on('value', function(s){ state.meta = s.val()||{}; renderRoom(); });
+  var h1 = roomRef.child('meta').on('value', function(s){
+    state.meta = s.val()||{};
+    syncChoices();          // 🔴 缺這一行 ⇒ 第 2 回合以後永遠出不了牌（見 syncChoices 的註解）
+    renderRoom();
+  });
   unsub.push(function(){ roomRef.child('meta').off('value', h1); });
   var h2 = roomRef.child('players').on('value', function(s){ state.players = normObj(s.val()); renderRoom(); });
   unsub.push(function(){ roomRef.child('players').off('value', h2); });
   var h3 = roomRef.child('chat').limitToLast(60).on('value', function(s){ renderChat(s.val()||{}); });
   unsub.push(function(){ roomRef.child('chat').off('value', h3); });
   var h4 = roomRef.child('rounds').on('value', function(s){
-    var r = normObj(s.val()); var n = (state.meta&&state.meta.round)||1;
-    state.rounds = r;
-    // 🔴 Firebase 對數字 key 會回 array（env 0-99 正好踩到），空隙是 null。
-    //    只 normObj 不夠，還要把 null 濾掉，否則 Object.keys 會把空隙算成「已出牌」，
-    //    導致回合提前結算、沒出牌的人被當成空過扣血。
-    state.choices = dropNull(normObj(r[n] && r[n].choices));
-    state.result  = (r[n-1]&&r[n-1].result) || (r[n]&&r[n].result) || null;
+    state.rounds = normObj(s.val());
+    syncChoices();
     renderRoom(); hostTick();
   });
   unsub.push(function(){ roomRef.child('rounds').off('value', h4); });
+}
+/* 🔴 這個函式存在的理由（2026-09-22 實測抓到，會讓整場卡死）：
+   state.choices 是「這一回合誰出過牌」，它要從 rounds[目前回合] 取，
+   所以它同時依賴 rounds（資料）與 meta.round（現在第幾回合）——兩個不同的節點。
+   原本只寫在 rounds 監聽器裡，於是 GM 按「下一回合」（只改 meta、rounds 沒動）之後，
+   rounds 監聽器不會再觸發，state.choices 還停在上一回合 ⇒ 每個人都被當成已出牌
+   ⇒ 出牌按鈕變成「改一下」，第 2 回合永遠開始不了，而且不會有任何錯誤訊息。
+   ⇒ 兩個監聽器都要呼叫這一支。
+   🔴 Firebase 對數字 key 會回 array（env 0-99 正好踩到），空隙是 null，
+      只 normObj 不夠、還要 dropNull，否則空隙會被算成「已出牌」。 */
+function syncChoices(){
+  var r = state.rounds || {}, n = (state.meta && state.meta.round) || 1;
+  state.choices = dropNull(normObj(r[n] && r[n].choices));
+  state.result  = (r[n-1] && r[n-1].result) || (r[n] && r[n].result) || null;
 }
 function isHost(){ return state.meta && String(state.meta.hostEnv) === String(me.env); }
 /* 🔴 hostEnv 只在建房那一刻寫一次，全檔沒有任何重新指派——GM 一關分頁，
@@ -1240,6 +1335,12 @@ function renderBar(c, P){
   }
   if (m.phase!=='choose') { $('bar').classList.add('hide'); document.body.classList.add('nobar'); stopTimer(); $('timer').style.display='none'; return; }
   if (lastTimerRound !== m.round) { lastTimerRound = m.round; startTimer(c); }
+  /* 每個人自己的暫存選擇也要跟著回合清掉——原本只有按「下一回合」的 GM 會清，
+     其他人的畫面會記得上一輪點過的行動與目標。 */
+  if (lastPickRound !== m.round) {
+    lastPickRound = m.round;
+    pick = { action:null, target:null, item:null, itemTarget:null, juryPick:null };
+  }
   var meP = state.players[me.env];
   var iAmGhost = meP && !meP.alive;
   if (iAmGhost && !c.modGhost && !c.modJury) {
@@ -1517,12 +1618,16 @@ var BOARDS = [
   { k:'ally',   icon:'🤝', t:'最佳隊友',     unit:'次',   hint:'參與聯手最多次',
     badge:'最佳隊友', f:function(s){ return s.team; } },
   { k:'host',   icon:'🎩', t:'常任 GM',      unit:'場',   hint:'當過最多次 GM',
-    badge:'常任 GM', f:function(s){ return s.host; } }
+    badge:'常任 GM', f:function(s){ return s.host; } },
+  /* 這個榜是反向的——上榜不是好事。擺出來本身就是嚇阻：
+     打到一半走人，整場的人都要等你。 */
+  { k:'leave',  icon:'🚪', t:'中離王',       unit:'次',   hint:'打到一半走人最多次——別人會一直等你出牌',
+    badge:'中離王', f:function(s){ return s.leaves; }, shame:true }
 ];
-var BD = { plays:null, talk:null, replays:null };
+var BD = { plays:null, talk:null, replays:null, leaves:null };
 
 function watchBoards(){
-  ['plays', 'talk', 'replays'].forEach(function(key){
+  ['plays', 'talk', 'replays', 'leaves'].forEach(function(key){
     var ref = (key === 'plays') ? ROOT.child('plays') : ROOT.child(key + '/' + SESS);
     ref.on('value', function(s){ BD[key] = dropNull(normObj(s.val())); renderBoards(); });
   });
@@ -1531,7 +1636,7 @@ function boardStats(){
   var S = {};
   var get = function(e){
     if (!S[e]) S[e] = { env:e, won:0, games:0, firstOut:0, talk:0, replays:0,
-                        designs:0, defend:0, team:0, solo:0, host:0, kinds:{} };
+                        designs:0, defend:0, team:0, solo:0, host:0, leaves:0, kinds:{} };
     return S[e];
   };
   var plays = BD.plays || {};
@@ -1568,6 +1673,7 @@ function boardStats(){
   });
   Object.keys(BD.talk || {}).forEach(function(e){ get(e).talk = ((BD.talk[e]||{}).n)||0; });
   Object.keys(BD.replays || {}).forEach(function(e){ get(e).replays = ((BD.replays[e]||{}).n)||0; });
+  Object.keys(BD.leaves || {}).forEach(function(e){ get(e).leaves = ((BD.leaves[e]||{}).n)||0; });
   return S;
 }
 function renderBoards(){
@@ -1587,7 +1693,7 @@ function renderBoards(){
                   .sort(function(a,b){ return b.v - a.v; });
     var top = rank.slice(0, 3);
     if (rank.length && String(rank[0].env) === String(me.env)) myBadges.push(B);
-    html += '<div class="bdcard"><div class="bdh">'+B.icon+' '+esc(B.t)+'</div>'
+    html += '<div class="bdcard'+(B.shame?' shame':'')+'"><div class="bdh">'+B.icon+' '+esc(B.t)+'</div>'
       + '<div class="bdhint">'+esc(B.hint)+'</div>'
       + (top.length
           ? '<ol class="bdlist">' + top.map(function(x){
@@ -1945,7 +2051,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222254"></script>
-<script src="js/bind_gate.js?v=202609222254"></script>
+<script src="js/gate_i18n.js?v=202609222305"></script>
+<script src="js/bind_gate.js?v=202609222305"></script>
 </body>
 </html>

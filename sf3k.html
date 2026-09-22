@@ -81,6 +81,19 @@ textarea{resize:vertical}
 .dmgpos{color:var(--warn);font-weight:700}
 .dmgneg{color:var(--ok);font-weight:700}
 
+/* 統計 */
+.stat{margin-top:10px;border-top:2px solid var(--hair);padding-top:8px}
+.stat h4{margin:.2em 0 .4em;font-size:.88rem}
+.statline{font-size:.84rem;color:var(--muted);margin:2px 0}
+.hl{display:inline-block;font-size:.76rem;padding:2px 9px;border-radius:99px;background:var(--surface2);
+  border:1px solid var(--hair);margin:3px 4px 0 0}
+.hl b{color:var(--ink)}
+table.st{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:6px}
+table.st th,table.st td{padding:3px 5px;border-bottom:1px dashed var(--hair);text-align:right}
+table.st th:first-child,table.st td:first-child{text-align:left}
+table.st th{color:var(--muted);font-weight:600}
+.bar3{display:flex;height:9px;border-radius:5px;overflow:hidden;margin:5px 0 2px;border:1px solid var(--hair)}
+.bar3 i{display:block}
 /* 底部列 */
 .bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--hair);
   padding:8px 12px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.06);z-index:20}
@@ -127,13 +140,13 @@ textarea{resize:vertical}
     </div>
 
     <div class="card">
-      <h3>當關主，開一個場次</h3>
+      <h3>當 GM，開一場</h3>
       <p class="sub" id="host-turn"></p>
-      <button class="ok" id="btn-host">我來當關主</button>
+      <button class="ok" id="btn-host">我來當 GM</button>
     </div>
   </section>
 
-  <!-- ══ 選卡（關主）══ -->
+  <!-- ══ 選卡（GM）══ -->
   <section id="scr-setup" class="hide">
     <h1>這一場要改什麼？</h1>
     <p class="sub">選到的每一張卡都會<b>立刻改變規則</b>。不選就是原版。</p>
@@ -184,6 +197,7 @@ textarea{resize:vertical}
     <div class="card" id="result-box" style="display:none">
       <h3 style="margin-top:0">上一回合結算</h3>
       <div id="result-log"></div>
+      <div id="stats-box"></div>
     </div>
 
     <div class="card" id="over-box" style="display:none">
@@ -195,8 +209,13 @@ textarea{resize:vertical}
       <textarea id="fb1" rows="2" placeholder="具體講你看到的行為變化，不要只寫「比較好玩」"></textarea>
       <p style="margin:.6em 0 .2em"><b>2. 這個差別是被哪一張卡造成的？為什麼？</b></p>
       <textarea id="fb2" rows="2" placeholder="哪一張卡？它改了規則的哪一點？"></textarea>
-      <p style="margin:.6em 0 .2em"><b>3. 這一場的「動態歷程」是什麼？（開局→中盤→殘局，局勢怎麼演變）</b></p>
-      <textarea id="fb3" rows="3" placeholder="例：開局大家亂打，中盤有人開始喊聯手，最後兩個人不敢動"></textarea>
+      <p style="margin:.6em 0 .2em"><b>3. 這一場的過程怎麼演變？（開局 → 中盤 → 剩兩個人時）</b></p>
+      <textarea id="fb3" rows="3" placeholder="例：開局大家亂打，中盤有人開始喊聯手，最後兩個人都不敢動"></textarea>
+      <p style="margin:.9em 0 .2em"><b>4. 今天整體感覺（100 字以內）</b><br>
+      <span class="sub">用 M（機制）→ D（動態）→ A（體驗）講一遍，最後補一句「下週我想自己改什麼」。<br>
+      <b>這段自己寫，不要用 AI 生。</b>字少沒關係，要講得具體——AI 寫得出漂亮的空話，寫不出你剛才在那一場裡的感覺。</span></p>
+      <textarea id="fb4" rows="3" maxlength="200" placeholder="100 字以內，自己寫"></textarea>
+      <div class="sub" id="fb4-count">0 / 100 字</div>
       <div class="row" style="margin-top:8px"><button class="ok" id="btn-fb">送出回饋</button><span id="fb-msg"></span></div>
     </div>
   </section>
@@ -218,10 +237,11 @@ textarea{resize:vertical}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="js/sf3k_engine.js"></script>
 <script src="js/sf3k_cards.js"></script>
+<script src="js/sf3k_stats.js"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
-  apiKey:"AIzaSyBwPR0yXQ2nYEMvVEfXWjlJUdMr8MRxkcM",
+  apiKey:"AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
   authDomain:"gen-lang-client-0929530380.firebaseapp.com",
   databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId:"gen-lang-client-0929530380"
@@ -234,9 +254,9 @@ var E = window.SF3K, CARDS = window.SF3K_CARDS;
 
 var me = { env:null, name:null, email:null, uid:null };
 var room = null, roomRef = null, unsub = [];
-var state = { meta:null, players:{}, choices:{}, result:null, phase:'lobby' };
+var state = { meta:null, players:{}, choices:{}, result:null, rounds:{}, phase:'lobby' };
 var pick = { action:null, target:null, item:null, itemTarget:null, juryPick:null };
-var selected = [];   // 關主選的卡 id
+var selected = [];   // GM 選的卡 id
 
 var $ = function(id){ return document.getElementById(id); };
 function show(id){ ['scr-login','scr-lobby','scr-setup','scr-room'].forEach(function(s){
@@ -307,8 +327,8 @@ function enterLobby(){
     var counts = Object.keys(h).map(function(k){ return (h[k].count||0); });
     var minC = counts.length? Math.min.apply(null,counts) : 0;
     $('host-turn').innerHTML = mine===0
-      ? '你<b>還沒當過關主</b>——這一輪優先讓你選版本。'
-      : '你當過 '+mine+' 次關主'+(mine>minC?'，還沒當過的同學會被優先排到，請先加入別人的場次。':'。');
+      ? '你<b>還沒當過 GM</b>——這一輪優先讓你挑卡開場。'
+      : '你當過 '+mine+' 次 GM'+(mine>minC?'，還沒當過的同學會被優先排到，請先加入別人的場次。':'。');
     $('btn-host').disabled = (mine > minC && minC === 0);
     if ($('btn-host').disabled) $('btn-host').textContent = '先讓還沒當過的人開（你已當過 '+mine+' 次）';
   });
@@ -320,7 +340,7 @@ function enterLobby(){
       var ph = m.phase==='lobby'?'招募中':(m.phase==='over'?'已結束':'進行中 R'+(m.round||1));
       out.push('<div class="row" style="justify-content:space-between;border-bottom:1px dashed var(--hair);padding:5px 0">'
         +'<span><b class="mono">'+esc(code)+'</b> <span class="pill">'+esc(ph)+'</span> '
-        +n+' 人 · 關主 #'+esc(m.hostEnv)+'</span>'
+        +n+' 人 · GM #'+esc(m.hostEnv)+'</span>'
         +'<button data-code="'+esc(code)+'" class="j">加入</button></div>');
     });
     $('open-rooms').innerHTML = out.length ? '<h3 style="margin:.6em 0 .2em">目前開著的場次</h3>'+out.join('')
@@ -439,6 +459,7 @@ function bindRoom(){
   unsub.push(function(){ roomRef.child('chat').off('value', h3); });
   var h4 = roomRef.child('rounds').on('value', function(s){
     var r = s.val()||{}; var n = (state.meta&&state.meta.round)||1;
+    state.rounds = r;
     state.choices = (r[n]&&r[n].choices)||{};
     state.result  = (r[n-1]&&r[n-1].result) || (r[n]&&r[n].result) || null;
     renderRoom(); hostTick();
@@ -551,8 +572,37 @@ function renderResult(c, P){
   if (dec.length) lines.push('🌊 縮圈：全體各扣 '+dec[0].dmg);
   $('result-log').innerHTML = lines.map(function(x){ return '<div class="logline">'+x+'</div>'; }).join('')
     + '<div class="row" style="margin-top:8px">' + (isHost() && state.meta.phase==='reveal'
-        ? '<button class="pri" id="btn-next">下一回合</button>' : '<span class="sub">等關主開下一回合</span>') + '</div>';
+        ? '<button class="pri" id="btn-next">下一回合</button>' : '<span class="sub">等 GM 開下一回合</span>') + '</div>';
   var bn = $('btn-next'); if (bn) bn.onclick = nextRound;
+  renderStats(c, P);
+}
+
+function renderStats(c, P){
+  var box = $('stats-box');
+  if (!window.SF3K_STATS || !state.rounds) { box.innerHTML=''; return; }
+  var st = SF3K_STATS.tally(state.rounds, P);
+  if (!st.totals.roundsPlayed) { box.innerHTML=''; return; }
+  var L = E.label(c), T = st.totals;
+  var nameOf = function(p){ var isMe=String(p.id)===String(me.env);
+    return esc(c.anonymous&&!isMe ? ('#'+p.id) : p.name); };
+  var mix = T.actionMix;
+  var rows = st.list.slice().sort(function(a,b){ return b.dealt - a.dealt; }).map(function(p){
+    return '<tr><td>'+nameOf(p)+'</td><td>'+p.solo+'</td><td>'+p.team+'</td><td>'+p.defend+'</td>'
+      + '<td>'+p.dealt+'</td><td>'+p.taken+'</td><td>'+p.targetedBy+'</td></tr>';
+  }).join('');
+  box.innerHTML = '<div class="stat"><h4>目前的遊玩統計（累計 '+T.roundsPlayed+' 回合）</h4>'
+    + SF3K_STATS.readOut(st, L).map(function(x){ return '<div class="statline">'+esc(x)+'</div>'; }).join('')
+    + '<div class="bar3" title="出牌比例">'
+      + '<i style="width:'+mix.solo+'%;background:var(--warn)"></i>'
+      + '<i style="width:'+mix.team+'%;background:var(--info)"></i>'
+      + '<i style="width:'+mix.defend+'%;background:var(--ok)"></i></div>'
+    + '<div class="statline">'+esc(L.solo)+' ／ '+esc(L.team)+' ／ '+esc(L.defend)+'</div>'
+    + st.highlights.map(function(h){
+        return '<span class="hl">'+esc(h.label)+'：<b>'+esc(h.who)+'</b> '+h.value+h.unit+'</span>'; }).join('')
+    + '<table class="st"><tr><th>玩家</th><th>單挑</th><th>聯手</th><th>畏縮</th>'
+      + '<th>打出</th><th>承受</th><th>被盯</th></tr>' + rows + '</table>'
+    + '<div class="statline" style="margin-top:6px">這張表就是你寫回饋時要用的證據——'
+      + '「大家的打法怎麼變」在數字裡看得到。</div></div>';
 }
 
 /* ═════ 出牌列 ═════ */
@@ -562,7 +612,7 @@ function renderBar(c, P){
     $('bar').classList.remove('hide');
     $('bar-actions').innerHTML = isHost()
       ? '<span class="sub">人到齊就開始（'+P.length+' 人）</span>'
-      : '<span class="sub">等關主開始（'+P.length+' 人）</span>';
+      : '<span class="sub">等 GM 開始（'+P.length+' 人）</span>';
     $('btn-submit').textContent = '開始遊戲';
     $('btn-submit').disabled = !isHost() || P.length < 3;
     $('btn-submit').onclick = startGame;
@@ -639,7 +689,7 @@ function submitChoice(){
   roomRef.child('rounds/'+m.round+'/choices/'+me.env).set(rec);
 }
 
-/* ═════ 關主：開局／結算／下一回合 ═════ */
+/* ═════ GM：開局／結算／下一回合 ═════ */
 function startGame(){
   var c = E.cfg(state.meta.cfg||{});
   var P = playersArr();
@@ -653,7 +703,7 @@ function startGame(){
   upd['meta/round'] = 1;
   if (c.modEvents) upd['meta/roundEvent'] = E.drawEvent(Math.random());
   roomRef.update(upd);
-  say('關主開始了遊戲', true);
+  say('GM 開始了遊戲', true);
 }
 function hostTick(){
   if (!isHost() || !state.meta || state.meta.phase!=='choose') return;
@@ -725,10 +775,21 @@ function renderChat(v){
 }
 
 /* ═════ 回饋與 bug 回報 ═════ */
+(function(){
+  var ta = $('fb4'); if (!ta) return;
+  ta.addEventListener('input', function(){
+    var n = ta.value.trim().length;
+    var el = $('fb4-count');
+    el.textContent = n + ' / 100 字' + (n>100 ? '　← 太長了，剪掉一些' : '');
+    el.style.color = n>100 ? 'var(--warn)' : 'var(--muted)';
+  });
+})();
 $('btn-fb').onclick = function(){
   var d = { env: me.env, room: room, cards: (state.meta&&state.meta.cards)||[],
-            q1: $('fb1').value.trim(), q2: $('fb2').value.trim(), q3: $('fb3').value.trim(), ts: nowTs() };
-  if (!d.q1 && !d.q2 && !d.q3) { $('fb-msg').textContent='至少寫一題'; return; }
+            q1: $('fb1').value.trim(), q2: $('fb2').value.trim(), q3: $('fb3').value.trim(),
+            essay: $('fb4').value.trim(), ts: nowTs() };
+  if (!d.q1 && !d.q2 && !d.q3 && !d.essay) { $('fb-msg').textContent='至少寫一題'; return; }
+  if (d.essay.length > 100) { $('fb-msg').textContent='第 4 題請縮到 100 字以內（目前 '+d.essay.length+' 字）'; return; }
   ROOT.child('feedback').push(d).then(function(){ $('fb-msg').textContent = '已送出，謝謝'; });
 };
 $('btn-report').onclick = function(){

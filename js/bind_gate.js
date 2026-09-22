@@ -1,0 +1,256 @@
+/* 學習單單元入口：一次綁定（編號 ＋ Gmail ＋ QR）
+   用法：在任何一個單元頁的 </body> 前加
+     <script>window.DJ_BIND_UNIT='w2';</script>
+     <script src="js/bind_gate.js"></script>
+   前提：該頁已經 firebase.initializeApp 過（unit1/w2/w3/sf3k 都有）。
+
+   🔴 踩過的坑，這裡一次擋掉：
+   ① 編號 0 是合法值（楊老師本人測試編號），**不能用 !v 判斷**。
+   ② qrcode-generator 的全域是小寫 `qrcode`；不要寫 if(window.QRCode) 之類的守衛，
+      那在換版之後永遠是 false，QR 會靜默不出現（2026-09-22 學習單就是這樣壞了三輪）。
+   ③ QR 容器要寫死尺寸，否則各頁網址長度不同→模組數不同→自然尺寸對不齊、還會撐爆卡片。
+   ④ 手機一律 signInWithRedirect（popup 會被擋）；錯誤訊息絕對不能吞成空字串。
+   ⑤ 綁好之後 reload，讓各頁原本讀 localStorage 的邏輯照常運作，不用改各頁程式。 */
+(function () {
+  'use strict';
+  var UNIT = window.DJ_BIND_UNIT || 'unknown';
+  var LS_ENV = 'designjam_env', LS_MAIL = 'designjam_email', LS_UID = 'designjam_uid';
+  var QR_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js';
+  var st = { email: null, uid: null, name: null, env: null, busy: false };
+
+  function ls(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lset(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&"]/g, function (c) {
+    return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]; }); }
+
+  function root() { return firebase.database().ref('whgm/analysis/w3game'); }
+
+  /* ── 樣式 ── */
+  var CSS = '\
+#dj-gate{position:fixed;inset:0;z-index:99999;background:rgba(20,18,14,.72);backdrop-filter:blur(3px);\
+  display:flex;align-items:center;justify-content:center;padding:14px;overflow-y:auto}\
+#dj-gate .box{background:#fffdf8;color:#211e1a;max-width:520px;width:100%;border-radius:14px;padding:18px 18px 16px;\
+  box-shadow:0 10px 40px rgba(0,0,0,.35);font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;line-height:1.6}\
+#dj-gate h2{margin:0 0 .2em;font-size:1.12rem}\
+#dj-gate .sub{color:#6f685d;font-size:.85rem;margin:.1em 0 .9em}\
+#dj-gate .step{border:1px solid #ded9cb;border-radius:10px;padding:10px 11px;margin:8px 0;background:#fff}\
+#dj-gate .step.done{border-color:#3f8f80;background:#f2f8f6}\
+#dj-gate .stitle{font-weight:700;font-size:.92rem;display:flex;gap:6px;align-items:center}\
+#dj-gate .tick{color:#3f8f80;font-weight:700}\
+#dj-gate input{font:inherit;font-size:1rem;padding:9px 10px;border:1px solid #ded9cb;border-radius:8px;width:100%;\
+  background:#fff;color:#211e1a}\
+#dj-gate button{font:inherit;font-size:.92rem;padding:9px 14px;border-radius:8px;border:1px solid #ded9cb;\
+  background:#efecdf;color:#211e1a;cursor:pointer}\
+#dj-gate button.pri{background:#b4552c;color:#fff;border-color:#b4552c}\
+#dj-gate button.ok{background:#3f8f80;color:#fff;border-color:#3f8f80}\
+#dj-gate button:disabled{opacity:.45;cursor:not-allowed}\
+#dj-gate .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}\
+#dj-gate .grow{flex:1 1 auto;min-width:0}\
+#dj-gate .err{color:#b4552c;font-size:.85rem;margin:.4em 0 0}\
+#dj-gate .qrwrap{text-align:center;margin:10px 0 2px}\
+#dj-gate .qrbox{display:inline-block;padding:8px;background:#fff;border:1px solid #ded9cb;border-radius:10px}\
+/* 🔴 寫死尺寸：容器 id 要跟下面 innerHTML 的 id 完全一致，選擇器打錯的話規則從加進去那刻就是死的 */\
+#dj-gate #dj-qr svg{display:block;width:132px;height:132px}\
+#dj-gate .qrcap{font-size:.76rem;color:#6f685d;margin-top:5px}\
+#dj-gate .tiny{font-size:.78rem;color:#6f685d;margin-top:10px}\
+#dj-gate .tiny a{color:#3763a8}\
+#dj-bar{position:fixed;right:10px;top:10px;z-index:9998;background:#fffdf8;border:1px solid #ded9cb;border-radius:99px;\
+  padding:5px 11px;font:400 .78rem/1.4 "Noto Sans TC",system-ui,sans-serif;color:#6f685d;box-shadow:0 2px 10px rgba(0,0,0,.12);\
+  cursor:pointer;max-width:70vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}\
+@media (prefers-color-scheme:dark){\
+  #dj-gate .box{background:#1f1d18;color:#ece6d9}\
+  #dj-gate .step{background:#28251e;border-color:#37332a}\
+  #dj-gate .step.done{background:#22302c;border-color:#3f8f80}\
+  #dj-gate input,#dj-gate button{background:#28251e;color:#ece6d9;border-color:#37332a}\
+  #dj-gate button.pri{background:#e0824f;color:#16130f;border-color:#e0824f}\
+  #dj-gate button.ok{background:#3f8f80;color:#fff;border-color:#3f8f80}\
+  #dj-gate .qrbox{background:#fff}\
+  #dj-bar{background:#1f1d18;color:#a49b8b;border-color:#37332a}}';
+
+  function injectCss() {
+    if (document.getElementById('dj-gate-css')) return;
+    var s = document.createElement('style'); s.id = 'dj-gate-css'; s.textContent = CSS;
+    document.head.appendChild(s);
+  }
+
+  /* ── QR：載入 qrcode-generator 再畫。全域是小寫 qrcode ── */
+  function withQr(cb) {
+    if (typeof window.qrcode === 'function') return cb();
+    var s = document.createElement('script');
+    s.src = QR_SRC;
+    s.onload = function () { cb(); };
+    s.onerror = function () { cb(new Error('QR 函式庫載入失敗')); };
+    document.head.appendChild(s);
+  }
+  function drawQr(elId, text) {
+    withQr(function (err) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      if (err) { el.innerHTML = '<span style="font-size:.76rem;color:#b4552c">QR 載入失敗，請直接用網址</span>'; return; }
+      var q = window.qrcode(0, 'M');
+      q.addData(text);
+      q.make();
+      el.innerHTML = q.createSvgTag(5, 8);
+    });
+  }
+
+  /* ── 主畫面 ── */
+  function openGate(reason) {
+    injectCss();
+    if (document.getElementById('dj-gate')) return;
+    var d = document.createElement('div');
+    d.id = 'dj-gate';
+    var pageUrl = location.origin + location.pathname;
+    d.innerHTML =
+      '<div class="box" role="dialog" aria-modal="true" aria-label="進入前先綁定">' +
+      '<h2>進入前，先綁定一次</h2>' +
+      '<p class="sub">' + (reason || '確認你的信封編號與學校 Google 帳號。綁定之後，你在所有單元留下的紀錄都會連在一起。') + '</p>' +
+
+      '<div class="step" id="dj-s1">' +
+        '<div class="stitle"><span id="dj-t1">①</span> 確認 Google 帳號</div>' +
+        '<div class="row" style="margin-top:7px">' +
+          '<button class="pri" id="dj-google">用 Google 登入</button>' +
+          '<span class="grow" id="dj-mail" style="font-size:.86rem;color:#6f685d">尚未登入</span>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="step" id="dj-s2">' +
+        '<div class="stitle"><span id="dj-t2">②</span> 輸入你的信封編號</div>' +
+        '<div class="row" style="margin-top:7px">' +
+          '<div class="grow"><input id="dj-env" type="number" inputmode="numeric" min="0" max="99" placeholder="0 - 99"></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="qrwrap"><div class="qrbox"><div id="dj-qr"></div></div>' +
+        '<div class="qrcap">用手機掃這個 QR，可以在手機上開同一頁</div></div>' +
+
+      '<div class="row" style="margin-top:10px"><button class="ok grow" id="dj-go" disabled>綁定並進入</button></div>' +
+      '<p class="err" id="dj-err" style="display:none"></p>' +
+      '<p class="tiny">登不進 Google？<a href="#" id="dj-skip">先只用編號進去</a>，' +
+        '之後在任何一頁右上角都可以補綁。</p>' +
+      '</div>';
+    document.body.appendChild(d);
+    drawQr('dj-qr', pageUrl);
+
+    var envI = document.getElementById('dj-env');
+    var saved = ls(LS_ENV);
+    if (saved != null && saved !== '') envI.value = saved;
+
+    document.getElementById('dj-google').onclick = signIn;
+    envI.addEventListener('input', refresh);
+    document.getElementById('dj-go').onclick = commit;
+    document.getElementById('dj-skip').onclick = function (e) { e.preventDefault(); commit(true); };
+    refresh();
+  }
+
+  function showErr(msg) {
+    var e = document.getElementById('dj-err');
+    if (!e) return;
+    e.textContent = msg; e.style.display = msg ? '' : 'none';
+  }
+
+  function refresh() {
+    var envI = document.getElementById('dj-env');
+    if (!envI) return;
+    var raw = envI.value.trim();
+    var v = raw === '' ? NaN : parseInt(raw, 10);
+    var envOk = !isNaN(v) && v >= 0 && v <= 99;     // ⚠ 0 合法
+    st.env = envOk ? v : null;
+    document.getElementById('dj-s1').className = 'step' + (st.email ? ' done' : '');
+    document.getElementById('dj-s2').className = 'step' + (envOk ? ' done' : '');
+    document.getElementById('dj-t1').textContent = st.email ? '✓' : '①';
+    document.getElementById('dj-t1').className = st.email ? 'tick' : '';
+    document.getElementById('dj-t2').textContent = envOk ? '✓' : '②';
+    document.getElementById('dj-t2').className = envOk ? 'tick' : '';
+    document.getElementById('dj-mail').textContent = st.email || '尚未登入';
+    document.getElementById('dj-go').disabled = !(envOk && st.email) || st.busy;
+  }
+
+  function signIn() {
+    showErr('');
+    var auth = firebase.auth();
+    var p = new firebase.auth.GoogleAuthProvider();
+    var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    if (mobile) { try { localStorage.setItem('designjam_bind_pending', UNIT); } catch (e) {}
+      return auth.signInWithRedirect(p); }
+    auth.signInWithPopup(p).catch(function (e) {
+      var code = (e && e.code) || '';
+      if (/popup|blocked/i.test(code)) {            // popup 被擋 → 退回 redirect
+        try { localStorage.setItem('designjam_bind_pending', UNIT); } catch (x) {}
+        return auth.signInWithRedirect(p);
+      }
+      // 🔴 不要吞掉：使用者要能判斷是不是該重試
+      showErr('登入失敗：' + (e && (e.message || e.code) || '不明原因'));
+    });
+  }
+
+  function commit(skipMail) {
+    if (st.busy) return;
+    var envI = document.getElementById('dj-env');
+    var v = envI ? parseInt(envI.value, 10) : NaN;
+    if (isNaN(v) || v < 0 || v > 99) { showErr('請輸入 0-99 的編號'); return; }
+    if (!skipMail && !st.email) { showErr('請先用 Google 登入'); return; }
+    st.busy = true; refresh();
+    lset(LS_ENV, String(v));
+    if (st.email) { lset(LS_MAIL, st.email); lset(LS_UID, st.uid || ''); }
+    var rec = { env: v, unit: UNIT, ts: firebase.database.ServerValue.TIMESTAMP };
+    if (st.email) { rec.email = st.email; rec.name = st.name || null; rec.uid = st.uid || null; }
+    var jobs = [root().child('envIndex/' + v).update(rec)];
+    if (st.uid) jobs.push(root().child('identity/' + st.uid).update(rec));
+    if (!st.email) jobs.push(root().child('unbound').push({ env: v, unit: UNIT, ts: rec.ts }));
+    Promise.all(jobs).catch(function (e) {
+      // 寫不進去也要讓學生進得去；但要留痕，不要假裝成功
+      console.warn('[bind_gate] 寫入失敗', e);
+    }).then(function () { location.reload(); });
+  }
+
+  /* ── 已綁定時的小列 ── */
+  function showBar() {
+    injectCss();
+    if (document.getElementById('dj-bar')) return;
+    var env = ls(LS_ENV), mail = ls(LS_MAIL);
+    var b = document.createElement('div');
+    b.id = 'dj-bar';
+    b.title = '點一下可以重新綁定';
+    b.textContent = '#' + env + (mail ? ' · ' + mail : ' · 未綁 Gmail');
+    b.onclick = function () {
+      b.remove();
+      openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補綁。');
+    };
+    document.body.appendChild(b);
+  }
+
+  /* ── 起手 ── */
+  function boot() {
+    if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) {
+      return setTimeout(boot, 120);                  // 等該頁自己 initializeApp
+    }
+    var auth;
+    try { auth = firebase.auth(); } catch (e) {
+      console.warn('[bind_gate] 這頁沒載 firebase-auth-compat，只能綁編號');
+    }
+    if (auth) {
+      auth.onAuthStateChanged(function (u) {
+        if (!u) return;
+        st.uid = u.uid; st.email = u.email; st.name = u.displayName || (u.email || '').split('@')[0];
+        refresh();
+      });
+      auth.getRedirectResult().then(function (r) {
+        if (r && r.user) {
+          try { localStorage.removeItem('designjam_bind_pending'); } catch (e) {}
+        }
+      }).catch(function (e) {
+        if (e) showErr('登入失敗：' + (e.message || e.code));
+      });
+    }
+    var env = ls(LS_ENV), mail = ls(LS_MAIL);
+    if (env != null && env !== '' && mail) showBar();
+    else openGate();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+
+  window.DJBind = { open: openGate, env: function () { var v = ls(LS_ENV); return v == null || v === '' ? null : parseInt(v, 10); },
+                    email: function () { return ls(LS_MAIL); } };
+})();

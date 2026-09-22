@@ -170,6 +170,13 @@ table.st.tl td.tzero{color:var(--ink-soft);background:var(--panel2);font-weight:
 .tlbars i{flex:1 1 auto;min-width:4px;border:1px solid transparent;border-bottom:none;
   border-radius:3px 3px 0 0}
 .tlname .swatch{margin-right:4px}
+/* 按讚 */
+.likebtn{flex:0 0 auto;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;
+  background:var(--panel2);border:1.5px solid var(--line);color:var(--ink-soft);cursor:pointer;
+  font-family:inherit;line-height:1.4}
+.likebtn:hover{border-color:var(--red);color:var(--red)}
+.likebtn.on{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.roomlike{display:inline-block}
 /* 一鍵複製 */
 .copybtn{flex:0 0 auto;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;
   background:var(--panel2);border:1.5px solid var(--line);color:var(--ink-soft);cursor:pointer;
@@ -630,9 +637,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222337"></script>
-<script src="js/sf3k_cards.js?v=202609222337"></script>
-<script src="js/sf3k_stats.js?v=202609222337"></script>
+<script src="js/sf3k_engine.js?v=202609222342"></script>
+<script src="js/sf3k_cards.js?v=202609222342"></script>
+<script src="js/sf3k_stats.js?v=202609222342"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -881,6 +888,7 @@ function enterLobby(){
   show('scr-lobby');
   if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); watchBoards(); }
   if (!nickWatched) { nickWatched = true; watchNicks(); }
+  watchLikes();
   renderChecklist();
   ROOT.child('comboStats').on('value', function(s){
     var v = s.val()||{}; comboCount = {};
@@ -941,7 +949,8 @@ function enterLobby(){
         done.push('<div class="roomrow done"><div class="top"><span>'+head
           + ' <span class="pill">已結束</span> <span class="pill">'+(m.round||1)+' 回合</span>'
           + ' <span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span></span>'
-          + '<button data-code="'+esc(code)+'" class="rp sm">看回放</button></div>'
+          + '<span><span class="roomlike" data-code="'+esc(code)+'"></span> '
+          + '<button data-code="'+esc(code)+'" class="rp sm">看回放</button></span></div>'
           + '<div class="feat">'+feat+'</div></div>');
       } else {
         /* 正在打的最有看頭——別人正在吵要不要聯手、有人快掛了。
@@ -976,6 +985,7 @@ function enterLobby(){
     Array.prototype.forEach.call($('open-rooms').querySelectorAll('.rp'), function(b){
       b.onclick = function(){ openReplay(b.dataset.code); };
     });
+    paintRoomLike();
   });
 }
 armConfirm($('btn-leave'), '這一場還沒打完，走了同一場的人會一直等你出牌。', function(){
@@ -1115,7 +1125,8 @@ function renderPool(){
         + 'data-id="'+c.id+'" data-dim="'+c.dim+'">'
         + '<div class="nm">'+esc(c.name)
         + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+badge+' '+colo
-        + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製</button></div>'
+        + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製</button>'
+        + ' ' + likeBtn('card', c.id) + '</div>'
         + '<div class="ds">'+esc(c.desc)+'</div>'
         /* 40 張卡每張都攤開 desc＋MDA 的話，選卡畫面要捲很久。
            「改什麼」是選卡當下要看的，留著；MDA 分析是寫回饋時才細讀的，收起來。
@@ -1132,12 +1143,14 @@ function renderPool(){
   Array.prototype.forEach.call($('pool').querySelectorAll('.mcard'), function(el){
     el.onclick = function(e){
       if (e.target && e.target.classList.contains('copybtn')) return;   // 按複製不要順便選卡
+      if (e.target && e.target.classList.contains('likebtn')) return;   // 按讚也不要
       if (e.target && e.target.closest && e.target.closest('details')) return;
       toggleCard(el.dataset.id, el);
     };
     el.onkeydown = function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); el.click(); } };
   });
   wireCopy($('pool'));
+  wireLikes($('pool'));
 }
 /* 🔴 一次只能選一張（楊老師 2026-09-22 定案）。
    理由是可驗證性：40 張單張全部窮舉測過都能打完；兩張是 780 組、三張以上是上萬組，
@@ -1931,6 +1944,67 @@ function renderChecklist(){
   if (all) box.innerHTML += '<p class="okmsg" style="margin-top:10px">四項都完成了！去 flipclass 交一張結束畫面的截圖就收工。</p>';
 }
 
+/* ═════ 按讚：卡片與場次 ═════
+   用 env 當 key（不是 push）：同一個人按兩次不會變兩讚，取消也只要刪自己那一筆。
+   數量一律當場數出來，不另存計數——另存就會跟真實資料脫鉤。 */
+var LIKES = { card: {}, room: {} };
+var likeWatched = false;
+function watchLikes(){
+  if (likeWatched) return;
+  likeWatched = true;
+  ROOT.child('cardLikes').on('value', function(s){
+    LIKES.card = dropNull(normObj(s.val()));
+    if (!$('scr-setup').classList.contains('hide')) paintCardLikes();
+    renderBoards();
+  });
+  ROOT.child('roomLikes').on('value', function(s){
+    LIKES.room = dropNull(normObj(s.val()));
+    paintRoomLike();
+    renderBoards();
+  });
+}
+function likeCount(kind, id){
+  var m = LIKES[kind][id];
+  return m ? Object.keys(dropNull(normObj(m))).length : 0;
+}
+function iLiked(kind, id){
+  var m = LIKES[kind][id];
+  return !!(m && dropNull(normObj(m))[me.env]);
+}
+function toggleLike(kind, id){
+  var path = (kind === 'card' ? 'cardLikes/' : 'roomLikes/') + id + '/' + me.env;
+  if (iLiked(kind, id)) ROOT.child(path).remove();
+  else ROOT.child(path).set(nowTs());
+}
+function likeBtn(kind, id, label){
+  var n = likeCount(kind, id), on = iLiked(kind, id);
+  return '<button class="likebtn' + (on ? ' on' : '') + '" data-lk="' + kind
+    + '" data-lid="' + esc(id) + '">👍 ' + (label || '') + (n ? ' ' + n : '') + '</button>';
+}
+function wireLikes(scope){
+  Array.prototype.forEach.call((scope || document).querySelectorAll('.likebtn'), function(b){
+    b.onclick = function(e){
+      e.stopPropagation(); e.preventDefault();
+      toggleLike(b.dataset.lk, b.dataset.lid);
+    };
+  });
+}
+/* 卡片的讚是即時的，但重畫整個卡池會把捲動位置弄丟 ⇒ 只換按鈕本身 */
+function paintCardLikes(){
+  Array.prototype.forEach.call(document.querySelectorAll('#pool .likebtn'), function(b){
+    var id = b.dataset.lid, n = likeCount('card', id);
+    b.textContent = '👍' + (n ? ' ' + n : '');
+    b.classList.toggle('on', iLiked('card', id));
+  });
+}
+function paintRoomLike(){
+  Array.prototype.forEach.call(document.querySelectorAll('.roomlike'), function(box){
+    var code = box.dataset.code;
+    box.innerHTML = likeBtn('room', code, '這一場好看');
+    wireLikes(box);
+  });
+}
+
 /* ═════ 排行榜與徽章 ═════
    全部是讀原始紀錄現算的，不另存排名——排名一存就會跟真實資料脫鉤。
    榜的挑法刻意不只獎勵「贏」：最早掛掉、最多話、看最多回放、設計最多版本
@@ -1956,7 +2030,9 @@ var BOARDS = [
   /* 這個榜是反向的——上榜不是好事。擺出來本身就是嚇阻：
      打到一半走人，整場的人都要等你。 */
   { k:'leave',  icon:'🚪', t:'中離王',       unit:'次',   hint:'打到一半走人最多次——別人會一直等你出牌',
-    badge:'中離王', f:function(s){ return s.leaves; }, shame:true }
+    badge:'中離王', f:function(s){ return s.leaves; }, shame:true },
+  { k:'pop',    icon:'❤️', t:'人氣場次',     unit:'讚',   hint:'你當 GM 開的場次被按最多讚',
+    badge:'人氣王', f:function(s){ return s.roomLikes; } }
 ];
 var BD = { plays:null, talk:null, replays:null, leaves:null };
 
@@ -1970,7 +2046,7 @@ function boardStats(){
   var S = {};
   var get = function(e){
     if (!S[e]) S[e] = { env:e, won:0, games:0, firstOut:0, talk:0, replays:0,
-                        designs:0, defend:0, team:0, solo:0, host:0, leaves:0, kinds:{} };
+                        designs:0, defend:0, team:0, solo:0, host:0, leaves:0, roomLikes:0, kinds:{} };
     return S[e];
   };
   var plays = BD.plays || {};
@@ -1983,7 +2059,10 @@ function boardStats(){
       var x = get(env);
       x.games++;
       if (p.won) x.won++;
-      if (p.wasHost) { x.host++; combos[comboKey(p.cards||[])] = true; }
+      if (p.wasHost) {
+        x.host++; combos[comboKey(p.cards||[])] = true;
+        x.roomLikes += likeCount('room', p.room);      // 自己開的場次收到的讚
+      }
       x.defend += (p.defend||0); x.team += (p.team||0); x.solo += (p.solo||0);
       var n = (p.cards||[]).length;
       x.kinds[n===0?'orig':(n===1?'one':'many')] = true;
@@ -2038,6 +2117,20 @@ function renderBoards(){
       + '</div>';
   });
   html += '</div>';
+
+  /* 卡片的讚是全班的口味，不屬於任何個人，所以獨立一塊，不放進個人榜 */
+  var cl = Object.keys(LIKES.card || {})
+    .map(function(id){ return { id: id, n: likeCount('card', id) }; })
+    .filter(function(x){ return x.n > 0; })
+    .sort(function(a, b){ return b.n - a.n; }).slice(0, 5);
+  if (cl.length) {
+    html += '<div class="bdcard" style="margin-top:9px"><div class="bdh">🃏 最受歡迎的改動卡</div>'
+      + '<div class="bdhint">全班按讚選出來的。想不到要挑哪張的時候，可以從這裡挑。</div>'
+      + '<ol class="bdlist">' + cl.map(function(x){
+          var c = CARDS.byId(x.id);
+          return '<li>' + esc(c ? c.name : x.id) + ' <b>' + x.n + '</b>讚</li>';
+        }).join('') + '</ol></div>';
+  }
 
   var mine = S[String(me.env)];
   html += '<div class="bdme"><b>你的成績（'+esc(me.name)+'　#'+esc(me.env)+'）</b>';
@@ -2100,6 +2193,7 @@ function watchOthers(){
         + '<div style="margin-bottom:8px">'+feat+'</div>'
         + '<div class="row"><button class="cmb sm pri" data-code="'+esc(code)+'">'
         + '▶ 看這一場的回放</button>'
+        + '<span class="roomlike" data-code="'+esc(code)+'"></span>'
         + '<span class="sub">看完才留觀察</span></div></div>' });
     });
     rows.sort(function(a, b){ return a.tier - b.tier; });
@@ -2109,6 +2203,7 @@ function watchOthers(){
     Array.prototype.forEach.call($('others').querySelectorAll('.cmb'), function(b){
       b.onclick = function(){ openReplay(b.dataset.code); };
     });
+    paintRoomLike();
   });
 }
 
@@ -2120,7 +2215,8 @@ function renderSpectateComment(){
   if (!amSpectating()) { box.innerHTML = ''; return; }
   if (box.dataset.room === room) return;              // 已經畫過就不要每次 render 都重建（會把打到一半的字清掉）
   box.dataset.room = room;
-  box.innerHTML = '<div class="box"><h3 style="margin-top:0">留下你的觀察</h3>'
+  box.innerHTML = '<div class="box"><h3 style="margin-top:0">留下你的觀察 '
+    + '<span class="roomlike" data-code="'+esc(room)+'"></span></h3>'
     + '<p class="sub" style="margin:0 0 9px">這一場跟你自己玩到的有什麼不一樣？'
     + '觀戰留的觀察跟看回放留的一樣算進檢核表。</p>'
     + '<div class="row"><div class="grow"><input id="sp-cm" maxlength="200" '
@@ -2286,7 +2382,8 @@ function rpComment(){
       + '下面就會出現留言框。<b>先看完再寫，寫出來的東西才是你真的看到的。</b></div>';
     return;
   }
-  box.innerHTML = '<div class="rpwatch rpdone">✓ 看完了。這一場跟你自己玩到的有什麼不一樣？</div>'
+  box.innerHTML = '<div class="rpwatch rpdone">✓ 看完了。這一場跟你自己玩到的有什麼不一樣？'
+    + ' <span class="roomlike" data-code="'+esc(RP.code)+'"></span></div>'
     + '<div class="row"><div class="grow"><input id="rp-cm" maxlength="200" '
     + 'placeholder="例：他們那場沒人敢出聯手，因為…"></div>'
     + '<button class="pri" id="rp-send">送出觀察</button></div>'
@@ -2439,7 +2536,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222337"></script>
-<script src="js/bind_gate.js?v=202609222337"></script>
+<script src="js/gate_i18n.js?v=202609222342"></script>
+<script src="js/bind_gate.js?v=202609222342"></script>
 </body>
 </html>

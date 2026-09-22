@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SiSSYFiGHT 線上版</title>
+<style>
+:root{
+  --bg:#f4f2ea; --surface:#fffdf8; --surface2:#efecdf; --ink:#211e1a; --muted:#6f685d;
+  --hair:#ded9cb; --accent:#b4552c; --accent2:#e08a5a; --soft:#f6e3d7;
+  --ok:#3f8f80; --warn:#b4552c; --info:#3763a8;
+  --shadow:0 1px 2px rgba(30,25,15,.06),0 6px 18px rgba(30,25,15,.05);
+  --sans:"Noto Sans TC",system-ui,-apple-system,"Microsoft JhengHei",sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#16150f; --surface:#1f1d18; --surface2:#28251e; --ink:#ece6d9; --muted:#a49b8b;
+  --hair:#37332a; --accent:#e0824f; --accent2:#f0a878; --soft:#3a2a20;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35);
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+  -webkit-text-size-adjust:100%}
+.wrap{max-width:860px;margin:0 auto;padding:12px 14px 120px}
+h1{font-size:1.25rem;margin:.2em 0 .1em;letter-spacing:.02em}
+h2{font-size:1.02rem;margin:1.1em 0 .4em;padding-bottom:.25em;border-bottom:2px solid var(--hair)}
+h3{font-size:.94rem;margin:.9em 0 .3em}
+p,li{font-size:.92rem}
+.sub{color:var(--muted);font-size:.84rem;margin:.2em 0 .8em}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 13px;
+  margin:10px 0;box-shadow:var(--shadow)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grow{flex:1 1 auto;min-width:0}
+button,.btn{font-family:inherit;font-size:.9rem;padding:9px 14px;border-radius:9px;border:1px solid var(--hair);
+  background:var(--surface2);color:var(--ink);cursor:pointer;line-height:1.2}
+button:active{transform:translateY(1px)}
+button.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+button:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{font-family:inherit;font-size:.92rem;padding:9px 10px;border-radius:9px;
+  border:1px solid var(--hair);background:var(--surface);color:var(--ink);width:100%}
+textarea{resize:vertical}
+.pill{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;background:var(--surface2);
+  border:1px solid var(--hair);color:var(--muted);white-space:nowrap}
+.pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pill.warn{background:var(--soft);color:var(--warn);border-color:var(--accent2)}
+.hide{display:none!important}
+.mono{font-family:var(--mono)}
+.err{color:var(--warn);font-size:.85rem;margin:.4em 0}
+.okmsg{color:var(--ok);font-size:.85rem;margin:.4em 0}
+
+/* 卡池 */
+.dimhead{margin:14px 0 4px;font-size:.8rem;color:var(--muted);letter-spacing:.06em}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.mcard{border:1px solid var(--hair);border-radius:10px;padding:9px 10px;background:var(--surface);cursor:pointer;
+  transition:border-color .12s,background .12s}
+.mcard[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.mcard .nm{font-weight:700;font-size:.9rem;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mcard .ds{font-size:.8rem;color:var(--muted);margin-top:3px}
+.mcard .md{font-size:.76rem;color:var(--info);margin-top:5px;border-top:1px dashed var(--hair);padding-top:5px}
+
+/* 玩家 */
+.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:8px 0}
+.seat{border:1px solid var(--hair);border-radius:10px;padding:8px;background:var(--surface);text-align:center;font-size:.84rem}
+.seat.me{border-color:var(--accent);background:var(--soft)}
+.seat.dead{opacity:.45}
+.seat .nm{font-weight:700}
+.seat .hp{font-family:var(--mono);font-size:1.02rem}
+.swatch{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:4px;border:1px solid rgba(0,0,0,.2)}
+
+/* 討論區 */
+.chat{height:210px;overflow-y:auto;border:1px solid var(--hair);border-radius:10px;padding:8px;
+  background:var(--surface2);font-size:.86rem}
+.msg{margin:2px 0}
+.msg .who{font-weight:700}
+.msg.sys{color:var(--muted);font-style:italic}
+.msg.whis{color:var(--info)}
+
+/* 結算 */
+.logline{font-size:.84rem;padding:3px 0;border-bottom:1px dashed var(--hair)}
+.dmgpos{color:var(--warn);font-weight:700}
+.dmgneg{color:var(--ok);font-weight:700}
+
+/* 底部列 */
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--hair);
+  padding:8px 12px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.06);z-index:20}
+.bar .wrap2{max-width:860px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fab{position:fixed;right:12px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:21;
+  border-radius:99px;padding:8px 13px;background:var(--surface);border:1px solid var(--hair);box-shadow:var(--shadow);font-size:.82rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ 登入 ══ -->
+  <section id="scr-login">
+    <h1>SiSSYFiGHT 線上版</h1>
+    <p class="sub">改編自 SiSSYFiGHT 3000（GDC Game Design Workshop 簡化版）。原作 Eric Zimmerman。</p>
+    <div class="card">
+      <h3>先確認你是誰</h3>
+      <p class="sub">用學校 Google 帳號登入，並綁定你的信封編號。綁定後，你之前在學習單留下的紀錄都會跟著這個帳號。</p>
+      <div class="row" style="margin-bottom:8px">
+        <button class="pri" id="btn-google">用 Google 帳號登入</button>
+        <span id="who" class="pill"></span>
+      </div>
+      <div class="row">
+        <div class="grow"><input id="env" type="number" inputmode="numeric" min="0" max="99" placeholder="信封編號（0-99）"></div>
+        <button class="ok" id="btn-bind">綁定並進入</button>
+      </div>
+      <p class="err hide" id="login-err"></p>
+      <p class="sub" id="login-note"></p>
+    </div>
+  </section>
+
+  <!-- ══ 大廳 ══ -->
+  <section id="scr-lobby" class="hide">
+    <h1>選一個場次</h1>
+    <p class="sub" id="lobby-me"></p>
+
+    <div class="card">
+      <h3>加入別人的場次</h3>
+      <div class="row">
+        <div class="grow"><input id="join-code" placeholder="四碼場次代號" maxlength="4" style="text-transform:uppercase"></div>
+        <button class="pri" id="btn-join">加入</button>
+      </div>
+      <div id="open-rooms" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <h3>當關主，開一個場次</h3>
+      <p class="sub" id="host-turn"></p>
+      <button class="ok" id="btn-host">我來當關主</button>
+    </div>
+  </section>
+
+  <!-- ══ 選卡（關主）══ -->
+  <section id="scr-setup" class="hide">
+    <h1>這一場要改什麼？</h1>
+    <p class="sub">選到的每一張卡都會<b>立刻改變規則</b>。不選就是原版。</p>
+    <div class="card">
+      <div class="row">
+        <span class="pill" id="setup-code"></span>
+        <span class="pill" id="setup-count">已選 0 張</span>
+        <button id="btn-clear">全部取消</button>
+      </div>
+      <div id="setup-problems" style="margin-top:8px"></div>
+      <div id="setup-colocate" style="margin-top:6px"></div>
+    </div>
+    <div id="pool"></div>
+  </section>
+
+  <!-- ══ 房間 ══ -->
+  <section id="scr-room" class="hide">
+    <div class="row" style="justify-content:space-between">
+      <h1 style="margin:0" id="room-title">場次</h1>
+      <span class="pill" id="room-code"></span>
+    </div>
+    <p class="sub" id="room-cards"></p>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <b id="phase-label">等待開始</b>
+        <span class="pill" id="round-label"></span>
+      </div>
+      <div id="event-box"></div>
+      <div class="seats" id="seats"></div>
+      <div id="my-extras"></div>
+    </div>
+
+    <!-- 公開討論：SissyFight 的本體 -->
+    <div class="card">
+      <h3 style="margin-top:0">公開討論
+        <span class="pill" id="whisper-pill" style="display:none">私訊已開放</span>
+      </h3>
+      <p class="sub" style="margin:0 0 6px">原版規則：出牌前只能用<b>公開</b>的言語和手勢串通。誰要聯手打誰，就在這裡喊。</p>
+      <div class="chat" id="chat"></div>
+      <div class="row" style="margin-top:6px">
+        <select id="chat-to" style="width:auto;flex:0 0 auto"><option value="">公開</option></select>
+        <div class="grow"><input id="chat-in" placeholder="說點什麼…" maxlength="120"></div>
+        <button class="pri" id="btn-say">送出</button>
+      </div>
+    </div>
+
+    <div class="card" id="result-box" style="display:none">
+      <h3 style="margin-top:0">上一回合結算</h3>
+      <div id="result-log"></div>
+    </div>
+
+    <div class="card" id="over-box" style="display:none">
+      <h3 style="margin-top:0">結束了</h3>
+      <div id="over-text"></div>
+      <h3>玩完了，回答三個問題</h3>
+      <p class="sub">這一輪的重點不是誰贏，是你有沒有看見「改了什麼 → 大家的行為怎麼變」。</p>
+      <p style="margin:.4em 0 .2em"><b>1. 這一場跟上一場，玩起來最大的差別是什麼？</b></p>
+      <textarea id="fb1" rows="2" placeholder="具體講你看到的行為變化，不要只寫「比較好玩」"></textarea>
+      <p style="margin:.6em 0 .2em"><b>2. 這個差別是被哪一張卡造成的？為什麼？</b></p>
+      <textarea id="fb2" rows="2" placeholder="哪一張卡？它改了規則的哪一點？"></textarea>
+      <p style="margin:.6em 0 .2em"><b>3. 這一場的「動態歷程」是什麼？（開局→中盤→殘局，局勢怎麼演變）</b></p>
+      <textarea id="fb3" rows="3" placeholder="例：開局大家亂打，中盤有人開始喊聯手，最後兩個人不敢動"></textarea>
+      <div class="row" style="margin-top:8px"><button class="ok" id="btn-fb">送出回饋</button><span id="fb-msg"></span></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- 底部出牌列 -->
+<div class="bar hide" id="bar">
+  <div class="wrap2">
+    <div class="row grow" id="bar-actions"></div>
+    <button class="pri" id="btn-submit">送出</button>
+  </div>
+</div>
+
+<button class="fab" id="btn-report">🐞 回報 bug／建議</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="js/sf3k_engine.js"></script>
+<script src="js/sf3k_cards.js"></script>
+<script>
+/* ═════ 基礎 ═════ */
+firebase.initializeApp({
+  apiKey:"AIzaSyBwPR0yXQ2nYEMvVEfXWjlJUdMr8MRxkcM",
+  authDomain:"gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"gen-lang-client-0929530380"
+});
+var db = firebase.database();
+var auth = firebase.auth();
+/* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
+var ROOT = db.ref('whgm/analysis/w3game');
+var E = window.SF3K, CARDS = window.SF3K_CARDS;
+
+var me = { env:null, name:null, email:null, uid:null };
+var room = null, roomRef = null, unsub = [];
+var state = { meta:null, players:{}, choices:{}, result:null, phase:'lobby' };
+var pick = { action:null, target:null, item:null, itemTarget:null, juryPick:null };
+var selected = [];   // 關主選的卡 id
+
+var $ = function(id){ return document.getElementById(id); };
+function show(id){ ['scr-login','scr-lobby','scr-setup','scr-room'].forEach(function(s){
+  $(s).classList.toggle('hide', s!==id); }); }
+function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g,function(c){
+  return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
+function nowTs(){ return firebase.database.ServerValue.TIMESTAMP; }
+function code4(){ var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<4;i++)
+  s+=A[Math.floor(Math.random()*A.length)]; return s; }
+var COLORS=['#c0392b','#27ae60','#2980b9','#2c3e50','#e67e22','#8e44ad','#16a085','#d35400'];
+
+/* ═════ 登入與綁定 ═════ */
+function setWho(){
+  $('who').textContent = me.email ? me.email : '尚未登入';
+  $('who').className = 'pill' + (me.email ? ' on' : '');
+}
+auth.onAuthStateChanged(function(u){
+  if(!u) { setWho(); return; }
+  me.uid = u.uid; me.email = u.email; me.name = u.displayName || (u.email||'').split('@')[0];
+  setWho();
+  ROOT.child('identity/'+u.uid).once('value').then(function(s){
+    var v = s.val();
+    if (v && v.env != null) { $('env').value = v.env; $('login-note').textContent = '你之前綁的是編號 '+v.env+'，可以直接進入。'; }
+  });
+});
+$('btn-google').onclick = function(){
+  var p = new firebase.auth.GoogleAuthProvider();
+  var mobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  $('login-err').classList.add('hide');
+  if (mobile) return auth.signInWithRedirect(p);     // 🔴 手機一律 redirect，popup 會被擋
+  auth.signInWithPopup(p).catch(function(e){
+    // 🔴 不要把錯誤吞成空字串：使用者要知道發生什麼事、要不要重試
+    if (e && /popup/i.test(e.code||'')) return auth.signInWithRedirect(p);
+    $('login-err').textContent = '登入失敗：' + (e && (e.message||e.code) || '不明原因');
+    $('login-err').classList.remove('hide');
+  });
+};
+auth.getRedirectResult().catch(function(e){
+  if (!e) return;
+  $('login-err').textContent = '登入失敗：' + (e.message||e.code);
+  $('login-err').classList.remove('hide');
+});
+$('btn-bind').onclick = function(){
+  var v = parseInt($('env').value, 10);
+  if (isNaN(v) || v < 0 || v > 99) {         // ⚠ 0 是合法編號，不能用 !v 判斷
+    $('login-err').textContent = '請輸入 0-99 的編號'; $('login-err').classList.remove('hide'); return;
+  }
+  me.env = v;
+  me.name = me.name || ('#'+v);
+  localStorage.setItem('designjam_env', String(v));
+  var rec = { env:v, name:me.name, ts:nowTs() };
+  if (me.uid) { rec.uid = me.uid; rec.email = me.email;
+    ROOT.child('identity/'+me.uid).update(rec);
+    ROOT.child('envIndex/'+v).update({ uid:me.uid, email:me.email, name:me.name, ts:nowTs() });
+  } else {
+    ROOT.child('envIndex/'+v).update({ name:me.name, ts:nowTs() });
+  }
+  enterLobby();
+};
+(function(){ var s = localStorage.getItem('designjam_env'); if (s!=null && s!=='') $('env').value = s; })();
+
+/* ═════ 大廳 ═════ */
+function enterLobby(){
+  show('scr-lobby');
+  $('lobby-me').innerHTML = '你是 <b>#'+me.env+'</b>' + (me.email ? '（'+esc(me.email)+'）' : '（未綁 Google 帳號）');
+  ROOT.child('hosts').once('value').then(function(s){
+    var h = s.val()||{}, mine = (h[me.env]&&h[me.env].count)||0;
+    var counts = Object.keys(h).map(function(k){ return (h[k].count||0); });
+    var minC = counts.length? Math.min.apply(null,counts) : 0;
+    $('host-turn').innerHTML = mine===0
+      ? '你<b>還沒當過關主</b>——這一輪優先讓你選版本。'
+      : '你當過 '+mine+' 次關主'+(mine>minC?'，還沒當過的同學會被優先排到，請先加入別人的場次。':'。');
+    $('btn-host').disabled = (mine > minC && minC === 0);
+    if ($('btn-host').disabled) $('btn-host').textContent = '先讓還沒當過的人開（你已當過 '+mine+' 次）';
+  });
+  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(12).on('value', function(s){
+    var v = s.val()||{}, out=[];
+    Object.keys(v).reverse().forEach(function(code){
+      var m = v[code].meta; if(!m) return;
+      var n = Object.keys(v[code].players||{}).length;
+      var ph = m.phase==='lobby'?'招募中':(m.phase==='over'?'已結束':'進行中 R'+(m.round||1));
+      out.push('<div class="row" style="justify-content:space-between;border-bottom:1px dashed var(--hair);padding:5px 0">'
+        +'<span><b class="mono">'+esc(code)+'</b> <span class="pill">'+esc(ph)+'</span> '
+        +n+' 人 · 關主 #'+esc(m.hostEnv)+'</span>'
+        +'<button data-code="'+esc(code)+'" class="j">加入</button></div>');
+    });
+    $('open-rooms').innerHTML = out.length ? '<h3 style="margin:.6em 0 .2em">目前開著的場次</h3>'+out.join('')
+      : '<p class="sub">還沒有人開場次。</p>';
+    Array.prototype.forEach.call($('open-rooms').querySelectorAll('.j'), function(b){
+      b.onclick = function(){ joinRoom(b.dataset.code); };
+    });
+  });
+}
+$('btn-join').onclick = function(){ joinRoom(($('join-code').value||'').trim().toUpperCase()); };
+$('btn-host').onclick = function(){ startSetup(); };
+
+/* ═════ 選卡 ═════ */
+function startSetup(){
+  show('scr-setup'); selected = [];
+  $('setup-code').textContent = '待開場';
+  renderPool(); renderSetupState();
+  $('bar').classList.remove('hide');
+  $('bar-actions').innerHTML = '<span class="sub" id="setup-hint">選好就開場</span>';
+  $('btn-submit').textContent = '開場';
+  $('btn-submit').onclick = createRoom;
+}
+function renderPool(){
+  var byDim = {};
+  CARDS.CARDS.forEach(function(c){ (byDim[c.dim]=byDim[c.dim]||[]).push(c); });
+  var html = '';
+  Object.keys(byDim).sort().forEach(function(d){
+    html += '<div class="dimhead">'+d+'　'+esc(CARDS.DIM_NAMES[d])+'</div><div class="cardgrid">';
+    byDim[d].forEach(function(c){
+      var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
+                : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
+                : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
+      var colo = /手勢|坐在|實體/.test(c.desc) ? '<span class="pill warn">要坐在一起</span>' : '';
+      html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" data-id="'+c.id+'">'
+        + '<div class="nm">'+esc(c.name)+' '+badge+' '+colo+'</div>'
+        + '<div class="ds">'+esc(c.desc)+'</div>'
+        + '<div class="md">'+esc(c.mda)+'</div></div>';
+    });
+    html += '</div>';
+  });
+  $('pool').innerHTML = html;
+  Array.prototype.forEach.call($('pool').querySelectorAll('.mcard'), function(el){
+    el.onclick = function(){ toggleCard(el.dataset.id, el); };
+    el.onkeydown = function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); el.click(); } };
+  });
+}
+function toggleCard(id, el){
+  var i = selected.indexOf(id);
+  if (i>=0) selected.splice(i,1); else selected.push(id);
+  el.setAttribute('aria-pressed', i>=0 ? 'false':'true');
+  renderSetupState();
+}
+$('btn-clear').onclick = function(){
+  selected = [];
+  Array.prototype.forEach.call($('pool').querySelectorAll('.mcard'), function(el){ el.setAttribute('aria-pressed','false'); });
+  renderSetupState();
+};
+function currentCfg(n){ return E.cfg(CARDS.merge(selected)); }
+function renderSetupState(){
+  $('setup-count').textContent = '已選 '+selected.length+' 張';
+  var c = currentCfg(), v = E.validate(c, 6), cf = CARDS.conflicts(selected);
+  var out = '';
+  v.problems.forEach(function(p){ out += '<p class="err">⛔ '+esc(p)+'</p>'; });
+  cf.forEach(function(p){ out += '<p class="err">⚠ '+esc(p)+'</p>'; });
+  if (!out) out = '<p class="okmsg">✅ 這個組合可以玩</p>';
+  $('setup-problems').innerHTML = out;
+  var colo = selected.map(CARDS.byId).filter(Boolean).filter(function(x){ return /手勢|坐在|實體/.test(x.desc); });
+  $('setup-colocate').innerHTML = colo.length
+    ? '<p class="err">👥 這一場有需要面對面的要素，開場前請大家<b>坐到同一桌</b>。</p>' : '';
+  $('btn-submit').disabled = !v.ok;
+}
+
+/* ═════ 建立／加入房間 ═════ */
+function createRoom(){
+  var c = currentCfg();
+  if (!E.validate(c, 6).ok) return;
+  var codeStr = code4();
+  var meta = { host: me.uid||('env'+me.env), hostEnv: me.env, phase:'lobby', round:1,
+               cards: selected.slice(), cfg: CARDS.merge(selected),
+               seed: Math.random(), createdAt: nowTs() };
+  ROOT.child('rooms/'+codeStr+'/meta').set(meta).then(function(){
+    ROOT.child('hosts/'+me.env).transaction(function(v){
+      v = v || { count:0 }; v.count = (v.count||0)+1; return v;
+    });
+    joinRoom(codeStr);
+  });
+}
+function joinRoom(codeStr){
+  if (!codeStr || codeStr.length!==4) { alert('請輸入四碼場次代號'); return; }
+  ROOT.child('rooms/'+codeStr+'/meta').once('value').then(function(s){
+    if (!s.exists()) { alert('找不到場次 '+codeStr); return; }
+    room = codeStr; roomRef = ROOT.child('rooms/'+codeStr);
+    var m = s.val();
+    var seat = Object.keys(state.players||{}).length;
+    roomRef.child('players/'+me.env).transaction(function(v){
+      if (v) { v.name = me.name; return v; }
+      return { env: me.env, name: me.name, chips: (m.cfg&&m.cfg.startChips)||10,
+               alive: true, lastAction: null, juryScore: 0, joinedAt: Date.now() };
+    }).then(enterRoom);
+  });
+}
+function enterRoom(){
+  show('scr-room');
+  $('room-code').textContent = room;
+  bindRoom();
+  say('#'+me.env+' 進來了', true);
+}
+function detach(){ unsub.forEach(function(f){ try{f();}catch(e){} }); unsub=[]; }
+function bindRoom(){
+  detach();
+  var h1 = roomRef.child('meta').on('value', function(s){ state.meta = s.val()||{}; renderRoom(); });
+  unsub.push(function(){ roomRef.child('meta').off('value', h1); });
+  var h2 = roomRef.child('players').on('value', function(s){ state.players = s.val()||{}; renderRoom(); });
+  unsub.push(function(){ roomRef.child('players').off('value', h2); });
+  var h3 = roomRef.child('chat').limitToLast(60).on('value', function(s){ renderChat(s.val()||{}); });
+  unsub.push(function(){ roomRef.child('chat').off('value', h3); });
+  var h4 = roomRef.child('rounds').on('value', function(s){
+    var r = s.val()||{}; var n = (state.meta&&state.meta.round)||1;
+    state.choices = (r[n]&&r[n].choices)||{};
+    state.result  = (r[n-1]&&r[n-1].result) || (r[n]&&r[n].result) || null;
+    renderRoom(); hostTick();
+  });
+  unsub.push(function(){ roomRef.child('rounds').off('value', h4); });
+}
+function isHost(){ return state.meta && String(state.meta.hostEnv) === String(me.env); }
+function playersArr(){
+  return Object.keys(state.players).map(function(k){ return state.players[k]; })
+    .sort(function(a,b){ return (a.seat!=null?a.seat:a.joinedAt) - (b.seat!=null?b.seat:b.joinedAt); })
+    .map(function(p,i){ p.id = String(p.env); if (p.seat==null) p.seat = i; return p; });
+}
+
+/* ═════ 畫面 ═════ */
+function renderRoom(){
+  if (!state.meta) return;
+  var m = state.meta, c = E.cfg(m.cfg||{}), L = E.label(c), P = playersArr();
+  $('room-title').textContent = L.name;
+  var names = (m.cards||[]).map(function(id){ var x=CARDS.byId(id); return x?x.name:id; });
+  $('room-cards').innerHTML = names.length
+    ? '這一場加了：' + names.map(function(n){ return '<span class="pill on">'+esc(n)+'</span>'; }).join(' ')
+    : '<span class="pill">原版規則，沒有改動</span>';
+  $('whisper-pill').style.display = c.modWhisper ? '' : 'none';
+
+  var ph = m.phase;
+  $('phase-label').textContent = ph==='lobby' ? '等待開始'
+    : ph==='choose' ? '出牌中（先在下面公開討論）'
+    : ph==='reveal' ? '結算完成' : '結束';
+  $('round-label').textContent = '第 '+(m.round||1)+' 回合';
+  $('event-box').innerHTML = (c.modEvents && m.roundEvent)
+    ? '<p class="err">🌪 本回合事件：<b>'+esc(m.roundEvent.label)+'</b></p>' : '';
+
+  // 座位
+  $('seats').innerHTML = P.map(function(p,i){
+    var isMe = String(p.env)===String(me.env);
+    var nm = c.anonymous && !isMe ? '???' : esc(p.name||('#'+p.env));
+    var hp = (c.hideChips && !isMe) ? '？' : p.chips;
+    var extra = [];
+    if (c.modRoles && (isMe||ph!=='choose') && p.role) { var R=(E.ROLES.filter(function(r){return r.key===p.role;})[0]); if(R) extra.push(R.name); }
+    if (c.modElements && p.element) extra.push(p.element);
+    if (c.modFactions && (isMe||ph==='over')) extra.push('隊'+p.faction);
+    if (c.modJury && p.juryScore) extra.push('陪審 '+p.juryScore);
+    var done = state.choices && state.choices[p.env] ? ' ✔' : '';
+    return '<div class="seat'+(isMe?' me':'')+(p.alive?'':' dead')+'">'
+      + '<div class="nm"><span class="swatch" style="background:'+COLORS[i%COLORS.length]+'"></span>'+nm+done+'</div>'
+      + '<div class="hp">'+hp+' <span class="sub">'+esc(L.chip)+'</span></div>'
+      + (extra.length?'<div class="sub">'+esc(extra.join(' · '))+'</div>':'')
+      + (p.alive?'':'<div class="sub">'+esc(L.out)+'</div>')
+      + '</div>';
+  }).join('');
+
+  // 私訊對象
+  var sel = $('chat-to'), keep = sel.value;
+  sel.innerHTML = '<option value="">公開</option>' + (c.modWhisper ? P.filter(function(p){
+    return String(p.env)!==String(me.env); }).map(function(p){
+    return '<option value="'+p.env+'">私訊 '+esc(c.anonymous?('#'+p.env):(p.name||('#'+p.env)))+'</option>'; }).join('') : '');
+  sel.value = keep;
+
+  renderResult(c, P);
+  renderBar(c, P);
+
+  // 結束
+  if (ph==='over') {
+    $('over-box').style.display='';
+    var w = (m.winners||[]).map(function(id){ var p=state.players[id]; return p?(p.name||('#'+id)):id; });
+    $('over-text').innerHTML = w.length
+      ? '<p>獲勝：'+w.map(function(x){return '<b>'+esc(x)+'</b>';}).join('、')+'（'+esc(m.overWhy||'')+'）</p>'
+      : '<p><b>全滅</b>，沒有人活下來。</p>';
+  } else $('over-box').style.display='none';
+}
+
+function renderResult(c, P){
+  var r = state.result;
+  if (!r || !r.log) { $('result-box').style.display='none'; return; }
+  $('result-box').style.display='';
+  var nameOf = function(id){ var p=state.players[id]; var isMe=String(id)===String(me.env);
+    return esc(c.anonymous&&!isMe ? ('#'+id) : (p&&p.name)||('#'+id)); };
+  var L = E.label(c);
+  var lines = r.log.map(function(e){
+    switch(e.t){
+      case 'solo': return c.revealTargets ? nameOf(e.from)+' 單挑 '+nameOf(e.to)+' <span class="dmgpos">-'+e.dmg+'</span>'
+                                          : '有人被單挑了';
+      case 'team': return c.revealTargets ? '['+e.from.map(nameOf).join('＋')+'] 聯手打 '+nameOf(e.to)+' <span class="dmgpos">-'+e.dmg+'</span>'
+                                          : e.n+' 個人聯手打了某人';
+      case 'team-fizzle': return c.revealTargets ? nameOf(e.from[0])+' 想聯手打 '+nameOf(e.to)+'，但沒人跟進 → 沒效果' : '有人聯手失敗';
+      case 'team-penalty': return nameOf(e.to)+' 空放聯手，自扣 '+e.dmg;
+      case 'defend': return nameOf(e.to)+' 畏縮：'+e.before+' → '+e.after;
+      case 'defend-idle': return nameOf(e.to)+' 畏縮但沒人理他，自扣 '+e.dmg;
+      case 'comeback': return nameOf(e.from)+' 反擊了 '+nameOf(e.to)+' <span class="dmgpos">-'+e.dmg+'</span>';
+      case 'redirect': return nameOf(e.from)+' 把傷害嫁禍給 '+nameOf(e.to)+' <span class="dmgpos">-'+e.dmg+'</span>';
+      case 'guard': return nameOf(e.from)+' 協防 '+nameOf(e.to)+'：'+e.before+' → '+e.after;
+      case 'vampire-heal': return nameOf(e.to)+' 被圍剿反而<span class="dmgneg">回 '+e.heal+'</span>';
+      case 'vampire-immune': return nameOf(e.to)+' 免疫了單人攻擊';
+      case 'vampire-idle': return nameOf(e.to)+' 整回合沒被理，自扣 '+e.dmg;
+      case 'drain': return nameOf(e.to)+' 吸取 <span class="dmgneg">+'+e.heal+'</span>';
+      case 'decay': return null;
+      case 'role-thick': return nameOf(e.to)+'（硬皮）減傷 1';
+      case 'role-martyr': return nameOf(e.from)+' 替死鬼反噬 '+nameOf(e.to)+' <span class="dmgpos">-'+e.dmg+'</span>';
+      case 'item-shield-absorb': return nameOf(e.to)+' 用鐵布衫擋掉 '+e.blocked;
+      case 'item-heal-apply': return nameOf(e.to)+' 吃棒棒糖 <span class="dmgneg">+'+e.heal+'</span>';
+      case 'item-silence': return nameOf(e.from)+' 搗住了 '+nameOf(e.to)+' 的嘴';
+      case 'item-double': return nameOf(e.to)+' 用了腎上腺素';
+      case 'stack-cancel': return nameOf(e.to)+' 先倒下了，這一刀沒砍出去';
+      case 'jury': return '陪審 '+nameOf(e.from)+' 猜 '+nameOf(e.pick)+(e.hit?' ✅ 猜中':' ✗');
+      case 'no-play': return nameOf(e.to)+' 沒出牌（'+esc(e.why||'')+'），自扣 '+e.dmg;
+      default: return null;
+    }
+  }).filter(Boolean);
+  var dec = r.log.filter(function(e){ return e.t==='decay'; });
+  if (dec.length) lines.push('🌊 縮圈：全體各扣 '+dec[0].dmg);
+  $('result-log').innerHTML = lines.map(function(x){ return '<div class="logline">'+x+'</div>'; }).join('')
+    + '<div class="row" style="margin-top:8px">' + (isHost() && state.meta.phase==='reveal'
+        ? '<button class="pri" id="btn-next">下一回合</button>' : '<span class="sub">等關主開下一回合</span>') + '</div>';
+  var bn = $('btn-next'); if (bn) bn.onclick = nextRound;
+}
+
+/* ═════ 出牌列 ═════ */
+function renderBar(c, P){
+  var m = state.meta, L = E.label(c);
+  if (m.phase==='lobby') {
+    $('bar').classList.remove('hide');
+    $('bar-actions').innerHTML = isHost()
+      ? '<span class="sub">人到齊就開始（'+P.length+' 人）</span>'
+      : '<span class="sub">等關主開始（'+P.length+' 人）</span>';
+    $('btn-submit').textContent = '開始遊戲';
+    $('btn-submit').disabled = !isHost() || P.length < 3;
+    $('btn-submit').onclick = startGame;
+    return;
+  }
+  if (m.phase!=='choose') { $('bar').classList.add('hide'); return; }
+  var meP = state.players[me.env];
+  var iAmGhost = meP && !meP.alive;
+  if (iAmGhost && !c.modGhost && !c.modJury) {
+    $('bar').classList.remove('hide');
+    $('bar-actions').innerHTML = '<span class="sub">你已經'+esc(L.out)+'了，看戲吧</span>';
+    $('btn-submit').classList.add('hide'); return;
+  }
+  $('btn-submit').classList.remove('hide');
+  $('bar').classList.remove('hide');
+  var done = state.choices && state.choices[me.env];
+  if (done) {
+    $('bar-actions').innerHTML = '<span class="okmsg">已出牌，等其他人（'
+      + Object.keys(state.choices).length + '/' + P.filter(function(p){return p.alive||c.modGhost||c.modJury;}).length + '）</span>';
+    $('btn-submit').textContent = '改一下'; $('btn-submit').disabled = false;
+    $('btn-submit').onclick = function(){ roomRef.child('rounds/'+m.round+'/choices/'+me.env).remove(); };
+    return;
+  }
+  // 陪審團
+  if (iAmGhost && c.modJury) {
+    $('bar-actions').innerHTML = '<span class="sub">猜誰這回合傷最重：</span>'
+      + P.filter(function(p){return p.alive;}).map(function(p){
+        return '<button class="jp'+(pick.juryPick===String(p.env)?' pri':'')+'" data-e="'+p.env+'">'+esc(p.name||('#'+p.env))+'</button>'; }).join('');
+    Array.prototype.forEach.call($('bar-actions').querySelectorAll('.jp'), function(b){
+      b.onclick = function(){ pick.juryPick = b.dataset.e; renderBar(c,P); }; });
+    $('btn-submit').textContent = '送出預測';
+    $('btn-submit').disabled = !pick.juryPick;
+    $('btn-submit').onclick = submitChoice;
+    return;
+  }
+  var acts = [['SOLO',L.solo],['TEAM',L.team],['DEFEND',L.defend]];
+  var html = acts.map(function(a){
+    var dis = (c.noRepeatAction && meP && meP.lastAction===a[0]) ? ' disabled title="不可連續出同一張"' : '';
+    return '<button class="ac'+(pick.action===a[0]?' pri':'')+'" data-a="'+a[0]+'"'+dis+'>'+esc(a[1])+'</button>';
+  }).join('');
+  var needTarget = pick.action && (pick.action!=='DEFEND' || c.modComeback || c.modRedirect || c.modGuard);
+  if (needTarget && !c.modDrawTarget) {
+    html += '<span class="sub">→</span>' + P.filter(function(p){
+      return p.alive && String(p.env)!==String(me.env); }).map(function(p,i){
+      return '<button class="tg'+(pick.target===String(p.env)?' pri':'')+'" data-t="'+p.env+'">'
+        + esc(c.anonymous?('#'+p.env):(p.name||('#'+p.env))) + '</button>'; }).join('');
+  }
+  if (c.modDrawTarget) html += '<span class="sub">（目標固定是右鄰）</span>';
+  if (c.modItems && meP && meP.item) {
+    var IT = E.ITEMS.filter(function(x){return x.key===meP.item;})[0];
+    html += '<button class="it'+(pick.item?' pri':'')+'" title="'+esc(IT?IT.desc:'')+'">道具：'+esc(IT?IT.name:meP.item)+(pick.item?' ✔':'')+'</button>';
+  }
+  $('bar-actions').innerHTML = html;
+  Array.prototype.forEach.call($('bar-actions').querySelectorAll('.ac'), function(b){
+    b.onclick = function(){ pick.action = b.dataset.a; if(pick.action==='DEFEND'&&!(c.modComeback||c.modRedirect||c.modGuard)) pick.target=null; renderBar(c,P); }; });
+  Array.prototype.forEach.call($('bar-actions').querySelectorAll('.tg'), function(b){
+    b.onclick = function(){ pick.target = b.dataset.t; renderBar(c,P); }; });
+  var itb = $('bar-actions').querySelector('.it');
+  if (itb) itb.onclick = function(){
+    pick.item = pick.item ? null : (state.players[me.env]||{}).item;
+    if (pick.item==='silence' && !pick.itemTarget) pick.itemTarget = pick.target;
+    renderBar(c,P);
+  };
+  var ready = !!pick.action && (!needTarget || !!pick.target || c.modDrawTarget);
+  $('btn-submit').textContent = '送出';
+  $('btn-submit').disabled = !ready;
+  $('btn-submit').onclick = submitChoice;
+}
+function submitChoice(){
+  var m = state.meta;
+  var rec = { action: pick.action, target: pick.target||null, ts: Date.now() };
+  if (pick.item) { rec.item = pick.item; rec.itemTarget = pick.itemTarget||pick.target||null; }
+  if (pick.juryPick) { rec.juryPick = pick.juryPick; rec.action = rec.action||'DEFEND'; }
+  roomRef.child('rounds/'+m.round+'/choices/'+me.env).set(rec);
+}
+
+/* ═════ 關主：開局／結算／下一回合 ═════ */
+function startGame(){
+  var c = E.cfg(state.meta.cfg||{});
+  var P = playersArr();
+  var v = E.validate(c, P.length);
+  if (!v.ok) { alert('這個組合在 '+P.length+' 人下玩不動：\n' + v.problems.join('\n')); return; }
+  var setupP = E.setup(P.map(function(p,i){ return Object.assign({}, p, { seat:i, chips:c.startChips, alive:true }); }),
+                       E.cfg(Object.assign({}, state.meta.cfg||{}, { shuffleSeed: state.meta.seed||0 })));
+  var upd = {};
+  setupP.forEach(function(p){ upd['players/'+p.env] = p; });
+  upd['meta/phase'] = 'choose';
+  upd['meta/round'] = 1;
+  if (c.modEvents) upd['meta/roundEvent'] = E.drawEvent(Math.random());
+  roomRef.update(upd);
+  say('關主開始了遊戲', true);
+}
+function hostTick(){
+  if (!isHost() || !state.meta || state.meta.phase!=='choose') return;
+  var c = E.cfg(state.meta.cfg||{});
+  if (state.meta.roundEvent) c.roundEvent = state.meta.roundEvent;
+  c.roundNo = state.meta.round||1;
+  var P = playersArr();
+  var actors = P.filter(function(p){ return p.alive || ((c.modGhost||c.modJury) && !p.alive); });
+  var got = Object.keys(state.choices||{}).length;
+  if (got < actors.length) return;                      // 還沒到齊
+  var res = E.resolve(P, state.choices, c);
+  var after = E.apply(P, res, c);
+  var oc = E.outcome(after, c);
+  var upd = {};
+  after.forEach(function(p){ upd['players/'+p.env] = p; });
+  upd['rounds/'+c.roundNo+'/result'] = { damage: res.damage, log: res.log, event: state.meta.roundEvent||null };
+  upd['meta/phase'] = oc.over ? 'over' : 'reveal';
+  if (oc.over) { upd['meta/winners'] = oc.winners; upd['meta/overWhy'] = oc.why; }
+  roomRef.update(upd).then(function(){ if (oc.over) recordPlays(after, oc); });
+}
+function nextRound(){
+  var m = state.meta, c = E.cfg(m.cfg||{});
+  var upd = { 'meta/phase':'choose', 'meta/round':(m.round||1)+1 };
+  if (c.modEvents) upd['meta/roundEvent'] = E.drawEvent(Math.random());
+  pick = { action:null, target:null, item:null, itemTarget:null, juryPick:null };
+  roomRef.update(upd);
+}
+/* 記錄每位同學：選過哪些要素、這場輸贏 */
+function recordPlays(after, oc){
+  var m = state.meta;
+  after.forEach(function(p){
+    var won = oc.winners.indexOf(String(p.env))>=0 || oc.winners.indexOf(p.env)>=0;
+    ROOT.child('plays/'+p.env).push({
+      room: room, cards: m.cards||[], role: p.role||null, faction: p.faction||null,
+      chips: p.chips, alive: !!p.alive, won: won, rounds: m.round||1,
+      wasHost: String(m.hostEnv)===String(p.env), ts: nowTs()
+    });
+  });
+}
+
+/* ═════ 討論區 ═════ */
+function say(text, sys){
+  if (!roomRef) return;
+  var to = sys ? '' : ($('chat-to').value||'');
+  roomRef.child('chat').push({ env: me.env, name: me.name||('#'+me.env),
+    text: text, to: to||null, sys: !!sys, ts: Date.now() });
+}
+$('btn-say').onclick = function(){
+  var t = ($('chat-in').value||'').trim(); if (!t) return;
+  say(t); $('chat-in').value=''; };
+$('chat-in').addEventListener('keydown', function(e){ if (e.key==='Enter') $('btn-say').click(); });
+function renderChat(v){
+  var c = E.cfg((state.meta&&state.meta.cfg)||{});
+  var out = Object.keys(v).map(function(k){ return v[k]; })
+    .sort(function(a,b){ return (a.ts||0)-(b.ts||0); })
+    .filter(function(m){
+      if (!m.to) return true;                           // 公開
+      return String(m.to)===String(me.env) || String(m.env)===String(me.env);
+    })
+    .map(function(m){
+      if (m.sys) return '<div class="msg sys">· '+esc(m.text)+'</div>';
+      var nm = c.anonymous && String(m.env)!==String(me.env) ? ('#'+m.env) : (m.name||('#'+m.env));
+      var pre = m.to ? '<span class="pill">私</span> ' : '';
+      return '<div class="msg'+(m.to?' whis':'')+'">'+pre+'<span class="who">'+esc(nm)+'</span>：'+esc(m.text)+'</div>';
+    }).join('');
+  var el = $('chat'); var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+  el.innerHTML = out;
+  if (atBottom) el.scrollTop = el.scrollHeight;
+}
+
+/* ═════ 回饋與 bug 回報 ═════ */
+$('btn-fb').onclick = function(){
+  var d = { env: me.env, room: room, cards: (state.meta&&state.meta.cards)||[],
+            q1: $('fb1').value.trim(), q2: $('fb2').value.trim(), q3: $('fb3').value.trim(), ts: nowTs() };
+  if (!d.q1 && !d.q2 && !d.q3) { $('fb-msg').textContent='至少寫一題'; return; }
+  ROOT.child('feedback').push(d).then(function(){ $('fb-msg').textContent = '已送出，謝謝'; });
+};
+$('btn-report').onclick = function(){
+  var t = prompt('發現 bug 或有設計建議？寫下來（會即時送到老師後台）');
+  if (!t || !t.trim()) return;
+  ROOT.child('reports').push({ env: me.env, room: room||null, text: t.trim(),
+    phase: (state.meta&&state.meta.phase)||'lobby', cards: (state.meta&&state.meta.cards)||[],
+    ua: navigator.userAgent.slice(0,120), ts: nowTs() })
+   .then(function(){ alert('收到了，謝謝！'); });
+};
+
+/* 起手：已綁過就直接進大廳 */
+(function(){
+  var s = localStorage.getItem('designjam_env');
+  if (s!=null && s!=='') { me.env = parseInt(s,10); me.name = '#'+me.env; }
+  show('scr-login');
+})();
+</script>
+</body>
+</html>

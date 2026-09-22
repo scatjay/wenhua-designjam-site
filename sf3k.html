@@ -558,6 +558,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
   <section id="scr-setup" class="hide">
     <h1>這一場要改什麼？</h1>
     <p class="sub"><b>挑一張</b>，想試組合的話<b>最多兩張</b>——選了就立刻改變規則，不選就是原版。<br>選了第一張之後，<b>只有實際測過可以搭的才亮著</b>；灰掉的是還沒測過的組合。<br>第二輪建議只挑一張：一次只動一個地方，等一下才看得出來「是哪一張造成的」。</p>
+    <p class="sub" style="border:1.5px dashed var(--line);border-radius:12px;padding:9px 12px;background:var(--panel2)">
+      ⚠ <b>不是每一張卡都會順順的跑完</b>——有些可能會卡住、可能會打很久都分不出勝負，這是正常的，
+      也正是這週要練的<b>playtesting</b>：你玩到的每一個「怪怪的」都是有價值的發現，不是你做錯了什麼。
+    </p>
     <div class="box">
       <div class="row">
         <span class="pill" id="setup-code"></span>
@@ -737,10 +741,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230718"></script>
-<script src="js/sf3k_verified.js?v=202609230718"></script>
-<script src="js/sf3k_cards.js?v=202609230718"></script>
-<script src="js/sf3k_stats.js?v=202609230718"></script>
+<script src="js/sf3k_engine.js?v=202609230719"></script>
+<script src="js/sf3k_verified.js?v=202609230719"></script>
+<script src="js/sf3k_cards.js?v=202609230719"></script>
+<script src="js/sf3k_stats.js?v=202609230719"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -2958,7 +2962,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230718"></script>
-<script src="js/bind_gate.js?v=202609230718"></script>
+<script src="js/gate_i18n.js?v=202609230719"></script>
+<script src="js/bind_gate.js?v=202609230719"></script>
 </body>
 </html>

@@ -737,10 +737,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230716"></script>
-<script src="js/sf3k_verified.js?v=202609230716"></script>
-<script src="js/sf3k_cards.js?v=202609230716"></script>
-<script src="js/sf3k_stats.js?v=202609230716"></script>
+<script src="js/sf3k_engine.js?v=202609230718"></script>
+<script src="js/sf3k_verified.js?v=202609230718"></script>
+<script src="js/sf3k_cards.js?v=202609230718"></script>
+<script src="js/sf3k_stats.js?v=202609230718"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1275,9 +1275,14 @@ function renderPool(){
             （還沒測過而已，不是壞掉）。 */
       var need4 = (VER_DATA.needs4p||[]).indexOf(c.id) >= 0;
       var n4badge = need4 ? '<span class="pill warn">👥 需要 4 人以上</span>' : '';
-      var pairN = matesOf(c.id).length;
-      var pairBadge = '<span class="pill' + (pairN ? '' : ' dim') + '">🔗 '
-        + (pairN ? '已驗證 ' + pairN + ' 種搭配' : '還沒有驗證過的搭配') + '</span>';
+      /* 楊老師 2026-09-23：「還沒選的時候，標籤就要顯示可和幾號卡片組合」——
+         不只給數字，直接把卡名列出來，選之前就看得到，不用先點下去試。
+         🔴 不用 title——手機沒有 hover，這條 harness 教訓已經踩過不只一次。 */
+      var mateNames = matesOf(c.id).map(function(id){
+        var m = CARDS.byId(id); return m ? m.name : id; });
+      var pairBadge = mateNames.length
+        ? '<span class="pill">🔗 可配：' + mateNames.map(esc).join('、') + '</span>'
+        : '<span class="pill dim">🔗 還沒有驗證過的搭配</span>';
       var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
                 : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
                 : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
@@ -2953,7 +2958,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230716"></script>
-<script src="js/bind_gate.js?v=202609230716"></script>
+<script src="js/gate_i18n.js?v=202609230718"></script>
+<script src="js/bind_gate.js?v=202609230718"></script>
 </body>
 </html>

@@ -170,6 +170,25 @@ table.st.tl td.tzero{color:var(--ink-soft);background:var(--panel2);font-weight:
 .tlbars i{flex:1 1 auto;min-width:4px;border:1px solid transparent;border-bottom:none;
   border-radius:3px 3px 0 0}
 .tlname .swatch{margin-right:4px}
+/* 設計卡：表單與列表 */
+.notebuilt{border:1.5px dashed var(--line);border-radius:12px;padding:11px 13px;
+  font-size:13px;line-height:1.8;background:var(--panel2);margin-bottom:14px}
+.notebuilt u{text-underline-offset:3px}
+.dform{display:flex;flex-direction:column;gap:11px}
+.dlab{display:block;font-size:13px;font-weight:800;line-height:1.7}
+.dlab input,.dlab select,.dlab textarea{width:100%;margin-top:5px;font:inherit;font-weight:400;
+  padding:9px 11px;border:1.5px solid var(--line);border-radius:10px;background:var(--panel);
+  color:var(--ink);box-sizing:border-box}
+.dlab textarea{resize:vertical;line-height:1.7}
+.kbtn{font-size:13px;padding:7px 12px;border-radius:9px;border:1.5px solid var(--line);
+  background:var(--panel);color:var(--ink-soft);font-weight:700;cursor:pointer}
+.kbtn.pri{border-color:var(--accent);color:var(--accent);background:var(--panel2)}
+.drow{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px;
+  background:var(--panel)}
+.drow .dhd{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:7px}
+.drow .dnm{font-weight:800;font-size:14px}
+.drow .dtx{font-size:13px;line-height:1.8;margin:3px 0}
+.drow .dtx b{font-weight:800}
 .legend{margin:0;padding-left:0;list-style:none;font-size:13px;line-height:1.9}
 .legend li{margin:3px 0}
 .legend .pill{margin-right:6px}
@@ -434,10 +453,56 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
     </details>
 
     <div class="box" id="checklist-box">
-      <h3>今天要完成的四項</h3>
-      <p class="sub" style="margin-bottom:10px">打勾是自動的——做完就會亮。四項都亮了再去 flipclass 交截圖。</p>
+      <h3>今天要完成的五項</h3>
+      <p class="sub" style="margin-bottom:10px">打勾是自動的——做完就會亮。五項都亮了再去 flipclass 交截圖。</p>
       <div id="checklist"></div>
     </div>
+
+    <details class="box" id="design-box">
+      <summary style="cursor:pointer;font-weight:800;font-size:15px">✍️ 設計一張自己的卡（每人至少一張）</summary>
+      <div style="margin-top:12px">
+        <p class="sub" style="margin:0 0 10px">
+          玩過幾場之後，你應該會有「如果改成這樣會怎樣」的念頭。把它寫成一張卡。</p>
+        <div class="notebuilt">
+          <b>先講清楚：你設計的卡<u>現在還不能真的拿來玩</u>。</b>
+          遊戲程式只看得懂內建那 40 張，你的規則要有人把它寫成程式才跑得動。
+          這不是你設計得不好——<b>設計師寫得出來的東西，不等於工程上當下做得出來</b>，
+          這在真的遊戲公司每天都在發生。所以這一格要的是<b>講得夠清楚，清楚到別人有辦法照著做</b>。
+        </div>
+
+        <div class="dform">
+          <label class="dlab">卡片名稱
+            <input id="d-name" maxlength="14" placeholder="例如：背刺加倍、說謊要罰">
+          </label>
+          <label class="dlab">你動的是哪一層
+            <select id="d-dim"></select>
+          </label>
+          <div class="dlab">這是哪一種改法
+            <div class="row" style="gap:8px;margin-top:5px">
+              <button type="button" class="kbtn pri" data-kind="參數">參數（只改數字）</button>
+              <button type="button" class="kbtn" data-kind="結構">結構（改玩法本身）</button>
+            </div>
+          </div>
+          <label class="dlab">規則怎麼改？<span class="sub">（寫成別人照著做得出來的句子）</span>
+            <textarea id="d-rule" maxlength="200" rows="3"
+              placeholder="例如：如果兩個人同時聯手打同一個人，被打的那個人下一回合不能出畏縮。"></textarea>
+          </label>
+          <label class="dlab">你猜會發生什麼？<span class="sub">（這一格才是重點）</span>
+            <textarea id="d-why" maxlength="200" rows="3"
+              placeholder="例如：大家會更願意講好一起打，因為多了一個好處；但也可能變成被盯上的人直接放棄。"></textarea>
+          </label>
+          <div class="row" style="gap:8px;align-items:center">
+            <button id="btn-design" class="btn-primary">送出這張卡</button>
+            <span class="sub" id="d-msg"></span>
+          </div>
+        </div>
+
+        <h4 style="margin:16px 0 6px;font-size:14px">全班設計的卡　<span class="sub" id="d-count"></span></h4>
+        <p class="sub" style="margin:0 0 9px">前三張是範例，給你看要寫到什麼程度用的——
+          <b>「你猜會發生什麼」那格比規則那格重要</b>，範例也是那樣寫的。</p>
+        <div id="design-list"></div>
+      </div>
+    </details>
 
     <details class="box" id="mda-box">
       <summary style="cursor:pointer;font-weight:800;font-size:15px">M／D／A 是什麼？（寫回饋前先看這個）</summary>
@@ -667,10 +732,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230038"></script>
-<script src="js/sf3k_verified.js?v=202609230038"></script>
-<script src="js/sf3k_cards.js?v=202609230038"></script>
-<script src="js/sf3k_stats.js?v=202609230038"></script>
+<script src="js/sf3k_engine.js?v=202609230047"></script>
+<script src="js/sf3k_verified.js?v=202609230047"></script>
+<script src="js/sf3k_cards.js?v=202609230047"></script>
+<script src="js/sf3k_stats.js?v=202609230047"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -947,7 +1012,8 @@ var progressWatched = false;
 var nickWatched = false;
 function enterLobby(){
   show('scr-lobby');
-  if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); watchBoards(); }
+  if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); watchBoards(); watchDesigns(); }
+  initDesignForm();
   if (!nickWatched) { nickWatched = true; watchNicks(); }
   watchLikes();
   renderChecklist();
@@ -1156,6 +1222,13 @@ function wireCopy(scope){
   Array.prototype.forEach.call(scope.querySelectorAll('.copybtn'), function(b){
     b.onclick = function(e){
       e.stopPropagation(); e.preventDefault();
+      /* data-copyraw ＝ 學生設計的卡（不是內建卡，cardText 查不到） */
+      var raw = b.dataset.copyraw;
+      if (raw) {
+        var p = raw.split('/'), per = dropNull(normObj(DESIGNS[p[0]]));
+        if (per[p[1]]) copyText(designText({ env: p[0], id: p[1], d: per[p[1]] }), b);
+        return;
+      }
       var id = b.dataset.copy;
       copyText(id === '__rules__' ? RULES_TEXT : cardText(id), b);
     };
@@ -2053,8 +2126,123 @@ function recordPlays(after, oc){
   });
 }
 
-/* ═════ 完成檢核：四項，全部讀真實資料 ═════ */
-var myStats = { games:0, feedback:0, comments:0, essay:false };
+/* ═════ 設計一張自己的卡：只收設計，不進遊戲 ═════
+   🔴 刻意不讓設計卡出現在選卡畫面——引擎跑不動自訂規則，讓它可選等於選了就卡住。
+      限制本身在版面上講成教學點（設計 ≠ 工程當下做得到），不要偷偷藏起來。*/
+var DESIGNS = {};
+var dKind = '參數';
+
+function watchDesigns(){
+  ROOT.child('cardDesigns').on('value', function(s){
+    DESIGNS = dropNull(normObj(s.val()));
+    myStats.designs = Object.keys(dropNull(normObj(DESIGNS[me.env]))).length;
+    renderDesigns(); renderChecklist();
+  }, function(e){ console.warn('[designs] 讀取失敗', e); });
+}
+function designRows(){
+  var rows = [];
+  Object.keys(DESIGNS).forEach(function(env){
+    var per = dropNull(normObj(DESIGNS[env]));
+    Object.keys(per).forEach(function(k){
+      var d = per[k]; if (!d || !d.name) return;
+      rows.push({ env: env, id: k, d: d });
+    });
+  });
+  /* 範例排最前 —— 學生一打開就看得到「要寫到什麼程度」，不用往下捲才找得到。 */
+  rows.sort(function(a, b){
+    var ad = a.d.demo ? 1 : 0, bd = b.d.demo ? 1 : 0;
+    if (ad !== bd) return bd - ad;
+    return (b.d.ts||0) - (a.d.ts||0);
+  });
+  return rows;
+}
+function designText(r){
+  var d = r.d;
+  return 'SiSSYFiGHT 規則卡（學生設計）' + NLC
+    + '名稱：' + d.name + NLC
+    + '動的那一層：' + (CARDS.DIM_NAMES[d.dim] || d.dim) + '（' + (d.kind||'參數') + '型）' + NLC
+    + '規則怎麼改：' + d.rule + NLC
+    + '設計者猜會發生什麼：' + d.why + NLC + NLC
+    + '⚠ 這張卡還沒有被寫成程式，目前不能在遊戲裡實際執行。';
+}
+function renderDesigns(){
+  var box = $('design-list'); if (!box) return;
+  var rows = designRows();
+  var cnt = $('d-count');
+  if (cnt) cnt.textContent = rows.length ? '共 ' + rows.length + ' 張' : '';
+  if (!rows.length) {
+    box.innerHTML = '<p class="sub" style="margin:0">還沒有人設計。第一張就是你的。</p>';
+    return;
+  }
+  box.innerHTML = rows.map(function(r){
+    var d = r.d, mine = !d.demo && String(r.env) === String(me.env);
+    /* 🔴 範例存在 cardDesigns/demo（字串鍵）⇒ avatarOf('demo') 會算出 NaN 索引、
+       畫面會印 undefined。範例不走玩家身分，直接標成範例。 */
+    var who = d.demo
+      ? '<span class="pill amber">老師的範例</span>'
+      : '<span class="sub">' + esc(avatarOf(r.env) + ' ' + nickOf(r.env, '#' + r.env)) + '</span>';
+    return '<div class="drow">'
+      + '<div class="dhd">'
+      +   '<span class="dnm">' + esc(d.name) + '</span>'
+      +   '<span class="pill on" data-dim="' + esc(d.dim) + '">'
+      +     esc(CARDS.DIM_NAMES[d.dim] || d.dim) + '</span>'
+      +   '<span class="pill">' + esc(d.kind || '參數') + '型</span>'
+      +   (mine ? '<span class="pill green">你設計的</span>' : '')
+      +   '<span class="grow"></span>'
+      +   who
+      +   '<button class="copybtn" data-copyraw="' + esc(r.env + '/' + r.id) + '">📋 複製</button>'
+      + '</div>'
+      + '<div class="dtx"><b>改法：</b>' + esc(d.rule) + '</div>'
+      + '<div class="dtx"><b>猜會發生：</b>' + esc(d.why) + '</div>'
+      + '</div>';
+  }).join('');
+  wireCopy(box);
+}
+function submitDesign(){
+  var msg = $('d-msg'), say_ = function(s, cls){
+    msg.className = 'sub' + (cls ? ' ' + cls : ''); msg.textContent = s;
+  };
+  if (me.env == null) { say_('還沒綁定編號。', 'err'); return; }
+  var name = ($('d-name').value || '').trim();
+  var dim  = $('d-dim').value;
+  var rule = ($('d-rule').value || '').trim();
+  var why  = ($('d-why').value || '').trim();
+  if (name.length < 2)  { say_('卡片要有名字（至少 2 個字）。', 'err'); return; }
+  if (rule.length < 10) { say_('「規則怎麼改」寫得再具體一點，讓別人照著做得出來。', 'err'); return; }
+  if (why.length  < 10) { say_('「你猜會發生什麼」是這張卡的重點，不要跳過。', 'err'); return; }
+  $('btn-design').disabled = true;
+  ROOT.child('cardDesigns/' + me.env).push({
+    name: name, dim: dim, kind: dKind, rule: rule, why: why,
+    nick: me.name || ('#' + me.env), sess: SESS, ts: nowTs()
+  }).then(function(){
+    $('d-name').value = ''; $('d-rule').value = ''; $('d-why').value = '';
+    say_('收到了，下面看得到。想再設計一張就繼續。', 'okmsg');
+    $('btn-design').disabled = false;
+  }).catch(function(e){
+    say_('送不出去：' + (e && e.message ? e.message : e), 'err');
+    $('btn-design').disabled = false;
+  });
+}
+function initDesignForm(){
+  var sel = $('d-dim'); if (!sel || sel.options.length) return;
+  Object.keys(CARDS.DIM_NAMES).forEach(function(k){
+    var o = document.createElement('option');
+    o.value = k; o.textContent = CARDS.DIM_NAMES[k];
+    sel.appendChild(o);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.kbtn'), function(b){
+    b.onclick = function(){
+      dKind = b.dataset.kind;
+      Array.prototype.forEach.call(document.querySelectorAll('.kbtn'), function(x){
+        x.classList.toggle('pri', x === b);
+      });
+    };
+  });
+  $('btn-design').onclick = submitDesign;
+}
+
+/* ═════ 完成檢核：五項，全部讀真實資料 ═════ */
+var myStats = { games:0, feedback:0, comments:0, essay:false, designs:0 };
 function watchMyProgress(){
   if (me.env == null) return;
   ROOT.child('plays/'+me.env).on('value', function(s){
@@ -2090,7 +2278,10 @@ function renderChecklist(){
       t: '2 則即時觀戰或回放的觀察',
       h: '觀戰別人正在打的場次，或看完回放，再留下你的觀察。目前 ' + myStats.comments + ' / 2 則' },
     { ok: myStats.essay, n: myStats.essay?1:0, need: 1,
-      t: '1 段短文（100 字以內）', h: '用 M／D／A 講今天整體感覺，自己寫、不要用 AI' }
+      t: '1 段短文（100 字以內）', h: '用 M／D／A 講今天整體感覺，自己寫、不要用 AI' },
+    { ok: myStats.designs >= 1, n: myStats.designs, need: 1,
+      t: '設計 1 張自己的卡',
+      h: '玩過之後把「如果改成這樣會怎樣」寫成一張卡。目前 ' + myStats.designs + ' 張' }
   ];
   box.innerHTML = items.map(function(x){
     return '<div class="ck' + (x.ok?' done':'') + '">'
@@ -2099,7 +2290,7 @@ function renderChecklist(){
       + '<div class="ckhint">' + esc(x.h) + '</div></div></div>';
   }).join('');
   var all = items.every(function(x){ return x.ok; });
-  if (all) box.innerHTML += '<p class="okmsg" style="margin-top:10px">四項都完成了！去 flipclass 交一張結束畫面的截圖就收工。</p>';
+  if (all) box.innerHTML += '<p class="okmsg" style="margin-top:10px">五項都完成了！去 flipclass 交一張結束畫面的截圖就收工。</p>';
 }
 
 /* ═════ 按讚：卡片與場次 ═════
@@ -2710,7 +2901,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230038"></script>
-<script src="js/bind_gate.js?v=202609230038"></script>
+<script src="js/gate_i18n.js?v=202609230047"></script>
+<script src="js/bind_gate.js?v=202609230047"></script>
 </body>
 </html>

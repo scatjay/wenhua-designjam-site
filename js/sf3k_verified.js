@@ -1966,7 +1966,9 @@ window.SF3K_VERIFIED = {
   "defend_strong",
   "defend_weak",
   "drain",
+  "draw_target",
   "elements",
+  "events",
   "ghost",
   "items",
   "last_one",
@@ -2151,7 +2153,17 @@ window.SF3K_VERIFIED = {
    "n": 3
   }
  },
- "quirky": [
-  "seat_right"
- ]
+ "quirky": [],
+ "needs4p": [
+  "seat_ring",
+  "range2",
+  "jury",
+  "factions"
+ ],
+ "roundCapPending": [
+  "fog",
+  "guard",
+  "theme_office"
+ ],
+ "note_20260923": "theme_office 是純換皮（patch 只有 theme），機制等同原版，卻三場都打不完 30 回合 ⇒ roundCapPending 這三張不算卡片問題，是測試員隨機出牌不會協調 TEAM。needs4p 那四張是遊戲自己的人數驗證擋下來的（正確行為），要 4 個測試視窗才測得到。 ⚠ 先前 quirky 寫成 seat_right，那個 id 在卡池裡不存在（真正的是 draw_target）⇒ 那個 ⚠ 標記從來沒有真的顯示過。憑記憶寫 id 不對資料，跟 QR 選擇器事故同一型。"
 };

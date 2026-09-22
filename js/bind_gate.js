@@ -28,8 +28,10 @@
   /* ── 樣式 ── */
   var CSS = [
 '#dj-gate{position:fixed;inset:0;z-index:99999;background:rgba(32,42,48,.62);backdrop-filter:blur(3px);',
-'  display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}',
+'  display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;',
+'  -webkit-overflow-scrolling:touch}',
 '#dj-gate .box{background:#fff;color:#202a30;max-width:520px;width:100%;border-radius:16px;padding:22px 20px 18px;',
+'  margin:auto;',   /* 🔴 搭配外層 flex-start：塞得下→置中；塞不下→頂端靠上且捲得到 */
 '  box-shadow:0 10px 44px rgba(32,42,48,.28);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;',
 '  font-size:16px;line-height:1.7}',
 '#dj-gate .course{font-size:13px;font-weight:800;color:#7a3f92;line-height:1.75;margin:0 0 10px;',
@@ -56,6 +58,9 @@
 '#dj-gate .qrbox{display:inline-block;padding:9px;background:#fff;border:1.5px solid #cfdae1;border-radius:12px;line-height:0}',
 /* 容器 id 要跟 innerHTML 裡的 id 完全一致，打錯的話這條規則從加進去那一刻就是死的 */
 '#dj-gate #dj-qr svg{display:block;width:132px;height:132px}',
+'@media (max-height:640px){#dj-gate #dj-qr svg{width:88px;height:88px}',
+'  #dj-gate .qrwrap{margin:8px 0 0}#dj-gate .box{padding:16px 16px 14px}',
+'  #dj-gate .step{padding:10px 12px;margin:7px 0}}',
 '#dj-gate .qrcap{font-size:13px;color:#54646e;margin-top:7px;line-height:1.6}',
 '#dj-gate .tiny{font-size:13px;color:#54646e;margin-top:14px;line-height:1.7}',
 '#dj-gate .tiny a{color:#2f6690}',

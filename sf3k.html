@@ -43,6 +43,17 @@ button.ok{background:var(--green-soft);color:var(--green);border-color:var(--gre
 button.wide{width:100%}
 button.sm{padding:7px 12px;font-size:13px;border-radius:8px}
 button:disabled{opacity:.42;cursor:not-allowed}
+button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
+#dj-toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:9999;
+  display:flex;flex-direction:column;gap:7px;width:min(430px,calc(100vw - 24px));pointer-events:none}
+#dj-toast .tmsg{pointer-events:auto;cursor:pointer;background:var(--panel);
+  border:1.5px solid var(--line);border-left-width:5px;border-radius:12px;padding:11px 14px;
+  font-size:14px;line-height:1.65;font-weight:600;color:var(--ink);
+  box-shadow:0 6px 22px rgba(36,31,42,.18);transition:opacity .35s;white-space:pre-line}
+#dj-toast .tmsg.err{border-left-color:var(--red);color:var(--red)}
+#dj-toast .tmsg.ok{border-left-color:var(--green);color:var(--green)}
+#dj-toast .tmsg.info{border-left-color:var(--blue)}
+.warnnote{font-size:12.5px;color:var(--amber);font-weight:700;margin-left:7px;line-height:1.5}
 .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
 .grow{flex:1 1 auto;min-width:0}
 .pill{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;
@@ -111,6 +122,22 @@ table.st th:first-child,table.st td:first-child{text-align:left}
 table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
 .bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
+/* 時序表：橫向可捲（回合數多的時候手機塞不下） */
+.tlwrap{margin-top:10px}
+.tlscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.st.tl{min-width:max-content;font-size:12.5px}
+table.st.tl td i{font-style:normal;font-size:10.5px;margin-left:3px;opacity:.75}
+table.st.tl td.tdown{color:var(--red)}
+table.st.tl td.tup{color:var(--green)}
+table.st.tl td.tzero{color:var(--ink-soft);background:var(--panel2);font-weight:800}
+.tlspark{margin-bottom:9px}
+.tlrow{display:flex;align-items:flex-end;gap:8px;margin:5px 0}
+.tlname{flex:0 0 78px;font-size:12px;font-weight:700;color:var(--ink-soft);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tlbars{flex:1 1 auto;display:flex;align-items:flex-end;gap:2px;height:34px;
+  border-bottom:1.5px solid var(--line)}
+.tlbars i{flex:1 1 auto;min-width:4px;background:var(--blue-soft);
+  border:1px solid var(--blue);border-bottom:none;border-radius:3px 3px 0 0}
 /* 一鍵複製 */
 .copybtn{flex:0 0 auto;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;
   background:var(--panel2);border:1.5px solid var(--line);color:var(--ink-soft);cursor:pointer;
@@ -556,9 +583,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222305"></script>
-<script src="js/sf3k_cards.js?v=202609222305"></script>
-<script src="js/sf3k_stats.js?v=202609222305"></script>
+<script src="js/sf3k_engine.js?v=202609222313"></script>
+<script src="js/sf3k_cards.js?v=202609222313"></script>
+<script src="js/sf3k_stats.js?v=202609222313"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -617,7 +644,62 @@ function show(id){ ['scr-lobby','scr-setup','scr-room','scr-replay'].forEach(fun
 function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g,function(c){
   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
 function nowTs(){ return firebase.database.ServerValue.TIMESTAMP; }
-var NLC = String.fromCharCode(10);   // confirm() 換行；不直接寫跳脫字元，避免被各層工具折掉
+var NLC = String.fromCharCode(10);   // 供複製到剪貼簿的文字換行用
+
+/* 🔴 不要用 confirm()／prompt()／alert()。
+   它們會凍結整個 renderer：手機上誤觸就卡住，自動化測試會直接逾時
+   （2026-09-22 我自己加的一個 confirm 讓 120 場測試一場都沒跑完）。
+   改成兩段式：第一次按 → 變成「再按一次」＋講清楚為什麼；6 秒內再按才執行，超過自動復原。 */
+/* 頁內提示，取代 alert()。固定在畫面上方、會自己消失、不擋任何操作。
+   kind: 'err'（紅）／'ok'（綠）／'info'（預設）。 */
+function toast(msg, kind, ms){
+  var box = document.getElementById('dj-toast');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'dj-toast';
+    document.body.appendChild(box);
+  }
+  var el = document.createElement('div');
+  el.className = 'tmsg ' + (kind || 'info');
+  el.textContent = msg;
+  el.onclick = function(){ el.remove(); };
+  box.appendChild(el);
+  setTimeout(function(){
+    el.style.opacity = '0';
+    setTimeout(function(){ el.remove(); }, 400);
+  }, ms || 4200);
+}
+var _armed = {};
+function armConfirm(btn, warnText, onYes){
+  if (!btn) return;
+  var id = btn.id || ('b' + Math.random().toString(36).slice(2, 8));
+  btn.id = id;
+  btn.onclick = function(){
+    if (_armed[id]) {
+      clearTimeout(_armed[id].timer);
+      var note = document.getElementById('warn-' + id);
+      if (note) note.remove();
+      btn.textContent = _armed[id].label;
+      btn.classList.remove('armed');
+      delete _armed[id];
+      onYes();
+      return;
+    }
+    var label = btn.textContent;
+    btn.textContent = '再按一次確認';
+    btn.classList.add('armed');
+    if (!document.getElementById('warn-' + id)) {
+      btn.insertAdjacentHTML('afterend',
+        '<span class="warnnote" id="warn-' + id + '">' + esc(warnText) + '</span>');
+    }
+    _armed[id] = { label: label, timer: setTimeout(function(){
+      var n2 = document.getElementById('warn-' + id);
+      if (n2) n2.remove();
+      btn.textContent = label; btn.classList.remove('armed');
+      delete _armed[id];
+    }, 6000) };
+  };
+}
 function code4(){ var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<4;i++)
   s+=A[Math.floor(Math.random()*A.length)]; return s; }
 var COLORS=['#c0392b','#27ae60','#2980b9','#2c3e50','#e67e22','#8e44ad','#16a085','#d35400'];
@@ -722,6 +804,7 @@ function enterLobby(){
        真的只有三個人肯當 GM 時硬鎖會讓全班開不了場。改成仍可點、但要多按一次確認。 */
     hostedBefore = mine;
     $('btn-host').disabled = false;
+    wireHostBtn();                     // 次數讀回來之後要重新決定要不要兩段式
     $('btn-host').textContent = mine > 0
       ? '還是要再開一場？（你已當過 ' + mine + ' 次）'
       : '我來當 GM，挑卡開一場';
@@ -757,11 +840,9 @@ function enterLobby(){
     });
   });
 }
-$('btn-leave').onclick = function(){
-  if (state.meta && state.meta.phase !== 'over'
-      && !confirm('這一場還沒打完，離開之後要用場次代號才能再進來。確定離開？')) return;
+armConfirm($('btn-leave'), '這一場還沒打完，走了同一場的人會一直等你出牌。', function(){
   leaveRoom();
-};
+});
 /* 玩完當下的回報最有價值，但「怪怪的」三個字我修不了——
    把這一場的代號、用了哪張卡、打了幾回合、幾個人一起送出去，才有辦法定位。 */
 $('btn-over-report').onclick = function(){
@@ -781,11 +862,15 @@ $('btn-over-report').onclick = function(){
 $('btn-back-lobby').onclick = leaveRoom;
 $('btn-join').onclick = function(){ joinRoom(($('join-code').value||'').trim().toUpperCase()); };
 var hostedBefore = 0;
-$('btn-host').onclick = function(){
-  if (hostedBefore > 0 && !confirm('你已經當過 ' + hostedBefore + ' 次 GM 了。'
-      + NLC + '先讓還沒當過的同學開場，全班才輪得完。' + NLC + NLC + '還是要再開一場嗎？')) return;
-  startSetup();
-};
+function wireHostBtn(){
+  var b = $('btn-host');
+  if (hostedBefore > 0) {
+    armConfirm(b, '先讓還沒當過的同學開場，全班才輪得完。', startSetup);
+  } else {
+    b.onclick = startSetup;
+  }
+}
+wireHostBtn();
 
 /* 上一場還沒打完就重整／離開的話，給一條回去的路。
    不自動跳回去——學生可能是故意離開的，自動跳會把人關在同一場出不來。 */
@@ -853,7 +938,7 @@ function copyText(txt, btn){
     var ta = document.createElement('textarea');
     ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); done(); } catch (e) { alert('複製失敗，請手動選取'); }
+    try { document.execCommand('copy'); done(); } catch (e) { toast('複製失敗，請長按選取文字再複製', 'err'); }
     document.body.removeChild(ta);
   }
 }
@@ -969,18 +1054,18 @@ function createRoom(){
   });
 }
 function joinRoom(codeStr){
-  if (!codeStr || codeStr.length!==4) { alert('請輸入四碼場次代號'); return; }
+  if (!codeStr || codeStr.length!==4) { toast('請輸入四碼場次代號', 'err'); return; }
   ROOT.child('rooms/'+codeStr+'/meta').once('value').then(function(s){
-    if (!s.exists()) { alert('找不到場次 '+codeStr); return; }
+    if (!s.exists()) { toast('找不到場次 ' + codeStr + '，代號再確認一次（不分大小寫）', 'err'); return; }
     room = codeStr; roomRef = ROOT.child('rooms/'+codeStr);
     var m = s.val();
     roomRef.child('presence/'+me.env).once('value').then(function(pr){
       var others = Object.keys(dropNull(normObj(pr.val())))
                          .filter(function(d){ return d !== myDevice; });
       if (others.length) {
-        alert('這個編號（#' + me.env + '）已經在這一場裡了，而且是別的裝置開著。\n\n'
-            + '同一個編號不能用兩台裝置進同一場——會變成一個人兩個螢幕搶著出牌。\n'
-            + '請把另一台的頁面關掉，或用那台繼續玩。');
+        toast('#' + me.env + ' 已經在這一場裡了（別的裝置開著）。' + NLC
+            + '同一個編號不能用兩台裝置進同一場，會變成一個人兩個螢幕搶著出牌。' + NLC
+            + '把另一台關掉，或用那台繼續玩。', 'err', 7000);
         return;
       }
       return roomRef.child('players').once('value').then(function(ps){
@@ -996,11 +1081,11 @@ function joinRoom(codeStr){
           spectator: true, inGame: false, lastAction: null, juryScore: 0, joinedAt: Date.now()
         }).then(function(){
           enterRoom();
-          setTimeout(function(){ alert('這一場已經開打了，你先用旁觀的身分看。下一場就能一起玩。'); }, 300);
+          setTimeout(function(){ toast('這一場已經開打了，你先用旁觀的身分看。下一場就能一起玩。', 'info', 6000); }, 300);
         });
       }
       if (!already && Object.keys(cur).length >= 6) {
-        alert('這一場滿了（一場最多 6 人）。去加入別的場次，或自己開一場。');
+        toast('這一場滿了（一場最多 6 人）。去加入別的場次，或自己開一場。', 'err');
         return;
       }
       return roomRef.child('players/'+me.env).transaction(function(v){
@@ -1090,19 +1175,17 @@ function renderTakeover(){
   if (!state.meta || isHost() || state.meta.phase === 'over') { box.innerHTML = ''; return; }
   box.innerHTML = '<p class="sub" style="margin:4px 0 0">GM（#'+esc(state.meta.hostEnv)+'）沒反應嗎？'
     + '<button class="sm" id="btn-takeover" style="margin-left:6px">我來接手當 GM</button></p>';
-  $('btn-takeover').onclick = function(){
-    var old = state.meta.hostEnv;
-    if (!confirm('原本的 GM #'+old+' 可能離開了。'
-        + NLC + '接手之後，開始遊戲／結算／下一回合都由你按。' + NLC + NLC + '確定接手？')) return;
+  var old = state.meta.hostEnv;
+  armConfirm($('btn-takeover'), '接手之後，開始遊戲／結算／下一回合都由你按。', function(){
     roomRef.child('meta/hostEnv').transaction(function(v){
       if (String(v) !== String(old)) return;      // 已經有人接走了，放棄
       return me.env;
     }, function(err, committed){
-      if (err) { alert('接手失敗：' + err); return; }
-      if (!committed) { alert('已經有別人接手了。'); return; }
+      if (err) { say('接手失敗：' + err, true); return; }
+      if (!committed) { say('（已經有別人接手了）', true); return; }
       say('#' + me.env + ' 接手當 GM（原本是 #' + old + '）', true);
     });
-  };
+  });
 }
 function playersArr(){
   return Object.keys(state.players).map(function(k){ return state.players[k]; })
@@ -1283,7 +1366,62 @@ function renderStats(c, P){
     + '<table class="st"><tr><th>玩家</th><th>單挑</th><th>聯手</th><th>畏縮</th>'
       + '<th>打出</th><th>承受</th><th>被盯</th></tr>' + rows + '</table>'
     + '<div class="statline" style="margin-top:6px">這張表就是你寫回饋時要用的證據——'
-      + '「大家的打法怎麼變」在數字裡看得到。</div></div>';
+      + '「大家的打法怎麼變」在數字裡看得到。</div>'
+    + timelineHtml(state.rounds, c, playersArr().map(function(p){ return String(p.env); }),
+                   function(e){ var p = state.players[e]; var isMe = String(e)===String(me.env);
+                     return esc(c.anonymous && !isMe ? ('#'+e) : ((p&&p.name)||('#'+e))); })
+    + '</div>';
+}
+
+/* ═════ 時序：每一回合結束時，每個人剩多少自尊 ═════
+   累計統計看得出「誰慘」，看不出「什麼時候開始慘的」。
+   這週要學生寫的 D（動態）＝局勢怎麼演變，那是時間軸上的事。
+   不用另外存資料：起始值 ＋ 每回合的 damage 就推得出來。 */
+function chipTimeline(rounds, cfg, ids){
+  var rns = Object.keys(dropNull(normObj(rounds))).map(Number)
+              .filter(function(x){ return !isNaN(x); }).sort(function(a,b){ return a-b; });
+  var cur = {}, series = {};
+  ids.forEach(function(e){ cur[e] = cfg.startChips; series[e] = [cfg.startChips]; });
+  var used = [];
+  rns.forEach(function(n){
+    var res = (rounds[n] || {}).result;
+    if (!res) return;                       // 還沒結算的回合不畫
+    used.push(n);
+    var dm = dropNull(normObj(res.damage));
+    ids.forEach(function(e){
+      cur[e] = Math.max(0, (cur[e] == null ? cfg.startChips : cur[e]) - (dm[e] || 0));
+      series[e].push(cur[e]);
+    });
+  });
+  return { rounds: used, series: series, max: cfg.startChips };
+}
+function timelineHtml(rounds, cfg, ids, nameOf){
+  var tl = chipTimeline(rounds, cfg, ids);
+  if (!tl.rounds.length) return '';
+  var head = '<tr><th>玩家</th><th>開局</th>'
+    + tl.rounds.map(function(n){ return '<th>R'+n+'</th>'; }).join('') + '</tr>';
+  var body = ids.map(function(e){
+    var s = tl.series[e];
+    return '<tr><td>'+nameOf(e)+'</td>' + s.map(function(v, i){
+      var prev = i ? s[i-1] : v, d = v - prev;
+      var cls = v === 0 ? ' class="tzero"' : (d < 0 ? ' class="tdown"' : (d > 0 ? ' class="tup"' : ''));
+      return '<td'+cls+'>'+v+(i && d ? '<i>'+(d>0?'+':'')+d+'</i>' : '')+'</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  // 折線：用純 CSS 的高度條，不畫 SVG（手機上小圖表看不清楚，條狀比較讀得出來）
+  var spark = ids.map(function(e){
+    var s = tl.series[e];
+    return '<div class="tlrow"><span class="tlname">'+nameOf(e)+'</span>'
+      + '<span class="tlbars">' + s.map(function(v){
+          var h = Math.max(3, Math.round(v / (tl.max || 1) * 100));
+          return '<i style="height:'+h+'%" title="'+v+'"></i>';
+        }).join('') + '</span></div>';
+  }).join('');
+  return '<div class="tlwrap"><h4 style="margin:12px 0 6px">自尊的時序變化</h4>'
+    + '<p class="sub" style="margin:0 0 8px">看得出來是「一路被磨」還是「某一回合突然被集火」——'
+    + '這就是你要寫的 D（動態）。</p>'
+    + '<div class="tlspark">' + spark + '</div>'
+    + '<div class="tlscroll"><table class="st tl">' + head + body + '</table></div></div>';
 }
 
 /* ═════ 出牌列 ═════ */
@@ -1444,11 +1582,7 @@ function waitingHtml(c, P){
   return h;
 }
 function wireForce(){
-  var b = $('btn-force');
-  if (b) b.onclick = function(){
-    if (!confirm('沒出牌的人會被當成空過（照規則自扣）。確定直接結算？')) return;
-    hostTick(true);
-  };
+  armConfirm($('btn-force'), '沒出牌的人會被當成空過，照規則自扣。', function(){ hostTick(true); });
 }
 function submitChoice(){
   var m = state.meta;
@@ -1463,7 +1597,7 @@ function startGame(){
   var c = E.cfg(state.meta.cfg||{});
   var P = playersArr();
   var v = E.validate(c, P.length);
-  if (!v.ok) { alert('這個組合在 '+P.length+' 人下玩不動：\n' + v.problems.join('\n')); return; }
+  if (!v.ok) { toast('這個組合在 ' + P.length + ' 人下玩不動：' + NLC + v.problems.join(NLC), 'err', 7000); return; }
   P = P.filter(function(p){ return !p.spectator; });
   var setupP = E.setup(P.map(function(p,i){
       return Object.assign({}, p, { seat:i, chips:c.startChips, alive:true, inGame:true, spectator:false }); }),
@@ -1769,13 +1903,13 @@ var RP_SPEEDS = [1, 2, 4];
 function openReplay(code){
   ROOT.child('rooms/'+code).once('value').then(function(s){
     var v = s.val();
-    if (!v || !v.meta) { alert('讀不到場次 '+code); return; }
+    if (!v || !v.meta) { toast('讀不到場次 ' + code, 'err'); return; }
     var rounds = dropNull(normObj(v.rounds));
     var c = E.cfg(v.meta.cfg||{});
     var players = dropNull(normObj(v.players));
     var chat = dropNull(normObj(v.chat));
     var rns = Object.keys(rounds).map(Number).filter(function(x){ return !isNaN(x); }).sort(function(a,b){return a-b;});
-    if (!rns.length) { alert('這一場沒有可以回放的回合'); return; }
+    if (!rns.length) { toast('這一場還沒打完任何一回合，沒有東西可以回放', 'err'); return; }
 
     /* 每一回合的「出牌時間上限」＝該回合最後一個人送出的時間。
        用它把 chat 切回所屬回合——出牌前的喊話才是這個遊戲的本體，回放一定要看得到。 */
@@ -1805,7 +1939,7 @@ function openReplay(code){
           : '<span class="pill">原版規則，沒有改動</span>');
     show('scr-replay');
     rpRender();
-  }).catch(function(e){ alert('讀不到這一場：'+(e.message||e)); });
+  }).catch(function(e){ toast('讀不到這一場：' + (e.message || e), 'err'); });
 }
 
 /* 第 r 回合「開始時」每個人的籌碼＝起始 − 前面所有回合的傷害 */
@@ -1882,6 +2016,11 @@ function rpRender(){
       + '<div class="rpreveal">' + (acts || '<span class="sub">沒有出牌紀錄</span>') + '</div>'
       + lines.map(function(x){ return '<div class="logline">'+x+'</div>'; }).join('')
       + '</div>';
+    // 走到最後一步時，把整場的時序攤出來——那是寫觀察最好用的東西
+    if (RP.i >= RP.steps.length - 1) {
+      html += '<div class="rpstep">'
+        + timelineHtml(RP.rounds, RP.cfg, Object.keys(RP.players), rpName) + '</div>';
+    }
   }
   $('rp-body').innerHTML = html;
 
@@ -2051,7 +2190,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222305"></script>
-<script src="js/bind_gate.js?v=202609222305"></script>
+<script src="js/gate_i18n.js?v=202609222313"></script>
+<script src="js/bind_gate.js?v=202609222313"></script>
 </body>
 </html>

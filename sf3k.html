@@ -122,6 +122,16 @@ table.st th:first-child,table.st td:first-child{text-align:left}
 table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
 .bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
+/* GM 功能說明 */
+.gmwhat{margin-top:9px;border:1.5px solid var(--line);border-radius:11px;padding:9px 12px;
+  background:var(--panel2)}
+.gmwhat summary{cursor:pointer;font-weight:800;font-size:14px;list-style:none}
+.gmwhat summary::-webkit-details-marker{display:none}
+.gmwhat summary::before{content:'▸ ';font-size:12px;opacity:.6}
+.gmwhat[open] summary::before{content:'▾ '}
+.gmwhat p{font-size:13.5px;line-height:1.75;margin:8px 0 0}
+.gmlist{margin:7px 0 0;padding-left:1.4em;font-size:13.5px;line-height:1.8}
+.gmlist li{margin:4px 0}
 /* 時序表：橫向可捲（回合數多的時候手機塞不下） */
 .tlwrap{margin-top:10px}
 .tlscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -416,8 +426,20 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       <h3>當 GM，開一場</h3>
       <p class="sub" id="host-turn"></p>
       <button class="ok" id="btn-host">我來當 GM</button>
-      <p class="sub" style="margin:7px 0 0"><b>GM 也是一起玩的玩家</b>——
-      你只是多負責「挑一張卡、按開始、按下一回合」，一樣有座位、一樣出牌、一樣可能輸。</p>
+      <details class="gmwhat"><summary>GM 要做什麼？（點開看）</summary>
+        <p><b>GM 也是一起玩的玩家</b>——一樣有座位、一樣要出牌、一樣可能輸。
+        只是多了五件事要按：</p>
+        <ol class="gmlist">
+          <li><b>挑一張卡</b>　決定這一場改哪一條規則（不挑就是原版）</li>
+          <li><b>按「開始遊戲」</b>　湊到 3-6 人才能開始</li>
+          <li><b>跑結算</b>　大家都出牌了，由你這邊算傷害。<b>所以你不要關掉頁面</b>——
+              你一走，這一場就沒有人能結算（真的走了，其他人可以按「我來接手當 GM」）</li>
+          <li><b>有人發呆時跳過他</b>　沒出牌的人照規則當成空過</li>
+          <li><b>按「下一回合」</b>　節奏由你控制，等大家看完上一回合的結果再按</li>
+        </ol>
+        <p class="sub" style="margin:6px 0 0">沒當過的人會被優先排到。當過了還是可以再開，
+        但請先讓還沒當過的同學試試看。</p>
+      </details>
     </div>
   </section>
 
@@ -583,9 +605,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222313"></script>
-<script src="js/sf3k_cards.js?v=202609222313"></script>
-<script src="js/sf3k_stats.js?v=202609222313"></script>
+<script src="js/sf3k_engine.js?v=202609222318"></script>
+<script src="js/sf3k_cards.js?v=202609222318"></script>
+<script src="js/sf3k_stats.js?v=202609222318"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -724,7 +746,43 @@ function pickUpIdentity(){
   try { nk = localStorage.getItem('designjam_nick'); } catch (x) {}
   me.nick = (nk && nk.trim()) ? nk.trim() : null;
   me.name = me.nick || ('#' + e);
+  /* 換一台裝置進來時 localStorage 是空的 —— 以伺服器上的為準，
+     不然同一個人在手機和電腦上會是兩個名字。 */
+  ROOT.child('nicks/' + e).once('value').then(function(s){
+    var v = s.val();
+    if (v && v.nick && v.nick !== me.nick) {
+      me.nick = v.nick; me.name = v.nick;
+      try { localStorage.setItem('designjam_nick', v.nick); } catch (x) {}
+      renderMeRow();
+      if (state.meta) renderRoom();
+    }
+  }).catch(function(){});
   return true;
+}
+
+/* ═════ 暱稱表：整個第三週共用一份 ═════
+   🔴 名字不要存進各場次裡。存進去就會變成快照：改了暱稱之後，
+      以前的場次、回放、排行榜、別人的畫面全都還是舊名字，而且永遠不會更新。
+      改成「渲染當下去查」——nicks/{env} 一個共用節點，全站訂閱，
+      players 裡的 name 退化成後備值（給舊資料與讀不到表的時候用）。 */
+var NICKS = {};
+function watchNicks(){
+  ROOT.child('nicks').on('value', function(s){
+    NICKS = dropNull(normObj(s.val()));
+    if (state.meta) renderRoom();
+    renderMeRow();
+    if (RP) rpRender();
+    renderBoards();
+  });
+}
+/* fallback 是舊資料裡存的名字；都沒有就用 #編號。
+   這一支是全站唯一決定「某個編號要顯示成什麼」的地方。 */
+function nickOf(env, fallback){
+  var e = String(env);
+  var n = NICKS[e] && NICKS[e].nick;
+  if (n) return n;
+  if (fallback && !/^#/.test(String(fallback))) return fallback;
+  return '#' + e;
 }
 
 /* ═════ 暱稱：隨時可改，跟編號剛好相反 ═════
@@ -738,9 +796,11 @@ function setNick(v){
     if (me.nick) localStorage.setItem('designjam_nick', me.nick);
     else localStorage.removeItem('designjam_nick');
   } catch (e) {}
-  var jobs = [ROOT.child('envIndex/' + me.env).update({ nick: me.nick || null })];
-  if (roomRef && room) jobs.push(roomRef.child('players/' + me.env + '/name').set(me.name));
-  Promise.all(jobs).catch(function(e){ console.warn('[nick] 寫入失敗', e); });
+  /* 只寫共用表，不再去改各場次裡的名字——名字是查出來的，不是存出來的。 */
+  Promise.all([
+    ROOT.child('nicks/' + me.env).set(me.nick ? { nick: me.nick, ts: nowTs() } : null),
+    ROOT.child('envIndex/' + me.env).update({ nick: me.nick || null })
+  ]).catch(function(e){ console.warn('[nick] 寫入失敗', e); });
   renderMeRow();
   if (state.meta) renderRoom();
 }
@@ -779,9 +839,11 @@ function dropNull(o){
   return out;
 }
 var progressWatched = false;
+var nickWatched = false;
 function enterLobby(){
   show('scr-lobby');
   if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); watchBoards(); }
+  if (!nickWatched) { nickWatched = true; watchNicks(); }
   renderChecklist();
   ROOT.child('comboStats').on('value', function(s){
     var v = s.val()||{}; comboCount = {};
@@ -1201,7 +1263,15 @@ function renderRoom(){
   $('room-title').textContent = L.name;
   var rm = $('room-me');
   if (rm) {
-    rm.innerHTML = '你在這一場是 <b>' + esc(me.name) + '</b>'
+    var duty = '';
+    if (isHost()) {
+      // 🔴 不要用 ph：它的 var 宣告在這一行之後，hoisting 之下這裡讀到的是 undefined，
+      //    整段條件永遠不成立、提示永遠不出現（而且不會報錯）。直接讀 m.phase。
+      duty = m.phase === 'lobby' ? '　<span class="pill amber">你是 GM：人到齊就按「開始遊戲」</span>'
+           : m.phase === 'choose' ? '　<span class="pill amber">你是 GM：大家出完牌會自動結算</span>'
+           : m.phase === 'reveal' ? '　<span class="pill amber">你是 GM：看完結果按「下一回合」</span>' : '';
+    }
+    rm.innerHTML = '你在這一場是 <b>' + esc(me.name) + '</b>' + duty
       + ' <button class="sm" id="btn-nick2">改暱稱</button>';
     $('btn-nick2').onclick = function(){
       var v = window.prompt ? null : null;   // 不用 prompt（會凍結畫面），改用頁內輸入
@@ -1254,7 +1324,7 @@ function renderRoom(){
   // 座位
   $('seats').innerHTML = P.map(function(p,i){
     var isMe = String(p.env)===String(me.env);
-    var nm = c.anonymous && !isMe ? '???' : esc(p.name||('#'+p.env));
+    var nm = c.anonymous && !isMe ? '???' : esc(nickOf(p.env, p.name));
     var hp = (c.hideChips && !isMe) ? '？' : p.chips;
     var extra = [];
     if (c.modRoles && (isMe||ph!=='choose') && p.role) { var R=(E.ROLES.filter(function(r){return r.key===p.role;})[0]); if(R) extra.push(R.name); }
@@ -1332,7 +1402,7 @@ function renderResult(c, P){
   if (!r || !r.log) { $('result-box').style.display='none'; return; }
   $('result-box').style.display='';
   var nameOf = function(id){ var p=state.players[id]; var isMe=String(id)===String(me.env);
-    return esc(c.anonymous&&!isMe ? ('#'+id) : (p&&p.name)||('#'+id)); };
+    return esc(c.anonymous&&!isMe ? ('#'+id) : nickOf(id, p&&p.name)); };
   var lines = fmtLog(r.log, c, nameOf);
   $('result-log').innerHTML = lines.map(function(x){ return '<div class="logline">'+x+'</div>'; }).join('')
     + '<div class="row" style="margin-top:8px">' + (isHost() && state.meta.phase==='reveal'
@@ -1348,7 +1418,7 @@ function renderStats(c, P){
   if (!st.totals.roundsPlayed) { box.innerHTML=''; return; }
   var L = E.label(c), T = st.totals;
   var nameOf = function(p){ var isMe=String(p.id)===String(me.env);
-    return esc(c.anonymous&&!isMe ? ('#'+p.id) : p.name); };
+    return esc(c.anonymous&&!isMe ? ('#'+p.id) : nickOf(p.id, p.name)); };
   var mix = T.actionMix;
   var rows = st.list.slice().sort(function(a,b){ return b.dealt - a.dealt; }).map(function(p){
     return '<tr><td>'+nameOf(p)+'</td><td>'+p.solo+'</td><td>'+p.team+'</td><td>'+p.defend+'</td>'
@@ -1503,7 +1573,7 @@ function renderBar(c, P){
   if (iAmGhost && c.modJury) {
     $('bar-actions').innerHTML = '<span class="sub">猜誰這回合傷最重：</span>'
       + P.filter(function(p){return p.alive;}).map(function(p){
-        return '<button class="jp'+(pick.juryPick===String(p.env)?' pri':'')+'" data-e="'+p.env+'">'+esc(p.name||('#'+p.env))+'</button>'; }).join('');
+        return '<button class="jp'+(pick.juryPick===String(p.env)?' pri':'')+'" data-e="'+p.env+'">'+esc(nickOf(p.env,p.name))+'</button>'; }).join('');
     Array.prototype.forEach.call($('bar-actions').querySelectorAll('.jp'), function(b){
       b.onclick = function(){ pick.juryPick = b.dataset.e; renderBar(c,P); }; });
     $('btn-submit').textContent = '送出預測';
@@ -1576,7 +1646,7 @@ function pendingList(c, P){
 function waitingHtml(c, P){
   var w = pendingList(c, P);
   if (!w.length) return '<span class="status">全員到齊，' + (isHost() ? '正在結算…' : '等 GM 結算') + '</span>';
-  var names = w.map(function(p){ return c.anonymous ? ('#'+p.env) : (p.name||('#'+p.env)); });
+  var names = w.map(function(p){ return c.anonymous ? ('#'+p.env) : nickOf(p.env, p.name); });
   var h = '<span class="status">還在等：<b>' + names.map(esc).join('、') + '</b></span>';
   if (isHost()) h += '<button class="sm" id="btn-force">跳過他們直接結算</button>';
   return h;
@@ -1832,7 +1902,7 @@ function renderBoards(){
       + (top.length
           ? '<ol class="bdlist">' + top.map(function(x){
               var meMark = String(x.env) === String(me.env) ? ' class="me"' : '';
-              return '<li'+meMark+'>#'+esc(x.env)+' <b>'+x.v+'</b>'+esc(B.unit)+'</li>';
+              return '<li'+meMark+'>'+esc(nickOf(x.env))+' <b>'+x.v+'</b>'+esc(B.unit)+'</li>';
             }).join('') + '</ol>'
           : '<p class="bdnone">還沒有人上榜</p>')
       + '</div>';
@@ -1840,7 +1910,7 @@ function renderBoards(){
   html += '</div>';
 
   var mine = S[String(me.env)];
-  html += '<div class="bdme"><b>你的成績（#'+esc(me.env)+'）</b>';
+  html += '<div class="bdme"><b>你的成績（'+esc(me.name)+'　#'+esc(me.env)+'）</b>';
   if (!mine) {
     html += '<div class="bdhint" style="margin-top:5px">還沒有紀錄。玩一場就會出現。</div>';
   } else {
@@ -1958,7 +2028,8 @@ function rpChipsAt(r){
 }
 function rpName(id){
   var p = RP.players[id];
-  return esc(RP.cfg.anonymous ? ('#'+id) : ((p&&p.name)||('#'+id)));
+  // 回放也走共用表——看舊場次的回放時，顯示的應該是那個人「現在」的暱稱
+  return esc(RP.cfg.anonymous ? ('#'+id) : nickOf(id, p && p.name));
 }
 function rpRender(){
   if (!RP) return;
@@ -2190,7 +2261,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222313"></script>
-<script src="js/bind_gate.js?v=202609222313"></script>
+<script src="js/gate_i18n.js?v=202609222318"></script>
+<script src="js/bind_gate.js?v=202609222318"></script>
 </body>
 </html>

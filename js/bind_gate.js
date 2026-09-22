@@ -73,7 +73,6 @@
 '#dj-gate .qrcap{font-size:13px;color:#54646e;margin-top:7px;line-height:1.6}',
 '#dj-gate .tiny{font-size:13px;color:#54646e;margin-top:14px;line-height:1.7}',
 '#dj-gate .tiny a{color:#2f6690}',
-'@media (max-width:560px){#dj-bar{max-width:calc(100vw - 24px);font-size:12px;padding:5px 11px}}',
 /* ── 單元導覽：不管 3 週還是 18 週，收起來永遠只佔一列 ──
    色票只有五個、依「單元性質」循環，不是每週一個新顏色（15 個可分辨的顏色不存在，
    硬給只會變成一堆分不出來的灰）。相鄰兩週一定不同色，這樣才認得出「我在對的那一頁」。*/
@@ -123,10 +122,7 @@
 '  border:1.5px solid #cfdae1;border-radius:999px;padding:6px 11px;cursor:pointer;',
 '  font:800 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
 '  box-shadow:0 2px 12px rgba(32,42,48,.14)}',
-/* 身分列也固定在右上；chip 擺它左邊，兩顆不要疊在一起 */
-'#dj-bar{right:64px}',
-'@media (max-width:560px){#dj-bar{right:58px;max-width:calc(100vw - 80px)}',
-'  #dj-langchip{padding:5px 9px;font-size:12px}}',
+'@media (max-width:560px){#dj-langchip{padding:5px 9px;font-size:12px}}',
 '.dj-gatelang{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}',
 '.dj-gatelang button{flex:1 1 auto;background:#f7f9fa;border:1.5px solid #cfdae1;color:#54646e;',
 '  border-radius:999px;padding:6px 12px;font:700 12.5px/1.4 inherit;cursor:pointer;white-space:nowrap}',
@@ -141,10 +137,13 @@
 '.dj-lang button.sel{background:#eef1f3;border-color:#cfdae1;color:#2f6690}',
 '.dj-lang .dj-note{font-size:11.5px;font-weight:400;color:#7b8892;padding:5px 12px 3px;line-height:1.5}',
 '@media (max-width:560px){.dj-lang{right:10px;left:auto;max-width:calc(100vw - 20px)}}',
-'#dj-bar{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
+'#dj-bar{position:fixed;right:66px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
 '  border-radius:999px;padding:6px 13px;font:700 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
-'  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:72vw;overflow:hidden;',
-'  text-overflow:ellipsis;white-space:nowrap}'
+'  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:calc(100vw - 90px);overflow:hidden;',
+'  text-overflow:ellipsis;white-space:nowrap}',
+/* 🔴 media query 不加權重：這條一定要排在上面 #dj-bar 基準規則之後，
+   排前面的話 right:66px 會在手機上照樣贏，覆寫等於沒寫（2026-09-22 當場量到）。 */
+'@media (max-width:560px){#dj-bar{right:56px;max-width:calc(100vw - 76px);font-size:12px;padding:5px 11px}}'
 ].join('\n');
 
   function injectCss() {

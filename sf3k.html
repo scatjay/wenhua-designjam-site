@@ -741,10 +741,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230722"></script>
-<script src="js/sf3k_verified.js?v=202609230722"></script>
-<script src="js/sf3k_cards.js?v=202609230722"></script>
-<script src="js/sf3k_stats.js?v=202609230722"></script>
+<script src="js/sf3k_engine.js?v=202609230726"></script>
+<script src="js/sf3k_verified.js?v=202609230726"></script>
+<script src="js/sf3k_cards.js?v=202609230726"></script>
+<script src="js/sf3k_stats.js?v=202609230726"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1334,9 +1334,13 @@ var MAX_CARDS = 2;
 var VER_DATA = window.SF3K_VERIFIED || { singles: {}, mates: {}, uiPairs: {} };
 /* 可以跟 id 搭的卡：以「真的走過介面測過」的為準；沒有 uiPairs 就退回引擎層的 mates。 */
 function matesOf(id){
-  var ui = VER_DATA.uiPairs && VER_DATA.uiPairs[id];
-  if (ui && ui.length) return ui;
-  return (VER_DATA.mates && VER_DATA.mates[id]) || [];
+  /* 🔴 2026-09-23 上課前總驗收抓到：原本沒有 uiPairs 就退回引擎層 mates（755組寬鬆清單，
+     只驗證過機制不衝突，沒走過真實介面）——那是 uiPairs 資料還是空的時候的暫時補償。
+     現在 uiPairs 已經有真的 20 組介面測試資料，這個退回邏輯反而違反楊老師原本的要求
+     「有測過沒問題的才能選，沒測過的不能選」——退回 mates 會讓 elements 這種「單張沒問題、
+     但兩張選卡流程本身有 bug（12組配對100%開不了場）」的卡看起來可以配對，實際選了會卡住。
+     ⇒ 不再退回 mates，沒有 uiPairs 資料就是沒有，如實回報空陣列。 */
+  return (VER_DATA.uiPairs && VER_DATA.uiPairs[id]) || [];
 }
 function canPairWith(firstId, id){
   if (!firstId || firstId === id) return true;
@@ -2962,7 +2966,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230722"></script>
-<script src="js/bind_gate.js?v=202609230722"></script>
+<script src="js/gate_i18n.js?v=202609230726"></script>
+<script src="js/bind_gate.js?v=202609230726"></script>
 </body>
 </html>

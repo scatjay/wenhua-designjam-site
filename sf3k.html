@@ -146,8 +146,9 @@ table.st.tl td.tzero{color:var(--ink-soft);background:var(--panel2);font-weight:
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tlbars{flex:1 1 auto;display:flex;align-items:flex-end;gap:2px;height:34px;
   border-bottom:1.5px solid var(--line)}
-.tlbars i{flex:1 1 auto;min-width:4px;background:var(--blue-soft);
-  border:1px solid var(--blue);border-bottom:none;border-radius:3px 3px 0 0}
+.tlbars i{flex:1 1 auto;min-width:4px;border:1px solid transparent;border-bottom:none;
+  border-radius:3px 3px 0 0}
+.tlname .swatch{margin-right:4px}
 /* 一鍵複製 */
 .copybtn{flex:0 0 auto;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;
   background:var(--panel2);border:1.5px solid var(--line);color:var(--ink-soft);cursor:pointer;
@@ -605,9 +606,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222330"></script>
-<script src="js/sf3k_cards.js?v=202609222330"></script>
-<script src="js/sf3k_stats.js?v=202609222330"></script>
+<script src="js/sf3k_engine.js?v=202609222331"></script>
+<script src="js/sf3k_cards.js?v=202609222331"></script>
+<script src="js/sf3k_stats.js?v=202609222331"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1484,21 +1485,27 @@ function timelineHtml(rounds, cfg, ids, nameOf){
   if (!tl.rounds.length) return '';
   var head = '<tr><th>玩家</th><th>開局</th>'
     + tl.rounds.map(function(n){ return '<th>R'+n+'</th>'; }).join('') + '</tr>';
-  var body = ids.map(function(e){
-    var s = tl.series[e];
-    return '<tr><td>'+nameOf(e)+'</td>' + s.map(function(v, i){
+  var body = ids.map(function(e, ri){
+    var s = tl.series[e], col = COLORS[ri % COLORS.length];
+    return '<tr><td><span class="swatch" style="background:'+col+'"></span>'+nameOf(e)+'</td>'
+      + s.map(function(v, i){
       var prev = i ? s[i-1] : v, d = v - prev;
       var cls = v === 0 ? ' class="tzero"' : (d < 0 ? ' class="tdown"' : (d > 0 ? ' class="tup"' : ''));
       return '<td'+cls+'>'+v+(i && d ? '<i>'+(d>0?'+':'')+d+'</i>' : '')+'</td>';
     }).join('') + '</tr>';
   }).join('');
   // 折線：用純 CSS 的高度條，不畫 SVG（手機上小圖表看不清楚，條狀比較讀得出來）
-  var spark = ids.map(function(e){
-    var s = tl.series[e];
-    return '<div class="tlrow"><span class="tlname">'+nameOf(e)+'</span>'
-      + '<span class="tlbars">' + s.map(function(v){
+  /* 顏色＝身分，而且要跟座位上那顆小方塊同一組色——同一個人在座位、結算、時序圖裡
+     都是同一個顏色，才有辦法一眼追著某個人看他怎麼被打下去的。 */
+  var spark = ids.map(function(e, i){
+    var s = tl.series[e], col = COLORS[i % COLORS.length];
+    return '<div class="tlrow">'
+      + '<span class="tlname"><span class="swatch" style="background:'+col+'"></span>'+nameOf(e)+'</span>'
+      + '<span class="tlbars">' + s.map(function(v, j){
           var h = Math.max(3, Math.round(v / (tl.max || 1) * 100));
-          return '<i style="height:'+h+'%" title="'+v+'"></i>';
+          var dead = v === 0;
+          return '<i style="height:'+h+'%;background:'+col+(dead?';opacity:.25':';opacity:.82')
+               + ';border-color:'+col+'" title="'+(j?('R'+j+'：'):'開局：')+v+'"></i>';
         }).join('') + '</span></div>';
   }).join('');
   return '<div class="tlwrap"><h4 style="margin:12px 0 6px">自尊的時序變化</h4>'
@@ -2293,7 +2300,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222330"></script>
-<script src="js/bind_gate.js?v=202609222330"></script>
+<script src="js/gate_i18n.js?v=202609222331"></script>
+<script src="js/bind_gate.js?v=202609222331"></script>
 </body>
 </html>

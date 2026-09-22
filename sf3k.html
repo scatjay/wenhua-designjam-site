@@ -90,6 +90,18 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 .roomrow{background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px}
 .roomrow .top{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .roomrow .feat{font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.7}
+/* 正在打的場次：最有看頭的那一組，所以視覺上要跳出來 */
+.roomrow.livrow{background:var(--panel);border-color:var(--red);border-left:5px solid var(--red)}
+.roomrow.done{opacity:.72}
+.livdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);
+  margin-right:5px;vertical-align:1px;animation:livpulse 1.4s ease-in-out infinite}
+@keyframes livpulse{0%,100%{opacity:1}50%{opacity:.25}}
+.livchips{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:8px;font-size:13px}
+.livchips .lp{display:inline-flex;align-items:center;gap:2px;padding:3px 9px;border-radius:999px;
+  background:var(--panel2);border:1px solid var(--line);white-space:nowrap}
+.livchips .lp b{font-size:14.5px;margin-left:2px}
+.livchips .lp.out{opacity:.4;text-decoration:line-through}
+@media (prefers-reduced-motion:reduce){.livdot{animation:none}}
 /* 座位 */
 .seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:9px;margin:10px 0}
 .seat{border:1.5px solid var(--line);border-radius:12px;padding:10px;background:var(--panel);text-align:center;font-size:13.5px}
@@ -318,7 +330,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
         <li><div class="st"><b>出牌前一定要講話</b><span>聯手要兩個人以上打同一個人才算數，所以你得先說服別人。<b>不講話這個遊戲就沒東西了</b>，公開討論區就是遊戲本體。</span></div></li>
         <li><div class="st"><b>第二場只改一個地方</b><span>GM 從卡池挑<b>一張</b>卡。只動一個變因，因果才看得清楚——這是這門課之後每一週都會用到的做法。</span></div></li>
         <li><div class="st"><b>第三場整組改</b><span>一次挑好幾張，玩起來會跟原版差很多。重點是體會<b>改動之間會互相作用</b>，不是把效果加總那麼簡單。</span></div></li>
-        <li><div class="st"><b>看兩場別人的回放</b><span>別組玩的規則跟你不一樣。看完他們的回放（可以快轉、倒轉、一步一步走），寫下你觀察到的差別。</span></div></li>
+        <li><div class="st"><b>看兩場即時觀戰或回放</b><span>別組玩的規則跟你不一樣。<b>觀戰正在打的場次</b>（看得到完整統計，比玩的人看到的還多），或看已經打完的<b>回放</b>（可以快轉、倒轉、一步一步走）。兩種都算，寫下你觀察到的差別。</span></div></li>
       </ol>
     </div>
 
@@ -416,9 +428,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
     </details>
 
     <div class="box">
-      <h3>看別人那一場的回放（要留 2 則觀察）</h3>
-      <p class="sub" style="margin-bottom:10px">別組玩的規則跟你不一樣。
-      <b>回放可以快轉、倒轉、一步一步走</b>——出牌前的討論、每個人出了什麼、怎麼結算，全部看得到。
+      <h3>看別人那一場（要留 2 則觀察）</h3>
+      <p class="sub" style="margin-bottom:10px">別組玩的規則跟你不一樣。兩種看法都算：
+      <b>即時觀戰</b>（上面正在打的場次，觀戰看得到完整統計，比玩的人還多）、
+      或<b>看回放</b>（可以快轉、倒轉、一步一步走，出牌前的討論也看得到）。
       看完才會出現留言框。</p>
       <div id="others"></div>
     </div>
@@ -544,6 +557,8 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       <div id="stats-box"></div>
     </div>
 
+    <div id="spectate-comment"></div>
+
     <div class="box" id="over-box" style="display:none">
       <h3 style="margin-top:0">結束了</h3>
       <div id="over-text"></div>
@@ -606,9 +621,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222333"></script>
-<script src="js/sf3k_cards.js?v=202609222333"></script>
-<script src="js/sf3k_stats.js?v=202609222333"></script>
+<script src="js/sf3k_engine.js?v=202609222335"></script>
+<script src="js/sf3k_cards.js?v=202609222335"></script>
+<script src="js/sf3k_stats.js?v=202609222335"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -875,35 +890,65 @@ function enterLobby(){
     console.warn('[lobby] hosts 讀取失敗', e);
     $('host-turn').textContent = '（讀不到輪替紀錄，還是可以開場）';
   });
-  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(12).on('value', function(s){
-    var v = s.val()||{}, out=[];
+  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(14).on('value', function(s){
+    var v = s.val()||{}, live=[], open_=[], done=[];
     Object.keys(v).reverse().forEach(function(code){
       if (/^ZZ/.test(code)) return;                 // 跳過整合測試用的房
       var m = v[code].meta; if(!m) return;
       if (m.sess !== SESS) return;                  // 別班／別天的房不要混進來（輸代號仍可進）
-      var n = Object.keys(normObj(v[code].players)).length;
-      var ph = m.phase==='lobby'?'招募中':(m.phase==='over'?'已結束':'進行中 R'+(m.round||1));
-      var phCls = m.phase==='lobby'?'green':(m.phase==='over'?'':'amber');
+      var ps = dropNull(normObj(v[code].players));
+      var ids = Object.keys(ps);
+      var players = ids.filter(function(e){ return !ps[e].spectator; });
+      var watchers = ids.length - players.length;
       var cards = (m.cards||[]).map(function(id){ return CARDS.byId(id); }).filter(Boolean);
       var feat = cards.length
-        ? cards.map(function(c){ return '<span class="pill on" style="margin:2px 4px 0 0">'+esc(c.name)+'</span>'; }).join('')
+        ? cards.map(function(c){ return '<span class="pill on" data-dim="'+esc(c.dim)
+            + '" style="margin:2px 4px 0 0">'+esc(c.name)+'</span>'; }).join('')
         : '<span class="pill" style="margin-top:2px">原版規則，沒有改動</span>';
       var played = comboCount[comboKey(m.cards||[])] || 0;
-      out.push('<div class="roomrow"><div class="top">'
-        +'<span><span class="sub">代號</span> <b class="mono">'+esc(code)+'</b> <span class="pill '+phCls+'">'+esc(ph)+'</span> '
-        +'<span class="pill">'+n+'/6 人</span> <span class="pill">GM #'+esc(m.hostEnv)+'</span></span>'
-        /* 🔴 打完的場次按「加入」沒有任何意義；進行中的場次加入其實是變旁觀者，
-           按鈕就要講清楚是旁觀，不要讓學生以為還能一起玩。 */
-        +(m.phase==='over'
-            ? '<button data-code="'+esc(code)+'" class="rp sm">看回放</button>'
-            : (m.phase==='lobby'
-                ? '<button data-code="'+esc(code)+'" class="j sm pri">加入</button>'
-                : '<button data-code="'+esc(code)+'" class="j sm">📺 旁觀（看得到完整數據）</button>'))+'</div>'
-        +'<div class="feat">'+feat
-        +'<div style="margin-top:5px">這個組合已經被玩過 <b>'+played+'</b> 次</div></div></div>');
+      var head = '<span class="sub">代號</span> <b class="mono">'+esc(code)+'</b>';
+
+      if (m.phase === 'lobby') {
+        open_.push('<div class="roomrow"><div class="top"><span>'+head
+          + ' <span class="pill green">招募中</span> <span class="pill">'+players.length+'/6 人</span>'
+          + ' <span class="pill">GM '+esc(nickOf(m.hostEnv))+'</span></span>'
+          + '<button data-code="'+esc(code)+'" class="j sm pri">加入</button></div>'
+          + '<div class="feat">'+feat
+          + '<div style="margin-top:5px">這個組合已經被玩過 <b>'+played+'</b> 次</div></div></div>');
+      } else if (m.phase === 'over') {
+        var wn = (m.winners||[]).length;
+        done.push('<div class="roomrow done"><div class="top"><span>'+head
+          + ' <span class="pill">已結束</span> <span class="pill">'+(m.round||1)+' 回合</span>'
+          + ' <span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span></span>'
+          + '<button data-code="'+esc(code)+'" class="rp sm">看回放</button></div>'
+          + '<div class="feat">'+feat+'</div></div>');
+      } else {
+        /* 正在打的最有看頭——別人正在吵要不要聯手、有人快掛了。
+           所以這一組給最多資訊：即時自尊（依玩家配色）＋幾個人在看＋大顆的觀戰鈕。 */
+        var chips = players.map(function(e, i){
+          var p = ps[e], col = COLORS[i % COLORS.length];
+          var alive = p.chips > 0 && p.alive !== false;
+          return '<span class="lp'+(alive?'':' out')+'">'
+            + '<span class="swatch" style="background:'+col+'"></span>'
+            + esc(nickOf(e, p.name)) + ' <b>' + (p.chips==null?'?':p.chips) + '</b></span>';
+        }).join('');
+        live.push('<div class="roomrow livrow"><div class="top"><span>'
+          + '<span class="livdot"></span><b>LIVE</b> ' + head
+          + ' <span class="pill amber">第 '+(m.round||1)+' 回合</span>'
+          + (watchers ? ' <span class="pill">'+watchers+' 人在看</span>' : '')
+          + '</span>'
+          + '<button data-code="'+esc(code)+'" class="j sm pri">📺 觀戰</button></div>'
+          + '<div class="livchips">'+chips+'</div>'
+          + '<div class="feat">'+feat+'</div></div>');
+      }
     });
-    $('open-rooms').innerHTML = out.length ? '<h3 style="margin:.6em 0 .2em">目前開著的場次</h3>'+out.join('')
-      : '<p class="sub">還沒有人開場次。</p>';
+    var html = '';
+    if (live.length)  html += '<h3 style="margin:.6em 0 .2em">🔴 正在打（可以即時觀戰）</h3>'
+      + '<p class="sub" style="margin:0 0 8px">觀戰看得到<b>完整的統計與自尊變化</b>——'
+      + '正在玩的人反而看不到這些。等下一輪的時候很好看。</p>' + live.join('');
+    if (open_.length) html += '<h3 style="margin:.9em 0 .2em">🟢 還在等人（可以加入）</h3>' + open_.join('');
+    if (done.length)  html += '<h3 style="margin:.9em 0 .2em">⚪ 打完了</h3>' + done.join('');
+    $('open-rooms').innerHTML = html || '<p class="sub">還沒有人開場次。你可以當第一個 GM。</p>';
     Array.prototype.forEach.call($('open-rooms').querySelectorAll('.j'), function(b){
       b.onclick = function(){ joinRoom(b.dataset.code); };
     });
@@ -984,7 +1029,7 @@ function cardText(id){
     + RULES_TEXT;
 }
 var RULES_TEXT =
-  '【原版規則：SiSSYFiGHT 3000】' + NLC
+  '【原版規則：SiSSYFiGHT】' + NLC
   + '3-6 人。每人 10 點自尊，把別人扣到 0 就出局，場上剩 1-2 人時那些人獲勝。' + NLC
   + '每回合同時祕密選一張行動卡 ＋ 一個目標，然後一起翻開結算：' + NLC
   + '・SOLO 單挑：目標扣 1 點。一個人就做得到。' + NLC
@@ -1584,7 +1629,9 @@ function renderBar(c, P){
     $('bar-actions').innerHTML = '<span class="okmsg">📺 轉播視角</span>'
       + '<span class="sub">這一場你沒下場，所以看得到完整的統計與自尊變化——'
       + '正在玩的人看不到這些。下一場就能一起玩。</span>';
-    $('btn-submit').classList.add('hide'); return;
+    $('btn-submit').classList.add('hide');
+    renderSpectateComment();
+    return;
   }
   var iAmGhost = meP && !meP.alive;
   if (iAmGhost && !c.modGhost && !c.modJury) {
@@ -1823,7 +1870,8 @@ function renderChecklist(){
     { ok: myStats.feedback >= 3, n: myStats.feedback, need: 3,
       t: '3 則各輪回饋', h: '每輪結束後回答那三個問題。目前 ' + myStats.feedback + ' / 3 則' },
     { ok: myStats.comments >= 2, n: myStats.comments, need: 2,
-      t: '2 則別場回放的觀察', h: '看完別人那一場的回放再留言。目前 ' + myStats.comments + ' / 2 則' },
+      t: '2 則即時觀戰或回放的觀察',
+      h: '觀戰別人正在打的場次，或看完回放，再留下你的觀察。目前 ' + myStats.comments + ' / 2 則' },
     { ok: myStats.essay, n: myStats.essay?1:0, need: 1,
       t: '1 段短文（100 字以內）', h: '用 M／D／A 講今天整體感覺，自己寫、不要用 AI' }
   ];
@@ -2016,6 +2064,31 @@ function watchOthers(){
       b.onclick = function(){ openReplay(b.dataset.code); };
     });
   });
+}
+
+/* 觀戰當場就能留觀察——不然「即時觀戰」算不進檢核表那兩則，
+   學生看完一場精彩的還得等它結束再去回放裡重看一次才能留言，很蠢。 */
+function renderSpectateComment(){
+  var box = $('spectate-comment');
+  if (!box) return;
+  if (!amSpectating()) { box.innerHTML = ''; return; }
+  if (box.dataset.room === room) return;              // 已經畫過就不要每次 render 都重建（會把打到一半的字清掉）
+  box.dataset.room = room;
+  box.innerHTML = '<div class="box"><h3 style="margin-top:0">留下你的觀察</h3>'
+    + '<p class="sub" style="margin:0 0 9px">這一場跟你自己玩到的有什麼不一樣？'
+    + '觀戰留的觀察跟看回放留的一樣算進檢核表。</p>'
+    + '<div class="row"><div class="grow"><input id="sp-cm" maxlength="200" '
+    + 'placeholder="例：他們一直不敢出聯手，因為…"></div>'
+    + '<button class="pri" id="sp-send">送出觀察</button></div>'
+    + '<div class="ckhint" id="sp-msg"></div></div>';
+  $('sp-send').onclick = function(){
+    var val = ($('sp-cm').value||'').trim();
+    if (val.length < 8) { $('sp-msg').textContent = '再多寫一點（至少 8 個字）'; return; }
+    ROOT.child('comments/'+room+'/'+me.env)
+      .set({ text: val, env: me.env, watched: true, live: true, ts: nowTs() })
+      .then(function(){ $('sp-cm').value=''; $('sp-msg').textContent = '已送出 ✓'; })
+      .catch(function(e){ $('sp-msg').textContent = '送不出去：'+(e.message||e); });
+  };
 }
 
 /* ═════ 回放：把一場已結束的遊戲一步一步重播 ═════
@@ -2315,7 +2388,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222333"></script>
-<script src="js/bind_gate.js?v=202609222333"></script>
+<script src="js/gate_i18n.js?v=202609222335"></script>
+<script src="js/bind_gate.js?v=202609222335"></script>
 </body>
 </html>

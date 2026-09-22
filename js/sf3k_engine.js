@@ -54,7 +54,7 @@
   };
 
   var THEMES = {
-    sf3k:  { name: 'SiSSYFiGHT 3000', chip: '自尊', solo: 'SOLO 單挑', team: 'TEAM 聯手', defend: 'DEFEND 畏縮', out: '出局' },
+    sf3k:  { name: 'SiSSYFiGHT', chip: '自尊', solo: 'SOLO 單挑', team: 'TEAM 聯手', defend: 'DEFEND 畏縮', out: '出局' },
     mol:   { name: '人生的意義',       chip: '論點', solo: '個人反駁',  team: '群起圍剿',  defend: '換個說法', out: '說不出話' },
     charm: { name: '魅力之爭',         chip: '魅力', solo: '單獨下套',  team: '聯合排擠',  defend: '裝無辜',   out: '失寵' },
     money: { name: '金庫爭奪',         chip: '錢',   solo: '偷一筆',    team: '聯手洗劫',  defend: '藏起來',   out: '破產' },

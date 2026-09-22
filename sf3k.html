@@ -109,6 +109,25 @@ table.st th:first-child,table.st td:first-child{text-align:left}
 table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
 .bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
+/* MDA 說明 */
+.mdarow{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.7}
+.mdarow:last-of-type{border-bottom:none}
+.mtag{flex:0 0 auto;font-size:12.5px;font-weight:800;padding:4px 11px;border-radius:999px;white-space:nowrap}
+.mtag.m{background:var(--accent-soft);color:var(--accent);border:1.5px solid var(--accent)}
+.mtag.d{background:var(--blue-soft);color:var(--blue);border:1.5px solid var(--blue)}
+.mtag.a{background:var(--amber-soft);color:var(--amber);border:1.5px solid var(--amber)}
+/* 完成檢核 */
+.ck{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.ck:last-child{border-bottom:none}
+.ckmark{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--ink-soft);background:var(--panel)}
+.ck.done .ckmark{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.ck.done .cktext{color:var(--ink-soft)}
+.cktext b{font-weight:800}
+.ckhint{font-size:13px;color:var(--ink-soft);margin-top:2px}
+/* 別人的場次 */
+.otherrow{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px;background:var(--panel)}
+.otherrow .hd{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:6px}
 /* 底部出牌列 */
 .bar{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1.5px solid var(--line);
   padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 14px rgba(36,31,42,.10);z-index:20}
@@ -141,6 +160,37 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
         <button class="pri" id="btn-join">加入</button>
       </div>
       <div id="open-rooms" style="margin-top:10px"></div>
+    </div>
+
+    <div class="box" id="checklist-box">
+      <h3>今天要完成的四項</h3>
+      <p class="sub" style="margin-bottom:10px">打勾是自動的——做完就會亮。四項都亮了再去 flipclass 交截圖。</p>
+      <div id="checklist"></div>
+    </div>
+
+    <details class="box" id="mda-box">
+      <summary style="cursor:pointer;font-weight:800;font-size:15px">M／D／A 是什麼？（寫回饋前先看這個）</summary>
+      <div style="margin-top:12px">
+        <p class="sub" style="margin:0 0 12px">這三層是這門課看遊戲的方式。寫回饋和短文時，就是在講「動了 M 的哪一點，D 和 A 怎麼跟著變」。</p>
+        <div class="mdarow"><b class="mtag m">M 機制</b>
+          <div><b>規則本身。</b>卡片改的就是這一層——例如「TEAM 要幾個人才算數」「DEFEND 減多少傷」「起始自尊幾點」。
+          這層是<b>設計師寫下來的東西</b>，玩家看得到、也改不了。</div></div>
+        <div class="mdarow"><b class="mtag d">D 動態</b>
+          <div><b>規則跑起來之後，大家實際上怎麼玩。</b>誰跟誰結盟、誰被集火、有沒有人一直龜、
+          討論區是熱絡還是沒人講話。這層<b>沒有人寫下來</b>，是從機制長出來的。
+          每一回合的統計表就是在給你看這一層。</div></div>
+        <div class="mdarow"><b class="mtag a">A 體驗</b>
+          <div><b>玩的人感覺到什麼。</b>緊張、爽、尷尬、被陰、不想出手。
+          這層最難講，但它才是玩家真正帶走的東西。</div></div>
+        <p class="sub" style="margin:12px 0 0"><b>關鍵：</b>同一張卡往往只動了 M 一點點，D 和 A 卻整個翻掉。
+        找出那條因果，就是這份作業要你做的事。</p>
+      </div>
+    </details>
+
+    <div class="box">
+      <h3>看別人那一場（要留 2 則評論）</h3>
+      <p class="sub" style="margin-bottom:10px">別組玩的規則跟你不一樣。看看他們的結果，說說跟你玩到的有什麼不同。</p>
+      <div id="others"></div>
     </div>
 
     <div class="box">
@@ -255,9 +305,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222141"></script>
-<script src="js/sf3k_cards.js?v=202609222141"></script>
-<script src="js/sf3k_stats.js?v=202609222141"></script>
+<script src="js/sf3k_engine.js?v=202609222144"></script>
+<script src="js/sf3k_cards.js?v=202609222144"></script>
+<script src="js/sf3k_stats.js?v=202609222144"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -335,8 +385,11 @@ function dropNull(o){
   Object.keys(o||{}).forEach(function(k){ if (o[k] != null) out[k] = o[k]; });
   return out;
 }
+var progressWatched = false;
 function enterLobby(){
   show('scr-lobby');
+  if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); }
+  renderChecklist();
   ROOT.child('comboStats').on('value', function(s){
     var v = s.val()||{}; comboCount = {};
     Object.keys(v).forEach(function(k){ comboCount[k] = (v[k]&&v[k].count)||0; });
@@ -923,6 +976,93 @@ function recordPlays(after, oc){
   });
 }
 
+/* ═════ 完成檢核：四項，全部讀真實資料 ═════ */
+var myStats = { games:0, feedback:0, comments:0, essay:false };
+function watchMyProgress(){
+  if (me.env == null) return;
+  ROOT.child('plays/'+me.env).on('value', function(s){
+    myStats.games = Object.keys(dropNull(normObj(s.val()))).length;
+    renderChecklist();
+  });
+  ROOT.child('feedback').on('value', function(s){
+    var v = dropNull(normObj(s.val()));
+    var mine = Object.keys(v).map(function(k){ return v[k]; })
+      .filter(function(x){ return String(x.env)===String(me.env); });
+    myStats.feedback = mine.length;
+    myStats.essay = mine.some(function(x){ return (x.essay||'').trim().length >= 20; });
+    renderChecklist();
+  });
+  ROOT.child('comments').on('value', function(s){
+    var byRoom = dropNull(normObj(s.val())), n = 0;
+    Object.keys(byRoom).forEach(function(rm){
+      var per = dropNull(normObj(byRoom[rm]));
+      Object.keys(per).forEach(function(e){ if (String(e)===String(me.env)) n++; });
+    });
+    myStats.comments = n;
+    renderChecklist();
+  });
+}
+function renderChecklist(){
+  var box = $('checklist'); if (!box) return;
+  var items = [
+    { ok: myStats.games >= 3, n: myStats.games, need: 3,
+      t: '玩完三輪', h: '原版 → 只改一個地方 → 整組改。目前 ' + myStats.games + ' / 3 場' },
+    { ok: myStats.feedback >= 3, n: myStats.feedback, need: 3,
+      t: '3 則各輪回饋', h: '每輪結束後回答那三個問題。目前 ' + myStats.feedback + ' / 3 則' },
+    { ok: myStats.comments >= 2, n: myStats.comments, need: 2,
+      t: '2 則看別場次的評論', h: '在下面「看別人那一場」留言。目前 ' + myStats.comments + ' / 2 則' },
+    { ok: myStats.essay, n: myStats.essay?1:0, need: 1,
+      t: '1 段短文（100 字以內）', h: '用 M／D／A 講今天整體感覺，自己寫、不要用 AI' }
+  ];
+  box.innerHTML = items.map(function(x){
+    return '<div class="ck' + (x.ok?' done':'') + '">'
+      + '<div class="ckmark">' + (x.ok?'✓':x.n) + '</div>'
+      + '<div><div class="cktext"><b>' + esc(x.t) + '</b></div>'
+      + '<div class="ckhint">' + esc(x.h) + '</div></div></div>';
+  }).join('');
+  var all = items.every(function(x){ return x.ok; });
+  if (all) box.innerHTML += '<p class="okmsg" style="margin-top:10px">四項都完成了！去 flipclass 交一張結束畫面的截圖就收工。</p>';
+}
+
+/* ═════ 看別人那一場：列出已結束的場次，可留評論 ═════ */
+function watchOthers(){
+  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(30).on('value', function(s){
+    var v = dropNull(normObj(s.val())), out = [];
+    Object.keys(v).reverse().forEach(function(code){
+      if (/^ZZ/.test(code)) return;
+      var m = v[code].meta; if (!m || m.phase !== 'over') return;
+      var mine = !!(dropNull(normObj(v[code].players))[me.env]);
+      if (mine) return;                       // 自己那場不算「別人的」
+      var cards = (m.cards||[]).map(CARDS.byId).filter(Boolean);
+      var feat = cards.length
+        ? cards.map(function(c){ return '<span class="pill on">'+esc(c.name)+'</span>'; }).join(' ')
+        : '<span class="pill">原版規則</span>';
+      var wn = (m.winners||[]).length;
+      out.push('<div class="otherrow"><div class="hd">'
+        + '<span><b class="mono">'+esc(code)+'</b> <span class="pill">'+(m.round||1)+' 回合</span> '
+        + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span></span></div>'
+        + '<div style="margin-bottom:8px">'+feat+'</div>'
+        + '<div class="row"><div class="grow"><input class="cm" data-code="'+esc(code)+'" '
+        + 'placeholder="他們那場跟你玩到的有什麼不一樣？" maxlength="200"></div>'
+        + '<button class="cmb sm pri" data-code="'+esc(code)+'">留言</button></div>'
+        + '<div class="ckhint" id="cm-'+esc(code)+'"></div></div>');
+    });
+    $('others').innerHTML = out.length ? out.join('')
+      : '<p class="sub" style="margin:0">還沒有別人玩完。等其他組打完一場就會出現在這裡。</p>';
+    Array.prototype.forEach.call($('others').querySelectorAll('.cmb'), function(b){
+      b.onclick = function(){
+        var code = b.dataset.code;
+        var inp = $('others').querySelector('.cm[data-code="'+code+'"]');
+        var v2 = (inp.value||'').trim();
+        if (v2.length < 5) { $('cm-'+code).textContent = '再多寫一點（至少 5 個字）'; return; }
+        ROOT.child('comments/'+code+'/'+me.env).set({ text: v2, env: me.env, ts: nowTs() })
+          .then(function(){ inp.value=''; $('cm-'+code).textContent = '已送出 ✓'; })
+          .catch(function(e){ $('cm-'+code).textContent = '送不出去：'+(e.message||e); });
+      };
+    });
+  });
+}
+
 /* ═════ 討論區 ═════ */
 function say(text, sys){
   if (!roomRef) return;
@@ -1001,6 +1141,6 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/bind_gate.js?v=202609222141"></script>
+<script src="js/bind_gate.js?v=202609222144"></script>
 </body>
 </html>

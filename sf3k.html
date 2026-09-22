@@ -111,6 +111,32 @@ table.st th:first-child,table.st td:first-child{text-align:left}
 table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:.04em}
 .bar3{display:flex;height:11px;border-radius:6px;overflow:hidden;margin:8px 0 4px;border:1.5px solid var(--line)}
 .bar3 i{display:block}
+/* 規則教學：照原始教學簡報的段落結構重講一遍 */
+.rsum{cursor:pointer;font-weight:800;font-size:15.5px;list-style:none}
+.rsum::-webkit-details-marker{display:none}
+.rsum::before{content:'▸ ';font-size:13px;opacity:.6}
+details[open] > .rsum::before{content:'▾ '}
+.rbody{margin-top:12px}
+.rlead{font-size:14.5px;line-height:1.85;margin:0 0 14px;padding:11px 13px;
+  background:var(--accent-soft);border-radius:10px;border-left:4px solid var(--accent)}
+.rsec{margin:0 0 14px}
+.rsec.key{padding:12px 13px;background:var(--panel2);border-radius:10px;border:1.5px dashed var(--line)}
+.rh{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--ink-soft);
+  text-transform:uppercase;margin:0 0 7px}
+.rul,.rol{margin:0;padding-left:1.35em;font-size:14px;line-height:1.85}
+.rul li,.rol li{margin:3px 0}
+.rnote{font-size:13px;color:var(--ink-soft);line-height:1.7;margin:7px 0 0}
+.rcards{display:grid;gap:8px;grid-template-columns:1fr}
+@media (min-width:680px){.rcards{grid-template-columns:repeat(3,1fr)}}
+.rcard{border:1.5px solid var(--line);border-left-width:5px;border-radius:11px;padding:10px 12px;
+  background:var(--panel);font-size:13.5px;line-height:1.7}
+.rcard b{display:block;font-size:14.5px;margin-bottom:4px}
+.rcard span{display:block}
+.rcard i{display:block;font-style:normal;font-size:12.5px;color:var(--ink-soft);margin-top:5px;
+  padding-top:5px;border-top:1px dashed var(--line)}
+.rcard.solo{border-left-color:var(--red)} .rcard.solo b{color:var(--red)}
+.rcard.team{border-left-color:var(--blue)} .rcard.team b{color:var(--blue)}
+.rcard.def{border-left-color:var(--green)} .rcard.def b{color:var(--green)}
 /* MDA 說明 */
 .mdarow{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.7}
 .mdarow:last-of-type{border-bottom:none}
@@ -168,6 +194,64 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
     </div>
 
     <div id="resume-box"></div>
+
+    <details class="box" id="rules-box" open>
+      <summary class="rsum">遊戲規則（第一次玩先看這裡）</summary>
+      <div class="rbody">
+      <p class="rlead">SiSSYFiGHT 模擬的是<b>小學女生在操場上的社交鬥爭</b>。
+      每個人一開始有 <b>10 點自尊</b>，目標是把別人的自尊扣到 0。
+      場上只剩 1-2 個人還有自尊時，那些人獲勝。</p>
+
+      <div class="rsec"><div class="rh">準備</div>
+        <ul class="rul">
+          <li><b>3 張行動卡</b>：單挑（SOLO）／聯手（TEAM）／畏縮（DEFEND）</li>
+          <li><b>6 張顏色目標卡</b>：紅、綠、藍、黑、白、灰。每個人挑一個顏色當自己的代表色，
+              不能跟別人重複，而且<b>要讓所有人隨時看得到你是什麼顏色</b>。</li>
+          <li><b>10 個自尊籌碼</b></li>
+        </ul>
+        <p class="rnote">線上版把顏色、發牌、算傷害都自動處理掉了——你只要選「出什麼」跟「打誰」。</p>
+      </div>
+
+      <div class="rsec"><div class="rh">一回合怎麼走</div>
+        <ol class="rol">
+          <li><b>秘密選</b>一張行動卡 ＋ 一個目標。</li>
+          <li><b>只能公開講話</b>。可以用講的、用手勢，但<b>不准耳語、不准傳紙條、
+              不准比別人看不到的手勢、不准給別人看你的牌</b>。</li>
+          <li>大家都想好了，<b>同時翻開</b>，一起結算。</li>
+          <li>籌碼歸零的人<b>出局</b>。</li>
+          <li>一回合結束時只剩 1-2 個人 → <b>那些人獲勝</b>。</li>
+        </ol>
+      </div>
+
+      <div class="rsec"><div class="rh">三張行動卡</div>
+        <div class="rcards">
+          <div class="rcard solo"><b>SOLO　單挑</b>
+            <span>一個人打目標。目標<b>扣 1 點</b>。</span>
+            <i>穩，但很小。一個人就做得到。</i></div>
+          <div class="rcard team"><b>TEAM　聯手</b>
+            <span><b>至少兩個人</b>同時選同一個目標才算數，目標<b>每個攻擊者扣 2 點</b>。
+            <b>只有一個人出 TEAM 打他＝完全沒效果。</b></span>
+            <i>威力大得多，但你得先說服別人跟你一起打。</i></div>
+          <div class="rcard def"><b>DEFEND　畏縮</b>
+            <span>這回合你選的目標卡<b>不生效</b>。你這回合要扣的籌碼<b>減半（無條件捨去）</b>。
+            但<b>如果沒有任何人指定你，你反而要自扣 1 點</b>。</span>
+            <i>躲得掉集火，躲不掉「沒人理你」。</i></div>
+        </div>
+      </div>
+
+      <div class="rsec key"><div class="rh">這個遊戲的關鍵在哪</div>
+        <ul class="rul">
+          <li><b>TEAM 的威力來自協調，而協調只能靠講話。</b>
+              所有的結盟、背叛、虛張聲勢，都發生在出牌前那段公開喊話裡——
+              <b>不講話這個遊戲就沒東西了</b>。</li>
+          <li><b>DEFEND 的自扣讓「什麼都不做」不安全。</b>
+              你不能一直龜著等別人打完，遊戲逼你參與衝突。</li>
+          <li>規則就這麼多。等一下你會看到：<b>只動其中一個數字，整場的氣氛就完全不一樣</b>——
+              那就是這週要你觀察的事。</li>
+        </ul>
+      </div>
+      </div>
+    </details>
 
     <div class="box" id="checklist-box">
       <h3>今天要完成的四項</h3>
@@ -231,6 +315,20 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
         <button class="sm" id="btn-leave" style="margin-left:6px">離開這場</button></span>
     </div>
     <div id="takeover-box"></div>
+    <details class="box tight" id="rules-mini">
+      <summary class="rsum" style="font-size:14px">規則速查（忘記了點這裡）</summary>
+      <div class="rbody" style="margin-top:10px">
+        <div class="rcards">
+          <div class="rcard solo"><b>SOLO　單挑</b><span>目標扣 <b>1</b> 點。一個人就做得到。</span></div>
+          <div class="rcard team"><b>TEAM　聯手</b><span><b>至少兩人</b>打同一個目標才算數，
+            每個攻擊者讓他扣 <b>2</b> 點。只有你一個人出＝<b>沒效果</b>。</span></div>
+          <div class="rcard def"><b>DEFEND　畏縮</b><span>受到的傷害<b>減半</b>（捨去），
+            但<b>沒人指定你就自扣 1</b>。</span></div>
+        </div>
+        <p class="rnote" style="margin-top:8px">出牌前<b>一定要在下面的公開討論區講話</b>——
+          誰要聯手打誰就在那裡喊。不准私下講。這一場如果改過規則，上面「這一場改了什麼」會寫。</p>
+      </div>
+    </details>
     <p class="sub" id="room-cards"></p>
     <details class="box tight" id="cardpeek" style="display:none">
       <summary style="cursor:pointer;font-weight:800;font-size:14.5px">這一場改了什麼？（點開看每張卡）</summary>
@@ -319,9 +417,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222222"></script>
-<script src="js/sf3k_cards.js?v=202609222222"></script>
-<script src="js/sf3k_stats.js?v=202609222222"></script>
+<script src="js/sf3k_engine.js?v=202609222223"></script>
+<script src="js/sf3k_cards.js?v=202609222223"></script>
+<script src="js/sf3k_stats.js?v=202609222223"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1261,7 +1359,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222222"></script>
-<script src="js/bind_gate.js?v=202609222222"></script>
+<script src="js/gate_i18n.js?v=202609222223"></script>
+<script src="js/bind_gate.js?v=202609222223"></script>
 </body>
 </html>

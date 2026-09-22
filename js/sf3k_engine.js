@@ -468,7 +468,14 @@
       var d = res.damage[p.id] || 0;
       out.chips = Math.max(0, Math.min(c.startChips, p.chips - d));
       out.alive = out.chips > 0;
-      out.lastAction = res.choices[p.id] ? res.choices[p.id].action : p.lastAction;
+      /* 🔴 2026-09-23 seat_ring 4 人測試抓到、會讓整場永久卡死的 bug：
+         寫 lastAction:null 在 Firebase 等於刪除那個欄位，讀回來是 undefined（鍵不存在），
+         不是 null。當某人第一回合的選擇被判定不合法（例如 attackRange 卡的超出射程）時，
+         這裡會退回讀 p.lastAction —— 新玩家從沒真的有這個欄位，值是 undefined。
+         undefined 寫進 Firebase 的 update() 會讓那次呼叫【同步拋出】（不是 Promise rejection），
+         呼叫端的 .then()/.catch() 鏈根本沒機會接手，外層 hostResolving 鎖永遠卡 true，
+         之後整個瀏覽器分頁的每一場都會被同一個死鎖擋下。用 || null 確保永遠不是 undefined。 */
+      out.lastAction = res.choices[p.id] ? res.choices[p.id].action : (p.lastAction || null);
       return out;
     });
   }

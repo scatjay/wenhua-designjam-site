@@ -732,10 +732,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230242"></script>
-<script src="js/sf3k_verified.js?v=202609230242"></script>
-<script src="js/sf3k_cards.js?v=202609230242"></script>
-<script src="js/sf3k_stats.js?v=202609230242"></script>
+<script src="js/sf3k_engine.js?v=202609230309"></script>
+<script src="js/sf3k_verified.js?v=202609230309"></script>
+<script src="js/sf3k_cards.js?v=202609230309"></script>
+<script src="js/sf3k_stats.js?v=202609230309"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -2078,18 +2078,31 @@ function hostTick(force){
   if (got < actors.length && !force) return;            // 還沒到齊（GM 可以按「跳過他們」強制結算）
   if (hostResolving) return;                            // 中：避免兩個 listener 同時進來重複結算
   hostResolving = true;
-  var res = E.resolve(P, state.choices, c);
-  var after = E.apply(P, res, c);
-  var oc = E.outcome(after, c);
-  var upd = {};
-  after.forEach(function(p){ upd['players/'+p.env] = p; });
-  upd['rounds/'+c.roundNo+'/result'] = { damage: res.damage, log: res.log, event: state.meta.roundEvent||null };
-  upd['meta/phase'] = oc.over ? 'over' : 'reveal';
-  if (oc.over) { upd['meta/winners'] = oc.winners; upd['meta/overWhy'] = oc.why; }
-  roomRef.update(upd).then(function(){
-    if (oc.over) recordPlays(after, oc);
-  }).catch(function(e){ console.warn('[host] 結算寫入失敗', e); })
-    .then(function(){ hostResolving = false; });
+  /* 🔴 2026-09-23 血淋淋教訓：這整段原本假設「錯誤只會透過 Promise 的 .catch() 出現」，
+     但 roomRef.update() 遇到 payload 裡有 undefined 值時是【同步拋出】，不是 Promise
+     rejection —— 那次連 .then()/.catch() 都沒機會接上，hostResolving 卡 true 到天荒地老，
+     之後這整個瀏覽器分頁的每一場都會被同一個死鎖擋下（座位權力環 4 人測試實測到）。
+     用 try/finally 包住整段同步計算：不管是哪裡（E.resolve/apply/outcome 或 update()
+     本身）拋出，hostResolving 都保證會被放掉，下一次監聽器觸發還有機會重試。
+     已經修掉那個具體的 undefined 來源（sf3k_engine.js 的 lastAction），這層是雙重保險，
+     不是取代那個修法。 */
+  try {
+    var res = E.resolve(P, state.choices, c);
+    var after = E.apply(P, res, c);
+    var oc = E.outcome(after, c);
+    var upd = {};
+    after.forEach(function(p){ upd['players/'+p.env] = p; });
+    upd['rounds/'+c.roundNo+'/result'] = { damage: res.damage, log: res.log, event: state.meta.roundEvent||null };
+    upd['meta/phase'] = oc.over ? 'over' : 'reveal';
+    if (oc.over) { upd['meta/winners'] = oc.winners; upd['meta/overWhy'] = oc.why; }
+    roomRef.update(upd).then(function(){
+      if (oc.over) recordPlays(after, oc);
+    }).catch(function(e){ console.warn('[host] 結算寫入失敗', e); })
+      .then(function(){ hostResolving = false; });
+  } catch (e) {
+    console.warn('[host] 結算計算時拋出（同步）', e);
+    hostResolving = false;
+  }
 }
 function nextRound(){
   var m = state.meta, c = E.cfg(m.cfg||{});
@@ -2918,7 +2931,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230242"></script>
-<script src="js/bind_gate.js?v=202609230242"></script>
+<script src="js/gate_i18n.js?v=202609230309"></script>
+<script src="js/bind_gate.js?v=202609230309"></script>
 </body>
 </html>

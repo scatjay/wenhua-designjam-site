@@ -375,7 +375,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
   <!-- ══ 選卡（GM）══ -->
   <section id="scr-setup" class="hide">
     <h1>這一場要改什麼？</h1>
-    <p class="sub">選到的每一張卡都會<b>立刻改變規則</b>。不選就是原版。</p>
+    <p class="sub"><b>挑一張</b>就好——選了就立刻改變規則，不選就是原版。<br>一次只動一個地方，等一下才看得出來「是哪一張造成的」。再點一張會換掉原本那張。</p>
     <div class="box">
       <div class="row">
         <span class="pill" id="setup-code"></span>
@@ -523,9 +523,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222236"></script>
-<script src="js/sf3k_cards.js?v=202609222236"></script>
-<script src="js/sf3k_stats.js?v=202609222236"></script>
+<script src="js/sf3k_engine.js?v=202609222248"></script>
+<script src="js/sf3k_cards.js?v=202609222248"></script>
+<script src="js/sf3k_stats.js?v=202609222248"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -755,10 +755,25 @@ function renderPool(){
     el.onkeydown = function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); el.click(); } };
   });
 }
+/* 🔴 一次只能選一張（楊老師 2026-09-22 定案）。
+   理由是可驗證性：40 張單張全部窮舉測過都能打完；兩張是 780 組、三張以上是上萬組，
+   沒辦法在上課前全部驗證。「每一種選擇都保證玩得動」比「什麼都能組」重要。
+   而且教學上本來就是要「只動一個變因，因果才看得清楚」。
+   選第二張時自動換掉第一張，不要跳錯誤訊息擋人。 */
+var MAX_CARDS = 1;
 function toggleCard(id, el){
   var i = selected.indexOf(id);
-  if (i>=0) selected.splice(i,1); else selected.push(id);
-  el.setAttribute('aria-pressed', i>=0 ? 'false':'true');
+  if (i>=0) { selected.splice(i,1); }
+  else {
+    selected.push(id);
+    while (selected.length > MAX_CARDS) selected.shift();   // 超過就把最早選的擠掉
+  }
+  // 重畫全部卡片的按下狀態——被擠掉那張也要跟著彈回來
+  Array.prototype.forEach.call(document.querySelectorAll('#pool .mcard'), function(c){
+    var cid = c.dataset && c.dataset.id;
+    if (cid) c.setAttribute('aria-pressed', selected.indexOf(cid)>=0 ? 'true':'false');
+  });
+  if (el) el.setAttribute('aria-pressed', selected.indexOf(id)>=0 ? 'true':'false');
   renderSetupState();
 }
 $('btn-clear').onclick = function(){
@@ -768,7 +783,7 @@ $('btn-clear').onclick = function(){
 };
 function currentCfg(n){ return E.cfg(CARDS.merge(selected)); }
 function renderSetupState(){
-  $('setup-count').textContent = '已選 '+selected.length+' 張';
+  $('setup-count').textContent = selected.length ? '已選：'+((CARDS.byId(selected[0])||{}).name||selected[0]) : '還沒選（＝原版）';
   var c = currentCfg(), v = E.validate(c, 6), cf = CARDS.conflicts(selected);
   var out = '';
   v.problems.forEach(function(p){ out += '<p class="err">⛔ '+esc(p)+'</p>'; });
@@ -1828,7 +1843,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222236"></script>
-<script src="js/bind_gate.js?v=202609222236"></script>
+<script src="js/gate_i18n.js?v=202609222248"></script>
+<script src="js/bind_gate.js?v=202609222248"></script>
 </body>
 </html>

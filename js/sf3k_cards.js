@@ -14,7 +14,13 @@
     // ⚠ 起始 1 點時必須同時把空過懲罰歸零，否則「畏縮一次就死」＝這張卡自己跟自己打架
     //   （窮舉測試抓到的：它一張就擋掉 26 組組合）
     { id: 'chips_1', name: '一擊必殺', dim: 'F', kind: '參數', online: true, from: 'student', seen: 3,
-      patch: { startChips: 1, defendIdlePenalty: 0 }, desc: '起始自尊只有 1 點，被打中就出局；畏縮不再自扣。',
+      // 🔴 2026-09-22 窮舉測試抓到：起始 1 點 ＋ 畏縮傷害減半（1 減半捨去＝0）＋ 空過懲罰 0
+      //    ⇒ 沒有任何人會掉血，3/4/5/6 人、隨機出牌或全部龜，八種情境全部打不完。
+      //    這是卡池裡唯一一張壞掉的卡（雙張組合出問題的 33 組也全部含它）。
+      //    修法：畏縮不再減半（defendDivisor:1）——這張卡的敘述本來就是「被打中就出局」，
+      //    減半跟它自己的設定互相矛盾。再加 maxRounds 當保險，避免全場互不出手時無限延長。
+      patch: { startChips: 1, defendIdlePenalty: 0, defendDivisor: 1, maxRounds: 12 },
+      desc: '起始自尊只有 1 點，被打中就出局；畏縮不再自扣，但也擋不住傷害。最多 12 回合，時間到比誰還活著。',
       mda: 'M→D：容錯歸零時，玩家從「經營消耗」變成「不敢出手」，觀望成為主流。' },
     { id: 'chips_20', name: '拉長對局', dim: 'F', kind: '參數', online: true, from: 'student', seen: 3,
       patch: { startChips: 20 }, desc: '起始自尊 20 點，局勢變化更慢。',

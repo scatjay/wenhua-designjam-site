@@ -18,6 +18,15 @@
   var QR_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js';
   var st = { email: null, uid: null, name: null, env: null, busy: false };
 
+  /* 🔴 合法編號範圍必須跟 unit1.html / w2.html 的 validEnv 完全一致，否則某一班會整班進不來。
+     0＝楊老師｜1-52 文化遊戲松學生（實體信封）｜53-61 測試/demo｜99＝駱老師｜101-130 遊戲設計學。
+     ⚠ 100 是刻意跳過的，不要「順手」補回去。
+     （2026-09-22：原本寫死 0-99，遊戲設計學的學生會全部被擋在門外才發現。）*/
+  function validEnv(v) {
+    if (v == null || isNaN(v)) return false;
+    return v === 0 || (v >= 1 && v <= 98) || v === 99 || (v >= 101 && v <= 130);
+  }
+
   function ls(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lset(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function esc(s) { return String(s == null ? '' : s).replace(/[<>&"]/g, function (c) {
@@ -64,6 +73,7 @@
 '#dj-gate .qrcap{font-size:13px;color:#54646e;margin-top:7px;line-height:1.6}',
 '#dj-gate .tiny{font-size:13px;color:#54646e;margin-top:14px;line-height:1.7}',
 '#dj-gate .tiny a{color:#2f6690}',
+'@media (max-width:560px){#dj-bar{max-width:calc(100vw - 24px);font-size:12px;padding:5px 11px}}',
 '#dj-bar{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
 '  border-radius:999px;padding:6px 13px;font:700 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
 '  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:72vw;overflow:hidden;',
@@ -122,7 +132,8 @@
       '<div class="step" id="dj-s2">' +
         '<div class="stitle"><span id="dj-t2">②</span> 輸入你的信封編號</div>' +
         '<div class="row" style="margin-top:7px">' +
-          '<div class="grow"><input id="dj-env" type="number" inputmode="numeric" min="0" max="99" placeholder="0 - 99"></div>' +
+          '<div class="grow"><input id="dj-env" type="number" inputmode="numeric" min="0" max="130" ' +
+            'placeholder="文化遊戲松 1-52 ／ 遊戲設計學 101 起"></div>' +
         '</div>' +
       '</div>' +
 
@@ -159,7 +170,7 @@
     if (!envI) return;
     var raw = envI.value.trim();
     var v = raw === '' ? NaN : parseInt(raw, 10);
-    var envOk = !isNaN(v) && v >= 0 && v <= 99;     // ⚠ 0 合法
+    var envOk = validEnv(v);                        // ⚠ 0 合法；100 不合法；上限 130
     st.env = envOk ? v : null;
     document.getElementById('dj-s1').className = 'step' + (st.email ? ' done' : '');
     document.getElementById('dj-s2').className = 'step' + (envOk ? ' done' : '');
@@ -193,7 +204,7 @@
     if (st.busy) return;
     var envI = document.getElementById('dj-env');
     var v = envI ? parseInt(envI.value, 10) : NaN;
-    if (isNaN(v) || v < 0 || v > 99) { showErr('請輸入 0-99 的編號'); return; }
+    if (!validEnv(v)) { showErr('這個編號不在名單範圍內。文化遊戲松是 1-52，遊戲設計學是 101 以上。'); return; }
     if (!skipMail && !st.email) { showErr('請先用 Google 登入'); return; }
     st.busy = true; refresh();
     lset(LS_ENV, String(v));
@@ -223,6 +234,13 @@
       openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補綁。');
     };
     document.body.appendChild(b);
+    // 🔴 固定定位會蓋住頁面最上緣（實測蓋掉單元導覽的「第3週」）。
+    //    顯示時把 body 往下推讓出它的高度——不要只調 z-index，那只是決定誰蓋誰，內容還是被擋。
+    requestAnimationFrame(function () {
+      var h = b.getBoundingClientRect().height || 30;
+      var cur = parseFloat(getComputedStyle(document.body).paddingTop) || 0;
+      if (cur < h + 20) document.body.style.paddingTop = (h + 20) + 'px';
+    });
   }
 
   /* ── 起手 ── */

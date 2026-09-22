@@ -115,7 +115,14 @@ table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:
 .bar .wrap2{max-width:860px;margin:0 auto;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
 .fab{position:fixed;right:14px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:21;
   border-radius:999px;padding:9px 15px;background:var(--panel);border:1.5px solid var(--line);
-  box-shadow:var(--shadow);font-size:13px;font-weight:700;color:var(--ink-soft)}
+  box-shadow:var(--shadow);font-size:13px;font-weight:700;color:var(--ink-soft);opacity:.92}
+/* 沒有底部出牌列時（大廳／選卡）就貼底，不要浮在內容中間 */
+body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
+/* 窄螢幕只留圖示，免得壓住卡片文字（實測壓到「當 GM，開一場」） */
+@media (max-width:560px){
+  .fab{padding:10px 12px;font-size:16px;line-height:1}
+  .fab .txt{display:none}
+}
 </style>
 </head>
 <body>
@@ -233,7 +240,7 @@ table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:
   </div>
 </div>
 
-<button class="fab" id="btn-report">🐞 回報 bug／建議</button>
+<button class="fab" id="btn-report" title="回報 bug／建議">🐞<span class="txt"> 回報 bug／建議</span></button>
 <div class="box hide" id="report-box" style="position:fixed;right:14px;left:14px;max-width:420px;
      bottom:calc(128px + env(safe-area-inset-bottom));margin:0 0 0 auto;z-index:22">
   <h3>哪裡怪怪的？</h3>
@@ -249,9 +256,9 @@ table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222129"></script>
-<script src="js/sf3k_cards.js?v=202609222129"></script>
-<script src="js/sf3k_stats.js?v=202609222129"></script>
+<script src="js/sf3k_engine.js?v=202609222133"></script>
+<script src="js/sf3k_cards.js?v=202609222133"></script>
+<script src="js/sf3k_stats.js?v=202609222133"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -711,7 +718,7 @@ function renderBar(c, P){
     $('btn-submit').onclick = startGame;
     return;
   }
-  if (m.phase!=='choose') { $('bar').classList.add('hide'); stopTimer(); $('timer').style.display='none'; return; }
+  if (m.phase!=='choose') { $('bar').classList.add('hide'); document.body.classList.add('nobar'); stopTimer(); $('timer').style.display='none'; return; }
   if (lastTimerRound !== m.round) { lastTimerRound = m.round; startTimer(c); }
   var meP = state.players[me.env];
   var iAmGhost = meP && !meP.alive;
@@ -721,7 +728,7 @@ function renderBar(c, P){
     $('btn-submit').classList.add('hide'); return;
   }
   $('btn-submit').classList.remove('hide');
-  $('bar').classList.remove('hide');
+  $('bar').classList.remove('hide'); document.body.classList.remove('nobar');
   var done = state.choices && state.choices[me.env];
   if (done) {
     $('bar-actions').innerHTML = '<span class="okmsg">已出牌</span>' + waitingHtml(c, P);
@@ -968,6 +975,6 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/bind_gate.js?v=202609222129"></script>
+<script src="js/bind_gate.js?v=202609222133"></script>
 </body>
 </html>

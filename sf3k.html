@@ -111,6 +111,8 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 .seat .hp{font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:700;margin:2px 0}
 .swatch{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.18)}
 /* 討論區 */
+.av{display:inline-block;margin-right:4px;font-size:1.05em;line-height:1;vertical-align:-1px}
+.msg.mine .who{color:var(--accent)}
 .chat{height:220px;overflow-y:auto;border:1.5px solid var(--line);border-radius:12px;padding:10px;
   background:var(--bg);font-size:14px;line-height:1.65}
 .msg{margin:3px 0}
@@ -621,9 +623,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222336"></script>
-<script src="js/sf3k_cards.js?v=202609222336"></script>
-<script src="js/sf3k_stats.js?v=202609222336"></script>
+<script src="js/sf3k_engine.js?v=202609222337"></script>
+<script src="js/sf3k_cards.js?v=202609222337"></script>
+<script src="js/sf3k_stats.js?v=202609222337"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -741,6 +743,18 @@ function armConfirm(btn, warnText, onYes){
 function code4(){ var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<4;i++)
   s+=A[Math.floor(Math.random()*A.length)]; return s; }
 var COLORS=['#c0392b','#27ae60','#2980b9','#2c3e50','#e67e22','#8e44ad','#16a085','#d35400'];
+/* 每個編號固定一個 emoji（楊老師 2026-09-22）。用編號算出來的，不存、不隨機，
+   所以同一個人在任何裝置、任何場次看到的都一樣，跟顏色一樣是身分標記。
+   ⚠ 不用國旗：Windows 很多環境的字型沒有國旗圖案，會變成 [TW] 字母代碼
+   （2026-09-09 踩過，那次要靠 twemoji 才救回來）。這裡只用單碼動物／物件，各平台都畫得出來。 */
+var AVATARS = ['🦊','🐼','🐙','🦉','🐸','🦁','🐧','🦄','🐝','🦖','🐳','🦔',
+               '🐨','🦩','🐢','🦜','🐺','🦦','🐰','🦌','🐷','🦇','🐻','🦈',
+               '🍄','🌵','🔥','⚡','🌙','⭐','🍀','🎈'];
+function avatarOf(env){
+  var n = parseInt(env, 10);
+  if (isNaN(n)) n = String(env).length;
+  return AVATARS[Math.abs(n) % AVATARS.length];
+}
 
 /* ═════ 身分：交給共用的 bind_gate.js ═════
    綁定只做一次（在學生第一次落地的那一頁），之後每一頁都只剩右上角小圓標。
@@ -822,7 +836,7 @@ function setNick(v){
 }
 function renderMeRow(){
   var el = $('lobby-me'); if (!el) return;
-  el.innerHTML = '你是 <b>' + esc(me.name) + '</b>'
+  el.innerHTML = '你是 <span class="av">' + avatarOf(me.env) + '</span><b>' + esc(me.name) + '</b>'
     + ' <span class="pill">#' + me.env + '</span>'
     + ' <button class="sm" id="btn-nick">改暱稱</button>'
     + '<span class="sub" style="display:block;margin-top:4px">'
@@ -1395,7 +1409,8 @@ function renderRoom(){
     var done = state.choices && state.choices[p.env] ? ' ✔' : '';
     var col = COLORS[((typeof p.seat==='number'?p.seat:i)%COLORS.length)];
     return '<div class="seat'+(isMe?' me':'')+(p.alive?'':' dead')+'">'
-      + '<div class="nm"><span class="swatch" style="background:'+col+'"></span>'+nm+done+'</div>'
+      + '<div class="nm"><span class="swatch" style="background:'+col+'"></span>'
+      + '<span class="av">'+avatarOf(p.env)+'</span>'+nm+done+'</div>'
       + '<div class="hp">'+hp+' <span class="sub">'+esc(L.chip)+'</span></div>'
       + (extra.length?'<div class="sub">'+esc(extra.join(' · '))+'</div>':'')
       + (p.alive?'':'<div class="sub">'+esc(L.out)+'</div>')
@@ -2211,7 +2226,8 @@ function rpRender(){
       + (msgs.length
           ? '<div class="rptalk">' + msgs.map(function(m){
               return '<div class="m">' + (m.sys ? '<i>'+esc(m.text)+'</i>'
-                : '<span class="who">'+rpName(m.env)+'：</span>'+esc(m.text)) + '</div>'; }).join('') + '</div>'
+                : '<span class="av">'+avatarOf(m.env)+'</span>'
+                  + '<span class="who">'+rpName(m.env)+'：</span>'+esc(m.text)) + '</div>'; }).join('') + '</div>'
           : '<p class="sub" style="margin:0">這一回合沒有人講話——聯手打不出來，'
             + '通常就是因為沒人開口。這件事本身就值得寫進你的觀察。</p>')
       + '</div>';
@@ -2325,9 +2341,13 @@ function renderChat(v){
     })
     .map(function(m){
       if (m.sys) return '<div class="msg sys">· '+esc(m.text)+'</div>';
-      var nm = c.anonymous && String(m.env)!==String(me.env) ? ('#'+m.env) : (m.name||('#'+m.env));
+      var anon = c.anonymous && String(m.env)!==String(me.env);
+      var nm = anon ? ('#'+m.env) : nickOf(m.env, m.name);
       var pre = m.to ? '<span class="pill">私</span> ' : '';
-      return '<div class="msg'+(m.to?' whis':'')+'">'+pre+'<span class="who">'+esc(nm)+'</span>：'+esc(m.text)+'</div>';
+      var me2 = String(m.env)===String(me.env) ? ' mine' : '';
+      return '<div class="msg'+(m.to?' whis':'')+me2+'">'+pre
+        + '<span class="av">'+avatarOf(m.env)+'</span>'
+        + '<span class="who">'+esc(nm)+'</span>：'+esc(m.text)+'</div>';
     }).join('');
   var el = $('chat'); var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
   el.innerHTML = out;
@@ -2403,7 +2423,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222336"></script>
-<script src="js/bind_gate.js?v=202609222336"></script>
+<script src="js/gate_i18n.js?v=202609222337"></script>
+<script src="js/bind_gate.js?v=202609222337"></script>
 </body>
 </html>

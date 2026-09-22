@@ -32,6 +32,9 @@
 '#dj-gate .box{background:#fff;color:#202a30;max-width:520px;width:100%;border-radius:16px;padding:22px 20px 18px;',
 '  box-shadow:0 10px 44px rgba(32,42,48,.28);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;',
 '  font-size:16px;line-height:1.7}',
+'#dj-gate .course{font-size:13px;font-weight:800;color:#7a3f92;line-height:1.75;margin:0 0 10px;',
+'  padding-bottom:10px;border-bottom:1.5px solid #dbd3e2}',
+'#dj-gate .course span{font-weight:400;color:#5d5566}',
 '#dj-gate h2{margin:0 0 4px;font-size:20px;font-weight:800}',
 '#dj-gate .sub{color:#54646e;font-size:14.5px;margin:0 0 16px;line-height:1.7}',
 '#dj-gate .step{border:1.5px solid #cfdae1;border-radius:12px;padding:13px 14px;margin:10px 0;background:#f7f9fa}',
@@ -98,6 +101,8 @@
     var pageUrl = location.origin + location.pathname;
     d.innerHTML =
       '<div class="box" role="dialog" aria-modal="true" aria-label="進入前先綁定">' +
+      '<div class="course">文化遊戲松實作　<span>通識・綜合實踐領域</span><br>' +
+        '遊戲設計學　<span>夜四技多樂一甲</span></div>' +
       '<h2>進入前，先綁定一次</h2>' +
       '<p class="sub">' + (reason || '確認你的信封編號與學校 Google 帳號。綁定之後，你在所有單元留下的紀錄都會連在一起。') + '</p>' +
 

@@ -605,9 +605,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222318"></script>
-<script src="js/sf3k_cards.js?v=202609222318"></script>
-<script src="js/sf3k_stats.js?v=202609222318"></script>
+<script src="js/sf3k_engine.js?v=202609222326"></script>
+<script src="js/sf3k_cards.js?v=202609222326"></script>
+<script src="js/sf3k_stats.js?v=202609222326"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -891,7 +891,13 @@ function enterLobby(){
       out.push('<div class="roomrow"><div class="top">'
         +'<span><span class="sub">代號</span> <b class="mono">'+esc(code)+'</b> <span class="pill '+phCls+'">'+esc(ph)+'</span> '
         +'<span class="pill">'+n+'/6 人</span> <span class="pill">GM #'+esc(m.hostEnv)+'</span></span>'
-        +'<button data-code="'+esc(code)+'" class="j sm">加入</button></div>'
+        /* 🔴 打完的場次按「加入」沒有任何意義；進行中的場次加入其實是變旁觀者，
+           按鈕就要講清楚是旁觀，不要讓學生以為還能一起玩。 */
+        +(m.phase==='over'
+            ? '<button data-code="'+esc(code)+'" class="rp sm">看回放</button>'
+            : (m.phase==='lobby'
+                ? '<button data-code="'+esc(code)+'" class="j sm pri">加入</button>'
+                : '<button data-code="'+esc(code)+'" class="j sm">旁觀</button>'))+'</div>'
         +'<div class="feat">'+feat
         +'<div style="margin-top:5px">這個組合已經被玩過 <b>'+played+'</b> 次</div></div></div>');
     });
@@ -899,6 +905,9 @@ function enterLobby(){
       : '<p class="sub">還沒有人開場次。</p>';
     Array.prototype.forEach.call($('open-rooms').querySelectorAll('.j'), function(b){
       b.onclick = function(){ joinRoom(b.dataset.code); };
+    });
+    Array.prototype.forEach.call($('open-rooms').querySelectorAll('.rp'), function(b){
+      b.onclick = function(){ openReplay(b.dataset.code); };
     });
   });
 }
@@ -1935,9 +1944,17 @@ function renderBoards(){
 }
 
 /* ═════ 看別人那一場：列出已結束的場次，可留評論 ═════ */
+function sessLabel(s){
+  if (!s) return '';
+  var m = /^(\d{4})(\d{2})(\d{2})(am|pm)$/.exec(String(s));
+  if (!m) return String(s);
+  var sameDay = String(s).slice(0, 8) === SESS.slice(0, 8);
+  var half = m[4] === 'am' ? '上午' : '晚上';
+  return sameDay ? half : (m[2] + '/' + m[3] + ' ' + half);
+}
 function watchOthers(){
-  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(30).on('value', function(s){
-    var v = dropNull(normObj(s.val())), out = [];
+  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(40).on('value', function(s){
+    var v = dropNull(normObj(s.val())), rows = [];
     Object.keys(v).reverse().forEach(function(code){
       if (/^ZZ/.test(code)) return;
       var m = v[code].meta; if (!m || m.phase !== 'over') return;
@@ -1945,17 +1962,27 @@ function watchOthers(){
       if (mine) return;                       // 自己那場不算「別人的」
       var cards = (m.cards||[]).map(CARDS.byId).filter(Boolean);
       var feat = cards.length
-        ? cards.map(function(c){ return '<span class="pill on">'+esc(c.name)+'</span>'; }).join(' ')
+        ? cards.map(function(c){ return '<span class="pill on" data-dim="'+esc(c.dim)+'">'+esc(c.name)+'</span>'; }).join(' ')
         : '<span class="pill">原版規則</span>';
       var wn = (m.winners||[]).length;
-      out.push('<div class="otherrow"><div class="hd">'
-        + '<span><b class="mono">'+esc(code)+'</b> <span class="pill">'+(m.round||1)+' 回合</span> '
-        + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span></span></div>'
+      /* 示範場次排最前（學生還沒打完之前就有東西可以看）、
+         再排本節課的（看同學的比看陌生人的有意義）、最後才是別的時段。 */
+      var tier = m.demo ? 0 : (m.sess === SESS ? 1 : 2);
+      var tag = m.demo
+        ? '<span class="pill amber">老師的示範場次</span>'
+        : (m.sess === SESS ? '' : '<span class="pill">' + esc(sessLabel(m.sess)) + '那一批</span>');
+      rows.push({ tier: tier, html:
+        '<div class="otherrow"><div class="hd">'
+        + '<span><span class="sub">代號</span> <b class="mono">'+esc(code)+'</b> '
+        + '<span class="pill">'+(m.round||1)+' 回合</span> '
+        + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span> '+tag+'</span></div>'
         + '<div style="margin-bottom:8px">'+feat+'</div>'
         + '<div class="row"><button class="cmb sm pri" data-code="'+esc(code)+'">'
         + '▶ 看這一場的回放</button>'
-        + '<span class="sub">看完才留觀察</span></div></div>');
+        + '<span class="sub">看完才留觀察</span></div></div>' });
     });
+    rows.sort(function(a, b){ return a.tier - b.tier; });
+    var out = rows.map(function(r){ return r.html; });
     $('others').innerHTML = out.length ? out.join('')
       : '<p class="sub" style="margin:0">還沒有別人玩完。等其他組打完一場就會出現在這裡。</p>';
     Array.prototype.forEach.call($('others').querySelectorAll('.cmb'), function(b){
@@ -2261,7 +2288,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609222318"></script>
-<script src="js/bind_gate.js?v=202609222318"></script>
+<script src="js/gate_i18n.js?v=202609222326"></script>
+<script src="js/bind_gate.js?v=202609222326"></script>
 </body>
 </html>

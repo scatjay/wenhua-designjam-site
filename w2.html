@@ -2346,7 +2346,7 @@ function startI18nObserver() {
 }
 
 function setLang(lang) {
-  try { localStorage.setItem("designjam_w2_lang", lang); } catch (_) {}
+  try { localStorage.setItem("designjam_lang", lang); } catch (_) {}
   // 🔴 不 reload。先把中文原文放回去，再套新語言——
   //    切回中文對照原文是外籍生最常做的動作，不能每做一次就被登出一次、
   //    也不能讓填到一半的欄位消失。
@@ -2380,7 +2380,7 @@ function setLang(lang) {
   });
   startI18nObserver();
   let saved = "zh";
-  try { saved = localStorage.getItem("designjam_w2_lang") || "zh"; } catch (_) {}
+  try { saved = localStorage.getItem("designjam_lang") || localStorage.getItem("designjam_w2_lang") || "zh"; } catch (_) {}
   if (saved !== "zh") setLang(saved);
 })();
 // ===== I18N-END =====
@@ -2422,6 +2422,7 @@ reEmoji();
 })();
 </script>
 <script>window.DJ_BIND_UNIT='w2';</script>
-<script src="js/bind_gate.js?v=202609222144"></script>
+<script src="js/gate_i18n.js?v=202609222210"></script>
+<script src="js/bind_gate.js?v=202609222210"></script>
 </body>
 </html>

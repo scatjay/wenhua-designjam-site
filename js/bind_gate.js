@@ -74,22 +74,73 @@
 '#dj-gate .tiny{font-size:13px;color:#54646e;margin-top:14px;line-height:1.7}',
 '#dj-gate .tiny a{color:#2f6690}',
 '@media (max-width:560px){#dj-bar{max-width:calc(100vw - 24px);font-size:12px;padding:5px 11px}}',
-'.dj-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}',
-'.dj-nav a{flex:1 1 150px;min-width:140px;text-decoration:none;background:#eaf0f3;',
-'  border:1.5px solid #cfdae1;border-left-width:5px;border-radius:12px;padding:9px 12px;',
-'  color:#54646e;font:700 13.5px/1.45 -apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;display:block}',
-'.dj-nav a b{display:block;font-size:14px}',
-'.dj-nav a span{display:block;font-weight:400;font-size:12px;color:#7b8892;margin-top:2px}',
-'.dj-nav a.hub{border-left-color:#9aa8b2}',
-'.dj-nav a.u1{border-left-color:#e0821f}',
-'.dj-nav a.u2{border-left-color:#2f6690}',
-'.dj-nav a.u3{border-left-color:#7a3f92}',
-'.dj-nav a.on.hub{background:#eef1f3;border-color:#9aa8b2;color:#465059}',
-'.dj-nav a.on.u1{background:#fbead2;border-color:#e0821f;color:#a35f14}',
-'.dj-nav a.on.u2{background:#e5eff6;border-color:#2f6690;color:#2f6690}',
-'.dj-nav a.on.u3{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
-'@media (max-width:560px){.dj-nav a{flex:1 1 calc(50% - 4px);min-width:0}',
-'  .dj-nav a span{display:none}}',
+/* ── 單元導覽：不管 3 週還是 18 週，收起來永遠只佔一列 ──
+   色票只有五個、依「單元性質」循環，不是每週一個新顏色（15 個可分辨的顏色不存在，
+   硬給只會變成一堆分不出來的灰）。相鄰兩週一定不同色，這樣才認得出「我在對的那一頁」。*/
+'.dj-nav{margin:0 0 16px;position:relative;',
+'  font:700 13.5px/1.45 -apple-system,"PingFang TC","Microsoft JhengHei",sans-serif}',
+'.dj-cur{display:flex;align-items:center;gap:9px;width:100%;text-align:left;cursor:pointer;',
+'  background:#eaf0f3;border:1.5px solid #cfdae1;border-left-width:5px;border-radius:12px;',
+'  padding:10px 13px;color:#54646e;font:inherit}',
+'.dj-cur .dj-k{font-size:14.5px;font-weight:800;white-space:nowrap}',
+'.dj-cur .dj-t{flex:1 1 auto;min-width:0;font-weight:400;font-size:12.5px;color:#7b8892;',
+'  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+'.dj-cur .dj-c{flex:0 0 auto;font-size:12px;opacity:.7;transition:transform .15s}',
+'.dj-nav.open .dj-cur .dj-c{transform:rotate(180deg)}',
+'.dj-list{margin-top:6px;border:1.5px solid #cfdae1;border-radius:12px;background:#fff;',
+'  overflow:auto;max-height:56vh;box-shadow:0 6px 20px rgba(32,42,48,.10)}',
+'.dj-list a{display:block;text-decoration:none;padding:10px 13px;border-left:5px solid transparent;',
+'  border-bottom:1px solid #eef2f4;color:#54646e;font:inherit}',
+'.dj-list a:last-child{border-bottom:none}',
+'.dj-list a b{display:block;font-size:14px}',
+'.dj-list a span{display:block;font-weight:400;font-size:12px;color:#7b8892;margin-top:2px}',
+'.dj-list a.on{font-weight:800}',
+/* 五色循環：warm 橘 / cool 藍 / plum 紫 / leaf 綠 / clay 磚，另加 slate 灰給總入口。
+   第 1-3 週的顏色跟已經上線的完全一樣，不要動——學生已經認得了。 */
+'[data-tone=slate]{border-left-color:#9aa8b2}',
+'[data-tone=warm]{border-left-color:#e0821f}',
+'[data-tone=cool]{border-left-color:#2f6690}',
+'[data-tone=plum]{border-left-color:#7a3f92}',
+'[data-tone=leaf]{border-left-color:#3f7a34}',
+'[data-tone=clay]{border-left-color:#b8452f}',
+'.dj-cur[data-tone=slate]{background:#eef1f3;border-color:#9aa8b2;color:#465059}',
+'.dj-cur[data-tone=warm]{background:#fbead2;border-color:#e0821f;color:#a35f14}',
+'.dj-cur[data-tone=cool]{background:#e5eff6;border-color:#2f6690;color:#2f6690}',
+'.dj-cur[data-tone=plum]{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
+'.dj-cur[data-tone=leaf]{background:#e9f3e3;border-color:#3f7a34;color:#3f7a34}',
+'.dj-cur[data-tone=clay]{background:#fae9e4;border-color:#b8452f;color:#b8452f}',
+'.dj-cur .dj-t{color:inherit;opacity:.72}',
+/* ── 全站按鈕度量：三頁原本三套（unit1 是 14px/20px 且 border:none、
+   w2 的 .btn 一律 width:100%、sf3k 是 12px/18px）。統一成 sf3k 那套，
+   寬度維持各頁原本的意圖（主要動作滿寬、次要動作抱文字），只把「看起來像不像同一家」對齊。*/
+'.btn,.btn-primary,.btn-ghost,button.pri,button.ok,button.wide{',
+'  font-family:inherit;font-weight:700;font-size:15px;line-height:1.35;',
+'  padding:12px 18px;border-radius:10px;border-width:1.5px;border-style:solid;cursor:pointer}',
+'button.sm,.langbtn,.dj-lang button{padding:7px 12px;font-size:13px;border-radius:8px;',
+'  border-width:1.5px;border-style:solid;line-height:1.35}',
+/* ── 語言切換：收進右上角身分列，不要每頁再擺一排國旗大按鈕 ── */
+'#dj-langchip{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;',
+'  border:1.5px solid #cfdae1;border-radius:999px;padding:6px 11px;cursor:pointer;',
+'  font:800 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
+'  box-shadow:0 2px 12px rgba(32,42,48,.14)}',
+/* 身分列也固定在右上；chip 擺它左邊，兩顆不要疊在一起 */
+'#dj-bar{right:64px}',
+'@media (max-width:560px){#dj-bar{right:58px;max-width:calc(100vw - 80px)}',
+'  #dj-langchip{padding:5px 9px;font-size:12px}}',
+'.dj-gatelang{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}',
+'.dj-gatelang button{flex:1 1 auto;background:#f7f9fa;border:1.5px solid #cfdae1;color:#54646e;',
+'  border-radius:999px;padding:6px 12px;font:700 12.5px/1.4 inherit;cursor:pointer;white-space:nowrap}',
+'.dj-gatelang button.sel{background:#f2e7f6;border-color:#7a3f92;color:#7a3f92}',
+'.dj-gatelang button:disabled{opacity:.45;cursor:not-allowed}',
+'.dj-gatelang .dj-note{flex:1 1 100%;font-size:11.5px;font-weight:400;color:#7b8892;line-height:1.5}',
+'.dj-lang{position:fixed;right:12px;top:52px;z-index:9998;background:#fff;',
+'  border:1.5px solid #cfdae1;border-radius:12px;box-shadow:0 6px 20px rgba(32,42,48,.14);',
+'  padding:6px;min-width:172px}',
+'.dj-lang button{display:block;width:100%;text-align:left;background:#fff;border-color:transparent;',
+'  color:#54646e;font-family:inherit;font-weight:700;cursor:pointer;margin:1px 0}',
+'.dj-lang button.sel{background:#eef1f3;border-color:#cfdae1;color:#2f6690}',
+'.dj-lang .dj-note{font-size:11.5px;font-weight:400;color:#7b8892;padding:5px 12px 3px;line-height:1.5}',
+'@media (max-width:560px){.dj-lang{right:10px;left:auto;max-width:calc(100vw - 20px)}}',
 '#dj-bar{position:fixed;right:12px;top:12px;z-index:9998;background:#fff;border:1.5px solid #cfdae1;',
 '  border-radius:999px;padding:6px 13px;font:700 13px/1.5 -apple-system,"PingFang TC",sans-serif;color:#54646e;',
 '  box-shadow:0 2px 12px rgba(32,42,48,.14);cursor:pointer;max-width:72vw;overflow:hidden;',
@@ -132,6 +183,7 @@
     var pageUrl = location.origin + location.pathname;
     d.innerHTML =
       '<div class="box" role="dialog" aria-modal="true" aria-label="進入前先綁定">' +
+      '<div class="dj-gatelang" id="dj-gate-lang"></div>' +
       '<div class="course">文化遊戲松實作　<span>通識・綜合實踐領域</span><br>' +
         '遊戲設計學　<span>夜四技多樂一甲</span></div>' +
       '<h2>進入前，先綁定一次</h2>' +
@@ -163,6 +215,8 @@
       '</div>';
     document.body.appendChild(d);
     drawQr('dj-qr', pageUrl);
+    renderLangUI();   // 登入畫面就要能選語言，不是進去之後才有
+    paintGate();
 
     var envI = document.getElementById('dj-env');
     var saved = ls(LS_ENV);
@@ -237,31 +291,177 @@
   }
 
 
+  /* ── 語言：一把鍵、一個控制項、四頁共用 ──
+     🔴 LS_LANG 只有一把。舊的 designjam_w2_lang 只在第一次載入時搬過來，之後不再讀。 */
+  var LS_LANG = 'designjam_lang';
+  var LANGS = [
+    { k: 'zh', label: '中文',            flag: '🇹🇼', short: '中' },
+    { k: 'vi', label: 'Tiếng Việt',      flag: '🇻🇳', short: 'VI' },
+    { k: 'id', label: 'Bahasa Indonesia', flag: '🇮🇩', short: 'ID' }
+  ];
+  /* 登入畫面自己的字。這是外籍生看到的第一個畫面，所以它一定要能翻，
+     不能等到「哪一週做了多語系」才有。翻譯由 Vertex 產生，不是手打的。 */
+  var GATE_I18N = window.DJ_GATE_I18N || {};
+
+  (function migrateLang() {
+    try {
+      if (!localStorage.getItem(LS_LANG)) {
+        var old = localStorage.getItem('designjam_w2_lang');
+        if (old) localStorage.setItem(LS_LANG, old);
+      }
+    } catch (e) {}
+  })();
+  function getLang() {
+    try { return localStorage.getItem(LS_LANG) || 'zh'; } catch (e) { return 'zh'; }
+  }
+  /* 這一頁翻得了嗎？＝它有沒有自己的翻譯器。
+     unit1 曝 applyLang()、w2 曝 setLang()；index／sf3k 兩個都沒有 ⇒ 選項停用。
+     🔴 停用要「看得到且講得出原因」，不是把按鈕藏起來——藏起來學生會以為是自己沒找到。 */
+  function pageTranslator() {
+    return (typeof window.applyLang === 'function') ? window.applyLang
+         : (typeof window.setLang   === 'function') ? window.setLang
+         : null;
+  }
+  function tGate(zh) {
+    var lang = getLang();
+    if (lang === 'zh') return zh;
+    var e = GATE_I18N[zh];
+    return (e && e[lang]) || zh;
+  }
+  /* 登入畫面的字是 bind_gate 自己畫的，所以直接掃它自己的子樹換字，
+     不用管各頁的 i18n 機制長什麼樣。切回中文靠 __djZh 存的原文，不 reload。 */
+  function paintGate() {
+    var root = document.getElementById('dj-gate');
+    if (!root) return;
+    var lang = getLang();
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false), n;
+    while ((n = w.nextNode())) {
+      if (n.__djZh == null) n.__djZh = n.nodeValue;
+      var zh = n.__djZh, key = zh.trim();
+      if (!key) continue;
+      n.nodeValue = (lang === 'zh') ? zh
+        : zh.replace(key, (GATE_I18N[key] && GATE_I18N[key][lang]) || key);
+    }
+    var envI = document.getElementById('dj-env');
+    if (envI) {
+      if (envI.__djZh == null) envI.__djZh = envI.placeholder;
+      envI.placeholder = (lang === 'zh') ? envI.__djZh
+        : ((GATE_I18N[envI.__djZh] && GATE_I18N[envI.__djZh][lang]) || envI.__djZh);
+    }
+  }
+  function setLangShared(k) {
+    try { localStorage.setItem(LS_LANG, k); } catch (e) {}
+    var fn = pageTranslator();
+    if (fn) { try { fn(k); } catch (e) { console.warn('[lang] 頁面翻譯器出錯', e); } }
+    paintGate();
+    renderLangUI();
+  }
+  /* 語言選單：登入畫面直接把三個選項攤開（那是第一個畫面，要一眼看到）；
+     綁定之後收進右上角身分列旁邊的 🌐，點開才展開。位置固定，不隨週次跑。 */
+  function langMenuHtml() {
+    var cur = getLang(), can = !!pageTranslator();
+    var h = LANGS.map(function (L) {
+      var off = (L.k !== 'zh' && !can);
+      return '<button type="button" data-lang="' + L.k + '"'
+        + (off ? ' disabled title="這一頁還沒有翻譯"' : '')
+        + ' class="' + (L.k === cur ? 'sel' : '') + '">'
+        + L.flag + ' ' + L.label + (off ? '　（這頁還沒翻）' : '') + '</button>';
+    }).join('');
+    if (!can) h += '<div class="dj-note">這一頁還沒有翻譯版本。其他單元有翻的話，'
+                 + '你選的語言會被記住，過去就會自動套用。</div>';
+    return h;
+  }
+  function wireLangButtons(scope) {
+    Array.prototype.forEach.call(scope.querySelectorAll('[data-lang]'), function (b) {
+      if (b.disabled) return;
+      b.onclick = function (e) { e.stopPropagation(); setLangShared(b.dataset.lang); };
+    });
+  }
+  function renderLangUI() {
+    var inGate = document.getElementById('dj-gate-lang');
+    if (inGate) { inGate.innerHTML = langMenuHtml(); wireLangButtons(inGate); }
+    var chip = document.getElementById('dj-langchip');
+    if (chip) {
+      var cur = getLang(), L = LANGS.filter(function (x) { return x.k === cur; })[0] || LANGS[0];
+      chip.textContent = '🌐 ' + L.short;
+    }
+    var menu = document.getElementById('dj-langmenu');
+    if (menu) { menu.innerHTML = langMenuHtml(); wireLangButtons(menu); }
+    /* 各頁原本那排國旗按鈕藏掉——留著就會有兩個控制項、而且它們讀的是舊的鍵。 */
+    ['.langswitch', '#w2LangZh', '#w2LangNote'].forEach(function (sel) {
+      Array.prototype.forEach.call(document.querySelectorAll(sel), function (o) {
+        var box = (sel === '#w2LangZh') ? o.parentNode : o;
+        if (box && box.style) box.style.display = 'none';
+      });
+    });
+  }
+  window.DJ_setLang = setLangShared;
+  window.DJ_getLang = getLang;
+
   /* ── 共用單元導覽：一個定義，四頁共用 ──
      原本 unit1/w2 各寫一份（只有兩週、而且 w2 還標著過期的「本週」），sf3k 又是第三套。
      這裡注入 .dj-nav 並把各頁原本的 .unitnav 藏起來，之後換週只要改這個陣列。 */
+  /* 🔴 加新的一週＝在這裡加一行，其他什麼都不用動（導覽、總入口清單、配色全部從這裡生）。
+     tone 依五色循環取：warm→cool→plum→leaf→clay→warm…（第 6 週回到 warm）。
+     「本週」不用手動標——取最後一個有 wk 的項目，加了新的一行就自動往前推。 */
+  var TONES = ['warm', 'cool', 'plum', 'leaf', 'clay'];
   var UNITS = [
-    { key: 'hub',  cls: 'hub', href: 'index.html', name: '總入口',   desc: '三週都在這裡' },
-    { key: 'w1',   cls: 'u1',  href: 'unit1.html', name: '第1週',    desc: '四種角色，孵出一個點子' },
-    { key: 'w2',   cls: 'u2',  href: 'w2.html',    name: '第2週',    desc: '文化怎麼放進遊戲裡' },
-    { key: 'sf3k', cls: 'u3',  href: 'sf3k.html',  name: '第3週',    desc: 'SiSSYFiGHT 三輪試玩', now: true }
+    { key: 'hub',  href: 'index.html', name: '總入口', desc: '每一週的學習單都在這裡', tone: 'slate' },
+    { key: 'w1',   href: 'unit1.html', wk: 1, desc: '四種角色，孵出一個點子' },
+    { key: 'w2',   href: 'w2.html',    wk: 2, desc: '文化怎麼放進遊戲裡' },
+    { key: 'sf3k', href: 'sf3k.html',  wk: 3, desc: 'SiSSYFiGHT 三輪試玩' }
   ];
+  UNITS.forEach(function (u) {
+    if (u.wk) {
+      if (!u.name) u.name = '第' + u.wk + '週';
+      if (!u.tone) u.tone = TONES[(u.wk - 1) % TONES.length];
+    }
+  });
+  var NOW_KEY = (function () {
+    var last = null;
+    UNITS.forEach(function (u) { if (u.wk) last = u; });
+    return last ? last.key : null;
+  })();
   function renderNav() {
     injectCss();
     if (document.querySelector('.dj-nav')) return;
-    var html = UNITS.map(function (u) {
+    var cur = null;
+    UNITS.forEach(function (u) { if (u.key === UNIT) cur = u; });
+    if (!cur) cur = UNITS[0];
+
+    var items = UNITS.map(function (u) {
       var on = (u.key === UNIT) ? ' on' : '';
-      return '<a class="' + u.cls + on + '" href="' + u.href + '">'
-        + '<b>' + u.name + (u.now ? ' · 本週' : '') + '</b>'
+      return '<a class="' + on.trim() + '" data-tone="' + u.tone + '" href="' + u.href + '">'
+        + '<b>' + u.name + (u.key === NOW_KEY ? ' · 本週' : '') + (on ? '（你在這裡）' : '') + '</b>'
         + '<span>' + u.desc + '</span></a>';
     }).join('');
+
     var nav = document.createElement('nav');
     nav.className = 'dj-nav';
-    nav.innerHTML = html;
+    nav.innerHTML =
+      '<button type="button" class="dj-cur" data-tone="' + cur.tone + '" aria-expanded="false">'
+      + '<span class="dj-k">' + cur.name + (cur.key === NOW_KEY ? ' · 本週' : '') + '</span>'
+      + '<span class="dj-t">' + cur.desc + '</span>'
+      + '<span class="dj-c">▼</span></button>'
+      + '<div class="dj-list" hidden>' + items + '</div>';
+
     // 各頁原本自己那份導覽藏掉，避免兩排
     Array.prototype.forEach.call(document.querySelectorAll('.unitnav'), function (o) { o.style.display = 'none'; });
     var host = document.querySelector('.wrap') || document.body;
     host.insertBefore(nav, host.firstChild);
+
+    var btn = nav.querySelector('.dj-cur'), list = nav.querySelector('.dj-list');
+    btn.onclick = function () {
+      var open = list.hidden;
+      list.hidden = !open;
+      nav.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    document.addEventListener('click', function (e) {
+      if (!nav.contains(e.target) && !list.hidden) {
+        list.hidden = true; nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false');
+      }
+    });
   }
 
   /* ── 已綁定時的小列 ── */
@@ -275,9 +475,40 @@
     b.textContent = '#' + env + (mail ? ' · ' + mail : ' · 未綁 Gmail');
     b.onclick = function () {
       b.remove();
+      var lc = document.getElementById('dj-langchip');
+      if (lc) lc.remove();
+      var lm = document.getElementById('dj-langmenu');
+      if (lm) lm.remove();
       openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補綁。');
     };
     document.body.appendChild(b);
+
+    /* 語言切換：每一頁都在同一個地方（身分列左邊），不隨週次搬家。
+       沒翻譯的頁面仍然看得到這顆，點開才知道「這頁還沒翻」——比整顆消失清楚。 */
+    var chip = document.createElement('div');
+    chip.id = 'dj-langchip';
+    chip.title = '切換語言 / Language';
+    chip.onclick = function (e) {
+      e.stopPropagation();
+      var m = document.getElementById('dj-langmenu');
+      if (m) { m.remove(); return; }
+      m = document.createElement('div');
+      m.id = 'dj-langmenu';
+      m.className = 'dj-lang';
+      document.body.appendChild(m);
+      renderLangUI();
+      setTimeout(function () {
+        document.addEventListener('click', function close(ev) {
+          var mm = document.getElementById('dj-langmenu');
+          if (mm && !mm.contains(ev.target)) { mm.remove(); document.removeEventListener('click', close); }
+        });
+      }, 0);
+    };
+    document.body.appendChild(chip);
+    renderLangUI();
+    // 這一頁有自己的翻譯器的話，把記住的語言套上去（原本各頁只讀自己那把鍵）
+    var saved = getLang(), fn = pageTranslator();
+    if (saved !== 'zh' && fn) { try { fn(saved); } catch (e) {} }
     // 🔴 固定定位會蓋住頁面最上緣（實測蓋掉單元導覽的「第3週」）。
     //    顯示時把 body 往下推讓出它的高度——不要只調 z-index，那只是決定誰蓋誰，內容還是被擋。
     requestAnimationFrame(function () {

@@ -52,6 +52,8 @@ button:disabled{opacity:.42;cursor:not-allowed}
 .pill.amber{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
 .pill.green{background:var(--green-soft);color:var(--green);border-color:var(--green)}
 .pill.red{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+/* .pill.warn 在頁面上用過但從來沒定義，警示徽章長得跟普通徽章一模一樣 */
+.pill.warn{background:var(--amber-soft);color:var(--amber);border-color:var(--amber);font-weight:800}
 .hide{display:none!important}
 .mono{font-family:ui-monospace,Menlo,monospace}
 .err{color:var(--red);font-size:13.5px;margin:6px 0 0;font-weight:600}
@@ -132,7 +134,10 @@ table.st th{color:var(--ink-soft);font-weight:700;font-size:12px;letter-spacing:
 .bar{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1.5px solid var(--line);
   padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -2px 14px rgba(36,31,42,.10);z-index:20}
 .bar .wrap2{max-width:860px;margin:0 auto;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-.fab{position:fixed;right:14px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:21;
+/* 🔴 z-index 原本是 21、壓在 .bar（20）上面：出牌列在窄螢幕會換行變高，
+   回報鈕就蓋住真正要點的目標鈕，而且學生點不到也不會有任何錯誤提示。
+   ⇒ 排到 .bar 底下（19），高度用 --barh 由 JS 量實際值撐開，不要寫死 80px。 */
+.fab{position:fixed;right:14px;bottom:calc(var(--barh, 70px) + 14px + env(safe-area-inset-bottom));z-index:19;
   border-radius:999px;padding:9px 15px;background:var(--panel);border:1.5px solid var(--line);
   box-shadow:var(--shadow);font-size:13px;font-weight:700;color:var(--ink-soft);opacity:.92}
 /* 沒有底部出牌列時（大廳／選卡）就貼底，不要浮在內容中間 */
@@ -161,6 +166,8 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       </div>
       <div id="open-rooms" style="margin-top:10px"></div>
     </div>
+
+    <div id="resume-box"></div>
 
     <div class="box" id="checklist-box">
       <h3>今天要完成的四項</h3>
@@ -220,8 +227,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
   <section id="scr-room" class="hide">
     <div class="row" style="justify-content:space-between">
       <h1 style="margin:0" id="room-title">場次</h1>
-      <span class="pill" id="room-code"></span>
+      <span><span class="pill" id="room-code"></span>
+        <button class="sm" id="btn-leave" style="margin-left:6px">離開這場</button></span>
     </div>
+    <div id="takeover-box"></div>
     <p class="sub" id="room-cards"></p>
     <details class="box tight" id="cardpeek" style="display:none">
       <summary style="cursor:pointer;font-weight:800;font-size:14.5px">這一場改了什麼？（點開看每張卡）</summary>
@@ -275,6 +284,11 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       <textarea id="fb4" rows="3" maxlength="200" placeholder="100 字以內，自己寫"></textarea>
       <div class="sub" id="fb4-count">0 / 100 字</div>
       <div class="row" style="margin-top:8px"><button class="ok" id="btn-fb">送出回饋</button><span id="fb-msg"></span></div>
+      <div class="row" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
+        <button class="pri" id="btn-back-lobby">回大廳，開下一場 →</button>
+      </div>
+      <p class="sub" style="margin:8px 0 0">回饋送出後就可以回大廳。三輪要玩完
+        <b>原版 → 只改一個地方 → 整組改</b>，大廳的檢核表會告訴你還缺哪一種。</p>
     </div>
   </section>
 
@@ -305,9 +319,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609222144"></script>
-<script src="js/sf3k_cards.js?v=202609222144"></script>
-<script src="js/sf3k_stats.js?v=202609222144"></script>
+<script src="js/sf3k_engine.js?v=202609222210"></script>
+<script src="js/sf3k_cards.js?v=202609222210"></script>
+<script src="js/sf3k_stats.js?v=202609222210"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -319,6 +333,16 @@ firebase.initializeApp({
 var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 var ROOT = db.ref('whgm/analysis/w3game');
+/* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
+   文化遊戲松 09:10-12:00（通識，約 44 人）／遊戲設計學 19:05-21:30（夜四技，20 人）。
+   不分區的話，晚上那班一進大廳就看到早上留下的九間死房，GM 次數也會算在一起。
+   以「當地日期＋上下午」當分區鍵；14:00 是兩班中間的安全切點。 */
+function sessionKey(){
+  var d = new Date();
+  var p = function(x){ return (x<10?'0':'')+x; };
+  return '' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + (d.getHours() < 14 ? 'am' : 'pm');
+}
+var SESS = sessionKey();
 var E = window.SF3K, CARDS = window.SF3K_CARDS;
 
 var me = { env:null, name:null, email:null, uid:null };
@@ -343,11 +367,20 @@ var presenceRef = null;
 var blitzTimer = null, blitzLeft = 0, lastTimerRound = null;
 
 var $ = function(id){ return document.getElementById(id); };
+/* 出牌列會換行（三張行動卡＋六個目標＋道具＋等待中名單），高度是變動的。
+   量實際值寫進 --barh，浮動回報鈕才不會憑一個寫死的數字去躲它。 */
+function syncBarHeight(){
+  var b = document.querySelector('.bar');
+  var h = (b && b.offsetParent !== null) ? b.offsetHeight : 0;
+  document.documentElement.style.setProperty('--barh', h + 'px');
+}
+window.addEventListener('resize', syncBarHeight);
 function show(id){ ['scr-lobby','scr-setup','scr-room'].forEach(function(s){
   $(s).classList.toggle('hide', s!==id); }); }
 function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g,function(c){
   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
 function nowTs(){ return firebase.database.ServerValue.TIMESTAMP; }
+var NLC = String.fromCharCode(10);   // confirm() 換行；不直接寫跳脫字元，避免被各層工具折掉
 function code4(){ var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<4;i++)
   s+=A[Math.floor(Math.random()*A.length)]; return s; }
 var COLORS=['#c0392b','#27ae60','#2980b9','#2c3e50','#e67e22','#8e44ad','#16a085','#d35400'];
@@ -394,8 +427,9 @@ function enterLobby(){
     var v = s.val()||{}; comboCount = {};
     Object.keys(v).forEach(function(k){ comboCount[k] = (v[k]&&v[k].count)||0; });
   });
+  renderResume();
   $('lobby-me').innerHTML = '你是 <b>#'+me.env+'</b>' + (me.email ? '（'+esc(me.email)+'）' : '（未綁 Google 帳號）');
-  ROOT.child('hosts').once('value').then(function(s){
+  ROOT.child('hosts/'+SESS).once('value').then(function(s){
     var h = dropNull(normObj(s.val()));            // 同一個數字 key 陷阱
     var mine = (h[me.env]&&h[me.env].count)||0;
     var counts = Object.keys(h).map(function(k){ return (h[k]&&h[k].count)||0; });
@@ -403,8 +437,15 @@ function enterLobby(){
     $('host-turn').innerHTML = mine===0
       ? '你<b>還沒當過 GM</b>——這一輪優先讓你挑卡開場。'
       : '你當過 '+mine+' 次 GM'+(mine>minC?'，還沒當過的同學會被優先排到，請先加入別人的場次。':'。');
-    $('btn-host').disabled = (mine > minC && minC === 0);
-    if ($('btn-host').disabled) $('btn-host').textContent = '先讓還沒當過的人開（你已當過 '+mine+' 次）';
+    /* 🔴 原本寫 disabled = (mine > minC && minC === 0)，但 counts 只收「已經當過 GM 的人」，
+       所以全班第一場打完之後 minC 恆 >= 1，這個節流從此永久失效——等於從來沒生效過。
+       而且楊老師的原話是「盡量排序給還沒當過的人」＝軟性排序，不是硬鎖：
+       真的只有三個人肯當 GM 時硬鎖會讓全班開不了場。改成仍可點、但要多按一次確認。 */
+    hostedBefore = mine;
+    $('btn-host').disabled = false;
+    $('btn-host').textContent = mine > 0
+      ? '還是要再開一場？（你已當過 ' + mine + ' 次）'
+      : '我來當 GM，挑卡開一場';
   }).catch(function(e){                            // 這段掛掉不該讓整個大廳變空白
     console.warn('[lobby] hosts 讀取失敗', e);
     $('host-turn').textContent = '（讀不到輪替紀錄，還是可以開場）';
@@ -414,6 +455,7 @@ function enterLobby(){
     Object.keys(v).reverse().forEach(function(code){
       if (/^ZZ/.test(code)) return;                 // 跳過整合測試用的房
       var m = v[code].meta; if(!m) return;
+      if (m.sess !== SESS) return;                  // 別班／別天的房不要混進來（輸代號仍可進）
       var n = Object.keys(normObj(v[code].players)).length;
       var ph = m.phase==='lobby'?'招募中':(m.phase==='over'?'已結束':'進行中 R'+(m.round||1));
       var phCls = m.phase==='lobby'?'green':(m.phase==='over'?'':'amber');
@@ -436,8 +478,44 @@ function enterLobby(){
     });
   });
 }
+$('btn-leave').onclick = function(){
+  if (state.meta && state.meta.phase !== 'over'
+      && !confirm('這一場還沒打完，離開之後要用場次代號才能再進來。確定離開？')) return;
+  leaveRoom();
+};
+$('btn-back-lobby').onclick = leaveRoom;
 $('btn-join').onclick = function(){ joinRoom(($('join-code').value||'').trim().toUpperCase()); };
-$('btn-host').onclick = function(){ startSetup(); };
+var hostedBefore = 0;
+$('btn-host').onclick = function(){
+  if (hostedBefore > 0 && !confirm('你已經當過 ' + hostedBefore + ' 次 GM 了。'
+      + NLC + '先讓還沒當過的同學開場，全班才輪得完。' + NLC + NLC + '還是要再開一場嗎？')) return;
+  startSetup();
+};
+
+/* 上一場還沒打完就重整／離開的話，給一條回去的路。
+   不自動跳回去——學生可能是故意離開的，自動跳會把人關在同一場出不來。 */
+function renderResume(){
+  var box = $('resume-box'); if (!box) return;
+  var last = null;
+  try { last = localStorage.getItem('designjam_sf3k_room'); } catch(e) {}
+  if (!last) { box.innerHTML = ''; return; }
+  ROOT.child('rooms/'+last+'/meta').once('value').then(function(s){
+    var m = s.val();
+    if (!m || m.phase === 'over') { box.innerHTML = '';
+      try { localStorage.removeItem('designjam_sf3k_room'); } catch(e) {}
+      return; }
+    box.innerHTML = '<div class="box" style="border-color:var(--amber)">'
+      + '<h3 style="margin-top:0">你還在場次 <b class="mono">'+esc(last)+'</b> 裡</h3>'
+      + '<p class="sub" style="margin:0 0 9px">那一場還在進行中（第 '+(m.round||1)+' 回合）。'
+      + '你不回去的話，同一場的人會一直等你出牌。</p>'
+      + '<div class="row"><button class="pri" id="btn-resume">回去繼續</button>'
+      + '<button class="sm" id="btn-forget">不回去了</button></div></div>';
+    $('btn-resume').onclick = function(){ joinRoom(last); };
+    $('btn-forget').onclick = function(){
+      try { localStorage.removeItem('designjam_sf3k_room'); } catch(e) {}
+      box.innerHTML = ''; };
+  }).catch(function(){ box.innerHTML = ''; });
+}
 
 /* ═════ 選卡 ═════ */
 function startSetup(){
@@ -504,11 +582,11 @@ function createRoom(){
   var c = currentCfg();
   if (!E.validate(c, 6).ok) return;
   var codeStr = code4();
-  var meta = { host: me.uid||('env'+me.env), hostEnv: me.env, phase:'lobby', round:1,
+  var meta = { host: me.uid||('env'+me.env), hostEnv: me.env, sess: SESS, phase:'lobby', round:1,
                cards: selected.slice(), cfg: CARDS.merge(selected),
                seed: Math.random(), createdAt: nowTs() };
   ROOT.child('rooms/'+codeStr+'/meta').set(meta).then(function(){
-    ROOT.child('hosts/'+me.env).transaction(function(v){
+    ROOT.child('hosts/'+SESS+'/'+me.env).transaction(function(v){
       v = v || { count:0 }; v.count = (v.count||0)+1; return v;
     });
     ROOT.child('comboStats/'+comboKey(selected)).transaction(function(v){
@@ -563,9 +641,22 @@ function joinRoom(codeStr){
     });
   });
 }
+function leaveRoom(){
+  /* 離開＝斷開這場的所有監聽＋放掉 presence 佔位，讓同一個編號可以換裝置再進來。
+     不刪 players 裡的自己——那是這場的戰績，刪掉統計就不對了。 */
+  try { if (presenceRef) presenceRef.remove(); } catch(e) {}
+  presenceRef = null;
+  detach();
+  try { localStorage.removeItem('designjam_sf3k_room'); } catch(e) {}
+  room = null; roomRef = null; state = { meta:null, players:{}, choices:{}, rounds:{} };
+  pick = { action:null, target:null, item:null, itemTarget:null, juryPick:null };
+  stopTimer();
+  enterLobby();
+}
 function enterRoom(){
   show('scr-room');
   $('room-code').textContent = room;
+  try { localStorage.setItem('designjam_sf3k_room', room); } catch(e) {}
   // 佔住這個編號在本場的位置；分頁關掉／斷線時 Firebase 會自動幫我們清掉
   presenceRef = roomRef.child('presence/'+me.env+'/'+myDevice);
   presenceRef.onDisconnect().remove();
@@ -595,6 +686,29 @@ function bindRoom(){
   unsub.push(function(){ roomRef.child('rounds').off('value', h4); });
 }
 function isHost(){ return state.meta && String(state.meta.hostEnv) === String(me.env); }
+/* 🔴 hostEnv 只在建房那一刻寫一次，全檔沒有任何重新指派——GM 一關分頁，
+   「結算」和「下一回合」就再也沒有人按得動，整場永久停在等待畫面。
+   44 個學生同時開七到九場，一定會發生。
+   用 transaction 交接：只有在 hostEnv 還是原本那個人時才換手，兩個人同時按也只有一個會成功。 */
+function renderTakeover(){
+  var box = $('takeover-box'); if (!box) return;
+  if (!state.meta || isHost() || state.meta.phase === 'over') { box.innerHTML = ''; return; }
+  box.innerHTML = '<p class="sub" style="margin:4px 0 0">GM（#'+esc(state.meta.hostEnv)+'）沒反應嗎？'
+    + '<button class="sm" id="btn-takeover" style="margin-left:6px">我來接手當 GM</button></p>';
+  $('btn-takeover').onclick = function(){
+    var old = state.meta.hostEnv;
+    if (!confirm('原本的 GM #'+old+' 可能離開了。'
+        + NLC + '接手之後，開始遊戲／結算／下一回合都由你按。' + NLC + NLC + '確定接手？')) return;
+    roomRef.child('meta/hostEnv').transaction(function(v){
+      if (String(v) !== String(old)) return;      // 已經有人接走了，放棄
+      return me.env;
+    }, function(err, committed){
+      if (err) { alert('接手失敗：' + err); return; }
+      if (!committed) { alert('已經有別人接手了。'); return; }
+      say('#' + me.env + ' 接手當 GM（原本是 #' + old + '）', true);
+    });
+  };
+}
 function playersArr(){
   return Object.keys(state.players).map(function(k){ return state.players[k]; })
     .sort(function(a,b){ return (a.seat!=null?a.seat:a.joinedAt) - (b.seat!=null?b.seat:b.joinedAt); })
@@ -603,6 +717,7 @@ function playersArr(){
 
 /* ═════ 畫面 ═════ */
 function renderRoom(){
+  renderTakeover();
   if (!state.meta) return;
   var m = state.meta, c = E.cfg(m.cfg||{}), L = E.label(c), P = playersArr();
   $('room-title').textContent = L.name;
@@ -854,8 +969,18 @@ function renderBar(c, P){
   if (c.modItems && meP && meP.item) {
     var IT = E.ITEMS.filter(function(x){return x.key===meP.item;})[0];
     html += '<button class="it'+(pick.item?' pri':'')+'" title="'+esc(IT?IT.desc:'')+'">道具：'+esc(IT?IT.name:meP.item)+(pick.item?' ✔':'')+'</button>';
+    /* 搗嘴要自己指定對象（modDrawTarget 開著時 pick.target 永遠不會被設定），
+       原本用 prompt() 讓學生打字輸入編號——那正是本檔自己在註解裡禁止的做法。改成點按鈕。 */
+    if (pick.item === 'silence') {
+      html += '<span class="status">搗嘴誰？</span>';
+      P.filter(function(q){ return q.alive && String(q.env)!==String(me.env); }).forEach(function(q){
+        html += '<button class="itg sm'+(String(pick.itemTarget)===String(q.env)?' pri':'')
+              + '" data-t="'+esc(q.env)+'">#'+esc(q.env)+'</button>';
+      });
+    }
   }
   $('bar-actions').innerHTML = html + waitingHtml(c, P);
+  syncBarHeight();
   wireForce();
   Array.prototype.forEach.call($('bar-actions').querySelectorAll('.ac'), function(b){
     b.onclick = function(){ pick.action = b.dataset.a; if(pick.action==='DEFEND'&&!(c.modComeback||c.modRedirect||c.modGuard)) pick.target=null; renderBar(c,P); }; });
@@ -864,18 +989,13 @@ function renderBar(c, P){
   var itb = $('bar-actions').querySelector('.it');
   if (itb) itb.onclick = function(){
     pick.item = pick.item ? null : (state.players[me.env]||{}).item;
-    // 搗嘴要有自己的目標：modDrawTarget 開著時 pick.target 從來不會被設定
-    if (pick.item === 'silence') {
-      var live2 = P.filter(function(q){ return q.alive && String(q.env)!==String(me.env); });
-      var nm = prompt('搗嘴要指定誰？輸入他的編號：\n' + live2.map(function(q){ return '#'+q.env; }).join('、'));
-      var tv = nm==null ? null : parseInt(String(nm).replace('#',''),10);
-      if (tv!=null && !isNaN(tv) && live2.some(function(q){ return String(q.env)===String(tv); })) {
-        pick.itemTarget = String(tv);
-      } else { pick.item = null; pick.itemTarget = null; }
-    }
+    if (!pick.item) pick.itemTarget = null;
     renderBar(c,P);
   };
-  var ready = !!pick.action && (!needTarget || !!pick.target || autoTarget);
+  Array.prototype.forEach.call($('bar-actions').querySelectorAll('.itg'), function(b){
+    b.onclick = function(){ pick.itemTarget = b.dataset.t; renderBar(c,P); }; });
+  var ready = !!pick.action && (!needTarget || !!pick.target || autoTarget)
+              && !(pick.item === 'silence' && !pick.itemTarget);   // 搗嘴開了卻沒選人＝送出去是空的
   $('btn-submit').textContent = '送出';
   $('btn-submit').disabled = !ready;
   $('btn-submit').onclick = submitChoice;
@@ -1141,6 +1261,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/bind_gate.js?v=202609222144"></script>
+<script src="js/gate_i18n.js?v=202609222210"></script>
+<script src="js/bind_gate.js?v=202609222210"></script>
 </body>
 </html>

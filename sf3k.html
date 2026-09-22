@@ -737,10 +737,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230713"></script>
-<script src="js/sf3k_verified.js?v=202609230713"></script>
-<script src="js/sf3k_cards.js?v=202609230713"></script>
-<script src="js/sf3k_stats.js?v=202609230713"></script>
+<script src="js/sf3k_engine.js?v=202609230716"></script>
+<script src="js/sf3k_verified.js?v=202609230716"></script>
+<script src="js/sf3k_cards.js?v=202609230716"></script>
+<script src="js/sf3k_stats.js?v=202609230716"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1735,6 +1735,11 @@ function fmtLog(log, c, nameOf){
       case 'role-thick': return nameOf(e.to)+'（硬皮）減傷 1';
       case 'role-martyr': return nameOf(e.from)+' 替死鬼反噬 '+nameOf(e.to)+' <span class="dmgpos">-'+e.dmg+'</span>';
       case 'item-shield-absorb': return nameOf(e.to)+' 用鐵布衫擋掉 '+e.blocked;
+      /* 🔴 2026-09-23 上課前系統性核對「引擎產生的 log type」vs「這裡認得的 case」抓到：
+         item-shield 這筆（用了鐵布衫但那回合沒被攻擊）原本沒有任何 case 接，
+         default 會直接吃掉——玩家會不知道自己的鐵布衫是不是已經耗掉了。
+         item-heal 不用補：item-heal-apply 一定會跟著出現，不會漏資訊。 */
+      case 'item-shield': return nameOf(e.to)+' 亮出鐵布衫，這回合沒被打到，先留著';
       case 'item-heal-apply': return nameOf(e.to)+' 吃棒棒糖 <span class="dmgneg">+'+e.heal+'</span>';
       case 'item-silence': return nameOf(e.from)+' 搗住了 '+nameOf(e.to)+' 的嘴';
       case 'item-double': return nameOf(e.to)+' 用了腎上腺素';
@@ -2948,7 +2953,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230713"></script>
-<script src="js/bind_gate.js?v=202609230713"></script>
+<script src="js/gate_i18n.js?v=202609230716"></script>
+<script src="js/bind_gate.js?v=202609230716"></script>
 </body>
 </html>

@@ -170,6 +170,16 @@ table.st.tl td.tzero{color:var(--ink-soft);background:var(--panel2);font-weight:
 .tlbars i{flex:1 1 auto;min-width:4px;border:1px solid transparent;border-bottom:none;
   border-radius:3px 3px 0 0}
 .tlname .swatch{margin-right:4px}
+.legend{margin:0;padding-left:0;list-style:none;font-size:13px;line-height:1.9}
+.legend li{margin:3px 0}
+.legend .pill{margin-right:6px}
+/* 沒測過的組合：灰掉而且要講出原因（手機沒有 hover，不能只靠 title） */
+.mcard.lockd{opacity:.42;cursor:not-allowed;background:var(--panel2)}
+.mcard.lockd .copybtn,.mcard.lockd .likebtn{pointer-events:auto;opacity:.85}
+.lockmsg{margin-top:7px;font-size:12px;font-weight:700;color:var(--ink-soft);
+  border-top:1px dashed var(--line);padding-top:6px}
+.pairhint{font-size:13px;line-height:1.7;color:var(--ink-soft);margin-top:8px}
+.pairhint b{color:var(--ink)}
 /* 場次編號 */
 .seqno{display:inline-block;font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:999px;
   background:var(--blue-soft);color:var(--blue);border:1.5px solid var(--blue);margin-right:3px}
@@ -481,15 +491,30 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
   <!-- ══ 選卡（GM）══ -->
   <section id="scr-setup" class="hide">
     <h1>這一場要改什麼？</h1>
-    <p class="sub"><b>挑一張</b>就好——選了就立刻改變規則，不選就是原版。<br>一次只動一個地方，等一下才看得出來「是哪一張造成的」。再點一張會換掉原本那張。</p>
+    <p class="sub"><b>挑一張</b>，想試組合的話<b>最多兩張</b>——選了就立刻改變規則，不選就是原版。<br>選了第一張之後，<b>只有實際測過可以搭的才亮著</b>；灰掉的是還沒測過的組合。<br>第二輪建議只挑一張：一次只動一個地方，等一下才看得出來「是哪一張造成的」。</p>
     <div class="box">
       <div class="row">
         <span class="pill" id="setup-code"></span>
         <span class="pill" id="setup-count">已選 0 張</span>
         <button id="btn-clear">全部取消</button>
       </div>
+      <div id="pair-hint" class="pairhint"></div>
       <div id="setup-problems" style="margin-top:8px"></div>
       <div id="setup-colocate" style="margin-top:6px"></div>
+    </div>
+    <div class="box tight" id="pool-legend">
+      <p class="sub" style="margin:0 0 6px"><b>卡片上的標記</b></p>
+      <ul class="legend">
+        <li><span class="pill green">✅ 已實測</span>我們實際玩過三場，每場都順利分出勝負。</li>
+        <li><span class="pill">🔍 還沒測過</span>還沒輪到它被測。<b>歡迎你當第一個</b>——
+            玩到怪怪的地方，用右下角的 🐞 回報，或玩完在結束畫面寫。</li>
+        <li><span class="pill red">⚠ 有人回報過怪怪的</span>我們測的時候覺得這張有點問題，
+            但<b>不告訴你是什麼</b>。你自己玩一場，看看能不能找出來——
+            <b>這就是 playtesting</b>，遊戲公司花錢請人做的就是這件事。</li>
+      </ul>
+      <p class="sub" style="margin:7px 0 0">找到問題不用怕講錯。
+        「我覺得這裡怪怪的但說不上來」也是有效的回報——
+        測試員的價值在於<b>發現</b>，不在於<b>診斷</b>。</p>
     </div>
     <div id="pool"></div>
   </section>
@@ -642,9 +667,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230002"></script>
-<script src="js/sf3k_cards.js?v=202609230002"></script>
-<script src="js/sf3k_stats.js?v=202609230002"></script>
+<script src="js/sf3k_engine.js?v=202609230027"></script>
+<script src="js/sf3k_verified.js?v=202609230027"></script>
+<script src="js/sf3k_cards.js?v=202609230027"></script>
+<script src="js/sf3k_stats.js?v=202609230027"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1110,7 +1136,8 @@ function wireCopy(scope){
 function startSetup(){
   show('scr-setup'); selected = [];
   $('setup-code').textContent = '待開場';
-  renderPool(); renderSetupState();
+  renderPool();
+  paintPool(); renderSetupState();
   $('bar').classList.remove('hide');
   $('bar-actions').innerHTML = '<span class="sub" id="setup-hint">選好就開場</span>';
   $('btn-submit').textContent = '開場';
@@ -1123,6 +1150,14 @@ function renderPool(){
   Object.keys(byDim).sort().forEach(function(d){
     html += '<div class="dimhead" data-dim="'+d+'">'+d+'　'+esc(CARDS.DIM_NAMES[d])+'</div><div class="cardgrid">';
     byDim[d].forEach(function(c){
+      /* 實測標記。🔴 措辭刻意不說破——寫出症狀就等於把答案給學生，
+         而「自己找出哪裡怪」正是這週要練的 playtesting。 */
+      var tested = (VER_DATA.uiSingles||[]).indexOf(c.id) >= 0;
+      var quirky = (VER_DATA.quirky||[]).indexOf(c.id) >= 0;
+      var tbadge = quirky
+        ? '<span class="pill red" title="">⚠ 這張有人回報過怪怪的</span>'
+        : (tested ? '<span class="pill green">✅ 已實測</span>'
+                  : '<span class="pill">🔍 還沒測過</span>');
       var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
                 : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
                 : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
@@ -1130,7 +1165,7 @@ function renderPool(){
       html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
         + 'data-id="'+c.id+'" data-dim="'+c.dim+'">'
         + '<div class="nm">'+esc(c.name)
-        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+badge+' '+colo
+        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+tbadge+' '+badge+' '+colo
         + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製</button>'
         + ' ' + likeBtn('card', c.id) + '</div>'
         + '<div class="ds">'+esc(c.desc)+'</div>'
@@ -1163,19 +1198,38 @@ function renderPool(){
    沒辦法在上課前全部驗證。「每一種選擇都保證玩得動」比「什麼都能組」重要。
    而且教學上本來就是要「只動一個變因，因果才看得清楚」。
    選第二張時自動換掉第一張，不要跳錯誤訊息擋人。 */
-var MAX_CARDS = 1;
+/* 楊老師 2026-09-23 定案：可以選到兩張，但第二張只能挑「真的測過可以搭」的。
+   一次一張太保守（學生想不到組合的樂趣），什麼都能組又驗不完（780 組 × 3 場跑不完）。
+   ⇒ 第一張 40 張都行（單張全部驗過），第二張限定在實測過的搭檔清單裡。 */
+var MAX_CARDS = 2;
+var VER_DATA = window.SF3K_VERIFIED || { singles: {}, mates: {}, uiPairs: {} };
+/* 可以跟 id 搭的卡：以「真的走過介面測過」的為準；沒有 uiPairs 就退回引擎層的 mates。 */
+function matesOf(id){
+  var ui = VER_DATA.uiPairs && VER_DATA.uiPairs[id];
+  if (ui && ui.length) return ui;
+  return (VER_DATA.mates && VER_DATA.mates[id]) || [];
+}
+function canPairWith(firstId, id){
+  if (!firstId || firstId === id) return true;
+  return matesOf(firstId).indexOf(id) >= 0;
+}
 function toggleCard(id, el){
   var i = selected.indexOf(id);
   if (i>=0) { selected.splice(i,1); }
   else {
+    /* 🔴 第二道防線。第一道是把按鈕變灰，但 disabled 在 devtools 兩秒就能拿掉，
+       而這不是視覺問題——沒驗證過的組合不該進到遊戲裡。 */
+    if (selected.length === 1 && !canPairWith(selected[0], id)) {
+      var f = CARDS.byId(selected[0]), s = CARDS.byId(id);
+      toast('「' + ((f&&f.name)||selected[0]) + '」和「' + ((s&&s.name)||id)
+            + '」這個組合還沒測過，先不開放。' + NLC
+            + '想試的話，先取消目前這張再重選。', 'err', 5000);
+      return;
+    }
     selected.push(id);
     while (selected.length > MAX_CARDS) selected.shift();   // 超過就把最早選的擠掉
   }
-  // 重畫全部卡片的按下狀態——被擠掉那張也要跟著彈回來
-  Array.prototype.forEach.call(document.querySelectorAll('#pool .mcard'), function(c){
-    var cid = c.dataset && c.dataset.id;
-    if (cid) c.setAttribute('aria-pressed', selected.indexOf(cid)>=0 ? 'true':'false');
-  });
+  paintPool();
   if (el) el.setAttribute('aria-pressed', selected.indexOf(id)>=0 ? 'true':'false');
   renderSetupState();
 }
@@ -1185,8 +1239,43 @@ $('btn-clear').onclick = function(){
   renderSetupState();
 };
 function currentCfg(n){ return E.cfg(CARDS.merge(selected)); }
+/* 選了第一張之後，把「不能搭」的卡變灰。
+   灰掉要看得出原因——手機沒有 hover，所以直接在卡上寫，不用 title。 */
+function paintPool(){
+  var first = selected.length === 1 ? selected[0] : null;
+  Array.prototype.forEach.call(document.querySelectorAll('#pool .mcard'), function(c){
+    var cid = c.dataset && c.dataset.id;
+    if (!cid) return;
+    var on = selected.indexOf(cid) >= 0;
+    c.setAttribute('aria-pressed', on ? 'true' : 'false');
+    var blocked = !!first && !on && !canPairWith(first, cid);
+    c.classList.toggle('lockd', blocked);
+    var tagEl = c.querySelector('.lockmsg');
+    if (blocked && !tagEl) {
+      c.insertAdjacentHTML('beforeend',
+        '<div class="lockmsg">這個組合還沒測過，先不開放</div>');
+    } else if (!blocked && tagEl) {
+      tagEl.remove();
+    }
+  });
+  var hint = $('pair-hint');
+  if (hint) {
+    if (!first) {
+      hint.innerHTML = '';
+    } else {
+      var f = CARDS.byId(first);
+      var n = matesOf(first).length;
+      hint.innerHTML = '已選 <b>' + esc((f&&f.name)||first) + '</b>。'
+        + (n ? '還可以再加<b>一張</b>——亮著的 <b>' + n + '</b> 張是實際測過可以搭的。'
+             : '這張目前沒有測過的搭檔，就用它單獨玩。')
+        + ' 只想用一張就直接開場。';
+    }
+  }
+}
 function renderSetupState(){
-  $('setup-count').textContent = selected.length ? '已選：'+((CARDS.byId(selected[0])||{}).name||selected[0]) : '還沒選（＝原版）';
+  $('setup-count').textContent = selected.length
+    ? '已選：' + selected.map(function(id){ return (CARDS.byId(id)||{}).name||id; }).join(' ＋ ')
+    : '還沒選（＝原版）';
   var c = currentCfg(), cf = CARDS.conflicts(selected);
   /* 🔴 原本寫死 6 人驗證，但開局是用真實人數驗——於是「敗者陪審團」這種需要多一點人的卡，
      在選卡畫面顯示「✅ 可以玩」，三個人按下開始才失敗，學生只會覺得系統壞了。
@@ -2577,7 +2666,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230002"></script>
-<script src="js/bind_gate.js?v=202609230002"></script>
+<script src="js/gate_i18n.js?v=202609230027"></script>
+<script src="js/bind_gate.js?v=202609230027"></script>
 </body>
 </html>

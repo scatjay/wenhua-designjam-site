@@ -66,6 +66,13 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 /* .pill.warn 在頁面上用過但從來沒定義，警示徽章長得跟普通徽章一模一樣 */
 .pill.warn{background:var(--amber-soft);color:var(--amber);border-color:var(--amber);font-weight:800}
 .pill.dim{opacity:.55;font-weight:400}
+/* 🔴 2026-09-23 楊老師手機截圖抓到：.pill 全域是 white-space:nowrap（短徽章故意設計成
+   這樣，例如「✅ 已實測」不該斷行）。但「🔗 可配：」後面接的卡名清單可能很長（最多7張），
+   nowrap 逼它擠成一整條不斷行的文字，把卡片、卡片格、body 全部撐寬到 628px（手機只有390px）。
+   讀 getComputedStyle 量到的數字：pairBadge width=282px、whiteSpace=nowrap、
+   body scrollWidth=628 vs clientWidth=390——這個 class 專門給長文字用，不動一般 .pill。 */
+.pill.wrap{white-space:normal;display:block;max-width:100%;line-height:1.6;text-align:left}
+.cardno{color:var(--ink-soft);font-weight:800;font-size:.9em}
 .hide{display:none!important}
 .mono{font-family:ui-monospace,Menlo,monospace}
 .err{color:var(--red);font-size:13.5px;margin:6px 0 0;font-weight:600}
@@ -741,10 +748,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230726"></script>
-<script src="js/sf3k_verified.js?v=202609230726"></script>
-<script src="js/sf3k_cards.js?v=202609230726"></script>
-<script src="js/sf3k_stats.js?v=202609230726"></script>
+<script src="js/sf3k_engine.js?v=202609230741"></script>
+<script src="js/sf3k_verified.js?v=202609230741"></script>
+<script src="js/sf3k_cards.js?v=202609230741"></script>
+<script src="js/sf3k_stats.js?v=202609230741"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -794,6 +801,12 @@ function visibleSessions(){
   return out;
 }
 var E = window.SF3K, CARDS = window.SF3K_CARDS;
+/* 楊老師 2026-09-23：「設計卡給編號，然後可配那些編號列上去」——
+   每張卡固定一個編號（照卡池原始順序，跟 sf3k_cards.js 的順序一致，不會每次重排），
+   「可配」標籤改列編號不列全名：① 學生要的就是這個 ② 順便解決編號前那版
+   長卡名把手機版面撐爆橫向捲動的問題（getComputedStyle 量到 body 628px vs 手機 390px）。*/
+var CARD_NO = {};
+CARDS.CARDS.forEach(function(c, i){ CARD_NO[c.id] = i + 1; });
 
 var me = { env:null, name:null, email:null, uid:null };
 var room = null, roomRef = null, unsub = [];
@@ -1280,22 +1293,22 @@ function renderPool(){
       var need4 = (VER_DATA.needs4p||[]).indexOf(c.id) >= 0;
       var n4badge = need4 ? '<span class="pill warn">👥 需要 4 人以上</span>' : '';
       /* 楊老師 2026-09-23：「還沒選的時候，標籤就要顯示可和幾號卡片組合」——
-         不只給數字，直接把卡名列出來，選之前就看得到，不用先點下去試。
+         改列編號（用上面的 CARD_NO），不列全名：短很多，手機也不會撐爆版面。
          🔴 不用 title——手機沒有 hover，這條 harness 教訓已經踩過不只一次。 */
-      var mateNames = matesOf(c.id).map(function(id){
-        var m = CARDS.byId(id); return m ? m.name : id; });
-      var pairBadge = mateNames.length
-        ? '<span class="pill">🔗 可配：' + mateNames.map(esc).join('、') + '</span>'
-        : '<span class="pill dim">🔗 還沒有驗證過的搭配</span>';
+      /* 楊老師 2026-09-23：「還沒驗證過就不用寫了，正向顯示」——沒有就不顯示這個標籤，
+         不寫負面說法（不寫「還沒有驗證過的搭配」）。有才講，用正向的「可配」講清楚是誰。 */
+      var mateNos = matesOf(c.id).map(function(id){ return CARD_NO[id] || '?'; }).sort(function(a,b){ return a-b; });
+      var pairBadge = mateNos.length
+        ? '<span class="pill wrap">🔗 可配：#' + mateNos.join('、#') + '</span>' : '';
       var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
                 : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
                 : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
       var colo = /手勢|坐在|實體/.test(c.desc) ? '<span class="pill warn">要坐在一起</span>' : '';
       html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
         + 'data-id="'+c.id+'" data-dim="'+c.dim+'">'
-        + '<div class="nm">'+esc(c.name)
+        + '<div class="nm"><span class="cardno">#'+CARD_NO[c.id]+'</span> '+esc(c.name)
         + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+tbadge+' '+n4badge+' '+pairBadge+' '+badge+' '+colo
-        + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製</button>'
+        + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製指令</button>'
         + ' ' + likeBtn('card', c.id) + '</div>'
         + '<div class="ds">'+esc(c.desc)+'</div>'
         /* 40 張卡每張都攤開 desc＋MDA 的話，選卡畫面要捲很久。
@@ -2966,7 +2979,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230726"></script>
-<script src="js/bind_gate.js?v=202609230726"></script>
+<script src="js/gate_i18n.js?v=202609230741"></script>
+<script src="js/bind_gate.js?v=202609230741"></script>
 </body>
 </html>

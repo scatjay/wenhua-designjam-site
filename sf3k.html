@@ -65,6 +65,7 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 .pill.red{background:var(--red-soft);color:var(--red);border-color:var(--red)}
 /* .pill.warn 在頁面上用過但從來沒定義，警示徽章長得跟普通徽章一模一樣 */
 .pill.warn{background:var(--amber-soft);color:var(--amber);border-color:var(--amber);font-weight:800}
+.pill.dim{opacity:.55;font-weight:400}
 .hide{display:none!important}
 .mono{font-family:ui-monospace,Menlo,monospace}
 .err{color:var(--red);font-size:13.5px;margin:6px 0 0;font-weight:600}
@@ -576,6 +577,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
         <li><span class="pill red">⚠ 有人回報過怪怪的</span>我們測的時候覺得這張有點問題，
             但<b>不告訴你是什麼</b>。你自己玩一場，看看能不能找出來——
             <b>這就是 playtesting</b>，遊戲公司花錢請人做的就是這件事。</li>
+        <li><span class="pill warn">👥 需要 4 人以上</span>這張選了之後，3 人會直接被系統擋下來
+            （會告訴你為什麼）。想玩就找第 4 個人一起，或先開別的組合。</li>
+        <li><span class="pill">🔗 已驗證 N 種搭配</span>選這張當第一張之後，還配得到幾種第二張。
+            寫「還沒有驗證過的搭配」不代表配不了，只是還沒人測過——跟 ⚠ 是不同的意思。</li>
       </ul>
       <p class="sub" style="margin:7px 0 0">找到問題不用怕講錯。
         「我覺得這裡怪怪的但說不上來」也是有效的回報——
@@ -732,10 +737,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230309"></script>
-<script src="js/sf3k_verified.js?v=202609230309"></script>
-<script src="js/sf3k_cards.js?v=202609230309"></script>
-<script src="js/sf3k_stats.js?v=202609230309"></script>
+<script src="js/sf3k_engine.js?v=202609230713"></script>
+<script src="js/sf3k_verified.js?v=202609230713"></script>
+<script src="js/sf3k_cards.js?v=202609230713"></script>
+<script src="js/sf3k_stats.js?v=202609230713"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1261,6 +1266,18 @@ function renderPool(){
         ? '<span class="pill red" title="">⚠ 這張有人回報過怪怪的</span>'
         : (tested ? '<span class="pill green">✅ 已實測</span>'
                   : '<span class="pill">🔍 還沒測過</span>');
+      /* 🔴 2026-09-23 上課前根據整晚測試結果新增的兩個標籤（楊老師交辦）：
+         ① 需要4人——座位權力環/敗者陪審團/射程限制/暗分兩隊，選了才會看到一句
+            「目前3人玩不動」，選之前完全看不出來。選卡前先講清楚比選了才噴錯好。
+         ② 已驗證搭配數——直接用 matesOf()（跟配對閘門同一份資料），
+            让學生看得出「選這張，還配不配得到第二張」，不然 elements/draw_target/
+            solo_hard/seat_ring 這四張目前 0 組配對，選了會覺得系統卡住、其實是設計如此
+            （還沒測過而已，不是壞掉）。 */
+      var need4 = (VER_DATA.needs4p||[]).indexOf(c.id) >= 0;
+      var n4badge = need4 ? '<span class="pill warn">👥 需要 4 人以上</span>' : '';
+      var pairN = matesOf(c.id).length;
+      var pairBadge = '<span class="pill' + (pairN ? '' : ' dim') + '">🔗 '
+        + (pairN ? '已驗證 ' + pairN + ' 種搭配' : '還沒有驗證過的搭配') + '</span>';
       var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
                 : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
                 : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
@@ -1268,7 +1285,7 @@ function renderPool(){
       html += '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
         + 'data-id="'+c.id+'" data-dim="'+c.dim+'">'
         + '<div class="nm">'+esc(c.name)
-        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+tbadge+' '+badge+' '+colo
+        + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+tbadge+' '+n4badge+' '+pairBadge+' '+badge+' '+colo
         + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製</button>'
         + ' ' + likeBtn('card', c.id) + '</div>'
         + '<div class="ds">'+esc(c.desc)+'</div>'
@@ -2931,7 +2948,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230309"></script>
-<script src="js/bind_gate.js?v=202609230309"></script>
+<script src="js/gate_i18n.js?v=202609230713"></script>
+<script src="js/bind_gate.js?v=202609230713"></script>
 </body>
 </html>

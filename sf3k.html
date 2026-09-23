@@ -2112,7 +2112,13 @@ function startTimer(c){
     $('timer').className = 'pill' + (blitzLeft <= 3 ? ' red' : '');
     if (blitzLeft <= 0) {
       stopTimer();
-      if (isBlitz && state.meta && state.meta.phase==='choose'
+      /* 🔴 2026-09-23 兩張卡疊合測試第1輪抓到：原本是 `if (isBlitz && …)`，
+         也就是「限時討論」倒數到 0 之後**什麼都不做**——卡片承諾「討論只有 30 秒」，
+         時間到卻沒有任何事發生，沒出牌的人就讓整間房一直等在 choose。
+         實測兩間房卡死（H6P6 第4回合、R8DD 第5回合，rounds 節點全空）。
+         而這個函式自己的註解早就寫著「時間到自動送 DEFEND…不會變成無敵掛機」
+         ⇒ 註解描述的是應有行為，程式只做了一半。兩種倒數都該自動畏縮。 */
+      if (state.meta && state.meta.phase==='choose'
           && !(state.choices && state.choices[me.env])) {
         var meP = state.players[me.env];
         if (meP && (meP.alive || c.modGhost || c.modJury) && !meP.spectator) {

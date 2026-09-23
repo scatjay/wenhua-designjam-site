@@ -102,6 +102,14 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 .mcard{border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;background:var(--panel);
   cursor:pointer;transition:border-color .12s,background .12s}
 .mcard[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+/* 楊老師 2026-09-23 晚上：「選完第一張，其他可選的應該可以稍微抖動，或卡牌旁邊有簡單的動畫，
+   讓學生知道可以再繼續選」。選下第一張的當下，還能配的卡輕晃兩下（只晃兩次，不會一直晃），
+   卡名旁留一個緩慢呼吸的「＋ 可以再加」；系統設了減少動態的人只留標籤。 */
+@keyframes cardnudge{0%,100%{transform:rotate(0)}20%{transform:rotate(-1.2deg)}40%{transform:rotate(1.2deg)}60%{transform:rotate(-.8deg)}80%{transform:rotate(.6deg)}}
+@keyframes addpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.08)}}
+.mcard.canadd{animation:cardnudge .7s ease-in-out 2;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.mcard.canadd .addtag{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--accent);color:#fff;font-size:.8em;font-weight:700;animation:addpulse 1.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.mcard.canadd,.mcard.canadd .addtag{animation:none}}
 .mcard .nm{font-weight:800;font-size:14.5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
 .mcard .ds{font-size:13.5px;color:var(--ink-soft);line-height:1.6}
 .mcard .md{font-size:13px;color:var(--blue);margin-top:5px;line-height:1.6}
@@ -783,10 +791,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231605"></script>
-<script src="js/sf3k_verified.js?v=202609231605"></script>
-<script src="js/sf3k_cards.js?v=202609231605"></script>
-<script src="js/sf3k_stats.js?v=202609231605"></script>
+<script src="js/sf3k_engine.js?v=202609231950"></script>
+<script src="js/sf3k_verified.js?v=202609231950"></script>
+<script src="js/sf3k_cards.js?v=202609231950"></script>
+<script src="js/sf3k_stats.js?v=202609231950"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -813,7 +821,7 @@ var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 /* 測試腳本用這個確認「瀏覽器裡實際跑的是哪一版」——?v= 只是破快取，證明不了跑的是哪份程式
    （2026-09-23 抓到：第 1 輪一半的測試員整下午都跑著舊版，因為頁面只在 worker 啟動時載入一次）。*/
-window.SF3K_BUILD = '202609231605';
+window.SF3K_BUILD = '202609231950';
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
    文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
@@ -1416,14 +1424,16 @@ function renderPool(){
        🔴 不用 title——手機沒有 hover，這條 harness 教訓已經踩過不只一次。 */
     var mateNos = matesOf(c.id).map(function(id){ return CARD_NO[id] || '?'; }).sort(function(a,b){ return a-b; });
     var pairBadge = mateNos.length
-      ? '<span class="pill wrap">🔗 可配：#' + mateNos.join('、#') + '</span>' : '';
+      ? '<span class="pill wrap">🔗 可配：卡' + mateNos.join('、卡') + '</span>' : '';
     var badge = c.from==='gap' ? '<span class="pill warn">學生沒碰過的維度</span>'
               : (c.from==='reference' ? '<span class="pill">官方改編版</span>'
               : '<span class="pill">學長姐提過 '+c.seen+' 次</span>');
     var colo = /手勢|坐在|實體/.test(c.desc) ? '<span class="pill warn">要坐在一起</span>' : '';
     return '<div class="mcard" role="button" tabindex="0" aria-pressed="false" '
       + 'data-id="'+c.id+'" data-dim="'+c.dim+'" data-haspair="'+(mateNos.length?'1':'0')+'">'
-      + '<div class="nm"><span class="cardno">#'+CARD_NO[c.id]+'</span> '+esc(c.name)
+      /* 🔴 2026-09-23 晚上楊老師：「學生編號和卡牌編號似乎會互相混淆」——玩家是 #107、學生卡作者是 #31，
+         卡片編號也寫 #12，聊天室裡講「#12」分不出是人還是卡。⇒ # 只留給人，卡片一律「卡12」。 */
+      + '<div class="nm"><span class="cardno">卡'+CARD_NO[c.id]+'</span> '+esc(c.name)
       + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[c.dim]||c.dim)+'</span> '+n4badge+' '+pairBadge+' '+badge+' '+colo
       + ' <button class="copybtn" data-copy="'+c.id+'" title="複製這張卡的完整內容">複製指令</button>'
       + ' ' + likeBtn('card', c.id) + '</div>'
@@ -1615,6 +1625,15 @@ function paintPool(){
     c.setAttribute('aria-pressed', on ? 'true' : 'false');
     var blocked = !!first && !on && !canPairWith(first, cid);
     c.classList.toggle('lockd', blocked);
+    var canadd = !!first && !on && !blocked;
+    c.classList.toggle('canadd', canadd);
+    var addEl = c.querySelector('.addtag');
+    if (canadd && !addEl) {
+      var nmEl = c.querySelector('.nm');
+      if (nmEl) nmEl.insertAdjacentHTML('beforeend', '<span class="addtag">＋ 可以再加</span>');
+    } else if (!canadd && addEl) {
+      addEl.remove();
+    }
     var tagEl = c.querySelector('.lockmsg');
     if (blocked && !tagEl) {
       c.insertAdjacentHTML('beforeend',
@@ -3418,7 +3437,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231605"></script>
-<script src="js/bind_gate.js?v=202609231605"></script>
+<script src="js/gate_i18n.js?v=202609231950"></script>
+<script src="js/bind_gate.js?v=202609231950"></script>
 </body>
 </html>

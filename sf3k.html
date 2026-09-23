@@ -783,10 +783,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231545"></script>
-<script src="js/sf3k_verified.js?v=202609231545"></script>
-<script src="js/sf3k_cards.js?v=202609231545"></script>
-<script src="js/sf3k_stats.js?v=202609231545"></script>
+<script src="js/sf3k_engine.js?v=202609231605"></script>
+<script src="js/sf3k_verified.js?v=202609231605"></script>
+<script src="js/sf3k_cards.js?v=202609231605"></script>
+<script src="js/sf3k_stats.js?v=202609231605"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -796,10 +796,24 @@ firebase.initializeApp({
   projectId:"gen-lang-client-0929530380"
 });
 var db = firebase.database();
+/* 測試農場改連本機 Firebase 模擬器（2026-09-23，依官方「Avoid surprise bills」建議：自動化測試用
+   Local Emulator Suite，不產生正式帳單）。原本測試直接打正式資料庫：實測 200-350 MB/小時，
+   而且學生沒關的舊版分頁會收到全部測試流量。
+   🔴 兩個條件同時成立才切：網址帶 ?emu=1 **且** 編號是測試段 55-60。學生兩個都不會有。
+   必須在任何 db.ref() 之前呼叫，否則 SDK 會拒絕（實例已初始化）。 */
+(function(){
+  try {
+    var e = parseInt(localStorage.getItem('designjam_env'), 10);
+    if (/[?&]emu=1(&|$)/.test(location.search) && e >= 55 && e <= 60) {
+      db.useEmulator('127.0.0.1', 9000);
+      window.SF3K_EMU = true;
+    }
+  } catch (x) { console.warn('[emu] 切換失敗', x); }
+})();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 /* 測試腳本用這個確認「瀏覽器裡實際跑的是哪一版」——?v= 只是破快取，證明不了跑的是哪份程式
    （2026-09-23 抓到：第 1 輪一半的測試員整下午都跑著舊版，因為頁面只在 worker 啟動時載入一次）。*/
-window.SF3K_BUILD = '202609231545';
+window.SF3K_BUILD = '202609231605';
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
    文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
@@ -3404,7 +3418,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231545"></script>
-<script src="js/bind_gate.js?v=202609231545"></script>
+<script src="js/gate_i18n.js?v=202609231605"></script>
+<script src="js/bind_gate.js?v=202609231605"></script>
 </body>
 </html>

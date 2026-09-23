@@ -783,10 +783,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231510"></script>
-<script src="js/sf3k_verified.js?v=202609231510"></script>
-<script src="js/sf3k_cards.js?v=202609231510"></script>
-<script src="js/sf3k_stats.js?v=202609231510"></script>
+<script src="js/sf3k_engine.js?v=202609231545"></script>
+<script src="js/sf3k_verified.js?v=202609231545"></script>
+<script src="js/sf3k_cards.js?v=202609231545"></script>
+<script src="js/sf3k_stats.js?v=202609231545"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -799,7 +799,7 @@ var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 /* 測試腳本用這個確認「瀏覽器裡實際跑的是哪一版」——?v= 只是破快取，證明不了跑的是哪份程式
    （2026-09-23 抓到：第 1 輪一半的測試員整下午都跑著舊版，因為頁面只在 worker 啟動時載入一次）。*/
-window.SF3K_BUILD = '202609231510';
+window.SF3K_BUILD = '202609231545';
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
    文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
@@ -1093,6 +1093,9 @@ function dropNull(o){
 }
 var progressWatched = false;
 var nickWatched = false;
+/* 🔴 大廳查詢與組合次數原本每次回到大廳就再掛一次 on('value')：網路層 SDK 會合併同一個查詢，
+   但 callback 越疊越多——機器人一個 worker 打幾十場就是每次更新重畫幾十次。只掛一次。 */
+var lobbyWatched = false, comboWatched = false;
 function enterLobby(){
   show('scr-lobby');
   if (!progressWatched) { progressWatched = true; watchMyProgress(); watchOthers(); watchBoards(); watchDesigns(); }
@@ -1100,10 +1103,12 @@ function enterLobby(){
   if (!nickWatched) { nickWatched = true; watchNicks(); }
   watchLikes();
   renderChecklist();
+  if (!comboWatched) { comboWatched = true;
   ROOT.child('comboStats').on('value', function(s){
     var v = s.val()||{}; comboCount = {};
     Object.keys(v).forEach(function(k){ comboCount[k] = (v[k]&&v[k].count)||0; });
   });
+  }
   renderResume();
   wireCopy(document);   // 規則區塊的複製鈕（大廳一載入就要能按）
   renderMeRow();
@@ -1134,6 +1139,7 @@ function enterLobby(){
      改成直接用 meta/sess 查本節（索引已在規則裡）。一節課實測 35 間、約 250 KB，全拿沒問題。
      測試場次動輒上百間，機器人又是靠輸代號進房、用不到大廳 ⇒ 測試場次只拿 14 間，省流量。
      equalTo 之後的 limitToLast 是依 key 排、不是依時間 ⇒ 時間順序一律在前端自己排。 */
+  if (!lobbyWatched) { lobbyWatched = true;
   var lobbyCap = /^test-/.test(SESS) ? 14 : 60;
   ROOT.child('rooms').orderByChild('meta/sess').equalTo(SESS).limitToLast(lobbyCap).on('value', function(s){
     var v = s.val()||{}, live=[], open_=[], done=[];
@@ -1208,6 +1214,7 @@ function enterLobby(){
     });
     paintRoomLike();
   });
+  }
 }
 armConfirm($('btn-leave'), '這一場還沒打完，走了同一場的人會一直等你出牌。', function(){
   leaveRoom();
@@ -2987,12 +2994,34 @@ function sessLabel(s){
   }
   return a.mo + '/' + a.d + ' ' + half;
 }
+var othersBySess = {};
 function watchOthers(){
-  /* 40 → 80：晚上那班要看得到早上那批，太小的視窗會被自己的場次擠掉。
-     ⚠ 這個查詢會把整間房（含每回合與聊天）抓下來，不要再往上加。*/
-  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(80).on('value', function(s){
-    var v = dropNull(normObj(s.val())), rows = [];
-    Object.keys(v).reverse().forEach(function(code){
+  /* 🔴 2026-09-23 下午改（firebase database:profile 實測）：原本是「全站最新 80 間房」整間訂閱
+     （含每回合與聊天），而且一直開著。兩個後果：
+     ① 流量：最新 80 間幾乎全是測試機器人正在打的房 ⇒ 每個開著頁面的人都即時收到所有測試對局
+        的每句聊天、每回合結算。profiler：一句 95 B 的聊天平均送給 13-18 個接收者（一間房只有 3 人）。
+        早上那班上課那 4 小時吃掉約 2.8 GB，這是主因之一（另一個是當時還沒加索引）。
+     ② 功能：晚上那班「看早上那批的回放」是從這 80 間裡篩的——早上之後測試又開了上千間，
+        早上那 35 間早就被擠出視窗，晚上那班根本看不到，而且不報錯。
+     ⇒ 每個看得到的場次各查一次；本節的查詢條件跟大廳一模一樣（SDK 會共用同一條監聽，不重複付流量）；
+       晚上那班多查早上那一節——那一節全是打完的房，下載一次之後就不會再有更新。 */
+  visibleSessions().forEach(function(ss){
+    var cap = /^test-/.test(ss) ? 14 : 60;
+    ROOT.child('rooms').orderByChild('meta/sess').equalTo(ss).limitToLast(cap).on('value', function(s){
+      othersBySess[ss] = dropNull(normObj(s.val()));
+      renderOthers();
+    });
+  });
+}
+function renderOthers(){
+    var v = {}, rows = [];
+    Object.keys(othersBySess).forEach(function(ss){
+      var x = othersBySess[ss] || {};
+      Object.keys(x).forEach(function(k){ v[k] = x[k]; });
+    });
+    Object.keys(v).sort(function(a, b){
+      return (((v[b]||{}).meta||{}).createdAt||0) - (((v[a]||{}).meta||{}).createdAt||0);
+    }).forEach(function(code){
       if (/^ZZ/.test(code)) return;
       var m = v[code].meta; if (!m || m.phase !== 'over') return;
       /* 🔴 原本這裡沒有場次篩選，40 場全列出來只是排序不同 ——
@@ -3031,7 +3060,6 @@ function watchOthers(){
       b.onclick = function(){ openReplay(b.dataset.code); };
     });
     paintRoomLike();
-  });
 }
 
 /* 觀戰當場就能留觀察——不然「即時觀戰」算不進檢核表那兩則，
@@ -3376,7 +3404,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231510"></script>
-<script src="js/bind_gate.js?v=202609231510"></script>
+<script src="js/gate_i18n.js?v=202609231545"></script>
+<script src="js/bind_gate.js?v=202609231545"></script>
 </body>
 </html>

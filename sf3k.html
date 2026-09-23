@@ -75,6 +75,7 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 .cardno{color:var(--ink-soft);font-weight:800;font-size:.9em}
 /* 選卡池裡的學生設計卡：跟能玩的卡片視覺上要明顯不一樣（虛線框＋不用手型游標），
    不然學生會誤以為點了就能選來玩。 */
+.ds.adj{background:var(--amber-soft);border-left:3px solid var(--amber);padding:4px 8px;border-radius:0 6px 6px 0;margin-top:3px}
 .mcard.stu-design{border-style:dashed;cursor:default;background:var(--panel2)}
 /* 可以玩的學生設計卡：看起來要跟能選的內建卡一樣（實線、手型游標），
    不要跟「只有想法」那種混在一起，不然學生不知道哪些點得下去。 */
@@ -782,10 +783,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231133"></script>
-<script src="js/sf3k_verified.js?v=202609231133"></script>
-<script src="js/sf3k_cards.js?v=202609231133"></script>
-<script src="js/sf3k_stats.js?v=202609231133"></script>
+<script src="js/sf3k_engine.js?v=202609231205"></script>
+<script src="js/sf3k_verified.js?v=202609231205"></script>
+<script src="js/sf3k_cards.js?v=202609231205"></script>
+<script src="js/sf3k_stats.js?v=202609231205"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1427,14 +1428,7 @@ function renderPool(){
       /* 有 patch 的＝真的能玩，跟內建卡一樣可以點選；沒有的（只有文字想法）維持展示用。 */
       var playable = !!d.patch;
       var sid = 'stu:' + r.env + ':' + r.id;
-      var knobTxt = '';
-      if (playable) {
-        for (var kk in d.patch) {
-          if (!Object.prototype.hasOwnProperty.call(d.patch, kk)) continue;
-          var kn = knobByKey(kk);
-          knobTxt = (kn ? kn.t : kk) + ' → ' + d.patch[kk];
-        }
-      }
+      var knobTxt = playable ? patchText(d.patch) : '';
       html += '<div class="mcard stu-design' + (playable ? ' playable' : '') + '"'
         + (playable ? ' role="button" tabindex="0" aria-pressed="false" data-id="' + sid + '"'
                     : ' data-stu-design="1"')
@@ -1446,7 +1440,12 @@ function renderPool(){
                     : ' <span class="pill warn">🎨 學生設計・只有想法，還不能玩</span>')
         + ' <span class="sub">' + esc(avatarOf(r.env) + ' ' + nickOf(r.env, '#' + r.env)) + '</span></div>'
         + (playable ? '<div class="ds"><b>實際改動：</b>' + esc(knobTxt) + '</div>' : '')
-        + '<div class="ds"><b>改法：</b>' + esc(d.rule) + '</div>'
+        + '<div class="ds"><b>你寫的改法：</b>' + esc(d.rule) + '</div>'
+        /* 楊老師 2026-09-23 11:49：「學生的設計調整過的，也在卡片做一下說明」。
+           引擎做不到原樣的想法，是被換成最接近的做法才變成可以玩的——這件事要寫在卡片上，
+           不能默默改掉。這本身就是這週的教學點：寫得出來 ≠ 做得出來。 */
+        + (d.map_note ? '<div class="ds adj"><b>' + (d.approx ? '⚙ 為了能玩，調整成：' : '⚙ 在引擎裡的做法：')
+             + '</b>' + esc(d.map_note) + '</div>' : '')
         + '<div class="ds"><b>猜會發生：</b>' + esc(d.why) + '</div></div>';
     });
     html += '</div>';
@@ -1542,6 +1541,7 @@ function stuCardById(id){
   if (!d || !d.patch) return null;                 // 沒有 patch 的舊設計卡＝不能玩
   return { id: id, name: d.name, dim: d.dim, kind: d.kind || '參數',
            desc: d.rule || '', mda: d.why || '', patch: d.patch,
+           adjNote: d.map_note || '', approx: !!d.approx,
            stu: true, env: p[1], online: true, seen: 0, from: 'student' };
 }
 /* 內建卡跟學生卡都解析成同一種形狀，顯示用的程式碼就不用各自分兩種寫法 */
@@ -1864,6 +1864,9 @@ function renderRoom(){
       return '<div class="mcard ro" data-dim="'+esc(x.dim)+'"><div class="nm">'+esc(x.name)
         + ' <span class="dimtag">'+esc(CARDS.DIM_NAMES[x.dim]||x.dim)+'</span></div>'
         + '<div class="ds">'+esc(x.desc)+'</div>'
+        /* 學生設計卡被調整過的話，玩的當下也要看得到是怎麼被調整的 */
+        + (x.adjNote ? '<div class="ds adj"><b>'+(x.approx?'⚙ 為了能玩，調整成：':'⚙ 在引擎裡的做法：')
+             + '</b>'+esc(x.adjNote)+'</div>' : '')
         + '<details class="mdbox"><summary>MDA 分析</summary>'
         + '<div class="md">'+esc(x.mda)+'</div></details></div>';
     }).join('') + '</div>';
@@ -2405,6 +2408,48 @@ var STU_KNOBS = [
 function knobByKey(k){
   for (var i=0;i<STU_KNOBS.length;i++) if (STU_KNOBS[i].k === k) return STU_KNOBS[i];
   return null;
+}
+/* 🔴 STU_KNOBS 只有學生表單開放的那 10 個數字。但老師幫既有設計卡對應時會用到
+   結構型模組（幽靈、反擊、協防、天災…），那些 knobByKey() 查不到，畫面上就會直接
+   印出 modGhost / teamCurve 這種英文變數名——學生看不懂。這份對照表補齊全部設定。
+   要新增設定時，這裡跟 sf3k_engine.js 的 DEFAULT_CFG 一起加。 */
+var CFG_LABEL = {
+  startChips:'起始自尊點數', soloDamage:'單挑造成的傷害',
+  teamDamagePerAttacker:'聯手時每個人造成的傷害', teamMinAttackers:'聯手最少要幾個人才算數',
+  teamCurve:'聯手傷害的累加方式', teamSoloPenalty:'想聯手但沒人跟進，自己扣幾點',
+  defendDivisor:'畏縮時傷害除以幾', defendIdlePenalty:'畏縮但沒人打你，自己扣幾點',
+  decayPerRound:'每回合全體自動扣幾點', decayRamp:'縮圈每回合再加重幾點',
+  winnersRemaining:'剩下幾個人時遊戲結束', maxRounds:'最多打幾回合',
+  noRepeatAction:'不可以連續出同一張', anonymous:'隱藏玩家名字',
+  hideChips:'不公開別人的自尊點數', revealTargets:'結算時公開誰打誰',
+  discussSeconds:'討論時間限制（秒）', blitzSeconds:'出牌時間限制（秒）',
+  modComeback:'反擊（畏縮指定的人來打你，他反被扣）',
+  modRedirect:'嫁禍（把自己的傷害轉給指定的人）',
+  modGuard:'協防（畏縮指定一人，那人傷害減半）',
+  modVampire:'受擊吸血（被聯手指定反而回血）', modDrain:'攻擊吸血（打人時自己回一半）',
+  modDrawTarget:'固定打右邊那個人', attackRange:'攻擊距離限制',
+  modGhost:'幽靈（出局後還能出牌干擾）', modJury:'陪審團（出局者猜誰傷最重）',
+  modElements:'屬性相剋', modEvents:'天災（每回合翻一張事件）',
+  modStack:'依序結算（畏縮→單挑→聯手）', modRoles:'角色異能',
+  modItems:'道具（每人一張一次性道具）', modFactions:'陣營（暗分兩隊）',
+  modWhisper:'私訊（可以一對一密談）'
+};
+/* 把一組 patch 講成一句中文。true/false 跟 teamCurve 這種字串值都要翻，
+   不然畫面會出現「幽靈 → true」。 */
+function patchText(patch){
+  var out = [];
+  for (var k in patch) {
+    if (!Object.prototype.hasOwnProperty.call(patch, k)) continue;
+    var kn = knobByKey(k);
+    var nm = (kn && kn.t) || CFG_LABEL[k] || k;
+    var v = patch[k], vt;
+    if (v === true) vt = '開啟';
+    else if (v === false) vt = '關閉';
+    else if (k === 'teamCurve') vt = ({linear:'每個人都加滿', square:'人越多加速暴增', diminish:'人越多、每多一個加的越少'})[v] || v;
+    else vt = String(v);
+    out.push(nm + ' → ' + vt);
+  }
+  return out.join('、');
 }
 var dKind = '參數';
 
@@ -3279,7 +3324,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231133"></script>
-<script src="js/bind_gate.js?v=202609231133"></script>
+<script src="js/gate_i18n.js?v=202609231205"></script>
+<script src="js/bind_gate.js?v=202609231205"></script>
 </body>
 </html>

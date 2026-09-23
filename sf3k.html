@@ -783,10 +783,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231205"></script>
-<script src="js/sf3k_verified.js?v=202609231205"></script>
-<script src="js/sf3k_cards.js?v=202609231205"></script>
-<script src="js/sf3k_stats.js?v=202609231205"></script>
+<script src="js/sf3k_engine.js?v=202609231332"></script>
+<script src="js/sf3k_verified.js?v=202609231332"></script>
+<script src="js/sf3k_cards.js?v=202609231332"></script>
+<script src="js/sf3k_stats.js?v=202609231332"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1649,10 +1649,16 @@ function createRoom(){
     ROOT.child('hosts/'+SESS+'/'+me.env).transaction(function(v){
       v = v || { count:0 }; v.count = (v.count||0)+1; return v;
     });
-    ROOT.child('comboStats/'+comboKey(selected)).transaction(function(v){
-      v = v || { count:0, cards:selected.slice() };
-      v.count = (v.count||0)+1; v.last = Date.now(); return v;
-    });
+    /* comboStats 刻意不分場次——「這個規則組合全校被玩過幾次」跨班累積才有意思。
+       🔴 但正因為不分區，測試機器人也會一起累積，而機器人的場次數是學生的好幾倍
+       ⇒ 那個數字會變成「機器人玩過幾次」，對學生完全沒有參考價值。
+       測試場次（test-*）一律不計入。測試自己的紀錄在 plays/{場次} 裡，不需要靠這個。 */
+    if (!/^test-/.test(SESS)) {
+      ROOT.child('comboStats/'+comboKey(selected)).transaction(function(v){
+        v = v || { count:0, cards:selected.slice() };
+        v.count = (v.count||0)+1; v.last = Date.now(); return v;
+      });
+    }
     joinRoom(codeStr);
   });
 }
@@ -2373,7 +2379,14 @@ function recordPlays(after, oc){
   after.forEach(function(p){
     var won = oc.winners.indexOf(String(p.env))>=0 || oc.winners.indexOf(p.env)>=0;
     var s = tal[String(p.env)] || {};
-    ROOT.child('plays/'+p.env).push({
+    /* 🔴 2026-09-23 楊老師指正：「代理人測試員的測試數據和編號，要和人類學生的編號區分開來，
+       不然會汙染。」他是對的，而且實測比想像嚴重——改之前 plays 是 plays/{編號}，沒有分區，
+       機器人 55/56/57 各累積 290 場（共 870 筆），真實學生 #19 只有 6 筆、#48 有 32 筆
+       ⇒ 機器人佔了這個節點約 3/4。而 plays 正是之後要拿來分析的那份資料。
+       連帶後果：排行榜是整包讀 plays，所以早上那班看到的「場次最多」其實是測試機器人。
+       ⇒ 改成 plays/{場次}/{編號}，跟 talk／leaves／replays 一致（它們本來就分區了）。
+       每筆紀錄本來就有 sess 欄位，所以舊資料可以照自己的 sess 精準搬移。 */
+    ROOT.child('plays/'+SESS+'/'+p.env).push({
       room: room, cards: m.cards||[], role: p.role||null, faction: p.faction||null,
       chips: p.chips, alive: !!p.alive, won: won, rounds: m.round||1,
       wasHost: String(m.hostEnv)===String(p.env),
@@ -2640,7 +2653,7 @@ function initDesignForm(){
 var myStats = { games:0, feedback:0, comments:0, essay:false, designs:0 };
 function watchMyProgress(){
   if (me.env == null) return;
-  ROOT.child('plays/'+me.env).on('value', function(s){
+  ROOT.child('plays/'+SESS+'/'+me.env).on('value', function(s){
     myStats.games = Object.keys(dropNull(normObj(s.val()))).length;
     renderChecklist();
   });
@@ -2793,7 +2806,9 @@ var BD = { plays:null, talk:null, replays:null, leaves:null };
 
 function watchBoards(){
   ['plays', 'talk', 'replays', 'leaves'].forEach(function(key){
-    var ref = (key === 'plays') ? ROOT.child('plays') : ROOT.child(key + '/' + SESS);
+    /* plays 原本是唯一沒有分區的例外（整包讀），所以排行榜會把測試機器人算進來、
+       而且每個學生都要下載全部場次的紀錄。現在四個節點一致依場次讀。 */
+    var ref = ROOT.child(key + '/' + SESS);
     ref.on('value', function(s){
       BD[key] = dropNull(normObj(s.val())); renderBoards();
       if (key === 'talk') renderMeRow();   // 帳號列的發言次數要跟著即時更新
@@ -3324,7 +3339,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231205"></script>
-<script src="js/bind_gate.js?v=202609231205"></script>
+<script src="js/gate_i18n.js?v=202609231332"></script>
+<script src="js/bind_gate.js?v=202609231332"></script>
 </body>
 </html>

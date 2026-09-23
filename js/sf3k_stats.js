@@ -95,6 +95,14 @@
       if (top && best > 0) touch(top).focusedRounds++;
     });
 
+    /* 🔴 有給 players 名單的話，只回報名單上的人（2026-09-23 觀戰者稽核）：touch() 會幫
+       choices／log 裡出現的任何 id 自動開一列，所以「只把下場的人傳進來」原本擋不住觀戰者。
+       被打的觀戰者不可能存在，但被當成目標的 id 若不在名單上，也不該出現在表上。 */
+    if (players && players.length) {
+      var keep = {};
+      players.forEach(function (p) { keep[String(p.id != null ? p.id : p.env)] = 1; });
+      Object.keys(per).forEach(function (k) { if (!keep[k]) delete per[k]; });
+    }
     var arr = Object.keys(per).map(function (k) { return per[k]; });
     var hl = [];
     function top1(key, label, unit) {

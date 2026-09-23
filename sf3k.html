@@ -73,6 +73,9 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
    body scrollWidth=628 vs clientWidth=390——這個 class 專門給長文字用，不動一般 .pill。 */
 .pill.wrap{white-space:normal;display:block;max-width:100%;line-height:1.6;text-align:left}
 .cardno{color:var(--ink-soft);font-weight:800;font-size:.9em}
+/* 選卡池裡的學生設計卡：跟能玩的卡片視覺上要明顯不一樣（虛線框＋不用手型游標），
+   不然學生會誤以為點了就能選來玩。 */
+.mcard.stu-design{border-style:dashed;cursor:default;background:var(--panel2)}
 /* 楊老師 2026-09-23：只顯示有搭配的卡／按編號排序，這兩顆是選卡畫面上的篩選/排序切換 */
 #pool.onlypairs .mcard[data-haspair="0"]{display:none}
 #btn-onlypairs[aria-pressed="true"],#btn-sortno[aria-pressed="true"]{
@@ -584,6 +587,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
         <button id="btn-clear">全部取消</button>
         <button id="btn-onlypairs" aria-pressed="false">只顯示有搭配的卡</button>
         <button id="btn-sortno" aria-pressed="false">按編號排序</button>
+        <button id="btn-hidestu" aria-pressed="false">隱藏學生設計的卡</button>
       </div>
       <div id="pair-hint" class="pairhint"></div>
       <div id="setup-problems" style="margin-top:8px"></div>
@@ -758,10 +762,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609230931"></script>
-<script src="js/sf3k_verified.js?v=202609230931"></script>
-<script src="js/sf3k_cards.js?v=202609230931"></script>
-<script src="js/sf3k_stats.js?v=202609230931"></script>
+<script src="js/sf3k_engine.js?v=202609231023"></script>
+<script src="js/sf3k_verified.js?v=202609231023"></script>
+<script src="js/sf3k_cards.js?v=202609231023"></script>
+<script src="js/sf3k_stats.js?v=202609231023"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -1286,6 +1290,12 @@ function wirePoolControls(){
     $('btn-sortno').setAttribute('aria-pressed', window.POOL_SORT === 'no' ? 'true' : 'false');
     renderPool(); paintPool();
   };
+  $('btn-hidestu').onclick = function(){
+    window.POOL_HIDE_STU = !window.POOL_HIDE_STU;
+    $('btn-hidestu').setAttribute('aria-pressed', window.POOL_HIDE_STU ? 'true' : 'false');
+    $('btn-hidestu').textContent = window.POOL_HIDE_STU ? '顯示學生設計的卡' : '隱藏學生設計的卡';
+    renderPool();
+  };
 }
 function startSetup(){
   show('scr-setup'); selected = [];
@@ -1364,12 +1374,43 @@ function renderPool(){
       html += '</div>';
     });
   }
+  /* 楊老師 2026-09-23 10:21（上課中）：「但我在卡片列表上沒有看到學生設計的，
+     要顯示而且特別標記一下」——這是「選卡列表」，跟「全班設計的卡」瀏覽區是兩個地方。
+     早上定案「引擎還不支援，不要加進去跑」沒有變，這裡只是把設計卡也顯示出來、
+     標記清楚是「還不能玩」，不能被點選（用 data-stu-design 讓下面的點擊監聽跳過它）。
+     demo 範例卡不放進來——那是給設計表單看格式用的，混進選卡池會讓人以為是某個同學。 */
+  var stuRows = window.POOL_HIDE_STU ? [] : designRows().filter(function(r){ return r.env !== 'demo'; });
+  if (stuRows.length) {
+    html += '<div class="dimhead" data-dim="stu">🎨　學生設計的卡（' + stuRows.length + '）</div><div class="cardgrid">';
+    stuRows.forEach(function(r){
+      var d = r.d;
+      html += '<div class="mcard stu-design" data-stu-design="1">'
+        + '<div class="nm">' + esc(d.name)
+        + ' <span class="dimtag">' + esc(CARDS.DIM_NAMES[d.dim]||d.dim) + '</span>'
+        + ' <span class="pill">' + esc(d.kind||'參數') + '型</span>'
+        + ' <span class="pill warn">🎨 學生設計・還不能玩</span>'
+        + ' <span class="sub">' + esc(avatarOf(r.env) + ' ' + nickOf(r.env, '#' + r.env)) + '</span></div>'
+        + '<div class="ds"><b>改法：</b>' + esc(d.rule) + '</div>'
+        + '<div class="ds"><b>猜會發生：</b>' + esc(d.why) + '</div></div>';
+    });
+    html += '</div>';
+  }
+
   $('pool').innerHTML = html;
   $('pool').classList.toggle('onlypairs', !!window.POOL_ONLYPAIRS);
   Array.prototype.forEach.call($('pool').querySelectorAll('.mcard summary'), function(s){
     s.onclick = function(e){ e.stopPropagation(); };     // 展開 MDA 不要順便選卡
   });
   Array.prototype.forEach.call($('pool').querySelectorAll('.mcard'), function(el){
+    if (el.dataset.stuDesign) {
+      /* 學生設計卡：點了不選卡，用 toast 講清楚為什麼不能點——不要讓它靜默沒反應，
+         那樣學生會以為是壞掉，不是「設計上如此」。 */
+      el.onclick = function(){
+        toast('這是同學設計的卡，遊戲引擎還不支援自訂規則，暫時不能真的拿來玩。'
+          + NLC + '想試試看的話，可以複製這張卡的內容去問 AI 怎麼實作。', 'err', 4500);
+      };
+      return;
+    }
     el.onclick = function(e){
       if (e.target && e.target.classList.contains('copybtn')) return;   // 按複製不要順便選卡
       if (e.target && e.target.classList.contains('likebtn')) return;   // 按讚也不要
@@ -2255,6 +2296,10 @@ function watchDesigns(){
     DESIGNS = dropNull(normObj(s.val()));
     myStats.designs = Object.keys(dropNull(normObj(DESIGNS[me.env]))).length;
     renderDesigns(); renderChecklist();
+    /* 選卡池也要顯示學生設計的卡（楊老師 2026-09-23 上課中交辦），
+       新設計送出時如果剛好有人在選卡畫面，要跟著更新，不用等他離開再回來。 */
+    var setupScr = document.getElementById('scr-setup');
+    if (setupScr && !setupScr.classList.contains('hide')) renderPool();
   }, function(e){ console.warn('[designs] 讀取失敗', e); });
 }
 function designRows(){
@@ -3035,7 +3080,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609230931"></script>
-<script src="js/bind_gate.js?v=202609230931"></script>
+<script src="js/gate_i18n.js?v=202609231023"></script>
+<script src="js/bind_gate.js?v=202609231023"></script>
 </body>
 </html>

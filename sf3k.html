@@ -791,10 +791,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609232000"></script>
-<script src="js/sf3k_verified.js?v=202609232000"></script>
-<script src="js/sf3k_cards.js?v=202609232000"></script>
-<script src="js/sf3k_stats.js?v=202609232000"></script>
+<script src="js/sf3k_engine.js?v=202609232010"></script>
+<script src="js/sf3k_verified.js?v=202609232010"></script>
+<script src="js/sf3k_cards.js?v=202609232010"></script>
+<script src="js/sf3k_stats.js?v=202609232010"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -821,7 +821,7 @@ var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 /* 測試腳本用這個確認「瀏覽器裡實際跑的是哪一版」——?v= 只是破快取，證明不了跑的是哪份程式
    （2026-09-23 抓到：第 1 輪一半的測試員整下午都跑著舊版，因為頁面只在 worker 啟動時載入一次）。*/
-window.SF3K_BUILD = '202609232000';
+window.SF3K_BUILD = '202609232010';
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
    文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
@@ -1391,7 +1391,22 @@ function startSetup(){
   $('btn-submit').textContent = '開場';
   $('btn-submit').onclick = createRoom;
 }
+/* 楊老師 2026-09-23 晚上：「學生卡片也給編號一下」。接在內建卡後面（內建 1-40 ⇒ 學生從 41 起）。
+   依 Firebase push key 排序＝依建立時間，且全站唯一 ⇒ 每個人畫面上的編號一致；
+   新卡永遠接在最後，已經有的編號不會因為有人新增而整批位移（刪卡才會）。示範卡不編號。 */
+function numberStudentCards(){
+  var keys = [];
+  Object.keys(DESIGNS || {}).forEach(function(env){
+    if (env === 'demo') return;
+    var per = dropNull(normObj(DESIGNS[env]));
+    Object.keys(per).forEach(function(k){ if (per[k] && per[k].name) keys.push({ env: env, id: k }); });
+  });
+  keys.sort(function(a, b){ return a.id < b.id ? -1 : (a.id > b.id ? 1 : 0); });
+  var base = CARDS.CARDS.length;
+  keys.forEach(function(x, i){ CARD_NO['stu:' + x.env + ':' + x.id] = base + i + 1; });
+}
 function renderPool(){
+  numberStudentCards();
   /* 楊老師 2026-09-23（推翻今晚稍早的決定，以這句為準）：
      「單張不用顯示已實測了，沒測過的根本不要放」——選卡池只留 uiSingles
      （真的三場全過的），quirky（⚠ draw_target）跟 needs4p 裡還沒確認過的
@@ -1465,6 +1480,8 @@ function renderPool(){
      標記清楚是「還不能玩」，不能被點選（用 data-stu-design 讓下面的點擊監聽跳過它）。
      demo 範例卡不放進來——那是給設計表單看格式用的，混進選卡池會讓人以為是某個同學。 */
   var stuRows = window.POOL_HIDE_STU ? [] : designRows().filter(function(r){ return r.env !== 'demo'; });
+  /* 有了卡片編號之後，依編號由小到大排（跟內建卡一致），學生講「卡57」才找得到；新卡會排在最後。 */
+  stuRows.sort(function(a, b){ return (CARD_NO['stu:'+a.env+':'+a.id]||0) - (CARD_NO['stu:'+b.env+':'+b.id]||0); });
   if (stuRows.length) {
     html += '<div class="dimhead" data-dim="stu">🎨　學生設計的卡（' + stuRows.length + '）</div><div class="cardgrid">';
     stuRows.forEach(function(r){
@@ -1477,12 +1494,18 @@ function renderPool(){
         + (playable ? ' role="button" tabindex="0" aria-pressed="false" data-id="' + sid + '"'
                     : ' data-stu-design="1"')
         + '>'
-        + '<div class="nm">' + esc(d.name)
+        + '<div class="nm"><span class="cardno">卡' + (CARD_NO[sid] || '?') + '</span> ' + esc(d.name)
         + ' <span class="dimtag">' + esc(CARDS.DIM_NAMES[d.dim]||d.dim) + '</span>'
         + ' <span class="pill">' + esc(d.kind||'參數') + '型</span>'
         + (playable ? ' <span class="pill green">🎮 學生設計・可以玩</span>'
                     : ' <span class="pill warn">🎨 學生設計・只有想法，還不能玩</span>')
-        + ' <span class="sub">' + esc(avatarOf(r.env) + ' ' + nickOf(r.env, '#' + r.env)) + '</span></div>'
+        + ' <span class="sub">' + esc(avatarOf(r.env) + ' ' + nickOf(r.env, '#' + r.env)) + '</span>'
+        + (function(){
+            if (!playable) return '';
+            var ns = matesOf(sid).map(function(id){ return CARD_NO[id] || '?'; }).sort(function(a,b){ return a-b; });
+            return ns.length ? ' <span class="pill wrap">🔗 可配：卡' + ns.join('、卡') + '</span>' : '';
+          })()
+        + '</div>'
         + (playable ? '<div class="ds"><b>實際改動：</b>' + esc(knobTxt) + '</div>' : '')
         + '<div class="ds"><b>你寫的改法：</b>' + esc(d.rule) + '</div>'
         /* 楊老師 2026-09-23 11:49：「學生的設計調整過的，也在卡片做一下說明」。
@@ -3467,7 +3490,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609232000"></script>
-<script src="js/bind_gate.js?v=202609232000"></script>
+<script src="js/gate_i18n.js?v=202609232010"></script>
+<script src="js/bind_gate.js?v=202609232010"></script>
 </body>
 </html>

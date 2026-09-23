@@ -762,10 +762,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231023"></script>
-<script src="js/sf3k_verified.js?v=202609231023"></script>
-<script src="js/sf3k_cards.js?v=202609231023"></script>
-<script src="js/sf3k_stats.js?v=202609231023"></script>
+<script src="js/sf3k_engine.js?v=202609231031"></script>
+<script src="js/sf3k_verified.js?v=202609231031"></script>
+<script src="js/sf3k_cards.js?v=202609231031"></script>
+<script src="js/sf3k_stats.js?v=202609231031"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -2417,7 +2417,13 @@ function watchMyProgress(){
     var mine = Object.keys(v).map(function(k){ return v[k]; })
       .filter(function(x){ return String(x.env)===String(me.env); });
     myStats.feedback = mine.length;
-    myStats.essay = mine.some(function(x){ return (x.essay||'').trim().length >= 20; });
+    /* 🔴 2026-09-23 上課中抓到：#49 寫了16字的真心話（「我覺得版主只要按得快沒人可以贏他」）
+       送出成功，但沒有算進完成度——因為這裡原本要求20字，而畫面上「字少沒關係，要講得
+       具體」那句話從頭到尾沒有提過有任何下限，學生完全沒有機會知道。
+       門檻本身在跟教學設計互相矛盾（鼓勵誠實簡短、卻暗中要求長度），不是加說明文字能解的，
+       改門檻本身。6字下限這個判準這個專案在別處(W2)用過同一個理由：擋真的空白亂填
+       （像「好」「ok」），不擋品質——品質本來就是老師在後台看原文用人眼判斷。 */
+    myStats.essay = mine.some(function(x){ return (x.essay||'').trim().length >= 6; });
     renderChecklist();
   });
   ROOT.child('comments').on('value', function(s){
@@ -3080,7 +3086,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231023"></script>
-<script src="js/bind_gate.js?v=202609231023"></script>
+<script src="js/gate_i18n.js?v=202609231031"></script>
+<script src="js/bind_gate.js?v=202609231031"></script>
 </body>
 </html>

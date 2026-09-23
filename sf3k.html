@@ -143,6 +143,9 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 .seat.me{border-color:var(--accent);background:var(--accent-soft)}
 .seat.dead{opacity:.42}
 .seat .nm{font-weight:800}
+.watchers{font-size:12.5px;color:#667085;margin:-2px 0 10px}
+.watchers .w{display:inline-block;padding:1px 8px;margin:2px 4px 0 0;border:1px dashed var(--line);border-radius:999px;background:var(--panel)}
+.watchers .w.me{border-color:var(--accent)}
 .seat .hp{font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:700;margin:2px 0}
 .swatch{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.18)}
 /* 討論區 */
@@ -704,6 +707,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       </div>
       <div id="event-box"></div>
       <div class="seats" id="seats"></div>
+      <div class="watchers" id="watchers"></div>
       <div id="my-extras"></div>
     </div>
 
@@ -719,6 +723,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
         <div class="grow"><input id="chat-in" placeholder="說點什麼…" maxlength="120"></div>
         <button class="pri" id="btn-say">送出</button>
       </div>
+      <p class="sub" id="chat-spec-note" style="display:none;margin:6px 0 0">👀 你在觀戰，不能在這裡發言——場上的談判只屬於下場的人。看到什麼，寫在下面「留下你的觀察」。</p>
     </div>
 
     <div class="box" id="result-box" style="display:none">
@@ -791,10 +796,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609232010"></script>
-<script src="js/sf3k_verified.js?v=202609232010"></script>
-<script src="js/sf3k_cards.js?v=202609232010"></script>
-<script src="js/sf3k_stats.js?v=202609232010"></script>
+<script src="js/sf3k_engine.js?v=202609232020"></script>
+<script src="js/sf3k_verified.js?v=202609232020"></script>
+<script src="js/sf3k_cards.js?v=202609232020"></script>
+<script src="js/sf3k_stats.js?v=202609232020"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -821,7 +826,7 @@ var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 /* 測試腳本用這個確認「瀏覽器裡實際跑的是哪一版」——?v= 只是破快取，證明不了跑的是哪份程式
    （2026-09-23 抓到：第 1 輪一半的測試員整下午都跑著舊版，因為頁面只在 worker 啟動時載入一次）。*/
-window.SF3K_BUILD = '202609232010';
+window.SF3K_BUILD = '202609232020';
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
    文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
@@ -1866,8 +1871,17 @@ function isHost(){ return state.meta && String(state.meta.hostEnv) === String(me
 /* 我是不是在「看別人打」而不是「自己在打」。
    旁觀者看得到的東西比玩家多——這是刻意的，不是漏洞（轉播視角）。 */
 function amSpectating(){
-  var p = state.players && state.players[me.env];
-  return !!(p && (p.spectator || p.inGame === false));
+  return isWatcherP(state.players && state.players[me.env]);
+}
+/* 這個人是不是「觀戰者」＝不屬於這一場的玩家（楊老師 2026-09-23 上課中連抓三處：座位被畫成
+   「0 自尊 出局」、統計表與時序圖列了他們、還被記成「玩過一場」＝檢核表灌水）。
+   中途進來的是 spectator:true；開局時沒下場的是 inGame:false。
+   開局前大廳裡的人 inGame 也是 false ⇒ 只在開局之後才看 inGame，不然大廳裡人人都變觀戰者。 */
+function isWatcherP(p){
+  if (!p) return false;
+  if (p.spectator) return true;
+  var ph = state.meta && state.meta.phase;
+  return !!ph && ph !== 'lobby' && p.inGame === false;
 }
 /* 🔴 hostEnv 只在建房那一刻寫一次，全檔沒有任何重新指派——GM 一關分頁，
    「結算」和「下一回合」就再也沒有人按得動，整場永久停在等待畫面。
@@ -1967,7 +1981,19 @@ function renderRoom(){
     ? '<p class="err">🌪 本回合事件：<b>'+esc(m.roundEvent.label)+'</b></p>' : '';
 
   // 座位
-  $('seats').innerHTML = P.map(function(p,i){
+  var inPlay = P.filter(function(p){ return !isWatcherP(p); });
+  var watchers = P.filter(isWatcherP);
+  if ($('watchers')) $('watchers').innerHTML = watchers.length
+    ? '👀 觀戰中（' + watchers.length + '）：' + watchers.map(function(p){
+        var isMeW = String(p.env) === String(me.env);
+        return '<span class="w' + (isMeW ? ' me' : '') + '">' + avatarOf(p.env) + ' ' + esc(nickOf(p.env, p.name)) + '</span>';
+      }).join('')
+    : '';
+  /* 觀戰者不能在遊戲聊天室講話（楊老師定：場上談判只屬於下場的人），觀察寫在「留下你的觀察」 */
+  var chatRow = $('chat-in') && $('chat-in').closest('.row');
+  if (chatRow) chatRow.style.display = amSpectating() ? 'none' : '';
+  if ($('chat-spec-note')) $('chat-spec-note').style.display = amSpectating() ? '' : 'none';
+  $('seats').innerHTML = inPlay.map(function(p,i){
     var isMe = String(p.env)===String(me.env);
     var nm = c.anonymous && !isMe ? '???' : esc(nickOf(p.env, p.name));
     var hp = (c.hideChips && !isMe) ? '？' : p.chips;
@@ -2067,7 +2093,7 @@ function renderResult(c, P){
 function renderStats(c, P){
   var box = $('stats-box');
   if (!window.SF3K_STATS || !state.rounds) { box.innerHTML=''; return; }
-  var st = SF3K_STATS.tally(state.rounds, P);
+  var st = SF3K_STATS.tally(state.rounds, P.filter(function(p){ return !isWatcherP(p); }));
   if (!st.totals.roundsPlayed) { box.innerHTML=''; return; }
   var L = E.label(c), T = st.totals;
   var nameOf = function(p){ var isMe=String(p.id)===String(me.env);
@@ -2103,7 +2129,7 @@ function renderStats(c, P){
     /* 旁觀者是「轉播視角」（楊老師 2026-09-22）：他不在這一場裡，看到全部數據不會影響
        這一場的談判，反而讓等下一輪的人有觀戰的樂趣、也看得比玩家更清楚。 */
     + ((state.meta && (state.meta.phase === 'over' || amSpectating()))
-        ? timelineHtml(state.rounds, c, playersArr().map(function(p){ return String(p.env); }),
+        ? timelineHtml(state.rounds, c, playersArr().filter(function(p){ return !isWatcherP(p); }).map(function(p){ return String(p.env); }),
             function(e){ var p = state.players[e]; var isMe = String(e)===String(me.env);
               return esc(c.anonymous && !isMe ? ('#'+e) : nickOf(e, p&&p.name)); })
         : '')
@@ -2459,7 +2485,8 @@ function recordPlays(after, oc){
       SF3K_STATS.tally(state.rounds, after).list.forEach(function(x){ tal[String(x.id)] = x; });
     }
   } catch (e) { console.warn('[plays] 統計算不出來，只記基本欄位', e); }
-  after.forEach(function(p){
+  /* 🔴 觀戰者不記「玩過一場」——原本整房都記，今晚 37 筆裡 9 筆是觀戰者，檢核表「玩完三輪」因此灌水 */
+  after.filter(function(p){ return !isWatcherP(p); }).forEach(function(p){
     var won = oc.winners.indexOf(String(p.env))>=0 || oc.winners.indexOf(p.env)>=0;
     var s = tal[String(p.env)] || {};
     /* 🔴 2026-09-23 楊老師指正：「代理人測試員的測試數據和編號，要和人類學生的編號區分開來，
@@ -3229,7 +3256,8 @@ function rpRender(){
 
   // 座位：這一回合開始時的狀態
   var chips = rpChipsAt(st.r);
-  var ids = Object.keys(RP.players).sort(function(a,b){
+  var ids = Object.keys(RP.players).filter(function(e){
+    var q = RP.players[e] || {}; return !(q.spectator || q.inGame === false); }).sort(function(a,b){
     return (RP.players[a].seat||0) - (RP.players[b].seat||0); });
   var ch = dropNull(normObj(RP.rounds[st.r].choices));
   $('rp-seats').innerHTML = ids.map(function(e, i){
@@ -3352,6 +3380,7 @@ function bumpTalk(){
 }
 function say(text, sys){
   if (!roomRef) return;
+  if (!sys && amSpectating()) { toast('觀戰中不能在遊戲聊天室發言，看到什麼寫在「留下你的觀察」。', 'err', 4000); return; }
   var to = sys ? '' : ($('chat-to').value||'');
   roomRef.child('chat').push({ env: me.env, name: me.name||('#'+me.env),
     text: text, to: to||null, sys: !!sys, ts: Date.now() });
@@ -3490,7 +3519,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609232010"></script>
-<script src="js/bind_gate.js?v=202609232010"></script>
+<script src="js/gate_i18n.js?v=202609232020"></script>
+<script src="js/bind_gate.js?v=202609232020"></script>
 </body>
 </html>

@@ -76,6 +76,10 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
 /* 選卡池裡的學生設計卡：跟能玩的卡片視覺上要明顯不一樣（虛線框＋不用手型游標），
    不然學生會誤以為點了就能選來玩。 */
 .mcard.stu-design{border-style:dashed;cursor:default;background:var(--panel2)}
+/* 可以玩的學生設計卡：看起來要跟能選的內建卡一樣（實線、手型游標），
+   不要跟「只有想法」那種混在一起，不然學生不知道哪些點得下去。 */
+.mcard.stu-design.playable{border-style:solid;cursor:pointer;background:var(--panel)}
+.mcard.stu-design.playable[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 /* 楊老師 2026-09-23：只顯示有搭配的卡／按編號排序，這兩顆是選卡畫面上的篩選/排序切換 */
 #pool.onlypairs .mcard[data-haspair="0"]{display:none}
 #btn-onlypairs[aria-pressed="true"],#btn-sortno[aria-pressed="true"]{
@@ -510,6 +514,22 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
             <textarea id="d-why" maxlength="200" rows="3"
               placeholder="例如：大家會更願意講好一起打，因為多了一個好處；但也可能變成被盯上的人直接放棄。"></textarea>
           </label>
+
+          <div class="notebuilt" style="margin-top:4px">
+            <b>想讓這張卡真的能玩？選一個地方來改。</b><br>
+            自由文字的規則遊戲引擎讀不懂，但如果你的想法可以換算成「把某個數字調大／調小」，
+            在下面選起來，這張卡就會變成<b>可以真的選來玩</b>的卡。
+            <b>一次只能改一個地方</b>——這正是這門課一直在講的：只動一個變因，因果才看得清楚。
+            <br>不想改數字也沒關係，留「不改（只寫想法）」就好，一樣算完成作業。
+          </div>
+          <label class="dlab">要改哪個地方
+            <select id="d-knob"></select>
+          </label>
+          <label class="dlab" id="d-val-wrap" style="display:none">改成多少　<span class="sub" id="d-val-hint"></span>
+            <input id="d-val" type="number" inputmode="numeric">
+          </label>
+          <div class="sub" id="d-knob-preview" style="margin-top:-4px"></div>
+
           <div class="row" style="gap:8px;align-items:center">
             <button id="btn-design" class="btn-primary">送出這張卡</button>
             <span class="sub" id="d-msg"></span>
@@ -762,10 +782,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231031"></script>
-<script src="js/sf3k_verified.js?v=202609231031"></script>
-<script src="js/sf3k_cards.js?v=202609231031"></script>
-<script src="js/sf3k_stats.js?v=202609231031"></script>
+<script src="js/sf3k_engine.js?v=202609231126"></script>
+<script src="js/sf3k_verified.js?v=202609231126"></script>
+<script src="js/sf3k_cards.js?v=202609231126"></script>
+<script src="js/sf3k_stats.js?v=202609231126"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -865,6 +885,24 @@ var NLC = String.fromCharCode(10);   // 供複製到剪貼簿的文字換行用
    改成兩段式：第一次按 → 變成「再按一次」＋講清楚為什麼；6 秒內再按才執行，超過自動復原。 */
 /* 頁內提示，取代 alert()。固定在畫面上方、會自己消失、不擋任何操作。
    kind: 'err'（紅）／'ok'（綠）／'info'（預設）。 */
+/* 🔴 2026-09-23 上課中，學生回報兩次「玩的數量或評論可以刷」，我自己也從資料查到
+   #21／#43 各有 6 則一模一樣的回饋（同一分鐘內）——根因是送出鈕在 Firebase 寫入
+   完成之前沒有 disabled，可以一直點，每點一次多一筆。
+   🔴 恢復一定要放在「成功與失敗都會走到」的地方：今天已經吃過一次教訓
+   （hostResolving 因為只在 .then() 裡恢復、而 update() 同步拋出，結果永久卡死）
+   ⇒ 這裡用 try/catch + .then/.catch 雙保險，任何路徑都一定會把按鈕放回去。 */
+function guardSubmit(btn, fn){
+  if (!btn) return;
+  if (btn.dataset.busy === '1') return;      // 寫入中，這次點擊直接忽略
+  btn.dataset.busy = '1';
+  btn.disabled = true;
+  var release = function(){ btn.dataset.busy = ''; btn.disabled = false; };
+  var p;
+  try { p = fn(); }
+  catch (e) { release(); throw e; }
+  if (p && typeof p.then === 'function') p.then(release, release);
+  else release();                            // 同步結束（例如驗證沒過就 return）
+}
 function toast(msg, kind, ms){
   var box = document.getElementById('dj-toast');
   if (!box) {
@@ -1097,7 +1135,7 @@ function enterLobby(){
       var ids = Object.keys(ps);
       var players = ids.filter(function(e){ return !ps[e].spectator; });
       var watchers = ids.length - players.length;
-      var cards = (m.cards||[]).map(function(id){ return CARDS.byId(id); }).filter(Boolean);
+      var cards = (m.cards||[]).map(function(id){ return anyCard(id); }).filter(Boolean);
       var feat = cards.length
         ? cards.map(function(c){ return '<span class="pill on" data-dim="'+esc(c.dim)
             + '" style="margin:2px 4px 0 0">'+esc(c.name)+'</span>'; }).join('')
@@ -1163,18 +1201,20 @@ armConfirm($('btn-leave'), '這一場還沒打完，走了同一場的人會一�
 /* 玩完當下的回報最有價值，但「怪怪的」三個字我修不了——
    把這一場的代號、用了哪張卡、打了幾回合、幾個人一起送出去，才有辦法定位。 */
 $('btn-over-report').onclick = function(){
-  var v = ($('over-report').value||'').trim();
-  if (v.length < 4) { $('over-report-msg').textContent = '再多寫幾個字'; return; }
-  var m = state.meta || {};
-  ROOT.child('reports').push({
-    env: me.env, name: me.name, room: room||null, text: v,
-    phase: 'over', cards: m.cards||[], rounds: m.round||null,
-    players: Object.keys(dropNull(normObj(state.players))).length,
-    sess: SESS, ua: navigator.userAgent.slice(0,120), ts: nowTs()
-  }).then(function(){
-    $('over-report').value = '';
-    $('over-report-msg').textContent = '收到了，謝謝！老師看得到。';
-  }).catch(function(e){ $('over-report-msg').textContent = '送不出去：'+(e.message||e); });
+  guardSubmit($('btn-over-report'), function(){
+    var v = ($('over-report').value||'').trim();
+    if (v.length < 4) { $('over-report-msg').textContent = '再多寫幾個字'; return; }
+    var m = state.meta || {};
+    return ROOT.child('reports').push({
+      env: me.env, name: me.name, room: room||null, text: v,
+      phase: 'over', cards: m.cards||[], rounds: m.round||null,
+      players: Object.keys(dropNull(normObj(state.players))).length,
+      sess: SESS, ua: navigator.userAgent.slice(0,120), ts: nowTs()
+    }).then(function(){
+      $('over-report').value = '';
+      $('over-report-msg').textContent = '收到了，謝謝！老師看得到。';
+    }).catch(function(e){ $('over-report-msg').textContent = '送不出去：'+(e.message||e); });
+  });
 };
 $('btn-back-lobby').onclick = leaveRoom;
 $('btn-join').onclick = function(){ joinRoom(($('join-code').value||'').trim().toUpperCase()); };
@@ -1218,7 +1258,7 @@ function renderResume(){
    學生下一步是拿這個去跟 AI 做企劃，所以複製出去的東西要自己講得清楚脈絡，
    不能只有卡片名字——貼過去對方看不懂就白做了。 */
 function cardText(id){
-  var c = CARDS.byId(id);
+  var c = anyCard(id);
   if (!c) return '';
   return '【SiSSYFiGHT 改動卡：' + c.name + '】' + NLC
     + '設計維度：' + (CARDS.DIM_NAMES[c.dim] || c.dim) + '（' + c.kind + '型）' + NLC
@@ -1384,12 +1424,28 @@ function renderPool(){
     html += '<div class="dimhead" data-dim="stu">🎨　學生設計的卡（' + stuRows.length + '）</div><div class="cardgrid">';
     stuRows.forEach(function(r){
       var d = r.d;
-      html += '<div class="mcard stu-design" data-stu-design="1">'
+      /* 有 patch 的＝真的能玩，跟內建卡一樣可以點選；沒有的（只有文字想法）維持展示用。 */
+      var playable = !!d.patch;
+      var sid = 'stu:' + r.env + ':' + r.id;
+      var knobTxt = '';
+      if (playable) {
+        for (var kk in d.patch) {
+          if (!Object.prototype.hasOwnProperty.call(d.patch, kk)) continue;
+          var kn = knobByKey(kk);
+          knobTxt = (kn ? kn.t : kk) + ' → ' + d.patch[kk];
+        }
+      }
+      html += '<div class="mcard stu-design' + (playable ? ' playable' : '') + '"'
+        + (playable ? ' role="button" tabindex="0" aria-pressed="false" data-id="' + sid + '"'
+                    : ' data-stu-design="1"')
+        + '>'
         + '<div class="nm">' + esc(d.name)
         + ' <span class="dimtag">' + esc(CARDS.DIM_NAMES[d.dim]||d.dim) + '</span>'
         + ' <span class="pill">' + esc(d.kind||'參數') + '型</span>'
-        + ' <span class="pill warn">🎨 學生設計・還不能玩</span>'
+        + (playable ? ' <span class="pill green">🎮 學生設計・可以玩</span>'
+                    : ' <span class="pill warn">🎨 學生設計・只有想法，還不能玩</span>')
         + ' <span class="sub">' + esc(avatarOf(r.env) + ' ' + nickOf(r.env, '#' + r.env)) + '</span></div>'
+        + (playable ? '<div class="ds"><b>實際改動：</b>' + esc(knobTxt) + '</div>' : '')
         + '<div class="ds"><b>改法：</b>' + esc(d.rule) + '</div>'
         + '<div class="ds"><b>猜會發生：</b>' + esc(d.why) + '</div></div>';
     });
@@ -1453,7 +1509,7 @@ function toggleCard(id, el){
     /* 🔴 第二道防線。第一道是把按鈕變灰，但 disabled 在 devtools 兩秒就能拿掉，
        而這不是視覺問題——沒驗證過的組合不該進到遊戲裡。 */
     if (selected.length === 1 && !canPairWith(selected[0], id)) {
-      var f = CARDS.byId(selected[0]), s = CARDS.byId(id);
+      var f = anyCard(selected[0]), s = anyCard(id);
       toast('「' + ((f&&f.name)||selected[0]) + '」和「' + ((s&&s.name)||id)
             + '」這個組合還沒測過，先不開放。' + NLC
             + '想試的話，先取消目前這張再重選。', 'err', 5000);
@@ -1471,7 +1527,49 @@ $('btn-clear').onclick = function(){
   Array.prototype.forEach.call($('pool').querySelectorAll('.mcard'), function(el){ el.setAttribute('aria-pressed','false'); });
   renderSetupState();
 };
-function currentCfg(n){ return E.cfg(CARDS.merge(selected)); }
+/* ═════ 學生設計的卡也能玩（楊老師 2026-09-23 交辦）═════
+   引擎沒辦法執行自由文字寫的規則，所以做法不是「解析文字」，而是讓學生
+   **在既有的引擎旋鈕裡挑一個來改**——挑什麼、改成多少，存成真正的 patch。
+   🔴 刻意只讓改一個參數：這正好就是這門課一直在講的「一次只動一個地方，
+      因果才看得清楚」，同時也讓驗證單純（E.validate 照樣擋得住壞組合）。
+   id 格式 `stu:{env}:{pushId}`，前綴讓所有地方都能一眼分辨是不是學生卡。 */
+function isStuCard(id){ return typeof id === 'string' && id.indexOf('stu:') === 0; }
+function stuCardById(id){
+  var p = String(id).split(':');
+  if (p.length < 3) return null;
+  var per = dropNull(normObj((DESIGNS||{})[p[1]]));
+  var d = per[p[2]];
+  if (!d || !d.patch) return null;                 // 沒有 patch 的舊設計卡＝不能玩
+  return { id: id, name: d.name, dim: d.dim, kind: d.kind || '參數',
+           desc: d.rule || '', mda: d.why || '', patch: d.patch,
+           stu: true, env: p[1], online: true, seen: 0, from: 'student' };
+}
+/* 內建卡跟學生卡都解析成同一種形狀，顯示用的程式碼就不用各自分兩種寫法 */
+function anyCard(id){ return isStuCard(id) ? stuCardById(id) : CARDS.byId(id); }
+function mergeAny(ids){
+  var patch = CARDS.merge((ids||[]).filter(function(x){ return !isStuCard(x); }));
+  (ids||[]).filter(isStuCard).forEach(function(id){
+    var c = stuCardById(id);
+    if (!c) return;
+    for (var k in c.patch) if (Object.prototype.hasOwnProperty.call(c.patch, k)) patch[k] = c.patch[k];
+  });
+  return patch;
+}
+/* 衝突偵測也要含學生卡——兩張卡把同一個旋鈕設成不同值就是衝突 */
+function conflictsAny(ids){
+  var seen = {}, out = [];
+  (ids||[]).forEach(function(id){
+    var c = anyCard(id); if (!c || !c.patch) return;
+    for (var k in c.patch) {
+      if (!Object.prototype.hasOwnProperty.call(c.patch, k)) continue;
+      if (seen[k] && seen[k].v !== c.patch[k]) {
+        out.push('「' + seen[k].n + '」和「' + c.name + '」都改了同一個地方，值不一樣');
+      } else seen[k] = { n: c.name, v: c.patch[k] };
+    }
+  });
+  return out;
+}
+function currentCfg(n){ return E.cfg(mergeAny(selected)); }
 /* 選了第一張之後，把「不能搭」的卡變灰。
    灰掉要看得出原因——手機沒有 hover，所以直接在卡上寫，不用 title。 */
 function paintPool(){
@@ -1496,7 +1594,7 @@ function paintPool(){
     if (!first) {
       hint.innerHTML = '';
     } else {
-      var f = CARDS.byId(first);
+      var f = anyCard(first);
       var n = matesOf(first).length;
       hint.innerHTML = '已選 <b>' + esc((f&&f.name)||first) + '</b>。'
         + (n ? '還可以再加<b>一張</b>——亮著的 <b>' + n + '</b> 張是實際測過可以搭的。'
@@ -1507,9 +1605,9 @@ function paintPool(){
 }
 function renderSetupState(){
   $('setup-count').textContent = selected.length
-    ? '已選：' + selected.map(function(id){ return (CARDS.byId(id)||{}).name||id; }).join(' ＋ ')
+    ? '已選：' + selected.map(function(id){ return (anyCard(id)||{}).name||id; }).join(' ＋ ')
     : '還沒選（＝原版）';
-  var c = currentCfg(), cf = CARDS.conflicts(selected);
+  var c = currentCfg(), cf = conflictsAny(selected);
   /* 🔴 原本寫死 6 人驗證，但開局是用真實人數驗——於是「敗者陪審團」這種需要多一點人的卡，
      在選卡畫面顯示「✅ 可以玩」，三個人按下開始才失敗，學生只會覺得系統壞了。
      這裡改成把 3-6 人全部驗一遍，明白標出這張卡幾個人才玩得動。 */
@@ -1525,7 +1623,7 @@ function renderSetupState(){
   cf.forEach(function(p){ out += '<p class="err">⚠ '+esc(p)+'</p>'; });
   if (!out) out = '<p class="okmsg">✅ 這個組合可以玩</p>';
   $('setup-problems').innerHTML = out;
-  var colo = selected.map(CARDS.byId).filter(Boolean).filter(function(x){ return /手勢|坐在|實體/.test(x.desc); });
+  var colo = selected.map(anyCard).filter(Boolean).filter(function(x){ return /手勢|坐在|實體/.test(x.desc); });
   $('setup-colocate').innerHTML = colo.length
     ? '<p class="err">👥 這一場有需要面對面的要素，開場前請大家<b>坐到同一桌</b>。</p>' : '';
   $('btn-submit').disabled = !v.ok;
@@ -1539,7 +1637,7 @@ function createRoom(){
   if (!okAny) { toast('這個組合 3-6 人都玩不動，換一張卡', 'err'); return; }
   var codeStr = code4();
   var meta = { host: me.uid||('env'+me.env), hostEnv: me.env, sess: SESS, phase:'lobby', round:1,
-               cards: selected.slice(), cfg: CARDS.merge(selected),
+               cards: selected.slice(), cfg: mergeAny(selected),
                seed: Math.random(), createdAt: nowTs() };
   ROOT.child('rooms/'+codeStr+'/meta').set(meta).then(function(){
     /* 這一節課的第幾場 —— 楊老師要一眼看得出全班跑了幾場。
@@ -1751,14 +1849,14 @@ function renderRoom(){
     ? '要找人一起玩：把代號 <b class="mono">' + esc(room) + '</b> 報給同學，'
       + '他們在大廳輸入這四個字就會進到這一場。'
     : '這一場的代號是 <b class="mono">' + esc(room) + '</b>。';
-  var names = (m.cards||[]).map(function(id){ var x=CARDS.byId(id); return x?x.name:id; });
+  var names = (m.cards||[]).map(function(id){ var x=anyCard(id); return x?x.name:id; });
   $('room-cards').innerHTML = names.length
     ? '這一場加了：' + names.map(function(n){ return '<span class="pill on">'+esc(n)+'</span>'; }).join(' ')
     : '<span class="pill">原版規則，沒有改動</span>';
   $('whisper-pill').style.display = c.modWhisper ? '' : 'none';
 
   // 遊戲中隨時看得到每張卡實際做了什麼（不用回大廳）
-  var picked = (m.cards||[]).map(function(id){ return CARDS.byId(id); }).filter(Boolean);
+  var picked = (m.cards||[]).map(function(id){ return anyCard(id); }).filter(Boolean);
   var peek = $('cardpeek');
   if (picked.length) {
     peek.style.display = '';
@@ -2289,6 +2387,25 @@ function recordPlays(after, oc){
    🔴 刻意不讓設計卡出現在選卡畫面——引擎跑不動自訂規則，讓它可選等於選了就卡住。
       限制本身在版面上講成教學點（設計 ≠ 工程當下做得到），不要偷偷藏起來。*/
 var DESIGNS = {};
+/* 學生可以改的引擎旋鈕。刻意只開「數值型、學生看得懂、內建卡本來就在用」的這幾個——
+   結構型模組（幽靈、陪審團、屬性相剋…）不開放，因為那些的互動組合爆炸多、驗不完。
+   每一項都要能被 E.validate 擋住壞值，所以 min/max 只是 UI 提示，真正把關的是 validate。 */
+var STU_KNOBS = [
+  { k:'startChips',            t:'起始自尊點數',              min:3,  max:20, def:10, hint:'預設 10' },
+  { k:'soloDamage',            t:'單挑造成的傷害',            min:0,  max:5,  def:1,  hint:'預設 1' },
+  { k:'teamDamagePerAttacker', t:'聯手時每個人造成的傷害',    min:0,  max:5,  def:2,  hint:'預設 2' },
+  { k:'teamMinAttackers',      t:'聯手最少要幾個人才算數',    min:1,  max:4,  def:2,  hint:'預設 2（設 1 就變成一個人也能聯手）' },
+  { k:'defendDivisor',         t:'畏縮時傷害除以幾',          min:1,  max:5,  def:2,  hint:'預設 2（設 1 等於畏縮沒用）' },
+  { k:'defendIdlePenalty',     t:'畏縮但沒人打你，自己扣幾點', min:0, max:3,  def:1,  hint:'預設 1' },
+  { k:'teamSoloPenalty',       t:'想聯手但沒人跟進，自己扣幾點', min:0, max:3, def:0, hint:'預設 0' },
+  { k:'decayPerRound',         t:'每回合全體自動扣幾點（縮圈）', min:0, max:3, def:0, hint:'預設 0' },
+  { k:'winnersRemaining',      t:'剩下幾個人時遊戲結束',      min:1,  max:3,  def:2,  hint:'預設 2（設 1 就要打到只剩一個人）' },
+  { k:'maxRounds',             t:'最多打幾回合（0＝不限）',    min:0,  max:30, def:0,  hint:'預設 0＝不限，到上限就比自尊高低' },
+];
+function knobByKey(k){
+  for (var i=0;i<STU_KNOBS.length;i++) if (STU_KNOBS[i].k === k) return STU_KNOBS[i];
+  return null;
+}
 var dKind = '參數';
 
 function watchDesigns(){
@@ -2373,17 +2490,39 @@ function submitDesign(){
   if (name.length < 2)  { say_('卡片要有名字（至少 2 個字）。', 'err'); return; }
   if (rule.length < 10) { say_('「規則怎麼改」寫得再具體一點，讓別人照著做得出來。', 'err'); return; }
   if (why.length  < 10) { say_('「你猜會發生什麼」是這張卡的重點，不要跳過。', 'err'); return; }
-  $('btn-design').disabled = true;
-  ROOT.child('cardDesigns/' + me.env).push({
-    name: name, dim: dim, kind: dKind, rule: rule, why: why,
-    nick: me.name || ('#' + me.env), sess: SESS, ts: nowTs()
-  }).then(function(){
-    $('d-name').value = ''; $('d-rule').value = ''; $('d-why').value = '';
-    say_('收到了，下面看得到。想再設計一張就繼續。', 'okmsg');
-    $('btn-design').disabled = false;
-  }).catch(function(e){
-    say_('送不出去：' + (e && e.message ? e.message : e), 'err');
-    $('btn-design').disabled = false;
+
+  /* 有選旋鈕才做成可以玩的卡。🔴 存之前一定要自己再驗一次，不能只信畫面上的預覽——
+     學生可能選好數值之後又手動改了輸入框、或在預覽更新之前就按送出。 */
+  var rec = { name: name, dim: dim, kind: dKind, rule: rule, why: why,
+              nick: me.name || ('#' + me.env), sess: SESS, ts: nowTs() };
+  var knobKey = $('d-knob') ? $('d-knob').value : '';
+  if (knobKey) {
+    var kn = knobByKey(knobKey);
+    var n = parseInt($('d-val').value, 10);
+    if (!kn || isNaN(n)) { say_('「改成多少」要填一個數字。', 'err'); return; }
+    if (n < kn.min || n > kn.max) {
+      say_('「' + kn.t + '」要填 ' + kn.min + '～' + kn.max + ' 之間。', 'err'); return;
+    }
+    var patch = {}; patch[knobKey] = n;
+    var okAt = [];
+    for (var np=3; np<=6; np++) if (E.validate(E.cfg(patch), np).ok) okAt.push(np);
+    if (!okAt.length) {
+      say_('這個數字會讓遊戲玩不動：' + E.validate(E.cfg(patch), 4).problems.join('；')
+           + '　換個數字，或選「不改」只寫想法。', 'err');
+      return;
+    }
+    rec.patch = patch;
+    rec.playable = true;
+  }
+
+  return guardSubmit($('btn-design'), function(){
+    return ROOT.child('cardDesigns/' + me.env).push(rec).then(function(){
+      $('d-name').value = ''; $('d-rule').value = ''; $('d-why').value = '';
+      say_(rec.patch ? '收到了！這張卡可以真的選來玩，去選卡畫面找找看。'
+                     : '收到了，下面看得到。想再設計一張就繼續。', 'okmsg');
+    }).catch(function(e){
+      say_('送不出去：' + (e && e.message ? e.message : e), 'err');
+    });
   });
 }
 function initDesignForm(){
@@ -2401,6 +2540,42 @@ function initDesignForm(){
       });
     };
   });
+
+  /* 旋鈕選單：選了才顯示數值欄，並即時預覽「這張卡會變成什麼」。
+     預覽用的是真正的 E.validate，跟開局時擋人的是同一套判斷，
+     不會發生「選卡時說可以、真的開局才說不行」那種事（那個坑今天早上已經踩過）。 */
+  var ks = $('d-knob');
+  if (ks && !ks.options.length) {
+    var o0 = document.createElement('option');
+    o0.value = ''; o0.textContent = '不改（只寫想法，不能真的玩）';
+    ks.appendChild(o0);
+    STU_KNOBS.forEach(function(kn){
+      var o = document.createElement('option');
+      o.value = kn.k; o.textContent = kn.t;
+      ks.appendChild(o);
+    });
+    var refresh = function(){
+      var kn = knobByKey(ks.value);
+      $('d-val-wrap').style.display = kn ? '' : 'none';
+      if (!kn) { $('d-knob-preview').textContent = ''; return; }
+      $('d-val-hint').textContent = '（' + kn.min + '～' + kn.max + '，' + kn.hint + '）';
+      var v = $('d-val');
+      v.min = kn.min; v.max = kn.max;
+      if (v.value === '' || isNaN(parseInt(v.value,10))) v.value = kn.def;
+      var n = parseInt(v.value, 10);
+      if (isNaN(n)) { $('d-knob-preview').textContent = ''; return; }
+      var patch = {}; patch[kn.k] = n;
+      var okAt = [];
+      for (var np=3; np<=6; np++) if (E.validate(E.cfg(patch), np).ok) okAt.push(np);
+      $('d-knob-preview').innerHTML = okAt.length
+        ? '✅ 這張卡可以玩（' + okAt.join('／') + ' 人）'
+        : '⛔ 這個數字會讓遊戲玩不動：' + esc(E.validate(E.cfg(patch), 4).problems.join('；'));
+    };
+    ks.onchange = refresh;
+    $('d-val').oninput = refresh;
+    refresh();
+  }
+
   $('btn-design').onclick = submitDesign;
 }
 
@@ -2655,7 +2830,7 @@ function renderBoards(){
     html += '<div class="bdcard" style="margin-top:9px"><div class="bdh">🃏 最受歡迎的改動卡</div>'
       + '<div class="bdhint">全班按讚選出來的。想不到要挑哪張的時候，可以從這裡挑。</div>'
       + '<ol class="bdlist">' + cl.map(function(x){
-          var c = CARDS.byId(x.id);
+          var c = anyCard(x.id);
           return '<li>' + esc(c ? c.name : x.id) + ' <b>' + x.n + '</b>讚</li>';
         }).join('') + '</ol></div>';
   }
@@ -2716,7 +2891,7 @@ function watchOthers(){
       if (!m.demo && visibleSessions().indexOf(m.sess) < 0) return;
       var mine = !!(dropNull(normObj(v[code].players))[me.env]);
       if (mine) return;                       // 自己那場不算「別人的」
-      var cards = (m.cards||[]).map(CARDS.byId).filter(Boolean);
+      var cards = (m.cards||[]).map(anyCard).filter(Boolean);
       var feat = cards.length
         ? cards.map(function(c){ return '<span class="pill on" data-dim="'+esc(c.dim)+'">'+esc(c.name)+'</span>'; }).join(' ')
         : '<span class="pill">原版規則</span>';
@@ -2817,7 +2992,7 @@ function openReplay(code){
       + '場次 <b class="mono">'+esc(code)+'</b>　GM '+esc(nickOf(v.meta.hostEnv))
       + '　' + (rns.length) + ' 回合　'
       + ((v.meta.cards||[]).length
-          ? '這一場改了：' + (v.meta.cards||[]).map(function(id){ var x=CARDS.byId(id);
+          ? '這一場改了：' + (v.meta.cards||[]).map(function(id){ var x=anyCard(id);
               return '<span class="pill on">'+esc(x?x.name:id)+'</span>'; }).join(' ')
           : '<span class="pill">原版規則，沒有改動</span>');
     show('scr-replay');
@@ -3028,12 +3203,16 @@ function renderChat(v){
   });
 })();
 $('btn-fb').onclick = function(){
-  var d = { env: me.env, room: room, cards: (state.meta&&state.meta.cards)||[],
-            q1: $('fb1').value.trim(), q2: $('fb2').value.trim(), q3: $('fb3').value.trim(),
-            essay: $('fb4').value.trim(), ts: nowTs() };
-  if (!d.q1 && !d.q2 && !d.q3 && !d.essay) { $('fb-msg').textContent='至少寫一題'; return; }
-  if (d.essay.length > 100) { $('fb-msg').textContent='第 4 題請縮到 100 字以內（目前 '+d.essay.length+' 字）'; return; }
-  ROOT.child('feedback').push(d).then(function(){ $('fb-msg').textContent = '已送出，謝謝'; });
+  guardSubmit($('btn-fb'), function(){
+    var d = { env: me.env, room: room, cards: (state.meta&&state.meta.cards)||[],
+              q1: $('fb1').value.trim(), q2: $('fb2').value.trim(), q3: $('fb3').value.trim(),
+              essay: $('fb4').value.trim(), ts: nowTs() };
+    if (!d.q1 && !d.q2 && !d.q3 && !d.essay) { $('fb-msg').textContent='至少寫一題'; return; }
+    if (d.essay.length > 100) { $('fb-msg').textContent='第 4 題請縮到 100 字以內（目前 '+d.essay.length+' 字）'; return; }
+    return ROOT.child('feedback').push(d).then(function(){
+      $('fb-msg').textContent = '已送出，謝謝';
+    }).catch(function(e){ $('fb-msg').textContent = '送不出去：' + (e.message||e); });
+  });
 };
 /* 🔴 不要用 prompt()：它會凍結該學生整台裝置的畫面，誤觸就卡住。改成頁內面板。 */
 $('btn-report').onclick = function(){
@@ -3042,16 +3221,18 @@ $('btn-report').onclick = function(){
   if (!box.classList.contains('hide')) $('report-text').focus();
 };
 $('btn-report-send').onclick = function(){
-  var v = ($('report-text').value||'').trim();
-  if (!v) { $('report-msg').textContent = '寫點東西再送'; return; }
-  ROOT.child('reports').push({ env: me.env, room: room||null, text: v,
-    phase: (state.meta&&state.meta.phase)||'lobby', cards: (state.meta&&state.meta.cards)||[],
-    ua: navigator.userAgent.slice(0,120), ts: nowTs() })
-   .then(function(){
-     $('report-text').value = '';
-     $('report-msg').textContent = '收到了，謝謝！';
-     setTimeout(function(){ $('report-box').classList.add('hide'); $('report-msg').textContent=''; }, 1400);
-   }).catch(function(e){ $('report-msg').textContent = '送不出去：' + (e.message||e); });
+  guardSubmit($('btn-report-send'), function(){
+    var v = ($('report-text').value||'').trim();
+    if (!v) { $('report-msg').textContent = '寫點東西再送'; return; }
+    return ROOT.child('reports').push({ env: me.env, room: room||null, text: v,
+      phase: (state.meta&&state.meta.phase)||'lobby', cards: (state.meta&&state.meta.cards)||[],
+      ua: navigator.userAgent.slice(0,120), ts: nowTs() })
+     .then(function(){
+       $('report-text').value = '';
+       $('report-msg').textContent = '收到了，謝謝！';
+       setTimeout(function(){ $('report-box').classList.add('hide'); $('report-msg').textContent=''; }, 1400);
+     }).catch(function(e){ $('report-msg').textContent = '送不出去：' + (e.message||e); });
+  });
 };
 $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'); };
 
@@ -3086,7 +3267,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231031"></script>
-<script src="js/bind_gate.js?v=202609231031"></script>
+<script src="js/gate_i18n.js?v=202609231126"></script>
+<script src="js/bind_gate.js?v=202609231126"></script>
 </body>
 </html>

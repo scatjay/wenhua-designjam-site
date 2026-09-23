@@ -734,9 +734,9 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       <div id="over-text"></div>
       <h3>玩完了，回答三個問題</h3>
       <p class="sub">這一輪的重點不是誰贏，是你有沒有看見「改了什麼 → 大家的行為怎麼變」。</p>
-      <p style="margin:.4em 0 .2em"><b>1. 這一場跟上一場，玩起來最大的差別是什麼？</b></p>
+      <p style="margin:.4em 0 .2em"><b id="fbq1">1. 這一場跟上一場，玩起來最大的差別是什麼？</b></p>
       <textarea id="fb1" rows="2" placeholder="具體講你看到的行為變化，不要只寫「比較好玩」"></textarea>
-      <p style="margin:.6em 0 .2em"><b>2. 這個差別是被哪一張卡造成的？為什麼？</b></p>
+      <p style="margin:.6em 0 .2em"><b id="fbq2">2. 這個差別是被哪一張卡造成的？為什麼？</b></p>
       <textarea id="fb2" rows="2" placeholder="哪一張卡？它改了規則的哪一點？"></textarea>
       <p style="margin:.6em 0 .2em"><b>3. 這一場的過程怎麼演變？（開局 → 中盤 → 剩兩個人時）</b></p>
       <textarea id="fb3" rows="3" placeholder="例：開局大家亂打，中盤有人開始喊聯手，最後兩個人都不敢動"></textarea>
@@ -791,10 +791,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231950"></script>
-<script src="js/sf3k_verified.js?v=202609231950"></script>
-<script src="js/sf3k_cards.js?v=202609231950"></script>
-<script src="js/sf3k_stats.js?v=202609231950"></script>
+<script src="js/sf3k_engine.js?v=202609232000"></script>
+<script src="js/sf3k_verified.js?v=202609232000"></script>
+<script src="js/sf3k_cards.js?v=202609232000"></script>
+<script src="js/sf3k_stats.js?v=202609232000"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -821,7 +821,7 @@ var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
 /* 測試腳本用這個確認「瀏覽器裡實際跑的是哪一版」——?v= 只是破快取，證明不了跑的是哪份程式
    （2026-09-23 抓到：第 1 輪一半的測試員整下午都跑著舊版，因為頁面只在 worker 啟動時載入一次）。*/
-window.SF3K_BUILD = '202609231950';
+window.SF3K_BUILD = '202609232000';
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
    文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
@@ -1977,6 +1977,7 @@ function renderRoom(){
   // 結束
   if (ph==='over') {
     $('over-box').style.display='';
+    setFeedbackQuestions(m);
     var w = (m.winners||[]).map(function(id){ var p=state.players[id]; return p?(p.name||('#'+id)):id; });
     $('over-text').innerHTML = w.length
       ? '<p>獲勝：'+w.map(function(x){return '<b>'+esc(x)+'</b>';}).join('、')+'（'+esc(m.overWhy||'')+'）</p>'
@@ -2710,6 +2711,7 @@ function initDesignForm(){
 
 /* ═════ 完成檢核：五項，全部讀真實資料 ═════ */
 var myStats = { games:0, feedback:0, comments:0, essay:false, designs:0 };
+var myPlayedRooms = {};   // 本單元（跨場次）我打過的房號——判斷回饋題目要不要問「跟上一場比」
 function watchMyProgress(){
   if (me.env == null) return;
   /* 🔴 2026-09-23 下午抓到：早上那班下課後回來截檢核表交作業，「玩完三輪」顯示 0/3。
@@ -2718,7 +2720,9 @@ function watchMyProgress(){
   var perSess = {};
   progressSessions().forEach(function(ss){
     ROOT.child('plays/'+ss+'/'+me.env).on('value', function(s){
-      perSess[ss] = Object.keys(dropNull(normObj(s.val()))).length;
+      var pv = dropNull(normObj(s.val()));
+      perSess[ss] = Object.keys(pv).length;
+      Object.keys(pv).forEach(function(k){ if (pv[k] && pv[k].room) myPlayedRooms[pv[k].room] = true; });
       myStats.games = Object.keys(perSess).reduce(function(t, k){ return t + perSess[k]; }, 0);
       renderChecklist();
     });
@@ -3372,11 +3376,37 @@ function renderChat(v){
     el.style.color = n>100 ? 'var(--red)' : 'var(--ink-soft)';
   });
 })();
+/* 楊老師 2026-09-23 晚上：「回饋的填答裡，如果玩第一場的時候，並沒有上一場可以比較，措辭要修改」。
+   檢核表建議的順序是 原版 → 只改一個地方 → 整組改，所以多數人的第一場＝原版＝沒有上一場、也沒有卡。
+   「是不是第一場」看本單元的遊玩紀錄裡有沒有**別間房**（這一場結束時自己的紀錄剛好寫進來，不能算上一場）。
+   題目版本記進 feedback.qv，之後分析才分得出第 1 題是在回答哪一種問題。 */
+var FB_Q = {
+  compare:        ['1. 這一場跟上一場，玩起來最大的差別是什麼？', '具體講你看到的行為變化，不要只寫「比較好玩」',
+                   '2. 這個差別是被哪一張卡造成的？為什麼？', '哪一張卡？它改了規則的哪一點？'],
+  compare_nocard: ['1. 這一場跟上一場，玩起來最大的差別是什麼？', '具體講你看到的行為變化，不要只寫「比較好玩」',
+                   '2. 這一場沒有加卡。上一場的卡拿掉之後，哪些行為不見了？', '例：上一場大家一直喊聯手，這一場都自己打'],
+  first_orig:     ['1. 這是你的第一場。玩起來最讓你意外的是什麼？（大家怎麼出牌、有沒有人喊聯手）', '具體講你看到的，不要只寫「很好玩」',
+                   '2. 如果只能改一條規則，你會改哪裡？為什麼？', '下一場就可以試試「只改一個地方」'],
+  first_card:     ['1. 這是你的第一場。跟你讀規則時的想像比，實際玩起來哪裡不一樣？', '具體講你看到的行為，不要只寫「比較好玩」',
+                   '2. 你覺得哪一張卡最影響這一場？為什麼？', '哪一張卡？它改了規則的哪一點？']
+};
+var fbVariant = 'compare';
+function setFeedbackQuestions(m){
+  var hasPrev = Object.keys(myPlayedRooms).some(function(r){ return r && r !== room; });
+  var ncards = ((m && m.cards) || []).length;
+  fbVariant = hasPrev ? (ncards ? 'compare' : 'compare_nocard') : (ncards ? 'first_card' : 'first_orig');
+  var q = FB_Q[fbVariant];
+  if ($('fbq1')) $('fbq1').textContent = q[0];
+  if ($('fb1')) $('fb1').placeholder = q[1];
+  if ($('fbq2')) $('fbq2').textContent = q[2];
+  if ($('fb2')) $('fb2').placeholder = q[3];
+}
 $('btn-fb').onclick = function(){
   guardSubmit($('btn-fb'), function(){
     var d = { env: me.env, room: room, cards: (state.meta&&state.meta.cards)||[],
               q1: $('fb1').value.trim(), q2: $('fb2').value.trim(), q3: $('fb3').value.trim(),
-              essay: $('fb4').value.trim(), ts: nowTs() };
+              essay: $('fb4').value.trim(), ts: nowTs(),
+              qv: fbVariant, ncards: ((state.meta&&state.meta.cards)||[]).length };
     if (!d.q1 && !d.q2 && !d.q3 && !d.essay) { $('fb-msg').textContent='至少寫一題'; return; }
     if (d.essay.length > 100) { $('fb-msg').textContent='第 4 題請縮到 100 字以內（目前 '+d.essay.length+' 字）'; return; }
     return ROOT.child('feedback').push(d).then(function(){
@@ -3437,7 +3467,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231950"></script>
-<script src="js/bind_gate.js?v=202609231950"></script>
+<script src="js/gate_i18n.js?v=202609232000"></script>
+<script src="js/bind_gate.js?v=202609232000"></script>
 </body>
 </html>

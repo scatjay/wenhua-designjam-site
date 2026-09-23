@@ -782,10 +782,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231126"></script>
-<script src="js/sf3k_verified.js?v=202609231126"></script>
-<script src="js/sf3k_cards.js?v=202609231126"></script>
-<script src="js/sf3k_stats.js?v=202609231126"></script>
+<script src="js/sf3k_engine.js?v=202609231133"></script>
+<script src="js/sf3k_verified.js?v=202609231133"></script>
+<script src="js/sf3k_cards.js?v=202609231133"></script>
+<script src="js/sf3k_stats.js?v=202609231133"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -2414,9 +2414,21 @@ function watchDesigns(){
     myStats.designs = Object.keys(dropNull(normObj(DESIGNS[me.env]))).length;
     renderDesigns(); renderChecklist();
     /* 選卡池也要顯示學生設計的卡（楊老師 2026-09-23 上課中交辦），
-       新設計送出時如果剛好有人在選卡畫面，要跟著更新，不用等他離開再回來。 */
+       新設計送出時如果剛好有人在選卡畫面，要跟著更新，不用等他離開再回來。
+       🔴 但不能每次有人送設計卡就立刻重畫：44 個人同時上課時，別人一送出就把
+       整個選卡池的 DOM 換掉，正在挑卡的人手上那一下點擊會被吃掉（測試第2場
+       就是這樣失敗的）。⇒ ① 已經選了卡的人先不打擾，等他選完 ② 其餘情況也延遲
+       合併重畫，短時間連續送出只重畫一次。 */
     var setupScr = document.getElementById('scr-setup');
-    if (setupScr && !setupScr.classList.contains('hide')) renderPool();
+    if (setupScr && !setupScr.classList.contains('hide')) {
+      if (!selected.length) {
+        clearTimeout(window.__poolRerenderT);
+        window.__poolRerenderT = setTimeout(function(){
+          var s2 = document.getElementById('scr-setup');
+          if (s2 && !s2.classList.contains('hide') && !selected.length) { renderPool(); paintPool(); }
+        }, 1500);
+      }
+    }
   }, function(e){ console.warn('[designs] 讀取失敗', e); });
 }
 function designRows(){
@@ -3267,7 +3279,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231126"></script>
-<script src="js/bind_gate.js?v=202609231126"></script>
+<script src="js/gate_i18n.js?v=202609231133"></script>
+<script src="js/bind_gate.js?v=202609231133"></script>
 </body>
 </html>

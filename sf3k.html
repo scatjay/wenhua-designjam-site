@@ -783,10 +783,10 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
-<script src="js/sf3k_engine.js?v=202609231332"></script>
-<script src="js/sf3k_verified.js?v=202609231332"></script>
-<script src="js/sf3k_cards.js?v=202609231332"></script>
-<script src="js/sf3k_stats.js?v=202609231332"></script>
+<script src="js/sf3k_engine.js?v=202609231510"></script>
+<script src="js/sf3k_verified.js?v=202609231510"></script>
+<script src="js/sf3k_cards.js?v=202609231510"></script>
+<script src="js/sf3k_stats.js?v=202609231510"></script>
 <script>
 /* ═════ 基礎 ═════ */
 firebase.initializeApp({
@@ -797,6 +797,9 @@ firebase.initializeApp({
 });
 var db = firebase.database();
 /* 🔴 只有 whgm/analysis/** 未認證可寫（2026-09-22 實測），其餘 whgm 子節點一律 401 靜默失敗 */
+/* 測試腳本用這個確認「瀏覽器裡實際跑的是哪一版」——?v= 只是破快取，證明不了跑的是哪份程式
+   （2026-09-23 抓到：第 1 輪一半的測試員整下午都跑著舊版，因為頁面只在 worker 啟動時載入一次）。*/
+window.SF3K_BUILD = '202609231510';
 var ROOT = db.ref('whgm/analysis/w3game');
 /* 兩門課共用同一個 Firebase 節點，但上課時間差 10 小時：
    文化遊戲松 47602 09:10-12:00（通識，約 44 人）／遊戲設計學 46582 19:05-21:30（夜四技，20 人）。
@@ -1126,9 +1129,18 @@ function enterLobby(){
     console.warn('[lobby] hosts 讀取失敗', e);
     $('host-turn').textContent = '（讀不到輪替紀錄，還是可以開場）';
   });
-  ROOT.child('rooms').orderByChild('meta/createdAt').limitToLast(14).on('value', function(s){
+  /* 🔴 2026-09-23 改：原本是「全站最新 14 間 → 前端再篩本節」。
+     測試機器人同時在開房時，最新 14 間全是測試房，篩完學生的大廳是空的——而且不報錯。
+     改成直接用 meta/sess 查本節（索引已在規則裡）。一節課實測 35 間、約 250 KB，全拿沒問題。
+     測試場次動輒上百間，機器人又是靠輸代號進房、用不到大廳 ⇒ 測試場次只拿 14 間，省流量。
+     equalTo 之後的 limitToLast 是依 key 排、不是依時間 ⇒ 時間順序一律在前端自己排。 */
+  var lobbyCap = /^test-/.test(SESS) ? 14 : 60;
+  ROOT.child('rooms').orderByChild('meta/sess').equalTo(SESS).limitToLast(lobbyCap).on('value', function(s){
     var v = s.val()||{}, live=[], open_=[], done=[];
-    Object.keys(v).reverse().forEach(function(code){
+    var codes = Object.keys(v).sort(function(a, b){
+      return (((v[b]||{}).meta||{}).createdAt||0) - (((v[a]||{}).meta||{}).createdAt||0);
+    });
+    codes.forEach(function(code){
       if (/^ZZ/.test(code)) return;                 // 跳過整合測試用的房
       var m = v[code].meta; if(!m) return;
       if (m.sess !== SESS) return;                  // 別班／別天的房不要混進來（輸代號仍可進）
@@ -1185,7 +1197,8 @@ function enterLobby(){
       + '<p class="sub" style="margin:0 0 8px">觀戰看得到<b>完整的統計與自尊變化</b>——'
       + '正在玩的人反而看不到這些。等下一輪的時候很好看。</p>' + live.join('');
     if (open_.length) html += '<h3 style="margin:.9em 0 .2em">🟢 還在等人（可以加入）</h3>' + open_.join('');
-    if (done.length)  html += '<h3 style="margin:.9em 0 .2em">⚪ 打完了</h3>' + done.join('');
+    if (done.length)  html += '<h3 style="margin:.9em 0 .2em">⚪ 打完了</h3>' + done.slice(0, 12).join('')
+      + (done.length > 12 ? '<p class="sub">還有 ' + (done.length - 12) + ' 場比較早的，可以到回放區找。</p>' : '');
     $('open-rooms').innerHTML = html || '<p class="sub">還沒有人開場次。你可以當第一個 GM。</p>';
     Array.prototype.forEach.call($('open-rooms').querySelectorAll('.j'), function(b){
       b.onclick = function(){ joinRoom(b.dataset.code); };
@@ -2659,9 +2672,16 @@ function initDesignForm(){
 var myStats = { games:0, feedback:0, comments:0, essay:false, designs:0 };
 function watchMyProgress(){
   if (me.env == null) return;
-  ROOT.child('plays/'+SESS+'/'+me.env).on('value', function(s){
-    myStats.games = Object.keys(dropNull(normObj(s.val()))).length;
-    renderChecklist();
+  /* 🔴 2026-09-23 下午抓到：早上那班下課後回來截檢核表交作業，「玩完三輪」顯示 0/3。
+     SESS 是依時段算的，下午再進來已經是 47602-20260923pm，只讀這一節當然是 0。
+     檢核表要的是「這個單元我打過幾場」⇒ 讀本課從 W3 開始到今天的每一節（am/pm）加總。 */
+  var perSess = {};
+  progressSessions().forEach(function(ss){
+    ROOT.child('plays/'+ss+'/'+me.env).on('value', function(s){
+      perSess[ss] = Object.keys(dropNull(normObj(s.val()))).length;
+      myStats.games = Object.keys(perSess).reduce(function(t, k){ return t + perSess[k]; }, 0);
+      renderChecklist();
+    });
   });
   ROOT.child('feedback').on('value', function(s){
     var v = dropNull(normObj(s.val()));
@@ -2686,6 +2706,17 @@ function watchMyProgress(){
     myStats.comments = n;
     renderChecklist();
   });
+}
+function progressSessions(){
+  var m = /^(test|\d{5})-(\d{4})(\d{2})(\d{2})(am|pm)$/.exec(SESS);
+  if (!m) return [SESS];
+  var p = function(x){ return (x<10?'0':'')+x; };
+  var d = new Date(2026, 8, 23), end = new Date(+m[2], +m[3]-1, +m[4]), out = [];   // W3 從 09-23 開始
+  for (var i = 0; d <= end && i < 28; i++, d.setDate(d.getDate()+1)) {
+    var ds = d.getFullYear() + p(d.getMonth()+1) + p(d.getDate());
+    out.push(m[1]+'-'+ds+'am', m[1]+'-'+ds+'pm');
+  }
+  return out.length ? out : [SESS];
 }
 function renderChecklist(){
   var box = $('checklist'); if (!box) return;
@@ -3345,7 +3376,7 @@ $('btn-report-close').onclick = function(){ $('report-box').classList.add('hide'
 })();
 window.DJ_BIND_UNIT = 'sf3k';
 </script>
-<script src="js/gate_i18n.js?v=202609231332"></script>
-<script src="js/bind_gate.js?v=202609231332"></script>
+<script src="js/gate_i18n.js?v=202609231510"></script>
+<script src="js/bind_gate.js?v=202609231510"></script>
 </body>
 </html>

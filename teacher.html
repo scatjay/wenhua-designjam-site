@@ -268,10 +268,12 @@
 
       <p style="background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px">
         <b>楊老師 2026-09-29 裁示</b>：① <b>不做人工標註</b>雙編碼校準——維持 v0 誠實聲明即可。
-        ② <b>完整 replay（room-level 社會網路分析）先擱置</b>：實測發現已完賽場次的
-        <code>rooms/{'{'}房號{'}'}</code> 現在讀出來只有 4 bytes（等於 <code>null</code>），資料疑似已被清除或搬移，
-        要先查清楚原因才知道這條路能不能走，不是「要不要多抓」的問題；好處是現在去抓也抓不到東西，
-        不會有流量爆表風險。
+        ② <b>完整 replay（room-level 社會網路分析）先擱置</b>，原因跟資料完整性無關：
+        <code>replays/{'{'}場次{'}'}</code> 底下的 key 是「第幾場」的序號，不是房間代碼本身
+        （2026-09-29 一度誤查成房間資料被清除，實測後更正——序號的 value 裡才有
+        <code>rooms:{'{'}房間代碼:true{'}'}</code>，資料庫本身完整，是查詢方式一開始弄錯了對照關係）。
+        真的要做 room-level SNA，要先用序號→房間代碼這層對照把資料串起來，工程量比先前估的
+        還要再多一步，先擱置、之後有空再做。
       </p>
 
       <p style="font-size:11px;opacity:.75;margin-top:8px">

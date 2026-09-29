@@ -268,12 +268,29 @@
 
       <p style="background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px">
         <b>楊老師 2026-09-29 裁示</b>：① <b>不做人工標註</b>雙編碼校準——維持 v0 誠實聲明即可。
-        ② <b>完整 replay（room-level 社會網路分析）先擱置</b>，原因跟資料完整性無關：
-        <code>replays/{'{'}場次{'}'}</code> 底下的 key 是「第幾場」的序號，不是房間代碼本身
-        （2026-09-29 一度誤查成房間資料被清除，實測後更正——序號的 value 裡才有
-        <code>rooms:{'{'}房間代碼:true{'}'}</code>，資料庫本身完整，是查詢方式一開始弄錯了對照關係）。
-        真的要做 room-level SNA，要先用序號→房間代碼這層對照把資料串起來，工程量比先前估的
-        還要再多一步，先擱置、之後有空再做。
+        ② <b>room-level 社會網路分析已補做</b>（見下方）。查資料時一度誤判成房間資料被清除，
+        後來查出 <code>replays/{'{'}場次{'}'}</code> 底下的 key 是「第幾場」序號、不是房間代碼，
+        value 裡的 <code>rooms:{'{'}房間代碼:true{'}'}</code> 才指向真正的房間資料——資料庫本身完整，
+        是查詢方式一開始弄錯了對照關係，已更正。
+      </p>
+
+      <p style="margin-top:12px"><b>房間層級社會網路分析（新增）</b>：抓了兩個場次全部
+      <b>76 個真實對局房間</b>（唯讀，共 475 KB，遠低於每日 360 MB 免費額度，不會有流量風險），
+      48 位真人玩家，拆成三張網路：</p>
+      <ul style="margin:4px 0 10px;padding-left:20px;line-height:1.8">
+        <li><b>同房網路</b>：誰跟誰常常同房——最高 #37×#52 同房 13 次。</li>
+        <li><b>攻擊／鎖定網路</b>：誰打誰、打了幾次——<b>#27 被攻擊 112 次，全班最高</b>，
+          其次 #33（70 次）、#37 與 #1（各 66 次）。</li>
+        <li><b>聯手網路</b>：同回合一起選 TEAM 打同一目標的次數——<b>#37×#52 聯手 69 次，
+          全班最強搭檔</b>，其次 #1×#21（40 次）。</li>
+      </ul>
+      <p><a href="teacher_w3_room_sna_20260929.html" target="_blank">📊 開房間層級 SNA 視覺化（三個網路可切換）</a></p>
+      <p style="font-size:11px;opacity:.75">
+        誠實聲明：這是 76 房的完整普查（不是抽樣），但只涵蓋 09-23 這一天兩個場次；
+        「被攻擊 112 次」是否代表這位同學體驗特別差，還要對照他自己的回饋文字才能下結論，
+        單看次數可能只是他整節課一直積極參與、留在場上久。分析腳本與原始結果見
+        <code>research_pbl_knowledge_model/astra_output_20260929/room_sna.py</code>／
+        <code>room_sna_result.json</code>。
       </p>
 
       <p style="font-size:11px;opacity:.75;margin-top:8px">

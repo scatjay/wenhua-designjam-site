@@ -496,7 +496,12 @@
           + '出牌前在公開討論區串通，玩完寫下你看到的差別。' },
     { key: 'w4',   href: 'w4.html',    wk: 4, desc: '把 W3 的組合做成能玩的原型',
       long: '延伸你們 W3 實際玩到的卡片組合：先用 Gemini Deep Research 跑三輪，'
-          + '把企劃定案、加上介面與美術設定，再用 Google AI Studio 做出一個真的能玩的網頁原型。' }
+          + '把企劃定案、加上介面與美術設定，再用 Google AI Studio 做出一個真的能玩的網頁原型。' },
+    /* 行政調查，跟週次無關 ⇒ 不給 wk（不進 index.html 的每週清單，只在下拉選單裡）。
+       tone 借用 clay（磚色）——目前 W1-4 用掉 warm/cool/plum/leaf，clay 還空著，
+       跟任何一週的顏色都不會混淆；之後真的排到 W5 用掉 clay 時再挑一個新色。 */
+    { key: 'laptop', href: 'laptop_survey.html', name: '設備調查', tone: 'clay',
+      desc: '帶筆電意願＋VNC／SSH 遠端協助意願（行政，跟週次無關）' }
   ];
   UNITS.forEach(function (u) {
     if (u.wk) {

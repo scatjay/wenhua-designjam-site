@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>帶筆電意願調查</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<style>
+/* 行政頁，跟週次無關，用下拉選單裡沒被週次佔用的磚色（clay），跟其他週次色一眼分得出來。 */
+:root{
+  --bg:#f7f9fa; --panel:#ffffff; --panel2:#eaf0f3; --ink:#202a30; --ink-soft:#54646e;
+  --line:#cfdae1; --accent:#b8452f; --accent-soft:#fae9e4;
+  --red:#b8452f; --red-soft:#fbe9e3;
+  --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
+}
+img.emoji{height:1.15em;width:1.15em;margin:0 .05em 0 .1em;vertical-align:-0.2em}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
+.wrap{max-width:620px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wrap:balance}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 18px;line-height:1.7}
+.kicker{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+[hidden]{display:none!important}
+
+.howtobox{border-radius:12px;padding:14px 16px;margin:0 0 12px;font-size:13.5px;line-height:1.7;
+  background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft)}
+.howtobox .lbl{font-weight:800;font-size:12.5px;letter-spacing:.02em;display:block;margin-bottom:5px;color:var(--ink)}
+.howtobox b{color:var(--ink)}
+
+.fld{margin-bottom:16px}
+.fld>label{display:block;font-weight:700;font-size:13.5px;margin-bottom:7px}
+.fld input[type=text],.fld textarea{width:100%;font:inherit;font-size:15px;padding:11px 13px;
+  border:1.5px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+.fld input[type=text]:focus,.fld textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.fld textarea{resize:vertical;min-height:60px;font-family:inherit}
+.choicegrid{display:flex;flex-direction:column;gap:8px}
+.choice{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1.5px solid var(--line);
+  border-radius:10px;background:var(--panel);cursor:pointer;font-size:14px}
+.choice:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.choice input{accent-color:var(--accent);width:16px;height:16px;flex:none}
+.lp-btn{font:inherit;font-weight:800;font-size:15px;padding:13px 18px;border-radius:10px;cursor:pointer;
+  width:100%;background:var(--accent);color:#fff;border:none}
+.lp-btn:disabled{opacity:.5;cursor:default}
+.lp-ghost{font:inherit;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;
+  border:1.5px solid var(--line);background:var(--panel);color:var(--ink-soft);cursor:pointer}
+footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;opacity:.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">文化遊戲松實作 · 行政調查</div>
+<h1>帶筆電意願調查</h1>
+<p class="sub">
+  這學期用 <b style="color:var(--ink)">Claude Pro</b> 做企劃與實作，帳號會分階段發放。<b style="color:var(--ink)">能固定帶筆電來上課</b>是第二個月優先發放的條件之一——
+  填這個讓我們排優先序，跟作業成績、出席都沒有關係，純粹是設備調查。已經填過的話這裡會直接顯示你填過的內容，不用重填。
+</p>
+
+<div class="box" id="laptopBox">
+  <div class="howtobox">
+    <span class="lbl">為什麼一定要自己的筆電</span>
+    E204 電腦教室的電腦裝了還原卡，每次重開機都會清空——Claude Code 的登入、設定、更新到一半都會被還原掉。自己的筆電才留得住這些設定。
+  </div>
+  <div class="howtobox" style="margin-bottom:0">
+    <span class="lbl">VNC／SSH 是什麼</span>
+    <b>VNC</b>：像螢幕分享，老師可以直接看到、操作你的整個桌面，用來示範怎麼設定／除錯。
+    <b>SSH</b>：比較技術性，不用看你的畫面，直接讓老師端的 Claude Code 跟你的 Claude Code 連線協作。
+    不管哪一種，<b>每一次連線前都要你在自己電腦上按同意才會進來</b>，你也隨時可以拒絕某一次連線、或事後整個撤回意願。
+  </div>
+
+  <form id="laptopForm" style="margin-top:16px">
+    <div class="fld">
+      <label>姓名 <span style="color:var(--red)">*</span></label>
+      <input type="text" id="lpName" placeholder="請填寫全名" autocomplete="off" required>
+    </div>
+    <div class="fld">
+      <label>能不能固定帶筆電到教室上課？ <span style="color:var(--red)">*</span></label>
+      <div class="choicegrid">
+        <label class="choice"><input type="radio" name="laptop" value="yes" required>可以，每週都能帶</label>
+        <label class="choice"><input type="radio" name="laptop" value="sometimes">偶爾可以，不是每週都行</label>
+        <label class="choice"><input type="radio" name="laptop" value="no">沒有筆電／沒辦法帶</label>
+      </div>
+    </div>
+    <div class="fld">
+      <label>願不願意讓老師用 VNC 連上你的桌面遠端示範？ <span style="color:var(--red)">*</span></label>
+      <div class="choicegrid">
+        <label class="choice"><input type="radio" name="vnc" value="yes" required>願意</label>
+        <label class="choice"><input type="radio" name="vnc" value="unsure">不確定</label>
+        <label class="choice"><input type="radio" name="vnc" value="no">不願意</label>
+      </div>
+    </div>
+    <div class="fld">
+      <label>願不願意讓老師用 SSH 連上你的 Claude Code？ <span style="color:var(--red)">*</span></label>
+      <div class="choicegrid">
+        <label class="choice"><input type="radio" name="ssh" value="yes" required>願意</label>
+        <label class="choice"><input type="radio" name="ssh" value="unsure">不確定</label>
+        <label class="choice"><input type="radio" name="ssh" value="no">不願意</label>
+      </div>
+    </div>
+    <div class="fld">
+      <label>備註（選填）</label>
+      <textarea id="lpNote" placeholder="例如：筆電在維修、可以跟同組借用等"></textarea>
+    </div>
+    <button type="submit" class="lp-btn" id="lpSubmit">送出回報</button>
+    <p id="lpErr" style="color:var(--red);font-size:13px;margin:8px 0 0;min-height:1em"></p>
+  </form>
+
+  <div class="howtobox" id="lpDone" hidden
+       style="border-color:var(--accent);background:var(--accent-soft);color:var(--accent);text-align:center">
+    <div style="font-size:26px">✓</div>
+    <div style="font-weight:800;margin:4px 0">已收到你的回報</div>
+    <div id="lpDoneSummary" style="font-size:12.5px;color:var(--ink-soft)"></div>
+    <button type="button" id="lpEditAgain" class="lp-ghost" style="margin-top:10px">填錯了？點這裡重填</button>
+  </div>
+</div>
+
+<footer id="lp-updstamp">最後更新：2026-09-29 20:31</footer>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
+  authDomain:"gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"gen-lang-client-0929530380"
+});
+
+// 原本是獨立 artifact（claude.use('db')），送出時常遇到「目前無法連線儲存」，
+// 改存這顆站上本來就在用、穩定得多的 Firebase RTDB（whgm/analysis/w4/laptopSurvey/{env}）。
+// 身分沿用 bind_gate 已經綁好的信封編號＋Email，不用再問一次學號。
+(function(){
+  function lpInit(){
+    var form = document.getElementById('laptopForm');
+    if (!form) return;
+    var submitBtn = document.getElementById('lpSubmit');
+    var errEl = document.getElementById('lpErr');
+    var doneEl = document.getElementById('lpDone');
+    var doneSummary = document.getElementById('lpDoneSummary');
+    var LABELS = {yes:'可以，每週都能帶', sometimes:'偶爾可以', no:'沒有筆電／沒辦法帶'};
+    var CONSENT = {yes:'願意', unsure:'不確定', no:'不願意'};
+
+    function ref(){ return firebase.database().ref('whgm/analysis/w4/laptopSurvey'); }
+    function env(){ try { return localStorage.getItem('designjam_env'); } catch(e){ return null; } }
+    function email(){ try { return localStorage.getItem('designjam_email'); } catch(e){ return null; } }
+
+    function showDone(d){
+      form.hidden = true;
+      doneEl.hidden = false;
+      doneSummary.textContent = (d.name||'') + '／' + (LABELS[d.laptop]||d.laptop)
+        + '／VNC:' + (CONSENT[d.vnc]||d.vnc) + '／SSH:' + (CONSENT[d.ssh]||d.ssh);
+    }
+
+    var e0 = env();
+    if (e0 != null && e0 !== '') {
+      ref().child(e0).once('value').then(function(s){
+        var v = s.val();
+        if (v) showDone(v);
+      }).catch(function(e){ console.warn('[laptop] 讀取既有回報失敗', e); });
+    }
+
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      errEl.textContent = '';
+      var e = env();
+      if (e == null || e === '') { errEl.textContent = '請先在最上方完成綁定（輸入信封編號）才能送出。'; return; }
+      var name = document.getElementById('lpName').value.trim();
+      var laptopEl = form.querySelector('input[name="laptop"]:checked');
+      var vncEl = form.querySelector('input[name="vnc"]:checked');
+      var sshEl = form.querySelector('input[name="ssh"]:checked');
+      if (!name || !laptopEl || !vncEl || !sshEl) {
+        errEl.textContent = '姓名、筆電狀況、VNC／SSH 意願都要填喔。'; return;
+      }
+      submitBtn.disabled = true; submitBtn.textContent = '送出中…';
+      var data = {
+        env: parseInt(e, 10), email: email() || null, name: name,
+        laptop: laptopEl.value, vnc: vncEl.value, ssh: sshEl.value,
+        note: document.getElementById('lpNote').value.trim(),
+        ts: firebase.database.ServerValue.TIMESTAMP
+      };
+      ref().child(e).set(data).then(function(){
+        showDone(data);
+      }).catch(function(err){
+        submitBtn.disabled = false; submitBtn.textContent = '送出回報';
+        errEl.textContent = '送出失敗，請再試一次（' + (err && err.code || '未知錯誤') + '）。';
+      });
+    });
+
+    document.getElementById('lpEditAgain').onclick = function(){
+      doneEl.hidden = true; form.hidden = false;
+      submitBtn.disabled = false; submitBtn.textContent = '送出回報';
+    };
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', lpInit);
+  else lpInit();
+})();
+
+// 2026-09-09 楊老師：Windows許多環境的emoji字型沒有國旗圖案/彩色符號，
+// 改用twemoji把畫面上所有emoji轉成圖片，不依賴系統字型。
+try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
+</script>
+<script>window.DJ_BIND_UNIT='laptop';</script>
+<script src="js/gate_i18n.js?v=202609291032"></script>
+<script src="js/bind_gate.js?v=202609292032"></script>
+</body>
+</html>

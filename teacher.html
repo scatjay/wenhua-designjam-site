@@ -78,6 +78,28 @@
   .chipk{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;
     background:var(--bg);border:1px solid var(--line);margin-right:4px}
   .imbalance{background:#fbe9e3;border:1.5px solid var(--warn);color:var(--warn);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;margin:-6px 0 18px}
+  /* 2026-09-29 視覺化優化：研究與工具分頁的分析區塊。沿用既有 token，不新增配色系統，
+     不影響 enaPanel／vertexUsagePanel／w2TestRows 等既有面板的 id 與邏輯。 */
+  .mtiles{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
+  .mtile{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px 10px;min-width:118px;flex:1 1 118px}
+  .mtile .mn{font-size:22px;font-weight:800;color:var(--accent);line-height:1.15;font-variant-numeric:tabular-nums}
+  .mtile .ml{font-size:11.5px;color:var(--ink-soft);margin-top:3px;line-height:1.55}
+  .mtile.tone-warn .mn{color:var(--warn)}
+  .mtile.tone-ok .mn{color:var(--ok)}
+  .vizcard{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0 16px}
+  .vizcard .vh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:9px;flex-wrap:wrap}
+  .vizcard .vh b{font-size:13px;color:var(--ink)}
+  .vizcard .vh a{font-size:12px;color:var(--accent);font-weight:700;white-space:nowrap;text-decoration:none;border:1px solid var(--accent);border-radius:999px;padding:3px 11px}
+  .vizcard .vh a:hover{background:var(--accent);color:#fff}
+  .vizframe{overflow:auto;max-height:560px;border-radius:8px;border:1px solid var(--line);background:#fff}
+  .vizframe iframe{display:block;border:none}
+  .flowsteps{display:flex;gap:0;margin:10px 0 4px;overflow-x:auto;padding-bottom:4px}
+  .flowsteps .fstep{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-width:200px;flex:1 1 200px}
+  .flowsteps .fstep b.wk{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:2px 10px;margin-bottom:6px}
+  .flowsteps .fstep .fk{font-size:10.5px;color:var(--ink-soft);font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:.03em}
+  .flowsteps .fstep .fv{font-size:12px;color:var(--ink);line-height:1.55;margin-top:2px}
+  .flowarrow{align-self:center;color:var(--ink-soft);font-size:19px;padding:0 5px;flex:0 0 auto}
+  @media (max-width:640px){.flowsteps{flex-direction:column}.flowarrow{transform:rotate(90deg);align-self:flex-start;margin-left:12px}}
 </style>
 </head>
 <body>
@@ -256,6 +278,12 @@
         <tr><td style="padding:3px 6px">其餘（initiator／uncertainty／strategy／clarifier／elaborator）</td><td style="padding:3px 6px">93／64／55／40／2</td></tr>
       </table>
 
+      <div class="mtiles">
+        <div class="mtile"><div class="mn">10</div><div class="ml">W3 網路節點數</div></div>
+        <div class="mtile"><div class="mn">3</div><div class="ml">W3 網路邊數</div></div>
+        <div class="mtile"><div class="mn">0.067</div><div class="ml">網路密度</div></div>
+      </div>
+
       <p>網路結果：W3 為 <b>10 節點、3 條邊、密度 0.067</b>（樣本 talk 105 則＋feedback 532 則，
       2026-09-23 單日真人資料）。把同一套 code 表拿去套 W1，會得到 12 節點、60 條邊、密度 0.909——
       <b>這只能拿來比較同一套 code 表下的網路形狀，不能解讀成「W3 學生認知比較差」</b>，
@@ -264,7 +292,20 @@
       <p><b>集體共創演進</b>：規則組合多樣性（Shannon entropy）09-23 當天 28 場對局、17 種不同組合，
       entropy 3.74（分散，還沒收斂到少數幾種打法）。卡片設計時間線可以畫，但 <code>cardDesigns</code>
       沒有記「這張卡參考了誰」的欄位，<b>不能畫成因果族譜</b>，只能誠實呈現時間序列。
-      <a href="teacher_w3_evolution_20260929.html" target="_blank">📊 開視覺化（entropy 曲線＋code 權重長條圖）</a></p>
+      </p>
+
+      <div class="mtiles">
+        <div class="mtile"><div class="mn">28</div><div class="ml">09-23 對局場次</div></div>
+        <div class="mtile"><div class="mn">17</div><div class="ml">出現過的規則組合數</div></div>
+        <div class="mtile"><div class="mn">3.74</div><div class="ml">Shannon entropy</div></div>
+      </div>
+
+      <div class="vizcard">
+        <div class="vh"><b>📊 entropy 曲線＋code 權重長條圖</b>
+          <a href="teacher_w3_evolution_20260929.html" target="_blank">在新視窗開啟 ↗</a></div>
+        <div class="vizframe"><iframe src="teacher_w3_evolution_20260929.html" width="850" height="760"
+          loading="lazy" title="W3 集體共創演進視覺化（entropy 曲線＋code 權重長條圖）"></iframe></div>
+      </div>
 
       <p style="background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px">
         <b>楊老師 2026-09-29 裁示</b>：① <b>不做人工標註</b>雙編碼校準——維持 v0 誠實聲明即可。
@@ -277,14 +318,17 @@
       <p style="margin-top:12px"><b>房間層級社會網路分析（新增）</b>：抓了兩個場次全部
       <b>76 個真實對局房間</b>（唯讀，共 475 KB，遠低於每日 360 MB 免費額度，不會有流量風險），
       48 位真人玩家，拆成三張網路：</p>
-      <ul style="margin:4px 0 10px;padding-left:20px;line-height:1.8">
-        <li><b>同房網路</b>：誰跟誰常常同房——最高 #37×#52 同房 13 次。</li>
-        <li><b>攻擊／鎖定網路</b>：誰打誰、打了幾次——<b>#27 被攻擊 112 次，全班最高</b>，
-          其次 #33（70 次）、#37 與 #1（各 66 次）。</li>
-        <li><b>聯手網路</b>：同回合一起選 TEAM 打同一目標的次數——<b>#37×#52 聯手 69 次，
-          全班最強搭檔</b>，其次 #1×#21（40 次）。</li>
-      </ul>
-      <p><a href="teacher_w3_room_sna_20260929.html" target="_blank">📊 開房間層級 SNA 視覺化（三個網路可切換）</a></p>
+      <div class="mtiles">
+        <div class="mtile"><div class="mn">13 次</div><div class="ml"><b>同房網路</b>最高：#37×#52<br>誰跟誰常常同房。</div></div>
+        <div class="mtile tone-warn"><div class="mn">112 次</div><div class="ml"><b>攻擊／鎖定網路</b>#27 被攻擊，全班最高<br>其次 #33（70 次）、#37 與 #1（各 66 次）。</div></div>
+        <div class="mtile tone-ok"><div class="mn">69 次</div><div class="ml"><b>聯手網路</b>#37×#52 全班最強搭檔<br>其次 #1×#21（40 次）。</div></div>
+      </div>
+      <div class="vizcard">
+        <div class="vh"><b>📊 房間層級 SNA（三個網路可切換）</b>
+          <a href="teacher_w3_room_sna_20260929.html" target="_blank">在新視窗開啟 ↗</a></div>
+        <div class="vizframe"><iframe src="teacher_w3_room_sna_20260929.html" width="820" height="1000"
+          loading="lazy" title="W3 房間層級社會網路分析（同房／攻擊／聯手三個網路）"></iframe></div>
+      </div>
       <p style="font-size:11px;opacity:.75">
         誠實聲明：這是 76 房的完整普查（不是抽樣），但只涵蓋 09-23 這一天兩個場次；
         「被攻擊 112 次」是否代表這位同學體驗特別差，還要對照他自己的回饋文字才能下結論，
@@ -311,36 +355,47 @@
       <code>research_pbl_knowledge_model/astra_output_20260929/</code>（<code>kb/w1-w3.md</code>、
       <code>guide_agent_w1-w4.md</code>）。</p>
 
-      <table style="width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0">
-        <tr style="text-align:left;border-bottom:1px solid var(--line)">
-          <th style="padding:5px 6px">週次</th><th style="padding:5px 6px">常見弱點（有證據）</th>
-          <th style="padding:5px 6px">介入時機</th><th style="padding:5px 6px">往下一週帶什麼</th>
-        </tr>
-        <tr>
-          <td style="padding:5px 6px;vertical-align:top"><b>W1</b><br>探索→收斂</td>
-          <td style="padding:5px 6px;vertical-align:top">規格定案前不知道往哪探問；AI 產出與學生原創界線不清；角色容易只丟點子不深化</td>
-          <td style="padding:5px 6px;vertical-align:top">第一個候選後、角色分歧時、定案前</td>
-          <td style="padding:5px 6px;vertical-align:top">concept_candidates、authorship_uncertain、unresolved_questions</td>
-        </tr>
-        <tr>
-          <td style="padding:5px 6px;vertical-align:top"><b>W2</b><br>文化機制化</td>
-          <td style="padding:5px 6px;vertical-align:top">文化停在背景沒變成玩家動作；缺失敗條件；取捨理由不足</td>
-          <td style="padding:5px 6px;vertical-align:top">選文化但未寫玩家行動、草稿只有故事、送出前</td>
-          <td style="padding:5px 6px;vertical-align:top">player_action、constraint_set、open_tradeoff</td>
-        </tr>
-        <tr>
-          <td style="padding:5px 6px;vertical-align:top"><b>W3</b><br>規則測試</td>
-          <td style="padding:5px 6px;vertical-align:top">節奏過快；聯手常從頭固定沒被打破；能描述改動但講不清因果；回饋深淺落差大</td>
-          <td style="padding:5px 6px;vertical-align:top">出牌前喊話、改卡後第一輪、回饋不到 20 字</td>
-          <td style="padding:5px 6px;vertical-align:top">rules_understood、rule_misconceptions、social_hypotheses、tested_effects</td>
-        </tr>
-        <tr>
-          <td style="padding:5px 6px;vertical-align:top"><b>W4</b><br>原型驗證</td>
-          <td style="padding:5px 6px;vertical-align:top">原型容易變回漂亮敘事沒有可驗證規則；AI 產出容易照單全收；文化轉譯可能變回說教（W4 尚無真實資料，屬設計風險非實測）</td>
-          <td style="padding:5px 6px;vertical-align:top">DR 第一版、AI Studio 第一次可玩、測試者卡住時</td>
-          <td style="padding:5px 6px;vertical-align:top">prototype_hypothesis、playtest_observation、rule_evidence</td>
-        </tr>
-      </table>
+      <div class="flowsteps">
+        <div class="fstep">
+          <b class="wk">W1 · 探索→收斂</b>
+          <div class="fk">常見弱點（有證據）</div>
+          <div class="fv">規格定案前不知道往哪探問；AI 產出與學生原創界線不清；角色容易只丟點子不深化</div>
+          <div class="fk">介入時機</div>
+          <div class="fv">第一個候選後、角色分歧時、定案前</div>
+          <div class="fk">往下一週帶什麼</div>
+          <div class="fv"><code>concept_candidates</code>、<code>authorship_uncertain</code>、<code>unresolved_questions</code></div>
+        </div>
+        <div class="flowarrow">→</div>
+        <div class="fstep">
+          <b class="wk">W2 · 文化機制化</b>
+          <div class="fk">常見弱點（有證據）</div>
+          <div class="fv">文化停在背景沒變成玩家動作；缺失敗條件；取捨理由不足</div>
+          <div class="fk">介入時機</div>
+          <div class="fv">選文化但未寫玩家行動、草稿只有故事、送出前</div>
+          <div class="fk">往下一週帶什麼</div>
+          <div class="fv"><code>player_action</code>、<code>constraint_set</code>、<code>open_tradeoff</code></div>
+        </div>
+        <div class="flowarrow">→</div>
+        <div class="fstep">
+          <b class="wk">W3 · 規則測試</b>
+          <div class="fk">常見弱點（有證據）</div>
+          <div class="fv">節奏過快；聯手常從頭固定沒被打破；能描述改動但講不清因果；回饋深淺落差大</div>
+          <div class="fk">介入時機</div>
+          <div class="fv">出牌前喊話、改卡後第一輪、回饋不到 20 字</div>
+          <div class="fk">往下一週帶什麼</div>
+          <div class="fv"><code>rules_understood</code>、<code>rule_misconceptions</code>、<code>social_hypotheses</code>、<code>tested_effects</code></div>
+        </div>
+        <div class="flowarrow">→</div>
+        <div class="fstep">
+          <b class="wk">W4 · 原型驗證</b>
+          <div class="fk">常見弱點（有證據）</div>
+          <div class="fv">原型容易變回漂亮敘事沒有可驗證規則；AI 產出容易照單全收；文化轉譯可能變回說教（W4 尚無真實資料，屬設計風險非實測）</div>
+          <div class="fk">介入時機</div>
+          <div class="fv">DR 第一版、AI Studio 第一次可玩、測試者卡住時</div>
+          <div class="fk">往下一週帶什麼</div>
+          <div class="fv"><code>prototype_hypothesis</code>、<code>playtest_observation</code>、<code>rule_evidence</code></div>
+        </div>
+      </div>
 
       <p>四份規格刻意串成一條線，不是各自獨立的 FAQ：<b>W1 提文化候選 → W2 轉成玩家機制 →
       W3 用真實遊戲行為測試規則與解讀行為 → W4 把已理解的規則與誤解轉成可玩原型驗證</b>——

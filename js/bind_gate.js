@@ -360,8 +360,21 @@
     try { return localStorage.getItem(LS_LANG) || 'zh'; } catch (e) { return 'zh'; }
   }
   /* 這一頁翻得了嗎？＝它有沒有自己的翻譯器。
-     unit1 曝 applyLang()、w2 曝 setLang()；index／sf3k 兩個都沒有 ⇒ 選項停用。
-     🔴 停用要「看得到且講得出原因」，不是把按鈕藏起來——藏起來學生會以為是自己沒找到。 */
+     unit1／w2／sf3k 現在都曝了（unit1 用 applyLang、w2／sf3k 用 setLang／applyLang）；
+     index 沒有 ⇒ 選項停用。
+     🔴 停用要「看得到且講得出原因」，不是把按鈕藏起來——藏起來學生會以為是自己沒找到。
+     🔴🔴 2026-09-29 修正：「有翻譯器」跟「這個語言真的翻好了」是兩件事——
+     sf3k 的字典只有 id（1,288 條），vi 一條都沒有，但舊版只要 pageTranslator() 存在
+     就把 zh 以外全部點亮，於是 W3 的越南文鈕看起來按得下去、按了卻什麼都沒變（悄悄退回中文）。
+     ⇒ 頁面可以在自己的 applyLang／setLang 函式上多掛一個 .langs（例如 ['id']），
+     宣告「我真的只翻了這些」；沒掛的頁面（unit1/w2，兩種語言都真的有）維持舊行為，
+     視為「有翻譯器就全部支援」，不用回頭補宣告。 */
+  function pageSupportsLang(k) {
+    var fn = pageTranslator();
+    if (!fn) return false;
+    var list = fn.langs;
+    return list ? (list.indexOf(k) >= 0) : true;
+  }
   function pageTranslator() {
     return (typeof window.applyLang === 'function') ? window.applyLang
          : (typeof window.setLang   === 'function') ? window.setLang
@@ -407,9 +420,9 @@
      🔴 登入畫面是 bind_gate 自己畫的、自己有字典（gate_i18n.js），所以它永遠翻得動——
         不可以因為「這一頁的內容還沒翻」就把登入畫面的語言選項也停用（2026-09-22 犯過）。 */
   function langMenuHtml(onGate) {
-    var cur = getLang(), can = onGate || !!pageTranslator();
+    var cur = getLang();
     var h = LANGS.map(function (L) {
-      var off = (L.k !== 'zh' && !can);
+      var off = (L.k !== 'zh') && !(onGate || pageSupportsLang(L.k));
       return '<button type="button" data-lang="' + L.k + '"'
         + (off ? ' disabled title="這一頁還沒有翻譯"' : '')
         + ' class="' + (L.k === cur ? 'sel' : '') + '">'

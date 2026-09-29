@@ -3800,6 +3800,9 @@ const I18N_POST_SRC = [[/卡(\d+)/g, '卡片 {1}']];
     curLang = lang || 'zh';
     try { localize(); } catch (e) { console.warn('[i18n]', e); }
   };
+  // 這頁的字典只真的翻了印尼文——沒有這行，bind_gate.js 只看「有沒有翻譯器」，
+  // 會把越南文鈕也點亮，按下去卻悄悄退回中文（2026-09-29 楊老師抓到）。
+  window.applyLang.langs = ['id'];
   window.SF3K_I18N_HIT = hit;                 // 除錯用
   window.SF3K_I18N_MISSING = function () {   // 量覆蓋率用：列出目前畫面上還沒翻到的中文
     var out = {}, w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), n;
@@ -3821,6 +3824,6 @@ const I18N_POST_SRC = [[/卡(\d+)/g, '卡片 {1}']];
 // ===== I18N-END =====
 </script>
 <script src="js/gate_i18n.js?v=202609232230"></script>
-<script src="js/bind_gate.js?v=202609232230"></script>
+<script src="js/bind_gate.js?v=202609290955"></script>
 </body>
 </html>

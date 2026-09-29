@@ -234,6 +234,102 @@
   </details>
 
   <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🔬 W3 社交推理認知網路＋集體共創演進（Astra，2026-09-29 v0）</summary>
+    <div style="font-size:13px;color:var(--ink-soft);line-height:1.85;margin-top:10px">
+      <p><b>這是一次性分析快照，不是即時查詢</b>——跟下面 Vertex 用量監控同一個模式：手動跑
+      <code>research_pbl_knowledge_model/ASTRA_BRIEF_20260929.md</code> 交辦的分析腳本才會更新，
+      不會因為打開這頁而消耗 Firebase 流量。派工給 Astra（<code>gpt-reserve</code>），全程唯讀，
+      沒有匯出 email／姓名／uid／暱稱，也沒有改動任何正式頁面。完整產出見
+      <code>research_pbl_knowledge_model/astra_output_20260929/</code>。</p>
+
+      <p style="margin-top:10px"><b>W3 的 code 表跟 W1 不一樣</b>——W1 的 16 個 code 是為「AI 協作發想」設計的，
+      不能原封不動套到「玩社交推理遊戲」。W3 改抓：策略推理、結盟／背叛、猜疑／試探、規則改動／評估、
+      反思體驗，沿用 Benne &amp; Sheats 四角色當跨週共同層次。</p>
+
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0">
+        <tr style="text-align:left;border-bottom:1px solid var(--line)"><th style="padding:4px 6px">code</th><th style="padding:4px 6px">節點權重</th></tr>
+        <tr><td style="padding:3px 6px">rule_design_evaluation（規則設計評論）</td><td style="padding:3px 6px">351</td></tr>
+        <tr><td style="padding:3px 6px">coalition_betrayal（結盟／背叛）</td><td style="padding:3px 6px">328</td></tr>
+        <tr><td style="padding:3px 6px">role_evaluator（評估者角色）</td><td style="padding:3px 6px">241</td></tr>
+        <tr><td style="padding:3px 6px">reflection_experience（反思體驗）</td><td style="padding:3px 6px">154</td></tr>
+        <tr><td style="padding:3px 6px">rule_change_experiment（規則實驗）</td><td style="padding:3px 6px">120</td></tr>
+        <tr><td style="padding:3px 6px">其餘（initiator／uncertainty／strategy／clarifier／elaborator）</td><td style="padding:3px 6px">93／64／55／40／2</td></tr>
+      </table>
+
+      <p>網路結果：W3 為 <b>10 節點、3 條邊、密度 0.067</b>（樣本 talk 105 則＋feedback 532 則，
+      2026-09-23 單日真人資料）。把同一套 code 表拿去套 W1，會得到 12 節點、60 條邊、密度 0.909——
+      <b>這只能拿來比較同一套 code 表下的網路形狀，不能解讀成「W3 學生認知比較差」</b>，
+      差異主要來自資料量與語料來源不同（W1 是打字討論、W3 是課堂即時喊話，句子本來就短很多）。</p>
+
+      <p><b>集體共創演進</b>：規則組合多樣性（Shannon entropy）09-23 當天 28 場對局、17 種不同組合，
+      entropy 3.74（分散，還沒收斂到少數幾種打法）。卡片設計時間線可以畫，但 <code>cardDesigns</code>
+      沒有記「這張卡參考了誰」的欄位，<b>不能畫成因果族譜</b>，只能誠實呈現時間序列。
+      <a href="teacher_w3_evolution_20260929.html" target="_blank">📊 開視覺化（entropy 曲線＋code 權重長條圖）</a></p>
+
+      <p style="background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px">
+        <b>楊老師 2026-09-29 裁示</b>：① <b>不做人工標註</b>雙編碼校準——維持 v0 誠實聲明即可。
+        ② <b>完整 replay（room-level 社會網路分析）先擱置</b>：實測發現已完賽場次的
+        <code>rooms/{'{'}房號{'}'}</code> 現在讀出來只有 4 bytes（等於 <code>null</code>），資料疑似已被清除或搬移，
+        要先查清楚原因才知道這條路能不能走，不是「要不要多抓」的問題；好處是現在去抓也抓不到東西，
+        不會有流量爆表風險。
+      </p>
+
+      <p style="font-size:11px;opacity:.75;margin-top:8px">
+        <b>誠實聲明</b>：v0 關鍵字啟發式，未經人工雙編碼／ncodeR／kappa-rho 驗證；關鍵字會漏同義詞、
+        誤判「規則」這類泛用詞，還沒處理否定與反諷。W3 talk 受 room payload 完整性限制，
+        feedback 是課後自填不等於整個遊戲過程。中間檔與詞例全表見
+        <code>research_pbl_knowledge_model/astra_output_20260929/w3_ena_extension.md</code>。
+      </p>
+    </div>
+  </details>
+
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
+    <summary style="cursor:pointer;font-weight:800;font-size:13.5px">📚 跨週學習知識庫＋W1-W4 引導代理人規格（Astra，2026-09-29 設計文件）</summary>
+    <div style="font-size:13px;color:var(--ink-soft);line-height:1.85;margin-top:10px">
+      <p>從 W1-W3 已累積的真實資料歸納每週常見弱點，並設計了 W1-W4 各一份「引導代理人」規格——
+      <b>這是設計文件，還不是會動的聊天機器人</b>，楊老師已裁示 <b>W4 先做 MVP</b>（課堂側欄形式，
+      待另外規劃範圍再動手，不在這次一併做）。完整檔案在
+      <code>research_pbl_knowledge_model/astra_output_20260929/</code>（<code>kb/w1-w3.md</code>、
+      <code>guide_agent_w1-w4.md</code>）。</p>
+
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0">
+        <tr style="text-align:left;border-bottom:1px solid var(--line)">
+          <th style="padding:5px 6px">週次</th><th style="padding:5px 6px">常見弱點（有證據）</th>
+          <th style="padding:5px 6px">介入時機</th><th style="padding:5px 6px">往下一週帶什麼</th>
+        </tr>
+        <tr>
+          <td style="padding:5px 6px;vertical-align:top"><b>W1</b><br>探索→收斂</td>
+          <td style="padding:5px 6px;vertical-align:top">規格定案前不知道往哪探問；AI 產出與學生原創界線不清；角色容易只丟點子不深化</td>
+          <td style="padding:5px 6px;vertical-align:top">第一個候選後、角色分歧時、定案前</td>
+          <td style="padding:5px 6px;vertical-align:top">concept_candidates、authorship_uncertain、unresolved_questions</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 6px;vertical-align:top"><b>W2</b><br>文化機制化</td>
+          <td style="padding:5px 6px;vertical-align:top">文化停在背景沒變成玩家動作；缺失敗條件；取捨理由不足</td>
+          <td style="padding:5px 6px;vertical-align:top">選文化但未寫玩家行動、草稿只有故事、送出前</td>
+          <td style="padding:5px 6px;vertical-align:top">player_action、constraint_set、open_tradeoff</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 6px;vertical-align:top"><b>W3</b><br>規則測試</td>
+          <td style="padding:5px 6px;vertical-align:top">節奏過快；聯手常從頭固定沒被打破；能描述改動但講不清因果；回饋深淺落差大</td>
+          <td style="padding:5px 6px;vertical-align:top">出牌前喊話、改卡後第一輪、回饋不到 20 字</td>
+          <td style="padding:5px 6px;vertical-align:top">rules_understood、rule_misconceptions、social_hypotheses、tested_effects</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 6px;vertical-align:top"><b>W4</b><br>原型驗證</td>
+          <td style="padding:5px 6px;vertical-align:top">原型容易變回漂亮敘事沒有可驗證規則；AI 產出容易照單全收；文化轉譯可能變回說教（W4 尚無真實資料，屬設計風險非實測）</td>
+          <td style="padding:5px 6px;vertical-align:top">DR 第一版、AI Studio 第一次可玩、測試者卡住時</td>
+          <td style="padding:5px 6px;vertical-align:top">prototype_hypothesis、playtest_observation、rule_evidence</td>
+        </tr>
+      </table>
+
+      <p>四份規格刻意串成一條線，不是各自獨立的 FAQ：<b>W1 提文化候選 → W2 轉成玩家機制 →
+      W3 用真實遊戲行為測試規則與解讀行為 → W4 把已理解的規則與誤解轉成可玩原型驗證</b>——
+      每一週的代理人開場都先讀上一週寫下的 state，不會叫學生重講一次。</p>
+    </div>
+  </details>
+
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
     <summary style="cursor:pointer;font-weight:800;font-size:13.5px">📡 Vertex AI 用量監控（收斂視覺化即時生成用）</summary>
     <div id="vertexUsagePanel" style="font-size:13px;color:var(--ink-soft);line-height:1.8;margin-top:10px">載入中…</div>
     <p style="font-size:11px;opacity:.75;margin-top:10px">

@@ -523,10 +523,13 @@
     UNITS.forEach(function (u) { if (u.key === UNIT) cur = u; });
     if (!cur) cur = UNITS[0];
 
+    /* 2026-09-29 楊老師：「你在這裡」跟「本週」這兩個文字標記拿掉——每次調順序
+       都要跟著想這兩個標記會不會擠在一起看混，太麻煩。當前項目改靠 .on 這個
+       class 的粗體樣式辨識（CSS 早就有），不再額外印文字。 */
     var items = UNITS.map(function (u) {
       var on = (u.key === UNIT) ? ' on' : '';
       return '<a class="' + on.trim() + '" data-tone="' + u.tone + '" href="' + u.href + '">'
-        + '<b>' + u.name + (u.key === NOW_KEY ? ' · 本週' : '') + (on ? '（你在這裡）' : '') + '</b>'
+        + '<b>' + u.name + '</b>'
         + '<span>' + u.desc + '</span></a>';
     }).join('');
 
@@ -534,7 +537,7 @@
     nav.className = 'dj-nav';
     nav.innerHTML =
       '<button type="button" class="dj-cur" data-tone="' + cur.tone + '" aria-expanded="false">'
-      + '<span class="dj-k">' + cur.name + (cur.key === NOW_KEY ? ' · 本週' : '') + '</span>'
+      + '<span class="dj-k">' + cur.name + '</span>'
       + '<span class="dj-t">' + cur.desc + '</span>'
       + '<span class="dj-c">▼</span></button>'
       + '<div class="dj-list" hidden>' + items + '</div>';

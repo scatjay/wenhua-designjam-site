@@ -484,26 +484,27 @@
      原本 unit1/w2 各寫一份（只有兩週、而且 w2 還標著過期的「本週」），sf3k 又是第三套。
      這裡注入 .dj-nav 並把各頁原本的 .unitnav 藏起來，之後換週只要改這個陣列。 */
   /* 🔴 加新的一週＝在這裡加一行，其他什麼都不用動（導覽、總入口清單、配色全部從這裡生）。
-     tone 依五色循環取：warm→cool→plum→leaf→clay→warm…（第 6 週回到 warm）。
-     「本週」不用手動標——取最後一個有 wk 的項目，加了新的一行就自動往前推。 */
+     tone 依五色循環取：warm→cool→plum→leaf→clay→warm…（第 6 週回到 warm），
+     照 wk 數字算、不看陣列排列順序，所以下面倒序排列不影響配色。
+     「本週」＝wk 數字最大的那個，一樣不看陣列順序（見下面 NOW_KEY）。 */
   var TONES = ['warm', 'cool', 'plum', 'leaf', 'clay'];
   var UNITS = [
     { key: 'hub',  href: 'index.html', name: '總入口', desc: '每一週的學習單都在這裡', tone: 'slate' },
     /* 行政調查，跟週次無關 ⇒ 不給 wk（不進 index.html 的每週清單，只在下拉選單裡）。
-       排在總入口之後、第1週之前——楊老師 2026-09-29 指定：原本排在最後、緊接第4週的
-       「· 本週」標記，跟這裡的「你在這裡」擠在同一畫面容易看混，挪到最前面隔開就不會了。
-       tone 借用 clay（磚色）——目前 W1-4 用掉 warm/cool/plum/leaf，clay 還空著，
-       跟任何一週的顏色都不會混淆；之後真的排到 W5 用掉 clay 時再挑一個新色。 */
+       排在總入口之後——tone 借用 clay（磚色）：目前 W1-4 用掉 warm/cool/plum/leaf，
+       clay 還空著，跟任何一週的顏色都不會混淆；之後真的排到 W5 用掉 clay 時再挑一個新色。 */
     { key: 'laptop', href: 'laptop_survey.html', name: '設備調查', tone: 'clay',
       desc: '帶筆電意願＋VNC／SSH 遠端協助意願（行政，跟週次無關）' },
-    { key: 'w1',   href: 'unit1.html', wk: 1, desc: '四種角色，孵出一個點子' },
-    { key: 'w2',   href: 'w2.html',    wk: 2, desc: '文化怎麼放進遊戲裡' },
+    /* 2026-09-29 楊老師：選單長了，週次改倒序（最新的排最上面，緊接在設備調查下面），
+       不用往下捲才找得到本週。加新的一週＝插在這一段最前面，其他不用動。 */
+    { key: 'w4',   href: 'w4.html',    wk: 4, desc: '把 W3 的組合做成能玩的原型',
+      long: '延伸你們 W3 實際玩到的卡片組合：先用 Gemini Deep Research 跑三輪，'
+          + '把企劃定案、加上介面與美術設定，再用 Google AI Studio 做出一個真的能玩的網頁原型。' },
     { key: 'sf3k', href: 'sf3k.html',  wk: 3, desc: 'SiSSYFiGHT 三輪試玩',
       long: '同一個遊戲玩三輪：原版 → 只改一個地方 → 整組改。一場 3-6 人，'
           + '出牌前在公開討論區串通，玩完寫下你看到的差別。' },
-    { key: 'w4',   href: 'w4.html',    wk: 4, desc: '把 W3 的組合做成能玩的原型',
-      long: '延伸你們 W3 實際玩到的卡片組合：先用 Gemini Deep Research 跑三輪，'
-          + '把企劃定案、加上介面與美術設定，再用 Google AI Studio 做出一個真的能玩的網頁原型。' }
+    { key: 'w2',   href: 'w2.html',    wk: 2, desc: '文化怎麼放進遊戲裡' },
+    { key: 'w1',   href: 'unit1.html', wk: 1, desc: '四種角色，孵出一個點子' }
   ];
   UNITS.forEach(function (u) {
     if (u.wk) {
@@ -511,10 +512,12 @@
       if (!u.tone) u.tone = TONES[(u.wk - 1) % TONES.length];
     }
   });
+  /* 🔴 改成陣列倒序之後，「最後一個有 wk 的項目」就不再是本週了——改成比大小，
+     不管陣列怎麼排都對（2026-09-29 跟著上面的倒序改動一起修，避免首頁「本週」大卡挑錯週）。 */
   var NOW_KEY = (function () {
-    var last = null;
-    UNITS.forEach(function (u) { if (u.wk) last = u; });
-    return last ? last.key : null;
+    var top = null;
+    UNITS.forEach(function (u) { if (u.wk && (!top || u.wk > top.wk)) top = u; });
+    return top ? top.key : null;
   })();
   function renderNav() {
     injectCss();

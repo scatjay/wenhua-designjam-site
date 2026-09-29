@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W4 SissyFight 原型工作坊</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<style>
+/* 第4週＝綠色系。版型跟 W1-W3 完全一致，只換主色（TONES 循環：warm→cool→plum→leaf）。 */
+:root{
+  --bg:#f7f9fa; --panel:#ffffff; --panel2:#eaf0f3; --ink:#202a30; --ink-soft:#54646e;
+  --line:#cfdae1; --accent:#3f7a34; --accent-soft:#e9f3e3;
+  --green:#3f7a34; --green-soft:#e9f3e3;
+  --blue:#2f6690; --blue-soft:#e5eff6;
+  --purple:#7a3f92; --purple-soft:#f2e7f6;
+  --red:#b8452f; --red-soft:#fbe9e3;
+  --amber:#8a6a1f; --amber-soft:#f5eeda;
+  --code-bg:#152417; --code-ink:#dcefe0; --code-accent:#8fe0a8;
+  --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
+}
+img.emoji{height:1.15em;width:1.15em;margin:0 .05em 0 .1em;vertical-align:-0.2em}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wrap:balance}
+h2{font-size:19px;font-weight:800;margin:0 0 4px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+h2 .tag{font-size:11.5px;font-weight:700;color:var(--ink-soft);background:var(--panel2);padding:3px 9px;border-radius:6px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 18px;line-height:1.7}
+section{margin:38px 0}
+section>.sub{margin:0 0 16px}
+.kicker{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.box.tight{padding:14px 16px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel2);padding:1px 6px;border-radius:5px}
+[hidden]{display:none!important}
+
+/* ── 跳轉列（非 sticky——sticky 交給 bind_gate.js 的 .dj-nav，不要疊兩層）── */
+.jumprow{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 4px}
+.jumprow a{flex:none;text-decoration:none;font-size:12.5px;font-weight:700;color:var(--ink-soft);
+  background:var(--panel2);border:1.5px solid var(--line);border-radius:999px;padding:6px 13px}
+.jumprow a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── 兩步驟流程卡 ── */
+.flow{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:18px 0 4px}
+.flow .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.flow .step .num{font-size:11.5px;font-weight:800;color:var(--accent);letter-spacing:.04em}
+.flow .step h3{font-size:15px;font-weight:800;margin:3px 0 3px}
+.flow .step p{font-size:13px;color:var(--ink-soft);margin:0}
+.flow .arrow{font-size:20px;color:var(--ink-soft);text-align:center}
+@media (max-width:560px){.flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg);padding:2px 0}}
+
+/* ── 規則回顧 ── */
+.rulegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+@media (max-width:560px){.rulegrid{grid-template-columns:1fr}}
+.rulegrid .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.rulegrid .card b{display:block;font-size:14.5px;margin-bottom:4px}
+.rulegrid .card span{font-size:13px;color:var(--ink-soft)}
+
+.dimbox{background:var(--amber-soft);border:1px solid var(--amber);border-radius:12px;padding:16px;margin:14px 0}
+.dimbox h4{margin:0 0 6px;font-size:14.5px;color:var(--amber)}
+.dimbox p{margin:0 0 6px;font-size:13.5px;color:var(--ink-soft)}
+.dimbox p:last-child{margin-bottom:0}
+
+/* ── 編號步驟（Round 1/2/3、AI Studio 操作步驟）── */
+.steps{list-style:none;padding:0;margin:0;counter-reset:stp}
+.steps>li{counter-increment:stp;position:relative;padding:0 0 0 40px;margin:0 0 22px}
+.steps>li::before{content:counter(stp);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;
+  background:var(--accent);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.steps>li h4{margin:1px 0 6px;font-size:15px;font-weight:800}
+.steps>li p{margin:0 0 10px;font-size:13.5px;color:var(--ink-soft);line-height:1.65}
+
+/* ── 提示詞區塊（深色，跟卡片的「複製指令」是同一件事，換一套配色）── */
+.promptbox{background:var(--code-bg);border-radius:12px;padding:14px 14px 12px;margin:10px 0;box-shadow:var(--shadow)}
+.promptbox .lbl{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px}
+.promptbox .lbl span{font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--code-accent);text-transform:uppercase}
+.promptbox .ptxt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.7;
+  color:var(--code-ink);white-space:pre-wrap;word-break:break-word;margin:0}
+/* 這個 class 名跟站上其他頁的「複製指令」共用，但這裡背景深，用亮色小膠囊 */
+.copybtn{flex:0 0 auto;font-family:inherit;font-size:12px;font-weight:700;background:var(--code-accent);
+  color:#0c2013;border:none;border-radius:7px;padding:5px 11px;cursor:pointer}
+.copybtn:active{transform:scale(.97)}
+.copybtn.done{background:var(--blue-soft);color:var(--blue)}
+
+/* ── 提示／警語／作法說明 ── */
+.tipbox,.warnbox,.howtobox{border-radius:12px;padding:14px 16px;margin:14px 0;font-size:13.5px;line-height:1.7}
+.tipbox{background:var(--blue-soft);border:1px solid var(--blue);color:var(--blue)}
+.warnbox{background:var(--red-soft);border:1px solid var(--red);color:var(--red)}
+.howtobox{background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft)}
+.tipbox .lbl,.warnbox .lbl,.howtobox .lbl{font-weight:800;font-size:12.5px;letter-spacing:.02em;display:block;margin-bottom:5px}
+.warnbox b,.tipbox b{color:inherit}
+.howtobox .lbl{color:var(--ink)}
+
+/* ── 評分標準 ── */
+.rubric{display:grid;gap:12px;margin:14px 0}
+.rubric .item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;
+  display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;box-shadow:var(--shadow)}
+.rubric .item .frac{font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:14.5px;
+  color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:6px 10px;white-space:nowrap}
+.rubric .item h4{margin:0 0 4px;font-size:14.5px;font-weight:800}
+.rubric .item p{margin:0;font-size:13px;color:var(--ink-soft);line-height:1.65}
+
+/* ── 繳交規定 ── */
+.turninbox{background:var(--panel);border:2px dashed var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;opacity:.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">文化遊戲松實作 · 第4週</div>
+<h1>把 W3 的組合，變成一個玩得動的原型</h1>
+<p class="sub">
+  這週的重點是<b>工具怎麼操作、怎麼串起來</b>——不是要你們從零發明一個全新遊戲。
+  先用 Gemini Deep Research 跟 AI 一起把 W3 那場的組合想得更完整，再用 Google AI Studio
+  把企劃做成一個可以在瀏覽器裡點來點去試玩的原型。
+</p>
+
+<div class="jumprow">
+  <a href="#recap">上週回顧</a>
+  <a href="#step1">① Deep Research</a>
+  <a href="#step2">② AI Studio</a>
+  <a href="#nolaptop">沒帶筆電</a>
+  <a href="#rubric">評分標準</a>
+  <a href="#turnin">怎麼交</a>
+</div>
+
+<div class="flow">
+  <div class="step">
+    <div class="num">STEP 1</div>
+    <h3>Gemini Deep Research</h3>
+    <p>跟 AI 一起把「這個組合往哪個方向改」想清楚、想具體</p>
+  </div>
+  <div class="arrow">→</div>
+  <div class="step">
+    <div class="num">STEP 2</div>
+    <h3>Google AI Studio</h3>
+    <p>把企劃變成一個真的能點、能玩的網頁原型</p>
+  </div>
+</div>
+
+<div class="warnbox">
+  <span class="lbl">⚠ 每個階段的提示詞都是參考範例，照抄不改分數會很差</span>
+  下面每一段深色提示詞都可以一鍵複製，但那是教你們「怎麼問」的範例，不是填一填就能交差的公式。
+  裡面的 <code>[[ ]]</code> 一定要換成你們真正的內容——連 <code>[[ ]]</code> 都照樣貼進去、
+  或整段複製完全不調整，DR／AI Studio 跑出來的東西就是空洞的樣板，評分標準每一項都會被扣到。
+</div>
+
+<section id="recap">
+  <h2>先看看：這個遊戲原本長怎樣 <span class="tag">背景</span></h2>
+  <p class="sub">你們上週已經在 W3 玩過改版了。這裡整理原始規則，接下來要做的是延伸你們自己那場的組合，不是重挑別人的方向。</p>
+
+  <div class="rulegrid">
+    <div class="card"><b>SOLO 單挑</b><span>出這張＋指定一人，那人扣 1 點自尊。一個人就能做，穩定但傷害小。</span></div>
+    <div class="card"><b>TEAM 聯手</b><span>至少要有兩個人同時打同一個目標才有效，每個攻擊者讓對方扣 2 點。一個人打等於沒打。</span></div>
+    <div class="card"><b>DEFEND 畏縮</b><span>這回合受到的傷害減半，但如果沒人指定你，反而要自己扣 1 點——躲著不參與並不安全。</span></div>
+  </div>
+
+  <p class="sub" style="margin:14px 0 0">
+    這三張牌唯一的引擎，是原始規則裡那條很不起眼的限制：<b style="color:var(--ink)">玩家只能靠公開的講話和動作溝通，不能傳小紙條、不能打暗號</b>。
+    所有的結盟、背叛、講好卻沒做到，都發生在出牌前那段公開喊話裡。
+  </p>
+
+  <div class="dimbox">
+    <h4>選定組合之後，想再往下發展可以參考這些維度（不是拿來另起爐灶）</h4>
+    <p><b>誰先誰後、坐在哪裡：</b>座位本身有沒有可能變成規則的一部分？例如只能打鄰座、畏縮成功可以跟對面換位子。</p>
+    <p><b>資訊什麼時候公開：</b>原版是同時翻牌、大家立刻知道誰打誰。如果結算時只公布「誰扣了多少血」、不公布誰打了誰，猜疑感會變得完全不同。</p>
+    <p><b>聯手的門檻怎麼算：</b>原版是「≥2 人就固定乘 2」。如果傷害隨人數變成平方成長（2人＝4傷、3人＝9傷），跟風的心理壓力會被放大到什麼程度？</p>
+    <p><b>出局之後還能做什麼：</b>原版出局就退場旁觀。如果出局的人可以組成「陪審團」，偷偷押注誰會贏，殘局會不會變得更好看？</p>
+  </div>
+
+  <p class="sub" style="margin:0">
+    GDC 官方也有一個換皮範例可以參考：把同一組機制換成「一群小孩在爭論人生的意義」，籌碼變成「論點卡」，
+    還多了一個 <b style="color:var(--ink)">Comeback（反駁）</b>機制——被攻擊時如果手上有對應的反駁牌，可以讓對方反而扣血。
+    可以拿這個問自己：Comeback 是真的動了機制，還是只是把「畏縮」換個名字？
+  </p>
+</section>
+
+<section id="step1">
+  <h2>① 用 Deep Research 把企劃想清楚 <span class="tag">工具操作</span></h2>
+  <p class="sub">DR 跑出來的東西是「原料」，不是企劃的終點——你們自己要挑、要合併、要決定要哪個。<b style="color:var(--ink)">規定至少跑三輪</b>，一輪站在上一輪的基礎上，不是三個各自獨立的問題。</p>
+
+  <div class="warnbox">
+    <span class="lbl">⚠ 規定：企劃要從你們實際玩過的卡片組合出發，不是自己憑空亂改</span>
+    W4 不是重新發明一個新方向，是把你們這場<b>真的玩到的卡片組合</b>，透過研究把它做得更完整。做法：
+    回 W3（<code>sf3k.html</code>）的「回放區」找到你們那場，點<b>看回放</b>——畫面最上面會寫
+    「這一場改了：卡◯◯、卡◯◯」，那就是你們這次要往下做的組合。
+    <b>手上沒有滿意的組合也沒關係，可以回 W3 大廳重新開一場、換一組卡片再玩一輪</b>，玩完再回來從新的回放開始。
+    <br><br>
+    <b>R1／R2／R3 三份文件跟最後的短文，都要明確寫出實際卡號跟卡名</b>
+    （例如「卡28 屬性相剋、卡1 一擊必殺」）——不能只用「我們的組合」「我們這場玩到的卡片」
+    這種話帶過，要讓人不用問你們就能直接對到是哪幾張設計卡。
+  </div>
+
+  <ol class="steps">
+    <li>
+      <h4>第一輪：從真實玩到的組合出發，查查別人怎麼處理過</h4>
+      <p>先準備三件事再開始問，讓 DR 站在你們的真實資料上研究，不是憑空腦補：</p>
+      <ul style="margin:0 0 10px;padding-left:20px;font-size:13px;color:var(--ink-soft);line-height:1.7">
+        <li>回放畫面上「<b style="color:var(--ink)">這一場改了</b>」列出的<b style="color:var(--ink)">卡片名稱</b>——這是你們這次要發展的組合，不是重選</li>
+        <li>你們這組<b style="color:var(--ink)">W3 試玩後寫的回饋</b>——3 則回饋的內容，直接複製貼上</li>
+        <li>在遊戲畫面「<b style="color:var(--ink)">全班設計的卡</b>」區塊裡挑幾張<b style="color:var(--ink)">同學提的設計</b>當參考，記下卡名跟效果</li>
+      </ul>
+      <div class="promptbox">
+        <div class="lbl"><span>Round 1 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">我在玩一個叫 SissyFight 3000 的小遊戲：3-8人，每人手上有「單挑」「聯手」「畏縮」三張行動卡跟目標卡，每回合同時出牌，聯手需要至少兩人打同一個目標才有效，畏縮會減傷但沒人理你要自扣血，玩家只能公開講話不能傳暗號。
+
+我們這場（W3）實際玩到的卡片組合是：
+[[貼上回放畫面「這一場改了」列出的卡名，例如：卡28 屬性相剋、卡1 一擊必殺]]
+
+我們這組 W3 試玩後寫的回饋是：
+[[貼上你們 3 則回饋的內容]]
+
+我們在「全班設計的卡」裡看到同學提的設計，例如：
+[[列出幾張卡名跟效果]]
+
+我們想針對「我們這場實際玩到的卡片組合」往下發展，不是換一個新方向。請幫我做兩件事：
+1. 查一下 SissyFight 這款遊戲的補充資料——原作 Eric Zimmerman／gameLab 的設計理念、GDC Game Design Workshop 怎麼用它教學、有沒有其他人做過的知名改編版本
+2. 查一下有沒有相關的商業電玩（不限桌遊，線上遊戲、手遊、主機遊戲都算）處理過類似「[[你們這個組合的機制關鍵字，例如：屬性相剋、一擊必殺]]」這類設計，它們怎麼做、效果好不好
+
+兩件事都要列出 3-5 個真實案例跟出處，不要幫我編。</p>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:8px">跑完這輪，把 DR 的回覆<b style="color:var(--ink)">轉出成一份 Google 文件</b>（Gemini 回覆下方有「轉出到 Google 文件」的按鈕），命名 <code>R1</code>。</p>
+    </li>
+    <li>
+      <h4>第二輪：企劃定案（規則和玩法，先不管視覺設計）</h4>
+      <p>把第一輪查到的案例貼回去，讓 DR 幫你們把「這個組合」寫成規則和玩法都定案的企劃——這一輪只管規則怎麼運作，畫面長什麼樣留到下一輪。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>Round 2 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">根據你剛剛查到的案例，幫我把「我們這場實際玩到的卡片組合」寫成企劃定案（規則和玩法，先不談視覺設計）：
+1. 哪張牌、哪個結算流程要改，改成什麼
+2. 跟那幾張卡（卡號＋卡名）原本的效果比，差在哪一句話
+3. 檢查這幾條規則有沒有互相矛盾、或漏了「平手／同時出局」這種邊界情況沒講清楚
+4. 把最終版本整理成「新手唸得懂、AI 工具聽得懂」的規則說明——像遊戲說明書一樣，一步一步講清楚設置、每回合怎麼進行、怎麼結算、怎麼分勝負
+5. 你預測這個改動會讓玩家的討論／結盟／猜疑變得怎麼樣（說出理由）
+6. 有沒有可能玩起來根本沒差、或者直接讓遊戲卡死——先幫我想一個最壞的狀況
+7. 最後幫我用 100-150 字寫一段短文：明確寫出我們這次是在哪幾張設計卡（卡號＋卡名）上做修改、跟那幾張卡原本的效果差在哪一句話、預期會讓玩家的討論／結盟／猜疑變得怎樣
+
+請用條列式，不要寫成一整段散文，我要能直接貼給另一個 AI 工具去做原型。</p>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:8px">轉出成 Google 文件，命名 <code>R2</code>——這份是企劃定案，含那段 100-150 字短文。</p>
+    </li>
+    <li>
+      <h4>第三輪：介面與美術設定文件</h4>
+      <p>把 R2 的企劃定案貼回去，這一輪<b style="color:var(--ink)">不再碰規則</b>，只讓 DR 幫你們把它變成 AI Studio 聽得懂的畫面與美術設定。<b style="color:var(--ink)">整段話從頭到尾都是在講同一個 W3 組合</b>，不要換掉。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>Round 3 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">這是我們這場（W3）實際玩到的卡片組合，企劃已經定案：[[貼上 R2 的企劃定案內容]]
+
+請幫我做介面與美術設定（不用再檢查規則，規則已經定案）：
+1. 這個原型需要哪幾個畫面（例如：大廳等待、出牌選擇、結算揭曉、勝負公布），列出每個畫面
+2. 每個畫面上要看得到哪些資訊（例如自己的自尊值、目前回合數、大家出的牌）
+3. 配色跟整體風格建議（呼應我們這幾張卡的主題）
+4. SOLO／TEAM／DEFEND 三種行動要怎麼用顏色或圖示讓人一眼分辨
+5. 要不要有角色圖像，或只用暱稱</p>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:8px">轉出成 Google 文件，命名 <code>R3</code>——這份是介面與美術設定，搭配 R2 一起貼給 AI Studio。</p>
+    </li>
+  </ol>
+
+  <div class="warnbox">
+    <span class="lbl">⚠ 不要把同學的真名／學號貼進去</span>
+    只要講遊戲規則本身，不需要講「我們這組哪些人」。三份 Google 文件都要<b>開分享權限</b>（知道連結的人皆可查看），不然等於沒交。
+  </div>
+</section>
+
+<section id="step2">
+  <h2>② 用 AI Studio 做出可以玩的原型 <span class="tag">工具操作</span></h2>
+  <p class="sub">這裡的「原型」是指：一個網頁，你們真的可以在瀏覽器裡點按鈕、看到自尊值變化、玩得出一輪結算——不是投影片，不是文字說明。</p>
+
+  <ol class="steps">
+    <li>
+      <h4>開 Google AI Studio，用「從一句話生成 App」的功能</h4>
+      <p>網址：<code>aistudio.google.com</code>。用 Google 帳號登入即可，<b style="color:var(--ink)">不需要信用卡</b>。左側選「Build」或「App」相關的建立功能，會有一個輸入框讓你貼一段說明。</p>
+    </li>
+    <li>
+      <h4>把 R2＋R3 整理成一段給 AI 的說明，貼進去</h4>
+      <p>R2 是規則和玩法的企劃定案、R3 是介面與美術設定，兩份一起整理成下面這種格式再貼進去——愈具體愈好做得出來。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>起手指令 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">幫我做一個網頁版的小遊戲原型，規則如下：
+
+・玩家：3-8 人，每人有一個暱稱跟 10 點自尊值
+・每回合每人選一張行動卡（單挑／聯手／畏縮）跟一個目標，全部人選好後同時公開結算
+・單挑：目標扣 1 點；聯手：至少 2 人打同一目標才有效，每人讓目標扣 2 點；畏縮：這回合受到的傷害減半，若沒人打你則自扣 1 點
+・我們改的地方（來自卡◯◯、卡◯◯）：[[貼上 R2 企劃定案裡的具體規則修改]]
+・自尊變 0 就出局，剩最後 1-2 人時遊戲結束並顯示贏家
+
+介面與美術設定：
+[[貼上 R3 的介面設定跟美術設定——需要哪幾個畫面、每個畫面顯示什麼、配色風格、三種行動怎麼分辨]]
+
+先做出可以本機測試的單一頁面就好，不用做帳號登入。</p>
+      </div>
+    </li>
+    <li>
+      <h4>一次只調一件事，卡住就把錯誤訊息整段貼回去</h4>
+      <p>不要一次貼一長串「還要加這個、還要改那個」——AI Studio 免費層有次數限制，一步一步調整比較容易抓到是哪句話出問題。跑不動時，把畫面上的錯誤訊息整段複製貼給它，讓它自己修。</p>
+    </li>
+  </ol>
+
+  <div class="warnbox">
+    <span class="lbl">⚠ 免費層的資料可能會被人工看到</span>
+    不要把真實同學的姓名、大頭貼、聯絡方式貼進 AI Studio。遊戲裡的角色一律用暱稱或代號，跟 DR 那一步一樣。
+  </div>
+
+  <div class="tipbox">
+    <span class="lbl">💡「執行」按鈕按不動？</span>
+    AI Studio 需要先選一個 API key 才能真的執行程式——沒有的話畫面上會有引導你申請一個免費 key 的連結，跟著申請就好，<b>不需要信用卡</b>。
+  </div>
+</section>
+
+<section id="nolaptop">
+  <h2>沒帶筆電怎麼辦 <span class="tag">彈性作法</span></h2>
+  <p class="sub">這週先確認「企劃想清楚了、跟 AI 工具的溝通做得起來」，原型只要做到<b>按得動、看得懂</b>就算數，不要求做到完整可以發布。</p>
+  <div class="howtobox">
+    <span class="lbl">手機／平板一樣能做</span>
+    Deep Research 跟 AI Studio 都是網頁版，手機瀏覽器開得起來，只是畫面比較小。也可以跟同組同學共用一台電腦，輪流操作、一起看螢幕討論。
+  </div>
+</section>
+
+<section id="rubric">
+  <h2>評分標準 <span class="tag">三項各 1/3</span></h2>
+  <div class="rubric">
+    <div class="item">
+      <div class="frac">1/3</div>
+      <div><h4>企劃有沒有動到規則本身</h4><p>要從你們 W3 實際玩到的卡片組合出發，不是自己另外亂改——文件裡要點名卡號跟卡名（例如「卡28 屬性相剋」），不是只換個名字、換個劇情包裝（換皮），要看得出來哪一句規則被真的改動了，跟那幾張卡原本的效果差在哪裡。</p></div>
+    </div>
+    <div class="item">
+      <div class="frac">1/3</div>
+      <div><h4>DR 企劃有沒有迭代改善的痕跡</h4><p>R1、R2、R3 從頭到尾要是<b>同一個</b> W3 卡片組合——R2 有沒有站在 R1 查到的案例上把規則定案、R3 有沒有把 R2 的定案規則具體轉譯成看得懂的介面與美術設定。三份文件疊起來看得出一條「研究→企劃定案→視覺設定」的脈絡，中途換掉組合、或三份各自獨立、內容重複，都不算。</p></div>
+    </div>
+    <div class="item">
+      <div class="frac">1/3</div>
+      <div><h4>原型玩得動</h4><p>按得下去、看得到結果，玩起來的行為跟企劃講的規則對得上——不用做到完整美觀，但要能真的跑一輪。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="turnin">
+  <h2>規定要交的東西 <span class="tag">缺一不可</span></h2>
+  <p class="sub">全部貼在同一次繳交裡（這份作業的「內容」欄位），依序標好編號，不要分次上傳。</p>
+
+  <div class="turninbox">
+    <ol class="steps" style="margin:0">
+      <li style="margin-bottom:16px">
+        <h4>1. 三份 Google 文件：R1、R2、R3</h4>
+        <p style="margin:0">照 Step 1 的三輪，Deep Research <b style="color:var(--ink)">每一輪都轉出一份 Google 文件</b>，依序命名 R1／R2／R3——這三份就是「迭代過三個版本」的證據，缺一輪不算數。R1 查資料、R2 是規則和玩法的企劃定案、R3 是介面與美術設定，三份要圍繞著<b style="color:var(--ink)">同一個 W3 實際玩到的卡片組合</b>，不是三個不相干的方向。三份都要開分享權限（知道連結的人皆可查看）。R2 的最後要有那段 100-150 字的短文，<b style="color:var(--ink)">明確點出卡號跟卡名</b>（例如「卡28 屬性相剋」），講清楚跟那幾張卡原本差在哪一句話、預期會讓玩家的討論／結盟／猜疑變得怎樣（Step 1 第二輪的提示詞已經請 DR 幫你們寫好）。</p>
+      </li>
+      <li style="margin-bottom:0">
+        <h4>2. 最後 Google AI Studio 的遊戲連結</h4>
+        <p style="margin:0">用 R2＋R3 做出來的原型，貼 AI Studio 專案的分享連結，一樣要開「知道連結的人可查看」。真的做不出來、或連結分享不出來時，改貼：<b style="color:var(--ink)">至少 2 張操作截圖</b>（要看得到你們輸入的規則說明，跟跑出來的畫面）＋<b style="color:var(--ink)">一段至少 30 秒的操作短片</b>（手機錄螢幕即可），證明有實際動手做，不是空講。</p>
+      </li>
+    </ol>
+  </div>
+
+  <div class="warnbox">
+    <span class="lbl">⚠ 這兩種情況算沒交</span>
+    連結沒開分享權限，或者連結指向錯誤／空白頁面——跟完全沒貼是一樣的，等於那一項沒交。
+  </div>
+</section>
+
+<footer id="w4-updstamp">最後更新：2026-09-29 10:27</footer>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",
+  authDomain:"gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"gen-lang-client-0929530380"
+});
+
+function copyPrompt(btn){
+  var box = btn.closest('.promptbox');
+  var text = box.querySelector('.ptxt').textContent;
+  function done(){
+    var old = btn.textContent;
+    btn.textContent = '已複製';
+    btn.classList.add('done');
+    setTimeout(function(){ btn.textContent = old; btn.classList.remove('done'); }, 1600);
+  }
+  function fallbackCopy(){
+    try{
+      var range = document.createRange();
+      range.selectNodeContents(box.querySelector('.ptxt'));
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      done();
+    }catch(e){}
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(fallbackCopy);
+  } else fallbackCopy();
+}
+Array.prototype.forEach.call(document.querySelectorAll('.copybtn'), function(b){
+  b.onclick = function(e){ e.preventDefault(); copyPrompt(b); };
+});
+
+// 2026-09-09 楊老師：Windows許多環境的emoji字型沒有國旗圖案/彩色符號，
+// 改用twemoji把畫面上所有emoji轉成圖片，不依賴系統字型。
+try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
+</script>
+<script>window.DJ_BIND_UNIT='w4';</script>
+<script src="js/gate_i18n.js?v=202609290955"></script>
+<script src="js/bind_gate.js?v=202609291032"></script>
+</body>
+</html>

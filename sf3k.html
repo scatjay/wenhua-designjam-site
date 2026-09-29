@@ -71,7 +71,10 @@ button.armed{background:var(--amber-soft);color:var(--amber);border-color:var(--
    nowrap 逼它擠成一整條不斷行的文字，把卡片、卡片格、body 全部撐寬到 628px（手機只有390px）。
    讀 getComputedStyle 量到的數字：pairBadge width=282px、whiteSpace=nowrap、
    body scrollWidth=628 vs clientWidth=390——這個 class 專門給長文字用，不動一般 .pill。 */
-.pill.wrap{white-space:normal;display:block;max-width:100%;line-height:1.6;text-align:left}
+/* 🔴 2026-09-29 楊老師截圖抓到第二個坑：只改了 white-space，border-radius 還留著 .pill 的
+   999px（單行小徽章的「藥丸」半徑）。長文字換行變成 3-4 行的方塊之後，999px 圓角把左右兩側
+   硬擠成橢圓，看起來像撐爆了——這條圓角規則其實從沒為「多行」這個情境調過。 */
+.pill.wrap{white-space:normal;display:block;max-width:100%;line-height:1.6;text-align:left;border-radius:10px}
 .cardno{color:var(--ink-soft);font-weight:800;font-size:.9em}
 /* 選卡池裡的學生設計卡：跟能玩的卡片視覺上要明顯不一樣（虛線框＋不用手型游標），
    不然學生會誤以為點了就能選來玩。 */
@@ -3824,6 +3827,6 @@ const I18N_POST_SRC = [[/卡(\d+)/g, '卡片 {1}']];
 // ===== I18N-END =====
 </script>
 <script src="js/gate_i18n.js?v=202609232230"></script>
-<script src="js/bind_gate.js?v=202609290955"></script>
+<script src="js/bind_gate.js?v=202609291032"></script>
 </body>
 </html>

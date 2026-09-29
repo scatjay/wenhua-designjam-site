@@ -493,7 +493,10 @@
     { key: 'w2',   href: 'w2.html',    wk: 2, desc: '文化怎麼放進遊戲裡' },
     { key: 'sf3k', href: 'sf3k.html',  wk: 3, desc: 'SiSSYFiGHT 三輪試玩',
       long: '同一個遊戲玩三輪：原版 → 只改一個地方 → 整組改。一場 3-6 人，'
-          + '出牌前在公開討論區串通，玩完寫下你看到的差別。' }
+          + '出牌前在公開討論區串通，玩完寫下你看到的差別。' },
+    { key: 'w4',   href: 'w4.html',    wk: 4, desc: '把 W3 的組合做成能玩的原型',
+      long: '延伸你們 W3 實際玩到的卡片組合：先用 Gemini Deep Research 跑三輪，'
+          + '把企劃定案、加上介面與美術設定，再用 Google AI Studio 做出一個真的能玩的網頁原型。' }
   ];
   UNITS.forEach(function (u) {
     if (u.wk) {

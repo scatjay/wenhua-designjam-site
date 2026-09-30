@@ -295,7 +295,10 @@
     showErr('');
     var auth = firebase.auth();
     var p = new firebase.auth.GoogleAuthProvider();
-    var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    /* 🔴 iOS Safari 的 redirect 會丟失登入結果（ITP 擋跨網域儲存：authDomain 是 firebaseapp.com、
+       頁面在 github.io），跳回來永遠像沒登入。iOS 一律走 popup（使用者點擊當下呼叫，不會被擋）。 */
+    var mobile = !ios && /Android|Mobile/i.test(navigator.userAgent);
     if (mobile) { try { localStorage.setItem('designjam_bind_pending', UNIT); } catch (e) {}
       return auth.signInWithRedirect(p); }
     auth.signInWithPopup(p).catch(function (e) {

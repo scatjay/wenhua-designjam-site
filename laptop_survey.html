@@ -49,6 +49,10 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.01em;margin:4px 0 2px;text-wr
 .lp-ghost{font:inherit;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;
   border:1.5px solid var(--line);background:var(--panel);color:var(--ink-soft);cursor:pointer}
 footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;opacity:.6}
+.qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qrbox .t{font-weight:800;font-size:15px}
+.qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line);width:216px;height:216px;box-sizing:border-box;overflow:hidden}
+.qrbox #qrcanvas svg{display:block;margin:0 auto;width:200px;height:200px}
 </style>
 </head>
 <body>
@@ -60,6 +64,11 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   這學期用 <b style="color:var(--ink)">Claude Pro</b> 做企劃與實作，帳號會分階段發放。<b style="color:var(--ink)">能固定帶筆電來上課</b>是第二個月優先發放的條件之一——
   填這個讓我們排優先序，跟作業成績、出席都沒有關係，純粹是設備調查。已經填過的話這裡會直接顯示你填過的內容，不用重填。
 </p>
+
+<div class="box qrbox">
+  <div class="t">手機掃這裡打開這一頁</div>
+  <div id="qrcanvas"></div>
+</div>
 
 <div class="box" id="laptopBox">
   <div class="howtobox">
@@ -119,7 +128,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </div>
 
-<footer id="lp-updstamp">最後更新：2026-09-29 20:31</footer>
+<footer id="lp-updstamp">最後更新：2026-09-30 10:09</footer>
 </div>
 
 <script>
@@ -202,6 +211,21 @@ firebase.initializeApp({
 // 2026-09-09 楊老師：Windows許多環境的emoji字型沒有國旗圖案/彩色符號，
 // 改用twemoji把畫面上所有emoji轉成圖片，不依賴系統字型。
 try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
+</script>
+<script>
+(function renderQR(){
+  var SITE="https://scatjay.github.io/wenhua-designjam-site/laptop_survey.html";
+  var holder=document.getElementById("qrcanvas");
+  if(!holder) return;
+  try{
+    var qr=qrcode(0,"M"); qr.addData(SITE); qr.make();
+    holder.innerHTML=qr.createSvgTag({cellSize:4,margin:2});
+  }catch(e){
+    holder.innerHTML="";
+    var b=holder.closest(".qrbox"); if(b) b.style.display="none";
+    console.warn("QR 載入失敗（不影響其他功能）：",e);
+  }
+})();
 </script>
 <script>window.DJ_BIND_UNIT='laptop';</script>
 <script src="js/gate_i18n.js?v=202609291032"></script>

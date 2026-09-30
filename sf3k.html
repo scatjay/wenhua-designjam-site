@@ -3237,6 +3237,7 @@ function sessLabel(s){
 }
 var othersBySess = {};
 var OTHERS_PAGE = 8, othersShown = OTHERS_PAGE;
+var archData = {};   // 每個舊節次：{rooms, n}，n＝打完且有回合可回放的場數
 /* 更早的場次（回放區）：不自動下載。只列出「自己那門課」舊節次的標籤，點了才拉那一節。
    （晚上那班額外看得到文化遊戲松的，跟 visibleSessions 的不對稱規則一致。） */
 function renderArchiveBar(keys){
@@ -3246,16 +3247,13 @@ function renderArchiveBar(keys){
     var a = sessParts(k), on = ARCH.indexOf(k) >= 0;
     var cn = a.course === '46582' ? '遊戲設計學' : '文化遊戲松';
     return '<button type="button" class="archchip'+(on?' on':'')+'" data-k="'+esc(k)+'"'+(on?' disabled':'')+'>'
-      + (+a.mo)+'/'+(+a.d)+' '+(a.half==='am'?'上午':'晚上')+'・'+cn+(on?' ✓':'')+'</button>';
+      + (+a.mo)+'/'+(+a.d)+' '+(a.half==='am'?'上午':'晚上')+'・'+cn+'（'+archData[k].n+' 場）'+(on?' ✓':'')+'</button>';
   }).join('');
   Array.prototype.forEach.call(box.querySelectorAll('.archchip'), function(b){
     b.onclick = function(){
       var k = b.dataset.k; if (ARCH.indexOf(k) >= 0) return;
-      b.textContent = '載入中…'; b.disabled = true;
-      ROOT.child('rooms').orderByChild('meta/sess').equalTo(k).limitToLast(100).once('value').then(function(s){
-        ARCH.push(k); othersBySess[k] = dropNull(normObj(s.val()));
-        renderOthers(); renderArchiveBar(keys);
-      }).catch(function(e){ b.disabled = false; b.textContent = '讀不到，再點一次'; console.warn('[archive]', e); });
+      ARCH.push(k); othersBySess[k] = archData[k].rooms;    // 索引時已經查過，不再下載一次
+      renderOthers(); renderArchiveBar(keys);
     };
   });
 }
@@ -3271,7 +3269,20 @@ function loadArchiveIndex(){
       var x = sessParts(a), y = sessParts(b);
       return (y.y + y.mo + y.d + y.half).localeCompare(x.y + x.mo + x.d + x.half);
     });
-    renderArchiveBar(keys);
+    /* 🔴 沒有內容的節次不列（楊老師 2026-09-30）：hosts 只代表「有人開過房」，不代表有打完的場次
+       （例如 9/30 上午只有 1 間沒打完的測試房）。所以每個候選節次查一次、數「打完且有回合」的場數，
+       0 場的直接不放；查到的資料留著，點了就不用再下載。 */
+    return Promise.all(keys.map(function(k){
+      return ROOT.child('rooms').orderByChild('meta/sess').equalTo(k).limitToLast(100).once('value').then(function(r){
+        var rooms = dropNull(normObj(r.val()));
+        var n = Object.keys(rooms).filter(function(c){
+          var v = rooms[c] || {}; return v.meta && v.meta.phase === 'over' && !/^ZZ/.test(c)
+            && Object.keys(dropNull(normObj(v.rounds))).length > 0;
+        }).length;
+        archData[k] = { rooms: rooms, n: n };
+        return n > 0 ? k : null;
+      }).catch(function(){ return null; });
+    })).then(function(ok){ renderArchiveBar(ok.filter(Boolean)); });
   }).catch(function(e){ console.warn('[archive] 讀不到場次索引', e); });
 }
 function watchOthers(){

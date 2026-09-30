@@ -374,7 +374,7 @@ details[open] > .rsum::before{content:'▾ '}
 .archbar .lbl{font-size:12.5px;color:var(--ink-soft);margin-bottom:6px}
 .archchip{display:inline-block;margin:0 6px 6px 0;padding:6px 12px;border-radius:999px;border:1.5px solid var(--line);
   background:var(--panel);color:var(--ink);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
-.archchip.on{background:var(--panel2);border-color:var(--ink-soft);color:var(--ink-soft);cursor:default}
+.archchip.on{background:var(--panel2);border-color:var(--ink-soft);color:var(--ink-soft)}
 .morebtn{display:block;width:100%;margin:4px 0 2px;padding:9px;border-radius:10px;border:1.5px dashed var(--line);
   background:transparent;color:var(--ink-soft);font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
 .otherrow{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px;background:var(--panel)}
@@ -3251,13 +3251,14 @@ function renderArchiveBar(keys){
   box.innerHTML = '<div class="lbl">更早的場次（點一下才載入）</div>' + keys.map(function(k){
     var a = sessParts(k), on = ARCH.indexOf(k) >= 0;
     var cn = a.course === '46582' ? '遊戲設計學' : '文化遊戲松';
-    return '<button type="button" class="archchip'+(on?' on':'')+'" data-k="'+esc(k)+'"'+(on?' disabled':'')+'>'
+    return '<button type="button" class="archchip'+(on?' on':'')+'" data-k="'+esc(k)+'"'+'>'
       + (+a.mo)+'/'+(+a.d)+' '+(a.half==='am'?'上午':'晚上')+'・'+cn+'（'+archData[k].n+' 場）'+(on?' ✓':'')+'</button>';
   }).join('');
   Array.prototype.forEach.call(box.querySelectorAll('.archchip'), function(b){
     b.onclick = function(){
-      var k = b.dataset.k; if (ARCH.indexOf(k) >= 0) return;
-      ARCH.push(k); othersBySess[k] = archData[k].rooms;    // 索引時已經查過，不再下載一次
+      var k = b.dataset.k, i = ARCH.indexOf(k);
+      if (i >= 0) { ARCH.splice(i, 1); delete othersBySess[k]; }     // 再點一次＝取消選取
+      else { ARCH.push(k); othersBySess[k] = archData[k].rooms; }     // 索引時已查過，不再下載
       renderOthers(); renderArchiveBar(keys);
     };
   });

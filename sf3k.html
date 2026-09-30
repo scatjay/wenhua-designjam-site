@@ -364,6 +364,17 @@ details[open] > .rsum::before{content:'▾ '}
 .cktext b{font-weight:800}
 .ckhint{font-size:13px;color:var(--ink-soft);margin-top:2px}
 /* 別人的場次 */
+.otherrow.cmp{display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center;padding:8px 11px;margin-bottom:6px}
+.otherrow.cmp .pill{padding:2px 8px;font-size:12px}
+.otherrow.cmp .cds{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px}
+.otherrow.cmp .go{margin-left:auto}
+.archbar{margin:12px 0 4px}
+.archbar .lbl{font-size:12.5px;color:var(--ink-soft);margin-bottom:6px}
+.archchip{display:inline-block;margin:0 6px 6px 0;padding:6px 12px;border-radius:999px;border:1.5px solid var(--line);
+  background:var(--panel);color:var(--ink);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.archchip.on{background:var(--panel2);border-color:var(--ink-soft);color:var(--ink-soft);cursor:default}
+.morebtn{display:block;width:100%;margin:4px 0 2px;padding:9px;border-radius:10px;border:1.5px dashed var(--line);
+  background:transparent;color:var(--ink-soft);font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
 .otherrow{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px;background:var(--panel)}
 .otherrow .hd{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:6px}
 /* 底部出牌列 */
@@ -584,6 +595,7 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
       或<b>看回放</b>（可以快轉、倒轉、一步一步走，出牌前的討論也看得到）。
       看完才會出現留言框。</p>
       <div id="others" style="margin-top:10px"></div>
+      <div id="others-arch" class="archbar"></div>
     </details>
 
     <div class="box">
@@ -865,10 +877,12 @@ var SESS = sessionKey(null);   // ⚠ 這時還不知道編號，綁定後在 pi
    🔴 刻意不對稱（楊老師 2026-09-23 定）：
       早上那班（44 人）要從空白開始 —— 場次要他們自己打出來。
       晚上那班只有 20 人，自己打不出足夠的場次可看 ⇒ 額外看得到早上那批。反過來不行。*/
+var ARCH = [];   // 使用者在「更早的場次」點開載入的場次（不點就不下載，省流量）
 function visibleSessions(){
   var out = [SESS];
   var m = /^(\d{5})-(\d{8})(am|pm)$/.exec(SESS);
   if (m && m[1] === '46582') out.push('47602-' + m[2] + 'am');   // 晚上那班看得到同一天早上的
+  ARCH.forEach(function(k){ if (out.indexOf(k) < 0) out.push(k); });
   return out;
 }
 var E = window.SF3K, CARDS = window.SF3K_CARDS;
@@ -3222,6 +3236,44 @@ function sessLabel(s){
   return a.mo + '/' + a.d + ' ' + half;
 }
 var othersBySess = {};
+var OTHERS_PAGE = 8, othersShown = OTHERS_PAGE;
+/* 更早的場次（回放區）：不自動下載。只列出「自己那門課」舊節次的標籤，點了才拉那一節。
+   （晚上那班額外看得到文化遊戲松的，跟 visibleSessions 的不對稱規則一致。） */
+function renderArchiveBar(keys){
+  var box = $('others-arch'); if (!box) return;
+  if (!keys.length) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="lbl">更早的場次（點一下才載入）</div>' + keys.map(function(k){
+    var a = sessParts(k), on = ARCH.indexOf(k) >= 0;
+    var cn = a.course === '46582' ? '遊戲設計學' : '文化遊戲松';
+    return '<button type="button" class="archchip'+(on?' on':'')+'" data-k="'+esc(k)+'"'+(on?' disabled':'')+'>'
+      + (+a.mo)+'/'+(+a.d)+' '+(a.half==='am'?'上午':'晚上')+'・'+cn+(on?' ✓':'')+'</button>';
+  }).join('');
+  Array.prototype.forEach.call(box.querySelectorAll('.archchip'), function(b){
+    b.onclick = function(){
+      var k = b.dataset.k; if (ARCH.indexOf(k) >= 0) return;
+      b.textContent = '載入中…'; b.disabled = true;
+      ROOT.child('rooms').orderByChild('meta/sess').equalTo(k).limitToLast(100).once('value').then(function(s){
+        ARCH.push(k); othersBySess[k] = dropNull(normObj(s.val()));
+        renderOthers(); renderArchiveBar(keys);
+      }).catch(function(e){ b.disabled = false; b.textContent = '讀不到，再點一次'; console.warn('[archive]', e); });
+    };
+  });
+}
+function loadArchiveIndex(){
+  var mine = /^(\d{5})-/.exec(SESS); var course = mine ? mine[1] : null;
+  if (!course) return;
+  var okCourse = course === '46582' ? ['46582', '47602'] : [course];
+  ROOT.child('hosts').once('value').then(function(s){
+    var keys = Object.keys(s.val() || {}).filter(function(k){
+      var a = sessParts(k);
+      return a && a.course && okCourse.indexOf(a.course) >= 0 && k !== SESS;
+    }).sort(function(a, b){
+      var x = sessParts(a), y = sessParts(b);
+      return (y.y + y.mo + y.d + y.half).localeCompare(x.y + x.mo + x.d + x.half);
+    });
+    renderArchiveBar(keys);
+  }).catch(function(e){ console.warn('[archive] 讀不到場次索引', e); });
+}
 function watchOthers(){
   /* 🔴 2026-09-23 下午改（firebase database:profile 實測）：原本是「全站最新 80 間房」整間訂閱
      （含每回合與聊天），而且一直開著。兩個後果：
@@ -3232,6 +3284,7 @@ function watchOthers(){
         早上那 35 間早就被擠出視窗，晚上那班根本看不到，而且不報錯。
      ⇒ 每個看得到的場次各查一次；本節的查詢條件跟大廳一模一樣（SDK 會共用同一條監聽，不重複付流量）；
        晚上那班多查早上那一節——那一節全是打完的房，下載一次之後就不會再有更新。 */
+  loadArchiveIndex();
   visibleSessions().forEach(function(ss){
     var cap = /^test-/.test(ss) ? 14 : 60;
     ROOT.child('rooms').orderByChild('meta/sess').equalTo(ss).limitToLast(cap).on('value', function(s){
@@ -3267,22 +3320,32 @@ function renderOthers(){
       var tag = m.demo
         ? '<span class="pill amber">老師的示範場次</span>'
         : (m.sess === SESS ? '' : '<span class="pill">' + esc(sessLabel(m.sess)) + '那一批</span>');
+      /* 2026-09-30：一行一場。卡片改列編號（跟大廳「可配」標籤同一套），完整卡名放 title；
+         場次多了之後整頁太長，所以只先列 OTHERS_PAGE 場，其餘按鈕展開。 */
+      var chips = cards.length
+        ? cards.map(function(c){ var no = CARD_NO[c.id];
+            return '<span class="pill on" data-dim="'+esc(c.dim)+'" title="'+esc(c.name)+'">'
+              + (no ? '#'+no : esc(c.name)) + '</span>'; }).join('')
+        : '<span class="pill">原版規則</span>';
       rows.push({ tier: tier, html:
-        '<div class="otherrow"><div class="hd">'
-        + '<span>' + (m.no ? '<b class="seqno">第 '+m.no+' 場</b> ' : '')
-        + '<span class="sub">代號</span> <b class="mono">'+esc(code)+'</b> '
-        + '<span class="pill">'+(m.round||1)+' 回合</span> '
-        + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span> '+tag+'</span></div>'
-        + '<div style="margin-bottom:8px">'+feat+'</div>'
-        + '<div class="row"><button class="cmb sm pri" data-code="'+esc(code)+'">'
-        + '▶ 看這一場的回放</button>'
+        '<div class="otherrow cmp">'
+        + (m.no ? '<b class="seqno">第 '+m.no+' 場</b>' : '')
+        + '<b class="mono">'+esc(code)+'</b>'
+        + '<span class="pill">'+(m.round||1)+' 回合</span>'
+        + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span>' + tag
         + '<span class="roomlike" data-code="'+esc(code)+'"></span>'
-        + '<span class="sub">看完才留觀察</span></div></div>' });
+        + '<button class="cmb sm pri go" data-code="'+esc(code)+'">▶ 回放</button>'
+        + '<span class="cds">'+chips+'</span></div>' });
     });
     rows.sort(function(a, b){ return a.tier - b.tier; });
     var out = rows.map(function(r){ return r.html; });
-    $('others').innerHTML = out.length ? out.join('')
-      : '<p class="sub" style="margin:0">還沒有別人玩完。等其他組打完一場就會出現在這裡。</p>';
+    var shown = out.slice(0, othersShown);
+    $('others').innerHTML = out.length
+      ? shown.join('') + (out.length > shown.length
+          ? '<button type="button" class="morebtn" id="others-more">再顯示 '
+            + Math.min(OTHERS_PAGE, out.length - shown.length) + ' 場（還有 ' + (out.length - shown.length) + ' 場）</button>' : '')
+      : '<p class="sub" style="margin:0">這一節還沒有別人玩完。想看以前的場次，點下面的「更早的場次」。</p>';
+    if ($('others-more')) $('others-more').onclick = function(){ othersShown += OTHERS_PAGE; renderOthers(); };
     Array.prototype.forEach.call($('others').querySelectorAll('.cmb'), function(b){
       b.onclick = function(){ openReplay(b.dataset.code); };
     });

@@ -366,7 +366,9 @@ details[open] > .rsum::before{content:'▾ '}
 /* 別人的場次 */
 .otherrow.cmp{display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center;padding:8px 11px;margin-bottom:6px}
 .otherrow.cmp .pill{padding:2px 8px;font-size:12px}
-.otherrow.cmp .cds{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px}
+.otherrow.cmp .cds{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px;align-items:center;
+  border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.otherrow.cmp .cdl{font-size:12px;font-weight:700;color:var(--ink-soft);margin-right:2px}
 .otherrow.cmp .go{margin-left:auto}
 .archbar{margin:12px 0 4px}
 .archbar .lbl{font-size:12.5px;color:var(--ink-soft);margin-bottom:6px}
@@ -1224,7 +1226,9 @@ function enterLobby(){
       } else if (m.phase === 'over') {
         var wn = (m.winners||[]).length;
         done.push('<div class="roomrow done"><div class="top"><span>'+head
-          + ' <span class="pill">已結束</span> <span class="pill">'+(m.round||1)+' 回合</span>'
+          + ' <span class="pill">已結束</span>'
+          + (m.hostEnv != null ? ' <span class="pill amber">GM #'+esc(m.hostEnv)+'</span>' : '')
+          + ' <span class="pill">'+(m.round||1)+' 回合</span>'
           + ' <span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span></span>'
           + '<span><span class="roomlike" data-code="'+esc(code)+'"></span> '
           + '<button data-code="'+esc(code)+'" class="rp sm">看回放</button></span></div>'
@@ -1241,6 +1245,7 @@ function enterLobby(){
         }).join('');
         live.push('<div class="roomrow livrow"><div class="top"><span>'
           + '<span class="livdot"></span><b>LIVE</b> ' + head
+          + (m.hostEnv != null ? ' <span class="pill">GM #'+esc(m.hostEnv)+'</span>' : '')
           + ' <span class="pill amber">第 '+(m.round||1)+' 回合</span>'
           + (watchers ? ' <span class="pill">'+watchers+' 人在看</span>' : '')
           + '</span>'
@@ -3319,7 +3324,9 @@ function renderOthers(){
          那會讓早上那班一開場就看到今晚 139 場測試，違反「空白開始」。*/
       if (!m.demo && visibleSessions().indexOf(m.sess) < 0) return;
       var mine = !!(dropNull(normObj(v[code].players))[me.env]);
-      if (mine) return;                       // 自己那場不算「別人的」
+      /* 自己「玩」的那場不算別人的；但自己「開」的（GM）要分區列出來，方便回頭看自己帶的場。 */
+      var hosted = (m.hostEnv != null && me.env != null && String(m.hostEnv) === String(me.env));
+      if (mine && !hosted) return;
       var cards = (m.cards||[]).map(anyCard).filter(Boolean);
       var feat = cards.length
         ? cards.map(function(c){ return '<span class="pill on" data-dim="'+esc(c.dim)+'">'+esc(c.name)+'</span>'; }).join(' ')
@@ -3338,21 +3345,26 @@ function renderOthers(){
             return '<span class="pill on" data-dim="'+esc(c.dim)+'" title="'+esc(c.name)+'">'
               + (no ? '#'+no : esc(c.name)) + '</span>'; }).join('')
         : '<span class="pill">原版規則</span>';
-      rows.push({ tier: tier, html:
+      rows.push({ tier: tier, hosted: hosted, html:
         '<div class="otherrow cmp">'
         + (m.no ? '<b class="seqno">第 '+m.no+' 場</b>' : '')
         + '<b class="mono">'+esc(code)+'</b>'
+        + (m.hostEnv != null ? '<span class="pill amber">GM #'+esc(m.hostEnv)+'</span>' : '')
         + '<span class="pill">'+(m.round||1)+' 回合</span>'
         + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span>' + tag
         + '<span class="roomlike" data-code="'+esc(code)+'"></span>'
         + '<button class="cmb sm pri go" data-code="'+esc(code)+'">▶ 回放</button>'
-        + '<span class="cds">'+chips+'</span></div>' });
+        + '<span class="cds"><span class="cdl">規則卡</span>'+chips+'</span></div>' });
     });
     rows.sort(function(a, b){ return a.tier - b.tier; });
-    var out = rows.map(function(r){ return r.html; });
+    var mineRows = rows.filter(function(r){ return r.hosted; }).map(function(r){ return r.html; });
+    var out = rows.filter(function(r){ return !r.hosted; }).map(function(r){ return r.html; });
     var shown = out.slice(0, othersShown);
-    $('others').innerHTML = out.length
-      ? shown.join('') + (out.length > shown.length
+    var mineHtml = mineRows.length
+      ? '<h3 style="margin:.2em 0 .4em">🎙 我開的場次（' + mineRows.length + '）</h3>' + mineRows.join('')
+        + (out.length ? '<h3 style="margin:.9em 0 .4em">👀 別人的場次</h3>' : '') : '';
+    $('others').innerHTML = (out.length || mineRows.length)
+      ? mineHtml + shown.join('') + (out.length > shown.length
           ? '<button type="button" class="morebtn" id="others-more">再顯示 '
             + Math.min(OTHERS_PAGE, out.length - shown.length) + ' 場（還有 ' + (out.length - shown.length) + ' 場）</button>' : '')
       : '<p class="sub" style="margin:0">這一節還沒有別人玩完。想看以前的場次，點下面的「更早的場次」。</p>';

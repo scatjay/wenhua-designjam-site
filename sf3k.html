@@ -1232,7 +1232,8 @@ function enterLobby(){
           + ' <span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span></span>'
           + '<span><span class="roomlike" data-code="'+esc(code)+'"></span> '
           + '<button data-code="'+esc(code)+'" class="rp sm">看回放</button></span></div>'
-          + '<div class="feat">'+feat+'</div></div>');
+          + '<div class="feat">'+feat+'</div>'
+          + playerChipsHtml(ps, m.hostEnv) + '</div>');
       } else {
         /* 正在打的最有看頭——別人正在吵要不要聯手、有人快掛了。
            所以這一組給最多資訊：即時自尊（依玩家配色）＋幾個人在看＋大顆的觀戰鈕。 */
@@ -3240,6 +3241,20 @@ function sessLabel(s){
   }
   return a.mo + '/' + a.d + ' ' + half;
 }
+/* 參與的玩家（不含觀戰）：編號 chip，GM 排最前並標色，自己用粗框。 */
+function playerChipsHtml(playersObj, hostEnv){
+  var ids = Object.keys(playersObj||{}).filter(function(e){ return !(playersObj[e]||{}).spectator; });
+  ids.sort(function(a, b){
+    var ah = String(a) === String(hostEnv) ? 0 : 1, bh = String(b) === String(hostEnv) ? 0 : 1;
+    return ah - bh || (+a) - (+b);
+  });
+  if (!ids.length) return '';
+  return '<span class="cds"><span class="cdl">玩家</span>' + ids.map(function(e){
+    var gm = String(e) === String(hostEnv), me_ = me.env != null && String(e) === String(me.env);
+    return '<span class="pill' + (gm ? ' amber' : '') + '"' + (me_ ? ' style="outline:2px solid var(--ink-soft)"' : '')
+      + ' title="' + esc(nickOf(+e, (playersObj[e]||{}).name)) + (gm ? '（GM）' : '') + '">#' + esc(e) + '</span>';
+  }).join('') + '</span>';
+}
 var othersBySess = {};
 var OTHERS_PAGE = 8, othersShown = OTHERS_PAGE;
 var archData = {};   // 每個舊節次：{rooms, n}，n＝打完且有回合可回放的場數
@@ -3355,7 +3370,8 @@ function renderOthers(){
         + '<span class="pill">'+(wn?wn+' 人獲勝':'全滅')+'</span>' + tag
         + '<span class="roomlike" data-code="'+esc(code)+'"></span>'
         + '<button class="cmb sm pri go" data-code="'+esc(code)+'">▶ 回放</button>'
-        + '<span class="cds"><span class="cdl">規則卡</span>'+chips+'</span></div>' });
+        + '<span class="cds"><span class="cdl">規則卡</span>'+chips+'</span>'
+        + playerChipsHtml(dropNull(normObj(v[code].players)), m.hostEnv) + '</div>' });
     });
     rows.sort(function(a, b){ return a.tier - b.tier; });
     var mineRows = rows.filter(function(r){ return r.hosted; }).map(function(r){ return r.html; });

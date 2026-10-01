@@ -742,7 +742,7 @@ $("joinBtn").onclick = async () => {
   const v = parseInt(raw, 10);
   // 2026-09-09 楊老師：老師本人測試用編號00、駱老師用99（不是打錯，00不能用!v判斷）。
   // 2026-09-09 楊老師：遊戲設計學(17位)共用這套系統，編號101起編，跟文化遊戲松(1-52)區隔。
-  const validEnv = raw !== "" && !Number.isNaN(v) && (v === 0 || (v >= 1 && v <= 98) || v === 99 || (v >= 101 && v <= 130));
+  const validEnv = raw !== "" && !Number.isNaN(v) && (v === 0 || (v >= 1 && v <= 98) || v === 99 || (v >= 101 && v <= 130) || (v >= 201 && v <= 299));
   if (!validEnv) { $("loginStatus").textContent = t("errNoEnv"); return; }
   if (!myRole) { $("loginStatus").textContent = t("errNoRole"); return; }
   myEnv = v;
@@ -1227,6 +1227,6 @@ window.addEventListener("beforeunload", () => { leaveQueue(); });
 </script>
 <script>window.DJ_BIND_UNIT='w1';</script>
 <script src="js/gate_i18n.js?v=202609231133"></script>
-<script src="js/bind_gate.js?v=202609301000"></script>
+<script src="js/bind_gate.js?v=202610011511"></script>
 </body>
 </html>

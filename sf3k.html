@@ -860,8 +860,9 @@ var ROOT = db.ref('whgm/analysis/w3game');
       之後還要拿來跑兩張卡的組合測試。改鍵之後它們自然對不上，不用刪就看不到。*/
 function courseKey(env){
   var m = /[?&]c=(\d{4,6})/.exec(location.search);
-  if (m && (m[1] === '47602' || m[1] === '46582')) return m[1];   // ① 當週 QR 帶的，老師可控
+  if (m && (m[1] === '47602' || m[1] === '46582' || m[1] === '47618')) return m[1];   // ① 當週 QR 帶的，老師可控
   if (env != null && env >= 55 && env <= 60) return 'test';       // ② 測試員專用段，永遠不混進任何一班
+  if (env != null && env >= 201 && env <= 299) return '47618';    // 跨域AI機器人3D（2026-10-01 起，201-238）
   if (env != null && env >= 101) return '46582';                  // ③ 信封編號範圍（實體發放時就分好）
   if (env != null && env >= 1 && env <= 52) return '47602';
   /* 老師編號（00／99）不綁課 —— 他兩班都要進，看時段決定 */
@@ -3266,7 +3267,7 @@ function renderArchiveBar(keys){
   if (!keys.length) { box.innerHTML = ''; return; }
   box.innerHTML = '<div class="lbl">更早的場次（點一下才載入）</div>' + keys.map(function(k){
     var a = sessParts(k), on = ARCH.indexOf(k) >= 0;
-    var cn = a.course === '46582' ? '遊戲設計學' : '文化遊戲松';
+    var cn = a.course === '46582' ? '遊戲設計學' : (a.course === '47618' ? '跨域AI' : '文化遊戲松');
     return '<button type="button" class="archchip'+(on?' on':'')+'" data-k="'+esc(k)+'"'+'>'
       + (+a.mo)+'/'+(+a.d)+' '+(a.half==='am'?'上午':'晚上')+'・'+cn+'（'+archData[k].n+' 場）'+(on?' ✓':'')+'</button>';
   }).join('');
@@ -3932,6 +3933,6 @@ const I18N_POST_SRC = [[/卡(\d+)/g, '卡片 {1}']];
 // ===== I18N-END =====
 </script>
 <script src="js/gate_i18n.js?v=202609232230"></script>
-<script src="js/bind_gate.js?v=202609301000"></script>
+<script src="js/bind_gate.js?v=202610011511"></script>
 </body>
 </html>

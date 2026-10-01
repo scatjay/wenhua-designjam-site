@@ -22,12 +22,12 @@
   var TEACHER_CODE = '0909';   // 跟 teacher.html 的備援密碼同一組，老師本來就記得
 
   /* 🔴 合法編號範圍必須跟 unit1.html / w2.html 的 validEnv 完全一致，否則某一班會整班進不來。
-     0＝楊老師｜1-52 文化遊戲松學生（實體信封）｜53-61 測試/demo｜99＝駱老師｜101-130 遊戲設計學。
+     0＝楊老師｜1-52 文化遊戲松學生（實體信封）｜53-61 測試/demo｜99＝駱老師｜101-130 遊戲設計學｜201-299 跨域AI機器人3D（47618，2026-10-01 起，38 人編 201-238）。
      ⚠ 100 是刻意跳過的，不要「順手」補回去。
      （2026-09-22：原本寫死 0-99，遊戲設計學的學生會全部被擋在門外才發現。）*/
   function validEnv(v) {
     if (v == null || isNaN(v)) return false;
-    return v === 0 || (v >= 1 && v <= 98) || v === 99 || (v >= 101 && v <= 130);
+    return v === 0 || (v >= 1 && v <= 98) || v === 99 || (v >= 101 && v <= 130) || (v >= 201 && v <= 299);
   }
 
   function ls(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -238,7 +238,7 @@
       '<div class="step" id="dj-s2">' +
         '<div class="stitle"><span id="dj-t2">②</span> 輸入你的信封編號</div>' +
         '<div class="row" style="margin-top:7px">' +
-          '<div class="grow"><input id="dj-env" type="number" inputmode="numeric" min="0" max="130" ' +
+          '<div class="grow"><input id="dj-env" type="number" inputmode="numeric" min="0" max="299" ' +
             'placeholder="文化遊戲松 1-52 ／ 遊戲設計學 101 起"></div>' +
         '</div>' +
         '<p class="tiny" id="dj-bound" style="display:none;margin:8px 0 0"></p>' +

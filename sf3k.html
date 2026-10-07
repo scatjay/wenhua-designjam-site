@@ -3258,7 +3258,9 @@ function playerChipsHtml(playersObj, hostEnv){
 }
 var othersBySess = {};
 var OTHERS_PAGE = 8, othersShown = OTHERS_PAGE;
-var ARCH_MAX_SESS = 4;   // 「更早的場次」最多探測最近幾節（楊老師 09-30：固定只看最近幾週）
+var ARCH_MAX_SESS = 4;   // 「更早的場次」最多【顯示】幾節有內容的（楊老師 09-30：固定只看最近幾週）
+var ARCH_PROBE = 10;     // 🔴 最多【探測】最近幾節。原本探測數＝顯示數(4)，最近 4 節全是沒打完的空場次（10/7 晚上班：1002pm、0930pm、0930am×2 都是 0 場）
+                         // ⇒ 有 12 場的 9/23 晚上、35 場的 9/23 早上排在第 5、6 名被切掉，回放區整個空白且不報錯。
 var archData = {};   // 每個舊節次：{rooms, n}，n＝打完且有回合可回放的場數
 /* 更早的場次（回放區）：不自動下載。只列出「自己那門課」舊節次的標籤，點了才拉那一節。
    （晚上那班額外看得到文化遊戲松的，跟 visibleSessions 的不對稱規則一致。） */
@@ -3292,7 +3294,7 @@ function loadArchiveIndex(){
       var x = sessParts(a), y = sessParts(b);
       return (y.y + y.mo + y.d + y.half).localeCompare(x.y + x.mo + x.d + x.half);
     });
-    keys = keys.slice(0, ARCH_MAX_SESS);   // 只查最近 N 節（新→舊已排序），流量不隨週數增加
+    keys = keys.slice(0, ARCH_PROBE);   // 只探測最近 N 節（新→舊已排序），流量不隨週數增加；空場次很小，有內容的才會被列出（上限 ARCH_MAX_SESS）
     /* 🔴 沒有內容的節次不列（楊老師 2026-09-30）：hosts 只代表「有人開過房」，不代表有打完的場次
        （例如 9/30 上午只有 1 間沒打完的測試房）。所以每個候選節次查一次、數「打完且有回合」的場數，
        0 場的直接不放；查到的資料留著，點了就不用再下載。 */
@@ -3306,7 +3308,7 @@ function loadArchiveIndex(){
         archData[k] = { rooms: rooms, n: n };
         return n > 0 ? k : null;
       }).catch(function(){ return null; });
-    })).then(function(ok){ renderArchiveBar(ok.filter(Boolean)); });
+    })).then(function(ok){ renderArchiveBar(ok.filter(Boolean).slice(0, ARCH_MAX_SESS)); });
   }).catch(function(e){ console.warn('[archive] 讀不到場次索引', e); });
 }
 function watchOthers(){

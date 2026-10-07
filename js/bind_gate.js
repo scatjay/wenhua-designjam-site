@@ -14,7 +14,7 @@
 (function () {
   'use strict';
   var UNIT = window.DJ_BIND_UNIT || 'unknown';
-  var LS_ENV = 'designjam_env', LS_MAIL = 'designjam_email', LS_UID = 'designjam_uid';
+  var LS_ENV = 'designjam_env', LS_MAIL = 'designjam_email', LS_UID = 'designjam_uid', LS_SKIP = 'designjam_skip';
   var QR_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js';
   var st = { email: null, uid: null, name: null, env: null, busy: false, bound: null, unlocked: false };
   /* 楊老師＝00、駱老師＝99（harness 2026-09-09 定案）。老師要能現場示範、也要能替學生改，不受鎖限制。 */
@@ -326,6 +326,7 @@
     if (!skipMail && !st.email) { showErr('請先用 Google 登入'); return; }
     st.busy = true; refresh();
     lset(LS_ENV, String(v));
+    if (skipMail === true && !st.email) lset(LS_SKIP, '1');   // 🔴 「先只用編號進去」要記下來，否則 boot 會再把綁定畫面打開（2026-10-07 #48 進不去）
     if (st.email) { lset(LS_MAIL, st.email); lset(LS_UID, st.uid || ''); }
     var rec = { env: v, unit: UNIT, ts: firebase.database.ServerValue.TIMESTAMP };
     if (st.email) { rec.email = st.email; rec.name = st.name || null; rec.uid = st.uid || null; }
@@ -705,7 +706,9 @@
     renderLangRow();
     renderHub();
     var env = ls(LS_ENV), mail = ls(LS_MAIL);
-    if (env != null && env !== '' && mail) showBar();
+    /* 🔴 只用編號進去的人沒有 mail；原本這裡要求 mail，於是「先只用編號進去」永遠回到綁定畫面。
+       要有 mail，或是明確按過「先只用編號進去」（LS_SKIP）才放行。 */
+    if (env != null && env !== '' && (mail || ls(LS_SKIP) === '1')) showBar();
     else openGate();
   }
 

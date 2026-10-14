@@ -120,13 +120,14 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 <p class="sub">
   這週的重點是<b>工具怎麼操作、怎麼串起來</b>——不是要你們從零發明一個全新遊戲。
   先用 Gemini Deep Research 跟 AI 一起把 W3 那場的組合想得更完整，再用 Google AI Studio
-  把企劃做成一個可以在瀏覽器裡點來點去試玩的原型。
+  把企劃做成一個可以在瀏覽器裡點來點去試玩的原型，最後再用 Gemini Canvas 把企劃畫成一頁看得懂的圖。
 </p>
 
 <div class="jumprow">
   <a href="#recap">上週回顧</a>
   <a href="#step1">① Deep Research</a>
   <a href="#step2">② AI Studio</a>
+  <a href="#step3">③ Canvas 視覺化企劃</a>
   <a href="#nolaptop">沒帶筆電</a>
   <a href="#rubric">評分標準</a>
   <a href="#turnin">怎麼交</a>
@@ -321,6 +322,72 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </section>
 
+<section id="step3">
+  <h2>③ 用 Gemini Canvas 把企劃畫成圖 <span class="tag">視覺化企劃</span></h2>
+  <p class="sub">「視覺化企劃」是一個可以預覽的網頁圖解：別人不用讀完整份 R2、R3，看圖就知道這個遊戲怎麼進行、每個畫面長什麼樣子，還有<b>你們改的那條規則</b>在哪一步發揮作用。</p>
+
+  <ol class="steps">
+    <li>
+      <h4>開 Gemini，打開 Canvas</h4>
+      <p>網址：<code>gemini.google.com</code>，用 Google 帳號登入。輸入框下方有一顆「<b style="color:var(--ink)">Canvas</b>」按鈕，按下去再輸入指令。Gemini 會把成果放在畫面右邊的視窗，按上面的「<b style="color:var(--ink)">Preview（預覽）</b>」就能看到畫出來的樣子。</p>
+    </li>
+    <li>
+      <h4>把 R2、R3 貼進去，用這段指令請它畫圖</h4>
+      <p>先把 R2（企劃定案）和 R3（介面與美術設定）的內容複製，貼在指令下面標示的位置。圖的內容以你們的文件為準，不要讓它自己加規則。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>Canvas 起手指令 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">幫我把下面企劃裡可以用畫面來呈現的構想，用簡單的圖畫出來，把構想切分乾淨，不要亂七八糟混在一起。請做成可以預覽的網頁，用視覺的圖，不要用文字條列。
+
+要有這幾個區塊（由上到下）：
+1. 一句話玩法：這個遊戲在玩什麼
+2. 一輪怎麼進行：流程圖，畫出「選行動卡 → 同時公開 → 結算 → 下一輪」
+3. 每個畫面長什麼樣子：把 R3 列的畫面（例如大廳、出牌、結算揭曉、戰報、勝負）各畫一個簡單的介面示意框，標出上面有哪些資訊與按鈕
+4. 三種行動（單挑／聯手／畏縮）各自的顏色與圖示
+5. 我們改的規則：用醒目的顏色框出來，標明它發生在流程的哪一步，並用一個具體例子（誰出了什麼牌、結果怎樣）說明跟原版有什麼不同
+
+配色不超過 3 種、字大一點、手機也看得清楚；不要加企劃裡沒有寫的規則；角色一律用暱稱或代號，不要出現真實姓名。
+
+企劃內容如下：
+【R2】
+[[貼上 R2 企劃定案的全文，包含那段 100-150 字的短文]]
+【R3】
+[[貼上 R3 介面與美術設定的全文]]</p>
+      </div>
+    </li>
+    <li>
+      <h4>看到的不對，就用一句話講出來</h4>
+      <p>第一次畫出來常常不是你要的。下面是最常遇到的三種情況，直接複製那一句貼給它：</p>
+      <div class="promptbox">
+        <div class="lbl"><span>只出現一堆程式碼或文字 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">我要的是視覺的圖，不要用文字的 markdown 格式。請用 Canvas 做成可以預覽的畫面。</p>
+      </div>
+      <div class="promptbox">
+        <div class="lbl"><span>右邊沒有預覽畫面 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">我沒看到預覽的畫面，請幫我做成可以預覽的網頁。</p>
+      </div>
+      <div class="promptbox">
+        <div class="lbl"><span>內容太簡單、想像不出來 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">把這幾個部分各自獨立成一個圖表，細節再多一點，要包含介面設計，我才有辦法想像。第 5 區「我們改的規則」請放到最上面，字體放大，並補上一個三人對戰的例子，寫出最後各人的自尊值各是多少。</p>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:8px">一次只講一件事；對照 R2 檢查圖裡的流程有沒有少、你們改的規則有沒有被畫出來。</p>
+    </li>
+    <li>
+      <h4>開分享，複製連結</h4>
+      <p>按 Canvas 視窗右上角的「分享」，權限選「知道連結的人可查看」，複製連結。這個連結就是這一項要交的東西。找不到分享時，改貼至少 2 張預覽畫面的截圖。</p>
+    </li>
+  </ol>
+
+  <div class="warnbox">
+    <span class="lbl">⚠ 免費層的資料可能會被人工看到</span>
+    不要把真實同學的姓名、大頭貼、聯絡方式貼進 Canvas，跟前兩步一樣用暱稱或代號。
+  </div>
+
+  <div class="tipbox">
+    <span class="lbl">💡 圖跟企劃對不上？</span>
+    先檢查自己貼進去的 R2、R3 是不是完整的；再請它「只修第幾個區塊」，不要整頁重做——整頁重做常常把已經對的地方也改掉。
+  </div>
+</section>
+
 <section id="nolaptop">
   <h2>沒帶筆電怎麼辦 <span class="tag">彈性作法</span></h2>
   <p class="sub">這週先確認「企劃想清楚了、跟 AI 工具的溝通做得起來」，原型只要做到<b>按得動、看得懂</b>就算數，不要求做到完整可以發布。</p>
@@ -358,8 +425,12 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
         <h4>1. 三份 Google 文件：R1、R2、R3</h4>
         <p style="margin:0">照 Step 1 的三輪，Deep Research <b style="color:var(--ink)">每一輪都轉出一份 Google 文件</b>，依序命名 R1／R2／R3——這三份就是「迭代過三個版本」的證據，缺一輪不算數。R1 查資料、R2 是規則和玩法的企劃定案、R3 是介面與美術設定，三份要圍繞著<b style="color:var(--ink)">同一個 W3 實際玩到的卡片組合</b>，不是三個不相干的方向。三份都要開分享權限（知道連結的人皆可查看）。R2 的最後要有那段 100-150 字的短文，<b style="color:var(--ink)">明確點出卡號跟卡名</b>（例如「卡28 屬性相剋」），講清楚跟那幾張卡原本差在哪一句話、預期會讓玩家的討論／結盟／猜疑變得怎樣（Step 1 第二輪的提示詞已經請 DR 幫你們寫好）。</p>
       </li>
+      <li style="margin-bottom:16px">
+        <h4>2. Gemini Canvas 視覺化企劃的連結</h4>
+        <p style="margin:0">用 R2、R3 請 Canvas 畫出來的視覺化企劃，按「分享」開成「知道連結的人可查看」後貼連結。分享不出來時，改貼<b style="color:var(--ink)">至少 2 張畫面截圖</b>（要看得到流程圖，跟你們改的那條規則）。</p>
+      </li>
       <li style="margin-bottom:0">
-        <h4>2. 最後 Google AI Studio 的遊戲連結</h4>
+        <h4>3. 最後 Google AI Studio 的遊戲連結</h4>
         <p style="margin:0">用 R2＋R3 做出來的原型，貼 AI Studio 專案的分享連結，一樣要開「知道連結的人可查看」。真的做不出來、或連結分享不出來時，改貼：<b style="color:var(--ink)">至少 2 張操作截圖</b>（要看得到你們輸入的規則說明，跟跑出來的畫面）＋<b style="color:var(--ink)">一段至少 30 秒的操作短片</b>（手機錄螢幕即可），證明有實際動手做，不是空講。</p>
       </li>
     </ol>
@@ -371,7 +442,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </section>
 
-<footer id="w4-updstamp">最後更新：2026-09-30 11:04</footer>
+<footer id="w4-updstamp">最後更新：2026-10-14 10:28</footer>
 </div>
 
 <script>

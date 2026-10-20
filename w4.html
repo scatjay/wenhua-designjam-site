@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>W4 AI幫你企劃和寫程式</title>
+<title>W4-7 從企劃到原型到成果包</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
@@ -45,13 +45,21 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background
 .jumprow a:hover{border-color:var(--accent);color:var(--accent)}
 
 /* ── 三步驟流程卡 ── */
-.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin:18px 0 4px}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:8px;align-items:center;margin:18px 0 4px}
 .flow .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
 .flow .step .num{font-size:11.5px;font-weight:800;color:var(--accent);letter-spacing:.04em}
 .flow .step h3{font-size:15px;font-weight:800;margin:3px 0 3px}
 .flow .step p{font-size:13px;color:var(--ink-soft);margin:0}
 .flow .arrow{font-size:20px;color:var(--ink-soft);text-align:center}
-@media (max-width:560px){.flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg);padding:2px 0}}
+.flow .step.s4{border:2px solid var(--accent);background:var(--accent-soft)}
+@media (max-width:680px){.flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg);padding:2px 0}}
+/* 週次時間軸 */
+.weekline{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 6px}
+.weekline .wk{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 11px}
+.weekline .wk b{display:block;font-size:12px;color:var(--accent);letter-spacing:.03em}
+.weekline .wk span{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:2px;line-height:1.5}
+.weekline .wk.now{border:2px solid var(--accent);background:var(--accent-soft)}
+@media (max-width:420px){.weekline{grid-template-columns:1fr}}
 
 /* ── 規則回顧 ── */
 .rulegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
@@ -115,20 +123,29 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 <body>
 <div class="wrap">
 
-<div class="kicker">文化遊戲松實作 · 第4週</div>
-<h1>把 W3 的組合，變成一個玩得動的原型</h1>
+<div class="kicker">文化遊戲松實作 · 第4–7週</div>
+<h1>把 W3 的組合，變成企劃、原型和一份成果包</h1>
 <p class="sub">
-  這週的重點是<b>工具怎麼操作、怎麼串起來</b>——不是要你們從零發明一個全新遊戲。
+  這幾週的重點是<b>工具怎麼操作、怎麼串起來</b>——不是要你們從零發明一個全新遊戲。
   先用 Gemini Deep Research 跟 AI 一起把 W3 那場的組合想得更完整，再用 Gemini Canvas
-  把企劃畫成一份看得懂的視覺化企劃，最後用 Google AI Studio 做成一個可以在瀏覽器裡點來點去試玩的原型。
+  把企劃畫成一份看得懂的視覺化企劃，接著用 Google AI Studio 做成一個可以在瀏覽器裡點來點去試玩的原型，
+  最後用 NotebookLM 把前面的文件整理成<b>資訊圖表、語音摘要、簡報</b>三樣成果。
 </p>
+
+<div class="weekline">
+  <div class="wk"><b>第4–6週</b><span>Step 1 Deep Research<br>Step 2 Canvas<br>Step 3 AI Studio</span></div>
+  <div class="wk now"><b>第7週 · 本週</b><span>Step 4 NotebookLM<br>三樣成果</span></div>
+  <div class="wk"><b>第8週</b><span>製作週：把還沒做完的補完</span></div>
+</div>
 
 <div class="jumprow">
   <a href="#recap">上週回顧</a>
   <a href="#step1">① Deep Research</a>
   <a href="#step2">② Canvas 視覺化企劃</a>
   <a href="#step3">③ AI Studio</a>
+  <a href="#step4">④ NotebookLM</a>
   <a href="#nolaptop">沒帶筆電</a>
+  <a href="#week8">第8週製作週</a>
   <a href="#rubric">評分標準</a>
   <a href="#turnin">怎麼交</a>
 </div>
@@ -155,6 +172,12 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
     <div class="num">STEP 3</div>
     <h3>Google AI Studio</h3>
     <p>把企劃變成一個真的能點、能玩的網頁原型</p>
+  </div>
+  <div class="arrow">→</div>
+  <div class="step s4">
+    <div class="num">STEP 4 · 第7週</div>
+    <h3>NotebookLM</h3>
+    <p>把 R1–R3 變成資訊圖表、語音摘要、簡報（手機就能做）</p>
   </div>
 </div>
 
@@ -394,29 +417,153 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </section>
 
-<section id="nolaptop">
-  <h2>沒帶筆電怎麼辦 <span class="tag">彈性作法</span></h2>
-  <p class="sub">這週先確認「企劃想清楚了、跟 AI 工具的溝通做得起來」，原型只要做到<b>按得動、看得懂</b>就算數，不要求做到完整可以發布。</p>
-  <div class="howtobox">
-    <span class="lbl">手機／平板一樣能做</span>
-    Deep Research 跟 AI Studio 都是網頁版，手機瀏覽器開得起來，只是畫面比較小。也可以跟同組同學共用一台電腦，輪流操作、一起看螢幕討論。
+<section id="step4">
+  <h2>④ 用 NotebookLM 做出三樣成果 <span class="tag">第7週 · 手機就能做</span></h2>
+  <p class="sub">前面三步做出來的是「給自己和 AI 看的文件」。這一步要把它們整理成<b style="color:var(--ink)">別人一看、一聽就懂</b>的三樣東西：
+    一張<b style="color:var(--ink)">資訊圖表</b>、一段<b style="color:var(--ink)">語音摘要</b>、一份<b style="color:var(--ink)">簡報</b>。
+    內容全部來自你們自己的 R1、R2、R3，NotebookLM 只負責整理和換形式。</p>
+
+  <div class="tipbox">
+    <span class="lbl">💡 沒帶筆電也沒關係，這一步就是為手機設計的</span>
+    手機下載 <b>NotebookLM</b> App（iPhone、Android 都有），或用手機瀏覽器開 <code>notebooklm.google.com</code>，用跟 Gemini 同一個 Google 帳號登入。
+    R1–R3 已經存在你的 Google 雲端硬碟，手機上直接加進來就好，不用重打。App 裡找不到某個按鈕時，改用瀏覽器開網頁版。
+  </div>
+
+  <ol class="steps">
+    <li>
+      <h4>建一本新的筆記本，把 R1、R2、R3 加進來</h4>
+      <p>按「新增筆記本」→「新增來源」→ 選 <b style="color:var(--ink)">Google 雲端硬碟</b>，勾選你們的 R1、R2、R3 三份文件。
+        有做 Canvas 的話，把 Canvas 畫面上的文字複製下來，用「複製的文字」也加進來。
+        筆記本名稱取成你們的遊戲名字。</p>
+      <p>還沒做完 R1–R3 的人：先回 Step 1 至少把 R1、R2 跑完，NotebookLM 只能整理你給它的東西，沒有來源就做不出內容。</p>
+    </li>
+    <li>
+      <h4>先問一題，確認它讀對了</h4>
+      <p>在對話框貼這段，看它講的跟你們的企劃一不一樣。哪一句講錯，就直接告訴它錯在哪，改到對為止——後面三樣成果都是從它的理解產生的。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>確認理解 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">只根據這些來源，用 5 句話說明我們的遊戲：
+1. 一句話玩法：這個遊戲在玩什麼
+2. 我們改了哪幾張卡（寫出卡號和卡名）
+3. 一輪怎麼進行
+4. 我們改的規則發生在流程的哪一步，跟原版差在哪一句話
+5. 我們預期這個改動會讓玩家的討論、結盟、猜疑變得怎樣
+
+來源裡沒有寫的內容不要自己補，沒寫到的就說「來源沒有提到」。</p>
+      </div>
+    </li>
+    <li>
+      <h4>做資訊圖表</h4>
+      <p>右邊（手機在下方）的「工作室」裡找「<b style="color:var(--ink)">資訊圖表</b>」，先按旁邊的筆形圖示「自訂」，把下面這段貼進去再產生。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>資訊圖表 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">用繁體中文做一張直式資訊圖表，對象是第一次看到這個遊戲的同學。由上到下：
+1. 遊戲名字和一句話玩法
+2. 一輪怎麼進行（選行動卡 → 同時公開 → 結算 → 下一輪），用箭頭串起來
+3. 單挑、聯手、畏縮三種行動，各用一個顏色和圖示
+4. 我們改的規則：用最醒目的顏色框起來，寫出卡號和卡名，並用一個三人對戰的小例子說明跟原版差在哪
+5. 我們預期玩家會出現的反應
+
+字要大、手機看得清楚；只用來源裡的內容，不要加新規則；角色只用暱稱，不要出現真實姓名。</p>
+      </div>
+    </li>
+    <li>
+      <h4>做語音摘要</h4>
+      <p>「工作室」裡找「<b style="color:var(--ink)">語音摘要</b>」，按「自訂」：長度選<b style="color:var(--ink)">較短</b>，語言選<b style="color:var(--ink)">中文（台灣）</b>，再把下面這段貼進去。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>語音摘要 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">請用台灣的口語中文，像兩個同學在聊一款他們剛設計的遊戲。聽眾是沒玩過的同學，聽完要知道：
+1. 這個遊戲在玩什麼、一輪怎麼進行
+2. 我們改了哪幾張卡（講出卡號和卡名），規則改成什麼
+3. 用一個具體的對戰情境，說明改了之後玩家會怎麼互相猜、怎麼結盟或背叛
+4. 我們自己最擔心這個改動哪裡會出問題
+
+只用來源裡寫的內容，不要編造試玩結果或數字。</p>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:8px">產生要幾分鐘，可以先去做下一項。做好後先自己聽一次：講錯規則的地方記下來，改好「自訂」的說明再重產生一次。</p>
+    </li>
+    <li>
+      <h4>做簡報</h4>
+      <p>「工作室」裡找「<b style="color:var(--ink)">簡報</b>」，按「自訂」，貼下面這段。這份簡報就是第8週之後跟大家介紹你們遊戲時用的。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>簡報 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">用繁體中文做一份 6 到 8 頁的簡報，介紹我們設計的遊戲：
+第 1 頁：遊戲名字、一句話玩法
+第 2 頁：原版 SissyFight 的三張牌怎麼玩（單挑、聯手、畏縮）
+第 3 頁：我們改了哪幾張卡（卡號和卡名），改成什麼
+第 4 頁：一輪怎麼進行，標出我們改的規則在哪一步
+第 5 頁：一個三人對戰的例子，原版和我們的版本各打一次，比較結果
+第 6 頁：畫面長什麼樣（來自介面與美術設定）
+第 7 頁：我們預期玩家的反應，以及最擔心的地方
+每頁字少、重點放大；只用來源的內容，不要加新規則，不要出現真實姓名。</p>
+      </div>
+    </li>
+    <li>
+      <h4>不對就用一句話改</h4>
+      <p>三樣成果最常遇到的問題，直接複製對應的那一句。改的時候在「自訂」裡補這句，再重新產生。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>多了企劃裡沒有的規則 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">只根據來源裡的規則，刪掉來源沒有寫的設定。我們改的規則是：[[用一句話寫出你們改的規則，例如：卡28 屬性相剋，打出剋制的屬性傷害加倍]]</p>
+      </div>
+      <div class="promptbox">
+        <div class="lbl"><span>出現英文或簡體字 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">全部改用繁體中文和台灣用語，遊戲名稱和卡名照來源原文。</p>
+      </div>
+      <div class="promptbox">
+        <div class="lbl"><span>看不出我們改了什麼 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">把「我們改的規則」放在最前面、最醒目的位置，寫出卡號和卡名，並用一個具體例子說明跟原版的差別。</p>
+      </div>
+    </li>
+    <li>
+      <h4>下載或分享</h4>
+      <p>每一樣做好後按「⋮」→ 下載：資訊圖表存成圖片、語音摘要存成音檔、簡報存成 PDF。
+        也可以按筆記本右上角「分享」，設成「知道連結的人可查看」，貼筆記本連結。</p>
+    </li>
+  </ol>
+
+  <div class="warnbox">
+    <span class="lbl">⚠ 成果的內容要對得上你們的企劃</span>
+    NotebookLM 有時會自己補內容。交之前每一樣都要自己看過、聽過一次，規則講錯、卡號卡名寫錯、或多了企劃裡沒有的東西，都要改到對再交。
   </div>
 </section>
 
+<section id="nolaptop">
+  <h2>沒帶筆電怎麼辦 <span class="tag">彈性作法</span></h2>
+  <p class="sub">先確認「企劃想清楚了、跟 AI 工具的溝通做得起來」，原型只要做到<b>按得動、看得懂</b>就算數，不要求做到完整可以發布。</p>
+  <div class="howtobox">
+    <span class="lbl">手機／平板一樣能做</span>
+    Deep Research、Canvas、NotebookLM 用手機都做得到；AI Studio 是網頁版，手機瀏覽器開得起來，只是畫面比較小。也可以跟同組同學共用一台電腦，輪流操作、一起看螢幕討論。
+  </div>
+  <div class="howtobox">
+    <span class="lbl">一整個流程都只用手機的話</span>
+    照順序做 Step 1（R1、R2、R3）→ Step 2（Canvas）→ Step 4（NotebookLM 三樣成果）。Step 3 的原型做不出來時，照「怎麼交」第 3 項改交截圖和短片。
+  </div>
+</section>
+
+<section id="week8">
+  <h2>第8週：製作週 <span class="tag">收尾</span></h2>
+  <p class="sub">第8週不教新工具，整堂課給大家把還沒完成的部分補完：R1–R3 還沒齊的先補齊，原型還不能玩的繼續調，三樣成果有講錯的改好。
+    這份作業的期限以 flipclass 上寫的為準。</p>
+</section>
+
 <section id="rubric">
-  <h2>評分標準 <span class="tag">三項各 1/3</span></h2>
+  <h2>評分標準 <span class="tag">四項各 1/4</span></h2>
   <div class="rubric">
     <div class="item">
-      <div class="frac">1/3</div>
+      <div class="frac">1/4</div>
       <div><h4>企劃有沒有動到規則本身</h4><p>要從你們 W3 實際玩到的卡片組合出發，不是自己另外亂改——文件裡要點名卡號跟卡名（例如「卡28 屬性相剋」），不是只換個名字、換個劇情包裝（換皮），要看得出來哪一句規則被真的改動了，跟那幾張卡原本的效果差在哪裡。</p></div>
     </div>
     <div class="item">
-      <div class="frac">1/3</div>
+      <div class="frac">1/4</div>
       <div><h4>DR 企劃有沒有迭代改善的痕跡</h4><p>R1、R2、R3 從頭到尾要是<b>同一個</b> W3 卡片組合——R2 有沒有站在 R1 查到的案例上把規則定案、R3 有沒有把 R2 的定案規則具體轉譯成看得懂的介面與美術設定。三份文件疊起來看得出一條「研究→企劃定案→視覺設定」的脈絡，中途換掉組合、或三份各自獨立、內容重複，都不算。</p></div>
     </div>
     <div class="item">
-      <div class="frac">1/3</div>
-      <div><h4>原型玩得動</h4><p>按得下去、看得到結果，玩起來的行為跟企劃講的規則對得上——不用做到完整美觀，但要能真的跑一輪。</p></div>
+      <div class="frac">1/4</div>
+      <div><h4>原型玩得動</h4><p>按得下去、看得到結果，玩起來的行為跟企劃講的規則對得上——不用做到完整美觀，但要能真的跑一輪。只用手機、原型做不出來的人，交截圖和短片也算。</p></div>
+    </div>
+    <div class="item">
+      <div class="frac">1/4</div>
+      <div><h4>三樣成果講得對、看得懂</h4><p>資訊圖表、語音摘要、簡報三樣都有，內容跟你們的 R2 對得上：講得出改了哪幾張卡（卡號＋卡名）、改的規則在哪一步、跟原版差在哪。有自己檢查過、把講錯的地方改掉，比做得漂亮重要。</p></div>
     </div>
   </div>
 </section>
@@ -435,9 +582,13 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
         <h4>2. Gemini Canvas 視覺化企劃的連結</h4>
         <p style="margin:0">用 R2、R3 請 Canvas 畫出來的視覺化企劃，按「分享」開成「知道連結的人可查看」後貼連結。分享不出來時，改貼<b style="color:var(--ink)">至少 2 張畫面截圖</b>（要看得到流程圖，跟你們改的那條規則）。</p>
       </li>
-      <li style="margin-bottom:0">
+      <li style="margin-bottom:16px">
         <h4>3. 最後 Google AI Studio 的遊戲連結</h4>
         <p style="margin:0">用 R2＋R3 做出來的原型，貼 AI Studio 專案的分享連結，一樣要開「知道連結的人可查看」。真的做不出來、或連結分享不出來時，改貼：<b style="color:var(--ink)">至少 2 張操作截圖</b>（要看得到你們輸入的規則說明，跟跑出來的畫面）＋<b style="color:var(--ink)">一段至少 30 秒的操作短片</b>（手機錄螢幕即可），證明有實際動手做，不是空講。</p>
+      </li>
+      <li style="margin-bottom:0">
+        <h4>4. NotebookLM 的三樣成果</h4>
+        <p style="margin:0">資訊圖表（圖片）、語音摘要（音檔）、簡報（PDF）三個檔案直接上傳；或貼 NotebookLM 筆記本的分享連結（設成「知道連結的人可查看」）。三樣缺一樣，這一項就不完整。</p>
       </li>
     </ol>
   </div>
@@ -448,7 +599,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </section>
 
-<footer id="w4-updstamp">最後更新：2026-10-14 19:19</footer>
+<footer id="w4-updstamp">最後更新：2026-10-20 22:15</footer>
 </div>
 
 <script>
@@ -548,6 +699,6 @@ try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
 <!-- I18N-END -->
 <script>window.DJ_BIND_UNIT='w4';</script>
 <script src="js/gate_i18n.js?v=202609290955"></script>
-<script src="js/bind_gate.js?v=202610071130"></script>
+<script src="js/bind_gate.js?v=202610202215"></script>
 </body>
 </html>

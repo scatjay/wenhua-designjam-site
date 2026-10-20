@@ -908,7 +908,7 @@ window.W47Skills = (function(){
     SK.forEach(function(s){
       var L=res.lv[s.k]||0, c=document.createElement('div'); c.className='skcard';
       var h=document.createElement('div'); h.className='skh';
-      h.textContent=s.icon+' '+s.name; var b=document.createElement('span'); b.className='sklv'; b.textContent='Lv '+L+' / 3'; h.appendChild(b);
+      h.textContent=s.icon+' '+s.name; var b=document.createElement('span'); b.className='sklv'; b.textContent=L?('Lv '+L+' / 3'):'未開始'; h.appendChild(b);
       var bar=document.createElement('div'); bar.className='skbar'; var f=document.createElement('i'); f.style.width=(L/3*100)+'%'; bar.appendChild(f);
       var now=document.createElement('div'); now.className='sknow'; now.textContent=s.lv[L];
       c.appendChild(h); c.appendChild(bar); c.appendChild(now);

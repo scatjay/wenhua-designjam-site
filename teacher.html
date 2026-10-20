@@ -264,7 +264,7 @@
     <div class="w3ctl" style="margin-top:14px"><label for="w47c"><b>課程</b></label>
       <select id="w47c"><option value="47602">文化遊戲松</option><option value="46582">遊戲設計學</option><option value="47618">AI機器人3D</option><option value="test">測試員</option></select>
       <button id="w47reload">重新載入</button><span id="w47msg" style="font-size:12px;color:var(--ink-soft)"></span></div>
-    <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>提交天數</th><th>最後一次</th><th>DR</th><th>Canvas</th><th>AI Studio</th><th>NBLM</th><th>其他</th><th>改過的指令</th></tr></thead><tbody id="w47rows"></tbody></table></div>
+    <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>提交天數</th><th>最後一次</th><th>DR</th><th>Canvas</th><th>AI Studio</th><th>NBLM</th><th>其他</th><th>最新回饋</th><th>改過的指令</th></tr></thead><tbody id="w47rows"></tbody></table></div>
   </div><!-- /tabW4 -->
 
   <div id="tabTools" hidden>
@@ -773,8 +773,8 @@ try {
 // ============================================================
 function loadW47() {
   const c = $("w47c").value; $("w47msg").textContent = "載入中…";
-  db.ref("whgm/analysis/w47sub/" + c).once("value").then(snap => {
-    const all = snap.val() || {}, tb = $("w47rows"); tb.innerHTML = "";
+  Promise.all([db.ref("whgm/analysis/w47sub/" + c).once("value"), db.ref("whgm/analysis/w47fb/" + c).once("value")]).then(([snap, fsnap]) => {
+    const all = snap.val() || {}, fbs = fsnap.val() || {}, tb = $("w47rows"); tb.innerHTML = "";
     const envs = Object.keys(all).sort((a,b)=>a-b);
     envs.forEach(e => {
       const days = Object.keys(all[e]||{}).sort(), lastKey = days[days.length-1] || "", last = all[e][lastKey] || {};
@@ -788,6 +788,10 @@ function loadW47() {
         else cell("—");
       });
       cell(days.some(d => (all[e][d]||{}).other) ? "有" : "—");
+      const fbE = fbs[e] || {}, fbLast = fbE[lastKey];
+      if (fbLast) { const dv = document.createElement("div"); dv.style.maxWidth = "260px"; dv.style.fontSize = "12px";
+        dv.textContent = (fbLast.ok ? "✅ 到位：" : "🔧 再補：") + (fbLast.fb || ""); cell(dv, true); }
+      else cell(lastKey ? "審核中" : "—");
       const det = document.createElement("details"), sm = document.createElement("summary");
       const pairs = []; days.forEach(d => { const r = all[e][d]||{}; [r.p1, r.p2].forEach(p => { if (p) pairs.push([d, p]); }); });
       sm.textContent = pairs.length + " 則"; det.appendChild(sm);
@@ -798,7 +802,7 @@ function loadW47() {
       });
       cell(det, true); tb.appendChild(tr);
     });
-    if (!envs.length) tb.innerHTML = '<tr><td colspan="9" style="color:var(--ink-soft)">還沒有提交</td></tr>';
+    if (!envs.length) tb.innerHTML = '<tr><td colspan="10" style="color:var(--ink-soft)">還沒有提交</td></tr>';
     $("w47msg").textContent = envs.length + " 個編號，已載入 " + new Date().toLocaleTimeString("zh-TW");
   }).catch(err => { $("w47msg").textContent = "載入失敗：" + (err && err.message || err); });
 }

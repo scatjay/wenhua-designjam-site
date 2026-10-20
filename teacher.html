@@ -258,9 +258,13 @@
   <div id="tabW4" hidden>
     <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;line-height:1.8;font-size:13.5px">
       <p style="margin:0 0 8px"><b>第4週流程</b>：Deep Research → Gemini Canvas 視覺化企劃 → AI Studio 做成可點的原型。</p>
-      <p style="margin:0 0 8px">這一週的學習單<b>不寫入資料庫</b>，繳交狀況看 flipclass 的作業頁，所以這裡沒有即時數字。</p>
+      <p style="margin:0 0 8px">第7週起學生在學習單的「提交區」交各工具的指令分享連結，每天一次，下面是彙整（只列編號）。成品另在 flipclass 交。</p>
       <p style="margin:0"><a href="w4.html" target="_blank" style="color:var(--accent);font-weight:700">開學生端 W4 學習單 ↗</a></p>
     </div>
+    <div class="w3ctl" style="margin-top:14px"><label for="w47c"><b>課程</b></label>
+      <select id="w47c"><option value="47602">文化遊戲松</option><option value="46582">遊戲設計學</option><option value="47618">AI機器人3D</option><option value="test">測試員</option></select>
+      <button id="w47reload">重新載入</button><span id="w47msg" style="font-size:12px;color:var(--ink-soft)"></span></div>
+    <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>提交天數</th><th>最後一次</th><th>DR</th><th>Canvas</th><th>AI Studio</th><th>NBLM</th><th>其他</th><th>改過的指令</th></tr></thead><tbody id="w47rows"></tbody></table></div>
   </div><!-- /tabW4 -->
 
   <div id="tabTools" hidden>
@@ -755,6 +759,7 @@ document.querySelectorAll(".unitnav .u").forEach(b => b.onclick = () => {
   document.querySelectorAll(".unitnav .u").forEach(x => x.classList.toggle("on", x === b));
   ["W1","W2","W3","W4","Tools"].forEach(k => { const el = $("tab" + k); if (el) el.hidden = (k !== t); });
   if (t === "W3") loadW3();
+  if (t === "W4") loadW47();
   try { localStorage.setItem("designjam_teacher_tab", t); } catch(_) {}
   window.scrollTo(0, 0);
 });
@@ -762,6 +767,42 @@ try {
   const savedTab = localStorage.getItem("designjam_teacher_tab");
   if (savedTab) { const b = document.querySelector('.unitnav .u[data-t="' + savedTab + '"]'); if (b) b.click(); }
 } catch(_) {}
+
+// ============================================================
+// 第4–7週：學生每天一次的指令連結提交（whgm/analysis/w47sub/{課}/{編號}/{日期}，一次性讀取）
+// ============================================================
+function loadW47() {
+  const c = $("w47c").value; $("w47msg").textContent = "載入中…";
+  db.ref("whgm/analysis/w47sub/" + c).once("value").then(snap => {
+    const all = snap.val() || {}, tb = $("w47rows"); tb.innerHTML = "";
+    const envs = Object.keys(all).sort((a,b)=>a-b);
+    envs.forEach(e => {
+      const days = Object.keys(all[e]||{}).sort(), lastKey = days[days.length-1] || "", last = all[e][lastKey] || {};
+      const links = {}; days.forEach(d => Object.assign(links, (all[e][d]||{}).links || {}));
+      const tr = document.createElement("tr");
+      const cell = (v, node) => { const td = document.createElement("td"); if (node) td.appendChild(v); else td.textContent = v; tr.appendChild(td); };
+      cell("#" + e); cell(days.length);
+      cell(lastKey ? lastKey.slice(4,6) + "/" + lastKey.slice(6) + (last.kind === "final" ? " 成品" : " 進度") : "");
+      ["dr","canvas","aistudio","nblm"].forEach(k => {
+        if (links[k]) { const a = document.createElement("a"); a.href = links[k]; a.target = "_blank"; a.rel = "noopener"; a.textContent = "開"; cell(a, true); }
+        else cell("—");
+      });
+      cell(days.some(d => (all[e][d]||{}).other) ? "有" : "—");
+      const det = document.createElement("details"), sm = document.createElement("summary");
+      const pairs = []; days.forEach(d => { const r = all[e][d]||{}; [r.p1, r.p2].forEach(p => { if (p) pairs.push([d, p]); }); });
+      sm.textContent = pairs.length + " 則"; det.appendChild(sm);
+      pairs.forEach(([d, p]) => {
+        const div = document.createElement("div"); div.className = "prompt"; div.style.whiteSpace = "pre-wrap";
+        div.textContent = d.slice(4,6) + "/" + d.slice(6) + "｜" + (p.tool||"") + "\n第一次：" + (p.v1||"") + "\n改過後：" + (p.v2||"") + "\n為什麼：" + (p.why||"");
+        det.appendChild(div);
+      });
+      cell(det, true); tb.appendChild(tr);
+    });
+    if (!envs.length) tb.innerHTML = '<tr><td colspan="9" style="color:var(--ink-soft)">還沒有提交</td></tr>';
+    $("w47msg").textContent = envs.length + " 個編號，已載入 " + new Date().toLocaleTimeString("zh-TW");
+  }).catch(err => { $("w47msg").textContent = "載入失敗：" + (err && err.message || err); });
+}
+$("w47c").onchange = loadW47; $("w47reload").onclick = loadW47;
 
 // ============================================================
 // 第3週：社交推理遊戲（讀 whgm/analysis/w3game，一次性讀取、不掛監聽以節省流量）

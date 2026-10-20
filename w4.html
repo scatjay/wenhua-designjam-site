@@ -118,6 +118,29 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 .qrbox .t{font-weight:800;font-size:15px}
 .qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line);width:216px;height:216px;box-sizing:border-box;overflow:hidden}
 .qrbox #qrcanvas svg{display:block;margin:0 auto;width:200px;height:200px}
+
+/* ── 第4–7週：提交區、技能與成就 ── */
+.subf label{display:block;font-weight:700;font-size:13.5px;margin:14px 0 5px;color:var(--ink)}
+.subf input[type=url],.subf input[type=text],.subf textarea,.subf select{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:8px;font-size:15px;background:var(--panel);color:var(--ink);font-family:inherit}
+.subf textarea{min-height:76px;resize:vertical}
+.subkind{display:flex;gap:16px;flex-wrap:wrap}
+.subf label.rad{display:inline-flex;align-items:center;gap:6px;font-weight:600;margin:0}
+.pickbox{margin:20px 0 4px;padding:12px 14px;background:var(--accent-soft);border-radius:10px;font-size:13.5px}
+.pair{border-left:3px solid var(--line);padding-left:12px;margin-top:8px}
+.subbtn{margin-top:18px;width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;font-weight:800;font-size:15px;cursor:pointer;min-height:44px}
+.subbtn:disabled{opacity:.55;cursor:default}
+.skgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.skcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.skh{display:flex;justify-content:space-between;gap:8px;font-weight:800;color:var(--ink);font-size:14px}
+.sklv{font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums}
+.skbar{height:6px;background:var(--panel2);border-radius:4px;margin:8px 0;overflow:hidden}
+.skbar i{display:block;height:100%;background:var(--accent)}
+.sknow{font-size:12.5px;color:var(--ink-soft)}
+.sknext{font-size:12.5px;color:var(--ink);margin-top:6px;font-weight:600}
+.bdrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.bd{display:inline-flex;flex-direction:column;background:var(--panel2);border-radius:10px;padding:7px 11px;font-size:13px;font-weight:700;color:var(--ink-soft)}
+.bd.on{background:var(--amber-soft);color:var(--amber)}
+.bdd{font-size:11.5px;font-weight:500;margin-top:2px}
 </style>
 </head>
 <body>
@@ -139,6 +162,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 </div>
 
 <div class="jumprow">
+  <a href="#guide">指令協作指南</a>
   <a href="#recap">上週回顧</a>
   <a href="#step1">① Deep Research</a>
   <a href="#step2">② Canvas 視覺化企劃</a>
@@ -146,6 +170,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   <a href="#step4">④ NotebookLM</a>
   <a href="#nolaptop">沒帶筆電</a>
   <a href="#week8">第8週製作週</a>
+  <a href="#submit">提交指令連結</a>
   <a href="#rubric">評分標準</a>
   <a href="#turnin">怎麼交</a>
 </div>
@@ -187,6 +212,48 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   裡面的 <code>[[ ]]</code> 一定要換成你們真正的內容——連 <code>[[ ]]</code> 都照樣貼進去、
   或整段複製完全不調整，DR／AI Studio 跑出來的東西就是空洞的樣板，評分標準每一項都會被扣到。
 </div>
+
+<section id="guide">
+  <h2>先讀：怎麼跟 AI 工具接力合作 <span class="tag">指令協作指南</span></h2>
+  <p class="sub">這幾週你會用到四、五種 AI 工具。每一種都很會做事，但它們<b style="color:var(--ink)">彼此不認識</b>——
+    Deep Research 查到的東西，Canvas 不會自己知道；AI Studio 做的原型，NotebookLM 也看不到。
+    把它們串起來的人是你，串起來的方法就是<b style="color:var(--ink)">指令</b>。</p>
+
+  <div class="rulegrid">
+    <div class="card"><b>① 先給它你的資料</b><span>貼上你們真的玩到的卡號卡名、回饋、上一步的文件全文。沒有資料，AI 只能編。</span></div>
+    <div class="card"><b>② 講清楚要它做什麼</b><span>一次一件事：「查案例」「把規則定案」「畫成圖」。不要一段話塞五個任務。</span></div>
+    <div class="card"><b>③ 說好限制</b><span>「只用來源的內容」「不要加新規則」「用暱稱」——說出不要什麼，比只說要什麼更有用。</span></div>
+    <div class="card"><b>④ 指定交出來的樣子</b><span>條列、幾頁、幾個區塊、給誰看。下一個工具要讀得懂，格式要先講好。</span></div>
+    <div class="card"><b>⑤ 請它自己檢查</b><span>「有沒有互相矛盾」「最壞的狀況是什麼」「來源沒寫的說沒寫」。</span></div>
+    <div class="card"><b>⑥ 不滿意就在同一串改</b><span>不要關掉重開。在同一個對話裡說「第 3 點不對，改成……」，你改了幾次、怎麼改，都會留在對話裡。</span></div>
+  </div>
+
+  <div class="dimbox">
+    <h4>接力棒：每一步的成果，就是下一步的原料</h4>
+    <p><b>W3 回放與回饋</b> → Step 1 Deep Research 做出 <code>R1</code>（案例）→ <code>R2</code>（規則定案）→ <code>R3</code>（畫面設定）
+      → Step 2 Canvas 把 R2＋R3 畫成圖 → Step 3 AI Studio 把 R2＋R3 做成原型 → Step 4 NotebookLM 把 R1–R3 做成三樣成果。</p>
+    <p>交棒的時候，<b>把上一份的全文貼過去</b>，並告訴它「這是我們的規則定案（R2）」，它才知道手上拿的是什麼。</p>
+  </div>
+
+  <div class="howtobox">
+    <span class="lbl">工具不限 Gemini</span>
+    頁面上的範例指令以 Gemini、Google AI Studio、NotebookLM 為主，因為大家都能免費用。你想改用 ChatGPT、Claude 或其他工具也可以，
+    一樣要把<b>對話分享連結</b>交上來，讓老師看得到你下了哪些指令。
+  </div>
+
+  <div class="howtobox">
+    <span class="lbl">每一種工具怎麼分享（交件時都要開成「知道連結的人可查看」）</span>
+    <b>Gemini（含 Deep Research、Canvas）</b>：對話右上角「分享」→ 建立公開連結。Deep Research 三輪請在<b>同一個對話</b>裡跑，交一個連結就看得到三輪。<br>
+    <b>Google AI Studio</b>：專案右上角「Share」分享專案。左側的指令（你貼進去的規則說明、之後每一次修改的要求）要留著不要刪，老師要看得到。<br>
+    <b>NotebookLM</b>：筆記本右上角「分享」→ 設成知道連結的人可查看。資訊圖表、語音摘要、簡報的「自訂」說明不會出現在分享頁面，提交時請另外貼上。<br>
+    <b>其他工具</b>：找「分享」或「Share」建立公開連結；找不到就截圖。
+  </div>
+
+  <div class="warnbox">
+    <span class="lbl">⚠ 每一段指令裡都不要放同學的真名、學號、照片</span>
+    遊戲角色一律用暱稱或代號。分享出去的連結任何人都看得到內容。
+  </div>
+</section>
 
 <section id="recap">
   <h2>先看看：這個遊戲原本長怎樣 <span class="tag">背景</span></h2>
@@ -546,6 +613,71 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
     這份作業的期限以 flipclass 上寫的為準。</p>
 </section>
 
+<section id="submit">
+  <h2>提交你的指令連結 <span class="tag">每天可以交一次</span></h2>
+  <p class="sub">做到哪裡就交到哪裡，<b style="color:var(--ink)">每天可以提交一次</b>，之後的提交不會蓋掉之前的，老師看得到你一路怎麼改。
+    <b style="color:var(--ink)">下週上課時至少要提交一次「階段進度」</b>；成品在兩週後上課前提交，選「最終成品」。期限以 flipclass 作業上寫的為準。</p>
+
+  <div class="box subf" id="subbox">
+    <div id="subWho" style="font-size:13.5px;color:var(--ink-soft)">載入中…</div>
+
+    <label>這次提交的是</label>
+    <div class="subkind">
+      <label class="rad"><input type="radio" name="subKind" value="progress" checked> 階段進度</label>
+      <label class="rad"><input type="radio" name="subKind" value="final"> 最終成品</label>
+    </div>
+
+    <label for="sub_dr">Step 1 · Deep Research 對話的分享連結（R1–R3 在同一個對話）</label>
+    <input id="sub_dr" type="url" inputmode="url" placeholder="https://gemini.google.com/share/...">
+    <label for="sub_canvas">Step 2 · Canvas 視覺化企劃的分享連結</label>
+    <input id="sub_canvas" type="url" inputmode="url" placeholder="https://gemini.google.com/share/... 或 canvas 連結">
+    <label for="sub_aistudio">Step 3 · Google AI Studio 專案的分享連結（左側指令要留著）</label>
+    <input id="sub_aistudio" type="url" inputmode="url" placeholder="https://aistudio.google.com/...">
+    <label for="sub_nblm">Step 4 · NotebookLM 筆記本的分享連結</label>
+    <input id="sub_nblm" type="url" inputmode="url" placeholder="https://notebooklm.google.com/notebook/...">
+    <label for="sub_nblm_prompt">Step 4 · 你在 NotebookLM「自訂」裡用的說明（分享頁看不到，貼在這裡）</label>
+    <textarea id="sub_nblm_prompt" placeholder="資訊圖表、語音摘要、簡報各用了什麼說明，直接貼上"></textarea>
+    <label for="sub_other">用了其他 AI 工具？寫工具名稱＋分享連結（選填）</label>
+    <input id="sub_other" type="text" placeholder="例如：ChatGPT https://chatgpt.com/share/...">
+
+    <div class="pickbox">
+      <b>挑一則你改過的指令</b>（至少 1 則，建議 2 則：一則最滿意、一則一開始最失敗的）
+      <p style="margin:4px 0 0;font-size:12.5px;color:var(--ink-soft)">貼「第一次怎麼問」和「改過之後怎麼問」，再用一句話說你改了什麼、為什麼。這是在練怎麼把指令越改越準，不用寫長。</p>
+    </div>
+    <div class="pair">
+      <label for="p1_tool">第 1 則 · 用在哪個工具</label>
+      <select id="p1_tool"><option value="">選一個</option><option>Deep Research</option><option>Canvas</option><option>AI Studio</option><option>NotebookLM</option><option>其他</option></select>
+      <label for="p1_v1">第一次的指令</label><textarea id="p1_v1"></textarea>
+      <label for="p1_v2">改過之後的指令</label><textarea id="p1_v2"></textarea>
+      <label for="p1_why">改了什麼、為什麼（一句話）</label><input id="p1_why" type="text">
+    </div>
+    <div class="pair">
+      <label for="p2_tool">第 2 則 · 用在哪個工具（選填）</label>
+      <select id="p2_tool"><option value="">選一個</option><option>Deep Research</option><option>Canvas</option><option>AI Studio</option><option>NotebookLM</option><option>其他</option></select>
+      <label for="p2_v1">第一次的指令</label><textarea id="p2_v1"></textarea>
+      <label for="p2_v2">改過之後的指令</label><textarea id="p2_v2"></textarea>
+      <label for="p2_why">改了什麼、為什麼（一句話）</label><input id="p2_why" type="text">
+    </div>
+
+    <label for="sub_note">卡在哪裡、下一步想做什麼（選填）</label>
+    <input id="sub_note" type="text">
+
+    <button id="subBtn" type="button" class="subbtn">送出今天的提交</button>
+    <div id="subMsg" style="font-size:13.5px;font-weight:700;margin-top:8px;min-height:18px"></div>
+  </div>
+
+  <div class="box tight">
+    <b style="font-size:14px">你的指令技能與成就</b>
+    <p style="margin:4px 0 10px;font-size:12.5px;color:var(--ink-soft)">每次提交後自動更新。這是看你交上來的指令給的<b>下一步提示</b>，不是成績；照「下一級」做，下一次提交就看得到變化。</p>
+    <div id="skillBox" style="font-size:13px;color:var(--ink-soft)">提交一次之後，這裡會出現你的五項技能</div>
+  </div>
+
+  <div class="box tight">
+    <b style="font-size:14px">我交過的</b>
+    <div id="subHist" style="font-size:13px;color:var(--ink-soft);margin-top:6px">還沒有提交紀錄</div>
+  </div>
+</section>
+
 <section id="rubric">
   <h2>評分標準 <span class="tag">四項各 1/4</span></h2>
   <div class="rubric">
@@ -570,7 +702,8 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 
 <section id="turnin">
   <h2>規定要交的東西 <span class="tag">缺一不可</span></h2>
-  <p class="sub">全部貼在同一次繳交裡（這份作業的「內容」欄位），依序標好編號，不要分次上傳。</p>
+  <p class="sub">平常的進度在上面的<a href="#submit" style="color:var(--accent);font-weight:700">提交區</a>交，每天可以交一次。成品期限前，在提交區選「最終成品」交一次，
+    並把下面這幾項全部貼在 flipclass 同一次繳交裡（這份作業的「內容」欄位），依序標好編號，不要分次上傳。</p>
 
   <div class="turninbox">
     <ol class="steps" style="margin:0">
@@ -697,6 +830,195 @@ try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
 })();
 </script>
 <!-- I18N-END -->
+<script>
+/* 指令技能與成就（第4–7週）。從這位學生所有的提交現算，不另外存。
+   五項技能對齊教學實踐計畫書的指令四個面向（脈絡化／精確度／設計意象性／迭代性）＋本單元的工具接力；
+   學生畫面只用白話名稱。判定是關鍵字與結構的粗略規則，是給學生下一步的提示，不是成績。 */
+window.W47Skills = (function(){
+  var SK = [
+    { k:'ctx', name:'給足資料', icon:'📎',
+      lv:['還沒看到你貼自己的資料','指令裡有你們的卡號或卡名','貼了上一步的全文或回饋','清楚說明貼的是哪一份（例如「這是 R2 規則定案」）'],
+      next:['在指令裡寫出你們這場的卡號和卡名','把上一步的文件全文或 W3 回饋貼進指令','貼之前加一句「這是我們的 R2 規則定案」，讓 AI 知道手上拿的是什麼',''] },
+    { k:'prec', name:'講得精準', icon:'🎯',
+      lv:['還看不出任務、限制和格式','有說「不要什麼／只能怎樣」','也指定了交出來的格式（條列、幾頁、幾個區塊）','任務分成編號的小步驟，限制和格式都講清楚'],
+      next:['加一句限制：「只用來源的內容」或「不要加新規則」','指定格式：條列、幾頁、幾個區塊','把要它做的事拆成 1. 2. 3. 編號小步驟',''] },
+    { k:'img', name:'說得出畫面', icon:'🖼️',
+      lv:['指令裡還沒描述畫面','提到了一種畫面元素','描述了好幾種畫面元素（畫面、配色、圖示……）','畫面、配色、版面、角色、按鈕都講得出來'],
+      next:['描述你想要的畫面：有哪幾個畫面、每個畫面有什麼','再講清楚配色、圖示或版面','補上角色、按鈕、字的大小這些細節',''] },
+    { k:'iter', name:'越改越準', icon:'🔁',
+      lv:['還沒有改過的指令','交了一則「第一次→改過」的指令','兩則都交了，而且說得出改了什麼','提交過兩天以上，指令一次比一次準'],
+      next:['挑一則指令，貼上第一次和改過之後的版本','第 2 則也補上，並各用一句話說改了什麼、為什麼','隔天再改一次、再提交一次',''] },
+    { k:'relay', name:'工具接力', icon:'🔗',
+      lv:['還沒有交任何工具的連結','交了 1 個工具的連結','交了 2–3 個工具的連結','Deep Research、Canvas、AI Studio、NotebookLM 四棒都交了'],
+      next:['先交 Deep Research 對話的分享連結','把 Canvas 或 AI Studio 的連結也交上來','補齊四個工具的連結',''] }
+  ];
+  var BADGES = [
+    { k:'first',  name:'第一棒', desc:'第一次提交' },
+    { k:'ontime', name:'準時交棒', desc:'在第8週上課前交過「階段進度」' },
+    { k:'all4',   name:'四棒全交', desc:'四個工具的連結都交了' },
+    { k:'days3',  name:'三天有進度', desc:'在三個不同的日子提交' },
+    { k:'beyond', name:'工具探險家', desc:'用了 Gemini 以外的工具，也交了分享連結' }
+  ];
+  function txt(p){ return p ? [p.v2||'', p.v1||''].join('\n') : ''; }
+  function distinct(s, words){ var n=0; words.forEach(function(w){ if (s.indexOf(w)>=0) n++; }); return n; }
+
+  function compute(all, progressDeadline){
+    var keys=Object.keys(all||{}).sort(), recs=keys.map(function(k){ return all[k]; });
+    var latest = recs[recs.length-1] || {};
+    var pairs=[]; recs.forEach(function(r){ if(r.p1) pairs.push(r.p1); if(r.p2) pairs.push(r.p2); });
+    var lp=[latest.p1, latest.p2].filter(Boolean);
+    var T = lp.map(function(p){ return p.v2||''; }).join('\n') + '\n' + (latest.nblmPrompt||'');
+    var lv={};
+    // 給足資料
+    var c=0;
+    if (/卡\s*\d+|卡號|卡名/.test(T)) c=1;
+    if (c>=1 && (lp.some(function(p){ return (p.v2||'').length>=200; }) || /回饋|全文|如下/.test(T))) c=2;
+    if (c>=2 && /R[123]|規則定案|介面與美術設定|上一步|來源/.test(T)) c=3;
+    lv.ctx=c;
+    // 講得精準
+    var hasLimit=/不要|只用|只能|不能|不超過|以內|不准/.test(T), hasFmt=/條列|頁|區塊|表格|格式|字以內|步驟|段/.test(T), hasNum=/(^|\n)\s*\d+\s*[.、．)]/.test(T);
+    lv.prec = hasLimit ? (hasFmt ? (hasNum ? 3 : 2) : 1) : 0;
+    // 說得出畫面
+    var d=distinct(T,['畫面','介面','配色','顏色','圖示','版面','風格','角色','按鈕','字體','字要大','圖表']);
+    lv.img = d>=5 ? 3 : d>=3 ? 2 : d>=1 ? 1 : 0;
+    // 越改越準
+    var changed=lp.filter(function(p){ return p.v1 && p.v2 && p.v1!==p.v2; });
+    var i=0;
+    if (changed.length>=1) i=1;
+    if (changed.length>=2 && changed.every(function(p){ return (p.why||'').length>=4; })) i=2;
+    if (i>=2 && keys.length>=2) i=3;
+    lv.iter=i;
+    // 工具接力（所有提交合起來）
+    var tools={}; recs.forEach(function(r){ Object.keys(r.links||{}).forEach(function(t){ tools[t]=1; }); });
+    var nt=Object.keys(tools).length;
+    lv.relay = nt>=4 ? 3 : nt>=2 ? 2 : nt>=1 ? 1 : 0;
+    var got={
+      first: recs.length>=1,
+      ontime: keys.some(function(k){ return all[k].kind==='progress' && (!progressDeadline || k<=progressDeadline); }),
+      all4: nt>=4,
+      days3: keys.length>=3,
+      beyond: recs.some(function(r){ return r.other && /https?:\/\//.test(r.other); })
+    };
+    return { lv:lv, got:got, n:recs.length, pairs:pairs.length };
+  }
+
+  function render(box, res){
+    box.innerHTML='';
+    var g=document.createElement('div'); g.className='skgrid';
+    SK.forEach(function(s){
+      var L=res.lv[s.k]||0, c=document.createElement('div'); c.className='skcard';
+      var h=document.createElement('div'); h.className='skh';
+      h.textContent=s.icon+' '+s.name; var b=document.createElement('span'); b.className='sklv'; b.textContent='Lv '+L+' / 3'; h.appendChild(b);
+      var bar=document.createElement('div'); bar.className='skbar'; var f=document.createElement('i'); f.style.width=(L/3*100)+'%'; bar.appendChild(f);
+      var now=document.createElement('div'); now.className='sknow'; now.textContent=s.lv[L];
+      c.appendChild(h); c.appendChild(bar); c.appendChild(now);
+      if (L<3){ var nx=document.createElement('div'); nx.className='sknext'; nx.textContent='下一級：'+s.next[L]; c.appendChild(nx); }
+      else { var ok=document.createElement('div'); ok.className='sknext'; ok.textContent='已到最高級，維持這樣的寫法'; c.appendChild(ok); }
+      g.appendChild(c);
+    });
+    box.appendChild(g);
+    var bd=document.createElement('div'); bd.className='bdrow';
+    BADGES.forEach(function(x){
+      var t=document.createElement('span'); t.className='bd'+(res.got[x.k]?' on':'');
+      t.textContent=(res.got[x.k]?'🏅 ':'○ ')+x.name; t.title=x.desc; bd.appendChild(t);
+      var d=document.createElement('span'); d.className='bdd'; d.textContent=x.desc; t.appendChild(d);
+    });
+    box.appendChild(bd);
+  }
+  return { SK:SK, BADGES:BADGES, compute:compute, render:render };
+})();
+</script>
+
+<script>
+/* 第4–7週提交：每天一次，存 whgm/analysis/w47sub/{課}/{編號}/{YYYYMMDD}。
+   用 transaction 只在「今天還沒有」時寫入，連點或兩個分頁同時送也只會留一筆。
+   分區鍵照 sf3k.html 的 courseKey（課程代碼；測試員 55-60 進 test，不混進任何一班）。 */
+(function(){
+  var db = firebase.database();
+  function $s(id){ return document.getElementById(id); }
+  function pad(x){ return (x<10?'0':'')+x; }
+  function today(){ var d=new Date(); return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate()); }
+  function courseOf(e){
+    var m=/[?&]c=(\d{4,6})/.exec(location.search);
+    if (m && ['47602','46582','47618'].indexOf(m[1])>=0) return m[1];
+    if (e>=55 && e<=60) return 'test';
+    if (e>=201 && e<=299) return '47618';
+    if (e>=101) return '46582';
+    if (e>=1 && e<=52) return '47602';
+    return 'teacher';
+  }
+  function envNow(){ try{ var v = window.DJBind && window.DJBind.env(); return (v==null || isNaN(v)) ? null : v; }catch(e){ return null; } }
+  function ref(e){ return db.ref('whgm/analysis/w47sub/' + courseOf(e) + '/' + e); }
+  function v(id){ var el=$s(id); return el ? el.value.trim() : ''; }
+  function isUrl(s){ return /^https?:\/\/\S+$/i.test(s); }
+  function msg(t, bad){ var m=$s('subMsg'); m.textContent=t; m.style.color = bad ? 'var(--red)' : 'var(--green)'; }
+  function fmtDay(k){ return k.slice(4,6)+'/'+k.slice(6,8); }
+  var LINKS = [['dr','Deep Research'],['canvas','Canvas'],['aistudio','AI Studio'],['nblm','NotebookLM']];
+
+  function renderHist(e){
+    var box=$s('subHist');
+    if (e==null){ box.textContent='綁定編號後會顯示你交過的紀錄'; return; }
+    ref(e).once('value').then(function(s){
+      var val=s.val()||{}, keys=Object.keys(val).sort().reverse();
+      if(!keys.length){ box.textContent='還沒有提交紀錄'; return; }
+      box.innerHTML='';
+      keys.forEach(function(k){
+        var r=val[k]||{}, row=document.createElement('div');
+        row.style.cssText='padding:6px 0;border-bottom:1px solid var(--line)';
+        var head=document.createElement('b'); head.style.color='var(--ink)';
+        head.textContent=fmtDay(k)+'　'+(r.kind==='final'?'最終成品':'階段進度')+'　';
+        row.appendChild(head);
+        LINKS.forEach(function(L){
+          var u=r.links && r.links[L[0]];
+          var t=document.createElement(u?'a':'span');
+          t.textContent=(u?'✓ ':'· ')+L[1]; t.style.marginRight='10px';
+          if(u){ t.href=u; t.target='_blank'; t.rel='noopener'; t.style.color='var(--accent)'; }
+          row.appendChild(t);
+        });
+        box.appendChild(row);
+      });
+      try{ window.W47Skills.render($s('skillBox'), window.W47Skills.compute(val, '20261028')); }catch(err){ console.warn('[w47 skills]', err); }
+      if (keys[0]===today()) { $s('subBtn').disabled=true; $s('subBtn').textContent='今天已經提交過了，明天可以再交'; }
+    }).catch(function(err){ box.textContent='讀取紀錄失敗：'+(err&&err.message||err); });
+  }
+
+  var lastEnv;
+  function tick(){
+    var e=envNow();
+    if (e===lastEnv) return;
+    lastEnv=e;
+    var who=$s('subWho');
+    if (e==null){ who.textContent='先在頁面最上方綁定你的編號，才能提交。'; $s('subBtn').disabled=true; }
+    else { who.textContent='你的編號：#'+e+'（提交只記編號，不記姓名）'; $s('subBtn').disabled=false; $s('subBtn').textContent='送出今天的提交'; }
+    renderHist(e);
+  }
+  tick(); setInterval(tick, 1500);
+
+  $s('subBtn').onclick=function(){
+    var e=envNow(); if(e==null){ msg('先綁定你的編號', true); return; }
+    var links={}, n=0, bad=[];
+    LINKS.forEach(function(L){ var u=v('sub_'+L[0]); if(u){ if(isUrl(u)){ links[L[0]]=u; n++; } else bad.push(L[1]); } });
+    if (bad.length){ msg(bad.join('、')+' 的連結要以 https:// 開頭', true); return; }
+    var other=v('sub_other');
+    if (!n && !other){ msg('至少要貼一個分享連結', true); return; }
+    function pair(i){ return { tool:v('p'+i+'_tool'), v1:v('p'+i+'_v1'), v2:v('p'+i+'_v2'), why:v('p'+i+'_why') }; }
+    var p1=pair(1), p2=pair(2);
+    if (!p1.v1 || !p1.v2){ msg('第 1 則要貼「第一次的指令」和「改過之後的指令」', true); return; }
+    var kind=(document.querySelector('input[name=subKind]:checked')||{}).value||'progress';
+    var rec={ ts: firebase.database.ServerValue.TIMESTAMP, kind: kind, links: links, other: other||null,
+              nblmPrompt: v('sub_nblm_prompt')||null, p1: p1, p2: (p2.v1||p2.v2)? p2 : null,
+              note: v('sub_note')||null, ver: 'w47-1' };
+    var btn=$s('subBtn'); btn.disabled=true; msg('送出中…');
+    ref(e).child(today()).transaction(function(cur){ return cur===null ? rec : undefined; }, function(err, committed){
+      if (err){ btn.disabled=false; msg('送出失敗，請再按一次：'+(err.message||err), true); return; }
+      if (!committed){ msg('今天已經提交過了，明天可以再交', true); renderHist(e); return; }
+      msg('已送出 ✓ 老師看得到這次的內容');
+      renderHist(e);
+    }, false);
+  };
+})();
+</script>
+
 <script>window.DJ_BIND_UNIT='w4';</script>
 <script src="js/gate_i18n.js?v=202609290955"></script>
 <script src="js/bind_gate.js?v=202610202215"></script>

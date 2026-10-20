@@ -55,6 +55,16 @@
   .w3tbl th{font-size:12px;color:var(--ink-soft);position:sticky;top:0;background:var(--panel)}
   .w3scroll{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
   .w3ok{color:var(--ok);font-weight:800}.w3no{color:var(--warn);font-weight:800}
+  .w47grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin:12px 0}
+  .w47box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+  .w47box h3{font-size:13.5px;margin:0 0 8px}
+  .w47bar{display:grid;grid-template-columns:96px 1fr 44px;gap:8px;align-items:center;font-size:12.5px;margin:5px 0}
+  .w47bar .tr{height:10px;background:var(--line);border-radius:6px;overflow:hidden;display:flex}
+  .w47bar .tr i{display:block;height:100%}
+  .w47lg{font-size:11.5px;color:var(--ink-soft);margin-top:6px}
+  .w47lg span{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin:0 3px 0 8px}
+  .w47care b{display:block;font-size:12.5px;margin:8px 0 2px}
+  .w47care .ids{font-size:12.5px;color:var(--ink-soft);line-height:1.7;word-break:break-all}
   .w3ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
   .w3ctl select,.w3ctl button{padding:7px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);font-size:13px}
   /* 第2週面板整體改用藍色主色，跟學生端 w2.html 對齊 */
@@ -138,7 +148,7 @@
     <button class="u u1 on" data-t="W1"><b>第1週 · Design Jam</b><span>四種角色，孵出一個點子</span></button>
     <button class="u u2" data-t="W2"><b>第2週 · 本週</b><span>文化怎麼放進遊戲裡</span></button>
     <button class="u u4" data-t="W3"><b>第3週 · 社交推理遊戲</b><span>場次、回饋、學生設計的卡</span></button>
-    <button class="u u5" data-t="W4"><b>第4週 · 視覺化企劃</b><span>Canvas → AI Studio</span></button>
+    <button class="u u5" data-t="W4"><b>第4–7週 · AI 工具協作</b><span>提交、回饋、指令技能</span></button>
     <button class="u u3" data-t="Tools"><b>研究用途與工具</b><span>persona／ENA／Vertex 用量（研究用）</span></button>
   </div>
 
@@ -256,15 +266,26 @@
   </div><!-- /tabW3 -->
 
   <div id="tabW4" hidden>
-    <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;line-height:1.8;font-size:13.5px">
-      <p style="margin:0 0 8px"><b>第4週流程</b>：Deep Research → Gemini Canvas 視覺化企劃 → AI Studio 做成可點的原型。</p>
-      <p style="margin:0 0 8px">第7週起學生在學習單的「提交區」交各工具的指令分享連結，每天一次，下面是彙整（只列編號）。成品另在 flipclass 交。</p>
-      <p style="margin:0"><a href="w4.html" target="_blank" style="color:var(--accent);font-weight:700">開學生端 W4 學習單 ↗</a></p>
-    </div>
-    <div class="w3ctl" style="margin-top:14px"><label for="w47c"><b>課程</b></label>
+    <div class="w3ctl"><label for="w47c"><b>課程</b></label>
       <select id="w47c"><option value="47602">文化遊戲松</option><option value="46582">遊戲設計學</option><option value="47618">AI機器人3D</option><option value="test">測試員</option></select>
       <button id="w47reload">重新載入</button><span id="w47msg" style="font-size:12px;color:var(--ink-soft)"></span></div>
-    <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>提交天數</th><th>最後一次</th><th>DR</th><th>Canvas</th><th>AI Studio</th><th>NBLM</th><th>其他</th><th>最新回饋</th><th>改過的指令</th></tr></thead><tbody id="w47rows"></tbody></table></div>
+    <p style="font-size:12px;color:var(--ink-soft);margin:0 0 10px">學生在學習單「提交區」每天可交一次（指令分享連結＋改過的指令），每晚 23:45 批次回饋。只顯示編號；教學用途。「應交人數」以這門課在第 3 週遊戲出現過的編號估算。</p>
+    <div class="stats">
+      <div class="stat"><div class="n" id="w47Sub">0</div><div class="l">提交過的人／應交（估）</div></div>
+      <div class="stat"><div class="n" id="w47Today">0</div><div class="l">今天提交</div></div>
+      <div class="stat"><div class="n" id="w47Nblm">0</div><div class="l">交了 NotebookLM 三段指令</div></div>
+      <div class="stat"><div class="n" id="w47Ok">0</div><div class="l">最新回饋到位／已批改</div></div>
+    </div>
+    <div class="w47grid">
+      <div class="w47box"><h3>各工具交了連結的比例</h3><div id="w47tools"></div></div>
+      <div class="w47box"><h3>指令技能分布（每人以全部提交計）</h3><div id="w47skills"></div></div>
+    </div>
+    <div class="w47grid">
+      <div class="w47box"><h3>需要關心</h3><div id="w47care"></div></div>
+      <div class="w47box"><h3>最近的回饋建議（下一步）</h3><div id="w47next"></div></div>
+    </div>
+    <h2 style="font-size:16px;margin:18px 0 8px">每個編號</h2>
+    <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>天數</th><th>最後一次</th><th>DR</th><th>Canvas</th><th>AIS</th><th>NBLM</th><th title="給足資料／講得精準／說得出畫面／越改越準／工具接力">技能 資精畫改接</th><th>最新回饋</th><th>指令</th></tr></thead><tbody id="w47rows"></tbody></table></div>
   </div><!-- /tabW4 -->
 
   <div id="tabTools" hidden>
@@ -773,37 +794,80 @@ try {
 // ============================================================
 function loadW47() {
   const c = $("w47c").value; $("w47msg").textContent = "載入中…";
-  Promise.all([db.ref("whgm/analysis/w47sub/" + c).once("value"), db.ref("whgm/analysis/w47fb/" + c).once("value")]).then(([snap, fsnap]) => {
-    const all = snap.val() || {}, fbs = fsnap.val() || {}, tb = $("w47rows"); tb.innerHTML = "";
-    const envs = Object.keys(all).sort((a,b)=>a-b);
+  const pad = x => (x < 10 ? "0" : "") + x, d0 = new Date(), today = d0.getFullYear() + pad(d0.getMonth() + 1) + pad(d0.getDate());
+  const dayN = k => Date.UTC(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)) / 864e5;
+  const flatV = v => !v ? {} : (Array.isArray(v) ? Object.fromEntries(v.map((x, i) => [String(i), x]).filter(a => a[1])) : v);
+  const rd = path => db.ref(path).once("value").then(x => x.val());
+  Promise.all([rd("whgm/analysis/w47sub/" + c), rd("whgm/analysis/w47fb/" + c), rd("whgm/analysis/w3game/plays")]).then(([subA, fbA, plays]) => {
+    const all = flatV(subA), fbs = flatV(fbA);
+    // 應交（估）：這門課在第 3 週遊戲出現過的編號
+    const roster = new Set();
+    Object.entries(plays || {}).forEach(([sess, envs]) => { if (sess.indexOf(c + "-") === 0) Object.keys(flatV(envs)).forEach(e => { if (c === "test" || w3IsReal(e)) roster.add(e); }); });
+    const envs = Object.keys(all).sort((a, b) => a - b);
+    const SK = window.W47Skills;
+    let nToday = 0, nNblm = 0, nFb = 0, nOk = 0;
+    const toolCnt = { dr: 0, canvas: 0, aistudio: 0, nblm: 0 }, skillDist = {};
+    (SK ? SK.SK : []).forEach(x => skillDist[x.k] = [0, 0, 0, 0]);
+    const care = { never: [], more: [], idle: [] }, nexts = [];
+    const tb = $("w47rows"); tb.innerHTML = "";
     envs.forEach(e => {
-      const days = Object.keys(all[e]||{}).sort(), lastKey = days[days.length-1] || "", last = all[e][lastKey] || {};
-      const links = {}; days.forEach(d => Object.assign(links, (all[e][d]||{}).links || {}));
+      const recs = flatV(all[e]), days = Object.keys(recs).sort(), lastKey = days[days.length - 1] || "", last = recs[lastKey] || {};
+      const links = {}; days.forEach(d => Object.assign(links, (recs[d] || {}).links || {}));
+      Object.keys(toolCnt).forEach(k => { if (links[k]) toolCnt[k]++; });
+      if (lastKey === today) nToday++;
+      if (days.some(d => ((recs[d] || {}).nblmPrompt || "").length >= 40)) nNblm++;
+      const fbE = flatV(fbs[e]), fbLast = fbE[lastKey];
+      if (fbLast) { nFb++; if (fbLast.ok) nOk++; else care.more.push(e); (fbLast.next || []).forEach(n => nexts.push([lastKey, e, n])); }
+      if (lastKey && dayN(today) - dayN(lastKey) >= 3) care.idle.push(e);
+      const res = SK ? SK.compute(recs, "20261028") : { lv: {} };
+      Object.keys(skillDist).forEach(k => skillDist[k][res.lv[k] || 0]++);
       const tr = document.createElement("tr");
       const cell = (v, node) => { const td = document.createElement("td"); if (node) td.appendChild(v); else td.textContent = v; tr.appendChild(td); };
       cell("#" + e); cell(days.length);
-      cell(lastKey ? lastKey.slice(4,6) + "/" + lastKey.slice(6) + (last.kind === "final" ? " 成品" : " 進度") : "");
-      ["dr","canvas","aistudio","nblm"].forEach(k => {
-        if (links[k]) { const a = document.createElement("a"); a.href = links[k]; a.target = "_blank"; a.rel = "noopener"; a.textContent = "開"; cell(a, true); }
-        else cell("—");
+      cell(lastKey ? lastKey.slice(4, 6) + "/" + lastKey.slice(6) + (last.kind === "final" ? " 成品" : " 進度") : "");
+      ["dr", "canvas", "aistudio", "nblm"].forEach(k => {
+        if (links[k]) { const a = document.createElement("a"); a.href = links[k]; a.target = "_blank"; a.rel = "noopener"; a.textContent = "開"; cell(a, true); } else cell("—");
       });
-      cell(days.some(d => (all[e][d]||{}).other) ? "有" : "—");
-      const fbE = fbs[e] || {}, fbLast = fbE[lastKey];
-      if (fbLast) { const dv = document.createElement("div"); dv.style.maxWidth = "260px"; dv.style.fontSize = "12px";
-        dv.textContent = (fbLast.ok ? "✅ 到位：" : "🔧 再補：") + (fbLast.fb || ""); cell(dv, true); }
+      cell(Object.keys(skillDist).map(k => res.lv[k] || 0).join(" "));
+      if (fbLast) { const dv = document.createElement("div"); dv.style.maxWidth = "260px"; dv.style.fontSize = "12px"; dv.textContent = (fbLast.ok ? "✅ 到位：" : "🔧 再補：") + (fbLast.fb || ""); cell(dv, true); }
       else cell(lastKey ? "審核中" : "—");
       const det = document.createElement("details"), sm = document.createElement("summary");
-      const pairs = []; days.forEach(d => { const r = all[e][d]||{}; [r.p1, r.p2].forEach(p => { if (p) pairs.push([d, p]); }); });
+      const pairs = []; days.forEach(d => { const r = recs[d] || {}; [r.p1, r.p2].forEach(p => { if (p) pairs.push([d, p]); }); if (r.nblmPrompt) pairs.push([d, { tool: "NotebookLM 三段", v1: "", v2: r.nblmPrompt, why: "" }]); });
       sm.textContent = pairs.length + " 則"; det.appendChild(sm);
-      pairs.forEach(([d, p]) => {
-        const div = document.createElement("div"); div.className = "prompt"; div.style.whiteSpace = "pre-wrap";
-        div.textContent = d.slice(4,6) + "/" + d.slice(6) + "｜" + (p.tool||"") + "\n第一次：" + (p.v1||"") + "\n改過後：" + (p.v2||"") + "\n為什麼：" + (p.why||"");
-        det.appendChild(div);
-      });
+      pairs.forEach(([d, p]) => { const div = document.createElement("div"); div.className = "prompt"; div.style.whiteSpace = "pre-wrap";
+        div.textContent = d.slice(4, 6) + "/" + d.slice(6) + "｜" + (p.tool || "") + (p.v1 ? "\n第一次：" + p.v1 : "") + "\n改過後：" + (p.v2 || "") + (p.why ? "\n為什麼：" + p.why : ""); det.appendChild(div); });
       cell(det, true); tb.appendChild(tr);
     });
-    if (!envs.length) tb.innerHTML = '<tr><td colspan="10" style="color:var(--ink-soft)">還沒有提交</td></tr>';
-    $("w47msg").textContent = envs.length + " 個編號，已載入 " + new Date().toLocaleTimeString("zh-TW");
+    roster.forEach(e => { if (!all[e]) care.never.push(e); });
+    if (!envs.length) tb.innerHTML = '<tr><td colspan="10" style="color:var(--ink-soft)">還沒有人提交（提交區 10-20 晚上才上線）</td></tr>';
+    const n = envs.length;
+    $("w47Sub").textContent = n + " / " + (roster.size || "—");
+    $("w47Today").textContent = nToday; $("w47Nblm").textContent = nNblm; $("w47Ok").textContent = nOk + " / " + nFb;
+    // 工具比例
+    const names = { dr: "Deep Research", canvas: "Canvas", aistudio: "AI Studio", nblm: "NotebookLM" };
+    $("w47tools").innerHTML = "";
+    Object.keys(toolCnt).forEach(k => { const pct = n ? Math.round(toolCnt[k] / n * 100) : 0, row = document.createElement("div"); row.className = "w47bar";
+      const l = document.createElement("span"); l.textContent = names[k]; const t = document.createElement("div"); t.className = "tr"; const f = document.createElement("i"); f.style.width = pct + "%"; f.style.background = "var(--accent)"; t.appendChild(f);
+      const v = document.createElement("span"); v.textContent = toolCnt[k] + " 人"; row.append(l, t, v); $("w47tools").appendChild(row); });
+    // 技能分布（堆疊）
+    const COL = ["var(--line)", "#e6c56a", "#7fb08f", "#2f6b55"];
+    $("w47skills").innerHTML = "";
+    (SK ? SK.SK : []).forEach(x => { const d = skillDist[x.k], row = document.createElement("div"); row.className = "w47bar";
+      const l = document.createElement("span"); l.textContent = x.name; const t = document.createElement("div"); t.className = "tr";
+      d.forEach((cnt, lv) => { const f = document.createElement("i"); f.style.width = (n ? cnt / n * 100 : 0) + "%"; f.style.background = COL[lv]; f.title = (lv ? "Lv" + lv : "未開始") + "：" + cnt + " 人"; t.appendChild(f); });
+      const v = document.createElement("span"); v.textContent = "Lv3 " + d[3]; row.append(l, t, v); $("w47skills").appendChild(row); });
+    const lg = document.createElement("div"); lg.className = "w47lg"; lg.innerHTML = ["未開始", "Lv1", "Lv2", "Lv3"].map((t, i) => '<span style="background:' + COL[i] + '"></span>' + t).join("");
+    $("w47skills").appendChild(lg);
+    // 需要關心
+    const careBox = $("w47care"); careBox.className = "w47care"; careBox.innerHTML = "";
+    [["第 3 週有玩、還沒提交過", care.never], ["最新回饋是「再補一點」", care.more], ["3 天以上沒有新的提交", care.idle]].forEach(([t, ids]) => {
+      const b = document.createElement("b"); b.textContent = t + "（" + ids.length + "）"; const d = document.createElement("div"); d.className = "ids";
+      d.textContent = ids.length ? ids.sort((a, b) => a - b).map(x => "#" + x).join("、") : "無"; careBox.append(b, d); });
+    // 最近的回饋建議
+    const nb = $("w47next"); nb.innerHTML = "";
+    nexts.sort((a, b) => a[0] < b[0] ? 1 : -1).slice(0, 12).forEach(([d, e, t]) => { const div = document.createElement("div"); div.style.cssText = "font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--line)"; div.textContent = "#" + e + "｜" + t; nb.appendChild(div); });
+    if (!nexts.length) nb.textContent = "還沒有批改結果（每晚 23:45 後產生）";
+    $("w47msg").textContent = n + " 人提交過，已載入 " + new Date().toLocaleTimeString("zh-TW");
   }).catch(err => { $("w47msg").textContent = "載入失敗：" + (err && err.message || err); });
 }
 $("w47c").onchange = loadW47; $("w47reload").onclick = loadW47;
@@ -1293,5 +1357,6 @@ db.ref(`${NS}/rounds`).on("value", snap => {
   });
 });
 </script>
+<script src="js/w47_skills.js?v=202610202325"></script>
 </body>
 </html>

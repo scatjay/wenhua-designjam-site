@@ -558,11 +558,31 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
       <p style="font-size:12.5px;color:var(--ink-soft);margin-top:8px">產生要幾分鐘，可以先去做下一項。做好後先自己聽一次：講錯規則的地方記下來，改好「自訂」的說明再重產生一次。</p>
     </li>
     <li>
-      <h4>做簡報</h4>
-      <p>「工作室」裡找「<b style="color:var(--ink)">簡報</b>」，按「自訂」，貼下面這段。這份簡報就是第8週之後跟大家介紹你們遊戲時用的。</p>
+      <h4>做簡報：先規劃架構，再請它做</h4>
+      <p>簡報不要一次叫它做完。先在 NotebookLM 的對話框貼第一段，讓它<b style="color:var(--ink)">用你們 Deep Research 的成果（R1–R3）收斂出一份簡報架構</b>；你看過、改到滿意，再把架構貼進「工作室」→「<b style="color:var(--ink)">簡報</b>」→「自訂」，配第二段做出簡報。這份簡報就是第8週之後跟大家介紹你們遊戲時用的。</p>
       <div class="promptbox">
-        <div class="lbl"><span>簡報 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
-        <p class="ptxt">用繁體中文做一份 6 到 8 頁的簡報，介紹我們設計的遊戲：
+        <div class="lbl"><span>簡報第一步 · 規劃架構 · 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">只根據這些來源（R1 案例研究、R2 規則定案、R3 畫面與美術設定），幫我規劃一份介紹我們遊戲的簡報架構，先不要做簡報：
+
+1. 觀眾是誰、他們看完要記住的「一句話」是什麼
+2. 把 R1 查到的案例收斂成一個結論：我們參考了哪些遊戲、我們的版本跟它們差在哪一句規則
+3. 列出 6 到 8 頁，每一頁寫：
+   ・標題
+   ・這頁只講的一件事
+   ・內容來自哪一份來源的哪一段（R1／R2／R3）
+   ・這頁要放什麼圖（流程圖、對戰示意、畫面示意框、插圖）
+4. 整體美術方向：風格、配色（不超過 3 種）、字的大小，跟 R3 的美術設定一致
+5. 檢查：有沒有哪一頁在講來源裡沒有的東西？有沒有兩頁在講同一件事？
+
+用條列，我要能直接貼回去當做簡報的說明。</p>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:8px 0 6px">架構不對就在同一個對話裡說「第幾頁改成……」，改到滿意再往下。</p>
+      <div class="promptbox">
+        <div class="lbl"><span>簡報第二步 · 貼進「自訂」· 可直接複製</span><button class="copybtn" type="button">複製</button></div>
+        <p class="ptxt">用繁體中文，照下面這份架構做簡報，頁數、每頁內容和美術方向都照架構，不要自己加頁：
+[[貼上第一步改好的簡報架構]]
+
+如果架構裡有沒寫清楚的地方，用這份預設：
 第 1 頁：遊戲名字、一句話玩法
 第 2 頁：原版 SissyFight 的三張牌怎麼玩（單挑、聯手、畏縮）
 第 3 頁：我們改了哪幾張卡（卡號和卡名），改成什麼
@@ -747,7 +767,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </section>
 
-<footer id="w4-updstamp">最後更新：2026-10-20 22:56</footer>
+<footer id="w4-updstamp">最後更新：2026-10-20 22:58</footer>
 </div>
 
 <script>

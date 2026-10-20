@@ -490,6 +490,14 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
     一張<b style="color:var(--ink)">資訊圖表</b>、一段<b style="color:var(--ink)">語音摘要</b>、一份<b style="color:var(--ink)">簡報</b>。
     內容全部來自你們自己的 R1、R2、R3，NotebookLM 只負責整理和換形式。</p>
 
+  <div class="warnbox" style="background:var(--accent-soft);border-color:var(--accent);color:var(--ink)">
+    <span class="lbl" style="color:var(--accent)">✅ 這週檢核的重點：三段「自訂」指令怎麼設計</span>
+    資訊圖表、簡報、語音摘要<b>三樣都一定要有</b>。每一樣都寫一段你自己的「自訂」指令（下面的範例要改成你們的內容），產生後自己看過、聽過，哪裡不對就在指令裡補一句再產生一次。
+    每一段都要講到：<b>給誰看、看完要知道什麼</b>／<b>結構</b>（哪幾區、每頁放什麼、依序聊什麼）／<b>限制</b>（只用來源、不加新規則、寫出卡號卡名）。
+    <b>簡報的指令還要講美術</b>：整體風格、配色、字體大小、每頁的圖要放什麼。
+    交件時三段各貼「第一次」和「改過之後」兩個版本。
+  </div>
+
   <div class="tipbox">
     <span class="lbl">💡 沒帶筆電也沒關係，這一步就是為手機設計的</span>
     手機下載 <b>NotebookLM</b> App（iPhone、Android 都有），或用手機瀏覽器開 <code>notebooklm.google.com</code>，用跟 Gemini 同一個 Google 帳號登入。
@@ -562,7 +570,14 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 第 5 頁：一個三人對戰的例子，原版和我們的版本各打一次，比較結果
 第 6 頁：畫面長什麼樣（來自介面與美術設定）
 第 7 頁：我們預期玩家的反應，以及最擔心的地方
-每頁字少、重點放大；只用來源的內容，不要加新規則，不要出現真實姓名。</p>
+
+美術設定：
+・整體風格：[[例如：手繪桌遊感／扁平插畫／復古遊戲機台]]，配色不超過 3 種，跟我們遊戲的主題一致
+・每頁一個大標題、最多 3 個重點，字要大，手機也看得清楚
+・每頁放一張圖：第 2、4、5 頁用流程圖或對戰示意圖，第 6 頁用畫面示意框，其他頁用跟內容有關的插圖
+・單挑、聯手、畏縮三種行動，整份簡報都用同一組顏色與圖示
+
+只用來源的內容，不要加新規則，不要出現真實姓名。</p>
       </div>
     </li>
     <li>
@@ -635,8 +650,8 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
     <input id="sub_aistudio" type="url" inputmode="url" placeholder="https://aistudio.google.com/...">
     <label for="sub_nblm">Step 4 · NotebookLM 筆記本的分享連結</label>
     <input id="sub_nblm" type="url" inputmode="url" placeholder="https://notebooklm.google.com/notebook/...">
-    <label for="sub_nblm_prompt">Step 4 · 你在 NotebookLM「自訂」裡用的說明（分享頁看不到，貼在這裡）</label>
-    <textarea id="sub_nblm_prompt" placeholder="資訊圖表、語音摘要、簡報各用了什麼說明，直接貼上"></textarea>
+    <label for="sub_nblm_prompt">Step 4 · NotebookLM 三段「自訂」指令，各貼第一次與改過之後的版本（分享頁看不到，貼在這裡）</label>
+    <textarea id="sub_nblm_prompt" style="min-height:140px" placeholder="【資訊圖表】第一次：…　改過後：…　改了什麼：…&#10;【簡報】第一次：…　改過後：…　改了什麼：…&#10;【語音摘要】第一次：…　改過後：…　改了什麼：…"></textarea>
     <label for="sub_other">用了其他 AI 工具？寫工具名稱＋分享連結（選填）</label>
     <input id="sub_other" type="text" placeholder="例如：ChatGPT https://chatgpt.com/share/...">
 
@@ -732,7 +747,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </section>
 
-<footer id="w4-updstamp">最後更新：2026-10-20 22:50</footer>
+<footer id="w4-updstamp">最後更新：2026-10-20 22:56</footer>
 </div>
 
 <script>

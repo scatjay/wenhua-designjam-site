@@ -44,6 +44,19 @@
   .unitnav .u.on.u2{border-left-color:#2f6690;background:#eaf1f6}
   .unitnav .u.on.u2 b{color:#2f6690}
   .unitnav .u.on.u3{border-left-color:#5c5648;background:#f2f0ea}
+  .unitnav .u.on.u4{border-left-color:#8a4fb3;background:#f3ecf8}
+  .unitnav .u.on.u4 b{color:#8a4fb3}
+  .unitnav .u.on.u5{border-left-color:#1f8a70;background:#e6f4ef}
+  .unitnav .u.on.u5 b{color:#1f8a70}
+  #tabW3{--accent:#8a4fb3}#tabW3 .stat .n{color:#8a4fb3}
+  #tabW4{--accent:#1f8a70}
+  .w3tbl{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+  .w3tbl th,.w3tbl td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+  .w3tbl th{font-size:12px;color:var(--ink-soft);position:sticky;top:0;background:var(--panel)}
+  .w3scroll{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+  .w3ok{color:var(--ok);font-weight:800}.w3no{color:var(--warn);font-weight:800}
+  .w3ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+  .w3ctl select,.w3ctl button{padding:7px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);font-size:13px}
   /* 第2週面板整體改用藍色主色，跟學生端 w2.html 對齊 */
   #tabW2{--accent:#2f6690}
   #tabW2 .stat .n{color:#2f6690}
@@ -124,7 +137,9 @@
   <div class="unitnav">
     <button class="u u1 on" data-t="W1"><b>第1週 · Design Jam</b><span>四種角色，孵出一個點子</span></button>
     <button class="u u2" data-t="W2"><b>第2週 · 本週</b><span>文化怎麼放進遊戲裡</span></button>
-    <button class="u u3" data-t="Tools"><b>研究與工具</b><span>persona／ENA／Vertex 用量</span></button>
+    <button class="u u4" data-t="W3"><b>第3週 · 社交推理遊戲</b><span>場次、回饋、學生設計的卡</span></button>
+    <button class="u u5" data-t="W4"><b>第4週 · 視覺化企劃</b><span>Canvas → AI Studio</span></button>
+    <button class="u u3" data-t="Tools"><b>研究用途與工具</b><span>persona／ENA／Vertex 用量（研究用）</span></button>
   </div>
 
   <div id="tabW1">
@@ -224,7 +239,32 @@
     </details>
   </div><!-- /tabW2 -->
 
+  <div id="tabW3" hidden>
+    <div class="w3ctl"><label for="w3sess"><b>場次</b></label><select id="w3sess"></select>
+      <button id="w3reload">重新載入</button><span id="w3msg" style="font-size:12px;color:var(--ink-soft)"></span></div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="w3Games">0</div><div class="l">遊戲場次（人次）</div></div>
+      <div class="stat"><div class="n" id="w3Players">0</div><div class="l">參與的編號數</div></div>
+      <div class="stat"><div class="n" id="w3Fb">0</div><div class="l">各輪回饋則數</div></div>
+      <div class="stat"><div class="n" id="w3Dz">0</div><div class="l">學生設計的卡</div></div>
+    </div>
+    <h2 style="font-size:16px;margin:18px 0 8px">每個編號的進度</h2>
+    <p style="font-size:12px;color:var(--ink-soft);margin:0 0 8px">「到位」＝回饋至少 3 則且設計過至少 1 張卡（教學用的粗略檢核，不是成績）。只列真實學生編號；測試員與老師編號已排除。編號僅供去識別化。</p>
+    <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>玩過</th><th>贏</th><th>當主持</th><th>回饋</th><th>設計卡</th><th>到位</th></tr></thead><tbody id="w3rows"></tbody></table></div>
+    <h2 style="font-size:16px;margin:22px 0 8px">學生設計的卡</h2>
+    <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>卡名</th><th>類型</th><th>規則</th><th>為什麼</th></tr></thead><tbody id="w3cards"></tbody></table></div>
+  </div><!-- /tabW3 -->
+
+  <div id="tabW4" hidden>
+    <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;line-height:1.8;font-size:13.5px">
+      <p style="margin:0 0 8px"><b>第4週流程</b>：Deep Research → Gemini Canvas 視覺化企劃 → AI Studio 做成可點的原型。</p>
+      <p style="margin:0 0 8px">這一週的學習單<b>不寫入資料庫</b>，繳交狀況看 flipclass 的作業頁，所以這裡沒有即時數字。</p>
+      <p style="margin:0"><a href="w4.html" target="_blank" style="color:var(--accent);font-weight:700">開學生端 W4 學習單 ↗</a></p>
+    </div>
+  </div><!-- /tabW4 -->
+
   <div id="tabTools" hidden>
+  <p style="background:#f2f0ea;border-radius:10px;padding:9px 14px;font-size:12.5px;line-height:1.7;margin:0 0 14px;color:#2b2a26"><b>研究用途區</b>：下面是研究與工具的分析，不是教學即時回饋。文化遊戲松的研究資料在事後同意之前只作保管與方法測試，不下結論。</p>
   <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
     <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🎭 測試員persona設定 v4（編號56-59，測試用，非真實學生）</summary>
     <div style="font-size:13px;color:var(--ink-soft);line-height:1.8;margin-top:10px">
@@ -242,7 +282,7 @@
     </div>
   </details>
 
-  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px" open>
+  <details style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px">
     <summary style="cursor:pointer;font-weight:800;font-size:13.5px">🔬 ENA跨週認知網路分析（v0，關鍵字啟發式編碼）</summary>
     <div id="enaPanel" style="font-size:13px;color:var(--ink-soft);line-height:1.8;margin-top:10px">載入中…</div>
     <p style="font-size:11px;opacity:.75;margin-top:10px">
@@ -713,7 +753,8 @@ db.ref(`${NS}/feedback`).on("value", snap => {
 document.querySelectorAll(".unitnav .u").forEach(b => b.onclick = () => {
   const t = b.dataset.t;
   document.querySelectorAll(".unitnav .u").forEach(x => x.classList.toggle("on", x === b));
-  ["W1","W2","Tools"].forEach(k => { const el = $("tab" + k); if (el) el.hidden = (k !== t); });
+  ["W1","W2","W3","W4","Tools"].forEach(k => { const el = $("tab" + k); if (el) el.hidden = (k !== t); });
+  if (t === "W3") loadW3();
   try { localStorage.setItem("designjam_teacher_tab", t); } catch(_) {}
   window.scrollTo(0, 0);
 });
@@ -721,6 +762,72 @@ try {
   const savedTab = localStorage.getItem("designjam_teacher_tab");
   if (savedTab) { const b = document.querySelector('.unitnav .u[data-t="' + savedTab + '"]'); if (b) b.click(); }
 } catch(_) {}
+
+// ============================================================
+// 第3週：社交推理遊戲（讀 whgm/analysis/w3game，一次性讀取、不掛監聽以節省流量）
+// ============================================================
+const W3_BASE = "whgm/analysis/w3game";
+const W3_COURSE = {"47602":"文化遊戲松","46582":"遊戲設計學","47618":"AI機器人3D"};
+let w3Data = null, w3Loading = false;
+function w3IsReal(e) { e = +e; return (e>=1&&e<=52)||(e>=101&&e<=130)||(e>=201&&e<=238); }
+function w3Label(k) {
+  const m = /^(\d{5})-(\d{4})(\d{2})(\d{2})(am|pm)$/.exec(k);
+  if (m) return (W3_COURSE[m[1]]||m[1]) + " " + m[3] + "/" + m[4] + (m[5]==="am"?" 上午":" 下午");
+  const o = /^(\d{4})(\d{2})(\d{2})(am|pm)$/.exec(k);
+  if (o) return "（早期）" + o[2] + "/" + o[3] + (o[4]==="am"?" 上午":" 下午");
+  return k;
+}
+// Firebase 會把連續數字鍵的物件轉成陣列，這裡統一攤平成 [key, value]
+function w3Flat(v) {
+  if (!v) return [];
+  return Array.isArray(v) ? v.map((x,i)=>[String(i),x]).filter(a=>a[1]) : Object.entries(v);
+}
+async function loadW3() {
+  if (w3Loading || w3Data) return;
+  w3Loading = true; $("w3msg").textContent = "載入中…";
+  try {
+    const rd = p => db.ref(W3_BASE + "/" + p).once("value").then(s => s.val());
+    const [plays, fb, dz] = await Promise.all([rd("plays"), rd("feedback"), rd("cardDesigns")]);
+    w3Data = {plays: plays||{}, fb: fb||{}, dz: dz||{}};
+    const keys = Object.keys(w3Data.plays).filter(k => !/^test/.test(k)).sort((a,b)=>(a.replace(/^\d{5}-/,"")<b.replace(/^\d{5}-/,"")?1:-1));
+    const sel = $("w3sess"); sel.innerHTML = "";
+    keys.forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = w3Label(k); sel.appendChild(o); });
+    $("w3msg").textContent = "已載入 " + new Date().toLocaleTimeString("zh-TW");
+    renderW3();
+  } catch (e) { $("w3msg").textContent = "載入失敗：" + (e && e.message || e); }
+  w3Loading = false;
+}
+function renderW3() {
+  if (!w3Data) return;
+  const sess = $("w3sess").value;
+  const byEnv = {}; const ensure = e => byEnv[e] || (byEnv[e] = {g:0,w:0,h:0,f:0,d:0});
+  const rooms = new Set();
+  w3Flat(w3Data.plays[sess]).forEach(([env, games]) => {
+    if (!w3IsReal(env)) return;
+    w3Flat(games).forEach(([, g]) => { if (!g) return; const r = ensure(env); r.g++; if (g.won) r.w++; if (g.wasHost) r.h++; if (g.room) rooms.add(g.room); });
+  });
+  // 回饋沒有場次欄位，用「房間代號出現在本場次的遊戲裡」對上
+  let fbN = 0;
+  Object.values(w3Data.fb).forEach(f => { if (f && rooms.has(f.room) && w3IsReal(f.env)) { ensure(f.env).f++; fbN++; } });
+  const cards = [];
+  Object.entries(w3Data.dz).forEach(([env, items]) => w3Flat(items).forEach(([, c]) => {
+    if (c && c.sess === sess && w3IsReal(env)) { ensure(env).d++; cards.push([env, c]); }
+  }));
+  const envs = Object.keys(byEnv).sort((a,b)=>a-b);
+  $("w3Games").textContent = envs.reduce((n,e)=>n+byEnv[e].g,0);
+  $("w3Players").textContent = envs.length; $("w3Fb").textContent = fbN; $("w3Dz").textContent = cards.length;
+  const tb = $("w3rows"); tb.innerHTML = "";
+  envs.forEach(e => { const r = byEnv[e], ok = r.f>=3 && r.d>=1, tr = document.createElement("tr");
+    ["#"+e, r.g, r.w, r.h, r.f, r.d].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
+    const td = document.createElement("td"); td.className = ok?"w3ok":"w3no"; td.textContent = ok?"到位":"還差"; tr.appendChild(td); tb.appendChild(tr); });
+  if (!envs.length) tb.innerHTML = '<tr><td colspan="7" style="color:var(--ink-soft)">這個場次沒有真實學生的紀錄</td></tr>';
+  const cb = $("w3cards"); cb.innerHTML = "";
+  cards.sort((a,b)=>a[0]-b[0]).forEach(([e,c]) => { const tr = document.createElement("tr");
+    ["#"+e, c.name||"", (c.kind||"")+(c.dim?"・"+c.dim:""), c.rule||"", c.why||""].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); }); cb.appendChild(tr); });
+  if (!cards.length) cb.innerHTML = '<tr><td colspan="5" style="color:var(--ink-soft)">這個場次還沒有學生設計的卡</td></tr>';
+}
+$("w3sess").onchange = renderW3;
+$("w3reload").onclick = () => { w3Data = null; loadW3(); };
 
 // ============================================================
 // 第2週：文化怎麼放進遊戲裡

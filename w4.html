@@ -141,6 +141,11 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 .bd{display:inline-flex;flex-direction:column;background:var(--panel2);border-radius:10px;padding:7px 11px;font-size:13px;font-weight:700;color:var(--ink-soft)}
 .bd.on{background:var(--amber-soft);color:var(--amber)}
 .bdd{font-size:11.5px;font-weight:500;margin-top:2px}
+.fbrow{margin:6px 0 2px;padding:8px 11px;border-radius:9px;background:var(--panel2);font-size:13px;color:var(--ink-soft);line-height:1.6}
+.fbrow b{display:block;font-size:12.5px;margin-bottom:2px}
+.fbrow.ok{background:var(--green-soft);color:var(--ink)} .fbrow.ok b{color:var(--green)}
+.fbrow.more{background:var(--amber-soft);color:var(--ink)} .fbrow.more b{color:var(--amber)}
+.fbrow ul{margin:4px 0 0;padding-left:18px}
 </style>
 </head>
 <body>
@@ -708,7 +713,8 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 
   <div class="box tight">
-    <b style="font-size:14px">我交過的</b>
+    <b style="font-size:14px">我交過的，和每一次的回饋</b>
+    <p style="margin:4px 0 0;font-size:12.5px;color:var(--ink-soft)">每次提交後，當天晚上會看過你交的指令，隔天在這裡給你一則回饋和最多兩個下一步。可以照著改，隔天再交一次。</p>
     <div id="subHist" style="font-size:13px;color:var(--ink-soft);margin-top:6px">還沒有提交紀錄</div>
   </div>
 </section>
@@ -767,7 +773,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
   </div>
 </section>
 
-<footer id="w4-updstamp">最後更新：2026-10-20 22:58</footer>
+<footer id="w4-updstamp">最後更新：2026-10-20 23:05</footer>
 </div>
 
 <script>
@@ -990,10 +996,12 @@ window.W47Skills = (function(){
   function fmtDay(k){ return k.slice(4,6)+'/'+k.slice(6,8); }
   var LINKS = [['dr','Deep Research'],['canvas','Canvas'],['aistudio','AI Studio'],['nblm','NotebookLM']];
 
+  function fbRef(e){ return db.ref('whgm/analysis/w47fb/' + courseOf(e) + '/' + e); }
   function renderHist(e){
     var box=$s('subHist');
     if (e==null){ box.textContent='綁定編號後會顯示你交過的紀錄'; return; }
-    ref(e).once('value').then(function(s){
+    Promise.all([ref(e).once('value'), fbRef(e).once('value')]).then(function(r2){
+      var s=r2[0], fbAll=r2[1].val()||{};
       var val=s.val()||{}, keys=Object.keys(val).sort().reverse();
       if(!keys.length){ box.textContent='還沒有提交紀錄'; return; }
       box.innerHTML='';
@@ -1010,6 +1018,17 @@ window.W47Skills = (function(){
           if(u){ t.href=u; t.target='_blank'; t.rel='noopener'; t.style.color='var(--accent)'; }
           row.appendChild(t);
         });
+        var fb=fbAll[k], fbd=document.createElement('div');
+        fbd.className='fbrow'+(fb?(fb.ok?' ok':' more'):'');
+        if (fb){
+          var h=document.createElement('b'); h.textContent=fb.ok?'✅ 這次的進度到位':'🔧 再補一點'; fbd.appendChild(h);
+          var tx=document.createElement('div'); tx.textContent=fb.fb||''; fbd.appendChild(tx);
+          if (fb.next && fb.next.length){ var ul=document.createElement('ul');
+            fb.next.forEach(function(n){ var li=document.createElement('li'); li.textContent=n; ul.appendChild(li); }); fbd.appendChild(ul); }
+        } else {
+          fbd.textContent='回饋審核中：每晚 23:45 後更新，隔天上來就看得到。';
+        }
+        row.appendChild(fbd);
         box.appendChild(row);
       });
       try{ window.W47Skills.render($s('skillBox'), window.W47Skills.compute(val, '20261028')); }catch(err){ console.warn('[w47 skills]', err); }

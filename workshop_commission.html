@@ -148,7 +148,7 @@ function refreshLive(partial){
 function resetLive(){LIVE={items:[],ledger:[],week:'',ready:false,loading:false,err:''};dbInit=null;FILES={}}
 function onEnv(){
   say('');resetLive();render();
-  if(mode()==='live'){refreshLive(false);if(!timer)timer=setInterval(function(){if(!document.hidden)refreshLive(true)},20000)}
+  if(mode()==='live'){refreshLive(false);if(!timer){var _last=0;timer=setInterval(function(){if(document.hidden)return;var busy=LIVE.items.some(function(x){return !C.isFinal(x.status)});var gap=busy?60000:300000;if(Date.now()-_last<gap)return;_last=Date.now();refreshLive(true)},20000)}}
   else if(timer){clearInterval(timer);timer=null}}
 
 /* ── 事件 ── */

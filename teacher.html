@@ -151,6 +151,13 @@
     <button class="u u5" data-t="W4"><b>第4–7週 · AI 工具協作</b><span>提交、回饋、指令技能</span></button>
     <button class="u u3" data-t="Tools"><b>研究用途與工具</b><span>persona／ENA／Vertex 用量（研究用）</span></button>
   </div>
+  <div id="onlineStrip" style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:10px 0 14px;font-size:13.5px" role="status" aria-live="polite">
+    <b style="font-size:15px">🟢 目前上線</b>
+    <span>文化遊戲松 <b id="olN47602" style="font-size:20px">–</b> 位</span>
+    <span>遊戲設計學 <b id="olN46582" style="font-size:20px">–</b> 位</span>
+    <span style="color:var(--ink-soft);font-size:12px" id="olMeta">等待資料…</span>
+    <span id="olList" style="color:var(--ink-soft);font-size:12px;flex-basis:100%"></span>
+  </div>
 
   <div id="tabW1">
   <div class="stats">
@@ -1358,5 +1365,29 @@ db.ref(`${NS}/rounds`).on("value", snap => {
 });
 </script>
 <script src="js/w47_skills.js?v=202610202325"></script>
+<script>
+/* 目前上線（2026-10-21 楊老師要求）：讀 whgm/analysis/online/<課程>/<編號>，只算 4 分鐘內有心跳的人。
+   學生端心跳在 js/online_badge.js（各單元頁載入後才會開始寫入）；老師與測試編號不寫入。 */
+(function(){
+  var FRESH = 4*60000;
+  window.renderOnline = function(data){
+    var now = Date.now(), out = {}, ids = {};
+    ['47602','46582'].forEach(function(c){
+      var d = (data && data[c]) || {}, ks = Object.keys(d).filter(function(k){ var t = d[k] && d[k].t; return t && now - t < FRESH; });
+      out[c] = ks.length; ids[c] = ks.map(Number).sort(function(a,b){return a-b});
+      var el = document.getElementById('olN'+c); if (el) el.textContent = ks.length;
+    });
+    var m = document.getElementById('olMeta'); if (m) m.textContent = '更新於 ' + new Date().toLocaleTimeString('zh-TW',{hour12:false}) + '（4 分鐘內有訊號才算）';
+    var l = document.getElementById('olList');
+    if (l) l.textContent = (ids['47602'].length ? '文化遊戲松編號：' + ids['47602'].join('、') : '') + (ids['46582'].length ? (ids['47602'].length ? '　｜　' : '') + '遊戲設計學編號：' + ids['46582'].join('、') : '');
+    return out;
+  };
+  try {
+    db.ref(NS + '/analysis/online').on('value', function(s){ window.__olLast = s.val() || {}; window.renderOnline(window.__olLast); },
+      function(){ var m = document.getElementById('olMeta'); if (m) m.textContent = '讀不到上線資料'; });
+    setInterval(function(){ if (window.__olLast) window.renderOnline(window.__olLast); }, 30000);
+  } catch (e) { var m = document.getElementById('olMeta'); if (m) m.textContent = '讀不到上線資料'; }
+})();
+</script>
 </body>
 </html>

@@ -55,7 +55,7 @@
   .w3tbl th{font-size:12px;color:var(--ink-soft);position:sticky;top:0;background:var(--panel)}
   .w3scroll{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
   .w3ok{color:var(--ok);font-weight:800}.w3no{color:var(--warn);font-weight:800}
-  .w47grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin:12px 0}
+  .w47grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin:12px 0;align-items:start}
   .w47box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
   .w47box h3{font-size:13.5px;margin:0 0 8px}
   .w47bar{display:grid;grid-template-columns:96px 1fr 44px;gap:8px;align-items:center;font-size:12.5px;margin:5px 0}
@@ -65,6 +65,26 @@
   .w47lg span{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin:0 3px 0 8px}
   .w47care b{display:block;font-size:12.5px;margin:8px 0 2px}
   .w47care .ids{font-size:12.5px;color:var(--ink-soft);line-height:1.7;word-break:break-all}
+  /* 全班編號一覽：填色＝提交狀態、綠框＝目前上線、琥珀底線＝需要關心（符號與提示文字也標出，不只靠顏色） */
+  .mx{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:5px}
+  .mx button{position:relative;min-height:38px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink-soft);font:700 12px/1 inherit;cursor:pointer;padding:0}
+  .mx button.t{background:var(--accent);border-color:var(--accent);color:#fff}
+  .mx button.e{background:color-mix(in srgb,var(--accent) 26%,var(--panel));border-color:color-mix(in srgb,var(--accent) 50%,var(--line));color:var(--ink)}
+  .mx button.care{box-shadow:inset 0 -4px 0 #e0a21b}
+  .mx button.on{outline:3px solid var(--ok);outline-offset:1px}
+  .mx button.on::after{content:"●";position:absolute;top:1px;right:3px;font-size:8px;color:var(--ok)}
+  .mx button.t.on::after{color:#fff}
+  .mx button:focus-visible{outline:3px solid #2f6690;outline-offset:2px}
+  .mxlg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink-soft);margin-top:10px;align-items:center}
+  .mxlg i{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line);vertical-align:-3px;margin-right:4px}
+  .mxsum{font-size:13px;margin:0 0 10px;color:var(--ink)}
+  .mxsum b{font-size:17px}
+  .sk5{display:inline-flex;gap:2px;vertical-align:middle}
+  .sk5 i{display:inline-block;width:11px;height:16px;border-radius:3px}
+  .dot{font-size:15px;text-decoration:none}
+  .olrow{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+  .olbar{display:inline-block;width:120px;height:8px;border-radius:5px;background:var(--line);overflow:hidden;vertical-align:middle}
+  .olbar i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
   .w3ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
   .w3ctl select,.w3ctl button{padding:7px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);font-size:13px}
   /* 第2週面板整體改用藍色主色，跟學生端 w2.html 對齊 */
@@ -153,8 +173,9 @@
   </div>
   <div id="onlineStrip" style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:10px 0 14px;font-size:13.5px" role="status" aria-live="polite">
     <b style="font-size:15px">🟢 目前上線</b>
-    <span>文化遊戲松 <b id="olN47602" style="font-size:20px">–</b> 位</span>
-    <span>遊戲設計學 <b id="olN46582" style="font-size:20px">–</b> 位</span>
+    <span>文化遊戲松 <b id="olN47602" style="font-size:20px">–</b> / 52 位 <span class="olbar" title="上線人數占全班"><i id="olB47602"></i></span></span>
+    <span>遊戲設計學 <b id="olN46582" style="font-size:20px">–</b> / 30 位 <span class="olbar" title="上線人數占全班"><i id="olB46582"></i></span></span>
+    <svg id="olSpark" width="160" height="30" viewBox="0 0 160 30" role="img" aria-label="這次開啟後的上線人數走勢" style="vertical-align:middle"></svg>
     <span style="color:var(--ink-soft);font-size:12px" id="olMeta">等待資料…</span>
     <span id="olList" style="color:var(--ink-soft);font-size:12px;flex-basis:100%"></span>
   </div>
@@ -282,6 +303,12 @@
       <div class="stat"><div class="n" id="w47Today">0</div><div class="l">今天提交</div></div>
       <div class="stat"><div class="n" id="w47Nblm">0</div><div class="l">交了 NotebookLM 三段指令</div></div>
       <div class="stat"><div class="n" id="w47Ok">0</div><div class="l">最新回饋到位／已批改</div></div>
+    </div>
+    <div class="w47box" style="margin:12px 0">
+      <h3>全班編號一覽　<span style="font-weight:400;color:var(--ink-soft)">點編號可跳到下方那一列</span></h3>
+      <div class="mxsum" id="mxSum">載入中…</div>
+      <div class="mx" id="w47mx"></div>
+      <div class="mxlg"><span><i style="background:var(--accent);border-color:var(--accent)"></i>今天已提交</span><span><i style="background:color-mix(in srgb,var(--accent) 26%,var(--panel))"></i>曾經提交</span><span><i></i>還沒提交過</span><span><i style="box-shadow:inset 0 -4px 0 #e0a21b"></i>需要關心（回饋是「再補一點」或 3 天沒新提交）</span><span><i style="outline:3px solid var(--ok);outline-offset:1px"></i>目前上線</span></div>
     </div>
     <div class="w47grid">
       <div class="w47box"><h3>各工具交了連結的比例</h3><div id="w47tools"></div></div>
@@ -799,6 +826,24 @@ try {
 // ============================================================
 // 第4–7週：學生每天一次的指令連結提交（whgm/analysis/w47sub/{課}/{編號}/{日期}，一次性讀取）
 // ============================================================
+const W47COL = ["var(--line)", "#e6c56a", "#7fb08f", "#2f6b55"];
+// 全班編號一覽：每次載入提交資料與每次上線資料更新時重畫（上線資料來自「目前上線」那一列的 window.__olLast）
+window.drawMx = function () {
+  const S = window.__w47mx, box = $("w47mx"); if (!S || !box) return;
+  const on = new Set(), od = (window.__olLast || {})[S.c] || {}, now = Date.now();
+  Object.keys(od).forEach(k => { const t = od[k] && od[k].t; if (t && now - t < 240000) on.add(String(k)); });
+  box.innerHTML = ""; let nt = 0, ne = 0, nn = 0, nc = 0;
+  S.ids.forEach(e => {
+    const st = S.today.has(e) ? "t" : S.ever.has(e) ? "e" : "n", care = S.care.has(e), onl = on.has(e);
+    if (st === "t") nt++; else if (st === "e") ne++; else nn++; if (care) nc++;
+    const b = document.createElement("button"); b.type = "button"; b.className = st + (care ? " care" : "") + (onl ? " on" : ""); b.textContent = e;
+    const txt = "#" + e + "｜" + (st === "t" ? "今天已提交" : st === "e" ? "曾經提交" : "還沒提交過") + (care ? "｜需要關心" : "") + (onl ? "｜目前上線" : "");
+    b.title = txt; b.setAttribute("aria-label", txt);
+    b.onclick = () => { const r = document.getElementById("w47row-" + e); if (r) { r.scrollIntoView({ block: "center" }); r.style.outline = "2px solid var(--accent)"; setTimeout(() => { r.style.outline = ""; }, 1600); } };
+    box.appendChild(b);
+  });
+  const s = $("mxSum"); if (s) s.innerHTML = "全班 <b>" + S.ids.length + "</b> 人｜今天已提交 <b>" + nt + "</b>｜曾經提交 <b>" + ne + "</b>｜還沒提交 <b>" + nn + "</b>｜目前上線 <b>" + on.size + "</b>｜需要關心 <b>" + nc + "</b>";
+};
 function loadW47() {
   const c = $("w47c").value; $("w47msg").textContent = "載入中…";
   const pad = x => (x < 10 ? "0" : "") + x, d0 = new Date(), today = d0.getFullYear() + pad(d0.getMonth() + 1) + pad(d0.getDate());
@@ -816,6 +861,7 @@ function loadW47() {
     const toolCnt = { dr: 0, canvas: 0, aistudio: 0, nblm: 0 }, skillDist = {};
     (SK ? SK.SK : []).forEach(x => skillDist[x.k] = [0, 0, 0, 0]);
     const care = { never: [], more: [], idle: [] }, nexts = [];
+    const mxS = { c, ids: [], today: new Set(), ever: new Set(), care: new Set() };
     const tb = $("w47rows"); tb.innerHTML = "";
     envs.forEach(e => {
       const recs = flatV(all[e]), days = Object.keys(recs).sort(), lastKey = days[days.length - 1] || "", last = recs[lastKey] || {};
@@ -829,14 +875,18 @@ function loadW47() {
       if (lastKey && dayN(today) - dayN(lastKey) >= 3) care.idle.push(e);
       const res = SK ? SK.compute(recs, "20261028") : { lv: {} };
       Object.keys(skillDist).forEach(k => skillDist[k][res.lv[k] || 0]++);
-      const tr = document.createElement("tr");
+      mxS.ever.add(String(e)); if (lastKey === today) mxS.today.add(String(e));
+      if ((fbLast && !fbLast.ok) || (lastKey && dayN(today) - dayN(lastKey) >= 3)) mxS.care.add(String(e));
+      const tr = document.createElement("tr"); tr.id = "w47row-" + e;
       const cell = (v, node) => { const td = document.createElement("td"); if (node) td.appendChild(v); else td.textContent = v; tr.appendChild(td); };
       cell("#" + e); cell(days.length);
       cell(lastKey ? lastKey.slice(4, 6) + "/" + lastKey.slice(6) + (last.kind === "final" ? " 成品" : " 進度") : "");
+      const TN = { dr: "Deep Research", canvas: "Canvas", aistudio: "AI Studio", nblm: "NotebookLM" };
       ["dr", "canvas", "aistudio", "nblm"].forEach(k => {
-        if (links[k]) { const a = document.createElement("a"); a.href = links[k]; a.target = "_blank"; a.rel = "noopener"; a.textContent = "開"; cell(a, true); } else cell("—");
+        if (links[k]) { const a = document.createElement("a"); a.href = links[k]; a.target = "_blank"; a.rel = "noopener"; a.className = "dot"; a.textContent = "●"; a.style.color = "var(--accent)"; a.title = "開啟 " + TN[k] + " 連結"; a.setAttribute("aria-label", "開啟 " + TN[k] + " 連結"); cell(a, true); }
+        else { const s = document.createElement("span"); s.className = "dot"; s.textContent = "○"; s.style.color = "var(--ink-soft)"; s.title = TN[k] + "：還沒交"; s.setAttribute("aria-label", TN[k] + "：還沒交"); cell(s, true); }
       });
-      cell(Object.keys(skillDist).map(k => res.lv[k] || 0).join(" "));
+      { const g = document.createElement("span"); g.className = "sk5"; (SK ? SK.SK : []).forEach(x => { const lv = res.lv[x.k] || 0, i = document.createElement("i"); i.style.background = W47COL[lv]; i.title = x.name + "：" + (lv ? "Lv" + lv : "未開始"); g.appendChild(i); }); cell(g, true); }
       if (fbLast) { const dv = document.createElement("div"); dv.style.maxWidth = "260px"; dv.style.fontSize = "12px"; dv.textContent = (fbLast.ok ? "✅ 到位：" : "🔧 再補：") + (fbLast.fb || ""); cell(dv, true); }
       else cell(lastKey ? "審核中" : "—");
       const det = document.createElement("details"), sm = document.createElement("summary");
@@ -847,6 +897,10 @@ function loadW47() {
       cell(det, true); tb.appendChild(tr);
     });
     roster.forEach(e => { if (!all[e]) care.never.push(e); });
+    { const RANGE = { "47602": [1, 52], "46582": [101, 130], "47618": [201, 238], "test": [55, 60] }[c] || [1, 52];
+      for (let i = RANGE[0]; i <= RANGE[1]; i++) mxS.ids.push(String(i));
+      envs.forEach(e => { if (mxS.ids.indexOf(String(e)) < 0) mxS.ids.push(String(e)); });
+      window.__w47mx = mxS; window.drawMx(); }
     if (!envs.length) tb.innerHTML = '<tr><td colspan="10" style="color:var(--ink-soft)">還沒有人提交（提交區 10-20 晚上才上線）</td></tr>';
     const n = envs.length;
     $("w47Sub").textContent = n + " / " + (roster.size || "—");
@@ -858,7 +912,7 @@ function loadW47() {
       const l = document.createElement("span"); l.textContent = names[k]; const t = document.createElement("div"); t.className = "tr"; const f = document.createElement("i"); f.style.width = pct + "%"; f.style.background = "var(--accent)"; t.appendChild(f);
       const v = document.createElement("span"); v.textContent = toolCnt[k] + " 人"; row.append(l, t, v); $("w47tools").appendChild(row); });
     // 技能分布（堆疊）
-    const COL = ["var(--line)", "#e6c56a", "#7fb08f", "#2f6b55"];
+    const COL = W47COL;
     $("w47skills").innerHTML = "";
     (SK ? SK.SK : []).forEach(x => { const d = skillDist[x.k], row = document.createElement("div"); row.className = "w47bar";
       const l = document.createElement("span"); l.textContent = x.name; const t = document.createElement("div"); t.className = "tr";
@@ -869,8 +923,11 @@ function loadW47() {
     // 需要關心
     const careBox = $("w47care"); careBox.className = "w47care"; careBox.innerHTML = "";
     [["第 3 週有玩、還沒提交過", care.never], ["最新回饋是「再補一點」", care.more], ["3 天以上沒有新的提交", care.idle]].forEach(([t, ids]) => {
-      const b = document.createElement("b"); b.textContent = t + "（" + ids.length + "）"; const d = document.createElement("div"); d.className = "ids";
-      d.textContent = ids.length ? ids.sort((a, b) => a - b).map(x => "#" + x).join("、") : "無"; careBox.append(b, d); });
+      const b = document.createElement("b"); b.textContent = t + "（" + ids.length + "）"; careBox.append(b);
+      if (!ids.length) { const d = document.createElement("div"); d.className = "ids"; d.textContent = "無"; careBox.append(d); return; }
+      const det = document.createElement("details"), sm = document.createElement("summary"), d = document.createElement("div");
+      sm.textContent = "看編號（全班一覽圖上有標示）"; sm.style.cssText = "cursor:pointer;font-size:12px;color:var(--ink-soft)"; d.className = "ids";
+      d.textContent = ids.sort((a, b) => a - b).map(x => "#" + x).join("、"); det.append(sm, d); careBox.append(det); });
     // 最近的回饋建議
     const nb = $("w47next"); nb.innerHTML = "";
     nexts.sort((a, b) => a[0] < b[0] ? 1 : -1).slice(0, 12).forEach(([d, e, t]) => { const div = document.createElement("div"); div.style.cssText = "font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--line)"; div.textContent = "#" + e + "｜" + t; nb.appendChild(div); });
@@ -1378,7 +1435,18 @@ db.ref(`${NS}/rounds`).on("value", snap => {
       out[c] = ks.length; ids[c] = ks.map(Number).sort(function(a,b){return a-b});
       var el = document.getElementById('olN'+c); if (el) el.textContent = ks.length;
     });
-    var m = document.getElementById('olMeta'); if (m) m.textContent = '更新於 ' + new Date().toLocaleTimeString('zh-TW',{hour12:false}) + '（4 分鐘內有訊號才算）';
+    var SZ = {'47602':52,'46582':30};
+    ['47602','46582'].forEach(function(c){ var b = document.getElementById('olB'+c); if (b) b.style.width = Math.min(100, Math.round(out[c] / SZ[c] * 100)) + '%'; });
+    var H = window.__olHist = window.__olHist || []; H.push([now, out['47602'], out['46582']]); if (H.length > 90) H.shift();
+    var sp = document.getElementById('olSpark');
+    if (sp && H.length > 1) {
+      var mx = Math.max(5, Math.max.apply(null, H.map(function(r){ return Math.max(r[1], r[2]); })));
+      var pts = function(i){ return H.map(function(r, k){ return (k / (H.length - 1) * 150 + 5).toFixed(1) + ',' + (26 - r[i] / mx * 22).toFixed(1); }).join(' '); };
+      sp.innerHTML = '<polyline fill="none" stroke="#2f6b55" stroke-width="2" points="' + pts(1) + '"/><polyline fill="none" stroke="#2f6690" stroke-width="1.5" stroke-dasharray="3 2" points="' + pts(2) + '"/>';
+      sp.setAttribute('aria-label', '這次開啟後的上線人數走勢，文化遊戲松最高 ' + Math.max.apply(null, H.map(function(r){ return r[1]; })) + ' 位');
+    }
+    if (window.drawMx) window.drawMx();
+    var m = document.getElementById('olMeta'); if (m) m.textContent = '更新於 ' + new Date().toLocaleTimeString('zh-TW',{hour12:false}) + '（4 分鐘內有訊號才算；實線＝文化遊戲松、虛線＝遊戲設計學）';
     var l = document.getElementById('olList');
     if (l) l.textContent = (ids['47602'].length ? '文化遊戲松編號：' + ids['47602'].join('、') : '') + (ids['46582'].length ? (ids['47602'].length ? '　｜　' : '') + '遊戲設計學編號：' + ids['46582'].join('、') : '');
     return out;

@@ -33,6 +33,7 @@ a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:4
 
 <div class="card" id="form"><h2>委託卡</h2>
 <label for="img">① 原圖 <small>（放一張你要修的圖，jpg 或 png 都可以；送出前會自動縮小）</small></label><input id="img" type="file" accept="image/*" style="min-height:44px">
+<p><small>請用你自己做的圖或沒有版權問題的圖，不要放有人臉、證件或個人資料的照片——其他同學技術上看得到上傳的內容。</small></p>
 <label for="where">② 要改哪裡 <small>（只寫那一小塊，用英文短詞，例：calligraphy brush、hammer、red hat）</small></label><input id="where" type="text" placeholder="hammer">
 <label for="what">③ 改成什麼 <small>（連風格一起寫，例：a golden hammer, cartoon sticker style, thick outline）</small></label><textarea id="what" rows="2" placeholder="a golden hammer, cartoon sticker style, thick outline"></textarea>
 <label for="ref">④ 參考圖連結 <small>（選填：你想要的樣子，貼雲端連結，記得開「知道連結的人可檢視」）</small></label><input id="ref" type="text" placeholder="https://">
@@ -43,7 +44,7 @@ a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:4
 <p><small>這一區只在網址加 ?sim=1 時出現。把委託匯出給夜間程式，再把它的結果匯入。</small></p>
 <button class="alt" id="exp">匯出委託檔</button> <button class="alt" id="fakeMask">假裝預覽好了</button> <button class="alt" id="fakeDone">假裝完成</button> <button class="alt" id="reset">清空</button></div>
 </main>
-<script src="js/workshop/commission_core.js?v=202610212"></script>
+<script src="js/workshop/commission_core.js?v=202610213"></script>
 <script>
 (function(){
 /* 三種模式：
@@ -120,7 +121,7 @@ function loadScript(src,cb){var s=document.createElement('script');s.src=src;s.o
 function ensureFirebase(cb){
   if(fbState==='ready'){cb(true);return}
   if(fbState==='loading')return;fbState='loading';
-  var go=function(){loadScript(CDN+'firebase-app-compat.js',function(a){if(!a)return fail();loadScript(CDN+'firebase-database-compat.js',function(b){if(!b)return fail();loadScript('js/workshop/commission_core.js?v=202610212b',function(c){
+  var go=function(){loadScript(CDN+'firebase-app-compat.js',function(a){if(!a)return fail();loadScript(CDN+'firebase-database-compat.js',function(b){if(!b)return fail();loadScript('js/workshop/commission_core.js?v=202610213b',function(c){
     if(!c||!window.COMM_STORE)return fail();C=window.COMM_CORE;fbState='ready';cb(true)})})})};
   function fail(){fbState='none';LIVE.err='連不上資料庫，請檢查網路後重新整理。';render()}
   go()}

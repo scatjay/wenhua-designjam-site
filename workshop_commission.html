@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>局部修圖委託1021</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,"Noto Sans TC",sans-serif;background:#fff7ec;color:#3b2a1a}
+main{max-width:720px;margin:0 auto;padding:16px}h1{font-size:1.4rem;margin:.2em 0}h2{font-size:1.1rem;margin:0 0 .5em}
+.card{background:#fff;border:2px solid #e0821f;border-radius:14px;padding:14px;margin:12px 0}
+label{display:block;font-weight:700;margin:.6em 0 .2em}small{color:#7a6650}
+input[type=text],input[type=number],textarea{width:100%;min-height:44px;padding:8px;border:2px solid #c9b8a0;border-radius:10px;font:inherit}
+button{min-height:44px;min-width:44px;padding:8px 16px;border:0;border-radius:10px;background:#e0821f;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+button.alt{background:#fff;color:#a85a0a;border:2px solid #e0821f}button:disabled{background:#cdbfae;color:#fff;border-color:#cdbfae;cursor:default}
+.quota{display:inline-block;background:#fde7c8;border-radius:20px;padding:4px 12px;font-weight:700}
+.pair{display:flex;gap:8px}.pair figure{margin:0;flex:1;text-align:center}.pair img{width:100%;border-radius:8px;background:#222}
+.st{display:inline-block;border-radius:6px;padding:2px 8px;font-size:.85rem;background:#eee}.st.ask{background:#ffe08a}.st.ok{background:#bfe8c0}.st.bad{background:#f6b8b8}
+.msg{min-height:1.4em;color:#a8321a;font-weight:700}ol.how li{margin:.3em 0}.sim{border-style:dashed;border-color:#888}
+.closed{border-color:#a8321a;background:#fff0ec}.emu{background:#eef3ff;border:2px dashed #4a6fd0;border-radius:10px;padding:6px 10px;font-size:.9rem}
+.fn{word-break:break-all;font-family:ui-monospace,Consolas,monospace;font-size:.9rem}
+a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:8px 16px;border-radius:10px;background:#e0821f;color:#fff;font-weight:700;text-decoration:none}
+</style></head><body><main>
+<h1>局部修圖委託</h1>
+<p class="emu" id="emu" hidden>測試模式：連到本機的測試資料庫，不是正式資料。</p>
+<p>只想改圖上的一小塊（例如手上拿的東西）？把原圖和想法交給工坊電腦，它會在夜裡幫你畫。<br>每個人每週最多 <b>3 張</b>。</p>
+<div class="card"><h2>怎麼做</h2><ol class="how">
+<li>填好下面的委託卡，送出。</li>
+<li>電腦先畫一張「遮罩預覽」：<b>白色的地方才會被重畫</b>。</li>
+<li>你看過預覽：圈對了就按「圈得對，重畫」；圈到整個人或圈錯地方，就改一下說法再送一次預覽（預覽不算張數）。</li>
+<li>重畫完成後，回到這一頁，在「我的委託」看結果，按「下載結果」存起來。</li></ol></div>
+
+<div class="card closed" id="closed" hidden><b>委託功能還沒開放</b><p>等老師通知開放後，這裡就能送委託。想先看流程，可以先看上面的「怎麼做」。</p></div>
+
+<div class="card"><label for="env">你的信封編號</label><input id="env" type="number" min="0" max="999" inputmode="numeric" placeholder="例：12">
+<p>本週還剩 <span class="quota" id="left">3</span> 張</p></div>
+
+<div class="card" id="form"><h2>委託卡</h2>
+<label for="img">① 原圖 <small>（放一張你要修的圖，jpg 或 png 都可以；送出前會自動縮小）</small></label><input id="img" type="file" accept="image/*" style="min-height:44px">
+<label for="where">② 要改哪裡 <small>（只寫那一小塊，用英文短詞，例：calligraphy brush、hammer、red hat）</small></label><input id="where" type="text" placeholder="hammer">
+<label for="what">③ 改成什麼 <small>（連風格一起寫，例：a golden hammer, cartoon sticker style, thick outline）</small></label><textarea id="what" rows="2" placeholder="a golden hammer, cartoon sticker style, thick outline"></textarea>
+<label for="ref">④ 參考圖連結 <small>（選填：你想要的樣子，貼雲端連結，記得開「知道連結的人可檢視」）</small></label><input id="ref" type="text" placeholder="https://">
+<p class="msg" id="msg" role="status"></p><button id="send">送出，先看遮罩預覽</button></div>
+
+<h2>我的委託</h2><div id="list"></div>
+<div class="card sim" id="sim" hidden><h2>模擬器（測試用，不連正式資料）</h2>
+<p><small>這一區只在網址加 ?sim=1 時出現。把委託匯出給夜間程式，再把它的結果匯入。</small></p>
+<button class="alt" id="exp">匯出委託檔</button> <button class="alt" id="fakeMask">假裝預覽好了</button> <button class="alt" id="fakeDone">假裝完成</button> <button class="alt" id="reset">清空</button></div>
+</main>
+<script src="js/workshop/commission_core.js?v=202610212"></script>
+<script>
+(function(){
+/* 三種模式：
+   sim    ?sim=1：離線示範，委託存在這台裝置（localStorage），可匯出給夜間程式
+   live   ?emu=1 且編號 55-60：連本機模擬器（測試用）；沒有 ?emu=1：所有合規編號連正式庫（55-60 走 test 課程）；?emu=1 但不是 55-60：關閉（模擬器模式絕不碰正式庫）
+   closed 其他：顯示「還沒開放」，表單停用，不載入 Firebase、不連任何外部網站 */
+var LIVE_ENABLED=true;             /* 正式庫旗標（2026-10-21 楊老師指示接上）。關掉＝回到「還沒開放」。規則現況與限制見 COMMISSION_QUEUE 第 3、6、9 節 */
+var CDN='https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/';
+var DBURL='https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app';
+var qs=location.search, SIM=/[?&]sim=1(&|$)/.test(qs), EMU=/[?&]emu=1(&|$)/.test(qs);
+var C=window.COMM_CORE, KEY='wk_commissions_v1', FILES={}, Q=[], LIVE={items:[],ledger:[],week:'',ready:false,loading:false,err:''}, fbState='none', timer=null;
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function envNum(){var v=$('env').value;if(v==='')return null;var n=parseInt(v,10);return isNaN(n)?null:n}
+function envStr(){var n=envNum();return n===null?null:String(n)}
+function mode(){
+  if(SIM)return'sim';var n=envNum();if(n===null)return'closed';
+  if(EMU)return(n>=55&&n<=60)?'live':'closed';
+  if(LIVE_ENABLED&&C.envOk(C.courseOf(n,qs),String(n)))return'live';
+  return'closed'}
+function say(t){$('msg').textContent=t||''}
+
+/* ── 離線示範（sim） ── */
+function load(){try{Q=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){Q=[]}Q.forEach(function(x){if(x.where&&!x.target){x.target=x.where;x.prompt=x.what}})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(Q))}catch(e){say('瀏覽器存不下了，請先清掉一些舊委託。')}}
+function simMine(){var e=envStr();return Q.filter(function(x){return x.code===e})}
+function thumb(file,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.7),file.name)};im.src=r.result};r.readAsDataURL(file)}
+
+/* ── 目前模式下「我的委託」與剩餘張數 ── */
+function myItems(m){return m==='sim'?simMine():m==='live'?LIVE.items:[]}
+function usedNow(m){
+  if(m==='sim'){var wk=C.weekKey(Date.now());return simMine().filter(function(x){return x.week===wk&&x.status!=='cancelled'}).length}
+  if(m==='live')return C.quotaUsed(LIVE.ledger,LIVE.items,C.weekKey(Date.now()));
+  return 0}
+
+function render(){
+  var m=mode(), used=usedNow(m), left=Math.max(0,C.LIM-used);
+  $('closed').hidden=m!=='closed'||SIM; $('emu').hidden=!(m==='live'&&EMU);
+  $('left').textContent=m==='closed'?C.LIM:left;
+  $('send').disabled=m==='closed'||left<=0||(m==='live'&&!LIVE.ready);
+  ['img','where','what','ref'].forEach(function(i){$(i).disabled=m==='closed'});
+  var L=$('list');L.innerHTML='';
+  if(m==='closed'){L.innerHTML='<p><small>'+(envNum()===null?'輸入信封編號後，這裡會列出你的委託。':'委託功能還沒開放。')+'</small></p>';return}
+  if(m==='live'&&!LIVE.ready){L.innerHTML='<p><small>'+(LIVE.err?esc(LIVE.err):'讀取你的委託中…')+'</small></p>';return}
+  var mine=myItems(m);if(!mine.length){L.innerHTML='<p><small>你還沒有送過委託。</small></p>';return}
+  mine.slice().reverse().forEach(function(x){
+    var d=document.createElement('div');d.className='card';var n=C.statusText(x);
+    var h='<p><b>'+esc(x.target)+'</b> → '+esc(x.prompt)+'<br><span class="st '+n[1]+'">'+esc(n[0])+'</span></p>';
+    if(x.thumb)h+='<div class="pair"><figure><img alt="原圖" src="'+x.thumb+'"><figcaption>原圖</figcaption></figure>'+(x.maskThumb?'<figure><img alt="遮罩預覽" src="'+x.maskThumb+'"><figcaption>遮罩（白色會被重畫）</figcaption></figure>':'')+(x.resultThumb?'<figure><img alt="結果" src="'+x.resultThumb+'"><figcaption>結果</figcaption></figure>':'')+'</div>';
+    if(m==='live'){
+      var mt=fileOf(x,'maskThumb'), rt=fileOf(x,'resultThumb');
+      if(mt||rt)h+='<div class="pair">'+(mt?'<figure><img alt="遮罩預覽" src="'+mt+'"><figcaption>遮罩預覽（紅色的地方會被重畫）</figcaption></figure>':'')+(rt?'<figure><img alt="結果" src="'+rt+'"><figcaption>結果</figcaption></figure>':'')+'</div>';
+      else if(needs(x).length)h+='<p><small>圖片載入中…</small></p>';
+      if(rt)h+='<p><a class="btn" href="'+rt+'" download="result-'+esc(x.id)+'.jpg">下載結果</a><br><small>這是適合貼進作業的縮小版（最長邊 768 像素）。</small></p>'}
+    var i=esc(x.id), s=esc(x.sess||'');
+    if(x.status==='mask_ready'){h+='<p><button data-a="ok" data-i="'+i+'" data-s="'+s+'">圈得對，重畫</button> <button class="alt" data-a="redo" data-i="'+i+'" data-s="'+s+'">圈不對，改說法</button></p><div id="redo-'+i+'" hidden><label for="rw-'+i+'">換一個說法（英文短詞）</label><input type="text" id="rw-'+i+'"><p><button data-a="redo2" data-i="'+i+'" data-s="'+s+'">再畫一次預覽</button></p></div>'}
+    if(!C.isFinal(x.status)&&x.status!=='approved')h+='<p><button class="alt" data-a="cancel" data-i="'+i+'" data-s="'+s+'">取消這張</button></p>';
+    if(m==='sim'&&x.status==='done'&&x.resultUrl)h+='<p><a href="'+esc(x.resultUrl)+'" download><button>下載結果</button></a></p>';
+    d.innerHTML=h;L.appendChild(d)})}
+
+/* ── 圖片：只在需要顯示時才讀「自己那一層」的單一欄位，讀過就記著（key 帶時間戳，重出遮罩會換新） ── */
+function needs(x){var o=[];
+  if((x.status==='mask_ready'||x.status==='approved'||x.status==='done')&&x.maskedAt)o.push(['maskThumb',x.maskedAt]);
+  if(x.status==='done'&&x.result)o.push(['resultThumb',x.done||'1']);
+  return o}
+function fkey(x,f){return x.sess+'/'+x.id+'/'+f[0]+'/'+f[1]}
+function fileOf(x,field){var l=needs(x);for(var i=0;i<l.length;i++)if(l[i][0]===field){var v=FILES[fkey(x,l[i])];return typeof v==='string'?v:null}return null}
+function loadImages(){
+  LIVE.items.forEach(function(x){needs(x).forEach(function(f){var k=fkey(x,f);if(FILES[k]!==undefined)return;FILES[k]=0;
+    COMM_STORE.loadFile(x.sess,x.id,f[0]).then(function(v){FILES[k]=v||null;render()}).catch(function(){delete FILES[k]})})})}
+
+/* ── Firebase（只有 live 模式才載入） ── */
+function loadScript(src,cb){var s=document.createElement('script');s.src=src;s.onload=function(){cb(true)};s.onerror=function(){cb(false)};document.head.appendChild(s)}
+function ensureFirebase(cb){
+  if(fbState==='ready'){cb(true);return}
+  if(fbState==='loading')return;fbState='loading';
+  var go=function(){loadScript(CDN+'firebase-app-compat.js',function(a){if(!a)return fail();loadScript(CDN+'firebase-database-compat.js',function(b){if(!b)return fail();loadScript('js/workshop/commission_core.js?v=202610212b',function(c){
+    if(!c||!window.COMM_STORE)return fail();C=window.COMM_CORE;fbState='ready';cb(true)})})})};
+  function fail(){fbState='none';LIVE.err='連不上資料庫，請檢查網路後重新整理。';render()}
+  go()}
+var dbInit=null;
+function initDb(n){
+  var course=C.courseOf(n,qs);
+  var key=course+'/'+n; if(dbInit===key)return;dbInit=key;
+  if(!firebase.apps.length)firebase.initializeApp({apiKey:'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng',authDomain:'gen-lang-client-0929530380.firebaseapp.com',databaseURL:DBURL,projectId:'gen-lang-client-0929530380'});
+  var db=firebase.database();
+  if(EMU&&n>=55&&n<=60&&!window.__emuSet){db.useEmulator('127.0.0.1',9000);window.__emuSet=true}   /* 與工坊其他頁同規則：只有測試編號才連本機 */
+  COMM_STORE.init(db,course,n)}
+function refreshLive(partial){
+  var n=envNum();if(mode()!=='live'||LIVE.loading)return;
+  ensureFirebase(function(){
+    if(mode()!=='live')return;initDb(n);LIVE.loading=true;
+    var list=null;
+    if(partial&&LIVE.ready){var cur={};cur[C.sessKey(COMM_STORE.course(),Date.now())]=1;LIVE.items.forEach(function(x){if(!C.isFinal(x.status))cur[x.sess]=1});list=Object.keys(cur)}
+    COMM_STORE.loadMine(list).then(function(r){
+      var keep=LIVE.items;
+      if(list){keep=keep.filter(function(x){return list.indexOf(x.sess)<0})}
+      LIVE.items=(list?keep.concat(r.items):r.items).sort(function(a,b){return(a.created||0)-(b.created||0)||(a.id<b.id?-1:1)});
+      LIVE.ledger=r.ledgerIds;LIVE.week=r.week;LIVE.ready=true;LIVE.err='';LIVE.loading=false;render();loadImages()
+    }).catch(function(e){LIVE.loading=false;LIVE.err='讀取失敗：'+(e&&e.message||e);render()})})}
+function resetLive(){LIVE={items:[],ledger:[],week:'',ready:false,loading:false,err:''};dbInit=null;FILES={}}
+function onEnv(){
+  say('');resetLive();render();
+  if(mode()==='live'){refreshLive(false);if(!timer)timer=setInterval(function(){if(!document.hidden)refreshLive(true)},20000)}
+  else if(timer){clearInterval(timer);timer=null}}
+
+/* ── 事件 ── */
+$('env').addEventListener('input',onEnv);
+$('send').onclick=function(){
+  var m=mode(),f=$('img').files[0],w=$('where').value,t=$('what').value,r=$('ref').value;
+  var v=C.validate({image:f?C.safeImageName(f.name):'',target:w,prompt:t,ref:r});if(!v.ok){say(v.msg);return}
+  if(usedNow(m)>=C.LIM){say('本週 3 張已用完。');return}
+  function clearForm(){say('');$('where').value='';$('what').value='';$('ref').value='';$('img').value=''}
+  if(m==='sim'){
+    thumb(f,function(th,name){Q.push({id:'c'+Date.now(),code:envStr(),week:C.weekKey(Date.now()),target:w.trim(),prompt:t.trim(),ref:r.trim(),file:name,thumb:th,status:'pending',created:Date.now()});save();clearForm();render()});return}
+  if(m==='live'){
+    $('send').disabled=true;say('處理圖片中…');
+    COMM_STORE.shrinkImage(f).then(function(d){say('送出中…');return COMM_STORE.send({image:C.safeImageName(f.name),origData:d,target:w,prompt:t,ref:r})})
+      .then(function(){clearForm();say('已送出。夜裡的電腦收件後，狀態會更新。');refreshLive(true)}).catch(function(e){say('送不出去：'+(e&&e.message||e));render()})}};
+$('list').onclick=function(e){
+  var b=e.target.closest('button');if(!b||!b.dataset.a)return;var i=b.dataset.i,s=b.dataset.s,a=b.dataset.a,m=mode();
+  if(a==='redo'){document.getElementById('redo-'+i).hidden=false;return}
+  if(m==='sim'){var x=Q.filter(function(q){return q.id===i})[0];if(!x)return;
+    if(a==='ok')x.status='approved';else if(a==='cancel')x.status='cancelled';
+    else if(a==='redo2'){var v=document.getElementById('rw-'+i).value.trim();if(!v)return;x.target=v;x.status='pending';x.maskThumb=null}
+    save();render();return}
+  if(m==='live'){
+    var p;b.disabled=true;
+    if(a==='ok')p=COMM_STORE.approve(s,i);
+    else if(a==='cancel')p=COMM_STORE.cancel(s,i);
+    else if(a==='redo2')p=COMM_STORE.redo(s,i,document.getElementById('rw-'+i).value);
+    if(p)p.then(function(){say('');refreshLive(true)}).catch(function(err){say('沒成功：'+(err&&err.message||err));render()})}};
+if(SIM){$('sim').hidden=false;
+  $('exp').onclick=function(){var out=Q.map(function(x){return{id:x.id,code:x.code,week:x.week,target:x.target,prompt:x.prompt,ref:x.ref,status:x.status}});var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,1)],{type:'application/json'}));a.download='commissions.json';a.click()};
+  $('fakeMask').onclick=function(){Q.forEach(function(x){if(x.status==='pending'){x.status='mask_ready';x.maskThumb=x.thumb}});save();render()};
+  $('fakeDone').onclick=function(){Q.forEach(function(x){if(x.status==='approved'){x.status='done';x.resultThumb=x.thumb;x.resultUrl=x.thumb}});save();render()};
+  $('reset').onclick=function(){Q=[];save();render()}}
+try{var saved=localStorage.getItem('designjam_env');if(saved!==null&&saved!==''&&!isNaN(Number(saved)))$('env').value=String(Number(saved))}catch(e){}
+load();onEnv();
+})();
+</script></body></html>

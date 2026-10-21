@@ -820,6 +820,7 @@ function loadW47() {
     envs.forEach(e => {
       const recs = flatV(all[e]), days = Object.keys(recs).sort(), lastKey = days[days.length - 1] || "", last = recs[lastKey] || {};
       const links = {}; days.forEach(d => Object.assign(links, (recs[d] || {}).links || {}));
+      if (!links.dr) links.dr = links.dr2 || links.dr3;   // R2／R3 分開對話的也算有交 Deep Research
       Object.keys(toolCnt).forEach(k => { if (links[k]) toolCnt[k]++; });
       if (lastKey === today) nToday++;
       if (days.some(d => ((recs[d] || {}).nblmPrompt || "").length >= 40)) nNblm++;
@@ -1364,7 +1365,7 @@ db.ref(`${NS}/rounds`).on("value", snap => {
   });
 });
 </script>
-<script src="js/w47_skills.js?v=202610202325"></script>
+<script src="js/w47_skills.js?v=202610210958"></script>
 <script>
 /* 目前上線（2026-10-21 楊老師要求）：讀 whgm/analysis/online/<課程>/<編號>，只算 4 分鐘內有心跳的人。
    學生端心跳在 js/online_badge.js（各單元頁載入後才會開始寫入）；老師與測試編號不寫入。 */

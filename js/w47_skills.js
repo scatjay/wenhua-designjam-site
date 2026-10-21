@@ -56,7 +56,7 @@ window.W47Skills = (function(){
     if (i>=2 && keys.length>=2) i=3;
     lv.iter=i;
     // 工具接力（所有提交合起來）
-    var tools={}; recs.forEach(function(r){ Object.keys(r.links||{}).forEach(function(t){ tools[t]=1; }); });
+    var tools={}; recs.forEach(function(r){ Object.keys(r.links||{}).forEach(function(t){ tools[t.replace(/\d+$/,'')]=1; }); });   // dr2／dr3 算同一個工具
     var nt=Object.keys(tools).length;
     lv.relay = nt>=4 ? 3 : nt>=2 ? 2 : nt>=1 ? 1 : 0;
     var got={

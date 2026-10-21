@@ -248,7 +248,7 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
 
   <div class="howtobox">
     <span class="lbl">每一種工具怎麼分享（交件時都要開成「知道連結的人可查看」）</span>
-    <b>Gemini（含 Deep Research、Canvas）</b>：對話右上角「分享」→ 建立公開連結。Deep Research 三輪請在<b>同一個對話</b>裡跑，交一個連結就看得到三輪。<br>
+    <b>Gemini（含 Deep Research、Canvas）</b>：對話右上角「分享」→ 建立公開連結。Deep Research 三輪建議在<b>同一個對話</b>裡跑，交一個連結就看得到三輪；如果 R1、R2、R3 是在不同的對話跑的也沒關係，每一輪各交一個連結就好（繳交表單有三格）。<br>
     <b>Google AI Studio</b>：專案右上角「Share」分享專案。左側的指令（你貼進去的規則說明、之後每一次修改的要求）要留著不要刪，老師要看得到。<br>
     <b>NotebookLM</b>：筆記本右上角「分享」→ 設成知道連結的人可查看。資訊圖表、語音摘要、簡報的「自訂」說明不會出現在分享頁面，提交時請另外貼上。<br>
     <b>其他工具</b>：找「分享」或「Share」建立公開連結；找不到就截圖。
@@ -667,8 +667,12 @@ footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:34px;op
       <label class="rad"><input type="radio" name="subKind" value="final"> 最終成品</label>
     </div>
 
-    <label for="sub_dr">Step 1 · Deep Research 對話的分享連結（R1–R3 在同一個對話）</label>
+    <label for="sub_dr">Step 1 · Deep Research 的分享連結（R1–R3 在同一個對話就只貼這一格；分開跑的話，這格貼 R1）</label>
     <input id="sub_dr" type="url" inputmode="url" placeholder="https://gemini.google.com/share/...">
+    <label for="sub_dr2">R2 在另一個對話的話，貼在這裡（選填）</label>
+    <input id="sub_dr2" type="url" inputmode="url" placeholder="https://gemini.google.com/share/...">
+    <label for="sub_dr3">R3 在另一個對話的話，貼在這裡（選填）</label>
+    <input id="sub_dr3" type="url" inputmode="url" placeholder="https://gemini.google.com/share/...">
     <label for="sub_canvas">Step 2 · Canvas 視覺化企劃的分享連結</label>
     <input id="sub_canvas" type="url" inputmode="url" placeholder="https://gemini.google.com/share/... 或 canvas 連結">
     <label for="sub_aistudio">Step 3 · Google AI Studio 專案的分享連結（左側指令要留著）</label>
@@ -877,7 +881,7 @@ try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
 })();
 </script>
 <!-- I18N-END -->
-<script src="js/w47_skills.js?v=202610202325"></script>
+<script src="js/w47_skills.js?v=202610210958"></script>
 
 <script>
 /* 第4–7週提交：每天一次，存 whgm/analysis/w47sub/{課}/{編號}/{YYYYMMDD}。
@@ -903,7 +907,7 @@ try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
   function isUrl(s){ return /^https?:\/\/\S+$/i.test(s); }
   function msg(t, bad){ var m=$s('subMsg'); m.textContent=t; m.style.color = bad ? 'var(--red)' : 'var(--green)'; }
   function fmtDay(k){ return k.slice(4,6)+'/'+k.slice(6,8); }
-  var LINKS = [['dr','Deep Research'],['canvas','Canvas'],['aistudio','AI Studio'],['nblm','NotebookLM']];
+  var LINKS = [['dr','Deep Research'],['dr2','Deep Research R2'],['dr3','Deep Research R3'],['canvas','Canvas'],['aistudio','AI Studio'],['nblm','NotebookLM']];
 
   function fbRef(e){ return db.ref('whgm/analysis/w47fb/' + courseOf(e) + '/' + e); }
   function renderHist(e){
@@ -922,6 +926,7 @@ try { if (window.twemoji) twemoji.parse(document.body); } catch(_) {}
         row.appendChild(head);
         LINKS.forEach(function(L){
           var u=r.links && r.links[L[0]];
+          if(!u && (L[0]==='dr2'||L[0]==='dr3')) return;      // 選填的 R2／R3 沒填就不顯示
           var t=document.createElement(u?'a':'span');
           t.textContent=(u?'✓ ':'· ')+L[1]; t.style.marginRight='10px';
           if(u){ t.href=u; t.target='_blank'; t.rel='noopener'; t.style.color='var(--accent)'; }

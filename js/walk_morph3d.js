@@ -7,6 +7,7 @@
   function supported() {
     try { var c = document.createElement('canvas'); return !!(window.THREE && (c.getContext('webgl') || c.getContext('experimental-webgl'))); } catch (e) { return false; }
   }
+  function rnd(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
   var clamp01 = function (x) { return Math.max(0, Math.min(1, x)); };
   var ease = function (x) { x = clamp01(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };   /* 三次方進出：起步與收尾乾脆 */
   var back = function (x) { x = clamp01(x); var c1 = 1.25, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };   /* 長出來時微微彈一下 */
@@ -76,10 +77,15 @@
     for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
       var isDark = (r >= 2 && c >= 2 && r < N - 2 && c < N - 2) ? q.isDark(r - 2, c - 2) : false;
       if (isDark) darkCells.push([r, c]);
-      mm.makeTranslation(c - N / 2 + 0.5, -0.2, r - N / 2 + 0.5); tiles.setMatrixAt(k, mm); tiles.setColorAt(k, col.set(isDark ? dark : light)); origCols.push(col.clone());
+      mm.makeTranslation(c - N / 2 + 0.5, -0.2, r - N / 2 + 0.5); tiles.setMatrixAt(k, mm); origCols.push(new THREE.Color(isDark ? dark : light));
       var hue = (((r * 0.013 + c * 0.021 + Math.sin(r * 0.7) * 0.05 + Math.cos(c * 0.5) * 0.05) % 1) + 1) % 1;
-      sceneCols.push(new THREE.Color().setHSL(hue, isDark ? 0.88 : 0.9, isDark ? (night ? 0.66 : 0.6) : (night ? 0.82 : 0.9)));     /* 場景：深格是糖果色、淺格是淡彩色 */
-      qrCols.push(new THREE.Color().setHSL(hue, isDark ? 0.62 : 0.5, isDark ? (night ? 0.2 : 0.27) : (night ? 0.93 : 0.96)));            /* QR：同色相但深格加深、淺格近白，對比夠才掃得到 */
+      /* 場景地板：花草地（綠色漸層＋零星花朵），和 QR 的深淺格完全無關，一開始看不出是 QR；轉向 QR 時圖案才浮現 */
+      var nz = Math.sin(r * 0.37 + 1.3) * Math.cos(c * 0.29) + 0.5 * Math.sin((r + c) * 0.21), rr9 = rnd(r * 131 + c * 7 + 5), meadow;
+      if (rr9 < 0.075) meadow = new THREE.Color().setHSL(rnd(r * 17 + c * 3) , 0.85, night ? 0.74 : 0.8);          /* 花朵點點 */
+      else meadow = new THREE.Color().setHSL(0.27 + nz * 0.025 + rnd(r * 3 + c * 11) * 0.02, night ? 0.38 : 0.52, (night ? 0.5 : 0.66) + nz * 0.035 + rnd(r * 19 + c) * 0.035);
+      sceneCols.push(meadow);
+      qrCols.push(new THREE.Color().setHSL(hue, isDark ? 0.72 : 0.5, isDark ? (night ? 0.4 : 0.42) : (night ? 0.95 : 0.97)));            /* QR：同色相但深格加深、淺格近白，對比夠才掃得到 */
+      tiles.setColorAt(k, sceneCols[k]);   /* 第一幀就是繽紛色 */
       k++;
     }
     tiles.instanceMatrix.needsUpdate = true; tiles.instanceColor.needsUpdate = true; scene.add(tiles);
@@ -94,7 +100,7 @@
     scene.add(cols);
     /* 特效：小女孩每揮手兩下，從腳下發出一圈衝擊波；波經過的 QR 方塊會往上彈，其中一些方塊變成同色的小方塊噴向空中再落下。
        粒子的位置與顏色都取自地板上真正的 QR 深色格；全部用時間算出來（不存狀態），收回 QR 時一起歸零。 */
-    var PERIOD = 1.5, SPD = 22, LIFE = 1.25, rnd = function (i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    var PERIOD = 1.5, SPD = 22, LIFE = 1.25;
     /* 種在地上的草與花：站在 QR 的格子上，隨風輕晃；衝擊波一到，被彈上天、轉幾圈再落回原位重新長好 */
     var PL = 64, plants = [];
     for (var pi = 0; pi < PL * 6 && plants.length < PL; pi++) {
@@ -118,6 +124,16 @@
       heads.setColorAt(i, p.flower ? new THREE.Color().setHSL(rnd(i * 9 + 5), 0.9, night ? 0.68 : 0.62) : new THREE.Color(rnd(i * 9 + 5) < 0.5 ? '#a8e87a' : '#8fd18a'));
     });
     scene.add(stems); scene.add(heads);
+    /* 小女孩消失／出現的戲劇性閃光：全身先變白→光柱衝天→地面光環擴散→放射狀碎片 */
+    var addMat = function (c) { return new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }); };
+    var beam = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), addMat(0xffffff)); scene.add(beam);
+    var beam2 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), addMat(night ? 0xffd36b : 0xff9bd0)); scene.add(beam2);
+    var ringA = new THREE.Mesh(new THREE.RingGeometry(0.82, 1, 64), addMat(0xffffff)); ringA.rotation.x = -Math.PI / 2; ringA.position.y = 0.6; scene.add(ringA);
+    var ringB = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 64), addMat(night ? 0x9bd1ff : 0xffd54a)); ringB.rotation.x = -Math.PI / 2; ringB.position.y = 0.7; scene.add(ringB);
+    var BN = 90, burst = new THREE.InstancedMesh(new THREE.OctahedronGeometry(1, 0), new THREE.MeshBasicMaterial({ color: 0xffffff }), BN);
+    for (var bi = 0; bi < BN; bi++) burst.setColorAt(bi, bi % 4 === 0 ? new THREE.Color('#ffffff') : new THREE.Color().setHSL(rnd(bi * 5 + 2), 1, 0.66)); scene.add(burst);
+    var girlIdx = [], girlBase = [], flashAmt = 0, lastW = 0;
+    info.forEach(function (b, i) { if (b.g === 'girl') { girlIdx.push(i); girlBase.push(new THREE.Color(b.c)); } });
     var tinted = new Uint8Array(N * N), tileFlat = true, ev = new THREE.Euler(), qv = new THREE.Quaternion();
     function fx(cur, t) {
       var s = ease((cur - 0.5) / 0.4), active = s > 0.01, i, j, d, A = 2.2 * f, hc = new THREE.Color();
@@ -136,6 +152,24 @@
         }
         tiles.instanceMatrix.needsUpdate = true; tiles.instanceColor.needsUpdate = true; tileFlat = !active; lastCur = cur;
       }
+      /* 3) 閃光：dir<0 小女孩消失（最強）、dir>0 出現（輕一點） */
+      var dirc = target < cur - 1e-4 ? -1 : (target > cur + 1e-4 ? 1 : 0), kk2 = dirc < 0 ? 1 : (dirc > 0 ? 0.5 : 0);
+      var pp = dirc < 0 ? clamp01((0.7 - cur) / 0.4) : (dirc > 0 ? clamp01((cur - 0.26) / 0.4) : 0), pulse = Math.sin(Math.PI * pp) * kk2, ctr = 9 * 1.45 * f;
+      flashAmt = pulse;
+      var H0 = 60 * f, bw = (0.5 + 3.2 * pulse) * f;
+      beam.scale.set(bw, H0, bw); beam.position.set(0, H0 / 2, 0); beam.material.opacity = Math.min(0.9, pulse * 1.0);
+      beam2.scale.set(bw * 1.9, H0, bw * 1.9); beam2.position.set(0, H0 / 2, 0); beam2.material.opacity = pulse * 0.4;
+      var rA = (2 + pp * 30) * f, rB = (1 + pp * 20) * f; ringA.scale.set(Math.max(TINY, rA), Math.max(TINY, rA), 1); ringA.material.opacity = (1 - pp) * kk2 * (pp > 0 ? 1 : 0); ringB.scale.set(Math.max(TINY, rB), Math.max(TINY, rB), 1); ringB.material.opacity = (1 - pp) * kk2 * (pp > 0 ? 0.9 : 0);
+      for (i = 0; i < BN; i++) {
+        if (pp <= 0 || pp >= 1 || kk2 === 0) { Sc.set(TINY, TINY, TINY); V.set(0, 0, 0); qv.identity(); mm.compose(V, qv, Sc); burst.setMatrixAt(i, mm); continue; }
+        var th0 = rnd(i * 3 + 1) * 6.283, ph0 = Math.acos(2 * rnd(i * 3 + 2) - 1), rr0 = (12 + rnd(i * 3 + 3) * 22) * f * kk2, ez = 1 - Math.pow(1 - pp, 2.2);
+        var bx = Math.sin(ph0) * Math.cos(th0) * rr0 * ez, bz = Math.sin(ph0) * Math.sin(th0) * rr0 * ez, by = ctr + Math.cos(ph0) * rr0 * ez * 0.9 - 14 * f * pp * pp;
+        var bs = (1.2 + rnd(i * 5 + 4) * 2.2) * f * Math.pow(1 - pp, 0.7) * Math.max(0.4, kk2);
+        ev.set(pp * 9 + i, pp * 7, pp * 5); qv.setFromEuler(ev); V.set(bx, Math.max(0.3, by), bz); Sc.set(bs, bs * 1.5, bs); mm.compose(V, qv, Sc); burst.setMatrixAt(i, mm);
+      }
+      burst.instanceMatrix.needsUpdate = true;
+      var wAmt = Math.min(1, Math.pow(pulse, 0.8) * 1.25);   /* 小女孩全身先變白 */
+      if (wAmt > 0.002 || lastW > 0.002) { for (j = 0; j < girlIdx.length; j++) { col.copy(girlBase[j]).lerp(WHITE, wAmt); cols.setColorAt(girlIdx[j], col); } cols.instanceColor.needsUpdate = true; lastW = wAmt; }
       /* 2) 草與花：生長、隨風晃；被衝擊波掃到的（約六成）彈上天、翻轉、落回原位 */
       for (i = 0; i < plants.length; i++) {
         var pl = plants[i], gr = Math.max(TINY, back((cur - 0.42 - pl.dist * 0.006) / 0.4));
@@ -160,10 +194,10 @@
         if (b.k === 'b') {
           var tw = b.g === 'spk' ? (0.7 + 0.3 * Math.sin(t * 3 + b.ph)) : 1;
           var gh = b.g === 'girl' ? Math.sin(t * 2.2) * 0.12 * f * s * (b.y0 > 10 ? 1 : 0) : 0;
-          Q.identity(); V.set((b.x + b.w / 2) * f, (b.y0 + b.h / 2) * f * s + bob + gh, (b.z + b.d / 2) * f); Sc.set(b.w * f * tw, b.h * f * s * tw, b.d * f * tw);
+          Q.identity(); V.set((b.x + b.w / 2) * f, (b.y0 + b.h / 2) * f * s + bob + gh, (b.z + b.d / 2) * f); var fw = Math.min(1, s * 4); Sc.set(b.w * f * tw * fw, b.h * f * s * tw, b.d * f * tw * fw);
         } else {
           var a = b.base + Math.sin(t * b.spd + b.ph) * b.amp, dx = Math.sin(a) * b.side, dy = Math.cos(a), mid = b.off + b.len / 2;
-          V.set((b.px + dx * mid) * f, (b.py + dy * mid) * f * s, b.pz * f); Q.setFromAxisAngle(AX, -Math.atan2(dx, dy)); Sc.set(b.th * f * s, b.len * f * s, b.th * f * s);
+          V.set((b.px + dx * mid) * f, (b.py + dy * mid) * f * s, b.pz * f); Q.setFromAxisAngle(AX, -Math.atan2(dx, dy)); var fw2 = Math.min(1, s * 4); Sc.set(b.th * f * s * fw2, b.len * f * s, b.th * f * s * fw2);
         }
         mm.compose(V, Q, Sc); cols.setMatrixAt(i, mm);
       }
@@ -180,27 +214,28 @@
       cam.lookAt(rx * sweep, ty, rz * sweep);
     }
 
-    var cur = 1, target = 1, mode = 'auto', holdT = 0, lastNow = performance.now(), tAcc = 0, DUR = 1.25;
+    var WHITE = new THREE.Color(0xffffff), cur = 1, target = 1, mode = 'auto', holdT = 0, lastNow = performance.now(), tAcc = 0, DUR = 1.25;
     function frame(now) {
       var dt = Math.min(0.1, (now - lastNow) / 1000); lastNow = now; tAcc += dt;
       if (cv.offsetParent !== null) {
         if (mode === 'auto') {
           if (Math.abs(cur - target) < 0.001) { holdT += dt; if (holdT > (target === 1 ? 3.6 : 5)) { target = 1 - target; holdT = 0; } } else holdT = 0;
         }
-        if (cur !== target) { var step = dt / DUR; cur = cur < target ? Math.min(target, cur + step) : Math.max(target, cur - step); }
+        if (cur !== target && !api.paused) { var step = dt / DUR; cur = cur < target ? Math.min(target, cur + step) : Math.max(target, cur - step); }
         place(cur, tAcc); fx(cur, tAcc); camera(cur, tAcc);
         var moving = Math.abs(cur - target) > 0.001;
-        cv.style.filter = moving ? 'blur(' + (Math.sin(Math.PI * cur) * 1.4).toFixed(2) + 'px)' : 'none';   /* 運鏡途中的景深模糊 */
+        cv.style.filter = (moving ? 'blur(' + (Math.sin(Math.PI * cur) * 1.4 * (1 - Math.min(1, flashAmt * 1.2))).toFixed(2) + 'px) ' : '') + (flashAmt > 0.01 ? 'brightness(' + (1 + flashAmt * 0.35).toFixed(2) + ') saturate(' + (1 + flashAmt * 0.7).toFixed(2) + ')' : '') || 'none';   /* 運鏡途中的景深模糊 */
         renderer.render(scene, cam);
       }
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
-    var api = {
+    var api = { paused: false,
       canvas: cv,
       toggle: function () { mode = 'manual'; target = target === 1 ? 0 : 1; return target === 0; },   /* true＝正在變成 QR */
       state: function () { return { cur: cur, target: target, mode: mode }; },
-      seek: function (v) { mode = 'manual'; cur = target = v; }
+      seek: function (v) { mode = 'manual'; cur = target = v; },
+      set: function (c, tg, pause) { mode = 'manual'; cur = c; target = tg; api.paused = !!pause; }
     };
     host.appendChild(cv);
     cv.onclick = function () { var toQR = api.toggle(); if (handlers && handlers.onToggle) handlers.onToggle(toQR); };

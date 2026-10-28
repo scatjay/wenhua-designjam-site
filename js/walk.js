@@ -771,7 +771,7 @@
     var last = '';
     el.innerHTML = tchat.length ? tchat.map(function (m) {
       var day = m.t ? dayLabel(m.t) : '', sep = (day && day !== last) ? '<div class="tcday">' + day + '</div>' : ''; if (day) last = day;
-      return sep + '<div class="tcm' + (m.uid === uid ? ' me' : '') + (profile && profile.nick && String(m.x).indexOf('@' + profile.nick) >= 0 ? ' at' : '') + (m.call ? ' call' : '') + '"><b>' + esc(m.n || '?') + '</b> ' + esc(m.x) + (m.t ? ' <span class="tctime">' + hhmm(m.t) + '</span>' : '') + '</div>';
+      return sep + '<div class="tcm' + (m.uid === uid ? ' me' : '') + (profile && profile.nick && String(m.x).indexOf('@' + profile.nick) >= 0 ? ' at' : '') + (m.call ? ' call' : '') + '"><b style="color:' + userColor(m.uid) + '">' + esc(m.n || '?') + '</b> ' + esc(m.x) + (m.t ? ' <span class="tctime">' + hhmm(m.t) + '</span>' : '') + '</div>';
     }).join('') : '<div class="sub">還沒有訊息，說聲嗨吧。</div>';
     el.scrollTop = el.scrollHeight;
   }
@@ -783,9 +783,11 @@
     var send = function () { var v = ($('tc-in').value || '').trim(); if (!v) return; if (chatSend('tchat/' + teamId, { uid: uid, n: (profile && profile.nick) || '?', x: v.slice(0, 100), t: nowMs() })) $('tc-in').value = ''; };
     go.onclick = send; $('tc-in').onkeydown = function (e) { if (e.key === 'Enter') send(); };
   }
+  var DMC = ['#c0392b', '#1e7a4c', '#2f5fb3', '#8a3fb0', '#b35a00', '#00727a', '#a0276a', '#4a5d1a', '#5b3fc0', '#0a6e9e'];   /* 白字在上面都 ≥4.5:1 */
+  function userColor(id) { var h = 0, i; id = String(id || ''); for (i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0; return DMC[h % DMC.length]; }
   function flyDanmaku(v) {
     var box = document.getElementById('dm'); if (!box || !dmShow || box.children.length > 14) return;
-    var e = document.createElement('div'); e.className = 'dmk'; e.textContent = (v.n ? v.n + '：' : '') + v.x;
+    var e = document.createElement('div'); e.className = 'dmk'; e.textContent = (v.n ? v.n + '：' : '') + v.x; e.style.background = userColor(v.uid); e.style.borderColor = '#fff';
     dmLane = (dmLane + 1) % 6; e.style.top = (14 + dmLane * 9) + 'vh'; e.style.animationDuration = (8 + Math.random() * 2) + 's';
     box.appendChild(e); setTimeout(function () { e.remove(); }, 11500);
   }

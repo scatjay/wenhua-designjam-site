@@ -163,6 +163,15 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 .mate.me b{background:#ffe28a!important;color:#2a2438!important}
 .mate b{color:#2a2438!important;background:#fff!important}
 /* /cute-theme */
+/* 手機介面優化（1029）：點擊區至少 44px、字至少 12px。量測：test_tools/walk_ui_audit.py */
+.btn,.btn2,button.chip,.inp,select{min-height:44px}
+button.chip{min-width:44px}
+#hd button{min-height:44px;min-width:44px;padding:0 12px}
+#nav button{min-height:56px;font-size:14px}
+#mapbar .btn2{min-height:44px;padding:0 14px;font-size:13px}
+.mapbtns button{min-width:44px;min-height:44px}
+.ocard button{width:44px;height:44px}
+.tag,.src,#gps,.sicon b,.phi,.mate b{font-size:12px}
 </style>
 </head>
 <body>

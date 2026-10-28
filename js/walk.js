@@ -739,7 +739,7 @@
     el.scrollTop = el.scrollHeight;
   }
   function chatBox() {
-    return '<div class="card"><b>💬 隊內訊息</b><div id="tc-list" class="tclist"></div><div class="opts"><input id="tc-in" class="inp" maxlength="100" placeholder="只有隊友看得到"><button class="btn2" id="tc-go">送出</button></div></div>';
+    return '<div class="card"><b>💬 隊內訊息</b><div id="tc-list" class="tclist"></div><div class="opts"><input id="tc-in" class="inp" maxlength="100" placeholder="只有隊友看得到"><button class="btn2 tcsend" id="tc-go">送出</button></div></div>';
   }
   function bindChat() {
     drawTchat(); var go = $('tc-go'); if (!go) return;
@@ -756,10 +756,10 @@
     dmStart = nowMs();
     if (!document.getElementById('dm')) {
       var st = document.createElement('style');
-      st.textContent = '#dm{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:2500;overflow:hidden}.dmk{position:absolute;left:100%;white-space:nowrap;font-weight:700;font-size:16px;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000;animation:dmkgo linear forwards}@keyframes dmkgo{to{transform:translateX(-160vw)}}#dm-btn{position:fixed;left:10px;bottom:76px;z-index:2600;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:20px}#dm-bar{position:fixed;left:8px;right:8px;bottom:128px;z-index:2600;display:none;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px}#dm-bar.on{display:flex}#dm-bar input{flex:1;min-width:0}.tclist{max-height:180px;overflow:auto;margin:6px 0;display:flex;flex-direction:column;gap:4px}.tcm{font-size:14px;background:rgba(127,127,127,.12);border-radius:8px;padding:4px 8px}.tcm.me{background:rgba(255,160,60,.22)}.tcm.call{background:rgba(255,90,90,.22);font-weight:700}.rolerow{border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:6px}.rolerow.taken{opacity:.42;filter:grayscale(1)}.rolerow.mine{border-color:#e0821f;background:rgba(224,130,31,.1)}.bub.secret{background:#fff3c4;color:#4a3a00;border:1px dashed #c9a400}';
+      st.textContent = '#dm{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:2500;overflow:hidden}.dmk{position:absolute;left:100%;white-space:nowrap;font-weight:700;font-size:16px;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000;animation:dmkgo linear forwards}@keyframes dmkgo{to{transform:translateX(-160vw)}}#dm-btn{position:fixed;left:10px;bottom:76px;z-index:2600;height:46px;padding:0 16px;border-radius:999px;border:3px solid #3a2a4a;background:#ff5c7a;color:#fff;font-size:16px;font-weight:800;box-shadow:0 4px 0 #3a2a4a,0 6px 14px rgba(0,0,0,.3);cursor:pointer}#dm-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #3a2a4a}#dm-bar .btn2,.tcsend{background:#ff5c7a!important;color:#fff!important;border:2px solid #3a2a4a!important;font-weight:800}#dm-bar{position:fixed;left:8px;right:8px;bottom:128px;z-index:2600;display:none;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px}#dm-bar.on{display:flex}#dm-bar input{flex:1;min-width:0}.tclist{max-height:180px;overflow:auto;margin:6px 0;display:flex;flex-direction:column;gap:4px}.tcm{font-size:14px;background:rgba(127,127,127,.12);border-radius:8px;padding:4px 8px}.tcm.me{background:rgba(255,160,60,.22)}.tcm.call{background:rgba(255,90,90,.22);font-weight:700}.rolerow{border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:6px}.rolerow.taken{opacity:.42;filter:grayscale(1)}.rolerow.mine{border-color:#e0821f;background:rgba(224,130,31,.1)}.bub.secret{background:#fff3c4;color:#4a3a00;border:1px dashed #c9a400}';
       document.head.appendChild(st);
       var d = document.createElement('div'); d.id = 'dm'; document.body.appendChild(d);
-      var b = document.createElement('button'); b.id = 'dm-btn'; b.textContent = '💬'; b.title = '全場彈幕（所有人都看得到）'; document.body.appendChild(b);
+      var b = document.createElement('button'); b.id = 'dm-btn'; b.textContent = '💬 彈幕'; b.title = '全場彈幕（所有人都看得到）'; document.body.appendChild(b);
       var bar = document.createElement('div'); bar.id = 'dm-bar';
       bar.innerHTML = '<input id="dm-in" class="inp" maxlength="40" placeholder="全場彈幕（40 字內，所有人看得到）"><button class="btn2" id="dm-go">送出</button><button class="btn2" id="dm-eye" title="顯示或隱藏彈幕">👁</button>';
       document.body.appendChild(bar);

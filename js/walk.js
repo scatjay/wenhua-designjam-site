@@ -51,7 +51,7 @@
     ink:   { land: '#ecdfbd', water: '#c7cdb9', park: '#d5cf9f', bld: '#bba878', bldLine: '#7d6a45', road: '#fbf3dc', casing: '#8b7650', rail: '#6d5c3c', text: '#4b3a22', halo: '#f5ebcf' },
     night: { land: '#1a2530', water: '#0e3a57', park: '#1d3a33', bld: '#34475c', bldLine: '#4f6a86', road: '#4e6a86', casing: '#0f1820', rail: '#7a8ca0', text: '#b9d3ea', halo: '#0f1820' }
   };
-  var vecLayer = null, mlMap = null, rasterMode = false, curPR = null, PR = { pixel: 0.4, toy: 0.9, ink: 0.9, night: 0.6 };
+  var vecLayer = null, mlMap = null, rasterMode = false, curPR = null, DPR = Math.min(2, Math.max(1, window.devicePixelRatio || 1)), PR = { pixel: DPR, toy: DPR, ink: DPR, night: DPR };  /* 文字要清楚：全部用裝置原生解析度，像素感靠配色與圖示，不靠降低解析度 */
   function paintVec(e) {
     if (!mlMap || !mlMap.getStyle) return; var P = PAL[e] || PAL.pixel, st = mlMap.getStyle(); if (!st) return;
     st.layers.forEach(function (l) {

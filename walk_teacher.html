@@ -90,8 +90,8 @@ function start(){
   ROOT.child('boardr').on('value',function(s){boardr=s.val()||{};render()});
   ROOT.child('board').on('value',function(s){board=s.val()||{};render()});
   /* 照片牆：只聽「新增／刪除」，每張照片只下載一次 */
-  ROOT.child('photos').limitToLast(60).on('child_added',function(s){PH[s.key]=s.val();renderPh()});
-  ROOT.child('photos').limitToLast(60).on('child_removed',function(s){delete PH[s.key];renderPh()});
+  ROOT.child('pth').limitToLast(60).on('child_added',function(s){PH[s.key]=s.val();renderPh()});
+  ROOT.child('pth').limitToLast(60).on('child_removed',function(s){delete PH[s.key];renderPh()});
   ROOT.child('claim').on('value',function(s){claims=s.val()||{};render()});
   ROOT.child('players').on('value',function(s){players=s.val()||{};render()});
   ROOT.child('fb').limitToLast(30).on('value',function(s){fbs=s.val()||{};renderFb()});
@@ -121,8 +121,8 @@ function unbind(u){
 function renderPh(){
   var ids=Object.keys(PH).sort(function(a,b){return PH[b].t-PH[a].t});$('phn').textContent=ids.length+' 張（最新 60）';
   $('phw').innerHTML=ids.map(function(id){var p=PH[id],tn=(teams[p.tid]||{}),nm=label(tn,p.tid);var st=(S.filter(function(x){return x.id===p.stop})[0]||{}).name||p.stop||'';
-    return '<figure><span class="x" id="pd'+id+'" data-pd="'+id+'" title="刪除">✕</span><img data-pb="'+id+'" src="'+p.d+'" alt=""><figcaption><b>'+esc(nm)+'</b> '+esc(st)+'<br>'+esc(p.cap||'')+'</figcaption></figure>'}).join('');
-  [].forEach.call(document.querySelectorAll('[data-pb]'),function(im){im.onclick=function(){var p=PH[im.dataset.pb],d=document.createElement('div');d.id='pbig';d.innerHTML='<img src="'+p.d+'"><div>'+esc(p.cap||'')+'・'+new Date(p.t).toLocaleTimeString('zh-TW',{hour12:false})+'（點任何地方關閉）</div>';d.onclick=function(){d.remove()};document.body.appendChild(d)}});
+    return '<figure><span class="x" id="pd'+id+'" data-pd="'+id+'" title="刪除">✕</span><img data-pb="'+id+'" src="'+(p.th||'')+'" alt=""><figcaption><b>'+esc(nm)+'</b> '+esc(st)+'<br>'+esc(p.cap||'')+'</figcaption></figure>'}).join('');
+  [].forEach.call(document.querySelectorAll('[data-pb]'),function(im){im.onclick=function(){var id=im.dataset.pb,p=PH[id];ROOT.child('photos/'+id).once('value').then(function(sn){var o=sn.val()||{},d=document.createElement('div');d.id='pbig';d.innerHTML='<img src="'+(o.d||p.th)+'"><div>'+esc(p.cap||'')+'・'+new Date(p.t).toLocaleTimeString('zh-TW',{hour12:false})+'（點任何地方關閉）</div>';d.onclick=function(){d.remove()};document.body.appendChild(d)})}});
   [].forEach.call(document.querySelectorAll('[data-pd]'),function(b){b.onclick=function(){var id=b.dataset.pd;if(confirmTwice('pd'+id,'再按一次確認刪除'))ROOT.update({['photos/'+id]:null,['pth/'+id]:null})}});
 }
 function renderFb(){

@@ -72,11 +72,15 @@
 
     var slab = new THREE.Mesh(new THREE.BoxGeometry(N, 2.4, N), new THREE.MeshLambertMaterial({ color: night ? '#5a4b8a' : '#e6c9b4' }));
     slab.position.y = -1.4; scene.add(slab);
-    var tiles = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.4, 1), new THREE.MeshBasicMaterial({ color: 0xffffff }), N * N), mm = new THREE.Matrix4(), col = new THREE.Color(), k = 0, darkCells = [], origCols = [];
+    var tiles = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.4, 1), new THREE.MeshBasicMaterial({ color: 0xffffff }), N * N), mm = new THREE.Matrix4(), col = new THREE.Color(), k = 0, darkCells = [], origCols = [], sceneCols = [], qrCols = [], lastCur = -1;
     for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
       var isDark = (r >= 2 && c >= 2 && r < N - 2 && c < N - 2) ? q.isDark(r - 2, c - 2) : false;
       if (isDark) darkCells.push([r, c]);
-      mm.makeTranslation(c - N / 2 + 0.5, -0.2, r - N / 2 + 0.5); tiles.setMatrixAt(k, mm); tiles.setColorAt(k, col.set(isDark ? dark : light)); origCols.push(col.clone()); k++;
+      mm.makeTranslation(c - N / 2 + 0.5, -0.2, r - N / 2 + 0.5); tiles.setMatrixAt(k, mm); tiles.setColorAt(k, col.set(isDark ? dark : light)); origCols.push(col.clone());
+      var hue = (((r * 0.013 + c * 0.021 + Math.sin(r * 0.7) * 0.05 + Math.cos(c * 0.5) * 0.05) % 1) + 1) % 1;
+      sceneCols.push(new THREE.Color().setHSL(hue, isDark ? 0.88 : 0.9, isDark ? (night ? 0.66 : 0.6) : (night ? 0.82 : 0.9)));     /* 場景：深格是糖果色、淺格是淡彩色 */
+      qrCols.push(new THREE.Color().setHSL(hue, isDark ? 0.62 : 0.5, isDark ? (night ? 0.2 : 0.27) : (night ? 0.93 : 0.96)));            /* QR：同色相但深格加深、淺格近白，對比夠才掃得到 */
+      k++;
     }
     tiles.instanceMatrix.needsUpdate = true; tiles.instanceColor.needsUpdate = true; scene.add(tiles);
 
@@ -110,17 +114,19 @@
     function fx(cur, t) {
       var s = ease((cur - 0.5) / 0.4), active = s > 0.01, i, j, d, A = 2.2 * f, hc = new THREE.Color();
       /* 1) 衝擊波：方塊依與她的距離彈起 */
-      if (active || !tileFlat) {
-        var k0 = Math.floor(t / PERIOD), ph = t - k0 * PERIOD, front = ph * SPD, tk = 0;
+      if (active || !tileFlat || cur !== lastCur) {
+        var k0 = Math.floor(t / PERIOD), ph = t - k0 * PERIOD, front = ph * SPD, tk = 0, mcol = ease((cur - 0.12) / 0.5);   /* mcol：0＝QR 配色，1＝繽紛配色 */
         for (var r = 0; r < N; r++) for (var c = 0; c < N; c++, tk++) {
           var dx = c - N / 2 + 0.5, dz = r - N / 2 + 0.5, dd = Math.sqrt(dx * dx + dz * dz), y = 0;
-          if (active) { var back0 = front - dd; var inBand = back0 > -1 && back0 < 7; if (inBand) y = A * s * Math.sin(Math.min(1, Math.max(0, (back0 + 1) / 8)) * Math.PI) * Math.exp(-dd / 34);
-            if (inBand) { var wgt = Math.min(1, y / (A * 0.5)); hc.setHSL(((dd * 0.03 + t * 0.35) % 1 + 1) % 1, 0.9, 0.62); tiles.setColorAt(tk, col.copy(origCols[tk]).lerp(hc, wgt * 0.45)); tinted[tk] = 1; }
-            else if (tinted[tk]) { tiles.setColorAt(tk, origCols[tk]); tinted[tk] = 0; } }
-          else if (tinted[tk]) { tiles.setColorAt(tk, origCols[tk]); tinted[tk] = 0; }
+          col.copy(qrCols[tk]).lerp(sceneCols[tk], mcol);
+          if (active) {
+            var back0 = front - dd, inBand = back0 > -1 && back0 < 7;
+            if (inBand) { y = A * s * Math.sin(Math.min(1, Math.max(0, (back0 + 1) / 8)) * Math.PI) * Math.exp(-dd / 34); var wgt = Math.min(1, y / (A * 0.5)); hc.setHSL(((dd * 0.03 + t * 0.35) % 1 + 1) % 1, 0.9, 0.7); col.lerp(hc, wgt * 0.5); }
+          }
+          tiles.setColorAt(tk, col);
           mm.makeTranslation(dx, -0.2 + y, dz); tiles.setMatrixAt(tk, mm);
         }
-        tiles.instanceMatrix.needsUpdate = true; tiles.instanceColor.needsUpdate = true; tileFlat = !active;
+        tiles.instanceMatrix.needsUpdate = true; tiles.instanceColor.needsUpdate = true; tileFlat = !active; lastCur = cur;
       }
       /* 2) 草與花：生長、隨風晃；被衝擊波掃到的（約六成）彈上天、翻轉、落回原位 */
       for (i = 0; i < plants.length; i++) {

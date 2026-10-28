@@ -112,6 +112,7 @@ th{background:var(--panel2)}
 
 <div class="box tight" id="prog">
   <b style="font-size:14px">我的檢核進度</b> <span class="sub" style="font-size:12.5px;margin:0">（勾選會即時更新；沒勾完也可以送出，系統只提醒）</span>
+  <div id="progChat" style="margin-top:8px;font-size:13px;font-weight:700"></div>
   <div id="progRows" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px"></div>
 </div>
 <style>@media(max-width:640px){#progRows{grid-template-columns:1fr 1fr!important}}#progRows .p{border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;font-size:12.5px;line-height:1.5;background:#fff}#progRows .p.done{border-color:var(--green);background:var(--green-soft)}#progRows .p b{display:block;font-size:13px}</style>
@@ -173,7 +174,7 @@ th{background:var(--panel2)}
 </section>
 
 <section id="coach">
-  <h2>AI 助教<span class="tag">每天最多 <span id="capN">20</span> 次提問</span></h2>
+  <h2>AI 助教<span class="tag" id="chatBadge">讀取中…</span><span class="tag">每天最多 <span id="capN">20</span> 次提問</span></h2>
   <p class="sub">卡住時可以直接問。助教知道你最近一次交的內容和上面的建議，會告訴你：問題在哪、怎麼改、為什麼這樣改、改完回哪一格確認。<b>它不會替你寫 R1–R3，也不給可以直接貼上的完整規則。</b></p>
   <div class="warn">你和助教的對話會被保留，供課程分析使用，只記編號、不記姓名。請不要在提問裡寫真名或學號。</div>
   <div class="box">
@@ -263,6 +264,6 @@ firebase.initializeApp({
 <script src="js/bind_gate.js?v=202610281100"></script>
 <script src="js/online_badge.js?v=202610210945"></script>
 <script src="js/w47_skills.js?v=202610281000"></script>
-<script src="js/mid.js?v=202610281100"></script>
+<script src="js/mid.js?v=202610281105"></script>
 </body>
 </html>

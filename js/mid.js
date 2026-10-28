@@ -313,13 +313,18 @@
     $('chatLeft').textContent = ENV == null ? '' : '今天還剩 ' + chatLeft() + ' 次';
     $('capN').textContent = CFG.dailyCap;
     $('chatState').textContent = CFG.chatEnabled ? '' : OFFLINE;
+    var left = ENV == null ? null : chatLeft();
+    var badge = !CFG.loaded ? '讀取中…' : !CFG.chatEnabled ? '⚪ 尚未開放' : (left == null ? '🟢 已開放' : (left > 0 ? '🟢 已開放 · 今天還剩 ' + left + '/' + CFG.dailyCap + ' 次' : '🟠 今天的 ' + CFG.dailyCap + ' 次用完了，明天再問'));
+    if ($('chatBadge')) $('chatBadge').textContent = badge;
+    if ($('progChat')) { $('progChat').textContent = 'AI 助教：' + (!CFG.loaded ? '讀取中…' : !CFG.chatEnabled ? '⚪ 尚未開放（先用單元裡的自查清單）' : badge.replace(/^🟢 |^🟠 /, '')); $('progChat').style.color = (CFG.loaded && CFG.chatEnabled && left !== 0) ? 'var(--green)' : 'var(--ink-soft)'; }
+    if (window.twemoji) try { twemoji.parse($('chatBadge')); twemoji.parse($('progChat')); } catch (e) {}
     $('chatSend').disabled = !CFG.chatEnabled || ENV == null || chatLeft() <= 0;
   }
   function listenChat() {
     ref('midchat/' + COURSE + '/' + ENV).limitToLast(60).on('value', function (s) { CHAT = s.val() || {}; renderChat(); renderAch(); });
   }
   function initChat() {
-    ref('midcfg').on('value', function (s) { var v = s.val() || {}; CFG.chatEnabled = !!v.chatEnabled; CFG.dailyCap = Number(v.dailyCap) > 0 ? Number(v.dailyCap) : 20; renderChat(); });
+    ref('midcfg').on('value', function (s) { var v = s.val() || {}; CFG.loaded = true; CFG.chatEnabled = !!v.chatEnabled; CFG.dailyCap = Number(v.dailyCap) > 0 ? Number(v.dailyCap) : 20; renderChat(); });
     $('chatSend').onclick = function () {
       var m = $('chatMsg'), q = $('chatQ').value.trim();
       if (ENV == null) { m.textContent = '先綁定編號'; return; }

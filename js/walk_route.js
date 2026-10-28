@@ -173,7 +173,8 @@ window.WALK_ROUTE.campus = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到圖書館前' },
         { id: 'k1', type: 'choice', title: '「修齊大樓」是用誰的名字取的？', options: ['辛文炳', '吳修齊（創辦人之一）', '吳三連'], answer: '吳修齊（創辦人之一）' },
-        { id: 't1', type: 'text', min: 4, title: '寫一句話：你最近一次進圖書館，是為了什麼？（寫真話）' }
+        { id: 't1', type: 'text', min: 4, title: '寫一句話：你最近一次進圖書館，是為了什麼？（寫真話）' },
+        { id: 'k2', type: 'choice', title: '回想第 2 章：這所學校的第一任「董事長」是誰？', options: ['辛文炳', '吳三連', '吳修齊'], answer: '吳三連', reward: '夜讀生點頭：「噓……對。下一站去優活館，聽聽夜裡的聲音。」' }
       ],
       note: '修齊大樓以創辦人之一吳修齊命名：見 E 棟（白天路線）說明。座標來自 OSM（標示為圖書資訊館）。' },
 
@@ -188,7 +189,8 @@ window.WALK_ROUTE.campus = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到優活館前' },
         { id: 't1', type: 'text', min: 4, title: '閉眼十秒：寫下你聽到的一種聲音，和它是從哪個方向來的' },
-        { id: 'a1', type: 'ack', title: '拍一張你站的位置（照片牆會看到）' }
+        { id: 'a1', type: 'ack', title: '拍一張你站的位置（照片牆會看到）' },
+        { id: 'k1', type: 'choice', title: '回想第 3 章：「修齊大樓」是用誰的名字取的？', options: ['吳修齊（創辦人之一）', '辛文炳', '吳三連'], answer: '吳修齊（創辦人之一）', reward: '學長停下腳步：「對！好，再一圈就好。下一站去水力加工坊，看看水怎麼工作。」' }
       ],
       note: '本站不放史實，只做觀察。座標來自 OSM。' },
 
@@ -203,7 +205,8 @@ window.WALK_ROUTE.campus = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到水力加工坊前' },
         { id: 't1', type: 'text', min: 6, title: '寫下你看到的、跟「水」有關的一樣東西，和它的樣子' },
-        { id: 'a1', type: 'ack', title: '拍一張你覺得最像「在工作」的畫面' }
+        { id: 'a1', type: 'ack', title: '拍一張你覺得最像「在工作」的畫面' },
+        { id: 'k1', type: 'choice', title: '回想第 6 章：這所學校在哪一年改名為「科技大學」？', options: ['1969 年', '1996 年', '1999 年'], answer: '1999 年', reward: '看守者的聲音像水：「記得很準。最後去榕園的天圓地方，抬頭看看。」' }
       ],
       note: '這一站的歷史待補：學校沒有可引用的公開說明前，NPC 不講史實。座標來自 OSM（watermill）。' },
 
@@ -218,7 +221,8 @@ window.WALK_ROUTE.campus = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到作品前' },
         { id: 'k1', type: 'choice', title: '「天圓地方」是古人對什麼的想像？', options: ['天是圓的、地是方的（古人的宇宙觀）', '一種棋類遊戲', '一個傳統節日'], answer: '天是圓的、地是方的（古人的宇宙觀）' },
-        { id: 't1', type: 'text', min: 6, title: '在作品附近找一個圓的、一個方的形狀，各寫一句它在哪裡' }
+        { id: 't1', type: 'text', min: 6, title: '在作品附近找一個圓的、一個方的形狀，各寫一句它在哪裡' },
+        { id: 'k2', type: 'choice', title: '回想第 6 章：校慶日 12 月 15 日，紀念的是哪一件事？', options: ['教育部核准立案', '第一屆學生開學典禮', '改名科技大學'], answer: '第一屆學生開學典禮', reward: '老先生看看天：「好。這一圈走完了，審查單最後一行，回去交給學姊。」' }
       ],
       note: '「天圓地方」為傳統宇宙觀常見說法（一般常識）；作品本身的創作者與涵義尚未查到可靠說明，NPC 不講。座標來自 OSM（artwork）。' },
 
@@ -250,7 +254,7 @@ window.WALK_ROUTE.campusW = {
     { id: 'wt', name: 'T 棟（隔壁）', time: '—', min: 2, lat: 23.02490, lon: 120.22630, r: 70, plain: true,
       tip: '路過隔壁的 T 棟～學姊的便條寫著：「這棟晚上最熱鬧，因為上夜間課的人都在這裡出沒。聽說走廊的燈會自己亮……其實是感應器啦，我試過了 😂」看一眼：T 棟和 W 棟，差幾步路？' },
 
-    { id: 'wc', name: '風雨球場（T 棟旁）', time: '—', min: 2, lat: 23.02470, lon: 120.22635, r: 60, plain: true,
+    { id: 'wc', name: '風雨球場（T 棟旁）', time: '—', min: 2, lat: 23.02387, lon: 120.22584, r: 55, plain: true,   /* 座標改用 OSM（風雨球場 pitch），原估算偏約 100 公尺 */
       tip: '路過風雨球場～學姊的便條：「白天有人打球，晚上燈一關，球場變成全校最大的『空白』。我總覺得，空白的地方最容易長出故事……明天（第二章）我們再回來。」站在邊上看一眼：這個球場有屋頂，下雨天也能用，所以叫風雨球場。（座標是估的，現場請以實際位置為準）' },
 
     { id: 'ws', name: '三連堂與吳三連銅像（選修加分）', time: '—', min: 5, lat: 23.02393, lon: 120.22528, r: 45, secret: '看銅像底座，找找有沒有刻字，念出第一行。',
@@ -281,7 +285,8 @@ window.WALK_ROUTE.campusW = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到圖書館前' },
         { id: 'k1', type: 'choice', title: '「修齊大樓」是用誰的名字取的？', options: ['辛文炳', '吳修齊（創辦人之一）', '吳三連'], answer: '吳修齊（創辦人之一）' },
-        { id: 't1', type: 'text', min: 4, title: '寫一句話：你最近一次進圖書館，是為了什麼？（寫真話）' }
+        { id: 't1', type: 'text', min: 4, title: '寫一句話：你最近一次進圖書館，是為了什麼？（寫真話）' },
+        { id: 'k2', type: 'choice', title: '回想第 2 章：這所學校的第一任「董事長」是誰？', options: ['辛文炳', '吳三連', '吳修齊'], answer: '吳三連', reward: '夜讀生點頭：「噓……對。下一站去優活館，聽聽夜裡的聲音。」' }
       ],
       note: '修齊大樓以創辦人之一吳修齊命名：見 E 棟（白天路線）說明。座標來自 OSM（標示為圖書資訊館）。' },
 
@@ -296,7 +301,8 @@ window.WALK_ROUTE.campusW = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到優活館前' },
         { id: 't1', type: 'text', min: 4, title: '閉眼十秒：寫下你聽到的一種聲音，和它是從哪個方向來的' },
-        { id: 'a1', type: 'ack', title: '拍一張你站的位置（照片牆會看到）' }
+        { id: 'a1', type: 'ack', title: '拍一張你站的位置（照片牆會看到）' },
+        { id: 'k1', type: 'choice', title: '回想第 3 章：「修齊大樓」是用誰的名字取的？', options: ['吳修齊（創辦人之一）', '辛文炳', '吳三連'], answer: '吳修齊（創辦人之一）', reward: '學長停下腳步：「對！好，再一圈就好。下一站去水力加工坊，看看水怎麼工作。」' }
       ],
       note: '本站不放史實，只做觀察。座標來自 OSM。' },
 
@@ -311,7 +317,8 @@ window.WALK_ROUTE.campusW = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到水力加工坊前' },
         { id: 't1', type: 'text', min: 6, title: '寫下你看到的、跟「水」有關的一樣東西，和它的樣子' },
-        { id: 'a1', type: 'ack', title: '拍一張你覺得最像「在工作」的畫面' }
+        { id: 'a1', type: 'ack', title: '拍一張你覺得最像「在工作」的畫面' },
+        { id: 'k1', type: 'choice', title: '回想第 6 章：這所學校在哪一年改名為「科技大學」？', options: ['1969 年', '1996 年', '1999 年'], answer: '1999 年', reward: '看守者的聲音像水：「記得很準。最後去榕園的天圓地方，抬頭看看。」' }
       ],
       note: '這一站的歷史待補：學校沒有可引用的公開說明前，NPC 不講史實。座標來自 OSM（watermill）。' },
 
@@ -326,7 +333,8 @@ window.WALK_ROUTE.campusW = {
       tasks: [
         { id: 'z1', type: 'zone', zone: 'Z', title: '走到作品前' },
         { id: 'k1', type: 'choice', title: '「天圓地方」是古人對什麼的想像？', options: ['天是圓的、地是方的（古人的宇宙觀）', '一種棋類遊戲', '一個傳統節日'], answer: '天是圓的、地是方的（古人的宇宙觀）' },
-        { id: 't1', type: 'text', min: 6, title: '在作品附近找一個圓的、一個方的形狀，各寫一句它在哪裡' }
+        { id: 't1', type: 'text', min: 6, title: '在作品附近找一個圓的、一個方的形狀，各寫一句它在哪裡' },
+        { id: 'k2', type: 'choice', title: '回想第 6 章：校慶日 12 月 15 日，紀念的是哪一件事？', options: ['教育部核准立案', '第一屆學生開學典禮', '改名科技大學'], answer: '第一屆學生開學典禮', reward: '老先生看看天：「好。這一圈走完了，審查單最後一行，回去交給學姊。」' }
       ],
       note: '「天圓地方」為傳統宇宙觀常見說法（一般常識）；作品本身的創作者與涵義尚未查到可靠說明，NPC 不講。座標來自 OSM（artwork）。' },
 
@@ -395,6 +403,14 @@ window.WALK_ROUTE.campusW = {
     var m = CHN[st.id]; if (!m) return;
     var c = JSON.parse(JSON.stringify(st)); c.id = m[1]; c.chapter = m[0]; delete c.frag; delete c.final; delete c.plain;
     c.name = '第 ' + m[0] + ' 章｜' + st.name.replace(/^出發：/, ''); c.tip = '加分章節，不影響三格審查單。' + (c.tip || '');
+    if (st.id === 'c0') {
+      c.zones = { Z: { name: 'E 棟前', lat: st.lat, lon: st.lon, r: 45 } };
+      c.tasks = [
+        { id: 'z1', type: 'zone', zone: 'Z', title: '回到 E 棟前' },
+        { id: 'k1', type: 'choice', title: '畢不了學姊的審查單，一共要蓋幾格？', options: ['2 格', '3 格', '4 格'], answer: '3 格', reward: '便條上畫了個笑臉：「對，三格。差三格就畢業的人，才知道三有多重。」' },
+        { id: 't1', type: 'text', min: 6, title: '寫一句話：走完這一圈，你覺得這所學校最特別的是哪個地方？（寫真話）' }
+      ];
+    }
     add.push(c);
   });
   Array.prototype.splice.apply(N.stops, [at, 0].concat(add));

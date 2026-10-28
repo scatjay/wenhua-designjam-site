@@ -24,14 +24,31 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 .pw{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}.pw figure{margin:0;font-size:11px}.pw img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:zoom-in;display:block}.pw .x{float:right;cursor:pointer;color:var(--warn)}
 #pbig{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff}#pbig img{max-width:96vw;max-height:84vh}
 .dot{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;text-align:center;line-height:22px;font-size:12px;font-weight:700;border:2px solid #fff}
-.pdot{display:block;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);margin:0 auto 2px}.mate{text-align:center}.mate b{display:inline-block;font-size:11px;background:#fff;border:1.5px solid #333;border-radius:99px;padding:0 6px;white-space:nowrap}.dot{width:18px;height:18px;border-radius:50%;background:#b8402a;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff}</style>
+.pdot{display:block;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);margin:0 auto 2px}.mate{text-align:center}.mate b{display:inline-block;font-size:11px;background:#fff;border:1.5px solid #333;border-radius:99px;padding:0 6px;white-space:nowrap}.dot{width:18px;height:18px;border-radius:50%;background:#b8402a;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+#tabs{display:flex;gap:4px;padding:8px 14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+#tabs button{border-radius:8px 8px 0 0;border-bottom:0;min-height:40px;padding:6px 16px}
+#tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+.tp{display:none}
+body[data-tab=ov] .tp-ov,body[data-tab=hq] .tp-hq,body[data-tab=npc] .tp-npc,body[data-tab=ph] .tp-ph,body[data-tab=fb] .tp-fb{display:block}
+body:not([data-tab=ov]) .wrap{grid-template-columns:1fr}
+.chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:700;background:var(--line);color:var(--fg)}
+.m-relax{background:#e3f1e8;color:#1f6b3f}.m-timed{background:#fceBd2;color:#8a4b00}.m-pk{background:#e6eafb;color:#2b3fa3}
+.q-IF{background:#e6edfb;color:#2447a8}.q-IT{background:#ddf3ee;color:#0b6556}.q-EF{background:#fff1dc;color:#8f4a00}.q-ET{background:#eef6dc;color:#3f6a0a}
+.s-ok{background:#ddf0e4;color:#1f6b3f}.s-short{background:#f4dedc;color:#8e2a22}.s-off{background:#e7e2d6;color:#3a4651}
+@media (prefers-color-scheme:dark){.m-relax{background:#1f3a2a;color:#9be0b4}.m-timed{background:#46330f;color:#f0c27a}.m-pk{background:#232a52;color:#b4c0ff}.q-IF{background:#1f2b4d;color:#b4c6ff}.q-IT{background:#12362f;color:#8fe0cf}.q-EF{background:#47300f;color:#f5c58a}.q-ET{background:#26380f;color:#bde37c}.s-ok{background:#1f3a2a;color:#9be0b4}.s-short{background:#4a2420;color:#f3b0a9}.s-off{background:#33302a;color:#cfc8b8}}
+tr.sel{background:rgba(15,127,112,.14)}tr[data-hq]{cursor:pointer}
+.nq{border-top:1px solid var(--line);padding:10px 0}.nq .bb{border-radius:10px;padding:8px 12px;margin-top:6px;background:var(--bg)}.nq .bb.a{background:rgba(15,127,112,.14)}
+.fl{display:flex;gap:8px;flex-wrap:wrap}.fl select{min-height:40px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;padding:0 10px}
+.stat4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}.stat4 .card{margin:0}.big{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+</style>
 </head>
 <body>
 <div id="gate"><h2>走讀 · 帶隊總覽</h2><div class="sub">只有老師能看。</div><p><button id="btn-g">用 Google 帳號登入</button></p><div class="sub" id="gmsg"></div></div>
 <div id="dash" hidden>
-<header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge" title="把只有 1～2 人的小隊併進較大的隊，讓大家有隊友。會改動隊伍，按兩次才會執行。">🤝 整併小隊</button><button id="b-clear" title="清掉地圖上所有人的舊定位點（不影響分數與進度）。畫面上有人已經離開卻還留著點時用。">🧹 清掉定位點</button><button id="b-adv" title="進階：階段切換（上課中請勿按）">⚙ 進階</button><button id="b-phase" hidden style="border-color:#c0392b;color:#c0392b">階段：<span id="pl">—</span></button><button id="b-test" hidden>切換：<span id="tl">正式</span></button><button id="b-out" title="登出老師帳號">🚪 登出</button></header>
+<header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><span class="chip s-off" id="npcst">NPC 對話：—</span><button id="b-merge" title="把只有 1～2 人的小隊併進較大的隊，讓大家有隊友。會改動隊伍，按兩次才會執行。">🤝 整併小隊</button><button id="b-clear" title="清掉地圖上所有人的舊定位點（不影響分數與進度）。畫面上有人已經離開卻還留著點時用。">🧹 清掉定位點</button><button id="b-adv" title="進階：階段切換（上課中請勿按）">⚙ 進階</button><button id="b-phase" hidden style="border-color:#c0392b;color:#c0392b">階段：<span id="pl">—</span></button><button id="b-test" hidden>切換：<span id="tl">正式</span></button><button id="b-out" title="登出老師帳號">🚪 登出</button></header>
 <div class="sub" style="padding:6px 14px;background:var(--panel2,#f3f3f3)">🤝 整併小隊＝把 1～2 人的隊併起來　🧹 清掉定位點＝移除地圖舊點（不影響分數）　⚙ 進階＝階段與測試切換，<b>上課中請勿按</b>　下方各卡片標題旁有一行說明。</div>
-<div class="wrap"><div><button id="b-map" style="margin-bottom:6px">▾ 收合地圖</button><div id="map"></div><div id="rtleg" class="sub" style="margin-top:6px;line-height:1.7"></div></div><div><div class="card"><b>隊伍</b><div class="sub">每隊一列：路線（夜間／白天／台文館）、人數、碎片（到手數／總數）、分數、最近到的一站、在線人數／全隊人數。</div><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div class="sub">已登入多少人、分到隊的人數、教學關六項都完成的人數，以及隊伍人數分佈。</div><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div class="sub">投影或貼給學生掃，會開到遊戲首頁。</div><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card"><details open><summary style="cursor:pointer"><b>📷 照片牆</b> <span class="sub" id="phn"></span>（點標題收合／展開）</summary><div class="sub">學生拍的照片即時出現，依隊伍分組，每組可單獨收合。發現不適當的照片，按照片右上角「✕」（要按兩次）。</div><div id="phw"></div></details></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
+<nav id="tabs"><button data-tab="ov">隊伍與地圖</button><button data-tab="hq">簡報室</button><button data-tab="npc">NPC 提問</button><button data-tab="ph">照片牆</button><button data-tab="fb">學生回報</button></nav>
+<div class="wrap"><div class="tp tp-ov"><button id="b-map" style="margin-bottom:6px">▾ 收合地圖</button><div id="map"></div><div id="rtleg" class="sub" style="margin-top:6px;line-height:1.7"></div></div><div><div class="card tp tp-ov"><b>隊伍</b><div class="sub">每隊一列：路線（夜間／白天／台文館）、人數、碎片（到手數／總數）、分數、最近到的一站、在線人數／全隊人數。</div><table id="tbl"></table></div><div class="card tp tp-ov"><b>練習日進度</b><div class="sub">已登入多少人、分到隊的人數、教學關六項都完成的人數，以及隊伍人數分佈。</div><div id="reh" class="sub">—</div></div><div class="card tp tp-ov"><b>學生入口 QR</b><div class="sub">投影或貼給學生掃，會開到遊戲首頁。</div><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card tp tp-ov"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card tp tp-ph"><details open><summary style="cursor:pointer"><b>📷 照片牆</b> <span class="sub" id="phn"></span>（點標題收合／展開）</summary><div class="sub">學生拍的照片即時出現，依隊伍分組，每組可單獨收合。發現不適當的照片，按照片右上角「✕」（要按兩次）。</div><div id="phw"></div></details></div><div class="card tp tp-fb"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="tp tp-hq" id="hqwrap"><div class="stat4" id="hqsum"></div><div class="card"><b>各隊簡報室狀態</b><div class="sub">點一列看下面的明細。積分＝目前總分；可用點數＝積分減去已花掉的。</div><div style="overflow-x:auto"><table id="hqtbl"></table></div></div><div class="card" id="hqdet"><div class="sub">點上面任一隊，看成員角色與採購內容。</div></div></div><div class="tp tp-npc" id="npcwrap"><div class="card"><b>NPC 提問記錄</b><div class="sub">最新 60 題，新的在最上面，自動更新。回答很短的，通常是問法被這位 NPC 冷處理了。</div><div class="fl" id="nqf" style="margin-top:8px"></div><div id="nqs" class="sub" style="margin-top:8px"></div></div><div class="card" id="nql">—</div></div><div class="card tp tp-ov"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
@@ -124,6 +141,11 @@ function start(){
   ROOT.child('claim').on('value',function(s){claims=s.val()||{};render()});
   ROOT.child('players').on('value',function(s){players=s.val()||{};render()});
   ROOT.child('fb').limitToLast(30).on('value',function(s){fbs=s.val()||{};renderFb()});
+  ROOT.child('npcq').limitToLast(60).on('child_added',function(s){NQ[s.key]=s.val();if(document.body.dataset.tab==='npc')renderNpc()});
+  ROOT.child('npcq').limitToLast(60).on('child_changed',function(s){NQ[s.key]=s.val();if(document.body.dataset.tab==='npc')renderNpc()});
+  ROOT.child('npcq').limitToLast(60).on('child_removed',function(s){delete NQ[s.key];if(document.body.dataset.tab==='npc')renderNpc()});
+  ROOT.child('cfg/npcd').on('value',function(s){npcd=s.val()||{};npcStatus()});
+  db.ref('.info/serverTimeOffset').on('value',function(s){svOff=s.val()||0});
   ROOT.child('rehearsal').on('value',function(s){reh=s.val()||{};render()});
   ROOT.child('cfg/phase').on('value',function(s){phase=s.val();render()});
   try{var u=location.origin+location.pathname.replace('walk_teacher.html','walk.html');var q=qrcode(0,'M');q.addData(u);q.make();$('qr').innerHTML=q.createImgTag(5,2);var im=$('qr').querySelector('img');if(im){im.style.width='180px';im.style.height='180px';im.style.imageRendering='pixelated'}$('qru').textContent=u}catch(e){}
@@ -163,8 +185,70 @@ function renderFb(){
   $('fbl').innerHTML=ids.length?ids.map(function(id){var f=fbs[id];return '<div style="border-top:1px solid var(--line);padding:4px 0;'+(f.done?'opacity:.5':'')+'">'+(T[f.type]||'')+' <b>'+esc(f.text)+'</b><br><span class="sub">'+new Date(f.t).toLocaleString('zh-TW',{hour12:false})+'・'+esc(f.route||'')+'・'+esc(f.stop||'')+'・'+esc(f.view||'')+(f.pos?'・'+f.pos.lat+','+f.pos.lon+'±'+f.pos.acc:'')+(f.errs&&f.errs.length?'<br>錯誤：'+esc(f.errs.join(' | ')):'')+'<br>'+esc((f.ua||'').slice(0,90))+' <button data-fbd="'+id+'">'+(f.done?'已處理':'標為已處理')+'</button></span></div>'}).join(''):'目前沒有。';
   [].forEach.call(document.querySelectorAll('[data-fbd]'),function(b){b.onclick=function(){ROOT.child('fb/'+b.dataset.fbd+'/done').set(true)}});
 }
+
+/* ---------- 分頁、簡報室、NPC 提問 ---------- */
+var SKN={scout:'偵查範圍',hint:'提示折扣',range:'到站判定'},GRN={lens:'放大鏡',kit:'急救包',radio:'對講機'},SKS={sk_hat:'偵探帽',sk_astro:'太空人',sk_cat:'貓咪',sk_ghost:'小幽靈',sk_robot:'機器人',sk_ninja:'忍者',sk_mage:'魔法師',sk_dragon:'小龍'};
+var HQSEL='',NQ={},NF={tid:'',npc:'',st:''},npcd={},svOff=0,nqKey='';
+function hqOf(id){return (progr[id]||{})._hq||{}}
+function cnt(o){return Object.keys(o||{}).length}
+function sumv(o){var n=0;Object.keys(o||{}).forEach(function(k){n+=(+o[k])||0});return n}
+function modeChip(h){var m=h.mode||'relax';return m==='timed'?'<span class="chip m-timed">計時賽</span>':m==='pk'?'<span class="chip m-pk">兩隊 PK</span>':'<span class="chip m-relax">自在悠閒</span>'}
+function timeLeft(h){var t=h.timer;if(!t||!t.start)return null;return Math.max(0,Math.ceil((t.start+(t.total||90)*60000-Date.now())/60000))}
+function pkText(id,h){if((h.mode||'')!=='pk'||!h.pk)return '—';var o=boardr[h.pk]||{};return '對 '+esc(label(teams[h.pk]||{},h.pk))+(o.pk===id?'・對戰中':'・等對方接受')}
+function renderHq(){
+  var ids=Object.keys(teams).sort(function(a,b){return sc(b)-sc(a)}),spent=0,sk=0,gr=0,sn=0,mc={relax:0,timed:0,pk:0},minL=null,idle=[];
+  ids.forEach(function(id){var h=hqOf(id);spent+=h.spent||0;sk+=sumv(h.lv);gr+=cnt(h.gear);sn+=cnt(h.skins);mc[h.mode||'relax']=(mc[h.mode||'relax']||0)+1;
+    if(h.mode==='timed'){var l=timeLeft(h);if(l!=null&&l>0&&(minL==null||l<minL))minL=l}
+    if(!(h.spent>0)&&sc(id)>=100)idle.push(label(teams[id],id))});
+  $('hqsum').innerHTML='<div class="card"><div class="sub">簡報室累計花費</div><div class="big">'+spent+' <span class="sub">點</span></div><div class="sub">技能 '+sk+' 級・裝備 '+gr+' 件・造型 '+sn+' 件</div></div>'
+   +'<div class="card"><div class="sub">現在的玩法</div><div style="margin-top:4px"><span class="chip m-relax">自在悠閒 '+mc.relax+' 隊</span> <span class="chip m-timed">計時賽 '+mc.timed+' 隊</span> <span class="chip m-pk">兩隊 PK '+mc.pk+' 隊</span></div></div>'
+   +'<div class="card"><div class="sub">計時賽最短剩餘</div><div class="big">'+(minL==null?'—':minL+' <span class="sub">分鐘</span>')+'</div></div>'
+   +'<div class="card"><div class="sub">有 100 分以上卻還沒花過點數</div><div class="big">'+idle.length+' <span class="sub">隊</span></div><div class="sub '+(idle.length?'warn':'')+'">'+(idle.map(esc).join('、')||'沒有')+'</div></div>';
+  var h='<tr><th>隊</th><th>玩法</th><th>計時／對手</th><th style="text-align:right">積分</th><th style="text-align:right">可用點數</th><th>已採購</th></tr>';
+  ids.forEach(function(id){var q=hqOf(id),l=timeLeft(q),mid=(q.mode||'relax'),tt=mid==='timed'?(l==null?'尚未開始':(l>0?'剩 '+l+' 分（共 '+(q.timer.total||90)+' 分）':'時間到，不再加速度分')):mid==='pk'?pkText(id,q):'不計時';
+    h+='<tr data-hq="'+esc(id)+'"'+(id===HQSEL?' class="sel"':'')+'><td><b>'+esc(label(teams[id],id))+'</b></td><td>'+modeChip(q)+'</td><td>'+tt+'</td><td style="text-align:right"><b>'+sc(id)+'</b></td><td style="text-align:right">'+Math.max(0,sc(id)-(q.spent||0))+'</td><td>'+(q.spent>0?'技能 '+sumv(q.lv)+'・裝備 '+cnt(q.gear)+'・造型 '+cnt(q.skins):'<span class="warn">還沒採購</span>')+'</td></tr>'});
+  $('hqtbl').innerHTML=h;
+  [].forEach.call(document.querySelectorAll('tr[data-hq]'),function(r){r.onclick=function(){HQSEL=r.dataset.hq;renderHq()}});
+  var d=$('hqdet');if(!HQSEL||!teams[HQSEL]){d.innerHTML='<div class="sub">點上面任一隊，看成員角色與採購內容。</div>';return}
+  var t=teams[HQSEL],q=hqOf(HQSEL),mem=t.members||{},names=function(o,M){return Object.keys(o||{}).filter(function(k){return o[k]}).map(function(k){return esc(M[k]||k)+(typeof o[k]==='number'&&o[k]>1?' '+o[k]+' 級':'')}).join('、')||'無'};
+  var skl=Object.keys(q.lv||{}).filter(function(k){return q.lv[k]}).map(function(k){return esc(SKN[k]||k)+' '+q.lv[k]+' 級'}).join('、')||'無';
+  var pkb='';if(q.mode==='pk'&&q.pk){var o=boardr[q.pk]||{},a=sc(HQSEL),b=o.score||0,pct=a+b?Math.round(a*100/(a+b)):50;pkb='<div class="sub" style="margin-top:8px">兩隊 PK'+(o.pk===HQSEL?'（對戰中）':'（等對方接受）')+'</div><div style="display:flex;align-items:center;gap:10px"><b class="big" style="min-width:48px">'+a+'</b><div style="flex:1;height:14px;border-radius:7px;background:var(--line);overflow:hidden;display:flex"><div style="width:'+pct+'%;background:#0f7f70"></div><div style="flex:1;background:#b9771a"></div></div><b class="big" style="min-width:48px;text-align:right">'+b+'</b></div><div class="sub" style="display:flex;justify-content:space-between"><span>'+esc(label(t,HQSEL))+'</span><span>'+esc(label(teams[q.pk]||{},q.pk))+'</span></div>'}
+  d.innerHTML='<b>'+esc(label(t,HQSEL))+'</b> <span class="sub">'+cnt(mem)+' 人</span>'+pkb
+   +'<div style="margin-top:10px"><b>成員與角色</b></div>'+Object.keys(mem).map(function(u){var m=mem[u]||{};return '<div style="display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0"><span>'+esc(m.nick||'—')+((q.skin||{})[u]?' <span class="sub">造型：'+esc(SKS[q.skin[u]]||q.skin[u])+'</span>':'')+'</span><span class="sub">'+esc(m.role||'—')+'・成長 '+((q.rlv||{})[m.role]||0)+' 級</span></div>'}).join('')
+   +'<div style="margin-top:10px"><b>採購內容</b></div><div class="sub">技能：'+skl+'<br>裝備：'+names(q.gear,GRN)+'<br>造型：'+names(q.skins,SKS)+'<br>累計花費：'+(q.spent||0)+' 點</div>';
+}
+function stopOf(id){return ALLS.filter(function(x){return x.id===id})[0]||{}}
+function renderNpc(){
+  var ids=Object.keys(NQ).sort(function(a,b){return (NQ[b].t||0)-(NQ[a].t||0)}),tids={},npcs={};
+  ids.forEach(function(id){var q=NQ[id],pl=players[q.uid]||{};if(pl.team)tids[pl.team]=1;var nm=(stopOf(q.stop).npc||{}).name;if(nm)npcs[nm]=1});
+  var key=Object.keys(tids).sort().join(',')+'|'+Object.keys(npcs).sort().join(',');
+  if(key!==nqKey){nqKey=key;
+    $('nqf').innerHTML='<select id="nf-t"><option value="">全部隊伍</option>'+Object.keys(tids).map(function(t){return '<option value="'+esc(t)+'">'+esc(label(teams[t]||{},t))+'</option>'}).join('')+'</select><select id="nf-n"><option value="">全部 NPC</option>'+Object.keys(npcs).sort().map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>'}).join('')+'</select><select id="nf-s"><option value="">全部結果</option><option value="ok">有展開</option><option value="short">回得很短</option><option value="off">沒有回應／失敗</option></select>';
+    $('nf-t').value=NF.tid;$('nf-n').value=NF.npc;$('nf-s').value=NF.st;
+    $('nf-t').onchange=function(){NF.tid=this.value;renderNpc()};$('nf-n').onchange=function(){NF.npc=this.value;renderNpc()};$('nf-s').onchange=function(){NF.st=this.value;renderNpc()}}
+  var per={};ids.forEach(function(id){var u=NQ[id].uid;per[u]=(per[u]||0)+1});
+  var top=Object.keys(per).sort(function(a,b){return per[b]-per[a]}).slice(0,6).map(function(u){return esc((players[u]||{}).nick||'—')+' '+per[u]}).join('、');
+  $('nqs').innerHTML='共 '+ids.length+' 題。誰問得多（這 '+ids.length+' 題裡）：'+(top||'—');
+  var now=Date.now(),out='';
+  ids.forEach(function(id){var q=NQ[id],pl=players[q.uid]||{},tid=pl.team||'',s=stopOf(q.stop),nm=(s.npc||{}).name||q.stop||'',ty=window.WALK_NPC_TYPE&&window.WALK_NPC_TYPE(nm),
+      st=q.st||((now-(q.t||0))>150000?'off':'wait'),sg=(st==='ok')?'ok':(st==='short')?'short':(st==='wait'?'wait':'off');
+    if(NF.tid&&tid!==NF.tid)return;if(NF.npc&&nm!==NF.npc)return;if(NF.st&&sg!==NF.st)return;
+    var chip=sg==='ok'?'<span class="chip s-ok">NPC 有展開</span>':sg==='short'?'<span class="chip s-short">回得很短，可能被冷處理</span>':sg==='wait'?'<span class="chip s-off">等待回覆中</span>':'<span class="chip s-off">'+(st==='cap'?'已達提問上限':st==='err'?'程式失敗，學生看到預寫台詞':'沒有回應，學生看到預寫台詞')+'</span>';
+    var note=sg==='short'&&ty?'<div class="sub">建議：'+esc(ty.open)+'。</div>':'';
+    out+='<div class="nq"><div class="sub"><span style="font-variant-numeric:tabular-nums">'+new Date(q.t||0).toLocaleTimeString('zh-TW',{hour12:false})+'</span>　'+esc(label(teams[tid]||{},tid))+'・'+esc(pl.nick||'—')+(q.rl?'（'+esc(q.rl)+(q.lv?' '+q.lv+' 級':'')+'）':'')+'　→　<b style="color:var(--fg)">'+esc(nm)+'</b> '+(ty?'<span class="chip q-'+ty.quad+'">'+ty.type+'　'+esc(ty.q.short)+'</span> ':'')+chip+'</div><div class="bb">'+esc(q.q)+'</div>'+(q.a?'<div class="bb a">'+esc(q.a)+'</div>':'')+note+'</div>'});
+  $('nql').innerHTML=out||'<div class="sub">還沒有符合的提問。</div>';
+}
+function npcStatus(){
+  var live=!!(npcd.on&&npcd.hb&&(Date.now()+svOff-npcd.hb)<90000),el=$('npcst');
+  el.className='chip '+(live?'s-ok':'s-short');el.textContent=live?'NPC 對話：在線，心跳 '+Math.max(0,Math.round((Date.now()+svOff-npcd.hb)/1000))+' 秒前':'NPC 對話：離線，學生看到預寫台詞';
+}
+function tabRender(){var t=document.body.dataset.tab;if(t==='hq')renderHq();if(t==='npc')renderNpc();npcStatus()}
+function setTab(t){document.body.dataset.tab=t;[].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.className=b.dataset.tab===t?'on':''});if(t==='ov'&&map)setTimeout(function(){map.invalidateSize()},50);try{localStorage.setItem('walk_t_tab',t)}catch(e){}tabRender()}
+[].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){setTab(b.dataset.tab)}});
+(function(){var t='ov';try{t=localStorage.getItem('walk_t_tab')||'ov'}catch(e){}if(!/^(ov|hq|npc|ph|fb)$/.test(t))t='ov';document.body.dataset.tab=t;[].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.className=b.dataset.tab===t?'on':''})})();
 function fresh(p){return p&&Date.now()-p.t<120000}
 function render(){
+  tabRender();
   var ids=Object.keys(teams),total=0,online=0,al=[],h='<tr><th>隊</th><th>路線</th><th>人</th><th>碎片</th><th>分</th><th>最近到</th><th>在線</th></tr>';
   ids.sort(function(a,b){return sc(b)-sc(a)});
   ids.forEach(function(id){var t=teams[id],m=Object.keys(t.members||{}),on=0,fr=0;total+=m.length;

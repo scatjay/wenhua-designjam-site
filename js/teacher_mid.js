@@ -10,6 +10,7 @@
   var CHKTOT = { u1: 7, u2: 4, u3: 6, u4: 6 };
   var D = null, SEL = null;
 
+  function safeUrl(u) { return /^https?:\/\//i.test(String(u || '')) ? String(u) : '#'; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function pad(x) { return (x < 10 ? '0' : '') + x; }
   function fmt(ts) { var d = new Date(Number(ts)); return pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
@@ -161,7 +162,7 @@
       h += '<h4 style="margin:12px 0 4px">' + u[1] + '（提交 ' + ss.length + ' 次）</h4>';
       if (!ss.length) h += '<div class="mini">還沒交。</div>';
       ss.forEach(function (s, i) {
-        var ln = Object.keys(s.links || {}).map(function (k) { return '<a href="' + esc(s.links[k]) + '" target="_blank" rel="noopener">' + esc(k) + '</a>'; }).join(' ');
+        var ln = Object.keys(s.links || {}).map(function (k) { return '<a href="' + esc(safeUrl(s.links[k])) + '" target="_blank" rel="noopener">' + esc(k) + '</a>'; }).join(' ');
         var tx = Object.keys(s.texts || {}).map(function (k) { return '<div class="mini"><b>' + esc(k) + '：</b>' + esc(s.texts[k]) + '</div>'; }).join('');
         h += '<div style="border-top:1px dashed var(--line);padding:6px 0"><span class="mini">第 ' + (ss.length - i) + ' 次 · ' + fmt(s.ts) + ' · 勾 ' + (s.chkN || 0) + '/' + (s.chkTotal || CHKTOT[u[0]]) + (s.fixN ? ' · 回應建議 ' + s.fixN + ' 條' : '') + '</span><br>' + ln + tx +
           (s.prompt ? '<details><summary class="mini">指令全文</summary><pre style="white-space:pre-wrap;font-size:12px;margin:4px 0">' + esc(s.prompt) + '</pre></details>' : '') +
@@ -174,7 +175,7 @@
     h += '<h4 style="margin:14px 0 4px">回報與意見（' + fbs.length + '）</h4>';
     if (!fbs.length) h += '<div class="mini">沒有。</div>';
     fbs.forEach(function (f) {
-      h += '<div style="border-top:1px dashed var(--line);padding:6px 0"><span class="mini">' + fmt(f.ts) + ' · ' + esc({ bug: '頁面或功能壞了', judge: '系統判斷不對', unclear: '建議看不懂', other: '其他' }[f.type] || f.type) + (f.unit ? ' · ' + esc(f.unit) : '') + '</span><br>' + esc(f.text) + (f.link ? ' <a href="' + esc(f.link) + '" target="_blank" rel="noopener">連結</a>' : '') +
+      h += '<div style="border-top:1px dashed var(--line);padding:6px 0"><span class="mini">' + fmt(f.ts) + ' · ' + esc({ bug: '頁面或功能壞了', judge: '系統判斷不對', unclear: '建議看不懂', other: '其他' }[f.type] || f.type) + (f.unit ? ' · ' + esc(f.unit) : '') + '</span><br>' + esc(f.text) + (f.link ? ' <a href="' + esc(safeUrl(f.link)) + '" target="_blank" rel="noopener">連結</a>' : '') +
         (f.reply ? '<div class="mini" style="background:#e6f4ef;padding:4px 8px;border-radius:6px;margin-top:4px"><b>已回覆（' + esc(f.reply.verdict || '') + '）：</b>' + esc(f.reply.text || '') + '</div>' :
           '<div style="margin-top:4px"><input type="text" id="rp_' + f._id + '" placeholder="回覆一句話" style="width:100%;padding:6px 9px;border:1px solid var(--line);border-radius:8px"><div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">' +
           ['採納改判', '維持原判', '已修 bug', '只回覆'].map(function (v) { return '<button class="sm" data-reply="' + esc(f._id) + '" data-v="' + v + '">' + v + '</button>'; }).join('') + '</div></div>') + '</div>';

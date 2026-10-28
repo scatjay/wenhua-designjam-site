@@ -190,6 +190,8 @@
     var sc = SCAN[u.key] || {};
     var hist = sc.hist ? Object.keys(sc.hist).sort().reverse() : [];
     var rv = '<b>歷次審核重點</b>';
+    var last = subs.length ? subs[0].ts : 0, ls = sc.lastScan || 0;
+    rv += '<div class="sub" style="margin:2px 0;font-size:12.5px">' + (ls ? '最近一次預掃：' + fmt(ls) : '還沒有預掃過') + (last && last > ls ? '　·　你最近一次送出（' + fmt(last) + '）還沒有被審核，會在今晚 22:30 的預掃處理' : '') + '</div>';
     if (!hist.length) rv += '<div class="sub" style="margin:4px 0">還沒有審核紀錄。老師或預掃審過之後，重點會列在這裡。</div>';
     hist.forEach(function (k) {
       var x = sc.hist[k] || {};
@@ -239,7 +241,11 @@
     if (bad.length) { say('連結要以 https:// 開頭', true); return; }
     if (!Object.keys(r.links).length && !r.prompt && !Object.keys(r.texts).length) { say('至少要貼一個連結，或貼指令全文', true); return; }
     var softWarn = '';
-    if (k === 'u1' && !(r.links.r1 || r.links.r2 || r.links.r3 || r.links.dr)) softWarn = '（提醒：單元 1 還沒有貼任何 Deep Research 文件或對話連結，至少交一份老師才掃得到）';
+    var pre = [], alltx = Object.keys(r.texts).map(function (x) { return r.texts[x]; }).join(' ') + ' ' + (r.prompt || '');
+    if (alltx.indexOf('[[') >= 0) pre.push('文字裡還有沒填的 [[ ]]');
+    if (!r.prompt && (k === 'u2' || k === 'u4')) pre.push('指令欄是空的，Canvas 與 NotebookLM 的分享頁看不到你下的指令');
+    if (pre.length) softWarn = '（提醒：' + pre.join('；') + '；已照常收下，可以明天補）';
+    if (k === 'u1' && !(r.links.r1 || r.links.r2 || r.links.r3 || r.links.dr)) softWarn += '（提醒：單元 1 還沒有貼任何 Deep Research 文件或對話連結，至少交一份老師才掃得到）';
     var fx = collectFix(u);
     var rec = { ts: firebase.database.ServerValue.TIMESTAMP, links: r.links, texts: r.texts, prompt: r.prompt || null, chk: r.chk, chkN: r.chkN, chkTotal: u.chk.length, fix: fx.n ? fx.fix : null, fixN: fx.n, ver: VER };
     var nth = (SUBS[k] || []).length + 1;
@@ -303,7 +309,7 @@
   }
 
   /* ───────── AI 助教 ───────── */
-  var CFG = { chatEnabled: false, dailyCap: 20 }, CHAT = {};
+  var CFG = { chatEnabled: false, dailyCap: 20 }, CHAT = {}, DAEMON = { hb: 0 };
   var OFFLINE = '助教目前還沒開放。先用下面的檢查清單自己對一遍：① 卡號卡名每一份都一樣嗎？② 改動句有原文引用嗎？③ 三人例子的最終自尊值在 R2、Canvas、原型、成果裡一樣嗎？④ 不一樣的地方有寫原因嗎？';
   function chatLeft() { var n = 0, t = today(); Object.keys(CHAT).forEach(function (k) { if (CHAT[k].day === t) n++; }); return Math.max(0, CFG.dailyCap - n); }
   function renderChat() {
@@ -314,7 +320,8 @@
     $('capN').textContent = CFG.dailyCap;
     $('chatState').textContent = CFG.chatEnabled ? '' : OFFLINE;
     var left = ENV == null ? null : chatLeft();
-    var badge = !CFG.loaded ? '讀取中…' : !CFG.chatEnabled ? '⚪ 尚未開放' : (left == null ? '🟢 已開放' : (left > 0 ? '🟢 已開放 · 今天還剩 ' + left + '/' + CFG.dailyCap + ' 次' : '🟠 今天的 ' + CFG.dailyCap + ' 次用完了，明天再問'));
+    var offline = CFG.loaded && CFG.chatEnabled && (!DAEMON.hb || (Date.now() - DAEMON.hb) > 90 * 1000);
+    var badge = !CFG.loaded ? '讀取中…' : !CFG.chatEnabled ? '⚪ 尚未開放' : offline ? '🟠 助教暫時沒在線（可以先問，上線後回答）' : (left == null ? '🟢 已開放' : (left > 0 ? '🟢 已開放 · 今天還剩 ' + left + '/' + CFG.dailyCap + ' 次' : '🟠 今天的 ' + CFG.dailyCap + ' 次用完了，明天再問'));
     if ($('chatBadge')) $('chatBadge').textContent = badge;
     if ($('progChat')) { $('progChat').textContent = 'AI 助教：' + (!CFG.loaded ? '讀取中…' : !CFG.chatEnabled ? '⚪ 尚未開放（先用單元裡的自查清單）' : badge.replace(/^🟢 |^🟠 /, '')); $('progChat').style.color = (CFG.loaded && CFG.chatEnabled && left !== 0) ? 'var(--green)' : 'var(--ink-soft)'; }
     if (window.twemoji) try { twemoji.parse($('chatBadge')); twemoji.parse($('progChat')); } catch (e) {}
@@ -324,6 +331,8 @@
     ref('midchat/' + COURSE + '/' + ENV).limitToLast(60).on('value', function (s) { CHAT = s.val() || {}; renderChat(); renderAch(); });
   }
   function initChat() {
+    ref('middaemon/hb').on('value', function (s) { DAEMON.hb = Number(s.val()) || 0; renderChat(); });
+    setInterval(renderChat, 30000);
     ref('midcfg').on('value', function (s) { var v = s.val() || {}; CFG.loaded = true; CFG.chatEnabled = !!v.chatEnabled; CFG.dailyCap = Number(v.dailyCap) > 0 ? Number(v.dailyCap) : 20; renderChat(); });
     $('chatSend').onclick = function () {
       var m = $('chatMsg'), q = $('chatQ').value.trim();

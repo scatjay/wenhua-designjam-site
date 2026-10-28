@@ -82,11 +82,11 @@ function start(){
   try{var u=location.origin+location.pathname.replace('walk_teacher.html','walk.html');var q=qrcode(0,'M');q.addData(u);q.make();$('qr').innerHTML=q.createImgTag(5,2);var im=$('qr').querySelector('img');if(im){im.style.width='180px';im.style.height='180px';im.style.imageRendering='pixelated'}$('qru').textContent=u}catch(e){}
   setInterval(render,15000);
 }
-var BIND='whgm/analysis/w3game';
+var BIND='whgm/analysis/w3game',PN=window.WALK_ROUTE.practice.length;
 function renderCl(){
-  var us=Object.keys(claims).sort(function(a,b){return (+claims[a])-(+claims[b])});$('cln').textContent=us.length+' 人';
-  $('clt').innerHTML='<tr><th>編號</th><th>暱稱</th><th>隊</th><th></th></tr>'+us.map(function(u){var pl=players[u]||{},t=teams[pl.team]||{};
-    return '<tr><td>#'+esc(claims[u])+'</td><td>'+esc(pl.nick||'—')+'</td><td>'+esc(t.kind==='room'?'房 '+t.code:(t.name||'—'))+'</td><td><button id="ub'+u+'" data-ub="'+u+'">解除</button></td></tr>'}).join('');
+  var us=Object.keys(claims).sort(function(a,b){return (+claims[a])-(+claims[b])});$('cln').textContent=us.length+' 人・教學關做完 '+us.filter(function(u){return Object.keys(reh[u]||{}).length>=PN}).length+' 人';
+  $('clt').innerHTML='<tr><th>編號</th><th>暱稱</th><th>隊</th><th>教學關</th><th></th></tr>'+us.map(function(u){var pl=players[u]||{},t=teams[pl.team]||{};
+    var tn=Object.keys(reh[u]||{}).length;return '<tr><td>#'+esc(claims[u])+'</td><td>'+esc(pl.nick||'—')+'</td><td>'+esc(t.kind==='room'?'房 '+t.code:(t.name||'—'))+'</td><td class="'+(tn>=PN?'ok':'warn')+'">'+tn+'/'+PN+'</td><td><button id="ub'+u+'" data-ub="'+u+'">解除</button></td></tr>'}).join('');
   [].forEach.call(document.querySelectorAll('[data-ub]'),function(b){b.onclick=function(){var u=b.dataset.ub;if(!confirmTwice('ub'+u,'再按一次確認'))return;unbind(u)}});
 }
 function unbind(u){

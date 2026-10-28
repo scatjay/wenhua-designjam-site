@@ -5,9 +5,12 @@
 (function () {
   'use strict';
   var R0 = window.WALK_ROUTE, R = R0, S = R0.stops, REH = false;
+  var CAMP = null;
+  /* 試玩關卡依信封編號自動選：遊戲設計學 101-130（夜間部、W 棟）走 campusW，其他走 E 棟校園導覽；?route=w 可強制（測試用） */
+  function pickCamp() { var w = new URLSearchParams(location.search).get('route') === 'w' || (envNo >= 101 && envNo <= 130); return (w && R0.campusW) ? R0.campusW : R0.campus; }
   function selectRoute(reh) {
-    REH = !!reh;
-    R = REH ? Object.assign({}, R0, { stops: R0.campus.stops, fragmentNames: R0.campus.fragmentNames, finalTask: R0.campus.finalTask }) : R0;
+    REH = !!reh; CAMP = pickCamp();
+    R = REH ? Object.assign({}, R0, { stops: CAMP.stops, fragmentNames: CAMP.fragmentNames, finalTask: CAMP.finalTask }) : R0;
     S = R.stops; curStop = S[0].id;
   }
   function PR_(id) { return (REH ? 'progr/' : 'prog/') + id; }
@@ -167,6 +170,7 @@
     uid = u; $('screen-login').hidden = true;
     var cu = auth.currentUser, em = ((cu && cu.email) || '').toLowerCase();
     isTeacher = !TEST && !!cu && cu.emailVerified !== false && TEACHERS.indexOf(em) >= 0;
+    if (TEST && qs.get('env')) envNo = parseInt(qs.get('env'), 10);
     if (TEST || isTeacher) { afterVerified(); return; }
     ROOT.child('claim/' + uid).once('value').then(function (s) {
       if (s.exists()) { envNo = parseInt(s.val(), 10); afterVerified(); } else showEnv();
@@ -334,7 +338,7 @@
     if (!map) return; S.forEach(function (s, i) { var m = stopMarkers[s.id]; if (m) m.setIcon(stopIcon(s, i, !!(prog[s.id] && prog[s.id].frag))); });
   };
   /* 主要建築名稱：用清楚的 HTML 文字疊在底圖上（座標取自 OSM，概略） */
-  var BLDG = [['修齊大樓（E 棟）', 23.02364, 120.22407, 1], ['人文藝術中心', 23.02315, 120.22437, 0], ['管理與資訊館', 23.02428, 120.22322, 1], ['資訊傳播館', 23.02356, 120.22555, 0], ['電機一館', 23.02516, 120.22314, 0], ['化工暨生物科技館', 23.02278, 120.2252, 0], ['優活館', 23.02279, 120.22446, 1], ['三連堂（體育館）', 23.02433, 120.22543, 1], ['校史館', 23.02325, 120.22418, 1], ['西淮館', 23.02403, 120.22346, 1], ['汽車工程館', 23.02541, 120.22466, 0], ['光電工程館', 23.02571, 120.22421, 0], ['能源工程館', 23.02553, 120.2251, 0]];
+  var BLDG = [['修齊大樓（E 棟）', 23.02364, 120.22407, 1], ['人文藝術中心', 23.02315, 120.22437, 0], ['管理與資訊館', 23.02428, 120.22322, 1], ['資訊傳播館', 23.02356, 120.22555, 0], ['電機一館', 23.02516, 120.22314, 0], ['化工暨生物科技館', 23.02278, 120.2252, 0], ['優活館', 23.02279, 120.22446, 1], ['三連堂（體育館）', 23.02433, 120.22543, 1], ['校史館', 23.02325, 120.22418, 1], ['西淮館', 23.02403, 120.22346, 1], ['汽車工程館', 23.02541, 120.22466, 0], ['光電工程館', 23.02571, 120.22421, 0], ['能源工程館', 23.02553, 120.2251, 0], ['磅礡館（W 棟）', 23.02504, 120.22656, 1], ['姑婆廟', 23.02556, 120.22707, 1], ['校門牌樓', 23.0254, 120.22641, 0]];
   var bldgLayer = null;
   function addBldgLabels() {
     if (bldgLayer) return; bldgLayer = L.layerGroup();
@@ -484,8 +488,13 @@
   function myRole() { return (team && team.members[uid] && team.members[uid].role) || ROLES[0]; }
   function renderTask() {
     var s = stopById(curStop || S[0].id) || S[0], p = prog[s.id] || {}, h = '';
-    if (REH && allDone()) h += certHtml();
-    if (REH) h = practiceHtml() + '<h2>校園試玩：' + esc(R0.campus.name) + '</h2><div class="sub">從 E 棟出發繞一圈，約 10–15 分鐘；校史小知識都來自學校通識電子報。</div>';
+    var WR = CAMP === R0.campusW;
+    if (REH && !tutorialOk()) {
+      $('pane-task').innerHTML = practiceHtml() + '<div class="card">🔒 校園任務要先完成上面的教學關，完成後才會解鎖。</div>';
+      [].forEach.call(document.querySelectorAll('[data-pack]'), function (b) { b.onclick = function () { pmark(b.dataset.pack); }; });
+      return;
+    }
+    if (REH) h = (allDone() ? certHtml() : '') + practiceHtml() + '<h2>校園試玩：' + esc(CAMP.name) + '</h2><div class="sub">' + (WR ? '從 W 棟出發，到門口繞一圈，約 10–15 分鐘；鬼故事都是工坊編的，姑婆廟是真的廟，請小聲、尊重。' : '從 E 棟出發繞一圈，約 10–15 分鐘；校史小知識都來自學校通識電子報。') + '</div>';
     h += '<div class="chips">' + S.map(function (x, i) { var st = (prog[x.id] && prog[x.id].frag) ? 'ok' : (prog[x.id] && prog[x.id].arrived ? 'half' : ''); return '<button class="chip ' + st + (x.id === s.id ? ' cur' : '') + '" data-s="' + x.id + '">' + i + '</button>'; }).join('') + '</div>';
     h += '<h2>' + esc(s.name) + '</h2><div class="sub">' + (REH ? '' : esc(s.time) + ' 起・') + '約 ' + s.min + ' 分' + (s.frag !== undefined ? '・碎片「' + esc(R.fragmentNames[s.frag]) + '」' + (p.frag ? ' ✔' : '') : '') + '</div>';
     if (s.tip) { h += '<div class="card">' + esc(s.tip || '') + '</div>'; if (s.id === 's0' || s.id === 'c0') h += '<div class="card">你的角色：<b>' + ROLE_ICON[myRole()] + myRole() + '</b><br><span class="sub">' + esc(ROLE_DESC[myRole()]) + '</span></div>'; }
@@ -550,6 +559,8 @@
       [].forEach.call(document.querySelectorAll('.phi img'), function (im) { im.onclick = function () { im.parentNode.classList.toggle('big'); }; });
     }).catch(function (e) { $('ph-grid').innerHTML = '<div class="sub">載入失敗：' + esc(e.message) + '</div>'; });
   }
+  /* 教學關（練習清單）全部完成才解鎖校園任務；測試模式預設略過（?gate=1 可測） */
+  function tutorialOk() { return (TEST && qs.get('gate') !== '1') || R0.practice.every(function (t) { return pdone(t.id); }); }
   function allDone() { return R0.practice.every(function (t) { return pdone(t.id); }) && fragCount() >= totalFrags() && !!(prog.final && prog.final.done); }
   function certHtml() {
     var d = new Date(nowMs()), ts = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
@@ -559,7 +570,7 @@
     var P = R0.practice, done = P.filter(function (t) { return pdone(t.id); }).length;
     var h = '<div class="card"><b>🎒 練習日清單</b>（不計分）<div class="sub">完成 ' + done + ' / ' + P.length + '。同隊的人一起做比較容易。</div>';
     P.forEach(function (t) { var d = pdone(t.id); h += '<div class="task' + (d ? ' done' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + esc(t.title) + '</div>' + ((!d && t.type === 'ack') ? '<button class="btn2" data-pack="' + t.id + '">做好了</button>' : '') + (!d && t.type === 'gps' ? '<div class="sub">到「地圖」頁並允許定位，會自動完成。</div>' : '') + (!d && t.type === 'mates' ? '<div class="sub">同隊兩人以上同時開著，會自動完成。</div>' : '') + (!d && t.type === 'auto' ? '<div class="sub">自動完成。</div>' : '') + '</div>'; });
-    if (done === P.length) h += '<div class="bub done">🎉 清單完成！接著出 E 棟繞一圈，完成下面的校園試玩關卡。11/14 當天直接登入就會回到同一隊。</div>';
+    if (done === P.length) h += '<div class="bub done">🎉 清單完成！接著出 ' + (CAMP === R0.campusW ? 'W' : 'E') + ' 棟繞一圈，完成下面的校園試玩關卡。11/14 當天直接登入就會回到同一隊。</div>';
     return h + '</div>';
   }
   var practiceHooked = false;

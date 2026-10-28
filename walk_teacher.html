@@ -29,7 +29,7 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 <body>
 <div id="gate"><h2>走讀 · 帶隊總覽</h2><div class="sub">只有老師能看。</div><p><button id="btn-g">用 Google 帳號登入</button></p><div class="sub" id="gmsg"></div></div>
 <div id="dash" hidden>
-<header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge">整併過小的隊</button><button id="b-clear">清除所有位置</button><button id="b-phase">階段：<span id="pl">—</span></button><button id="b-test">切換：<span id="tl">正式</span></button></header>
+<header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge">整併過小的隊</button><button id="b-clear">清除所有位置</button><button id="b-phase">階段：<span id="pl">—</span></button><button id="b-test">切換：<span id="tl">正式</span></button><button id="b-out">登出</button></header>
 <div class="wrap"><div><div id="map"></div></div><div><div class="card"><b>隊伍</b><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card"><b>📷 照片牆</b> <span class="sub" id="phn"></span><div id="phw" class="pw"></div></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -50,6 +50,7 @@ var db=firebase.database(),auth=firebase.auth(),ROOT=db.ref(TEST?'whgm/analysis/
 var teams={},pos={},prog={},board={},map,markers={},players={},reh={},phase=null,fbs={};
 $('tl').textContent=TEST?'測試':'正式';
 $('b-phase').onclick=function(){var cur=phase||((Date.now()<Date.parse(window.WALK_ROUTE.liveStart))?'rehearsal':'live');if(confirmTwice('b-phase','切換為'+(cur==='rehearsal'?'正式':'練習日')+'（再按一次確認）'))ROOT.child('cfg/phase').set(cur==='rehearsal'?'live':'rehearsal')};
+$('b-out').onclick=function(){if(confirmTwice('b-out','再按一次登出'))auth.signOut().then(function(){location.reload()})};
 $('b-test').onclick=function(){location.search=TEST?'':'?test=1'};
 function accept(u){
   var em=(u.email||'').toLowerCase();

@@ -665,6 +665,11 @@
     boot();
     [].forEach.call(document.querySelectorAll('.fb-open'), function (b) { b.onclick = openFb; });
     $('ph-close').onclick = function () { $('phm').hidden = true; }; $('ph-ref').onclick = openWall;
+    [].forEach.call(document.querySelectorAll('.lo'), function (b) { b.onclick = function () {
+      if (b.dataset.arm !== '1') { b.dataset.t = b.textContent; b.dataset.arm = '1'; b.textContent = '再按一次登出'; setTimeout(function () { b.dataset.arm = '0'; b.textContent = b.dataset.t; }, 5000); return; }
+      try { clearInterval(posTimer); } catch (e) {}
+      auth.signOut().then(function () { location.reload(); });
+    }; });
     $('fb-send').onclick = sendFb; $('fb-close').onclick = function () { $('fbm').hidden = true; };
   });
 })();

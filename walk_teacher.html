@@ -92,12 +92,18 @@ function start(){
   LV.filter(function(x){return x.lat&&x.lon}).forEach(function(x){byCh[9].push(x)});
   Object.keys(byCh).forEach(function(k){CH.push({k:'ch'+k,name:'第 '+k+' 章：'+NAMES[k],stops:byCh[k],on:byCh[k].length>0})});
   var PAL=['#d9534f','#2f6690','#2e8b57','#c08a1e','#8e44ad','#d35400','#16a085','#7f8c8d','#c2185b','#5d4037'];
-  CH.forEach(function(c,ci){c.col=PAL[ci%PAL.length];c.lg=L.layerGroup();c.stops.forEach(function(s,i){
-    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot" style="background:'+c.col+';border-color:#fff;color:#fff">'+(c.k==='ch2'?'★':i)+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).bindTooltip(c.name.split('：')[0]+'・'+i+'・'+s.name).addTo(c.lg);
-    L.circle([s.lat,s.lon],{radius:s.r,color:c.col,weight:1.5,opacity:.55,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(c.lg)})});
+  /* 每章一種形狀＋一種顏色：1 圓｜2 方｜3 菱形｜4 三角｜5 六邊形｜6 五邊形｜7 星｜8 盾｜9 十字 */
+  var SHP=['border-radius:50%','border-radius:4px','clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)','clip-path:polygon(50% 0,100% 100%,0 100%)','clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)','clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%)','clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)','clip-path:polygon(0 0,100% 0,100% 60%,50% 100%,0 60%)','clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)'];
+  window.chShape=function(ci){return SHP[ci%SHP.length]};
+  CH.forEach(function(c,ci){c.col=PAL[ci%PAL.length];c.sh=SHP[ci%SHP.length];c.lg=L.layerGroup();c.nlg=L.layerGroup();c.stops.forEach(function(s,i){
+    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:'+c.col+';color:#fff;font-size:12px;font-weight:700;'+c.sh+';filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.5))">'+i+'</div>',iconSize:[26,26],iconAnchor:[13,13]})}).bindTooltip('第 '+c.k.replace('ch','')+' 章・'+i+'・'+s.name).addTo(c.lg);
+    L.circle([s.lat,s.lon],{radius:s.r,color:c.col,weight:1.5,opacity:.55,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(c.lg);
+    if(s.npc)L.marker([s.lat+0.00008,s.lon+0.00008],{zIndexOffset:500,icon:L.divIcon({className:'',html:'<div style="width:26px;height:26px;border-radius:50%;background:#fff;border:2.5px solid '+c.col+';display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 1px 3px rgba(0,0,0,.4)">'+(s.npc.ava||'💬')+'</div>',iconSize:[26,26],iconAnchor:[13,13]})}).bindTooltip('NPC：'+s.npc.name+'（'+s.name+'）').addTo(c.nlg)})});
+  var npcOn=true;
   window.drawChapters=function(){
-    CH.forEach(function(c){if(c.on)c.lg.addTo(map);else map.removeLayer(c.lg)});
-    $('rtleg').innerHTML='<div style="margin-bottom:4px"><b>關卡定位點</b>（勾選要顯示的章節；地圖上的數字＝該章的關卡編號，滑過數字看站名，虛線圈是到站範圍，顏色＝章節）</div>'+CH.map(function(c){return '<label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" data-ch="'+c.k+'"'+(c.on?' checked':'')+'> <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c.col+';vertical-align:middle"></span> <b>'+esc(c.name)+'</b>：'+c.stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')+'</label>'}).join('');
+    CH.forEach(function(c){if(c.on)c.lg.addTo(map);else map.removeLayer(c.lg);if(c.on&&npcOn)c.nlg.addTo(map);else map.removeLayer(c.nlg)});
+    $('rtleg').innerHTML='<div style="margin-bottom:4px"><b>關卡定位點</b>（勾選要顯示的章節；顏色與形狀＝章節，形狀裡的數字＝該章的關卡編號，滑過看站名，虛線圈是到站範圍；白底圓圈裡的表情＝該站的 NPC 所在位置）</div><label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" id="npcon"'+(npcOn?' checked':'')+'> 顯示 NPC 位置</label>'+CH.map(function(c){return '<label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" data-ch="'+c.k+'"'+(c.on?' checked':'')+'> <span style="display:inline-block;width:14px;height:14px;background:'+c.col+';vertical-align:middle;'+c.sh+'"></span> <b>'+esc(c.name)+'</b>：'+c.stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')+'</label>'}).join('');
+    $('npcon').onchange=function(){npcOn=this.checked;drawChapters()};
     [].forEach.call(document.querySelectorAll('#rtleg [data-ch]'),function(b){b.onchange=function(){CH.forEach(function(c){if(c.k===b.dataset.ch)c.on=b.checked});drawChapters()}})};
   drawChapters();
   var first=CH[0]&&CH[0].stops[0];if(first)map.setView([first.lat,first.lon],17);

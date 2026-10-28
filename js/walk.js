@@ -159,12 +159,11 @@
     var night = effectiveStyle() === 'night', ok3d = false, wrap = $('morph-wrap');
     if (window.WalkMorph3D && WalkMorph3D.supported()) {   /* 有 WebGL：等角體素 3D 場景，運鏡變成 QR；沒有就退回 2D 像素版 */
       try {
-        var api = WalkMorph3D.mount(wrap, url, night, { onToggle: function (toQR) { $('morph-hint').textContent = toQR ? 'QR 已定住，再點一下運鏡回場景' : '點一下運鏡切換 QR'; } });
+        var api = WalkMorph3D.mount(wrap, url, night, { onToggle: function (toQR) { $('morph-hint').textContent = toQR ? '朋友掃這個就能加入・再點一下回場景' : '點一下運鏡成 QR，朋友掃了就能加入'; } });
         if (api) { var old = $('morph'); if (old && old !== api.canvas) old.remove(); wrap.insertBefore(api.canvas, $('morph-hint')); window.__morph3d = api; ok3d = true; }
       } catch (e) { ok3d = false; }
     }
     if (!ok3d && window.WalkMorph) WalkMorph.mount($('morph'), url, night);
-    $('qr-url').textContent = url;
   }
   function loginErr(e) { $('login-msg').textContent = '登入沒完成（' + ((e && e.code) || 'unknown') + '）。可以換瀏覽器或重試一次。'; }
   function googleLogin() {
@@ -582,7 +581,7 @@
     var P = R0.practice, done = P.filter(function (t) { return pdone(t.id); }).length;
     var h = '<div class="card"><b>🎒 練習日清單</b>（不計分）<div class="sub">完成 ' + done + ' / ' + P.length + '。同隊的人一起做比較容易。</div>';
     P.forEach(function (t) { var d = pdone(t.id); h += '<div class="task' + (d ? ' done' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + esc(t.title) + '</div>' + ((!d && t.type === 'ack') ? '<button class="btn2" data-pack="' + t.id + '">做好了</button>' : '') + (!d && t.type === 'gps' ? '<div class="sub">到「地圖」頁並允許定位，會自動完成。</div>' : '') + (!d && t.type === 'mates' ? '<div class="sub">同隊兩人以上同時開著，會自動完成。</div>' : '') + (!d && t.type === 'auto' ? '<div class="sub">自動完成。</div>' : '') + '</div>'; });
-    if (done === P.length) h += '<div class="bub done">🎉 清單完成！接著出 ' + (CAMP === R0.campusW ? 'W' : 'E') + ' 棟繞一圈，完成下面的校園試玩關卡。11/14 當天直接登入就會回到同一隊。</div>';
+    if (done === P.length) h += '<div class="bub done">🎉 清單完成！接著出 ' + (CAMP === R0.campusW ? 'W' : 'E') + ' 棟繞一圈，完成下面的校園試玩關卡。</div>';
     return h + '</div>';
   }
   var practiceHooked = false;
@@ -654,7 +653,7 @@
     ROOT.child(PR_(teamId) + '/final').transaction(function (c) { return c === null ? { done: true, by: uid, t: nowMs(), text: v.slice(0, 200) } : undefined; }).then(function (r) { if (r.committed) { log('final', 's7', v); toast('🎉 完成！'); } });
   }
   function renderTeam() {
-    var m = team.members, h = '<h2>' + esc(teamLabel()) + '</h2><div class="sub">' + Object.keys(m).length + ' / 4 人' + (team.closed ? '・已關門' : '・可加入') + '</div>';
+    var m = team.members, h = '<h2>隊員 ' + Object.keys(m).length + ' / 4</h2><div class="sub">' + (team.closed ? '已關門，不能再加入' : '還可以加入') + '</div>';   /* 隊名與人數頂列已經有了，這裡不再重複 */
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
     h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + avaHtml(x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span></div>'; }).join('') + '</div>';
     h += '<div class="card"><b>你的角色：' + ROLE_ICON[myRole()] + myRole() + '</b><div class="sub">' + esc(ROLE_DESC[myRole()]) + '。角色只是看到的提示不同，缺人也不影響過關。</div><div class="opts">' + ROLES.map(function (r) { return '<button class="btn2" data-role="' + r + '">' + ROLE_ICON[r] + r + '</button>'; }).join('') + '</div></div>';

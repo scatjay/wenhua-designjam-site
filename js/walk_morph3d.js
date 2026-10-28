@@ -8,6 +8,79 @@
     try { var c = document.createElement('canvas'); return !!(window.THREE && (c.getContext('webgl') || c.getContext('experimental-webgl'))); } catch (e) { return false; }
   }
   function rnd(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  /* ── 音效：全部用 WebAudio 即時合成（不需要音檔）。瀏覽器規定要先有使用者操作才能出聲，所以第一次點擊／觸碰後才會響；右下的喇叭鈕可靜音（記在 localStorage） ── */
+  var sfx = (function () {
+    var ctx = null, master = null, enabled = true, unlocked = false, played = [], noiseBuf = null;
+    try { enabled = localStorage.getItem('walk_sfx') !== '0'; } catch (e) {}
+    function init() {
+      if (ctx) return true;
+      try { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false; ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination); } catch (e) { ctx = null; return false; }
+      return true;
+    }
+    function unlock() { if (!init()) return; if (ctx.state === 'suspended') ctx.resume(); unlocked = true; if (enabled) bgmStart(); }
+    function ok() { return enabled && unlocked && ctx && ctx.state !== 'closed'; }
+    function noise() { if (noiseBuf) return noiseBuf; noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 1, ctx.sampleRate); var d = noiseBuf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return noiseBuf; }
+    function env(g, t0, a, peak, dec) { g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + a); g.gain.exponentialRampToValueAtTime(0.0001, t0 + a + dec); }
+    function tone(type, f0, f1, t0, a, peak, dec, dest) {
+      var o = ctx.createOscillator(), g = ctx.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t0); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t0 + a + dec);
+      env(g, t0, a, peak, dec); o.connect(g); g.connect(dest || master); o.start(t0); o.stop(t0 + a + dec + 0.05);
+    }
+    function nz(t0, dur, f0, f1, q, peak, type) {
+      var src = ctx.createBufferSource(), flt = ctx.createBiquadFilter(), g = ctx.createGain(); src.buffer = noise(); flt.type = type || 'bandpass'; flt.Q.value = q || 1.2;
+      flt.frequency.setValueAtTime(f0, t0); flt.frequency.exponentialRampToValueAtTime(f1, t0 + dur); env(g, t0, dur * 0.3, peak, dur * 0.7); src.connect(flt); flt.connect(g); g.connect(master); src.start(t0); src.stop(t0 + dur + 0.05);
+    }
+    var NOTE = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
+    function play(name, fn) { if (!ok()) return; played.push(name); if (played.length > 60) played.shift(); try { fn(ctx.currentTime + 0.01); } catch (e) {} }
+    /* ── 背景音樂：四小節循環（和弦墊底＋低音＋五聲音階旋律＋輕輕的節拍），用前瞻排程；與音效共用同一個靜音鈕 ── */
+    var bgm = { on: false, timer: null, next: 0, step: 0, night: false, gain: null };
+    var CH = { day: [[48, 52, 55, 59], [45, 48, 52, 57], [41, 45, 48, 52], [43, 47, 50, 55]], night: [[45, 48, 52, 55], [41, 45, 48, 52], [48, 52, 55, 59], [40, 44, 47, 52]] };
+    var ML = { day: [72, 0, 76, 0, 79, 0, 76, 74, 69, 0, 72, 0, 76, 0, 74, 72, 72, 0, 69, 0, 72, 76, 0, 74, 71, 0, 74, 0, 79, 0, 76, 0],
+               night: [69, 0, 72, 0, 76, 0, 72, 0, 65, 0, 69, 0, 72, 0, 69, 67, 72, 0, 76, 0, 79, 0, 76, 0, 64, 0, 71, 0, 74, 0, 71, 0] };
+    function bgmStep(st, t, spb) {
+      var bar = Math.floor(st / 8) % 4, k = st % 8, ch = CH[bgm.night ? 'night' : 'day'][bar], ml = ML[bgm.night ? 'night' : 'day'], dest = bgm.gain;
+      if (k === 0) ch.slice(1).forEach(function (m) { tone('triangle', NOTE(m), 0, t, 0.08, 0.05, spb * 7, dest); });
+      if (k === 0 || k === 4) tone('sine', NOTE(ch[0] - 12), 0, t, 0.01, 0.14, spb * 1.6, dest);
+      var m = ml[st % 32]; if (m) { tone(bgm.night ? 'sine' : 'triangle', NOTE(m), 0, t, 0.006, bgm.night ? 0.1 : 0.09, spb * 1.5, dest); tone('sine', NOTE(m + 12), 0, t, 0.006, 0.025, spb * 0.9, dest); }
+      if (k % 2 === 1) nzTo(t, 0.05, 7000, 7000, 0.02, dest);
+    }
+    function nzTo(t0, dur, f0, f1, peak, dest) {
+      var src = ctx.createBufferSource(), flt = ctx.createBiquadFilter(), g = ctx.createGain(); src.buffer = noise(); flt.type = 'highpass'; flt.frequency.value = f0; env(g, t0, 0.004, peak, dur); src.connect(flt); flt.connect(g); g.connect(dest); src.start(t0); src.stop(t0 + dur + 0.05);
+    }
+    function bgmTick() {
+      if (!bgm.on || !ctx) return; var spb = 60 / (bgm.night ? 84 : 104);
+      while (bgm.next < ctx.currentTime + 0.4) { bgmStep(bgm.step, bgm.next, spb); bgm.next += spb / 2; bgm.step++; }
+    }
+    function bgmStart() {
+      if (!ok() || bgm.on) return; bgm.on = true; bgm.gain = ctx.createGain(); bgm.gain.gain.value = 0.0001; bgm.gain.connect(master); bgm.gain.gain.exponentialRampToValueAtTime(0.5, ctx.currentTime + 1.2);
+      bgm.next = ctx.currentTime + 0.1; bgm.step = 0; bgm.timer = setInterval(bgmTick, 120); bgmTick(); played.push('bgm-start');
+    }
+    function bgmStop() {
+      if (!bgm.on) return; bgm.on = false; clearInterval(bgm.timer); var g = bgm.gain; try { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setValueAtTime(g.gain.value, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4); setTimeout(function () { try { g.disconnect(); } catch (e) {} }, 600); } catch (e) {}
+      played.push('bgm-stop');
+    }
+    return {
+      bgmStart: bgmStart, bgmStop: bgmStop, bgmSetNight: function (n) { bgm.night = !!n; }, bgmPlaying: function () { return bgm.on; },
+      unlock: unlock, played: played,
+      isOn: function () { return enabled; },
+      setOn: function (v) { enabled = !!v; try { localStorage.setItem('walk_sfx', v ? '1' : '0'); } catch (e) {} if (enabled) bgmStart(); else bgmStop(); },
+      whoosh: function (toQR) { play('whoosh', function (t) { nz(t, 0.7, toQR ? 400 : 3200, toQR ? 3200 : 400, 1.1, 0.5); tone('sine', toQR ? 180 : 520, toQR ? 520 : 180, t, 0.05, 0.12, 0.5); }); },
+      vanish: function () { play('vanish', function (t) {      /* 小女孩消失：低頻爆音＋閃亮琶音＋高頻閃爍 */
+        tone('sine', 140, 38, t, 0.01, 0.9, 0.45); nz(t, 0.5, 6000, 1200, 0.8, 0.35, 'highpass');
+        [84, 88, 91, 96, 100, 103].forEach(function (m, i) { tone('triangle', NOTE(m), 0, t + 0.04 + i * 0.055, 0.005, 0.22, 0.5); tone('sine', NOTE(m + 12), 0, t + 0.04 + i * 0.055, 0.005, 0.07, 0.35); });
+      }); },
+      appear: function () { play('appear', function (t) {      /* 小女孩出現：氣泡「啵」＋下行小鈴 */
+        tone('sine', 260, 980, t, 0.01, 0.5, 0.16); [96, 91, 88, 84].forEach(function (m, i) { tone('triangle', NOTE(m), 0, t + 0.08 + i * 0.07, 0.005, 0.18, 0.4); });
+      }); },
+      tick: function (k) { play('tick', function (t) { var sc = [72, 74, 76, 79, 81, 84], m = sc[Math.abs(k * 7 + 3) % sc.length]; tone('sine', NOTE(m), 0, t, 0.004, 0.11, 0.55); tone('triangle', NOTE(m + 12), 0, t, 0.004, 0.03, 0.2); }); },
+      ding: function () { play('ding', function (t) { tone('sine', NOTE(91), 0, t, 0.004, 0.3, 0.7); tone('sine', NOTE(98), 0, t + 0.09, 0.004, 0.22, 0.8); }); }
+    };
+  })();
+  function luma(c) { return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b; }   /* 與手機相機轉灰階的算法一致（編碼後的值） */
+  function fitLuma(h, sat, target) {   /* 固定色相與飽和度，調明度直到灰階亮度等於 target */
+    var lo = 0.04, hi = 0.97, c = new THREE.Color();
+    for (var k = 0; k < 14; k++) { var mid = (lo + hi) / 2; c.setHSL(h, sat, mid); if (luma(c) < target) lo = mid; else hi = mid; }
+    return c.setHSL(h, sat, (lo + hi) / 2);
+  }
   var clamp01 = function (x) { return Math.max(0, Math.min(1, x)); };
   var ease = function (x) { x = clamp01(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };   /* 三次方進出：起步與收尾乾脆 */
   var back = function (x) { x = clamp01(x); var c1 = 1.25, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };   /* 長出來時微微彈一下 */
@@ -84,7 +157,7 @@
       if (rr9 < 0.075) meadow = new THREE.Color().setHSL(rnd(r * 17 + c * 3) , 0.85, night ? 0.74 : 0.8);          /* 花朵點點 */
       else meadow = new THREE.Color().setHSL(0.27 + nz * 0.025 + rnd(r * 3 + c * 11) * 0.02, night ? 0.38 : 0.52, (night ? 0.5 : 0.66) + nz * 0.035 + rnd(r * 19 + c) * 0.035);
       sceneCols.push(meadow);
-      qrCols.push(new THREE.Color().setHSL(hue, isDark ? 0.72 : 0.5, isDark ? (night ? 0.4 : 0.42) : (night ? 0.95 : 0.97)));            /* QR：同色相但深格加深、淺格近白，對比夠才掃得到 */
+      qrCols.push(fitLuma(hue, isDark ? 0.8 : 0.45, isDark ? (night ? 0.2 : 0.22) : 0.965));            /* QR：同色相，但用灰階亮度定色——深格一律夠暗（約 0.22）、淺格一律近白（約 0.965），對比不看色相 */
       tiles.setColorAt(k, sceneCols[k]);   /* 第一幀就是繽紛色 */
       k++;
     }
@@ -132,7 +205,7 @@
     var ringB = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 64), addMat(night ? 0x9bd1ff : 0xffd54a)); ringB.rotation.x = -Math.PI / 2; ringB.position.y = 0.7; scene.add(ringB);
     var BN = 90, burst = new THREE.InstancedMesh(new THREE.OctahedronGeometry(1, 0), new THREE.MeshBasicMaterial({ color: 0xffffff }), BN);
     for (var bi = 0; bi < BN; bi++) burst.setColorAt(bi, bi % 4 === 0 ? new THREE.Color('#ffffff') : new THREE.Color().setHSL(rnd(bi * 5 + 2), 1, 0.66)); scene.add(burst);
-    var girlIdx = [], girlBase = [], flashAmt = 0, lastW = 0;
+    var sfxFired = false, lastTickK = -1, wasMoving = false, girlIdx = [], girlBase = [], flashAmt = 0, lastW = 0;
     info.forEach(function (b, i) { if (b.g === 'girl') { girlIdx.push(i); girlBase.push(new THREE.Color(b.c)); } });
     var tinted = new Uint8Array(N * N), tileFlat = true, ev = new THREE.Euler(), qv = new THREE.Quaternion();
     function fx(cur, t) {
@@ -156,6 +229,8 @@
       var dirc = target < cur - 1e-4 ? -1 : (target > cur + 1e-4 ? 1 : 0), kk2 = dirc < 0 ? 1 : (dirc > 0 ? 0.5 : 0);
       var pp = dirc < 0 ? clamp01((0.7 - cur) / 0.4) : (dirc > 0 ? clamp01((cur - 0.26) / 0.4) : 0), pulse = Math.sin(Math.PI * pp) * kk2, ctr = 9 * 1.45 * f;
       flashAmt = pulse;
+      if (dirc !== 0) { if (!sfxFired && pp > 0.3) { sfxFired = true; if (dirc < 0) sfx.vanish(); else sfx.appear(); } } else sfxFired = false;
+      if (dirc === 0 && cur > 0.95 && active) { var kP = Math.floor(t / PERIOD); if (kP !== lastTickK) { lastTickK = kP; sfx.tick(kP); } }
       var H0 = 60 * f, bw = (0.5 + 3.2 * pulse) * f;
       beam.scale.set(bw, H0, bw); beam.position.set(0, H0 / 2, 0); beam.material.opacity = Math.min(0.9, pulse * 1.0);
       beam2.scale.set(bw * 1.9, H0, bw * 1.9); beam2.position.set(0, H0 / 2, 0); beam2.material.opacity = pulse * 0.4;
@@ -217,6 +292,8 @@
     var WHITE = new THREE.Color(0xffffff), cur = 1, target = 1, mode = 'auto', holdT = 0, lastNow = performance.now(), tAcc = 0, DUR = 1.25;
     function frame(now) {
       var dt = Math.min(0.1, (now - lastNow) / 1000); lastNow = now; tAcc += dt;
+      var vis = cv.offsetParent !== null && !document.hidden;
+      if (sfx.bgmPlaying() && !vis) sfx.bgmStop(); else if (vis && sfx.isOn() && !sfx.bgmPlaying() && sfx.played.length) sfx.bgmStart();   /* 離開登入畫面或分頁在背景就停，回來再接著播 */
       if (cv.offsetParent !== null) {
         if (mode === 'auto') {
           if (Math.abs(cur - target) < 0.001) { holdT += dt; if (holdT > (target === 1 ? 3.6 : 5)) { target = 1 - target; holdT = 0; } } else holdT = 0;
@@ -224,6 +301,8 @@
         if (cur !== target && !api.paused) { var step = dt / DUR; cur = cur < target ? Math.min(target, cur + step) : Math.max(target, cur - step); }
         place(cur, tAcc); fx(cur, tAcc); camera(cur, tAcc);
         var moving = Math.abs(cur - target) > 0.001;
+        if (wasMoving && !moving && cur === 0) sfx.ding();
+        wasMoving = moving;
         cv.style.filter = (moving ? 'blur(' + (Math.sin(Math.PI * cur) * 1.4 * (1 - Math.min(1, flashAmt * 1.2))).toFixed(2) + 'px) ' : '') + (flashAmt > 0.01 ? 'brightness(' + (1 + flashAmt * 0.35).toFixed(2) + ') saturate(' + (1 + flashAmt * 0.7).toFixed(2) + ')' : '') || 'none';   /* 運鏡途中的景深模糊 */
         renderer.render(scene, cam);
       }
@@ -232,14 +311,20 @@
     requestAnimationFrame(frame);
     var api = { paused: false,
       canvas: cv,
-      toggle: function () { mode = 'manual'; target = target === 1 ? 0 : 1; return target === 0; },   /* true＝正在變成 QR */
+      toggle: function () { sfx.unlock(); mode = 'manual'; target = target === 1 ? 0 : 1; sfx.whoosh(target === 0); return target === 0; },   /* true＝正在變成 QR */
       state: function () { return { cur: cur, target: target, mode: mode }; },
       seek: function (v) { mode = 'manual'; cur = target = v; },
       set: function (c, tg, pause) { mode = 'manual'; cur = c; target = tg; api.paused = !!pause; }
     };
     host.appendChild(cv);
+    sfx.bgmSetNight(night);
+    var sb = document.createElement('button'); sb.id = 'sfx-btn'; sb.type = 'button'; sb.className = 'btn2'; sb.setAttribute('aria-label', '音效開關');
+    sb.style.cssText = 'display:block;margin:2px auto 0;padding:2px 12px;font-size:13px';
+    var paint = function () { sb.textContent = sfx.isOn() ? '🔊 音樂與音效' : '🔇 已靜音'; };
+    paint(); sb.onclick = function (e) { e.stopPropagation(); sfx.unlock(); sfx.setOn(!sfx.isOn()); paint(); if (sfx.isOn()) sfx.ding(); }; host.appendChild(sb);
+    document.addEventListener('pointerdown', function () { sfx.unlock(); }, { once: true, capture: true });
     cv.onclick = function () { var toQR = api.toggle(); if (handlers && handlers.onToggle) handlers.onToggle(toQR); };
     return api;
   }
-  window.WalkMorph3D = { supported: supported, mount: mount };
+  window.WalkMorph3D = { supported: supported, mount: mount, sfx: sfx };
 })();

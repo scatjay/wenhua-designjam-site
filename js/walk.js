@@ -777,8 +777,8 @@
   function flyDanmaku(v) {
     var box = document.getElementById('dm'); if (!box || !dmShow || box.children.length > 14) return;
     var e = document.createElement('div'); e.className = 'dmk'; e.textContent = (v.n ? v.n + '：' : '') + v.x;
-    dmLane = (dmLane + 1) % 6; e.style.top = (14 + dmLane * 9) + 'vh'; e.style.animationDuration = (13 + Math.random() * 3) + 's';
-    box.appendChild(e); setTimeout(function () { e.remove(); }, 17000);
+    dmLane = (dmLane + 1) % 6; e.style.top = (14 + dmLane * 9) + 'vh'; e.style.animationDuration = (8 + Math.random() * 2) + 's';
+    box.appendChild(e); setTimeout(function () { e.remove(); }, 11500);
   }
   function startChat() {
     dmStart = nowMs();

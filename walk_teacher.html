@@ -37,11 +37,22 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="js/walk_route.js?v=202610281615"></script>
+<script src="js/walk_route.js?v=202610282005"></script>
 <script>
 (function(){
 'use strict';
 var S=window.WALK_ROUTE.stops, TEACHERS=['scatjay@gmail.com','yib@stust.edu.tw'];
+var progr={},boardr={};
+var ALLS=(window.WALK_ROUTE.campusW?window.WALK_ROUTE.campusW.stops:[]).concat(window.WALK_ROUTE.campus?window.WALK_ROUTE.campus.stops:[]).concat(S);
+var NM_A=['夜班','月光','提燈','蓋章','守夜','迷路','飄飄','八億','審查','鐘樓','牌樓','涼亭'],NM_B=['小隊','偵探團','巡守隊','探險隊','審查組','幽靈團','蓋章組','守衛隊'];
+function storyName(id){var h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return NM_A[h%NM_A.length]+NM_B[Math.floor(h/13)%NM_B.length]}
+function label(t,id){return t&&t.kind==='room'?'房 '+t.code:storyName(id)}
+function sc(id){return Math.max((board[id]||{}).score||0,(boardr[id]||{}).score||0)}
+function mergedProg(id){var a=prog[id]||{},b=progr[id]||{},o={};Object.keys(a).forEach(function(k){o[k]=a[k]});Object.keys(b).forEach(function(k){o[k]=b[k]});return o}
+function fragsOf(id){var m=mergedProg(id),n=0;Object.keys(m).forEach(function(k){if(m[k]&&m[k].frag)n++});return n}
+function routeName(id){var ks=Object.keys(mergedProg(id));if(ks.some(function(k){return /^w/.test(k)}))return '夜間';if(ks.some(function(k){return /^c/.test(k)}))return '白天';if(ks.some(function(k){return /^s/.test(k)}))return '台文館';return '—'}
+function totOf(id){var r=routeName(id);return r==='台文館'?4:3}
+function stopNow(id){var m=mergedProg(id),best='';ALLS.forEach(function(s){if(m[s.id]&&m[s.id].arrived)best=s.name});return best}
 var qs=new URLSearchParams(location.search), TEST=qs.get('test')==='1';
 var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
@@ -65,12 +76,14 @@ $('btn-g').onclick=function(){if(inApp)return;var p=new firebase.auth.GoogleAuth
   /* 一律先彈窗：手機 Chrome 的轉頁登入會丟掉登入結果；彈窗被擋才轉頁 */
   auth.signInWithPopup(p).catch(function(e){var c=e.code||'';if(c==='auth/popup-blocked')auth.signInWithRedirect(p).catch(function(x){$('gmsg').textContent='登入沒完成（'+(x.code||x.message)+'）'});else if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')$('gmsg').textContent='登入視窗被關掉了，請再按一次。';else $('gmsg').textContent='登入沒完成（'+(c||e.message)+'）'})};
 function start(){
-  map=L.map('map').setView([S[0].lat,S[0].lon],16);
+  map=L.map('map').setView([ALLS[0].lat,ALLS[0].lon],16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-  S.forEach(function(s,i){L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+i+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(map);L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,fillOpacity:.04}).addTo(map)});
+  ALLS.forEach(function(s,i){L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+i+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(map);L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,fillOpacity:.04}).addTo(map)});
   ROOT.child('teams').on('value',function(s){teams=s.val()||{};render()});
   ROOT.child('pos').on('value',function(s){pos=s.val()||{};render()});
   ROOT.child('prog').on('value',function(s){prog=s.val()||{};render()});
+  ROOT.child('progr').on('value',function(s){progr=s.val()||{};render()});
+  ROOT.child('boardr').on('value',function(s){boardr=s.val()||{};render()});
   ROOT.child('board').on('value',function(s){board=s.val()||{};render()});
   /* 照片牆：只聽「新增／刪除」，每張照片只下載一次 */
   var PH={};
@@ -104,7 +117,7 @@ function unbind(u){
 }
 function renderPh(){
   var ids=Object.keys(PH).sort(function(a,b){return PH[b].t-PH[a].t});$('phn').textContent=ids.length+' 張（最新 60）';
-  $('phw').innerHTML=ids.map(function(id){var p=PH[id],tn=(teams[p.tid]||{}),nm=tn.kind==='room'?'房 '+tn.code:(tn.name||'');var st=(S.filter(function(x){return x.id===p.stop})[0]||{}).name||p.stop||'';
+  $('phw').innerHTML=ids.map(function(id){var p=PH[id],tn=(teams[p.tid]||{}),nm=label(tn,p.tid);var st=(S.filter(function(x){return x.id===p.stop})[0]||{}).name||p.stop||'';
     return '<figure><span class="x" id="pd'+id+'" data-pd="'+id+'" title="刪除">✕</span><img data-pb="'+id+'" src="'+p.d+'" alt=""><figcaption><b>'+esc(nm)+'</b> '+esc(st)+'<br>'+esc(p.cap||'')+'</figcaption></figure>'}).join('');
   [].forEach.call(document.querySelectorAll('[data-pb]'),function(im){im.onclick=function(){var p=PH[im.dataset.pb],d=document.createElement('div');d.id='pbig';d.innerHTML='<img src="'+p.d+'"><div>'+esc(p.cap||'')+'・'+new Date(p.t).toLocaleTimeString('zh-TW',{hour12:false})+'（點任何地方關閉）</div>';d.onclick=function(){d.remove()};document.body.appendChild(d)}});
   [].forEach.call(document.querySelectorAll('[data-pd]'),function(b){b.onclick=function(){var id=b.dataset.pd;if(confirmTwice('pd'+id,'再按一次確認刪除'))ROOT.update({['photos/'+id]:null,['pth/'+id]:null})}});
@@ -116,14 +129,14 @@ function renderFb(){
 }
 function fresh(p){return p&&Date.now()-p.t<120000}
 function render(){
-  var ids=Object.keys(teams),total=0,online=0,al=[],h='<tr><th>隊</th><th>人</th><th>碎片</th><th>分</th><th>在線</th></tr>';
-  ids.sort(function(a,b){return ((board[b]||{}).score||0)-((board[a]||{}).score||0)});
+  var ids=Object.keys(teams),total=0,online=0,al=[],h='<tr><th>隊</th><th>路線</th><th>人</th><th>碎片</th><th>分</th><th>最近到</th><th>在線</th></tr>';
+  ids.sort(function(a,b){return sc(b)-sc(a)});
   ids.forEach(function(id){var t=teams[id],m=Object.keys(t.members||{}),on=0,fr=0;total+=m.length;
     m.forEach(function(u){if(fresh((pos[id]||{})[u]))on++});online+=on;
-    S.forEach(function(s){if(s.frag!==undefined&&(prog[id]||{})[s.id]&&prog[id][s.id].frag)fr++});
-    if(m.length<=2&&!t.closed)al.push((t.name||'房 '+t.code)+' 只有 '+m.length+' 人');
-    if(on<m.length)al.push((t.name||'房 '+t.code)+' 有 '+(m.length-on)+' 人離線或沒開定位');
-    h+='<tr><td>'+esc(t.kind==='room'?'房 '+t.code:t.name)+'</td><td>'+m.length+'</td><td>'+fr+'/4</td><td>'+((board[id]||{}).score||0)+'</td><td class="'+(on===m.length?'ok':'warn')+'">'+on+'/'+m.length+'</td></tr>'});
+    fr=fragsOf(id);
+    if(m.length<=2&&!t.closed)al.push(label(t,id)+' 只有 '+m.length+' 人');
+    if(on<m.length)al.push(label(t,id)+' 有 '+(m.length-on)+' 人離線或沒開定位');
+    h+='<tr><td>'+esc(label(t,id))+'</td><td>'+routeName(id)+'</td><td>'+m.length+'</td><td>'+fr+'/'+totOf(id)+'</td><td>'+sc(id)+'</td><td class="small">'+esc(stopNow(id))+'</td><td class="'+(on===m.length?'ok':'warn')+'">'+on+'/'+m.length+'</td></tr>'});
   $('tbl').innerHTML=h;$('alerts').innerHTML=al.length?al.map(esc).join('<br>'):'沒有。';
   renderCl();
   $('stat').textContent=ids.length+' 隊・'+total+' 人・在線 '+online;

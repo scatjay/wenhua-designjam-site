@@ -156,7 +156,14 @@
   function buildQR() {
     var box = $('qr-box'); if (!box || !window.qrcode) return;
     var url = location.origin + location.pathname;
-    if (window.WalkMorph) WalkMorph.mount($('morph'), url, effectiveStyle() === 'night');
+    var night = effectiveStyle() === 'night', ok3d = false, wrap = $('morph-wrap');
+    if (window.WalkMorph3D && WalkMorph3D.supported()) {   /* 有 WebGL：等角體素 3D 場景，運鏡變成 QR；沒有就退回 2D 像素版 */
+      try {
+        var api = WalkMorph3D.mount(wrap, url, night, { onToggle: function (toQR) { $('morph-hint').textContent = toQR ? 'QR 已定住，再點一下運鏡回場景' : '點一下運鏡切換 QR'; } });
+        if (api) { var old = $('morph'); if (old && old !== api.canvas) old.remove(); wrap.insertBefore(api.canvas, $('morph-hint')); window.__morph3d = api; ok3d = true; }
+      } catch (e) { ok3d = false; }
+    }
+    if (!ok3d && window.WalkMorph) WalkMorph.mount($('morph'), url, night);
     $('qr-url').textContent = url;
   }
   function loginErr(e) { $('login-msg').textContent = '登入沒完成（' + ((e && e.code) || 'unknown') + '）。可以換瀏覽器或重試一次。'; }

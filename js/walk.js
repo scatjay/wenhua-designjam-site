@@ -7,9 +7,10 @@
   var R0 = window.WALK_ROUTE, R = R0, S = R0.stops, REH = false;
   var CAMP = null;
   /* 試玩關卡依信封編號自動選：遊戲設計學 101-130（夜間部、W 棟）走 campusW，其他走 E 棟校園導覽；?route=w 可強制（測試用） */
-  function pickCamp() { var w = new URLSearchParams(location.search).get('route') === 'w' || (envNo >= 101 && envNo <= 130); return (w && R0.campusW) ? R0.campusW : R0.campus; }
+  var TWR = new URLSearchParams(location.search).get('route') === 'tw';
+  function pickCamp() { if (TWR && R0.tw) return R0.tw; var w = new URLSearchParams(location.search).get('route') === 'w' || (envNo >= 101 && envNo <= 130); return (w && R0.campusW) ? R0.campusW : R0.campus; }
   function selectRoute(reh) {
-    REH = !!reh; CAMP = pickCamp();
+    REH = !!reh || (TWR && !!R0.tw); CAMP = pickCamp();
     R = REH ? Object.assign({}, R0, { stops: CAMP.stops, fragmentNames: CAMP.fragmentNames, finalTask: CAMP.finalTask }) : R0;
     S = R.stops; curStop = S[0].id;
   }
@@ -321,7 +322,7 @@
     on(ROOT.child('players/' + uid + '/team'), 'value', function (sn) { var nt = sn.val(); if (nt && nt !== teamId) { toast('你的隊伍被整併了，已切到新隊。'); enterGame(nt); } });
     on(ROOT.child(PR_(id)), 'value', function (s) { prog = s.val() || {}; render(); checkTasks(); });
     on(ROOT.child('pos/' + id), 'value', function (s) { teamPos = s.val() || {}; renderMates(); checkTasks(); });
-    on(ROOT.child('cfg/phase'), 'value', function (sn) { cfgPhase = sn.val(); if ((phase() === 'rehearsal') !== REH) { console.log('RELOAD', phase(), REH, cfgPhase, R.liveStart); location.reload(); return; } render(); renderBanner(); });
+    on(ROOT.child('cfg/phase'), 'value', function (sn) { cfgPhase = sn.val(); if (!(TWR && R0.tw) && (phase() === 'rehearsal') !== REH) { console.log('RELOAD', phase(), REH, cfgPhase, R.liveStart); location.reload(); return; } render(); renderBanner(); });
     on(ROOT.child('cfg/npcd'), 'value', function (sn) { npcd = sn.val() || {}; refreshNpcBox(); });
     db.ref('.info/serverTimeOffset').on('value', function (sn) { svOff = sn.val() || 0; });
     on(ROOT.child('npca/' + uid), 'value', function (sn) { var v = sn.val() || {}; Object.keys(v).forEach(function (k) { npcAns[k] = v[k]; }); refreshNpcBox(); });
@@ -513,7 +514,7 @@
   }
   /* 隊名：不用系名，依隊伍代號固定產生和故事有關的名字（每個人看到的一樣） */
   var NM_A = ['夜班', '月光', '提燈', '蓋章', '守夜', '迷路', '飄飄', '八億', '審查', '鐘樓', '牌樓', '涼亭'], NM_B = ['小隊', '偵探團', '巡守隊', '探險隊', '審查組', '幽靈團', '蓋章組', '守衛隊'];
-  function storyName(id) { var h = 0, i; id = String(id || ''); for (i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0; return NM_A[h % NM_A.length] + NM_B[Math.floor(h / 13) % NM_B.length]; }
+  function storyName(id) { if (TWR && R0.tw) { var g = 0, j; id = String(id || ''); for (j = 0; j < id.length; j++) g = (g * 31 + id.charCodeAt(j)) >>> 0; return ['時安局', '案件', '檔案室', '守時', '校時', '鐘樓'][g % 6] + ['一組', '二組', '三組', '調查隊', '特勤組', '巡查隊'][Math.floor(g / 7) % 6]; } var h = 0, i; id = String(id || ''); for (i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0; return NM_A[h % NM_A.length] + NM_B[Math.floor(h / 13) % NM_B.length]; }
   function teamLabel() { return (team.kind === 'room' ? '房 ' + team.code : storyName(teamId)) || '隊'; }
 
   /* ---------- 介面渲染 ---------- */
@@ -547,8 +548,9 @@
     var nxt = null, i; for (i = 0; i < S.length; i++) { if (S[i].frag !== undefined && !(prog[S[i].id] && prog[S[i].id].frag)) { nxt = S[i]; break; } }
     if (!nxt) nxt = S.filter(function (x) { return x.final; })[0] || S[S.length - 1];
     var d = myPos ? ' ・約 ' + Math.round(dist(myPos, nxt)) + ' 公尺' : '';
-    if (got >= total) return '🎯 目標：三格都蓋滿了！回「' + nxt.name + '」交審查單，寫下最後一句。';
-    return '🎯 目標：集滿 ' + total + ' 格審查單（已 ' + got + '/' + total + '）・下一站：' + nxt.name + d;
+    var UN = (TWR && R0.tw) ? '案件章' : '審查單';
+    if (got >= total) return '🎯 目標：' + total + ' 格都蓋滿了！回「' + nxt.name + '」交' + (UN === '案件章' ? '案件檔' : '審查單') + '，寫下最後一句。';
+    return '🎯 目標：集滿 ' + total + ' 格' + UN + '（已 ' + got + '/' + total + '）・下一站：' + nxt.name + d;
   }
   var goalT = 0;
   function updateGoal(force) {
@@ -566,7 +568,7 @@
       [].forEach.call(document.querySelectorAll('[data-pack]'), function (b) { b.onclick = function () { pmark(b.dataset.pack); }; });
       return;
     }
-    if (REH) h = (allDone() ? certHtml() : '') + practiceHtml() + '<h2>校園試玩：' + esc(CAMP.name) + '</h2><div class="sub">' + (WR ? '從 W 棟出發，到門口繞一圈，約 10–15 分鐘；鬼故事都是工坊編的，姑婆廟是真的廟，請小聲、尊重。' : '從 E 棟出發繞一圈，約 10–15 分鐘；校史小知識都來自學校通識電子報。') + '</div>';
+    if (REH) h = (allDone() ? certHtml() : '') + practiceHtml() + '<h2>' + ((TWR && R0.tw) ? '中西區九案：' : '校園試玩：') + esc(CAMP.name) + '</h2><div class="sub">' + ((TWR && R0.tw) ? '九個案子同時在地圖上，不分先後，挑你想去的；每一案的事實都有出處，每一站都有一題「文化怎麼變成遊戲規則」。到不了現場可以按 🆘 或「我不在現場，先聊聊」。' : WR ? '從 W 棟出發，到門口繞一圈，約 10–15 分鐘；鬼故事都是工坊編的，姑婆廟是真的廟，請小聲、尊重。' : '從 E 棟出發繞一圈，約 10–15 分鐘；校史小知識都來自學校通識電子報。') + '</div>';
     h += '<div class="chips">' + S.map(function (x, i) { var st = (prog[x.id] && prog[x.id].frag) ? 'ok' : (prog[x.id] && prog[x.id].arrived ? 'half' : ''); return '<button class="chip ' + st + (x.id === s.id ? ' cur' : '') + '" data-s="' + x.id + '">' + i + '</button>'; }).join('') + '</div>';
     h += '<h2>' + esc(s.name) + '</h2><div class="sub">' + (REH ? '' : esc(s.time) + ' 起・') + '約 ' + s.min + ' 分' + (s.frag !== undefined ? '・碎片「' + esc(R.fragmentNames[s.frag]) + '」' + (p.frag ? ' ✔' : '') : '') + '</div>';
     if (s.tip) { h += '<div class="card">' + esc(s.tip || '') + '</div>'; if (s.id === 's0' || s.id === 'c0') h += '<div class="card">你的角色：<b>' + ROLE_ICON[myRole()] + myRole() + '</b><br><span class="sub">' + esc(ROLE_DESC[myRole()]) + '</span></div>'; }
@@ -664,7 +666,7 @@
     var P = R0.practice, done = P.filter(function (t) { return pdone(t.id); }).length;
     var h = '<div class="card"><b>🎒 練習日清單</b>（不計分）<div class="sub">完成 ' + done + ' / ' + P.length + '。同隊的人一起做比較容易。</div>';
     P.forEach(function (t) { var d = pdone(t.id); h += '<div class="task' + (d ? ' done' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + esc(t.title) + '</div>' + ((!d && t.type === 'ack') ? '<button class="btn2" data-pack="' + t.id + '">做好了</button>' : '') + (!d && t.type === 'gps' ? '<div class="sub">到「地圖」頁並允許定位，會自動完成。</div>' : '') + (!d && t.type === 'mates' ? '<div class="sub">同隊兩人以上同時開著，會自動完成。</div><button class="btn2" data-pack="' + t.id + '">我一個人玩，直接通過</button>' : '') + (!d && t.type === 'auto' ? '<div class="sub">自動完成。</div>' : '') + '</div>'; });
-    if (done === P.length) h += '<div class="bub done">🎉 清單完成！接著出 ' + (CAMP === R0.campusW ? 'W' : 'E') + ' 棟繞一圈，完成下面的校園試玩關卡。</div>';
+    if (done === P.length) h += '<div class="bub done">🎉 清單完成！接著' + ((TWR && R0.tw) ? '到中西區走走，完成下面的案件。' : '出 ' + (CAMP === R0.campusW ? 'W' : 'E') + ' 棟繞一圈，完成下面的校園試玩關卡。') + '</div>';
     return h + '</div>';
   }
   var practiceHooked = false;

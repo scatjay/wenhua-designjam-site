@@ -38,13 +38,14 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="js/walk_route.js?v=202610282045"></script>
+<script src="js/walk_route.js?v=202610282235"></script>
+<script src="js/walk_route_tw.js?v=202610282242"></script>
 <script>
 (function(){
 'use strict';
 var S=window.WALK_ROUTE.stops, TEACHERS=['scatjay@gmail.com','yib@stust.edu.tw'];
 var progr={},boardr={},PH={};
-var ALLS=(window.WALK_ROUTE.campusW?window.WALK_ROUTE.campusW.stops:[]).concat(window.WALK_ROUTE.campus?window.WALK_ROUTE.campus.stops:[]);
+var ALLS=(window.WALK_ROUTE.campusW?window.WALK_ROUTE.campusW.stops:[]).concat(window.WALK_ROUTE.campus?window.WALK_ROUTE.campus.stops:[]).concat(window.WALK_ROUTE.tw?window.WALK_ROUTE.tw.stops:[]);
 var NM_A=['夜班','月光','提燈','蓋章','守夜','迷路','飄飄','八億','審查','鐘樓','牌樓','涼亭'],NM_B=['小隊','偵探團','巡守隊','探險隊','審查組','幽靈團','蓋章組','守衛隊'];
 function pcolor(id){var C=['#c0392b','#1e7a4c','#2f5fb3','#8a3fb0','#b35a00','#00727a','#a0276a','#4a5d1a','#5b3fc0','#0a6e9e'],h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return C[h%C.length]}
 function storyName(id){var h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return NM_A[h%NM_A.length]+NM_B[Math.floor(h/13)%NM_B.length]}
@@ -83,20 +84,21 @@ function start(){
   map=L.map('map').setView([ALLS[0].lat,ALLS[0].lon],16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
   /* 關卡分章節：每章一個圖層，可單獨顯示或關閉 */
-  var CW=window.WALK_ROUTE.campusW,CC=window.WALK_ROUTE.campus,LV=window.WALK_ROUTE.stops||[],CH=[];
-  /* 十章：1 夜班審查單｜2 三連堂與銅像｜3 圖書館與優活館｜4 水力加工坊｜5 天圓地方｜6 校史館｜7 西淮館｜8 E 棟｜9 台文館（11/14 現場） */
-  var NAMES={1:'夜班審查單',2:'三連堂與銅像（選修）',3:'通識的最後一格（圖書館、優活館）',4:'水力加工坊',5:'天圓地方',6:'校史館',7:'西淮館',8:'E 棟（修齊大樓）',9:'台文館（11/14 現場）'};
-  var byCh={1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]};
+  var CW=window.WALK_ROUTE.campusW,CC=window.WALK_ROUTE.campus,TW=window.WALK_ROUTE.tw,CH=[];
+  /* 校園八章：1 夜班審查單｜2 三連堂與銅像｜3 圖書館與優活館｜4 水力加工坊｜5 天圓地方｜6 校史館｜7 西淮館｜8 E 棟；中西區九案（時安局世界觀）另成一組 */
+  var NAMES={1:'夜班審查單',2:'三連堂與銅像（選修）',3:'通識的最後一格（圖書館、優活館）',4:'水力加工坊',5:'天圓地方',6:'校史館',7:'西淮館',8:'E 棟（修齊大樓）'};
+  var byCh={1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[]};
   if(CW)CW.stops.forEach(function(x){var n=x.id==='ws'?2:(x.chapter||1);byCh[n].push(x)});
   if(CC)CC.stops.forEach(function(x){if(x.chapter&&!byCh[x.chapter].length)byCh[x.chapter].push(x)});
-  LV.filter(function(x){return x.lat&&x.lon}).forEach(function(x){byCh[9].push(x)});
-  Object.keys(byCh).forEach(function(k){CH.push({k:'ch'+k,name:'第 '+k+' 章：'+NAMES[k],stops:byCh[k],on:byCh[k].length>0&&k!=='9'})});
+  Object.keys(byCh).forEach(function(k){CH.push({k:'ch'+k,name:'校園・第 '+k+' 章：'+NAMES[k],stops:byCh[k],on:byCh[k].length>0})});
+  if(TW){for(var n=1;n<=9;n++){(function(n){var st=TW.stops.filter(function(x){return x.chapter===n});if(st.length)CH.push({k:'tw'+n,name:'中西區・第 '+n+' 案：'+st[0].name.replace(/^第 \d 案｜/,''),stops:st,on:true})})(n)}
+    var fin=TW.stops.filter(function(x){return x.final});if(fin.length)CH.push({k:'twf',name:'中西區・終點：台文館',stops:fin,on:true})}
   var PAL=['#d9534f','#2f6690','#2e8b57','#c08a1e','#8e44ad','#d35400','#16a085','#7f8c8d','#c2185b','#5d4037'];
   /* 每章一種形狀＋一種顏色：1 圓｜2 方｜3 菱形｜4 三角｜5 六邊形｜6 五邊形｜7 星｜8 盾｜9 十字 */
   var SHP=['border-radius:50%','border-radius:4px','clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)','clip-path:polygon(50% 0,100% 100%,0 100%)','clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)','clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%)','clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)','clip-path:polygon(0 0,100% 0,100% 60%,50% 100%,0 60%)','clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)'];
   window.chShape=function(ci){return SHP[ci%SHP.length]};
   CH.forEach(function(c,ci){c.col=PAL[ci%PAL.length];c.sh=SHP[ci%SHP.length];c.lg=L.layerGroup();c.nlg=L.layerGroup();c.stops.forEach(function(s,i){
-    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:'+c.col+';color:#fff;font-size:14px;font-weight:800;'+c.sh+';filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 2px 2px rgba(0,0,0,.55))">'+i+'</div>',iconSize:[30,30],iconAnchor:[15,15]})}).bindTooltip('第 '+c.k.replace('ch','')+' 章・'+i+'・'+s.name).addTo(c.lg);
+    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:'+c.col+';color:#fff;font-size:14px;font-weight:800;'+c.sh+';filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 2px 2px rgba(0,0,0,.55))">'+i+'</div>',iconSize:[30,30],iconAnchor:[15,15]})}).bindTooltip(c.name.split('：')[0]+'・'+i+'・'+s.name).addTo(c.lg);
     L.circle([s.lat,s.lon],{radius:s.r,color:c.col,weight:1.5,opacity:.55,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(c.lg);
     if(s.npc)L.marker([s.lat+0.00014,s.lon+0.00014],{zIndexOffset:500,icon:L.divIcon({className:'',html:'<div style="width:36px;height:30px;background:#fff;border:3px solid #1b1b1b;border-radius:15px 15px 15px 3px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:3px 3px 0 '+c.col+'">'+(s.npc.ava||'💬')+'</div>',iconSize:[36,30],iconAnchor:[4,30]})}).bindTooltip('NPC：'+s.npc.name+'（'+s.name+'）').addTo(c.nlg)})});
   var npcOn=true;

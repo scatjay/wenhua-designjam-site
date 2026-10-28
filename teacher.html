@@ -56,6 +56,7 @@
   .w3tbl{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
   .w3tbl th,.w3tbl td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
   .w3tbl th{font-size:12px;color:var(--ink-soft);position:sticky;top:0;background:var(--panel)}
+  .w3tbl td{overflow-wrap:anywhere;word-break:break-word}.w3tbl summary{white-space:nowrap}.w3tbl td details{min-width:64px}
   .w3scroll{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
   .w3ok{color:var(--ok);font-weight:800}.w3no{color:var(--warn);font-weight:800}
   .w47grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin:12px 0;align-items:start}
@@ -1466,6 +1467,6 @@ db.ref(`${NS}/rounds`).on("value", snap => {
   } catch (e) { var m = document.getElementById('olMeta'); if (m) m.textContent = '讀不到上線資料'; }
 })();
 </script>
-<script src="js/teacher_mid.js?v=202610281140"></script>
+<script src="js/teacher_mid.js?v=202610281925"></script>
 </body>
 </html>

@@ -87,7 +87,7 @@
       '<br><b>被問最多的主題：</b>' + (topics.length ? topics.slice(0, 6).map(function (t) { return esc(t) + ' ' + st.topic[t]; }).join('　') : '（還分不出主題）') +
       '<br><b>觀察：</b>' + obs(st).map(esc).join('；') + '</div>';
     h += '<details open><summary class="mini" style="cursor:pointer"><b>最近的提問（最多 60 則，點「答」展開）</b></summary><div class="w3scroll"><table class="w3tbl"><thead><tr><th>時間</th><th>編號</th><th>單元</th><th>問</th><th>答</th></tr></thead><tbody>' +
-      list.slice(0, 60).map(function (m, i) { return '<tr><td class="small">' + fmt(m.ts) + '</td><td><a href="#" data-mid="' + esc(m._env) + '">#' + esc(m._env) + '</a></td><td>' + esc(UNN[m.unit] || m.unit || '') + '</td><td>' + esc(m.q) + '</td><td>' + (m.a ? '<details><summary class="mini">展開</summary><div class="mini" style="white-space:pre-wrap;max-width:420px">' + esc(m.a) + '</div></details>' : '<span class="mini">' + esc(m.status || '') + '</span>') + '</td></tr>'; }).join('') +
+      list.slice(0, 60).map(function (m, i) { return '<tr><td class="small">' + fmt(m.ts) + '</td><td><a href="#" data-mid="' + esc(m._env) + '">#' + esc(m._env) + '</a></td><td>' + esc(UNN[m.unit] || m.unit || '') + '</td><td>' + esc(m.q) + '</td><td>' + (m.a ? '<details><summary class="mini">展開</summary><div class="mini" style="white-space:pre-wrap;max-width:min(420px,70vw);overflow-wrap:anywhere">' + esc(m.a) + '</div></details>' : '<span class="mini">' + esc(m.status || '') + '</span>') + '</td></tr>'; }).join('') +
       '</tbody></table></div></details>';
     return h;
   }

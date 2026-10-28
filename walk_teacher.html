@@ -87,12 +87,13 @@ function start(){
   if(CW){CH.push({k:'c1',name:'夜間・第 1 章：夜班審查單',stops:CW.stops.filter(function(x){return x.id!=='ws'}),on:true});
          var w2=CW.stops.filter(function(x){return x.id==='ws'});if(w2.length)CH.push({k:'c2',name:'夜間・第 2 章：三連堂與銅像（選修）',stops:w2,on:true});}
   if(CC)CH.push({k:'c0',name:'白天・校內導覽（E 棟出發）',stops:CC.stops,on:false});
-  CH.forEach(function(c){c.lg=L.layerGroup();c.stops.forEach(function(s,i){
-    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+(c.k==='c2'?'★':i)+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).bindTooltip(c.name.split('：')[0]+'・'+i+'・'+s.name).addTo(c.lg);
-    L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,opacity:.35,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(c.lg)})});
+  var PAL=['#d9534f','#2f6690','#2e8b57','#c08a1e','#8e44ad','#d35400','#16a085','#7f8c8d','#c2185b','#5d4037'];
+  CH.forEach(function(c,ci){c.col=PAL[ci%PAL.length];c.lg=L.layerGroup();c.stops.forEach(function(s,i){
+    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot" style="background:'+c.col+';border-color:#fff;color:#fff">'+(c.k==='c2'?'★':i)+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).bindTooltip(c.name.split('：')[0]+'・'+i+'・'+s.name).addTo(c.lg);
+    L.circle([s.lat,s.lon],{radius:s.r,color:c.col,weight:1.5,opacity:.55,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(c.lg)})});
   window.drawChapters=function(){
     CH.forEach(function(c){if(c.on)c.lg.addTo(map);else map.removeLayer(c.lg)});
-    $('rtleg').innerHTML='<div style="margin-bottom:4px"><b>關卡定位點</b>（勾選要顯示的章節；地圖上的數字＝該章的關卡編號，滑過數字看站名，紅色虛線圈是到站範圍）</div>'+CH.map(function(c){return '<label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" data-ch="'+c.k+'"'+(c.on?' checked':'')+'> <b>'+esc(c.name)+'</b>：'+c.stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')+'</label>'}).join('');
+    $('rtleg').innerHTML='<div style="margin-bottom:4px"><b>關卡定位點</b>（勾選要顯示的章節；地圖上的數字＝該章的關卡編號，滑過數字看站名，虛線圈是到站範圍，顏色＝章節）</div>'+CH.map(function(c){return '<label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" data-ch="'+c.k+'"'+(c.on?' checked':'')+'> <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c.col+';vertical-align:middle"></span> <b>'+esc(c.name)+'</b>：'+c.stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')+'</label>'}).join('');
     [].forEach.call(document.querySelectorAll('#rtleg [data-ch]'),function(b){b.onchange=function(){CH.forEach(function(c){if(c.k===b.dataset.ch)c.on=b.checked});drawChapters()}})};
   drawChapters();
   var first=CH[0]&&CH[0].stops[0];if(first)map.setView([first.lat,first.lon],17);

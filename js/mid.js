@@ -100,7 +100,7 @@
       });
       h += '<label class="f">指令全文 <small>（連結看不到指令時一定要貼；看得到也鼓勵貼，老師端才有東西可以看。不要放真名、學號）</small></label><textarea id="pr_' + u.key + '" style="min-height:120px"></textarea>' +
         '<div id="warn_' + u.key + '"></div>' +
-        '<div class="sub" style="margin:8px 0 0;font-size:13px">AI 預掃審核一天一輪（晚上跑），只審你當天最後一次送出的內容；今天送出，明天看得到審核結果。</div>' +
+        '<div class="sub" style="margin:8px 0 0;font-size:13px">這個單元每天只能送出一次（四個單元各算各的）；AI 預掃審核每天晚上跑一輪，今天送出的，明天看得到審核結果。</div>' +
         '<div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap"><button data-send="' + u.key + '">送出單元 ' + u.n + '</button><span class="sub" style="margin:0" id="cnt_' + u.key + '"></span></div>' +
         '<div class="msg" id="msg_' + u.key + '"></div>' +
         '<div class="hist" id="hist_' + u.key + '"></div></div>';
@@ -174,6 +174,9 @@
   function renderUnit(u) {
     var subs = SUBS[u.key] || [];
     $('cnt_' + u.key).textContent = '這個單元已提交 ' + subs.length + ' 次';
+    var sentToday = subs.length && subs[0].id === today();
+    var sb2 = document.querySelector('button[data-send="' + u.key + '"]');
+    if (sb2) { sb2.disabled = !!sentToday; sb2.textContent = sentToday ? '今天已送出，明天可以再送' : '送出單元 ' + u.n; }
     var h = '<b>提交紀錄（共 ' + subs.length + ' 次）</b>';
     if (!subs.length) h += '<div class="sub" style="margin:4px 0">還沒有提交。</div>';
     subs.forEach(function (r, i) {
@@ -239,14 +242,15 @@
     var rec = { ts: firebase.database.ServerValue.TIMESTAMP, links: r.links, texts: r.texts, prompt: r.prompt || null, chk: r.chk, chkN: r.chkN, chkTotal: u.chk.length, fix: fx.n ? fx.fix : null, fixN: fx.n, ver: VER };
     var nth = (SUBS[k] || []).length + 1;
     var btn = document.querySelector('button[data-send="' + k + '"]'); btn.disabled = true; say('送出中…');
-    ref('midsub/' + COURSE + '/' + ENV + '/' + k).push(rec).then(function () {
+    ref('midsub/' + COURSE + '/' + ENV + '/' + k).child(today()).transaction(function (cur) { return cur === null ? rec : undefined; }).then(function (res) {
+      if (!res.committed) { btn.disabled = true; say('這個單元今天已經送出過了，明天可以再送（四個單元各算各的）', true); return; }
       lsSet('mid_fix_' + ENV + '_' + k, fx.fix);
       Object.keys(fx.fix).forEach(function (id) {
         if (fx.fix[id].s === 'disagree') ref('midfb/' + COURSE + '/' + ENV).push({ ts: firebase.database.ServerValue.TIMESTAMP, type: 'judge', unit: k, sg: id, text: mask(fx.fix[id].note || '（未寫說明）'), ver: VER, ua: navigator.userAgent.slice(0, 100) });
       });
       var tail = r.chkN < u.chk.length ? '（自查還有 ' + (u.chk.length - r.chkN) + ' 項沒勾，系統只是提醒，已照常收下）' : '';
-      say('已送出 ✓ 這是第 ' + nth + ' 次提交。' + tail + softWarn);
-      btn.disabled = false;
+      say('已送出 ✓ 這是第 ' + nth + ' 次提交。這個單元今天不能再送，明天可以再送。' + tail + softWarn);
+      btn.disabled = true;
     }).catch(function (e) { btn.disabled = false; say('送出失敗，請再按一次：' + (e && e.message || e), true); });
   }
 

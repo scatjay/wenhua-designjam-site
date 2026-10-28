@@ -189,7 +189,7 @@
     if (TEST && qs.get('env')) envNo = parseInt(qs.get('env'), 10);
     if (TEST || isTeacher) { afterVerified(); return; }
     ROOT.child('claim/' + uid).once('value').then(function (s) {
-      if (s.exists()) { envNo = parseInt(s.val(), 10); afterVerified(); } else showEnv();
+      if (s.exists() && qs.get('asstudent') !== '1') { envNo = parseInt(s.val(), 10); afterVerified(); } else showEnv();   /* 預覽模式：就算已有綁定也顯示輸入畫面 */
     }).catch(function (e) { $('screen-login').hidden = false; $('login-msg').textContent = '資料庫連線被拒絕（' + (e.code || e.message) + '）。請確認用 Google 帳號登入後再試。'; });
   }
   function afterVerified() {

@@ -124,7 +124,9 @@ h1,h2{letter-spacing:.02em}
 .bub.reward{background:#ffd9e6!important}.bub.reward::before{background:#ffd9e6}
 .bub.dim{opacity:.7}
 #hd{background:var(--acc)!important;color:#fff;border-bottom:3px solid var(--ink)!important;font-size:14px;padding-bottom:8px}
-#hd .fb-open{background:#fff!important;color:var(--ink)!important;border:2px solid var(--ink)!important;border-radius:99px!important;box-shadow:0 2px 0 var(--ink)!important;font-size:12px}
+#hd{gap:6px;align-items:center}#hd-team{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#hd-score{flex:0 0 auto;white-space:nowrap;font-size:12px}
+#hd .hd-lo{flex:0 0 auto;background:#c0392b!important;color:#fff!important;border:2px solid var(--ink)!important;border-radius:99px!important;box-shadow:0 2px 0 var(--ink)!important;font-size:12px;font-weight:800;padding:1px 9px!important;white-space:nowrap}
+#hd .fb-open{flex:0 0 auto;white-space:nowrap;background:#fff!important;color:var(--ink)!important;border:2px solid var(--ink)!important;border-radius:99px!important;box-shadow:0 2px 0 var(--ink)!important;font-size:12px}
 #hd-score{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:99px;padding:0 10px;font-weight:700}
 #banner{background:var(--sun)!important;color:var(--ink);border-bottom:3px solid var(--ink);font-size:13px}
 #nav{background:var(--card)!important;border-top:3px solid var(--ink)!important}
@@ -220,7 +222,7 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 </div>
 
 <div id="app" hidden>
-  <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span><button class="fb-open" title="回報問題或建議" style="padding:0 8px">⚑ 回報</button></div>
+  <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span><button class="fb-open" title="回報問題或建議" style="padding:0 8px">⚑ 回報</button><button class="lo hd-lo" title="登出，換別的 Google 帳號">🚪 登出</button></div>
   <div id="banner"></div>
   <div id="body">
     <div class="pane" id="pane-map">
@@ -246,12 +248,12 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="js/walk_morph.js?v=202610282110"></script>
-<script src="js/walk_morph3d.js?v=202610282110"></script>
-<script src="js/walk_route.js?v=202610282110"></script>
-<script src="js/walk_sprites.js?v=202610282110"></script>
-<script src="js/walk_i18n_id.js?v=202610282110"></script>
-<script src="js/walk.js?v=202610282110"></script>
-<script src="js/walk_i18n.js?v=202610282110"></script>
+<script src="js/walk_morph.js?v=202610282120"></script>
+<script src="js/walk_morph3d.js?v=202610282120"></script>
+<script src="js/walk_route.js?v=202610282120"></script>
+<script src="js/walk_sprites.js?v=202610282120"></script>
+<script src="js/walk_i18n_id.js?v=202610282120"></script>
+<script src="js/walk.js?v=202610282120"></script>
+<script src="js/walk_i18n.js?v=202610282120"></script>
 </body>
 </html>

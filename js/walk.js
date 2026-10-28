@@ -510,7 +510,7 @@
   function allDone() { return R0.practice.every(function (t) { return pdone(t.id); }) && fragCount() >= totalFrags() && !!(prog.final && prog.final.done); }
   function certHtml() {
     var d = new Date(nowMs()), ts = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
-    return '<div class="card cert"><div style="font-size:34px;text-align:center">🎓🎉</div><h2 style="text-align:center;margin:4px 0">練習日全破！</h2><div style="text-align:center">' + esc((profile && profile.nick) || '') + '　' + esc(teamLabel()) + '</div><div class="sub" style="text-align:center">練習清單 ' + R0.practice.length + '／' + R0.practice.length + '・審查單 ' + totalFrags() + '／' + totalFrags() + '・' + ts + '</div><div class="bub done" style="margin-left:0">「' + esc(prog.final.text) + '」</div><div class="sub" style="text-align:center">請把這一頁截圖，交到 flipclass 的作業。</div></div>';
+    return '<div class="card cert"><div style="font-size:34px;text-align:center">🎓🎉</div><h2 style="text-align:center;margin:4px 0">練習日全破！</h2><div style="text-align:center">' + esc((profile && profile.nick) || '') + (envNo != null ? '　#' + envNo : '') + '　' + esc(teamLabel()) + '</div><div class="sub" style="text-align:center">練習清單 ' + R0.practice.length + '／' + R0.practice.length + '・審查單 ' + totalFrags() + '／' + totalFrags() + '・' + ts + '</div><div class="bub done" style="margin-left:0">「' + esc(prog.final.text) + '」</div><div class="sub" style="text-align:center">請把這一頁截圖，交到 flipclass 的作業。</div></div>';
   }
   function practiceHtml() {
     var P = R0.practice, done = P.filter(function (t) { return pdone(t.id); }).length;

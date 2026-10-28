@@ -205,7 +205,7 @@
     var prevFix = lsGet('mid_fix_' + ENV + '_' + u.key) || {};
     sg.innerHTML = '<h3>預掃建議 <small style="font-weight:400;color:var(--ink-soft)">（每條請選一個，再次送出時會一起記錄）</small></h3>' + items.map(function (it) {
       var f = prevFix[it._id] || {};
-      return '<div class="sg" data-sg="' + esc(it._id) + '"><div class="t">' + esc(it.check || '') + (it.status ? ' <span class="tag" style="font-size:11px;background:var(--panel2);padding:2px 7px;border-radius:5px">' + esc(it.status) + '</span>' : '') + '</div>' +
+      return '<div class="sg" data-sg="' + esc(it._id) + '"><div class="t">' + esc(it.check || '') + (it.status ? ' <span class="tag" style="font-size:11px;background:var(--panel2);padding:2px 7px;border-radius:5px">' + esc(it.status) + '</span>' : '') + (it.src === 'llm' ? ' <span class="tag" style="font-size:11px;background:var(--amber-soft);color:var(--amber);padding:2px 7px;border-radius:5px">AI 提示，可能有誤</span>' : '') + '</div>' +
         '<div class="why">為什麼：' + esc(it.why || '') + '</div><div class="how">可以怎麼改：' + esc(it.how || '') + '</div>' +
         '<div class="resp"><label><input type="radio" name="fx_' + u.key + '_' + esc(it._id) + '" value="done"' + (f.s === 'done' ? ' checked' : '') + '> 已改</label>' +
         '<label><input type="radio" name="fx_' + u.key + '_' + esc(it._id) + '" value="notyet"' + (f.s === 'notyet' ? ' checked' : '') + '> 還沒改</label>' +

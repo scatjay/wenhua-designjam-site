@@ -57,7 +57,7 @@
       var dx = (cc - N / 2) / (N / 2), dy = (r - N / 2) / (N / 2);
       cells.push({ r: r, c: cc, s: [px[k], px[k + 1], px[k + 2]], q: dark ? [17, 17, 17] : [255, 255, 255], d: 0.4 * rnd(r * N + cc) + 0.2 * Math.min(1, Math.sqrt(dx * dx + dy * dy)) });
     }
-    var T_SCENE = 3.2, T_MORPH = 2.4, T_QR = 6.5, CYCLE = T_SCENE + T_MORPH + T_QR + T_MORPH, hold = false, t0 = performance.now();
+    var T_SCENE = 3.2, T_MORPH = 2.4, T_QR = 6.5, CYCLE = T_SCENE + T_MORPH + T_QR + T_MORPH, mode = 'auto', flipping = false, t0 = performance.now();
     var ease = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x); };
     function frame(mixAt) {   /* mixAt(cell) -> 0..1，0 是場景、1 是 QR */
       g.fillStyle = '#fff'; g.fillRect(0, 0, canvas.width, canvas.height);
@@ -68,7 +68,8 @@
       }
     }
     function mixFor(t) {
-      if (hold) return function () { return 1; };
+      if (mode === 'qr') return function () { return 1; };
+      if (mode === 'scene') return function () { return 0; };
       t = t % CYCLE;
       if (t < T_SCENE) return function () { return 0; };
       if (t < T_SCENE + T_MORPH) { var tau = (t - T_SCENE) / T_MORPH; return function (ce) { return (tau - ce.d) / 0.4; }; }
@@ -76,16 +77,36 @@
       var tau2 = (t - T_SCENE - T_MORPH - T_QR) / T_MORPH; return function (ce) { return 1 - (tau2 - (0.6 - ce.d)) / 0.4; };
     }
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) hold = true;
+    if (reduce) mode = 'qr';
+    function showsQR(t) { t = t % CYCLE; return t >= T_SCENE + T_MORPH * 0.5 && t < T_SCENE + T_MORPH + T_QR + T_MORPH * 0.5; }
     function loop(now) {
-      if (canvas.offsetParent !== null) frame(mixFor((now - t0) / 1000));
+      if (canvas.offsetParent !== null) {
+        var t = (now - t0) / 1000;
+        frame(mixFor(t));
+        /* 場景狀態輕輕左右轉動，有「3D 立體」的感覺；QR 一律擺正方便掃描 */
+        if (!flipping) {
+          var sceneish = mode === 'scene' || (mode === 'auto' && !showsQR(t));
+          canvas.style.transform = sceneish && !reduce ? 'perspective(700px) rotateY(' + (Math.sin(now / 900) * 9).toFixed(2) + 'deg) rotateX(' + (Math.cos(now / 1300) * 3).toFixed(2) + 'deg)' : 'none';
+        }
+      }
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
-    window.__morphSeek = function (sec, h) { hold = !!h; t0 = performance.now() - sec * 1000; };
+    window.__morphSeek = function (sec, m) { mode = m || 'auto'; t0 = performance.now() - sec * 1000; };
+    /* 點一下：翻面（沿 Y 軸翻 180 度）在「場景」和「QR」之間切換 */
     canvas.onclick = function () {
-      hold = !hold; t0 = performance.now() - (hold ? 0 : (T_SCENE + T_MORPH) * 1000);
-      var hnt = document.getElementById('morph-hint'); if (hnt) hnt.textContent = hold ? '已定住 QR，再點一下繼續播放' : '點一下定住 QR 方便掃描';
+      if (flipping) return;
+      var toQR = mode === 'auto' ? !showsQR((performance.now() - t0) / 1000) : mode === 'scene';
+      var hnt = document.getElementById('morph-hint');
+      if (reduce) { mode = toQR ? 'qr' : 'scene'; return; }
+      flipping = true; canvas.style.transition = 'transform .26s ease-in'; canvas.style.transform = 'perspective(700px) rotateY(90deg) scale(1.04)';
+      setTimeout(function () {
+        mode = toQR ? 'qr' : 'scene';
+        canvas.style.transition = 'none'; canvas.style.transform = 'perspective(700px) rotateY(-90deg) scale(1.04)'; void canvas.offsetWidth;
+        canvas.style.transition = 'transform .42s cubic-bezier(.2,1.3,.4,1)'; canvas.style.transform = 'perspective(700px) rotateY(0deg) scale(1)';
+        setTimeout(function () { canvas.style.transition = 'none'; flipping = false; }, 460);
+      }, 270);
+      if (hnt) hnt.textContent = toQR ? 'QR 已定住，再點一下翻回場景' : '點一下翻面成 QR';
     };
   }
   window.WalkMorph = { mount: mount };

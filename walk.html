@@ -40,6 +40,7 @@ label{display:block;font-size:13px;margin-top:10px;font-weight:600}
 #mapbar .btn2{padding:2px 10px;margin:0;font-size:12px}
 #pane-map.mini{flex:0 0 38%}
 #pane-map.mini #mapbar{display:flex}
+#mapwrap{position:relative}#btn-mapclose{position:absolute;left:10px;top:10px;z-index:700;padding:5px 12px;font-weight:700;background:var(--card);box-shadow:0 2px 0 var(--ink)}#pane-map.mini #btn-mapclose{display:none}
 #pane-map.mini.folded{flex:0 0 auto}
 #pane-map.mini.folded #mapwrap{display:none}
 .pane{position:absolute;inset:0;overflow:auto;padding:12px 14px 20px;background:var(--bg)}
@@ -180,16 +181,16 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 </div>
 
 <div class="screen" id="screen-login">
-  <div id="morph-wrap"><canvas id="morph" aria-label="校園像素場景，會變成進入遊戲的 QR Code"></canvas><div class="sub" id="morph-hint">點一下定住 QR 方便掃描</div></div>
+  <div id="morph-wrap"><canvas id="morph" aria-label="校園像素場景，會變成進入遊戲的 QR Code"></canvas><div class="sub" id="morph-hint">點一下翻面成 QR</div></div>
   <h1 style="text-align:center">走讀 · 鯨骨碎片</h1>
   <div class="sub">11/14 文化遊戲松走讀（台文館出發）</div>
   <div class="notice">登入只用來讓你回來時還是同一個人。你的姓名、電子郵件不會寫進遊戲資料；遊戲裡只有你自己取的暱稱。位置只在走讀期間分享給同隊與老師，結束後清除。</div>
   <button class="btn" id="btn-google">用 Google 帳號登入</button>
   <button class="btn g" id="btn-test" hidden>測試模式（不登入）</button>
   <div class="msg" id="login-msg"></div>
-  <div class="sub" style="text-align:center;margin-top:18px">朋友沒有網址？讓他掃這個</div>
-  <div id="qr-box"></div><div class="sub" style="text-align:center" id="qr-url"></div>
-  <p style="text-align:center"><button class="btn2 fb-open">⚑ 登入有問題？回報給老師</button></p>
+  <div class="sub" style="text-align:center;margin-top:6px">朋友沒有網址？讓他掃上面的 QR（點一下翻面）</div>
+  <div id="qr-box" hidden></div><div class="sub" style="text-align:center" id="qr-url"></div>
+  <p style="text-align:center"><button class="btn2 fb-open">⚑ 登入有問題？回報給老師</button> <button class="btn2 lang"></button></p>
 </div>
 
 <div class="screen" id="screen-vf" hidden>
@@ -198,7 +199,7 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
   <label>信封編號</label><input id="vf-env" class="inp" type="number" inputmode="numeric" min="0" max="99" placeholder="例：17">
   <button class="btn" id="vf-go">確定</button>
   <div class="msg" id="vf-msg"></div>
-  <p style="text-align:center"><button class="btn2 fb-open">⚑ 進不去？回報給老師</button> <button class="btn2 lo">登出，換帳號</button></p>
+  <p style="text-align:center"><button class="btn2 fb-open">⚑ 進不去？回報給老師</button> <button class="btn2 lo">登出，換帳號</button> <button class="btn2 lang"></button></p>
 </div>
 
 <div class="screen" id="screen-ob" hidden>
@@ -220,12 +221,12 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 </div>
 
 <div id="app" hidden>
-  <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span><button class="fb-open" title="回報問題或建議" style="padding:0 8px">⚑ 回報</button><button class="lo" title="登出，換別的 Google 帳號" style="padding:0 8px">登出</button></div>
+  <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span><button class="fb-open" title="回報問題或建議" style="padding:0 8px">⚑ 回報</button></div>
   <div id="banner"></div>
   <div id="body">
     <div class="pane" id="pane-map">
       <div id="mapbar"><span>🗺 地圖</span><button id="btn-fold" class="btn2">收合 ▴</button></div>
-      <div id="mapwrap">
+      <div id="mapwrap"><button id="btn-mapclose" class="btn2" title="把地圖收起來，看任務">▾ 收合地圖</button>
         <div id="map"></div>
         <div class="mapbtns"><button id="btn-mates" title="顯示或隱藏隊友">👥</button><button id="btn-locate" title="回到我的位置">📍</button></div>
         <div id="gps">定位中…</div>
@@ -245,9 +246,11 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="js/walk_morph.js?v=202610282000"></script>
-<script src="js/walk_route.js?v=202610282000"></script>
-<script src="js/walk_sprites.js?v=202610282000"></script>
-<script src="js/walk.js?v=202610282000"></script>
+<script src="js/walk_morph.js?v=202610282010"></script>
+<script src="js/walk_route.js?v=202610282010"></script>
+<script src="js/walk_sprites.js?v=202610282010"></script>
+<script src="js/walk_i18n_id.js?v=202610282010"></script>
+<script src="js/walk.js?v=202610282010"></script>
+<script src="js/walk_i18n.js?v=202610282010"></script>
 </body>
 </html>

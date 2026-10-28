@@ -73,7 +73,11 @@
       else if (l.type === 'line' && /^(road|bridge|tunnel)_/.test(id)) set('line-color', P.road);
       else if (l.type === 'line' && id === 'park_outline') set('line-color', P.park);
       else if (l.type === 'symbol') {
-        set('text-color', P.text); set('text-halo-color', P.halo); set('text-halo-width', 2);
+        set('text-color', P.text); set('text-halo-color', P.halo); set('text-halo-width', 2.4);
+        try {
+          var tf = mlMap.getLayoutProperty(id, 'text-field');
+          if (tf && JSON.stringify(tf).indexOf('name') >= 0) mlMap.setLayoutProperty(id, 'text-field', ['coalesce', ['get', 'name:zh-Hant'], ['get', 'name:zh'], ['get', 'name']]);   /* 只留中文，不要中英文疊兩行 */
+        } catch (x) { }
         if (/^(poi_|highway-name|label_other|label_village|label_town|water_name)/.test(id)) {
           try { mlMap.setLayoutProperty(id, 'text-size', ['interpolate', ['linear'], ['zoom'], 14, 12, 17, 15, 19, 18]); mlMap.setLayoutProperty(id, 'text-font', ['Noto Sans Bold']); } catch (x) { }
         }
@@ -153,7 +157,7 @@
     var box = $('qr-box'); if (!box || !window.qrcode) return;
     var url = location.origin + location.pathname;
     if (window.WalkMorph) WalkMorph.mount($('morph'), url, effectiveStyle() === 'night');
-    try { var q = qrcode(0, 'M'); q.addData(url); q.make(); box.innerHTML = q.createImgTag(6, 2); var im = box.querySelector('img'); if (im) { im.style.width = '200px'; im.style.height = '200px'; im.style.imageRendering = 'pixelated'; im.alt = '掃這個進入走讀頁'; } $('qr-url').textContent = url; } catch (e) { box.textContent = ''; }
+    $('qr-url').textContent = url;
   }
   function loginErr(e) { $('login-msg').textContent = '登入沒完成（' + ((e && e.code) || 'unknown') + '）。可以換瀏覽器或重試一次。'; }
   function googleLogin() {
@@ -344,7 +348,7 @@
   function addBldgLabels() {
     if (bldgLayer) return; bldgLayer = L.layerGroup();
     var all = [], main = [];
-    BLDG.forEach(function (b) { var m = L.marker([b[1], b[2]], { interactive: false, keyboard: false, icon: L.divIcon({ className: 'bname', html: '<span>' + esc(b[0]) + '</span>', iconSize: [0, 0] }) }); all.push(m); if (b[3]) main.push(m); });
+    BLDG.forEach(function (b) { if (S.some(function (st) { return st.lat && Math.abs(st.lat - b[1]) < 0.0003 && Math.abs(st.lon - b[2]) < 0.0003; })) return; var m = L.marker([b[1], b[2]], { interactive: false, keyboard: false, icon: L.divIcon({ className: 'bname', html: '<span>' + esc(b[0]) + '</span>', iconSize: [0, 0] }) }); all.push(m); if (b[3]) main.push(m); });
     var upd = function () { var z = map.getZoom(), want = z >= 18 ? all : (z >= 17 ? main : []); all.forEach(function (m) { var on = want.indexOf(m) >= 0; if (on && !map.hasLayer(m)) m.addTo(map); if (!on && map.hasLayer(m)) map.removeLayer(m); }); };
     map.on('zoomend', upd); upd();
   }
@@ -647,9 +651,10 @@
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
     h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + avaHtml(x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span></div>'; }).join('') + '</div>';
     h += '<div class="card"><b>你的角色：' + ROLE_ICON[myRole()] + myRole() + '</b><div class="sub">' + esc(ROLE_DESC[myRole()]) + '。角色只是看到的提示不同，缺人也不影響過關。</div><div class="opts">' + ROLES.map(function (r) { return '<button class="btn2" data-role="' + r + '">' + ROLE_ICON[r] + r + '</button>'; }).join('') + '</div></div>';
+    h += '<div class="card"><b>帳號與語言</b><div class="opts"><button class="btn2 lo">登出，換 Google 帳號</button><button class="btn2 lang"></button></div></div>';
     h += '<div class="card"><b>開房間／加入別的房</b><div class="opts"><button class="btn2" id="mk-room">開一個臨時房間</button></div><div class="opts"><input id="jn-code" class="inp" maxlength="4" placeholder="輸入 4 碼房碼"><button class="btn2" id="jn-go">加入</button></div>' + (team.kind === 'room' && team.owner === uid ? '<div class="opts"><button class="btn2" id="rm-open">' + (team.open === false ? '開放補位：關（按此開啟）' : '開放補位：開（按此關閉）') + '</button><button class="btn2" id="rm-close">' + (team.closed ? '重新開門' : '提早關門') + '</button></div>' : '') + '<div class="msg" id="tm-msg"></div></div>';
     h += '<div class="card"><b>地圖風格</b><div class="sub">只改你自己看到的地圖，隊友不受影響。</div><div class="opts">' + ([{ id: 'auto', name: '自動（晚上換夜景）' }].concat(STYLES)).map(function (x) { return '<button class="btn2' + (styleSel === x.id ? ' on' : '') + '" data-style="' + x.id + '">' + esc(x.name) + '</button>'; }).join('') + '</div></div>';
-    $('pane-team').innerHTML = h;
+    $('pane-team').innerHTML = h; bindLo();
     [].forEach.call(document.querySelectorAll('[data-style]'), function (b) { b.onclick = function () { styleSel = b.dataset.style; try { localStorage.setItem('walk_style', styleSel); } catch (e) {} applyStyle(); if (phase() === 'rehearsal') pmark('g5'); renderTeam(); }; });
     [].forEach.call(document.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { ROOT.child('teams/' + teamId + '/members/' + uid + '/role').set(b.dataset.role); }; });
     $('mk-room').onclick = function () { leaveTeam().then(function () { return createTeam('room', ($('ob-dept').value || ''), ''); }).then(function (id) { enterGame(id); }).catch(function (e) { $('tm-msg').textContent = e.message; }); };
@@ -665,6 +670,14 @@
   }
 
   /* ---------- 臭蟲與建議回報 ---------- */
+  function bindLo() {
+    [].forEach.call(document.querySelectorAll('.lo'), function (b) { b.onclick = function () {
+      if (b.dataset.arm !== '1') { b.dataset.t = b.textContent; b.dataset.arm = '1'; b.textContent = '再按一次登出'; setTimeout(function () { b.dataset.arm = '0'; b.textContent = b.dataset.t; }, 5000); return; }
+      try { clearInterval(posTimer); } catch (e) {}
+      auth.signOut().then(function () { location.reload(); });
+    }; });
+    if (window.WalkLang && WalkLang.bind) WalkLang.bind();
+  }
   function openFb() { $('fbm').hidden = false; $('fb-msg').textContent = ''; $('fb-tx').focus(); }
   function sendFb() {
     var tx = ($('fb-tx').value || '').trim(); if (tx.length < 4) { $('fb-msg').textContent = '請多寫幾個字，讓我們看得懂。'; return; }
@@ -677,11 +690,8 @@
     boot();
     [].forEach.call(document.querySelectorAll('.fb-open'), function (b) { b.onclick = openFb; });
     $('ph-close').onclick = function () { $('phm').hidden = true; }; $('ph-ref').onclick = openWall;
-    [].forEach.call(document.querySelectorAll('.lo'), function (b) { b.onclick = function () {
-      if (b.dataset.arm !== '1') { b.dataset.t = b.textContent; b.dataset.arm = '1'; b.textContent = '再按一次登出'; setTimeout(function () { b.dataset.arm = '0'; b.textContent = b.dataset.t; }, 5000); return; }
-      try { clearInterval(posTimer); } catch (e) {}
-      auth.signOut().then(function () { location.reload(); });
-    }; });
+    bindLo();
+    if ($('btn-mapclose')) $('btn-mapclose').onclick = function () { mapFolded = true; setView('task'); };
     $('fb-send').onclick = sendFb; $('fb-close').onclick = function () { $('fbm').hidden = true; };
   });
 })();

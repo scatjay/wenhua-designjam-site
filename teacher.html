@@ -48,6 +48,9 @@
   .unitnav .u.on.u4 b{color:#8a4fb3}
   .unitnav .u.on.u5{border-left-color:#1f8a70;background:#e6f4ef}
   .unitnav .u.on.u5 b{color:#1f8a70}
+  .unitnav .u.on.u6{border-left-color:#7a3f92;background:#f2e7f6}
+  .unitnav .u.on.u6 b{color:#7a3f92}
+  #tabMid{--accent:#7a3f92}
   #tabW3{--accent:#8a4fb3}#tabW3 .stat .n{color:#8a4fb3}
   #tabW4{--accent:#1f8a70}
   .w3tbl{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
@@ -169,6 +172,7 @@
     <button class="u u2" data-t="W2"><b>第2週 · 本週</b><span>文化怎麼放進遊戲裡</span></button>
     <button class="u u4" data-t="W3"><b>第3週 · 社交推理遊戲</b><span>場次、回饋、學生設計的卡</span></button>
     <button class="u u5" data-t="W4"><b>第4–7週 · AI 工具協作</b><span>提交、回饋、指令技能</span></button>
+    <button class="u u6" data-t="Mid"><b>第8–9週 · 期中作業</b><span>進度矩陣、回報、AI 助教</span></button>
     <button class="u u3" data-t="Tools"><b>研究用途與工具</b><span>persona／ENA／Vertex 用量（研究用）</span></button>
   </div>
   <div id="onlineStrip" style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:10px 0 14px;font-size:13.5px" role="status" aria-live="polite">
@@ -321,6 +325,8 @@
     <h2 style="font-size:16px;margin:18px 0 8px">每個編號</h2>
     <div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>天數</th><th>最後一次</th><th>DR</th><th>Canvas</th><th>AIS</th><th>NBLM</th><th title="給足資料／講得精準／說得出畫面／越改越準／工具接力">技能 資精畫改接</th><th>最新回饋</th><th>指令</th></tr></thead><tbody id="w47rows"></tbody></table></div>
   </div><!-- /tabW4 -->
+
+  <div id="tabMid" hidden></div>
 
   <div id="tabTools" hidden>
   <p style="background:#f2f0ea;border-radius:10px;padding:9px 14px;font-size:12.5px;line-height:1.7;margin:0 0 14px;color:#2b2a26"><b>研究用途區</b>：下面是研究與工具的分析，不是教學即時回饋。文化遊戲松的研究資料在事後同意之前只作保管與方法測試，不下結論。</p>
@@ -813,9 +819,10 @@ db.ref(`${NS}/feedback`).on("value", snap => {
 document.querySelectorAll(".unitnav .u").forEach(b => b.onclick = () => {
   const t = b.dataset.t;
   document.querySelectorAll(".unitnav .u").forEach(x => x.classList.toggle("on", x === b));
-  ["W1","W2","W3","W4","Tools"].forEach(k => { const el = $("tab" + k); if (el) el.hidden = (k !== t); });
+  ["W1","W2","W3","W4","Mid","Tools"].forEach(k => { const el = $("tab" + k); if (el) el.hidden = (k !== t); });
   if (t === "W3") loadW3();
   if (t === "W4") loadW47();
+  if (t === "Mid" && window.loadMid) window.loadMid();
   try { localStorage.setItem("designjam_teacher_tab", t); } catch(_) {}
   window.scrollTo(0, 0);
 });
@@ -1459,5 +1466,6 @@ db.ref(`${NS}/rounds`).on("value", snap => {
   } catch (e) { var m = document.getElementById('olMeta'); if (m) m.textContent = '讀不到上線資料'; }
 })();
 </script>
+<script src="js/teacher_mid.js?v=202610281030"></script>
 </body>
 </html>

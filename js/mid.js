@@ -30,7 +30,8 @@
       todo: ['用 Canvas 把流程、畫面、改動規則畫出來', '圖裡要放三人例子，逐輪的自尊值'],
       ok: ['流程步驟數和 R2 一樣', '改動規則被框出，標在第幾步', '圖上最終自尊值和單元 1 的 R2 一樣', '沒有 R2 以外的規則'],
       bridge: '圖上的三人例子數字要和 R2 逐一核對。不一樣就要修，不是「差不多」。',
-      links: [['canvas', 'Canvas 分享連結（分享不出來就貼 2 張以上截圖的連結）'], ['canvasChat', '建立 Canvas 的那個 Gemini 對話分享連結']],
+      note: '這個單元有<b>兩種不同的連結</b>，請分開貼，不要貼成同一個：<br>① <b>Canvas 成品連結</b>：在 Canvas 畫面右上角按「分享」拿到的連結，打開看到的是你做出來的那張圖或文件。<br>② <b>建立 Canvas 的對話連結</b>：在 Gemini 左側的對話記錄，對那一串對話按「分享對話」拿到的連結，打開看到的是你和 AI 一來一往下了哪些指令。老師要看你下的指令，主要看這個。<br>⚠ Canvas 成品連結<b>有時候會打不開或分享不出來</b>（這是 Gemini 的狀況，不是你的錯）。這時候請不用硬撐：<b>把 Canvas 畫面存成 2 張以上的截圖（或匯出成 PDF），上傳到雲端硬碟開分享，貼在③</b>，並且一定要貼②和指令全文。',
+      links: [['canvas', '① Canvas 成品連結（右上角「分享」；出不來就留白）'], ['canvasChat', '② 建立這個 Canvas 的 Gemini 對話分享連結（「分享對話」）'], ['shots', '③ 備案：Canvas 截圖（2 張以上）或 PDF 的雲端連結（①出不來時才需要）']],
       texts: [['gold', '圖上看到的最終自尊值，例：A7 B5 C0', 1]],
       chk: ['流程步驟數和 R2 一樣', '改動規則有框出並標第幾步', '圖上的最終自尊值和 R2 一樣', '圖上沒有 R2 以外的規則'] },
     { key: 'u3', n: 3, name: 'AI Studio', sub: '能玩的原型', when: '第 9 週起 · 前置：單元 1；單元 2 建議先完成',
@@ -94,6 +95,7 @@
         '<h3>銜接自查 <small style="font-weight:400;color:var(--ink-soft)">（<span id="cn_' + u.key + '">0</span>/' + u.chk.length + ' 已勾）</small></h3>' +
         '<div id="chk_' + u.key + '">' + u.chk.map(function (t, i) { return '<label class="chk"><input type="checkbox" data-u="' + u.key + '" data-i="' + i + '"><span>' + esc(t) + '</span></label>'; }).join('') + '</div>' +
         '<div id="sg_' + u.key + '"></div>';
+      if (u.note) h += '<div class="warn" style="line-height:1.8">' + u.note + '</div>';
       u.links.forEach(function (L) { h += '<label class="f">' + esc(L[1]) + '</label><input type="url" id="l_' + u.key + '_' + L[0] + '" placeholder="https://">'; });
       u.texts.forEach(function (T) {
         h += '<label class="f">' + esc(T[1]) + '</label>' + (T[2] === 1 ? '<input type="text" id="t_' + u.key + '_' + T[0] + '">' : '<textarea id="t_' + u.key + '_' + T[0] + '" style="min-height:' + (T[2] * 30) + 'px"></textarea>');

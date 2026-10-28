@@ -107,7 +107,7 @@
   var TEACHERS = ['scatjay@gmail.com', 'yib@stust.edu.tw'];
   var BIND = 'whgm/analysis/w3game';   /* 其他學習單頁共用的綁定資料（envIndex／identity） */
   var envNo = null, isTeacher = false;
-  function validEnv(v) { return v === parseInt(v, 10) && ((v >= 1 && v <= 60) || v === 99 || v === 0); }
+  function validEnv(v) { return v === parseInt(v, 10) && ((v >= 1 && v <= 60) || (v >= 101 && v <= 130) || v === 99 || v === 0); }
   var db, auth, ROOT, uid = null, profile = null, team = null, teamId = null, prog = {}, teamPos = {}, posTimer = null;
   var map, meMarker, mateMarkers = {}, stopMarkers = {}, myPos = null, showMates = true, watchId = null, simTimer = null;
   var view = 'map', curStop = null, listeners = [], lastScoreWritten = null;

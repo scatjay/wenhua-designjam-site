@@ -298,12 +298,11 @@
     var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     /* 🔴 iOS Safari 的 redirect 會丟失登入結果（ITP 擋跨網域儲存：authDomain 是 firebaseapp.com、
        頁面在 github.io），跳回來永遠像沒登入。iOS 一律走 popup（使用者點擊當下呼叫，不會被擋）。 */
-    var mobile = !ios && /Android|Mobile/i.test(navigator.userAgent);
-    if (mobile) { try { localStorage.setItem('designjam_bind_pending', UNIT); } catch (e) {}
-      return auth.signInWithRedirect(p); }
+    /* 10-28 更正：手機（Android Chrome 156）的轉頁登入會丟掉登入結果，改成一律先彈窗；被擋才轉頁 */
     auth.signInWithPopup(p).catch(function (e) {
       var code = (e && e.code) || '';
-      if (/popup|blocked/i.test(code)) {            // popup 被擋 → 退回 redirect
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') { showErr('登入視窗被關掉了，請再按一次。'); return; }
+      if (/popup-blocked/i.test(code)) {            // popup 被擋 → 退回 redirect（手機轉頁登入不可靠，所以只有被擋才用）
         try { localStorage.setItem('designjam_bind_pending', UNIT); } catch (x) {}
         return auth.signInWithRedirect(p);
       }

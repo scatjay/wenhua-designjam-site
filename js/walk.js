@@ -173,12 +173,12 @@
   function googleLogin() {
     if (inAppBrowser()) { $('login-msg').innerHTML = '⚠️ 這個 App 內建的瀏覽器不能用 Google 登入。請點右上角「⋯」→「用瀏覽器開啟」，改用 Chrome 或 Safari 再試。'; return; }
     var p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
-    var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    $('login-msg').textContent = mobile ? '轉到 Google 登入頁…登入完會自動回來。' : '開啟 Google 登入視窗…';
-    if (mobile) { auth.signInWithRedirect(p).catch(loginErr); return; }
+    /* 一律先彈出視窗：手機 Chrome 的「轉頁登入」會把登入結果丟掉（登入完回來 currentUser 是空的，10-28 實機用 adb 查到），彈窗則正常；被擋掉才退回轉頁 */
+    $('login-msg').textContent = '開啟 Google 登入視窗…（沒跳出來的話，請允許彈出視窗）';
     auth.signInWithPopup(p).catch(function (e) {
       var c = (e && e.code) || '';
-      if (c === 'auth/popup-blocked' || c === 'auth/popup-closed-by-user' || c === 'auth/cancelled-popup-request') { $('login-msg').textContent = '視窗被擋掉了，改用轉頁登入…'; auth.signInWithRedirect(p).catch(loginErr); return; }
+      if (c === 'auth/popup-blocked') { $('login-msg').textContent = '視窗被擋掉了，改用轉頁登入…'; auth.signInWithRedirect(p).catch(loginErr); return; }
+      if (c === 'auth/popup-closed-by-user' || c === 'auth/cancelled-popup-request') { $('login-msg').textContent = '登入視窗被關掉了，請再按一次。'; return; }
       loginErr(e);
     });
   }

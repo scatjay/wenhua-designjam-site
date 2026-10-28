@@ -367,7 +367,18 @@
     var sim = qs.get('sim');
     if (sim) { var p = sim.split(',').map(Number); gotPos({ coords: { latitude: p[0], longitude: p[1], accuracy: 5 } }); window.__walkSim = function (lat, lon) { gotPos({ coords: { latitude: lat, longitude: lon, accuracy: 5 } }); }; return; }
     if (!navigator.geolocation) { $('gps').textContent = '這個瀏覽器不支援定位。'; return; }
-    watchId = navigator.geolocation.watchPosition(gotPos, function (e) { $('gps').textContent = '定位失敗：' + (e.code === 1 ? '請允許定位權限' : e.message); }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
+    var IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), INAPP = /Line\/|FBAN|FBAV|Instagram|MicroMessenger/i.test(navigator.userAgent);
+    var geoStart = function () {
+      if (watchId != null) { try { navigator.geolocation.clearWatch(watchId); } catch (e) {} }
+      watchId = navigator.geolocation.watchPosition(gotPos, function (e) {
+        var g = $('gps');
+        if (e.code === 1) g.innerHTML = '定位被擋住了。' + (INAPP ? '你在 LINE／臉書等App裡面開的，請按右上角「用瀏覽器開啟」改用 Safari／Chrome。' : IOS ? 'iPhone：到「設定 → 隱私權與安全性 → 定位服務」確認開啟，並把「Safari 網站」設成「使用 App 期間」；再回來按重新定位。' : '請在網址列左邊的鎖頭允許「位置」。') + ' <button class="btn2" id="geo-retry">重新定位</button>';
+        else if (e.code === 3) { g.innerHTML = '定位逾時，正在重試…（iPhone 請到空曠處、關掉「低耗電模式」）'; setTimeout(geoStart, 4000); }
+        else { g.innerHTML = '暫時抓不到位置，正在重試…若一直失敗，可以用任務頁的「我不在現場，先聊聊」先往下玩。'; setTimeout(geoStart, 6000); }
+        var rb = $('geo-retry'); if (rb) rb.onclick = function () { g.textContent = '定位中…'; geoStart(); };
+      }, { enableHighAccuracy: !IOS, maximumAge: IOS ? 15000 : 5000, timeout: IOS ? 40000 : 20000 });
+    };
+    geoStart();
     if (!posTimer) posTimer = setInterval(uploadPos, 25000);
   }
   window.__walkSim2 = function () { };
@@ -733,9 +744,19 @@
   /* ---------- 隊內訊息、全場彈幕 ---------- */
   var tchat = [], lastSend = 0, dmStart = 0, lastCall = 0, dmShow = true, dmLane = 0;
   function chatSend(path, obj) { var n = Date.now(); if (n - lastSend < 2000) { toast('慢一點，2 秒一則～'); return false; } lastSend = n; ROOT.child(path).push(obj); return true; }
+  function hhmm(t) { var d = new Date(t); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+  function dayLabel(t) {
+    var d = new Date(t), n = new Date(), a = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(), b = new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime();
+    var w = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+    return (d.getMonth() + 1) + '/' + d.getDate() + '（' + w + '）' + (a === b ? ' 今天' : a === b - 86400000 ? ' 昨天' : '');
+  }
   function drawTchat() {
     var el = document.getElementById('tc-list'); if (!el) return;
-    el.innerHTML = tchat.length ? tchat.map(function (m) { return '<div class="tcm' + (m.uid === uid ? ' me' : '') + (m.call ? ' call' : '') + '"><b>' + esc(m.n || '?') + '</b> ' + esc(m.x) + '</div>'; }).join('') : '<div class="sub">還沒有訊息，說聲嗨吧。</div>';
+    var last = '';
+    el.innerHTML = tchat.length ? tchat.map(function (m) {
+      var day = m.t ? dayLabel(m.t) : '', sep = (day && day !== last) ? '<div class="tcday">' + day + '</div>' : ''; if (day) last = day;
+      return sep + '<div class="tcm' + (m.uid === uid ? ' me' : '') + (m.call ? ' call' : '') + '"><b>' + esc(m.n || '?') + '</b> ' + esc(m.x) + (m.t ? ' <span class="tctime">' + hhmm(m.t) + '</span>' : '') + '</div>';
+    }).join('') : '<div class="sub">還沒有訊息，說聲嗨吧。</div>';
     el.scrollTop = el.scrollHeight;
   }
   function chatBox() {
@@ -756,7 +777,7 @@
     dmStart = nowMs();
     if (!document.getElementById('dm')) {
       var st = document.createElement('style');
-      st.textContent = '#dm{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:2500;overflow:hidden}.dmk{position:absolute;left:100%;white-space:nowrap;font-weight:800;font-size:19px;line-height:1.3;color:#fff;background:rgba(24,12,36,.78);padding:4px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 8px rgba(0,0,0,.35);animation:dmkgo linear forwards}@keyframes dmkgo{to{transform:translateX(-160vw)}}#dm-btn{position:fixed;left:10px;bottom:76px;z-index:2600;height:46px;padding:0 16px;border-radius:999px;border:3px solid #3a2a4a;background:#ff5c7a;color:#fff;font-size:16px;font-weight:800;box-shadow:0 4px 0 #3a2a4a,0 6px 14px rgba(0,0,0,.3);cursor:pointer}#dm-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #3a2a4a}#dm-bar .btn2,.tcsend{background:#ff5c7a!important;color:#fff!important;border:2px solid #3a2a4a!important;font-weight:800}#dm-bar{position:fixed;left:8px;right:8px;bottom:128px;z-index:2600;display:none;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px}#dm-bar.on{display:flex}#dm-bar input{flex:1;min-width:0}.tclist{max-height:180px;overflow:auto;margin:6px 0;display:flex;flex-direction:column;gap:4px}.tcm{font-size:14px;background:rgba(127,127,127,.12);border-radius:8px;padding:4px 8px}.tcm.me{background:rgba(255,160,60,.22)}.tcm.call{background:rgba(255,90,90,.22);font-weight:700}.rolerow{border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:6px}.rolerow.taken{opacity:.42;filter:grayscale(1)}.rolerow.mine{border-color:#e0821f;background:rgba(224,130,31,.1)}.bub.secret{background:#fff3c4;color:#4a3a00;border:1px dashed #c9a400}';
+      st.textContent = '#dm{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:2500;overflow:hidden}.dmk{position:absolute;left:100%;white-space:nowrap;font-weight:800;font-size:19px;line-height:1.3;color:#fff;background:rgba(24,12,36,.78);padding:4px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 8px rgba(0,0,0,.35);animation:dmkgo linear forwards}@keyframes dmkgo{to{transform:translateX(-160vw)}}#dm-btn{position:fixed;left:10px;bottom:76px;z-index:2600;height:46px;padding:0 16px;border-radius:999px;border:3px solid #3a2a4a;background:#ff5c7a;color:#fff;font-size:16px;font-weight:800;box-shadow:0 4px 0 #3a2a4a,0 6px 14px rgba(0,0,0,.3);cursor:pointer}#dm-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #3a2a4a}#dm-bar .btn2,.tcsend{background:#ff5c7a!important;color:#fff!important;border:2px solid #3a2a4a!important;font-weight:800}#dm-bar{position:fixed;left:8px;right:8px;bottom:128px;z-index:2600;display:none;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px}#dm-bar.on{display:flex}#dm-bar input{flex:1;min-width:0}.tclist{max-height:180px;overflow:auto;margin:6px 0;display:flex;flex-direction:column;gap:4px}.tcm{font-size:14px;background:rgba(127,127,127,.12);border-radius:8px;padding:4px 8px}.tcday{align-self:center;font-size:12px;color:#fff;background:rgba(80,60,100,.75);border-radius:999px;padding:1px 10px;margin:4px 0}.tctime{font-size:11px;opacity:.6;margin-left:4px}.tcm.me{background:rgba(255,160,60,.22)}.tcm.call{background:rgba(255,90,90,.22);font-weight:700}.rolerow{border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:6px}.rolerow.taken{opacity:.42;filter:grayscale(1)}.rolerow.mine{border-color:#e0821f;background:rgba(224,130,31,.1)}.bub.secret{background:#fff3c4;color:#4a3a00;border:1px dashed #c9a400}';
       document.head.appendChild(st);
       var d = document.createElement('div'); d.id = 'dm'; document.body.appendChild(d);
       var b = document.createElement('button'); b.id = 'dm-btn'; b.textContent = '💬 彈幕'; b.title = '全場彈幕（所有人都看得到）'; document.body.appendChild(b);
@@ -778,7 +799,7 @@
   function renderRank() {
     var arr = Object.keys(board).map(function (k) { return { id: k, b: board[k] }; }).sort(function (a, b) { return b.b.score - a.b.score; });
     var h = '<h2>排行榜</h2><div class="sub">隊與隊競爭積分；落單的人也有完整的單人路徑。</div>';
-    h += arr.map(function (x, i) { return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i + 1) + '</span><span class="nm">' + esc(x.b.name) + '・' + x.b.n + ' 人</span><span class="sc">' + x.b.score + ' 分・🧩' + x.b.frags + '</span></div>'; }).join('') || '<div class="card">還沒有分數。</div>';
+    h += arr.map(function (x, i) { return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(x.b.name) + '・' + x.b.n + ' 人</span><span class="sc">' + x.b.score + ' 分・🧩' + x.b.frags + '</span></div>'; }).join('') || '<div class="card">還沒有分數。</div>';
     $('pane-rank').innerHTML = h;
   }
 

@@ -123,6 +123,8 @@ h1,h2{letter-spacing:.02em}
 .bub.done{background:var(--mint)!important}.bub.done::before{background:var(--mint)}
 .bub.reward{background:#ffd9e6!important}.bub.reward::before{background:#ffd9e6}
 .bub.dim{opacity:.7}
+/* 淺色底的對話框（提示、獎勵、隱藏線索）一律用深色字，深色模式也看得清楚 */
+.bub.hint,.bub.reward{color:#2a2438!important}.bub.secret{background:#fff3c4!important;color:#3b2f00!important}.bub.secret::before{background:#fff3c4!important}.bub.hint a,.bub.reward a{color:#1d4f91}
 #hd{background:var(--acc)!important;color:#fff;border-bottom:3px solid var(--ink)!important;font-size:14px;padding-bottom:8px}
 #hd{gap:6px;align-items:center}#hd-team{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#hd-score{flex:0 0 auto;white-space:nowrap;font-size:12px}
 #hd .hd-lo{flex:0 0 auto;background:#c0392b!important;color:#fff!important;border:2px solid var(--ink)!important;border-radius:99px!important;box-shadow:0 2px 0 var(--ink)!important;font-size:12px;font-weight:800;padding:1px 9px!important;white-space:nowrap}
@@ -253,7 +255,7 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="js/walk_route.js?v=202610282032"></script>
 <script src="js/walk_sprites.js?v=202610282215"></script>
 <script src="js/walk_i18n_id.js?v=202610282215"></script>
-<script src="js/walk.js?v=202610282032"></script>
+<script src="js/walk.js?v=202610282036"></script>
 <script src="js/walk_i18n.js?v=202610282215"></script>
 </body>
 </html>

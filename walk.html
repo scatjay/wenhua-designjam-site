@@ -83,7 +83,7 @@ body.st-night .mapbtns button,body.st-night #gps{background:#fff;color:#2a2438}.
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}.card.big{font-size:18px;text-align:center}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.chip{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card)}.chip.cur{border:2px solid var(--acc)}.chip.half{background:var(--chip)}.chip.ok{background:var(--acc2);color:#fff}
 .npc{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc2);border-radius:10px;padding:10px 12px;margin:8px 0}
-.nhd{display:flex;align-items:center;gap:8px;margin-bottom:4px}.npclog{max-height:200px;overflow-y:auto}.mbti{border-radius:10px;padding:6px 9px;margin:4px 0 6px;font-size:13px}.bub.me{background:var(--chip);margin-left:40px;text-align:right}.npcin{display:flex;gap:6px;margin-top:6px}.npcin .inp{flex:1;min-width:0}.nava{font-size:26px}
+.nhd{display:flex;align-items:center;gap:8px;margin-bottom:4px}.npclog{max-height:200px;overflow-y:auto}.mbti{border-radius:10px;padding:6px 9px;margin:4px 0 6px;font-size:13px}.skinav{font-size:30px;line-height:1;display:inline-block}.skins{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.skinb{border:2px solid var(--ink,#333);border-radius:12px;background:var(--card,#fff);color:var(--ink,#222);padding:4px 8px;font-size:12px;cursor:pointer;min-width:68px}.skinb.on{background:var(--acc2,#cfe8d4);box-shadow:0 2px 0 var(--ink,#333)}.skinb.lock{opacity:.8}.skinb:disabled{opacity:.45}#nav button{white-space:nowrap}.bub.me{background:var(--chip);margin-left:40px;text-align:right}.npcin{display:flex;gap:6px;margin-top:6px}.npcin .inp{flex:1;min-width:0}.nava{font-size:26px}
 .bub{background:var(--chip);border-radius:10px;padding:7px 10px;margin:5px 0;font-size:14px}.bub.clue{border-left:3px solid var(--acc)}.bub.hint{border-left:3px solid var(--blue)}.bub.done{border-left:3px solid var(--acc2)}.bub.reward{border-left:3px solid #c08a1e}.bub.dim{opacity:.6}
 .task{border-top:1px solid var(--line);padding:8px 0}.task.done{opacity:.6}.task .tt{font-weight:600}.task.bonus .tt{font-weight:500}
 .tag{display:inline-block;font-size:11px;background:var(--chip);border-radius:99px;padding:0 7px}
@@ -237,10 +237,11 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
       </div>
     </div>
     <div class="pane" id="pane-task" hidden></div>
+    <div class="pane" id="pane-hq" hidden></div>
     <div class="pane" id="pane-team" hidden></div>
     <div class="pane" id="pane-rank" hidden></div>
   </div>
-  <div id="nav"><button data-v="map" class="on">🗺 地圖</button><button data-v="task">🧩 任務</button><button data-v="team">👥 隊伍</button><button data-v="rank">🏆 排行</button></div>
+  <div id="nav"><button data-v="map" class="on">🗺 地圖</button><button data-v="task">🧩 任務</button><button data-v="hq">🏢 簡報室</button><button data-v="team">👥 隊伍</button><button data-v="rank">🏆 排行</button></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -253,12 +254,12 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/walk_morph.js?v=202610282215"></script>
 <script src="js/walk_morph3d.js?v=202610282215"></script>
-<script src="js/walk_route.js?v=202610282235"></script>
+<script src="js/walk_route.js?v=202610282336"></script>
 <script src="js/walk_route_tw.js?v=202610282242"></script>
 <script src="js/walk_npc_types.js?v=202610282256"></script>
 <script src="js/walk_sprites.js?v=202610282215"></script>
 <script src="js/walk_i18n_id.js?v=202610282215"></script>
-<script src="js/walk.js?v=202610282256"></script>
+<script src="js/walk.js?v=202610282336"></script>
 <script src="js/walk_i18n.js?v=202610282215"></script>
 </body>
 </html>

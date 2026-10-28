@@ -23,9 +23,28 @@
   var TEST = qs.get('test') === '1';
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
-  var ROLES = ['隊長', '領航員', '軍師', '偵查員'];
-  var ROLE_ICON = { '隊長': '👑', '領航員': '🧭', '軍師': '📜', '偵查員': '🔍' };
-  var ROLE_DESC = { '隊長': '📣 「號召全隊」到某一站集合；機動：隨時可以無限次換角色（補位用）', '領航員': '🧭 看得到離每一站的距離與方向', '軍師': '📜 每一站的第一則提示免費、自動出現（不扣分）', '偵查員': '🔍 走近一站，就會看到那裡的「隱藏關卡」，找到了全隊 +15 分' };
+  /* 組織的功能性角色（簡報室可挑、可換；一隊一種只有一個）。前四個是預設，其餘由隊員在簡報室自己挑 */
+  var ROLES = ['隊長', '領航員', '軍師', '偵查員', '檔案官', '訪談員', '蒐證員', '記錄官', '文化設計員', '通訊官', '安全官', '補給官', '鑑識員', '技術專家', '在地嚮導', '扮演專員'];
+  var ROLE_ICON = { '隊長': '👑', '領航員': '🧭', '軍師': '📜', '偵查員': '🔍', '檔案官': '🗂️', '訪談員': '🎤', '蒐證員': '📸', '記錄官': '✍️', '文化設計員': '🎎', '通訊官': '📡', '安全官': '🦺', '補給官': '🎒', '鑑識員': '🔬', '技術專家': '🛠️', '在地嚮導': '🗺️', '扮演專員': '🎭' };
+  var ROLE_DEPT = { '隊長': '指揮', '領航員': '調度', '軍師': '分析', '偵查員': '情報', '檔案官': '情報', '訪談員': '行動', '蒐證員': '行動', '記錄官': '行動', '文化設計員': '行動', '通訊官': '聯絡', '安全官': '後勤', '補給官': '後勤', '鑑識員': '情報', '技術專家': '後勤', '在地嚮導': '調度', '扮演專員': '行動' };
+  var ROLE_DESC = {
+    '隊長': '【指揮】「號召全隊」到某一站集合；可採購補給；機動：隨時可以無限次換角色（補位用）。',
+    '領航員': '【調度】看得到離每一站的距離與方向。負責走在前面帶路。',
+    '軍師': '【分析】每一站的第一則提示免費、自動出現（不扣分）；負責回答選擇題與排序題。',
+    '偵查員': '【情報】走近一站，就會看到那裡的「隱藏關卡」，找到了全隊 +15 分。',
+    '檔案官': '【情報】每一站都看得到「資料出處與可信度」，知道哪些是有出處的、哪些只是聽說。',
+    '訪談員': '【行動】向 NPC 提問時，看得到這個人「怎麼問他才會開口、怎樣的問法他只會冷處理」。',
+    '蒐證員': '【行動】負責拍照任務（蒐證），照片是全隊的證據。',
+    '記錄官': '【行動】負責寫字的任務與最後那一句話，把全隊的想法整理成一句。',
+    '文化設計員': '【行動】負責「文化→遊戲」那一題：這一站的文化要素屬於哪一類、放進遊戲會變成什麼規則。',
+    '通訊官': '【聯絡】可以對「全場」廣播求援，附上你們隊在哪一站需要協助。',
+    '安全官': '【後勤】看得到隊友離你最遠多少公尺，並顯示每一站的現場安全提醒（車流、安靜、不拍人臉）。',
+    '補給官': '【後勤】管理隊伍的點數：和隊長一樣可以在簡報室採購技能、裝備與造型。',
+    '鑑識員': '【情報】寫觀察題時，多給你一個「觀察框架」（形狀、材質、新舊、文字、數字），教你怎麼看出細節。',
+    '技術專家': '【後勤】看得到定位精度與連線狀況，並提醒怎麼讓手機定位更準。',
+    '在地嚮導': '【調度】看得到走到每一站大約要幾分鐘，以及怎麼走比較安全。',
+    '扮演專員': '【行動】向 NPC 提問時以劇中人身分入戲，NPC 會多回一句符合場景的反應（不會給答案）。'
+  };
   var AVAS = Object.keys(window.WALK_SPRITES || {});
   var SPR = window.WALK_SPRITES || {}, SPRL = window.WALK_SPRITE_LABELS || {};
   /* 像素角色：精靈圖 8 格（前×2、右×2、左×2、背×2，每格 10×14）；walking 時前面兩格交替 */
@@ -252,7 +271,7 @@
   }
 
   /* ---------- 組隊：自動分隊、開房、加房 ---------- */
-  function pickRole(m) { var used = {}; Object.keys(m || {}).forEach(function (k) { used[m[k].role] = 1; }); for (var i = 0; i < ROLES.length; i++) if (!used[ROLES[i]]) return ROLES[i]; return ROLES[Object.keys(m || {}).length % ROLES.length]; }
+  function pickRole(m) { var used = {}; Object.keys(m || {}).forEach(function (k) { used[m[k].role] = 1; }); for (var i = 0; i < 4; i++) if (!used[ROLES[i]]) return ROLES[i]; for (i = 4; i < ROLES.length; i++) if (!used[ROLES[i]]) return ROLES[i]; return ROLES[Object.keys(m || {}).length % 4]; }
   function memberRec(m) { return { nick: profile.nick, ava: profile.ava, role: pickRole(m), ts: nowMs() }; }
   function tryJoin(id) {
     return ROOT.child('teams/' + id).once('value').then(function () {
@@ -393,12 +412,17 @@
     if (!posTimer) posTimer = setInterval(uploadPos, 25000);
   }
   window.__walkSim2 = function () { };
-  var lastMe = null, lastMoveT = 0, mateLast = {};
+  var lastMe = null, lastMoveT = 0, mateLast = {}, meSkin = '';
+  /* 換造型後，我的地圖圖示馬上換（不用等下一次定位） */
+  function refreshMeIcon() {
+    if (typeof meMarker === 'undefined' || !meMarker) return; var k = (skinOf(uid) || {}).k || ''; if (k === meSkin) return; meSkin = k;
+    meMarker.setIcon(L.divIcon({ className: '', html: '<div class="mate me">' + skinAva(uid, profile && profile.ava, 3, nowMs() - lastMoveT < 12000) + '<b>' + esc((profile && profile.nick) || '我') + '</b></div>', iconSize: [48, 56], iconAnchor: [24, 44] }));
+  }
   function gotPos(p) {
     myPos = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy || 0, t: nowMs() };
     $('gps').textContent = '定位精度約 ' + Math.round(myPos.acc) + ' 公尺';
     var moved = lastMe && dist(lastMe, myPos) > 3; lastMe = { lat: myPos.lat, lon: myPos.lon }; if (moved) lastMoveT = nowMs();
-    var mic = L.divIcon({ className: '', html: '<div class="mate me">' + avaHtml(profile && profile.ava, 3, nowMs() - lastMoveT < 12000) + '<b>' + esc((profile && profile.nick) || '我') + '</b></div>', iconSize: [48, 56], iconAnchor: [24, 44] });
+    var mic = L.divIcon({ className: '', html: '<div class="mate me">' + skinAva(uid, profile && profile.ava, 3, nowMs() - lastMoveT < 12000) + '<b>' + esc((profile && profile.nick) || '我') + '</b></div>', iconSize: [48, 56], iconAnchor: [24, 44] });
     if (!meMarker) { meMarker = L.marker([myPos.lat, myPos.lon], { icon: mic, zIndexOffset: 800 }).addTo(map); if (!REH) map.setView([myPos.lat, myPos.lon], 17); }
     else meMarker.setLatLng([myPos.lat, myPos.lon]).setIcon(mic);
     if (phase() === 'rehearsal') pmark('g1');
@@ -428,7 +452,7 @@
     Object.keys(teamPos).forEach(function (k) {
       if (k === uid) return; var p = teamPos[k];
       var pp = spreadPos(k, p), ml = mateLast[k], mv = ml && (Math.abs(ml.lat - p.lat) > 0.00003 || Math.abs(ml.lon - p.lon) > 0.00003); mateLast[k] = { lat: p.lat, lon: p.lon, mv: mv ? nowMs() : (ml ? ml.mv : 0) };
-      var html = '<div class="mate mt">' + avaHtml(p.ava, 3, nowMs() - (mateLast[k].mv || 0) < 40000) + '<b>👥 ' + esc(p.nick || '') + '</b></div>';
+      var html = '<div class="mate mt">' + skinAva(k, p.ava, 3, nowMs() - (mateLast[k].mv || 0) < 40000) + '<b>👥 ' + esc(p.nick || '') + '</b></div>';
       var ic = L.divIcon({ className: '', html: html, iconSize: [48, 56], iconAnchor: [24, 44] });
       if (mateMarkers[k]) mateMarkers[k].setLatLng([pp.lat, pp.lon]).setIcon(ic); else mateMarkers[k] = L.marker([pp.lat, pp.lon], { icon: ic, zIndexOffset: 600 }).addTo(map).on('click', function () { talkTo(p.nick || ''); });
     });
@@ -466,12 +490,12 @@
     if (!teamId || !uid || !team) return;
     S.forEach(function (s) {
       // 到點打卡
-      if (myPos && dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) && !(prog[s.id] && prog[s.id].arrived)) {
+      if (myPos && dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) + 10 * hqLv('range') && !(prog[s.id] && prog[s.id].arrived)) {
         ROOT.child(PR_(teamId) + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) toast('📍 到達：' + s.name); });
       }
       (s.tasks || []).forEach(function (t) {
         if (taskDone(s.id, t.id)) return;
-        if (t.type === 'zone' && myPos) { var z = zoneOf(s, t.zone); if (z && dist(myPos, z) <= z.r + Math.min(myPos.acc || 0, 40) + 12) markTask(s.id, t.id); }
+        if (t.type === 'zone' && myPos) { var z = zoneOf(s, t.zone); if (z && dist(myPos, z) <= z.r + Math.min(myPos.acc || 0, 40) + 12 + 10 * hqLv('range')) markTask(s.id, t.id); }
         if (t.type === 'together') {
           var n = 0; Object.keys(teamPos).forEach(function (k) { var p = teamPos[k]; if (fresh(p) && dist(p, s) <= s.r) n++; });
           if (n >= (t.min || 2)) markTask(s.id, t.id);
@@ -493,16 +517,17 @@
     if (s.frag === undefined || (prog[s.id] && prog[s.id].frag)) return;
     var need = (s.tasks || []).filter(function (t) { return !t.bonus && t.type !== 'together' && t.type !== 'cross'; });
     if (need.every(function (t) { return taskDone(s.id, t.id); })) {
-      ROOT.child(PR_(teamId) + '/' + s.id + '/frag').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🧩 取得碎片：' + R.fragmentNames[s.frag]); log('frag', s.id, R.fragmentNames[s.frag]); } });
+      ROOT.child(PR_(teamId) + '/' + s.id + '/frag').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🧩 取得碎片：' + R.fragmentNames[s.frag] + '　回「簡報室」領補給！'); hqNew = true; hqBadge(); log('frag', s.id, R.fragmentNames[s.frag]); } });
     }
   }
   function scoreOf() {
-    var sc = 0, P = R.score;
+    var sc = 0, P = R.score, hn = 0;
     S.forEach(function (s) {
       var p = prog[s.id] || {}; if (p.arrived) sc += P.arrive;
       (s.tasks || []).forEach(function (t) { if (p.tasks && p.tasks[t.id]) sc += t.bonus ? P.bonus : P.task; });
-      if (p.frag) sc += P.frag; if (p.secret) sc += 15; sc += P.hint * (p.hints || 0);
+      if (p.frag) sc += P.frag; if (p.secret) sc += 15; sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
     });
+    if (hasGear('kit') && hn > 0) sc -= hintPenalty(P);
     if (prog.final && prog.final.done) sc += P.final;
     return Math.max(0, sc);
   }
@@ -536,9 +561,105 @@
     if (!team) return; if (window.refreshStopIcons) refreshStopIcons();
     $('hd-team').textContent = teamLabel() + '・' + Object.keys(team.members).length + ' 人';
     $('hd-score').textContent = scoreOf() + ' 分・碎片 ' + fragCount() + '/' + totalFrags();
-    if (view === 'task') renderTask(); if (view === 'team') renderTeam(); if (view === 'rank') renderRank();
+    if (view === 'task') renderTask(); if (view === 'team') renderTeam(); if (view === 'rank') renderRank(); if (view === 'hq') renderHq();
+    refreshMeIcon();
     updateGoal(true);
+    if (!hqChecked && team && uid && teamId) { hqChecked = true; var kk = 'walk_hq_seen_' + teamId, seen = false; try { seen = !!localStorage.getItem(kk); } catch (e) { } if (!seen) { try { localStorage.setItem(kk, '1'); } catch (e) { } setTimeout(function () { setView('hq'); }, 250); } }
   }
+  /* ================= 簡報室（HQ）：任務簡報、角色、點數商店、造型 ================= */
+  var SKILLS = [
+    { k: 'scout', icon: '🔍', name: '偵查範圍', desc: '偵查員看得到「隱藏關卡」的距離 +20 公尺／級', max: 3, cost: [60, 120, 180] },
+    { k: 'hint', icon: '📜', name: '提示折扣', desc: '要提示時扣的分數：10 → 7 → 5 → 3', max: 3, cost: [50, 100, 150] },
+    { k: 'range', icon: '📍', name: '到站判定', desc: '算「到站」的範圍加大 10 公尺／級（定位不準時救命）', max: 3, cost: [40, 80, 120] }
+  ];
+  var GEARS = [
+    { k: 'lens', icon: '🔎', name: '放大鏡', desc: '每個人的任務頁多出「資料出處」，看這一站的事實從哪來', cost: 80 },
+    { k: 'kit', icon: '🩹', name: '急救包', desc: '全程有一次免費提示（不扣分）', cost: 100 },
+    { k: 'radio', icon: '📻', name: '對講機', desc: '每個人都能「號召全隊集合」，不用等隊長', cost: 90 }
+  ];
+  var SKINS = [
+    { k: 'sk_hat', e: '🕵️', n: '偵探帽' }, { k: 'sk_astro', e: '🧑‍🚀', n: '太空人' }, { k: 'sk_cat', e: '🐱', n: '貓咪' }, { k: 'sk_ghost', e: '👻', n: '小幽靈' },
+    { k: 'sk_robot', e: '🤖', n: '機器人' }, { k: 'sk_ninja', e: '🥷', n: '忍者' }, { k: 'sk_mage', e: '🧙', n: '魔法師' }, { k: 'sk_dragon', e: '🐲', n: '小龍' }
+  ];
+  var SKIN_COST = 50;
+  var hqNew = false, hqChecked = false;
+  function hqState() { return (prog && prog._hq) || {}; }
+  function hqLv(k) { return ((hqState().lv || {})[k]) || 0; }
+  function hasGear(k) { return !!((hqState().gear || {})[k]); }
+  function hqSpent() { return hqState().spent || 0; }
+  function hqPoints() { return Math.max(0, scoreOf() - hqSpent()); }
+  function hintPenalty(P) { return Math.min(0, (P.hint || 0) + [0, 3, 5, 7][Math.min(3, hqLv('hint'))]); }
+  function canShop() { var r = myRole(); return r === '隊長' || r === '補給官'; }
+  function skinOf(k) { var sk = ((hqState().skin || {})[k]); if (!sk) return null; for (var i = 0; i < SKINS.length; i++) if (SKINS[i].k === sk && (hqState().skins || {})[sk]) return SKINS[i]; return null; }
+  function skinAva(k, ava, scale, walking) { var sk = skinOf(k); return sk ? '<span class="skinav">' + sk.e + '</span>' : avaHtml(ava, scale, walking); }
+  function farthestMate() {
+    if (!myPos) return null; var far = null;
+    Object.keys(teamPos || {}).forEach(function (k) { if (k === uid || !fresh(teamPos[k])) return; var d = Math.round(dist(myPos, teamPos[k])); if (far === null || d > far) far = d; });
+    return far;
+  }
+  function hqBuy(kind, key, cost, apply, okMsg) {
+    if (!canShop()) { toast('只有隊長或補給官可以採購。'); return; }
+    var cur = hqPoints(); if (cost > cur) { toast('點數不夠（還差 ' + (cost - cur) + ' 點）'); return; }
+    var earnedNow = scoreOf();
+    ROOT.child(PR_(teamId) + '/_hq').transaction(function (c) {
+      c = c || {}; if ((c.spent || 0) + cost > earnedNow) return undefined;
+      if (apply(c) === false) return undefined; c.spent = (c.spent || 0) + cost; return c;
+    }).then(function (r) { if (r.committed) { toast('✔ ' + okMsg); log('buy', kind, key); } else toast('買不成（點數不夠，或已經有了／被別人先買了）'); });
+  }
+  function worldOf() { return ((TWR && R0.tw) || !REH) ? 'tw' : (CAMP === R0.campusW ? 'night' : 'day'); }
+  var SAFE = '<li>路口車多，只走人行道與斑馬線；天黑了盡量結伴。</li><li>紀念地、廟宇、校園和館內請安靜、尊重，不拍別人的臉、不拍幼兒。</li><li>找不到地點就按任務裡的 🆘，或在隊內訊息問隊友；手機快沒電先告訴隊友。</li>';
+  function briefingHtml() {
+    var w = worldOf(), h = '';
+    if (w === 'tw') h += '<div class="bub"><b>局長（廣播）</b>：「探員，歡迎加入時安局。我們負責看守這座城市被遺忘的時間。今天有 ' + totalFrags() + ' 個案件在中西區等你，每個案件有一位線索人（NPC），他們只說一半的話，另一半要靠你到現場看。你不是超級英雄——你是一個小隊裡的專業分工。」</div>';
+    else if (w === 'night') h += '<div class="bub"><b>志工站長</b>：「歡迎加入夜班審查單志工站。畢不了學姊差三格審查單就畢業，白天她已經跑過校園那一輪，今晚夜班這條路線還有三格要補蓋。你們不是來當英雄的，是來幫忙的——各自有分工，一起把單子蓋滿。」</div>';
+    else h += '<div class="bub"><b>志工站長</b>：「歡迎加入審查單志工站。畢不了學姊的畢業審查單永遠差三格章，我們每個人負責一種工作，繞校園一圈幫她蓋章。你們不是來當英雄的，是來幫忙的。」</div>';
+    var tot = totalFrags(), UN = w === 'tw' ? '案件章' : '審查單';
+    h += '<div class="sub"><b>任務目標</b>：集滿 ' + tot + ' 格' + UN + '，回終點交單。每一站有 NPC（可以直接打字問他）、題目與一題「文化怎麼變成遊戲規則」。</div>';
+    h += '<div class="sub"><b>編制</b>：下面有 ' + ROLES.length + ' 種工作，一隊一種只有一個人當，被挑走的會變灰；你們可以自己挑，隊長可以隨時換，其他人換一次。每種工作看得到的資訊不一樣，要互相報告。</div>';
+    h += '<div class="sub"><b>補給</b>：每完成一個章節回來簡報室，用累積的點數升級技能、買裝備、換造型。</div>';
+    h += '<div class="sub"><b>安全守則</b><ul style="margin:3px 0 0;padding-left:18px">' + SAFE + '</ul></div>';
+    return h;
+  }
+  function shopHtml() {
+    var st = hqState(), cs = canShop(), h = '<div class="card"><h2>🎒 補給站</h2><div class="sub">隊伍點數：<b>' + hqPoints() + '</b>（累積 ' + scoreOf() + '，已花 ' + hqSpent() + '）。' + (cs ? '你可以採購。' : '只有隊長或補給官可以採購，你可以先看看、跟他們討論。') + ' 花點數不會影響排行榜。</div>';
+    h += '<b>技能升級</b>';
+    SKILLS.forEach(function (k) {
+      var lv = hqLv(k.k), max = lv >= k.max;
+      h += '<div class="rolerow"><div class="rr1"><b>' + k.icon + k.name + '</b> <span class="tag">' + lv + '／' + k.max + ' 級</span></div><div class="sub">' + esc(k.desc) + '</div>' + (max ? '' : '<button class="btn2" data-buy="skill:' + k.k + '"' + (cs ? '' : ' disabled') + '>升到 ' + (lv + 1) + ' 級（' + k.cost[lv] + ' 點）</button>') + '</div>';
+    });
+    h += '<b>裝備</b>';
+    GEARS.forEach(function (g) {
+      var own = hasGear(g.k);
+      h += '<div class="rolerow' + (own ? ' mine' : '') + '"><div class="rr1"><b>' + g.icon + g.name + '</b>' + (own ? ' <span class="tag">已擁有</span>' : '') + '</div><div class="sub">' + esc(g.desc) + '</div>' + (own ? '' : '<button class="btn2" data-buy="gear:' + g.k + '"' + (cs ? '' : ' disabled') + '>購買（' + g.cost + ' 點）</button>') + '</div>';
+    });
+    h += '<b>造型（地圖上的你）</b><div class="sub">先由隊長或補給官解鎖（每款 ' + SKIN_COST + ' 點，全隊都能用），每個人再選自己要穿哪一款。</div><div class="skins">';
+    var mine = (st.skin || {})[uid];
+    h += '<button class="skinb' + (!mine ? ' on' : '') + '" data-skin="">預設</button>';
+    SKINS.forEach(function (k) {
+      var un = !!(st.skins || {})[k.k];
+      h += un ? '<button class="skinb' + (mine === k.k ? ' on' : '') + '" data-skin="' + k.k + '"><span class="skinav">' + k.e + '</span>' + k.n + '</button>'
+              : '<button class="skinb lock" data-buy="skin:' + k.k + '"' + (cs ? '' : ' disabled') + '><span class="skinav">' + k.e + '</span>' + k.n + '<br><span class="sub">🔒 ' + SKIN_COST + ' 點</span></button>';
+    });
+    return h + '</div></div>';
+  }
+  function renderHq() {
+    var el = $('pane-hq'); if (!el) return; hqNew = false; hqBadge();
+    var h = '<div class="card"><h2>🏢 任務簡報室</h2>' + briefingHtml() + '</div>' + roleCard() + shopHtml();
+    h += '<button class="btn" id="hq-go">✔ 我準備好了，出發！</button>';
+    el.innerHTML = h;
+    [].forEach.call(el.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
+    [].forEach.call(el.querySelectorAll('[data-buy]'), function (b) {
+      b.onclick = function () {
+        var a = b.dataset.buy.split(':'), t = a[0], k = a[1];
+        if (t === 'skill') { var sk = SKILLS.filter(function (x) { return x.k === k; })[0], lv = hqLv(k); if (!sk || lv >= sk.max) return; hqBuy('skill', k, sk.cost[lv], function (c) { c.lv = c.lv || {}; if ((c.lv[k] || 0) !== lv) return false; c.lv[k] = lv + 1; }, sk.name + ' 升到 ' + (lv + 1) + ' 級'); }
+        if (t === 'gear') { var g = GEARS.filter(function (x) { return x.k === k; })[0]; if (!g || hasGear(k)) return; hqBuy('gear', k, g.cost, function (c) { c.gear = c.gear || {}; if (c.gear[k]) return false; c.gear[k] = 1; }, '買到 ' + g.name); }
+        if (t === 'skin') { hqBuy('skin', k, SKIN_COST, function (c) { c.skins = c.skins || {}; if (c.skins[k]) return false; c.skins[k] = 1; }, '解鎖造型'); }
+      };
+    });
+    [].forEach.call(el.querySelectorAll('[data-skin]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/_hq/skin/' + uid).set(b.dataset.skin || null); log('skin', '', b.dataset.skin || 'default'); }; });
+    var go = $('hq-go'); if (go) go.onclick = function () { setView('map'); };
+  }
+  function hqBadge() { var b = document.querySelector('#nav button[data-v="hq"]'); if (b) b.textContent = hqNew ? '🏢 簡報室 🆕' : '🏢 簡報室'; }
   /* 目標列：打開遊戲就知道要做什麼、現在到哪、下一步去哪 */
   function goalText() {
     if (!team || !S || !S.length) return '';
@@ -595,6 +716,7 @@
     [].forEach.call(document.querySelectorAll('[data-secret]'), function (b) { b.onclick = function () { var sid = b.dataset.secret; ROOT.child(PR_(teamId) + '/' + sid + '/secret').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🎉 隱藏關卡解開！全隊 +15 分'); log('secret', sid, 'found'); } }); }; });
     [].forEach.call(document.querySelectorAll('[data-ask]'), function (b) { b.onclick = function () { var st = stopById(b.dataset.s); log('npc', b.dataset.s, b.dataset.ask); toast(b.dataset.ask === 'who' ? st.npc.name + '：' + st.npc.voice : st.npc.open.join(' ')); }; });
     bindNpcBox();
+    [].forEach.call(document.querySelectorAll('[data-sosall]'), function (b) { b.onclick = function () { var st = stopById(b.dataset.sosall); chatSend('gchat', { uid: uid, n: (profile && profile.nick) || '', x: ('🆘 ' + teamLabel() + '在「' + st.name.replace(/^第 \d 案｜|^第 \d 章｜/, '') + '」需要協助').slice(0, 40), t: nowMs() }); toast('已廣播給全場'); }; });
     [].forEach.call(document.querySelectorAll('[data-call]'), function (b) { b.onclick = function () { var st = stopById(b.dataset.call); chatSend('tchat/' + teamId, { uid: uid, n: (profile && profile.nick) || '隊長', x: ('📣 隊長號召：大家到「' + st.name + '」集合！').slice(0, 100), call: 1, t: nowMs() }); }; });
     [].forEach.call(document.querySelectorAll('[data-hint]'), function (b) { b.onclick = function () { useHint(b.dataset.hint); }; });
     [].forEach.call(document.querySelectorAll('[data-ans]'), function (b) { b.onclick = function () { answer(b.dataset.s, b.dataset.t, b.dataset.ans); }; });
@@ -719,7 +841,7 @@
         npcAsk[id] = { s: sid, q: q.slice(0, 100) };
         try { localStorage.setItem('walk_npcask_' + uid, JSON.stringify(npcAsk)); } catch (e) { }
         refreshNpcBox();
-        ref.set({ uid: uid, q: q.slice(0, 100), stop: sid, hl: p.hints || 0, t: nowMs() }).catch(function (e) { toast('傳不出去：' + ((e && e.message) || e)); });
+        ref.set({ uid: uid, q: q.slice(0, 100), stop: sid, hl: p.hints || 0, rl: myRole(), t: nowMs() }).catch(function (e) { toast('傳不出去：' + ((e && e.message) || e)); });
         log('npcq', sid, q.length);
       }
       b.onclick = go; if (inp) inp.onkeydown = function (e) { if (e.key === 'Enter') go(); };
@@ -728,7 +850,7 @@
   /* 人格類型晶片（沿用急診室做法）：四碼文字＋象限色＋問法提示，顏色旁一定有字 */
   function npcTypeHtml(n) {
     var t = window.WALK_NPC_TYPE && window.WALK_NPC_TYPE(n.name); if (!t) return '';
-    return '<div class="mbti" style="background:' + t.q.bg + ';border:2px solid ' + t.q.color + ';color:#1b1b1b"><b>' + t.type + '・' + esc(t.label) + '</b>　' + esc(t.q.short) + '<div class="sub" style="color:#333">💡 問法：' + esc(t.open) + '。<br>⚠ 容易被冷處理：' + esc(t.cold) + '。</div></div>';
+    return '<div class="mbti" style="background:' + t.q.bg + ';border:2px solid ' + t.q.color + ';color:#1b1b1b"><b>' + t.type + '・' + esc(t.label) + '</b>　' + esc(t.q.short) + (myRole() === '訪談員' ? '<div class="sub" style="color:#333">💡 問法：' + esc(t.open) + '。<br>⚠ 容易被冷處理：' + esc(t.cold) + '。</div>' : '<div class="sub" style="color:#333">🎤 想知道怎麼問他才會開口？請隊裡的「訪談員」來看。</div>') + '</div>';
   }
   function npcHtml(s, p) {
     var n = s.npc, used = p.hints || 0, h = '<div class="npc"><div class="nhd"><span class="nava">' + n.ava + '</span><b>' + esc(n.name) + '</b></div>' + npcTypeHtml(n);
@@ -748,9 +870,9 @@
     if (s.secret) {
       if (p.secret) h += '<div class="bub secret">🔍 隱藏關卡已解開 ✔ ' + esc(s.secret) + '</div>';
       else if (r === '偵查員') {
-        var dd = myPos ? Math.round(dist(myPos, s)) : null, near = TEST || (dd !== null && dd <= (s.r || 50) + 40);
+        var dd = myPos ? Math.round(dist(myPos, s)) : null, near = TEST || (dd !== null && dd <= (s.r || 50) + 40 + 20 * hqLv('scout'));
         if (near) h += '<div class="bub secret">🔍 偵查員發現隱藏關卡：' + esc(s.secret) + '</div><button class="btn2" data-secret="' + s.id + '">✔ 我找到了（全隊 +15 分）</button>';
-        else h += '<div class="bub dim">🔍 這一站有隱藏關卡，走到離這裡 ' + ((s.r || 50) + 40) + ' 公尺內才看得到' + (dd !== null ? '（你現在約 ' + dd + ' 公尺）' : '（要先允許定位）') + '。</div>';
+        else h += '<div class="bub dim">🔍 這一站有隱藏關卡，走到離這裡 ' + ((s.r || 50) + 40 + 20 * hqLv('scout')) + ' 公尺內才看得到' + (dd !== null ? '（你現在約 ' + dd + ' 公尺）' : '（要先允許定位）') + '。</div>';
       } else h += '<div class="bub dim">🔒 這一站有隱藏關卡，只有「偵查員」走近才看得到。</div>';
     }
     if (r === '領航員') {
@@ -762,16 +884,25 @@
       } else h += '<div class="bub dim">🧭 領航員要先允許定位，才算得出距離與方向。</div>';
     }
     if (r === '軍師' && s.npc && s.npc.hints && s.npc.hints[0] && !/^答案/.test(s.npc.hints[0]) && !(p.hints > 0)) h += '<div class="bub hint">📜 軍師的筆記（免費）：' + esc(s.npc.hints[0]) + '</div>';
-    if (r === '隊長') h += '<button class="btn2" data-call="' + s.id + '">📣 號召全隊到這一站集合</button>';
+    if (r === '隊長' || hasGear('radio')) h += '<button class="btn2" data-call="' + s.id + '">📣 號召全隊到這一站集合</button>';
+    if (r === '檔案官' && s.note) h += '<div class="bub hint">🗂️ 檔案官：資料出處與可信度——' + esc(s.note) + '</div>';
+    else if (hasGear('lens') && s.note) h += '<div class="bub hint">🔎 放大鏡：' + esc(s.note) + '</div>';
+    if (r === '通訊官') h += '<button class="btn2" data-sosall="' + s.id + '">📡 向全場廣播求援</button>';
+    if (r === '安全官') { var far = farthestMate(); h += '<div class="bub hint">🦺 安全官：' + (far !== null ? '離你最遠的隊友約 ' + far + ' 公尺。' : '等隊友打開定位，才算得出走散的距離。') + (s.tip ? '<br>現場提醒：' + esc(s.tip) : '') + '</div>'; }
+    if (r === '文化設計員') h += '<div class="bub hint">🎎 文化設計員：想一想這一站的文化要素屬於哪一類——物件・地點／行為・儀式／人際關係／禁忌・規矩／時間節奏。</div>';
+    if (r === '鑑識員') h += '<div class="bub hint">🔬 鑑識員的觀察框架：形狀・材質・新舊・文字・數字——每一項各找一個細節，寫觀察題就有東西寫。</div>';
+    if (r === '技術專家') h += '<div class="bub hint">🛠️ 技術專家：' + (myPos ? '目前定位精度約 ' + Math.round(myPos.acc || 0) + ' 公尺' + ((myPos.acc || 0) > 50 ? '，偏大——請到空曠處、打開精確位置、關閉低耗電模式。' : '，狀況不錯。') : '還沒抓到定位——請允許定位、到空曠處。') + '</div>';
+    if (r === '在地嚮導') h += '<div class="bub hint">🗺️ 在地嚮導：' + (myPos ? '走到「' + esc(s.name.replace(/^第 \d (案|章)｜/, '')) + '」約 ' + Math.max(1, Math.round(dist(myPos, s) * 1.3 / 80)) + ' 分鐘（直線距離估算）。路口走斑馬線，天黑走有燈的路。' : '等定位出來才算得出走路時間。') + '</div>';
+    if (r === '補給官') h += '<div class="bub hint">🎒 補給官：隊伍點數 ' + hqPoints() + '，到「簡報室」採購。</div>';
     return h + '</div>';
   }
   /* 題型 → 負責角色。隊裡有這個角色的人，就由他作答；沒有這個角色（人不夠）就任何人都能答 */
-  var TASK_ROLE = { choice: '軍師', order: '軍師', text: '偵查員', ack: '隊長' };
+  var TASK_ROLE = { choice: ['軍師'], order: ['軍師'], text: ['記錄官', '偵查員'], ack: ['蒐證員', '隊長'], cu: ['文化設計員', '記錄官', '偵查員'] };
   function roleHolder(role) { var m = (team && team.members) || {}, k; for (k in m) if (m[k].role === role) return { uid: k, nick: m[k].nick }; return null; }
   function blockedBy(t) {
-    var r = TASK_ROLE[t.type]; if (!r || t.bonus) return null;
-    var h = roleHolder(r); if (!h || h.uid === uid) return null;
-    return { role: r, nick: h.nick };
+    var list = TASK_ROLE[t.id === 'cu' ? 'cu' : t.type]; if (!list || t.bonus) return null;
+    for (var i = 0; i < list.length; i++) { var h = roleHolder(list[i]); if (h) return h.uid === uid ? null : { role: list[i], nick: h.nick }; }
+    return null;
   }
   function taskHtml(s, t) {
     var d = taskDone(s.id, t.id), h = '<div class="task' + (d ? ' done' : '') + (t.bonus ? ' bonus' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + (t.bonus ? '<span class="tag">協力加分</span> ' : '') + esc(t.title) + '</div>';
@@ -827,9 +958,9 @@
   }
   function finalHtml() {
     var ok = fragCount() >= totalFrags(), d = prog.final && prog.final.done, h = '<div class="card"><b>' + esc(R.finalTask.title) + '</b>';
-    if (d) return h + '<div class="bub done">交給時安局了：「' + esc(prog.final.text) + '」</div></div>';
+    if (d) return h + '<div class="bub done">交給' + (worldOf() === 'tw' ? '時安局' : '志工站長') + '了：「' + esc(prog.final.text) + '」</div></div>';
     if (!ok) return h + '<div class="sub">還差 ' + (totalFrags() - fragCount()) + ' 塊碎片。</div></div>';
-    var cap = roleHolder('隊長'); if (cap && cap.uid !== uid) return h + '<div class="sub">三格都蓋滿了！最後一句話由 👑隊長「' + esc(cap.nick || '') + '」寫，大家可以在隊內訊息一起想。</div></div>';
+    var cap = roleHolder('記錄官') || roleHolder('隊長'); if (cap && cap.uid !== uid) return h + '<div class="sub">三格都蓋滿了！最後一句話由 ' + (roleHolder('記錄官') ? ROLE_ICON['記錄官'] + '記錄官' : ROLE_ICON['隊長'] + '隊長') + '「' + esc(cap.nick || '') + '」寫，大家可以在隊內訊息一起想。</div></div>';
     return h + '<textarea id="final-tx" class="inp" rows="3" placeholder="寫一句話"></textarea><button id="final-go" class="btn2">交給時安局</button></div>';
   }
   function submitFinal() {
@@ -839,7 +970,7 @@
   function renderTeam() {
     var m = team.members, h = '<h2>隊員 ' + Object.keys(m).length + ' / 4</h2><div class="sub">' + (team.closed ? '已關門，不能再加入' : '還可以加入') + '</div>';   /* 隊名與人數頂列已經有了，這裡不再重複 */
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
-    h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + avaHtml(x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span></div>'; }).join('') + '</div>';
+    h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span></div>'; }).join('') + '</div>';
     h += roleCard();
     h += chatBox();
     h += '<div class="card"><b>帳號與語言</b><div class="opts"><button class="btn2 lo">登出，換 Google 帳號</button><button class="btn2 lang"></button></div></div>';

@@ -544,6 +544,13 @@
     [].forEach.call(document.querySelectorAll('.chip'), function (b) { b.onclick = function () { curStop = b.dataset.s; renderTask(); }; });
     [].forEach.call(document.querySelectorAll('[data-pack]'), function (b) { b.onclick = function () { pmark(b.dataset.pack); }; });
     [].forEach.call(document.querySelectorAll('[data-arr]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/' + b.dataset.arr + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs(), manual: 1 } : undefined; }); }; });
+    [].forEach.call(document.querySelectorAll('[data-sos]'), function (b) { b.onclick = function () {
+      var st = stopById(b.dataset.s), key = 'sos' + b.dataset.s + b.dataset.sos; sosN[key] = (sosN[key] || 0) + 1; log('sos', st.id, 'press ' + sosN[key]);
+      if (sosN[key] === 1) {
+        chatSend('tchat/' + teamId, { uid: uid, n: (profile && profile.nick) || '?', x: ('🆘 我找不到「' + st.name + '」，有人知道在哪嗎？').slice(0, 100), call: 1, t: nowMs() });
+        toast('已通知隊友。打開地圖頁，看綠色虛線圈就是這一站；領航員能看到距離與方向。還是找不到，再按一次這顆鈕，就直接算你到了。');
+      } else { toast('好，這一站先算你到了，繼續往下走～'); markTask(b.dataset.s, b.dataset.sos, { soft: true, sos: 1 }); var rr = ROOT.child(PR_(teamId) + '/' + b.dataset.s + '/arrived'); rr.transaction(function (c) { return c === null ? { by: uid, t: nowMs(), manual: 1 } : undefined; }); }
+    }; });
     [].forEach.call(document.querySelectorAll('[data-secret]'), function (b) { b.onclick = function () { var sid = b.dataset.secret; ROOT.child(PR_(teamId) + '/' + sid + '/secret').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🎉 隱藏關卡解開！全隊 +15 分'); log('secret', sid, 'found'); } }); }; });
     [].forEach.call(document.querySelectorAll('[data-ask]'), function (b) { b.onclick = function () { var st = stopById(b.dataset.s); log('npc', b.dataset.s, b.dataset.ask); toast(b.dataset.ask === 'who' ? st.npc.name + '：' + st.npc.voice : st.npc.open.join(' ')); }; });
     [].forEach.call(document.querySelectorAll('[data-call]'), function (b) { b.onclick = function () { var st = stopById(b.dataset.call); chatSend('tchat/' + teamId, { uid: uid, n: (profile && profile.nick) || '隊長', x: ('📣 隊長號召：大家到「' + st.name + '」集合！').slice(0, 100), call: 1, t: nowMs() }); }; });
@@ -659,7 +666,7 @@
   function taskHtml(s, t) {
     var d = taskDone(s.id, t.id), h = '<div class="task' + (d ? ' done' : '') + (t.bonus ? ' bonus' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + (t.bonus ? '<span class="tag">協力加分</span> ' : '') + esc(t.title) + '</div>';
     if (!d) {
-      if (t.type === 'zone') h += '<div class="sub">走到圍欄裡就會自動完成（地圖上的綠色虛線圈）。</div>';
+      if (t.type === 'zone') h += '<div class="sub">走到圍欄裡就會自動完成（地圖上的綠色虛線圈）。</div><button class="btn2" data-sos="' + t.id + '" data-s="' + s.id + '">🆘 找不到這裡？</button>';
       if (t.type === 'together' || t.type === 'cross') h += '<div class="sub">隊友同時到位就會自動完成，沒做到也不影響主線。</div>';
       if (t.type === 'ack') h += '<button class="btn2" data-ack="' + t.id + '" data-s="' + s.id + '">我拍好了</button>';
       if (t.type === 'choice') h += '<div class="opts">' + t.options.map(function (o) { return '<button class="btn2" data-s="' + s.id + '" data-t="' + t.id + '" data-ans="' + esc(o) + '">' + esc(o) + '</button>'; }).join('') + '</div>';
@@ -686,7 +693,7 @@
     if (a.join() === s.cardOrder.join()) { markTask(sid, tid); log('answer', sid, 'order ok'); }
     else { var n = (checkOrder['n' + sid] = (checkOrder['n' + sid] || 0) + 1); log('answer', sid, 'order wrong ' + a.join('>')); toast(n >= 3 ? '還差一點。提示：想想「這塊地先給誰用」。' : '順序不太對，再想想。'); if (n >= 3) { toast('這題送你過～'); markTask(sid, tid, { soft: true }); } }
   }
-  var wrong = {};
+  var wrong = {}, sosN = {};
   function answer(sid, tid, a) {
     var s = stopById(sid), t = s.tasks.filter(function (x) { return x.id === tid; })[0]; log('answer', sid, tid + '=' + a);
     if (a === t.answer) { markTask(sid, tid); return; }

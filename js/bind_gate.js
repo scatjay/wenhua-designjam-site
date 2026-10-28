@@ -526,6 +526,35 @@
     UNITS.forEach(function (u) { if (u.wk && (!top || u.wk > top.wk)) top = u; });
     return top ? top.key : null;
   })();
+  /* 2026-10-28 楊老師：各學習單的字數顯示在頁尾。
+     只算學習單本文：排除導覽、輸入欄、浮動按鈕、對話框、頁尾、進度條與 QR，空白不計。
+     每週的學習單（有 wk）與期中頁才顯示；動態內容晚一點才出現，所以 2 秒與 7 秒各重算一次。 */
+  function renderWordCount() {
+    var cur = null; UNITS.forEach(function (u) { if (u.key === UNIT) cur = u; });
+    if (!cur || !(cur.wk || cur.key === 'mid')) return;
+    function count() {
+      var root = document.querySelector('.wrap') || document.body;
+      var c = root.cloneNode(true);
+      Array.prototype.forEach.call(c.querySelectorAll('.dj-nav,.unitnav,script,style,.fab,.dlg,footer,#prog,.qrbox,textarea,input,select,button,#chatLog,.dj-wc'), function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+      var t = (c.textContent || '').replace(/\s+/g, '');
+      return t.length;
+    }
+    function put() {
+      var n = count(), txt = '本頁約 ' + n.toLocaleString('en-US') + ' 字（不含導覽與輸入欄）';
+      var el = document.getElementById('dj-wc');
+      if (!el) {
+        el = document.createElement('span'); el.id = 'dj-wc'; el.className = 'dj-wc';
+        var f = document.querySelector('footer');
+        if (f) { f.appendChild(document.createTextNode(' · ')); f.appendChild(el); }
+        else {
+          var d = document.createElement('div'); d.style.cssText = 'text-align:center;color:#8a8478;font-size:12px;padding:18px 16px 28px'; d.appendChild(el);
+          (document.querySelector('.wrap') || document.body).appendChild(d);
+        }
+      }
+      el.textContent = txt;
+    }
+    setTimeout(put, 2000); setTimeout(put, 7000);
+  }
   function renderNav() {
     injectCss();
     if (document.querySelector('.dj-nav')) return;
@@ -708,6 +737,7 @@
     renderNav();
     renderLangRow();
     renderHub();
+    renderWordCount();
     var env = ls(LS_ENV), mail = ls(LS_MAIL);
     /* 🔴 只用編號進去的人沒有 mail；原本這裡要求 mail，於是「先只用編號進去」永遠回到綁定畫面。
        要有 mail，或是明確按過「先只用編號進去」（LS_SKIP）才放行。 */

@@ -90,7 +90,7 @@ function start(){
   if(CW)CW.stops.forEach(function(x){var n=x.id==='ws'?2:(x.chapter||1);byCh[n].push(x)});
   if(CC)CC.stops.forEach(function(x){if(x.chapter&&!byCh[x.chapter].length)byCh[x.chapter].push(x)});
   LV.filter(function(x){return x.lat&&x.lon}).forEach(function(x){byCh[9].push(x)});
-  Object.keys(byCh).forEach(function(k){CH.push({k:'ch'+k,name:'第 '+k+' 章：'+NAMES[k],stops:byCh[k],on:byCh[k].length>0})});
+  Object.keys(byCh).forEach(function(k){CH.push({k:'ch'+k,name:'第 '+k+' 章：'+NAMES[k],stops:byCh[k],on:byCh[k].length>0&&k!=='9'})});
   var PAL=['#d9534f','#2f6690','#2e8b57','#c08a1e','#8e44ad','#d35400','#16a085','#7f8c8d','#c2185b','#5d4037'];
   /* 每章一種形狀＋一種顏色：1 圓｜2 方｜3 菱形｜4 三角｜5 六邊形｜6 五邊形｜7 星｜8 盾｜9 十字 */
   var SHP=['border-radius:50%','border-radius:4px','clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)','clip-path:polygon(50% 0,100% 100%,0 100%)','clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)','clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%)','clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)','clip-path:polygon(0 0,100% 0,100% 60%,50% 100%,0 60%)','clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)'];

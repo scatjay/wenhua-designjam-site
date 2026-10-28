@@ -84,12 +84,12 @@ function start(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
   /* 關卡分章節：每章一個圖層，可單獨顯示或關閉 */
   var CW=window.WALK_ROUTE.campusW,CC=window.WALK_ROUTE.campus,LV=window.WALK_ROUTE.stops||[],CH=[];
-  /* 十章：1 夜班審查單｜2 三連堂與銅像｜3 圖書館與優活館｜4 水力加工坊｜5 天圓地方｜6 校史館｜7 西淮館｜8 E 棟｜9 承樸（待座標）｜10 台文館（11/14 現場） */
-  var NAMES={1:'夜班審查單',2:'三連堂與銅像（選修）',3:'通識的最後一格（圖書館、優活館）',4:'水力加工坊',5:'天圓地方',6:'校史館',7:'西淮館',8:'E 棟（修齊大樓）',9:'承樸（座標待補）',10:'台文館（11/14 現場）'};
-  var byCh={1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[],10:[]};
+  /* 十章：1 夜班審查單｜2 三連堂與銅像｜3 圖書館與優活館｜4 水力加工坊｜5 天圓地方｜6 校史館｜7 西淮館｜8 E 棟｜9 台文館（11/14 現場） */
+  var NAMES={1:'夜班審查單',2:'三連堂與銅像（選修）',3:'通識的最後一格（圖書館、優活館）',4:'水力加工坊',5:'天圓地方',6:'校史館',7:'西淮館',8:'E 棟（修齊大樓）',9:'台文館（11/14 現場）'};
+  var byCh={1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]};
   if(CW)CW.stops.forEach(function(x){var n=x.id==='ws'?2:(x.chapter||1);byCh[n].push(x)});
   if(CC)CC.stops.forEach(function(x){if(x.chapter&&!byCh[x.chapter].length)byCh[x.chapter].push(x)});
-  LV.filter(function(x){return x.lat&&x.lon}).forEach(function(x){byCh[10].push(x)});
+  LV.filter(function(x){return x.lat&&x.lon}).forEach(function(x){byCh[9].push(x)});
   Object.keys(byCh).forEach(function(k){CH.push({k:'ch'+k,name:'第 '+k+' 章：'+NAMES[k],stops:byCh[k],on:byCh[k].length>0})});
   var PAL=['#d9534f','#2f6690','#2e8b57','#c08a1e','#8e44ad','#d35400','#16a085','#7f8c8d','#c2185b','#5d4037'];
   CH.forEach(function(c,ci){c.col=PAL[ci%PAL.length];c.lg=L.layerGroup();c.stops.forEach(function(s,i){

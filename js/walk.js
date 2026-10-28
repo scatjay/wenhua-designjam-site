@@ -322,6 +322,9 @@
     on(ROOT.child(PR_(id)), 'value', function (s) { prog = s.val() || {}; render(); checkTasks(); });
     on(ROOT.child('pos/' + id), 'value', function (s) { teamPos = s.val() || {}; renderMates(); checkTasks(); });
     on(ROOT.child('cfg/phase'), 'value', function (sn) { cfgPhase = sn.val(); if ((phase() === 'rehearsal') !== REH) { console.log('RELOAD', phase(), REH, cfgPhase, R.liveStart); location.reload(); return; } render(); renderBanner(); });
+    on(ROOT.child('cfg/npcd'), 'value', function (sn) { npcd = sn.val() || {}; refreshNpcBox(); });
+    db.ref('.info/serverTimeOffset').on('value', function (sn) { svOff = sn.val() || 0; });
+    on(ROOT.child('npca/' + uid), 'value', function (sn) { var v = sn.val() || {}; Object.keys(v).forEach(function (k) { npcAns[k] = v[k]; }); refreshNpcBox(); });
     on(ROOT.child('rehearsal/' + uid), 'value', function (sn) { rehearsal = sn.val() || {}; render(); });
     on(ROOT.child(REH ? 'boardr' : 'board'), 'value', function (s) { board = s.val() || {}; if (view === 'rank') render(); });
     schedLoop();
@@ -589,6 +592,7 @@
     }; });
     [].forEach.call(document.querySelectorAll('[data-secret]'), function (b) { b.onclick = function () { var sid = b.dataset.secret; ROOT.child(PR_(teamId) + '/' + sid + '/secret').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🎉 隱藏關卡解開！全隊 +15 分'); log('secret', sid, 'found'); } }); }; });
     [].forEach.call(document.querySelectorAll('[data-ask]'), function (b) { b.onclick = function () { var st = stopById(b.dataset.s); log('npc', b.dataset.s, b.dataset.ask); toast(b.dataset.ask === 'who' ? st.npc.name + '：' + st.npc.voice : st.npc.open.join(' ')); }; });
+    bindNpcBox();
     [].forEach.call(document.querySelectorAll('[data-call]'), function (b) { b.onclick = function () { var st = stopById(b.dataset.call); chatSend('tchat/' + teamId, { uid: uid, n: (profile && profile.nick) || '隊長', x: ('📣 隊長號召：大家到「' + st.name + '」集合！').slice(0, 100), call: 1, t: nowMs() }); }; });
     [].forEach.call(document.querySelectorAll('[data-hint]'), function (b) { b.onclick = function () { useHint(b.dataset.hint); }; });
     [].forEach.call(document.querySelectorAll('[data-ans]'), function (b) { b.onclick = function () { answer(b.dataset.s, b.dataset.t, b.dataset.ans); }; });
@@ -676,6 +680,49 @@
       hd.onclick = function (e) { if (e.target.closest('button,a,input,textarea')) return; var c = el.classList.toggle('cl-collapsed'); clState[key] = c; };
     });
   }
+  /* NPC 自由對話：電腦端常駐程式回答；心跳過期（關機／沒開）就退回預寫台詞按鈕，遊戲照玩 */
+  var npcd = {}, svOff = 0, npcAns = {}, npcAsk = {};
+  try { npcAsk = JSON.parse(localStorage.getItem('walk_npcask_' + (uid || '')) || '{}'); } catch (e) { npcAsk = {}; }
+  function npcLive() { return !!(npcd && npcd.on && npcd.hb && (Date.now() + svOff - npcd.hb) < 90000); }
+  function npcLogHtml(sid) {
+    var ids = Object.keys(npcAsk).filter(function (k) { return npcAsk[k].s === sid; }).sort().slice(-4), h = '';
+    ids.forEach(function (k) {
+      h += '<div class="bub me">🙋 ' + esc(npcAsk[k].q) + '</div>';
+      h += npcAns[k] ? '<div class="bub">' + esc(npcAns[k].a) + '</div>' : '<div class="bub dim">（想一下…）</div>';
+    });
+    return h;
+  }
+  function npcBoxHtml(s) {
+    var h = '<div class="npcbox" data-box="' + s.id + '"><div class="npclog" id="npclog-' + s.id + '">' + npcLogHtml(s.id) + '</div>';
+    if (npcLive()) h += '<div class="npcin"><input class="inp" id="npcq-' + s.id + '" maxlength="100" placeholder="想問' + esc(s.npc.name) + '什麼？（100 字內）"><button class="btn2" data-npcsend="' + s.id + '">送出</button></div>';
+    else h += '<div class="sub">💬 ' + esc(s.npc.name) + '現在只能用上面的按鈕聊天（自由提問暫時沒開）。</div>';
+    return h + '</div>';
+  }
+  function refreshNpcBox() {
+    [].forEach.call(document.querySelectorAll('.npcbox'), function (b) {
+      var sid = b.dataset.box, st = stopById(sid), lg = document.getElementById('npclog-' + sid), inp = document.getElementById('npcq-' + sid);
+      if (!st) return; if (lg) { lg.innerHTML = npcLogHtml(sid); lg.scrollTop = lg.scrollHeight; }
+      if (!!inp !== npcLive() && document.activeElement !== inp) { var tmp = document.createElement('div'); tmp.innerHTML = npcBoxHtml(st); b.parentNode.replaceChild(tmp.firstChild, b); bindNpcBox(); }
+    });
+  }
+  var npcLast = 0;
+  function bindNpcBox() {
+    [].forEach.call(document.querySelectorAll('[data-npcsend]'), function (b) {
+      var sid = b.dataset.npcsend, inp = document.getElementById('npcq-' + sid);
+      function go() {
+        var q = (inp.value || '').trim(); if (!q) return;
+        if (Date.now() - npcLast < 4000) { toast('慢一點，等 NPC 回完再問～'); return; }
+        npcLast = Date.now(); inp.value = '';
+        var ref = ROOT.child('npcq').push(), id = ref.key, p = prog[sid] || {};
+        npcAsk[id] = { s: sid, q: q.slice(0, 100) };
+        try { localStorage.setItem('walk_npcask_' + uid, JSON.stringify(npcAsk)); } catch (e) { }
+        refreshNpcBox();
+        ref.set({ uid: uid, q: q.slice(0, 100), stop: sid, hl: p.hints || 0, t: nowMs() }).catch(function (e) { toast('傳不出去：' + ((e && e.message) || e)); });
+        log('npcq', sid, q.length);
+      }
+      b.onclick = go; if (inp) inp.onkeydown = function (e) { if (e.key === 'Enter') go(); };
+    });
+  }
   function npcHtml(s, p) {
     var n = s.npc, used = p.hints || 0, h = '<div class="npc"><div class="nhd"><span class="nava">' + n.ava + '</span><b>' + esc(n.name) + '</b></div>';
     if (!(p.arrived || TEST)) { h += '<div class="bub dim">（還沒走到這裡，' + esc(n.name) + '還在趕路…）</div><button class="btn2" data-arr="' + s.id + '">我不在現場，先聊聊</button></div>'; return h; }
@@ -685,7 +732,7 @@
     if (p.frag || (s.final && prog.final && prog.final.done)) h += '<div class="bub done">' + esc(n.done) + '</div>';
     Object.keys(p.tasks || {}).forEach(function (k) { var t = (s.tasks || []).filter(function (x) { return x.id === k; })[0]; if (t && t.reward) h += '<div class="bub reward">' + esc(t.reward) + '</div>'; });
     if (!p.frag && used < n.hints.length) h += '<button class="btn2" data-hint="' + s.id + '">再給我一點提示（−10 分，剩 ' + (n.hints.length - used) + ' 次）</button>';
-    h += '<div class="opts"><button class="btn2" data-ask="open" data-s="' + s.id + '">再聽一次開場</button><button class="btn2" data-ask="who" data-s="' + s.id + '">你是誰？</button></div>';
+    h += '<div class="opts"><button class="btn2" data-ask="open" data-s="' + s.id + '">再聽一次開場</button><button class="btn2" data-ask="who" data-s="' + s.id + '">你是誰？</button></div>' + npcBoxHtml(s);
     return h + roleHtml(s, p) + '</div>';
   }
   var BEAR = ['北', '東北', '東', '東南', '南', '西南', '西', '西北'];

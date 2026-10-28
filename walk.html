@@ -103,6 +103,7 @@ h1,h2{letter-spacing:.02em}
 .btn,.btn2,.inp,select,.card,.npc,.task,.rk,.ocard,.notice,.chip,.bub{border:2.5px solid var(--ink)!important;border-radius:16px!important;box-shadow:0 3px 0 var(--ink)!important}
 .btn{background:var(--acc)!important;color:#fff!important;font-size:16px;border-radius:99px!important}
 .btn.g{background:var(--card)!important;color:var(--fg)!important}
+.phg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.phi{margin:0;font-size:11px}.phi img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}.phi.big{grid-column:1/-1}.phi.big img{aspect-ratio:auto}.phi figcaption{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn2{border-radius:99px!important;padding:7px 14px;transition:transform .12s}
 .btn2:active,.btn:active{transform:translateY(3px)!important;box-shadow:0 0 0 var(--ink)!important}
 .btn2.on{background:var(--sun)!important}
@@ -160,6 +161,13 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 </head>
 <body>
 <div id="toast" hidden></div>
+<div id="phm" hidden style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center">
+  <div style="background:var(--card);color:var(--fg,inherit);width:100%;max-width:520px;max-height:85vh;overflow:auto;border-radius:14px 14px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px))">
+    <b>🖼 照片牆</b> <span class="sub">最新 40 張縮圖，點一下放大</span>
+    <div id="ph-grid" class="phg"></div>
+    <div style="display:flex;gap:8px"><button class="btn g" id="ph-ref" style="margin:6px 0">重新整理</button><button class="btn" id="ph-close" style="margin:6px 0">關閉</button></div>
+  </div>
+</div>
 <div id="fbm" hidden style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center">
   <div style="background:var(--card);width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px))">
     <b>回報問題或建議</b>
@@ -236,8 +244,8 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="js/walk_route.js?v=202610281840"></script>
-<script src="js/walk_sprites.js?v=202610281840"></script>
-<script src="js/walk.js?v=202610281840"></script>
+<script src="js/walk_route.js?v=202610281900"></script>
+<script src="js/walk_sprites.js?v=202610281900"></script>
+<script src="js/walk.js?v=202610281900"></script>
 </body>
 </html>

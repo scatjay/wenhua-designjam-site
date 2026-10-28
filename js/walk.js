@@ -495,6 +495,7 @@
       h += '<h3>任務</h3>';
       s.tasks.forEach(function (t) { h += taskHtml(s, t); });
     }
+    h += photoCardHtml();
     if (s.note) h += '<details class="card"><summary>給老師看的備註</summary><div class="sub">' + esc(s.note) + '</div></details>';
     $('pane-task').innerHTML = h;
     [].forEach.call(document.querySelectorAll('.chip'), function (b) { b.onclick = function () { curStop = b.dataset.s; renderTask(); }; });
@@ -506,6 +507,48 @@
     [].forEach.call(document.querySelectorAll('[data-mv]'), function (b) { b.onclick = function () { moveCard(b.dataset.s, +b.dataset.i, +b.dataset.mv); }; });
     [].forEach.call(document.querySelectorAll('[data-ord]'), function (b) { b.onclick = function () { checkOrder(b.dataset.s, b.dataset.t); }; });
     var fb = document.getElementById('final-go'); if (fb) fb.onclick = submitFinal;
+    var pf = $('ph-file'); if (pf) { pf.onchange = function () { if (pf.files && pf.files[0]) sendPhoto(pf.files[0]); pf.value = ''; }; $('ph-wall').onclick = openWall; }
+  }
+  /* ---------- 照片：拍照 → 縮成原圖(老師看)＋縮圖(照片牆) → 一次寫入 ---------- */
+  var photoN = 0;
+  function photoCardHtml() {
+    return '<div class="card"><b>📷 拍一張</b><div class="sub">拍這一站看到的東西，會放上照片牆。請不要拍到別人的臉。</div><input class="inp" id="ph-cap" maxlength="40" placeholder="一句話說明（可不寫）"><label class="btn2" style="display:inline-block">拍照／選照片<input id="ph-file" type="file" accept="image/*" capture="environment" hidden></label><button class="btn2" id="ph-wall">🖼 看照片牆</button><div class="sub" id="ph-msg"></div></div>';
+  }
+  function shrink(file, max, q, limit) {
+    return new Promise(function (ok, no) {
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onerror = function () { URL.revokeObjectURL(url); no(new Error('讀不到這張照片')); };
+      im.onload = function () {
+        URL.revokeObjectURL(url);
+        var k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+        c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        var d = c.toDataURL('image/jpeg', q);
+        while (d.length > limit && q > 0.2) { q -= 0.1; d = c.toDataURL('image/jpeg', q); }
+        d.length > limit ? no(new Error('照片太大，換一張試試')) : ok(d);
+      };
+      im.src = url;
+    });
+  }
+  function sendPhoto(file) {
+    var msg = $('ph-msg'); if (!teamId || !uid) { msg.textContent = '還沒加入隊伍。'; return; }
+    if (photoN >= 12) { msg.textContent = '這次先拍到這裡，夠多了！'; return; }
+    msg.textContent = '處理照片中…';
+    Promise.all([shrink(file, 720, 0.6, 130000), shrink(file, 200, 0.6, 22000)]).then(function (r) {
+      var id = ROOT.child('photos').push().key, cap = ($('ph-cap').value || '').trim().slice(0, 40), t = nowMs(), ups = {};
+      var base = { uid: uid, tid: teamId, stop: curStop || '', t: t, cap: cap, route: REH ? 'campus' : 'live' };
+      ups['photos/' + id] = Object.assign({ d: r[0] }, base);
+      ups['pth/' + id] = Object.assign({ th: r[1], nick: (profile && profile.nick) || '' }, base);
+      return ROOT.update(ups).then(function () { photoN++; $('ph-cap').value = ''; msg.textContent = '已傳上去 ✔（' + Math.round(r[0].length / 1024) + ' KB）'; log('photo', curStop, id); toast('📷 照片傳好了'); });
+    }).catch(function (e) { msg.textContent = '傳不出去：' + (e.message || e); });
+  }
+  function openWall() {
+    $('phm').hidden = false; $('ph-grid').innerHTML = '<div class="sub">載入中…</div>';
+    ROOT.child('pth').limitToLast(40).once('value').then(function (s) {
+      var v = s.val() || {}, ids = Object.keys(v).sort(function (a, b) { return v[b].t - v[a].t; });
+      $('ph-grid').innerHTML = ids.length ? ids.map(function (id) { var p = v[id]; return '<figure class="phi"><img src="' + p.th + '" alt=""><figcaption><b>' + esc(p.nick || '') + '</b> ' + esc(p.cap || '') + '</figcaption></figure>'; }).join('') : '<div class="sub">還沒有照片，你來拍第一張！</div>';
+      [].forEach.call(document.querySelectorAll('.phi img'), function (im) { im.onclick = function () { im.parentNode.classList.toggle('big'); }; });
+    }).catch(function (e) { $('ph-grid').innerHTML = '<div class="sub">載入失敗：' + esc(e.message) + '</div>'; });
   }
   function allDone() { return R0.practice.every(function (t) { return pdone(t.id); }) && fragCount() >= totalFrags() && !!(prog.final && prog.final.done); }
   function certHtml() {
@@ -621,6 +664,7 @@
   window.addEventListener('load', function () {
     boot();
     [].forEach.call(document.querySelectorAll('.fb-open'), function (b) { b.onclick = openFb; });
+    $('ph-close').onclick = function () { $('phm').hidden = true; }; $('ph-ref').onclick = openWall;
     $('fb-send').onclick = sendFb; $('fb-close').onclick = function () { $('fbm').hidden = true; };
   });
 })();

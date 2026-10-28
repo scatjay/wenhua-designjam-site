@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W8-9 期中作業：串起四個單元</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<style>
+:root{
+  --bg:#f8f7fa; --panel:#ffffff; --panel2:#efeaf3; --ink:#27222c; --ink-soft:#5f566a;
+  --line:#d8cfe0; --accent:#7a3f92; --accent-soft:#f2e7f6;
+  --green:#3f7a34; --green-soft:#e9f3e3; --red:#b8452f; --red-soft:#fbe9e3;
+  --amber:#8a6a1f; --amber-soft:#f5eeda; --blue:#2f6690; --blue-soft:#e5eff6;
+  --shadow:0 1px 2px rgba(40,32,10,.06), 0 6px 18px rgba(40,32,10,.08);
+}
+img.emoji{height:1.15em;width:1.15em;margin:0 .05em 0 .1em;vertical-align:-0.2em}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;font-weight:800;margin:4px 0 2px;text-wrap:balance}
+h2{font-size:19px;font-weight:800;margin:0 0 4px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+h2 .tag{font-size:11.5px;font-weight:700;color:var(--ink-soft);background:var(--panel2);padding:3px 9px;border-radius:6px}
+h3{font-size:15px;margin:14px 0 4px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 18px;line-height:1.7}
+section{margin:38px 0}
+.kicker{font-size:11px;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:6px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.box.hl{border:2px solid var(--accent);background:var(--accent-soft)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel2);padding:1px 6px;border-radius:5px}
+[hidden]{display:none!important}
+ul,ol{padding-left:22px;margin:6px 0;line-height:1.75}
+.jumprow{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 4px}
+.jumprow a{text-decoration:none;font-size:12.5px;font-weight:700;color:var(--ink-soft);background:var(--panel2);border:1.5px solid var(--line);border-radius:999px;padding:6px 13px}
+.jumprow a:hover{border-color:var(--accent);color:var(--accent)}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.timeline .wk{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 11px}
+.timeline .wk b{display:block;font-size:12px;color:var(--accent)}
+.timeline .wk span{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:2px;line-height:1.5}
+@media(max-width:640px){.timeline{grid-template-columns:1fr 1fr}}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.three .c{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.three .c b{display:block;color:var(--accent);margin-bottom:4px}
+@media(max-width:640px){.three{grid-template-columns:1fr}}
+.unit .meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+@media(max-width:640px){.unit .meta{grid-template-columns:1fr}}
+.unit .meta div{background:var(--panel2);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.7}
+.unit .meta b{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:2px}
+label.f{display:block;font-size:13.5px;font-weight:700;margin:12px 0 4px}
+label.f small{font-weight:400;color:var(--ink-soft)}
+input[type=text],input[type=url],textarea,select{width:100%;font:inherit;font-size:15px;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+textarea{min-height:84px;resize:vertical;line-height:1.6}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.6;margin:5px 0}
+.chk input{margin-top:5px;flex:none}
+button{font:inherit;font-size:15px;font-weight:700;border:0;border-radius:10px;padding:10px 18px;background:var(--accent);color:#fff;cursor:pointer}
+button.sec{background:var(--panel2);color:var(--ink);border:1.5px solid var(--line)}
+button.sm{font-size:12.5px;padding:5px 11px}
+button:disabled{opacity:.5;cursor:default}
+.msg{font-size:14px;margin-top:8px;min-height:20px}
+.warn{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:8px;padding:8px 12px;font-size:14px;margin:8px 0;line-height:1.6}
+.bad{background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;padding:8px 12px;font-size:14px;margin:8px 0}
+.ok{background:var(--green-soft);border-left:4px solid var(--green);border-radius:8px;padding:8px 12px;font-size:14px;margin:8px 0}
+.hist{font-size:13.5px;border-top:1px solid var(--line);margin-top:12px;padding-top:8px}
+.hist div{padding:5px 0;border-bottom:1px dashed var(--line);line-height:1.6}
+.sg{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fff}
+.sg .t{font-weight:700;font-size:14px}
+.sg .why{font-size:13.5px;color:var(--ink-soft);margin:3px 0;line-height:1.6}
+.sg .how{font-size:13.5px;margin:3px 0;line-height:1.6}
+.sg .resp{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;font-size:13.5px}
+.sg .resp input[type=text]{flex:1;min-width:140px;padding:6px 9px;font-size:13.5px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+.scroll{overflow-x:auto}
+#chatLog{max-height:340px;overflow:auto;background:var(--panel2);border-radius:12px;padding:10px;margin:8px 0}
+.bub{margin:6px 0;padding:8px 11px;border-radius:12px;font-size:14.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.bub.q{background:#fff;border:1px solid var(--line);margin-left:24px}
+.bub.a{background:var(--accent-soft);border:1px solid var(--line);margin-right:24px}
+.fab{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:50;box-shadow:var(--shadow)}
+.dlg{position:fixed;inset:0;background:rgba(30,20,40,.45);z-index:80;display:flex;align-items:center;justify-content:center;padding:16px}
+.dlg .in{background:#fff;border-radius:16px;max-width:520px;width:100%;padding:18px;max-height:90vh;overflow:auto}
+.who{font-size:14px;color:var(--ink-soft);margin:6px 0}
+.skgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.skcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.skh{display:flex;justify-content:space-between;gap:8px;font-weight:800;color:var(--ink);font-size:14px}
+.sklv{font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums}
+.skbar{height:6px;background:var(--panel2);border-radius:4px;margin:8px 0;overflow:hidden}
+.skbar i{display:block;height:100%;background:var(--accent)}
+.sknow{font-size:12.5px;color:var(--ink-soft)}
+.sknext{font-size:12.5px;color:var(--ink);margin-top:6px;font-weight:600}
+.bdrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.bd{display:inline-flex;flex-direction:column;background:var(--panel2);border-radius:10px;padding:7px 11px;font-size:13px;font-weight:700;color:var(--ink-soft)}
+.bd.on{background:var(--amber-soft);color:var(--amber)}
+.bdd{font-size:11.5px;font-weight:500;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">W8–9 · 期中作業</div>
+<h1>把 W4 到 W7 四個單元，接成同一款改版遊戲</h1>
+<p class="sub">你已經用 Deep Research、Canvas、AI Studio、NotebookLM 各做了一輪。這次不教新工具，要做的是：讓四步的產出<b>互相對得上</b>。同一組卡、同一句改動、同一個三人對戰例子，從頭到尾一路貫穿。</p>
+<div class="who" id="who">先在頁面最上方綁定你的編號，才能提交。</div>
+
+<div class="box tight" id="prog" style="position:sticky;top:44px;z-index:20">
+  <b style="font-size:14px">我的檢核進度</b> <span class="sub" style="font-size:12.5px;margin:0">（勾選會即時更新；沒勾完也可以送出，系統只提醒）</span>
+  <div id="progRows" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px"></div>
+</div>
+<style>@media(max-width:640px){#progRows{grid-template-columns:1fr 1fr!important}}#progRows .p{border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;font-size:12.5px;line-height:1.5;background:#fff}#progRows .p.done{border-color:var(--green);background:var(--green-soft)}#progRows .p b{display:block;font-size:13px}</style>
+
+<div class="jumprow">
+  <a href="#when">時程與期限</a><a href="#lines">三個要對上的東西</a><a href="#u1">單元 1</a><a href="#u2">單元 2</a><a href="#u3">單元 3</a><a href="#u4">單元 4</a><a href="#ach">我的成就</a><a href="#advice">預掃建議</a><a href="#coach">AI 助教</a><a href="#rubric">怎麼評分</a><a href="#common">常見狀況</a>
+</div>
+
+<section id="when">
+  <h2>時程與期限<span class="tag">從 10/28 起三週</span></h2>
+  <div class="timeline">
+    <div class="wk"><b>10/28 第 8 週</b><span>單元 1 對齊或補做，單元 2 開始</span></div>
+    <div class="wk"><b>11/4 第 9 週</b><span>單元 1–2 完成，單元 3 至少有可按的畫面</span></div>
+    <div class="wk"><b>11/11</b><span>不上課；走讀在 11/14，不排進度</span></div>
+    <div class="wk"><b>11/18 09:10 期限</b><span>單元 3、4 完成，整份繳交</span></div>
+  </div>
+  <div class="box tight">
+    <ul>
+      <li>超過期限仍然可以補交，期末之前都收；但<b>成績以 E 計算</b>。歡迎你期末前補上，不要讓未完成的作業越堆越多。</li>
+      <li>已經做過的單元：<b>拿現有的成果逐項對照，只修不一致的地方</b>，不用重做。還沒做的：補做。</li>
+      <li>沒帶筆電、原型做不出來：單元 3 改交截圖和短片，其餘不變。三人例子仍要用文字算出來。</li>
+      <li>已經交過 W4 到 W7 的，這裡請貼<b>最新的連結</b>（修正之後的版本）。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="lines">
+  <h2>三個要從頭對到尾的東西</h2>
+  <p class="sub">每個工具各做各的，是最常見的問題：研究報告寫一套、原型做另一套、簡報又講第三套。先把下面三個東西定下來，後面每一步都要原樣用到。</p>
+  <div class="three">
+    <div class="c"><b>① 卡號卡名</b>W3 回放最上面寫著「這一場改了：卡◯◯、卡◯◯」。從 R1 到簡報，每一份都要寫出<u>一模一樣</u>的卡號卡名。</div>
+    <div class="c"><b>② 一句改動句</b>不超過 40 字：「卡◯◯ 原本……，我們改成……，發生在結算的第幾步」。後面每一步都要原文引用；要改就標「修訂」。</div>
+    <div class="c"><b>③ 三人對戰例子</b>A、B、C 三人從 10 點自尊開始，一輪各出什麼牌，最後各人剩幾點。R2、Canvas、原型、簡報裡的<u>數字必須相同</u>。</div>
+  </div>
+  <p class="sub" style="margin-top:12px">三人例子的最終數字寫成這樣：<code>A7 B5 C0</code>。系統會在你送出時幫你比對單元之間的數字，不一致只會提醒你，不會擋住送出。</p>
+</section>
+
+<div id="units"></div>
+
+<section id="ach">
+  <h2>我的成就<span class="tag">只是給你參考，不是成績</span></h2>
+  <p class="sub">上面五項是你從 W4 到 W7 交過的指令算出來的寫法等級；下面是這次期中作業的成就。每一格都寫了怎麼拿到，沒亮的就是下一步可以做的事。</p>
+  <div class="box"><h3 style="margin-top:0">指令寫法的五項技能</h3><div id="skillBox" class="sub" style="margin:0">綁定編號後會顯示。</div></div>
+  <div class="box"><h3 style="margin-top:0">期中作業成就</h3><div id="midBadges" class="bdrow" style="margin-top:0"></div></div>
+</section>
+
+<section id="advice">
+  <h2>AI 預掃建議<span class="tag">只給方向，不代寫</span></h2>
+  <p class="sub">老師端會用程式與 AI 先掃一遍你交的連結和指令，每個單元列出 3–5 條建議。你再次送出時，請對每一條選「已改／沒改／不同意」，並用一句話說明改了什麼——這樣老師看得到你<b>依據什麼修了什麼</b>。</p>
+  <div id="adviceBox" class="box tight">綁定編號後會顯示你的建議。還沒掃到的單元，這裡先是空的。</div>
+</section>
+
+<section id="coach">
+  <h2>AI 助教<span class="tag">每天最多 <span id="capN">20</span> 次提問</span></h2>
+  <p class="sub">卡住時可以直接問。助教知道你最近一次交的內容和上面的建議，會告訴你：問題在哪、怎麼改、為什麼這樣改、改完回哪一格確認。<b>它不會替你寫 R1–R3，也不給可以直接貼上的完整規則。</b></p>
+  <div class="warn">你和助教的對話會被保留，供課程分析使用，只記編號、不記姓名。請不要在提問裡寫真名或學號。</div>
+  <div class="box">
+    <div id="chatState" class="sub" style="margin:0 0 6px"></div>
+    <label class="f">這個問題和哪個單元有關？</label>
+    <select id="chatUnit"><option value="u1">單元 1 · Deep Research</option><option value="u2">單元 2 · Canvas</option><option value="u3">單元 3 · AI Studio</option><option value="u4">單元 4 · NotebookLM</option><option value="all">整體銜接</option></select>
+    <div id="chatLog"><div class="sub" style="margin:0">還沒有對話。</div></div>
+    <textarea id="chatQ" placeholder="例：我的 R2 寫了改動句，但 Canvas 的步驟數對不上，該先檢查哪裡？"></textarea>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><button id="chatSend">送出提問</button><span id="chatLeft" class="sub" style="margin:0"></span></div>
+    <div id="chatMsg" class="msg"></div>
+  </div>
+</section>
+
+<section id="rubric">
+  <h2>怎麼評分<span class="tag">四項各 1/4</span></h2>
+  <div class="scroll"><table>
+    <tr><th>看什麼</th><th>對應</th></tr>
+    <tr><td>改動有沒有動到規則本身：卡號卡名準確，不是只換皮，說得出跟原版差在哪一句</td><td>單元 1</td></tr>
+    <tr><td>前後銜接：三個東西在每一份產出裡一致；不一致有標明並解釋</td><td>單元 1 到 4，尤其是一致性表</td></tr>
+    <tr><td>原型玩得動，跟企劃對得上：三人例子在原型重現，數字和 R2 一樣</td><td>單元 3</td></tr>
+    <tr><td>成果包講得對：三樣成果沒有編造規則，自己檢查過</td><td>單元 4</td></tr>
+  </table></div>
+  <p class="sub" style="margin-top:10px">AI 預掃不打分，只給建議；分數由老師決定。</p>
+</section>
+
+<section id="common">
+  <h2>目前同學常見的狀況<span class="tag">已去識別化的彙整</span></h2>
+  <p class="sub">下面是 10/28 看過已交 W4–W7 的 24 位同學之後，整理出來最常見的幾種狀況。只有次數，沒有編號、沒有原文。送出前對照一次，看有沒有你也中了。</p>
+  <div class="box">
+    <h3 style="margin-top:0">1. 指令裡沒有寫出卡號卡名（24 份裡有 20 份）</h3>
+    <p class="sub" style="margin:0">只說「那張卡」「這個規則」，AI 就得自己猜是哪一張。<b>怎麼改：</b>每一輪指令第一段就貼上卡號卡名和改動句原文。</p>
+    <h3>2. 指令裡還留著沒填的空格 <code>[[ ]]</code>（24 份裡有 6 份）</h3>
+    <p class="sub" style="margin:0">範本的 <code>[[ ]]</code> 要換成你自己的內容再送出。<b>怎麼改：</b>送出前用搜尋功能找一次 <code>[[</code>。</p>
+    <h3>3. 「改過之後」和「第一次」的指令一模一樣（24 份裡有 2 份）</h3>
+    <p class="sub" style="margin:0">這樣看不出你改了什麼。另外有 9 份「改過之後」比第一次還短，短不一定不好，但請在旁邊用一句話說明刪掉了什麼、為什麼。<b>怎麼改：</b>改過的指令要看得出新增或修正了哪一件事。</p>
+    <h3>4. 連結別人打不開（93 條連結裡，約 38 條要登入、11 條失效或空白、1 條不是網址）</h3>
+    <p class="sub" style="margin:0">最多的是 AI Studio 和 NotebookLM 的連結沒有開分享權限，另外有 Gemini 對話連結已經失效，還有一條貼成了自己電腦上的檔案路徑。<b>怎麼改：</b>貼之前用<u>無痕視窗</u>開一次；打不開就重新分享，或把截圖、指令全文貼在指令欄。</p>
+    <h3>5. NotebookLM 的「自訂」說明沒有貼（24 份裡有 9 份）</h3>
+    <p class="sub" style="margin:0">分享頁看不到自訂說明，老師只能靠你貼。<b>怎麼改：</b>三樣成果各自的自訂說明全文，貼在單元 4 的欄位裡。</p>
+    <h3>6. 每個單元各算各的</h3>
+    <p class="sub" style="margin:0">R2 的最終自尊值、Canvas 圖上的、原型跑出的、成果裡講的，常常不是同一組。<b>怎麼改：</b>每個單元都填同一欄「最終自尊值」，系統會幫你比對；不一樣就寫原因。</p>
+  </div>
+  <p class="sub">這份彙整會隨大家修正更新。沒有中的項目就不用理它。</p>
+</section>
+
+</div>
+
+<button class="fab sec" id="fbBtn">回報問題或意見</button>
+<div class="dlg" id="fbDlg" hidden><div class="in">
+  <h2 style="margin-bottom:8px">回報問題或意見</h2>
+  <p class="sub" style="margin-bottom:8px">頁面壞了、系統判斷和你實際交的內容對不上、建議看不懂，都可以在這裡說。老師會看，並回覆你。</p>
+  <label class="f">類型</label>
+  <select id="fbType"><option value="bug">頁面或功能壞了</option><option value="judge">系統的判斷不對</option><option value="unclear">建議看不懂</option><option value="other">其他</option></select>
+  <label class="f">和哪個單元有關</label>
+  <select id="fbUnit"><option value="">不確定／整體</option><option value="u1">單元 1</option><option value="u2">單元 2</option><option value="u3">單元 3</option><option value="u4">單元 4</option></select>
+  <label class="f">說明 <small>（發生了什麼、你預期是什麼）</small></label>
+  <textarea id="fbText"></textarea>
+  <label class="f">相關連結 <small>（選填）</small></label>
+  <input type="url" id="fbLink" placeholder="https://">
+  <div style="display:flex;gap:10px;margin-top:12px"><button id="fbSend">送出</button><button class="sec" id="fbClose">取消</button></div>
+  <div id="fbMsg" class="msg"></div>
+</div></div>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyDzNwiHk9bp1l1s9-vEsAQQu-HXYkTvpGI",
+  authDomain:"gen-lang-client-0929530380.firebaseapp.com",
+  databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"gen-lang-client-0929530380"
+});
+</script>
+<script>window.DJ_BIND_UNIT='mid';</script>
+<script src="js/gate_i18n.js?v=202609290955"></script>
+<script src="js/bind_gate.js?v=202610281000"></script>
+<script src="js/online_badge.js?v=202610210945"></script>
+<script src="js/w47_skills.js?v=202610281000"></script>
+<script src="js/mid.js?v=202610281000"></script>
+</body>
+</html>

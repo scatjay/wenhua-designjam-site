@@ -42,7 +42,7 @@
 '#dj-gate{position:fixed;inset:0;z-index:99999;background:rgba(32,42,48,.62);backdrop-filter:blur(3px);',
 '  display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;',
 '  -webkit-overflow-scrolling:touch}',
-'#dj-gate .box{background:#fff;color:#202a30;max-width:520px;width:100%;border-radius:16px;padding:22px 20px 18px;',
+'#dj-gate .box{display:block;gap:0;align-items:stretch;border:0;background:#fff;color:#202a30;max-width:520px;width:100%;border-radius:16px;padding:22px 20px 18px;',
 '  margin:auto;',   /* 🔴 搭配外層 flex-start：塞得下→置中；塞不下→頂端靠上且捲得到 */
 '  box-shadow:0 10px 44px rgba(32,42,48,.28);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;',
 '  font-size:16px;line-height:1.7}',

@@ -32,6 +32,16 @@ label{display:block;font-size:13px;margin-top:10px;font-weight:600}
 #banner{padding:5px 12px;background:var(--chip);font-size:13px}
 #body{flex:1;position:relative;min-height:0}
 #map{position:absolute;inset:0}
+#body{display:flex;flex-direction:column}
+.pane{position:relative!important;inset:auto!important;flex:1 1 0;min-height:0}
+#pane-map{padding:0!important;overflow:hidden;display:flex;flex-direction:column}
+#mapwrap{position:relative;flex:1;min-height:0}
+#mapbar{display:none;align-items:center;justify-content:space-between;padding:3px 10px;background:var(--lav);border-bottom:2.5px solid var(--ink);font-size:13px}
+#mapbar .btn2{padding:2px 10px;margin:0;font-size:12px}
+#pane-map.mini{flex:0 0 38%}
+#pane-map.mini #mapbar{display:flex}
+#pane-map.mini.folded{flex:0 0 auto}
+#pane-map.mini.folded #mapwrap{display:none}
 .pane{position:absolute;inset:0;overflow:auto;padding:12px 14px 20px;background:var(--bg)}
 #nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 #nav button{flex:1;padding:10px 0;border:0;background:none;font-size:13px}
@@ -78,6 +88,9 @@ body.st-night #hd,body.st-night #banner{background:#14202b;color:#cfe0ef}.mate b
 .rk{display:flex;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:5px 0;background:var(--card)}.rk.me{border-color:var(--acc)}.rk .n{width:24px;font-weight:700}.rk .nm{flex:1}
 #toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 56px);transform:translateX(-50%);max-width:90%;background:#222;color:#fff;padding:8px 14px;border-radius:99px;font-size:13px;z-index:2000}
 details summary{cursor:pointer;font-size:13px}
+.bname span{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-weight:700;font-size:13px;color:#2a2438;background:rgba(255,250,242,.82);border:2px solid #3b3350;border-radius:99px;padding:0 8px;box-shadow:0 2px 0 #3b3350;pointer-events:none}
+body.st-night .bname span{background:rgba(30,24,50,.85);color:#e8ddff;border-color:#e8ddff;box-shadow:0 2px 0 #000}
+.cert{background:var(--sun)!important;border-width:3px!important}
 /* cute-theme：整體更可愛——粉彩底、厚描邊、圓角貼紙感、彈跳動畫（描邊色取自像素角色的深藍） */
 :root{--bg:#fff4e6;--fg:#3b3350;--mute:#8a7d98;--card:#fffaf2;--line:#f0d9c0;--acc:#ff7a8a;--acc2:#58c4b5;--blue:#6aa7ff;--chip:#ffe6d0;--ink:#3b3350;--mint:#c9f1e6;--lav:#e4dcff;--sun:#ffe28a}
 @media (prefers-color-scheme:dark){:root{--bg:#241f33;--fg:#f4ecff;--mute:#b8aacb;--card:#322a47;--line:#4b4068;--acc:#ff8fa0;--acc2:#6fd6c6;--blue:#8dbaff;--chip:#3d3356;--ink:#120f1d;--mint:#24463f;--lav:#403566;--sun:#6b5a22}}
@@ -185,10 +198,13 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
   <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span><button class="fb-open" title="回報問題或建議" style="padding:0 8px">⚑ 回報</button></div>
   <div id="banner"></div>
   <div id="body">
-    <div class="pane" id="pane-map" style="padding:0;overflow:hidden">
-      <div id="map"></div>
-      <div class="mapbtns"><button id="btn-mates" title="顯示或隱藏隊友">👥</button><button id="btn-locate" title="回到我的位置">📍</button></div>
-      <div id="gps">定位中…</div>
+    <div class="pane" id="pane-map">
+      <div id="mapbar"><span>🗺 地圖</span><button id="btn-fold" class="btn2">收合 ▴</button></div>
+      <div id="mapwrap">
+        <div id="map"></div>
+        <div class="mapbtns"><button id="btn-mates" title="顯示或隱藏隊友">👥</button><button id="btn-locate" title="回到我的位置">📍</button></div>
+        <div id="gps">定位中…</div>
+      </div>
     </div>
     <div class="pane" id="pane-task" hidden></div>
     <div class="pane" id="pane-team" hidden></div>
@@ -204,8 +220,8 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="js/walk_route.js?v=202610281615"></script>
-<script src="js/walk_sprites.js?v=202610281615"></script>
-<script src="js/walk.js?v=202610281615"></script>
+<script src="js/walk_route.js?v=202610281700"></script>
+<script src="js/walk_sprites.js?v=202610281700"></script>
+<script src="js/walk.js?v=202610281700"></script>
 </body>
 </html>

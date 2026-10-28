@@ -69,7 +69,12 @@
       else if (l.type === 'line' && /casing/.test(id)) set('line-color', P.casing);
       else if (l.type === 'line' && /^(road|bridge|tunnel)_/.test(id)) set('line-color', P.road);
       else if (l.type === 'line' && id === 'park_outline') set('line-color', P.park);
-      else if (l.type === 'symbol') { set('text-color', P.text); set('text-halo-color', P.halo); }
+      else if (l.type === 'symbol') {
+        set('text-color', P.text); set('text-halo-color', P.halo); set('text-halo-width', 2);
+        if (/^(poi_|highway-name|label_other|label_village|label_town|water_name)/.test(id)) {
+          try { mlMap.setLayoutProperty(id, 'text-size', ['interpolate', ['linear'], ['zoom'], 14, 12, 17, 15, 19, 18]); mlMap.setLayoutProperty(id, 'text-font', ['Noto Sans Bold']); } catch (x) { }
+        }
+      }
     });
   }
   function applyStyle() {
@@ -266,6 +271,7 @@
     on(ROOT.child(REH ? 'boardr' : 'board'), 'value', function (s) { board = s.val() || {}; if (view === 'rank') render(); });
     schedLoop();
   }
+  var mapFolded = false; try { mapFolded = localStorage.getItem('walk_fold') === '1'; } catch (e) {}
   var board = {}, cfgPhase = null, rehearsal = {};
   function phase() { if (cfgPhase === 'live' || cfgPhase === 'rehearsal') return cfgPhase; return nowMs() < Date.parse(R.liveStart) ? 'rehearsal' : 'live'; }
   function pdone(id) { return !!rehearsal[id]; }
@@ -275,7 +281,7 @@
   function initMap() {
     if (map) return;
     map = L.map('map', { zoomControl: false, attributionControl: true }).setView([S[0].lat, S[0].lon], 16);
-    initBasemap();
+    initBasemap(); addBldgLabels();
     if (REH) { var bb = L.latLngBounds(S.map(function (x) { return [x.lat, x.lon]; })); map.fitBounds(bb, { padding: [50, 50], maxZoom: 18 }); }
     S.forEach(function (s, i) {
       stopMarkers[s.id] = L.marker([s.lat, s.lon], { icon: stopIcon(s, i, false) }).addTo(map).on('click', function () { curStop = s.id; setView('task'); });
@@ -292,6 +298,16 @@
   window.refreshStopIcons = function () {
     if (!map) return; S.forEach(function (s, i) { var m = stopMarkers[s.id]; if (m) m.setIcon(stopIcon(s, i, !!(prog[s.id] && prog[s.id].frag))); });
   };
+  /* 主要建築名稱：用清楚的 HTML 文字疊在底圖上（座標取自 OSM，概略） */
+  var BLDG = [['修齊大樓（E 棟）', 23.02364, 120.22407, 1], ['人文藝術中心', 23.02315, 120.22437, 0], ['管理與資訊館', 23.02428, 120.22322, 1], ['資訊傳播館', 23.02356, 120.22555, 0], ['電機一館', 23.02516, 120.22314, 0], ['化工暨生物科技館', 23.02278, 120.2252, 0], ['優活館', 23.02279, 120.22446, 1], ['三連堂（體育館）', 23.02433, 120.22543, 1], ['校史館', 23.02325, 120.22418, 1], ['西淮館', 23.02403, 120.22346, 1], ['汽車工程館', 23.02541, 120.22466, 0], ['光電工程館', 23.02571, 120.22421, 0], ['能源工程館', 23.02553, 120.2251, 0]];
+  var bldgLayer = null;
+  function addBldgLabels() {
+    if (bldgLayer) return; bldgLayer = L.layerGroup();
+    var all = [], main = [];
+    BLDG.forEach(function (b) { var m = L.marker([b[1], b[2]], { interactive: false, keyboard: false, icon: L.divIcon({ className: 'bname', html: '<span>' + esc(b[0]) + '</span>', iconSize: [0, 0] }) }); all.push(m); if (b[3]) main.push(m); });
+    var upd = function () { var z = map.getZoom(), want = z >= 18 ? all : (z >= 17 ? main : []); all.forEach(function (m) { var on = want.indexOf(m) >= 0; if (on && !map.hasLayer(m)) m.addTo(map); if (!on && map.hasLayer(m)) map.removeLayer(m); }); };
+    map.on('zoomend', upd); upd();
+  }
   function startLocation() {
     var sim = qs.get('sim');
     if (sim) { var p = sim.split(',').map(Number); gotPos({ coords: { latitude: p[0], longitude: p[1], accuracy: 5 } }); window.__walkSim = function (lat, lon) { gotPos({ coords: { latitude: lat, longitude: lon, accuracy: 5 } }); }; return; }
@@ -414,12 +430,14 @@
     if (wireTabs.done) return; wireTabs.done = true;
     [].forEach.call(document.querySelectorAll('#nav button'), function (b) { b.onclick = function () { setView(b.dataset.v); }; });
     $('btn-mates').onclick = function () { showMates = !showMates; $('btn-mates').classList.toggle('off', !showMates); renderMates(); };
+    $('btn-fold').onclick = function () { mapFolded = !mapFolded; try { localStorage.setItem('walk_fold', mapFolded ? '1' : '0'); } catch (e) {} setView(view); };
     $('btn-locate').onclick = function () { if (myPos) map.setView([myPos.lat, myPos.lon], 18); };
   }
   function setView(v) {
-    view = v; if (phase() === 'rehearsal' && v === 'task') setTimeout(function () { pmark('g4'); }, 4000); if (phase() === 'rehearsal' && v === 'team') pmark('g3'); [].forEach.call(document.querySelectorAll('.pane'), function (p) { p.hidden = p.id !== 'pane-' + v; });
+    view = v; if (phase() === 'rehearsal' && v === 'task') setTimeout(function () { pmark('g4'); }, 4000); if (phase() === 'rehearsal' && v === 'team') pmark('g3'); [].forEach.call(document.querySelectorAll('.pane'), function (p) { p.hidden = (p.id !== 'pane-' + v) && p.id !== 'pane-map'; });
+    var pm = $('pane-map'); pm.classList.toggle('mini', v !== 'map'); pm.classList.toggle('folded', v !== 'map' && mapFolded); $('btn-fold').textContent = mapFolded ? '展開 ▾' : '收合 ▴';
+    if (map) setTimeout(function () { map.invalidateSize(); }, 80);
     [].forEach.call(document.querySelectorAll('#nav button'), function (b) { b.classList.toggle('on', b.dataset.v === v); });
-    if (v === 'map' && map) setTimeout(function () { map.invalidateSize(); }, 50);
     render();
   }
   function render() {
@@ -431,6 +449,7 @@
   function myRole() { return (team && team.members[uid] && team.members[uid].role) || ROLES[0]; }
   function renderTask() {
     var s = stopById(curStop || S[0].id) || S[0], p = prog[s.id] || {}, h = '';
+    if (REH && allDone()) h += certHtml();
     if (REH) h = practiceHtml() + '<h2>校園試玩：' + esc(R0.campus.name) + '</h2><div class="sub">從 E 棟出發繞一圈，約 10–15 分鐘；校史小知識都來自學校通識電子報。</div>';
     h += '<div class="chips">' + S.map(function (x, i) { var st = (prog[x.id] && prog[x.id].frag) ? 'ok' : (prog[x.id] && prog[x.id].arrived ? 'half' : ''); return '<button class="chip ' + st + (x.id === s.id ? ' cur' : '') + '" data-s="' + x.id + '">' + i + '</button>'; }).join('') + '</div>';
     h += '<h2>' + esc(s.name) + '</h2><div class="sub">' + (REH ? '' : esc(s.time) + ' 起・') + '約 ' + s.min + ' 分' + (s.frag !== undefined ? '・碎片「' + esc(R.fragmentNames[s.frag]) + '」' + (p.frag ? ' ✔' : '') : '') + '</div>';
@@ -452,6 +471,11 @@
     [].forEach.call(document.querySelectorAll('[data-mv]'), function (b) { b.onclick = function () { moveCard(b.dataset.s, +b.dataset.i, +b.dataset.mv); }; });
     [].forEach.call(document.querySelectorAll('[data-ord]'), function (b) { b.onclick = function () { checkOrder(b.dataset.s, b.dataset.t); }; });
     var fb = document.getElementById('final-go'); if (fb) fb.onclick = submitFinal;
+  }
+  function allDone() { return R0.practice.every(function (t) { return pdone(t.id); }) && fragCount() >= totalFrags() && !!(prog.final && prog.final.done); }
+  function certHtml() {
+    var d = new Date(nowMs()), ts = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+    return '<div class="card cert"><div style="font-size:34px;text-align:center">🎓🎉</div><h2 style="text-align:center;margin:4px 0">練習日全破！</h2><div style="text-align:center">' + esc((profile && profile.nick) || '') + '　' + esc(teamLabel()) + '</div><div class="sub" style="text-align:center">練習清單 ' + R0.practice.length + '／' + R0.practice.length + '・審查單 ' + totalFrags() + '／' + totalFrags() + '・' + ts + '</div><div class="bub done" style="margin-left:0">「' + esc(prog.final.text) + '」</div><div class="sub" style="text-align:center">請把這一頁截圖，交到 flipclass 的作業。</div></div>';
   }
   function practiceHtml() {
     var P = R0.practice, done = P.filter(function (t) { return pdone(t.id); }).length;

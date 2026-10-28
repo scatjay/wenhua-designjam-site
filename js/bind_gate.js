@@ -500,8 +500,8 @@
     { key: 'laptop', href: 'laptop_survey.html', name: '設備調查', tone: 'clay',
       desc: '帶筆電意願＋VNC／SSH 遠端協助意願（行政，跟週次無關）' },
     /* 2026-10-28 期中作業 W8-9：不給 wk（不進每週清單、不搶「本週」），排在設備調查後面（楊老師指定）。 */
-    { key: 'mid', href: 'mid.html', name: 'W8-9', tone: 'plum',
-      desc: '期中作業：把 W4–W7 四個單元接成同一款改版遊戲（檢核、預掃建議、AI 助教）' },
+    { key: 'mid', href: 'mid.html', name: '第8–9週', tone: 'plum',
+      desc: '期中作業：把 W4–W7 接成同一款改版遊戲' },
     /* 2026-09-29 楊老師：選單長了，週次改倒序（最新的排最上面，緊接在設備調查下面），
        不用往下捲才找得到本週。加新的一週＝插在這一段最前面，其他不用動。 */
     { key: 'w4',   href: 'w4.html',    wk: 4, name: '第4–7週', desc: '從企劃、原型到 NotebookLM 成果包',

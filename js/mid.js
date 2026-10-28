@@ -15,16 +15,16 @@
   var UNITS = [
     { key: 'u1', n: 1, name: 'Deep Research', sub: 'R1、R2、R3', when: '第 8 週 · 前置：W3 試玩已完成',
       prev: 'W3 回放畫面最上面的「這一場改了：卡◯◯、卡◯◯」，和你們寫的 3 則回饋。',
-      todo: ['起點：抄下卡號卡名，寫一句改動句（40 字內），寫三人例子草稿（A、B、C 各 10 點，先用原版算一次、再用改動後算一次）',
-             '在同一個對話跑三輪，依序轉成 R1、R2、R3，三份都開分享'],
-      ok: ['起點：卡號卡名跟回放一模一樣；三人例子在原版與改動後結果不同',
-           'R1：寫出的卡號卡名和起點一樣；3–5 個真實案例、連結點得開；至少 1 個寫了「對我們有什麼用」',
-           'R2：100–150 字短文點名卡號卡名，改動句同字面（改了就標「修訂」）；引用 R1 至少 1 個案例名；三人例子定案、寫出最後各人自尊值；處理平手與同時出局',
-           'R3：畫面對照表，每個畫面對得到 R2 的一步；三種行動名稱和 R2 一致；標出改動規則出現在哪個畫面'],
-      bridge: '起點 → R1：找案例的方向就是那句改動句。R1 → R2：R2 引用 R1 的案例。R2 → R3：R3 不能新增 R2 沒有的規則。三人例子在起點是草稿、在 R2 定案，兩版多了什麼要說得出來。',
-      links: [['dr', 'Deep Research 對話連結（三輪同一串）'], ['r1', 'R1 文件連結'], ['r2', 'R2 文件連結'], ['r3', 'R3 文件連結']],
+      todo: ['起點：寫下你這款遊戲要改的是哪一張卡（卡號卡名）、一句改動句（40 字內），和三人例子草稿（A、B、C 各 10 點，先用原版算一次、再用改動後算一次）。主題可以自訂，不一定要沿用 W3 那一組',
+             '用 Deep Research 做出文件。R1、R2、R3 不用全交，至少交一份就可以，有幾份交幾份'],
+      ok: ['起點：卡號卡名寫得清楚（沿用 W3 的話要和回放一模一樣）；三人例子在原版與改動後結果不同',
+           '交的文件如果是 R1：卡號卡名和起點一樣；3–5 個真實案例、連結點得開；至少 1 個寫了「對我們有什麼用」',
+           '交的文件如果是 R2：100–150 字短文點名卡號卡名，改動句同字面（改了就標「修訂」）；引用 R1 至少 1 個案例名；三人例子定案、寫出最後各人自尊值；處理平手與同時出局',
+           '交的文件如果是 R3：畫面對照表，每個畫面對得到 R2 的一步；三種行動名稱和 R2 一致；標出改動規則出現在哪個畫面'],
+      bridge: '有交幾份文件，就照這幾份之間的順序對：起點 → R1：找案例的方向就是那句改動句。R1 → R2：R2 引用 R1 的案例。R2 → R3：R3 不能新增 R2 沒有的規則。只交其中一份也可以，三個要對上的東西（卡號卡名、改動句、三人例子數字）仍然要寫出來。',
+      links: [['dr', 'Deep Research 對話連結（不一定同一串）'], ['r1', 'R1 文件連結（選填）'], ['r2', 'R2 文件連結（選填）'], ['r3', 'R3 文件連結（選填）']],
       texts: [['change', '改動句（40 字內）', 1], ['gold', '三人例子最終自尊值，例：A7 B5 C0', 1]],
-      chk: ['卡號卡名和 W3 回放一模一樣', '改動句不超過 40 字，且有寫出發生在結算第幾步', 'R1 的案例連結我都點開確認過', 'R2 的改動句和起點同字面（改了有標「修訂」）', '三人例子定案，最終自尊值已寫在下面', 'R3 的畫面都對得到 R2 的某一步', '三份文件和對話串都開了分享，我用無痕視窗開過'] },
+      chk: ['卡號卡名寫清楚了（沿用 W3 的話和回放一模一樣）', '改動句不超過 40 字，且有寫出發生在結算第幾步', '我交的文件裡的案例連結我都點開確認過', '文件裡的改動句和起點同字面（改了有標「修訂」）', '三人例子定案，最終自尊值已寫在下面', '至少交了一份 Deep Research 文件（R1、R2、R3 其中一份）', '文件和對話串都開了分享，我用無痕視窗開過'] },
     { key: 'u2', n: 2, name: 'Canvas', sub: '視覺化企劃', when: '第 8–9 週 · 前置：單元 1 的 R2、R3',
       prev: 'R2 的規則與三人例子，R3 的畫面對照表。',
       todo: ['用 Canvas 把流程、畫面、改動規則畫出來', '圖裡要放三人例子，逐輪的自尊值'],
@@ -232,6 +232,8 @@
     Object.keys(r.links).forEach(function (a) { if (!isUrl(r.links[a])) bad.push(a); });
     if (bad.length) { say('連結要以 https:// 開頭', true); return; }
     if (!Object.keys(r.links).length && !r.prompt && !Object.keys(r.texts).length) { say('至少要貼一個連結，或貼指令全文', true); return; }
+    var softWarn = '';
+    if (k === 'u1' && !(r.links.r1 || r.links.r2 || r.links.r3 || r.links.dr)) softWarn = '（提醒：單元 1 還沒有貼任何 Deep Research 文件或對話連結，至少交一份老師才掃得到）';
     var fx = collectFix(u);
     var rec = { ts: firebase.database.ServerValue.TIMESTAMP, links: r.links, texts: r.texts, prompt: r.prompt || null, chk: r.chk, chkN: r.chkN, chkTotal: u.chk.length, fix: fx.n ? fx.fix : null, fixN: fx.n, ver: VER };
     var nth = (SUBS[k] || []).length + 1;
@@ -242,7 +244,7 @@
         if (fx.fix[id].s === 'disagree') ref('midfb/' + COURSE + '/' + ENV).push({ ts: firebase.database.ServerValue.TIMESTAMP, type: 'judge', unit: k, sg: id, text: mask(fx.fix[id].note || '（未寫說明）'), ver: VER, ua: navigator.userAgent.slice(0, 100) });
       });
       var tail = r.chkN < u.chk.length ? '（自查還有 ' + (u.chk.length - r.chkN) + ' 項沒勾，系統只是提醒，已照常收下）' : '';
-      say('已送出 ✓ 這是第 ' + nth + ' 次提交。' + tail);
+      say('已送出 ✓ 這是第 ' + nth + ' 次提交。' + tail + softWarn);
       btn.disabled = false;
     }).catch(function (e) { btn.disabled = false; say('送出失敗，請再按一次：' + (e && e.message || e), true); });
   }

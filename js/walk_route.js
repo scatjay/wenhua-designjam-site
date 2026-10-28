@@ -416,6 +416,20 @@ window.WALK_ROUTE.campusW = {
   Array.prototype.splice.apply(N.stops, [at, 0].concat(add));
 })();
 
+/* 銜接「怎麼把文化融入遊戲」單元（W2 學習單的文化卡五類）：每個有任務的站多一題，
+   學生在現場挑一個文化要素、選類型、寫一句「放進遊戲會變成什麼規則」。主線站（有碎片）設為加分題，不影響過關。 */
+(function () {
+  var Q = '文化→遊戲：在這一站挑一個你看到或聽到的文化要素。先寫它是哪一類（物件・地點／行為・儀式／人際關係／禁忌・規矩／時間節奏），再寫一句：如果放進遊戲，它會變成什麼規則？（至少 15 字）';
+  ['campus', 'campusW'].forEach(function (rk) {
+    var r = window.WALK_ROUTE[rk]; if (!r || !r.stops) return;
+    r.stops.forEach(function (s) {
+      if (!s.tasks || !s.tasks.length || s.final || s.plain) return;
+      if (s.tasks.some(function (t) { return t.id === 'cu'; })) return;
+      s.tasks.push({ id: 'cu', type: 'text', min: 15, bonus: s.frag !== undefined, title: Q });
+    });
+  });
+})();
+
 /* 白天與夜間是學姊的「同一天」：白天她在校內蓋前兩格、留紙條，夜裡回來補蓋。
    這裡只加台詞（附在各站 NPC 開場白最後一句），不動關卡與題目。 */
 (function () {

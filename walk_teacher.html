@@ -102,8 +102,10 @@ function start(){
   var npcOn=true;
   window.drawChapters=function(){
     CH.forEach(function(c){if(c.on)c.lg.addTo(map);else map.removeLayer(c.lg);if(c.on&&npcOn)c.nlg.addTo(map);else map.removeLayer(c.nlg)});
-    $('rtleg').innerHTML='<div style="margin-bottom:4px"><b>關卡定位點</b>（勾選要顯示的章節；顏色與形狀＝章節，形狀裡的數字＝該章的關卡編號，滑過看站名，虛線圈是到站範圍；白底圓圈裡的表情＝該站的 NPC 所在位置）</div><label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" id="npcon"'+(npcOn?' checked':'')+'> 顯示 NPC 位置</label>'+CH.map(function(c){return '<label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" data-ch="'+c.k+'"'+(c.on?' checked':'')+'> <span style="display:inline-block;width:14px;height:14px;background:'+c.col+';vertical-align:middle;'+c.sh+'"></span> <b>'+esc(c.name)+'</b>：'+c.stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')+'</label>'}).join('');
+    $('rtleg').innerHTML='<div style="margin-bottom:4px"><b>關卡定位點</b>（勾選要顯示的章節；顏色與形狀＝章節，形狀裡的數字＝該章的關卡編號，滑過看站名，虛線圈是到站範圍；白底圓圈裡的表情＝該站的 NPC 所在位置）</div><div style="margin:4px 0"><button id="chall" style="padding:3px 10px;font-size:13px">全選</button> <button id="chnone" style="padding:3px 10px;font-size:13px">全不選</button> <label style="margin-left:10px;cursor:pointer"><input type="checkbox" id="npcon"'+(npcOn?' checked':'')+'> 顯示 NPC 位置</label></div>'+CH.map(function(c){return '<label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" data-ch="'+c.k+'"'+(c.on?' checked':'')+'> <span style="display:inline-block;width:14px;height:14px;background:'+c.col+';vertical-align:middle;'+c.sh+'"></span> <b>'+esc(c.name)+'</b>：'+c.stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')+'</label>'}).join('');
     $('npcon').onchange=function(){npcOn=this.checked;drawChapters()};
+    $('chall').onclick=function(){CH.forEach(function(c){c.on=c.stops.length>0});drawChapters()};
+    $('chnone').onclick=function(){CH.forEach(function(c){c.on=false});drawChapters()};
     [].forEach.call(document.querySelectorAll('#rtleg [data-ch]'),function(b){b.onchange=function(){CH.forEach(function(c){if(c.k===b.dataset.ch)c.on=b.checked});drawChapters()}})};
   drawChapters();
   var first=CH[0]&&CH[0].stops[0];if(first)map.setView([first.lat,first.lon],17);

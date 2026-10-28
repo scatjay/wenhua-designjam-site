@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <style>
 :root{--bg:#f7f2e8;--fg:#262019;--mute:#6c6254;--card:#fffdf7;--line:#ddd2bd;--acc:#b8402a;--acc2:#1f6f68;--blue:#2f6690;--chip:#efe6d2}
-@media (prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#ece4d3;--mute:#a69a85;--card:#211d16;--line:#3a3327;--acc:#e0705a;--acc2:#5cb8ae;--blue:#7fb0d6;--chip:#2c261c}}
+@media (prefers-color-scheme:dark){:root:not(.lt){--bg:#0b0f12;--fg:#e8e4da;--mute:#9aa6b0;--card:#161d23;--line:#2c3943;--acc:#e0705a;--acc2:#4fd1bc;--blue:#7fb0d6;--chip:#26323b}}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Noto Sans TC","PingFang TC",sans-serif;-webkit-text-size-adjust:100%}
@@ -172,6 +172,11 @@ button.chip{min-width:44px}
 .mapbtns button{min-width:44px;min-height:44px}
 .ocard button{width:44px;height:44px}
 .tag,.src,#gps,.sicon b,.phi,.mate b{font-size:12px}
+:root.dk{--bg:#0b0f12;--fg:#e8e4da;--mute:#9aa6b0;--card:#161d23;--line:#2c3943;--acc:#e0705a;--acc2:#4fd1bc;--blue:#7fb0d6;--chip:#26323b}
+body.dk.st-night #hd{background:#05080a!important}body.dk.st-night #banner{background:#0f1a22!important}body.dk.st-night #mapbar{background:#0f1a22}
+body.dk.raster .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}
+.mate .spr:not(.walk),.sicon img{animation:none}
+body.eco *,body.eco *::before,body.eco *::after{animation:none!important;transition:none!important}
 </style>
 </head>
 <body>
@@ -266,9 +271,10 @@ button.chip{min-width:44px}
 <script src="js/walk_route.js?v=202610282336"></script>
 <script src="js/walk_route_tw.js?v=202610290541"></script>
 <script src="js/walk_npc_types.js?v=202610282256"></script>
+<script src="js/walk_npc_drama.js?v=202610290600"></script>
 <script src="js/walk_sprites.js?v=202610282215"></script>
 <script src="js/walk_i18n_id.js?v=202610282215"></script>
-<script src="js/walk.js?v=202610290008"></script>
+<script src="js/walk.js?v=202610290552"></script>
 <script src="js/walk_i18n.js?v=202610282215"></script>
 </body>
 </html>

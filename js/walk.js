@@ -63,7 +63,30 @@
   ];
   var styleSel = 'pixel';
   try { styleSel = localStorage.getItem('walk_style') || 'pixel'; } catch (e) {}
+  /* ---------- 顯示與省電：深色（OLED 黑色像素不發光）、省電模式（停動畫、降低定位處理與上傳頻率） ---------- */
+  var themePref = 'auto', ecoPref = 'auto', ecoAuto = false, ecoOn = false, geoCtl = null;
+  try { themePref = localStorage.getItem('walk_theme') || 'auto'; ecoPref = localStorage.getItem('walk_eco') || 'auto'; } catch (e) {}
+  function isDark() { return themePref === 'dark' || (themePref === 'auto' && !!(window.matchMedia && matchMedia('(prefers-color-scheme:dark)').matches)); }
+  function applyTheme() {
+    ecoOn = ecoPref === 'on' || (ecoPref === 'auto' && ecoAuto);
+    var d = isDark(), r = document.documentElement; r.classList.toggle('dk', d); r.classList.toggle('lt', themePref === 'light');
+    if (document.body) { document.body.classList.toggle('dk', d); document.body.classList.toggle('eco', ecoOn); }
+  }
+  try { if (navigator.getBattery) navigator.getBattery().then(function (b) { var u = function () { ecoAuto = !b.charging && b.level < 0.3; applyTheme(); }; b.addEventListener('levelchange', u); b.addEventListener('chargingchange', u); u(); }); } catch (e) {}
+  document.addEventListener('visibilitychange', function () { if (!geoCtl) return; if (document.hidden) geoCtl.stop(); else geoCtl.start(); });
+  function dispCard() {
+    var T = [['auto', '跟著手機'], ['dark', '深色'], ['light', '淺色']], E = [['auto', '電量低時自動'], ['on', '一律開'], ['off', '關']];
+    return '<div class="card"><b>顯示與省電</b><div class="sub">深色背景較省電（OLED 螢幕）。省電模式會停掉動畫、降低定位與上傳的頻率。只影響你自己的手機。</div>'
+      + '<div class="opts">' + T.map(function (x) { return '<button class="btn2' + (themePref === x[0] ? ' on' : '') + '" data-theme="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'
+      + '<div class="opts">' + E.map(function (x) { return '<button class="btn2' + (ecoPref === x[0] ? ' on' : '') + '" data-eco="' + x[0] + '">省電：' + x[1] + '</button>'; }).join('') + '</div></div>';
+  }
+  function bindDisp() {
+    [].forEach.call(document.querySelectorAll('[data-theme]'), function (b) { b.onclick = function () { themePref = b.dataset.theme; try { localStorage.setItem('walk_theme', themePref); } catch (e) {} applyTheme(); applyStyle(); renderTeam(); }; });
+    [].forEach.call(document.querySelectorAll('[data-eco]'), function (b) { b.onclick = function () { ecoPref = b.dataset.eco; try { localStorage.setItem('walk_eco', ecoPref); } catch (e) {} applyTheme(); renderTeam(); }; });
+  }
+  applyTheme();
   function effectiveStyle() {
+    if (isDark() && (styleSel === 'pixel' || styleSel === 'auto')) return 'night';
     if (styleSel === 'auto') { var h = new Date(nowMs() + 8 * 3600 * 1000).getUTCHours(); return (h >= 18 || h < 6) ? 'night' : 'pixel'; }
     return styleSel;
   }
@@ -399,6 +422,7 @@
     if (!navigator.geolocation) { $('gps').textContent = '這個瀏覽器不支援定位。'; return; }
     var IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), INAPP = /Line\/|FBAN|FBAV|Instagram|MicroMessenger/i.test(navigator.userAgent);
     var geoStart = function () {
+      if (document.hidden) return;
       if (watchId != null) { try { navigator.geolocation.clearWatch(watchId); } catch (e) {} }
       watchId = navigator.geolocation.watchPosition(gotPos, function (e) {
         var g = $('gps');
@@ -408,6 +432,7 @@
         var rb = $('geo-retry'); if (rb) rb.onclick = function () { g.textContent = '定位中…'; geoStart(); };
       }, { enableHighAccuracy: !IOS, maximumAge: IOS ? 15000 : 5000, timeout: IOS ? 40000 : 20000 });
     };
+    geoCtl = { start: geoStart, stop: function () { if (watchId != null) { try { navigator.geolocation.clearWatch(watchId); } catch (e) {} watchId = null; } } };
     geoStart();
     if (!posTimer) posTimer = setInterval(uploadPos, 25000);
   }
@@ -420,14 +445,16 @@
   }
   function gotPos(p) {
     myPos = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy || 0, t: nowMs() };
+    if (!window.__walkSim && gotPos._t && nowMs() - gotPos._t < (ecoOn ? 8000 : 3000) && gotPos._p && dist(gotPos._p, myPos) < 4) return;
+    gotPos._t = nowMs(); gotPos._p = { lat: myPos.lat, lon: myPos.lon };
     $('gps').textContent = '定位精度約 ' + Math.round(myPos.acc) + ' 公尺';
     var moved = lastMe && dist(lastMe, myPos) > 3; lastMe = { lat: myPos.lat, lon: myPos.lon }; if (moved) lastMoveT = nowMs();
     var mic = L.divIcon({ className: '', html: '<div class="mate me">' + skinAva(uid, profile && profile.ava, 3, nowMs() - lastMoveT < 12000) + '<b>' + esc((profile && profile.nick) || '我') + '</b></div>', iconSize: [48, 56], iconAnchor: [24, 44] });
     if (!meMarker) { meMarker = L.marker([myPos.lat, myPos.lon], { icon: mic, zIndexOffset: 800 }).addTo(map); if (!REH) map.setView([myPos.lat, myPos.lon], 17); }
-    else meMarker.setLatLng([myPos.lat, myPos.lon]).setIcon(mic);
+    else { meMarker.setLatLng([myPos.lat, myPos.lon]); if (meMarker._ik !== mic.options.html) { meMarker.setIcon(mic); meMarker._ik = mic.options.html; } }
     if (phase() === 'rehearsal') pmark('g1');
     updateGoal();
-    if (!uploadPos._last || nowMs() - uploadPos._last > 15000) uploadPos();
+    if (!uploadPos._last || nowMs() - uploadPos._last > (ecoOn ? 45000 : 15000)) uploadPos();
     checkTasks();
   }
   function uploadPos() {
@@ -465,7 +492,7 @@
     for (var i = 0; i < S.length; i++) if (stopStartMs(S[i]) <= t) cur = S[i];
     return cur;
   }
-  function schedLoop() { renderBanner(); setInterval(renderBanner, 20000); }
+  function schedLoop() { renderBanner(); setInterval(function () { if (!document.hidden) renderBanner(); }, 20000); }
   function renderBanner() {
     var b = $('banner');
     if (phase() === 'rehearsal') { b.innerHTML = '🎒 <b>練習日</b>：先在教室登入、分好隊、試試看地圖與任務。11/14 當天直接登入，會回到同一隊。'; return; }
@@ -752,7 +779,7 @@
     [].forEach.call(el.querySelectorAll('[data-pkset]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/_hq').update({ mode: 'pk', pk: b.dataset.pkset }); log('mode', '', 'pk'); setTimeout(writeScoreForce, 300); }; });
   }
   function writeScoreForce() { lastScoreWritten = ''; writeScore(); }
-  var modeTick = setInterval(function () { if (team) updateGoal(true); }, 30000);
+  var modeTick = setInterval(function () { if (team && !document.hidden) updateGoal(true); }, 30000);
   /* 目標列：打開遊戲就知道要做什麼、現在到哪、下一步去哪 */
   function goalText() {
     if (!team || !S || !S.length) return '';
@@ -1085,8 +1112,9 @@
     h += chatBox();
     h += '<div class="card"><b>帳號與語言</b><div class="opts"><button class="btn2 lo">登出，換 Google 帳號</button><button class="btn2 lang"></button></div></div>';
     h += '<div class="card"><b>開房間／加入別的房</b><div class="opts"><button class="btn2" id="mk-room">開一個臨時房間</button></div><div class="opts"><input id="jn-code" class="inp" maxlength="4" placeholder="輸入 4 碼房碼"><button class="btn2" id="jn-go">加入</button></div>' + (team.kind === 'room' && team.owner === uid ? '<div class="opts"><button class="btn2" id="rm-open">' + (team.open === false ? '開放補位：關（按此開啟）' : '開放補位：開（按此關閉）') + '</button><button class="btn2" id="rm-close">' + (team.closed ? '重新開門' : '提早關門') + '</button></div>' : '') + '<div class="msg" id="tm-msg"></div></div>';
+    h += dispCard();
     h += '<div class="card"><b>地圖風格</b><div class="sub">只改你自己看到的地圖，隊友不受影響。</div><div class="opts">' + ([{ id: 'auto', name: '自動（晚上換夜景）' }].concat(STYLES)).map(function (x) { return '<button class="btn2' + (styleSel === x.id ? ' on' : '') + '" data-style="' + x.id + '">' + esc(x.name) + '</button>'; }).join('') + '</div></div>';
-    $('pane-team').innerHTML = h; bindLo(); bindChat();
+    $('pane-team').innerHTML = h; bindLo(); bindChat(); bindDisp();
     [].forEach.call(document.querySelectorAll('[data-style]'), function (b) { b.onclick = function () { styleSel = b.dataset.style; try { localStorage.setItem('walk_style', styleSel); } catch (e) {} applyStyle(); if (phase() === 'rehearsal') pmark('g5'); renderTeam(); }; });
     [].forEach.call(document.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
     $('mk-room').onclick = function () { leaveTeam().then(function () { return createTeam('room', ($('ob-dept').value || ''), ''); }).then(function (id) { enterGame(id); }).catch(function (e) { $('tm-msg').textContent = e.message; }); };
@@ -1158,7 +1186,7 @@
   /* 重疊時：被壓在後面的標記變淡（頭像蓋在站點上，後面的頭像更淡） */
   var fadeT = null;
   function fadeOverlaps() {
-    if (!map || !map.latLngToContainerPoint) return;
+    if (document.hidden || !map || !map.latLngToContainerPoint) return;
     var av = [], st = [], pt = function (m) { return map.latLngToContainerPoint(m.getLatLng()); };
     if (meMarker && meMarker._icon) av.push(meMarker);
     Object.keys(mateMarkers).forEach(function (k) { if (mateMarkers[k]._icon) av.push(mateMarkers[k]); });
@@ -1172,7 +1200,7 @@
   }
   function startChat() {
     dmStart = nowMs();
-    if (!fadeT) fadeT = setInterval(fadeOverlaps, 900);
+    if (!fadeT) fadeT = setInterval(fadeOverlaps, 2500);
     if (!document.getElementById('dm')) {
       var st = document.createElement('style');
       st.textContent = '#dm{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:2500;overflow:hidden}.dmk{position:absolute;left:100%;white-space:nowrap;font-weight:800;font-size:19px;line-height:1.3;color:#fff;background:rgba(24,12,36,.78);padding:4px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 8px rgba(0,0,0,.35);animation:dmkgo linear forwards}@keyframes dmkgo{to{transform:translateX(calc(-100vw - 100% - 24px))}}#dm-btn{position:fixed;left:10px;bottom:76px;z-index:2600;height:46px;padding:0 16px;border-radius:999px;border:3px solid #3a2a4a;background:#ff5c7a;color:#fff;font-size:16px;font-weight:800;box-shadow:0 4px 0 #3a2a4a,0 6px 14px rgba(0,0,0,.3);cursor:pointer}#dm-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #3a2a4a}#dm-bar .btn2,.tcsend{background:#ff5c7a!important;color:#fff!important;border:2px solid #3a2a4a!important;font-weight:800}#dm-bar{position:fixed;left:8px;right:8px;bottom:128px;z-index:2600;display:none;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px}#dm-bar.on{display:flex}#dm-bar input{flex:1;min-width:0}.tclist{max-height:180px;overflow:auto;margin:6px 0;display:flex;flex-direction:column;gap:4px}.tcm{font-size:14px;background:rgba(127,127,127,.12);border-radius:8px;padding:4px 8px}.mate.mt b{background:#2f6690!important;color:#fff!important;border:2px solid #1b3f5c!important;cursor:pointer}.mate.me b{background:#e0821f!important;color:#fff!important;border:2px solid #7a4710!important}.mate.mt .spr{filter:drop-shadow(0 0 4px #2f6690)}.tcm.at{outline:2px solid #2f6690}.tcday{align-self:center;font-size:12px;color:#fff;background:rgba(80,60,100,.75);border-radius:999px;padding:1px 10px;margin:4px 0}.tctime{font-size:11px;opacity:.6;margin-left:4px}.tcm.me{background:rgba(255,160,60,.22)}.tcm.call{background:rgba(255,90,90,.22);font-weight:700}.cl-h{cursor:pointer;position:relative;padding-right:22px}.cl-h::after{content:"▾";position:absolute;right:4px;top:0;opacity:.55;font-size:14px}.cl-collapsed>.cl-h::after{content:"▸"}.cl-collapsed>*:not(.cl-h){display:none!important}.rolerow{border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:6px}.rolerow.taken{opacity:.42;filter:grayscale(1)}.rolerow.mine{border-color:#e0821f;background:rgba(224,130,31,.1)}.bub.secret{background:#fff3c4;color:#4a3a00;border:1px dashed #c9a400}';

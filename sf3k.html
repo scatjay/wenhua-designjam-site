@@ -414,6 +414,11 @@ body.nobar .fab{bottom:calc(14px + env(safe-area-inset-bottom))}
           <div class="grow"><input id="join-code" placeholder="四碼場次代號" maxlength="4" style="text-transform:uppercase"></div>
           <button class="pri" id="btn-join">加入</button>
         </div>
+        <div style="margin-top:12px;padding:10px 12px;border:1.5px solid var(--line,#cfdae1);border-radius:12px">
+          <b>🎬 用場次代號找回放</b>
+          <div class="sub" style="margin:2px 0 6px">列表裡找不到某一場（例如更早或別班的場次）時，輸入那一場的四碼代號就能直接看回放。</div>
+          <div class="row"><div class="grow"><input id="rp-code" placeholder="四碼場次代號" maxlength="4" style="text-transform:uppercase"></div><button class="pri" id="btn-rp">看回放</button></div>
+        </div>
         <div id="open-rooms" style="margin-top:10px"></div>
       </div>
     </details>
@@ -1302,6 +1307,8 @@ $('btn-over-report').onclick = function(){
   });
 };
 $('btn-back-lobby').onclick = leaveRoom;
+$('btn-rp').onclick = function(){ var c = ($('rp-code').value||'').trim().toUpperCase(); if (!c) { toast('先輸入四碼場次代號', 'err'); return; } openReplay(c); };
+$('rp-code').onkeydown = function(e){ if (e.key === 'Enter') $('btn-rp').click(); };
 $('btn-join').onclick = function(){ joinRoom(($('join-code').value||'').trim().toUpperCase()); };
 var hostedBefore = 0;
 function wireHostBtn(){

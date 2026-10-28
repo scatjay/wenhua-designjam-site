@@ -44,7 +44,7 @@ var qs=new URLSearchParams(location.search), TEST=qs.get('test')==='1';
 var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 firebase.initializeApp({apiKey:'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng',authDomain:'gen-lang-client-0929530380.firebaseapp.com',databaseURL:'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app',projectId:'gen-lang-client-0929530380'});
-var db=firebase.database(),auth=firebase.auth(),ROOT=db.ref('whgm/analysis/'+(TEST?'walk1114test':'walk1114'));
+var db=firebase.database(),auth=firebase.auth(),ROOT=db.ref(TEST?'whgm/analysis/walk1114test':'stwalk1114'),claims={};
 var teams={},pos={},prog={},board={},map,markers={},players={},reh={},phase=null,fbs={};
 $('tl').textContent=TEST?'測試':'正式';
 $('b-phase').onclick=function(){var cur=phase||((Date.now()<Date.parse(window.WALK_ROUTE.liveStart))?'rehearsal':'live');if(confirmTwice('b-phase','切換為'+(cur==='rehearsal'?'正式':'練習日')+'（再按一次確認）'))ROOT.child('cfg/phase').set(cur==='rehearsal'?'live':'rehearsal')};
@@ -67,6 +67,7 @@ function start(){
   ROOT.child('pos').on('value',function(s){pos=s.val()||{};render()});
   ROOT.child('prog').on('value',function(s){prog=s.val()||{};render()});
   ROOT.child('board').on('value',function(s){board=s.val()||{};render()});
+  ROOT.child('claim').on('value',function(s){claims=s.val()||{};render()});
   ROOT.child('players').on('value',function(s){players=s.val()||{};render()});
   ROOT.child('fb').limitToLast(30).on('value',function(s){fbs=s.val()||{};renderFb()});
   ROOT.child('rehearsal').on('value',function(s){reh=s.val()||{};render()});
@@ -93,7 +94,7 @@ function render(){
   $('stat').textContent=ids.length+' 隊・'+total+' 人・在線 '+online;
   var pc=Object.keys(players).length,withTeam=Object.keys(players).filter(function(u){return players[u].team}).length,full=Object.keys(reh).filter(function(u){return Object.keys(reh[u]||{}).length>=5}).length;
   var sizes={};ids.forEach(function(id){var n=Object.keys(teams[id].members||{}).length;sizes[n]=(sizes[n]||0)+1});
-  $('reh').innerHTML='已登入 <b>'+pc+'</b> 人（全班 52）・已分到隊 <b>'+withTeam+'</b>・練習 5 項全做完 <b>'+full+'</b><br>隊伍人數分佈：'+(Object.keys(sizes).sort().map(function(k){return k+' 人 × '+sizes[k]}).join('、')||'—')+'<br>還沒登入的人要在教室裡提醒；人數 1–2 的隊用上方「整併過小的隊」。';
+  $('reh').innerHTML='已登入 <b>'+pc+'</b> 人（全班 52）・已分到隊 <b>'+withTeam+'</b>・練習 5 項全做完 <b>'+full+'</b><br>隊伍人數分佈：'+(Object.keys(sizes).sort().map(function(k){return k+' 人 × '+sizes[k]}).join('、')||'—')+'<br>已登記信封編號 <b>'+Object.keys(claims).length+'</b> 人；1–52 裡還沒登記的編號：'+(function(){var got={};Object.keys(claims).forEach(function(u){got[claims[u]]=1});var m=[];for(var i=1;i<=52;i++)if(!got[i])m.push(i);return m.length?m.join('、'):'無'})()+'<br>還沒登入的人要在教室裡提醒；人數 1–2 的隊用上方「整併過小的隊」。';
   var ph=phase||((Date.now()<Date.parse(window.WALK_ROUTE.liveStart))?'rehearsal':'live');$('pl').textContent=(ph==='rehearsal'?'練習日':'正式')+(phase?'（手動）':'（依日期）');
   if(!map)return;
   Object.keys(markers).forEach(function(k){map.removeLayer(markers[k]);delete markers[k]});

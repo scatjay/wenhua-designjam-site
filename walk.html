@@ -183,6 +183,15 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
   <p style="text-align:center"><button class="btn2 fb-open">⚑ 登入有問題？回報給老師</button></p>
 </div>
 
+<div class="screen" id="screen-vf" hidden>
+  <h1>輸入你的信封編號</h1>
+  <div class="sub">就是文化遊戲松信封上的數字。系統會核對這個編號有沒有和你的 Google 帳號綁在一起（之前學習單綁定過的就是同一個）。</div>
+  <label>信封編號</label><input id="vf-env" class="inp" type="number" inputmode="numeric" min="0" max="99" placeholder="例：17">
+  <button class="btn" id="vf-go">確定</button>
+  <div class="msg" id="vf-msg"></div>
+  <p style="text-align:center"><button class="btn2 fb-open">⚑ 進不去？回報給老師</button></p>
+</div>
+
 <div class="screen" id="screen-ob" hidden>
   <h1>加入隊伍</h1>
   <label>暱稱（不是真實姓名）</label>
@@ -227,8 +236,8 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="js/walk_route.js?v=202610281730"></script>
-<script src="js/walk_sprites.js?v=202610281730"></script>
-<script src="js/walk.js?v=202610281730"></script>
+<script src="js/walk_route.js?v=202610281830"></script>
+<script src="js/walk_sprites.js?v=202610281830"></script>
+<script src="js/walk.js?v=202610281830"></script>
 </body>
 </html>

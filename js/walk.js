@@ -103,6 +103,11 @@
   }
   var DEPTS = ['多樂', '資工', '資管', '半導體', '電機', '電子', '化材', '機械', '企管', '工管', '流音', '應日', '資傳', '視傳', '永續', '其他'];
 
+  /* ---- 信封編號登記：編號要和「已綁定的編號＋Google 帳號」對得上才能進（不收姓名學號） ---- */
+  var TEACHERS = ['scatjay@gmail.com', 'yib@stust.edu.tw'];
+  var BIND = 'whgm/analysis/w3game';   /* 其他學習單頁共用的綁定資料（envIndex／identity） */
+  var envNo = null, isTeacher = false;
+  function validEnv(v) { return v === parseInt(v, 10) && ((v >= 1 && v <= 60) || v === 99 || v === 0); }
   var db, auth, ROOT, uid = null, profile = null, team = null, teamId = null, prog = {}, teamPos = {}, posTimer = null;
   var map, meMarker, mateMarkers = {}, stopMarkers = {}, myPos = null, showMates = true, watchId = null, simTimer = null;
   var view = 'map', curStop = null, listeners = [], lastScoreWritten = null;
@@ -134,7 +139,7 @@
   function boot() {
     firebase.initializeApp({ apiKey: 'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng', authDomain: 'gen-lang-client-0929530380.firebaseapp.com', databaseURL: 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', projectId: 'gen-lang-client-0929530380' });
     db = firebase.database(); auth = firebase.auth();
-    ROOT = db.ref('whgm/analysis/' + (TEST ? 'walk1114test' : 'walk1114'));
+    ROOT = db.ref(TEST ? 'whgm/analysis/walk1114test' : 'stwalk1114');   /* 正式資料在專用區塊 stwalk1114（要登入且登記過信封編號）；測試模式用開放的測試節點 */
     buildOnboarding(); applyStyle(); buildQR();
     $('btn-google').onclick = googleLogin;
     if (TEST) { $('btn-test').hidden = false; $('btn-test').onclick = function () { startUser(qs.get('uid') || ('dev-' + Math.random().toString(36).slice(2, 8))); }; if (qs.get('uid')) startUser(qs.get('uid')); }
@@ -160,6 +165,15 @@
   }
   function startUser(u) {
     uid = u; $('screen-login').hidden = true;
+    var cu = auth.currentUser, em = ((cu && cu.email) || '').toLowerCase();
+    isTeacher = !TEST && !!cu && cu.emailVerified !== false && TEACHERS.indexOf(em) >= 0;
+    if (TEST || isTeacher) { afterVerified(); return; }
+    ROOT.child('claim/' + uid).once('value').then(function (s) {
+      if (s.exists()) { envNo = parseInt(s.val(), 10); afterVerified(); } else showEnv();
+    }).catch(function (e) { $('screen-login').hidden = false; $('login-msg').textContent = '資料庫連線被拒絕（' + (e.code || e.message) + '）。請確認用 Google 帳號登入後再試。'; });
+  }
+  function afterVerified() {
+    $('screen-vf').hidden = true;
     ROOT.child('players/' + uid).once('value').then(function (s) {
       profile = s.val();
       if (profile && profile.team) {
@@ -169,6 +183,26 @@
       }
       showOnboarding();
     }).catch(function (e) { toast('讀取失敗：' + e.message); });
+  }
+  function showEnv() {
+    $('screen-vf').hidden = false;
+    db.ref(BIND + '/identity/' + uid + '/env').once('value').then(function (s) { if (s.exists() && !$('vf-env').value) $('vf-env').value = s.val(); }).catch(function () {});
+    $('vf-go').onclick = envGo;
+  }
+  function envGo() {
+    var v = parseInt($('vf-env').value, 10), cu = auth.currentUser, em = ((cu && cu.email) || '');
+    if (!validEnv(v)) { $('vf-msg').textContent = '請輸入信封上的編號（數字）。'; return; }
+    $('vf-go').disabled = true; $('vf-msg').textContent = '核對中…';
+    var bad = function (m) { $('vf-go').disabled = false; $('vf-msg').textContent = m; };
+    Promise.all([db.ref(BIND + '/identity/' + uid).once('value'), db.ref(BIND + '/envIndex/' + v).once('value')]).then(function (r) {
+      var idn = r[0].val(), ei = r[1].val();
+      if (idn && idn.env != null && +idn.env !== v) return bad('你的 Google 帳號已經綁定編號 #' + idn.env + '，和你輸入的不一樣。請確認信封上的號碼；還是不行請按下面的「回報」。');
+      if (ei && ei.uid && ei.uid !== uid) return bad('編號 #' + v + ' 已經綁定另一個 Google 帳號。請確認信封號碼和登入的帳號；還是不行請按下面的「回報」。');
+      var rec = { env: v, unit: 'walk', uid: uid, email: em || null, name: (cu && cu.displayName) || null, ts: firebase.database.ServerValue.TIMESTAMP };
+      var jobs = [];
+      if (!ei || !ei.uid) { jobs.push(db.ref(BIND + '/envIndex/' + v).update(rec)); jobs.push(db.ref(BIND + '/identity/' + uid).update(rec)); }
+      return Promise.all(jobs).then(function () { return ROOT.child('claim/' + uid).set(String(v)); }).then(function () { envNo = v; log('claim', '', String(v)); afterVerified(); });
+    }).catch(function () { bad('編號和帳號對不起來，進不去。請確認信封號碼；還是不行請按下面的「回報」。'); });
   }
 
   /* ---------- 加入畫面（暱稱、系／班、同意） ---------- */
@@ -188,6 +222,7 @@
     var code = $('ob-code').value.trim().toUpperCase();
     if (!code && !dept) { $('ob-msg').textContent = '請選你的系（只用來分隊）。'; return; }
     profile = { nick: nick.slice(0, 12), ava: ava, ts: nowMs() };
+    if (envNo != null) profile.env = envNo;
     $('ob-go').disabled = true; $('ob-msg').textContent = '分隊中…';
     ROOT.child('players/' + uid).update(profile).then(function () {
       return code ? joinByCode(code) : autoAssign(dept, cls);
@@ -579,8 +614,9 @@
   function sendFb() {
     var tx = ($('fb-tx').value || '').trim(); if (tx.length < 4) { $('fb-msg').textContent = '請多寫幾個字，讓我們看得懂。'; return; }
     var rec = { t: nowMs(), uid: uid || '', team: teamId || '', type: $('fb-type').value, text: tx.slice(0, 600), stop: curStop || '', view: view, route: REH ? 'campus' : 'live', phase: phase(), style: effectiveStyle(), pos: myPos ? { lat: +myPos.lat.toFixed(5), lon: +myPos.lon.toFixed(5), acc: Math.round(myPos.acc) } : null, ua: navigator.userAgent.slice(0, 140), errs: errBuf.slice(-5), ver: R0.version };
-    var root = ROOT || db.ref('whgm/analysis/walk1114');
-    root.child('fb').push(rec).then(function () { $('fb-tx').value = ''; $('fbm').hidden = true; toast('已送出，謝謝！'); }).catch(function (e) { $('fb-msg').textContent = '送不出去：' + e.message; });
+    if (!uid) { $('fb-msg').textContent = '請先用 Google 登入再回報；登入不了的話，請直接告訴老師。'; return; }
+    if (envNo != null) rec.env = envNo;
+    ROOT.child('fb').push(rec).then(function () { $('fb-tx').value = ''; $('fbm').hidden = true; toast('已送出，謝謝！'); }).catch(function (e) { $('fb-msg').textContent = '送不出去：' + e.message; });
   }
   window.addEventListener('load', function () {
     boot();

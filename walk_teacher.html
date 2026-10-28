@@ -43,7 +43,7 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 (function(){
 'use strict';
 var S=window.WALK_ROUTE.stops, TEACHERS=['scatjay@gmail.com','yib@stust.edu.tw'];
-var progr={},boardr={};
+var progr={},boardr={},PH={};
 var ALLS=(window.WALK_ROUTE.campusW?window.WALK_ROUTE.campusW.stops:[]).concat(window.WALK_ROUTE.campus?window.WALK_ROUTE.campus.stops:[]);
 var NM_A=['夜班','月光','提燈','蓋章','守夜','迷路','飄飄','八億','審查','鐘樓','牌樓','涼亭'],NM_B=['小隊','偵探團','巡守隊','探險隊','審查組','幽靈團','蓋章組','守衛隊'];
 function pcolor(id){var C=['#c0392b','#1e7a4c','#2f5fb3','#8a3fb0','#b35a00','#00727a','#a0276a','#4a5d1a','#5b3fc0','#0a6e9e'],h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return C[h%C.length]}
@@ -90,7 +90,6 @@ function start(){
   ROOT.child('boardr').on('value',function(s){boardr=s.val()||{};render()});
   ROOT.child('board').on('value',function(s){board=s.val()||{};render()});
   /* 照片牆：只聽「新增／刪除」，每張照片只下載一次 */
-  var PH={};
   ROOT.child('photos').limitToLast(60).on('child_added',function(s){PH[s.key]=s.val();renderPh()});
   ROOT.child('photos').limitToLast(60).on('child_removed',function(s){delete PH[s.key];renderPh()});
   ROOT.child('claim').on('value',function(s){claims=s.val()||{};render()});

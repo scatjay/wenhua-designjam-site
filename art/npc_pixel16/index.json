@@ -1,0 +1,102 @@
+{
+ "校史館的志工學姊": {
+  "png_x8": "NN_01_volunteer.png",
+  "png_128": "NN_01_volunteer_128.png",
+  "raw768": "_raw/01_volunteer_r1.png"
+ },
+ "西淮館的夜班管理員": {
+  "png_x8": "NN_02_night_guard.png",
+  "png_128": "NN_02_night_guard_128.png",
+  "raw768": "_raw/02_night_guard_r2.png"
+ },
+ "銅像旁的老園丁": {
+  "png_x8": "NN_03_gardener.png",
+  "png_128": "NN_03_gardener_128.png",
+  "raw768": "_raw/03_gardener.png"
+ },
+ "時安局局長": {
+  "png_x8": "NN_04_chief.png",
+  "png_128": "NN_04_chief_128.png",
+  "raw768": "_raw/04_chief_r1.png"
+ },
+ "畢不了學姊": {
+  "png_x8": "NN_05_senior_student.png",
+  "png_128": "NN_05_senior_student_128.png",
+  "raw768": "_raw/05_senior_student.png"
+ },
+ "還書櫃旁的夜讀生": {
+  "png_x8": "NN_06_night_reader.png",
+  "png_128": "NN_06_night_reader_128.png",
+  "raw768": "_raw/06_night_reader.png"
+ },
+ "夜跑的學長": {
+  "png_x8": "NN_07_night_runner.png",
+  "png_128": "NN_07_night_runner_128.png",
+  "raw768": "_raw/07_night_runner_r1.png"
+ },
+ "水邊的看守者": {
+  "png_x8": "NN_08_water_watcher.png",
+  "png_128": "NN_08_water_watcher_128.png",
+  "raw768": "_raw/08_water_watcher.png"
+ },
+ "榕樹下的老先生": {
+  "png_x8": "NN_09_banyan_elder.png",
+  "png_128": "NN_09_banyan_elder_128.png",
+  "raw768": "_raw/09_banyan_elder.png"
+ },
+ "守夜的警衛伯伯": {
+  "png_x8": "NN_10_guard_uncle.png",
+  "png_128": "NN_10_guard_uncle_128.png",
+  "raw768": "_raw/10_guard_uncle_r2.png"
+ },
+ "涼亭裡的等車阿姨": {
+  "png_x8": "NN_11_aunt_waiting.png",
+  "png_128": "NN_11_aunt_waiting_128.png",
+  "raw768": "_raw/11_aunt_waiting.png"
+ },
+ "州知事的祕書": {
+  "png_x8": "NN_12_governor_secretary.png",
+  "png_128": "NN_12_governor_secretary_128.png",
+  "raw768": "_raw/12_governor_secretary.png"
+ },
+ "圓環旁的路牌檢查員": {
+  "png_x8": "NN_13_signpost_inspector.png",
+  "png_128": "NN_13_signpost_inspector_128.png",
+  "raw768": "_raw/13_signpost_inspector.png"
+ },
+ "檔案室管理員": {
+  "png_x8": "NN_14_archivist.png",
+  "png_128": "NN_14_archivist_128.png",
+  "raw768": "_raw/14_archivist.png"
+ },
+ "看守校舍的老工友": {
+  "png_x8": "NN_15_school_janitor.png",
+  "png_128": "NN_15_school_janitor_128.png",
+  "raw768": "_raw/15_school_janitor.png"
+ },
+ "電梯學徒（時安局編外）": {
+  "png_x8": "NN_16_elevator_apprentice.png",
+  "png_128": "NN_16_elevator_apprentice_128.png",
+  "raw768": "_raw/16_elevator_apprentice_r1.png"
+ },
+ "三郊的老帳房": {
+  "png_x8": "NN_17_old_accountant.png",
+  "png_128": "NN_17_old_accountant_128.png",
+  "raw768": "_raw/17_old_accountant.png"
+ },
+ "搬廟那年的木匠學徒": {
+  "png_x8": "NN_18_carpenter_apprentice.png",
+  "png_128": "NN_18_carpenter_apprentice_128.png",
+  "raw768": "_raw/18_carpenter_apprentice.png"
+ },
+ "夜間守門人": {
+  "png_x8": "NN_19_night_gatekeeper.png",
+  "png_128": "NN_19_night_gatekeeper_128.png",
+  "raw768": "_raw/19_night_gatekeeper.png"
+ },
+ "老圖書館員": {
+  "png_x8": "NN_20_old_librarian.png",
+  "png_128": "NN_20_old_librarian_128.png",
+  "raw768": "_raw/20_old_librarian.png"
+ }
+}

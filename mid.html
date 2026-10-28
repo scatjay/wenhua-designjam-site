@@ -7,6 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <style>
 :root{
@@ -82,6 +83,10 @@ th{background:var(--panel2)}
 .fab{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:50;box-shadow:var(--shadow)}
 .dlg{position:fixed;inset:0;background:rgba(30,20,40,.45);z-index:80;display:flex;align-items:center;justify-content:center;padding:16px}
 .dlg .in{background:#fff;border-radius:16px;max-width:520px;width:100%;padding:18px;max-height:90vh;overflow:auto}
+.qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qrbox .t{font-weight:800;font-size:15px}
+.qrbox #qrcanvas{background:#fff;padding:8px;border-radius:12px;line-height:0;border:1px solid var(--line);width:216px;height:216px;box-sizing:border-box;overflow:hidden}
+.qrbox #qrcanvas svg{display:block;margin:0 auto;width:200px;height:200px}
 .who{font-size:14px;color:var(--ink-soft);margin:6px 0}
 .skgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
 .skcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
@@ -113,6 +118,11 @@ th{background:var(--panel2)}
 
 <div class="jumprow">
   <a href="#when">時程與期限</a><a href="#lines">三個要對上的東西</a><a href="#u1">單元 1</a><a href="#u2">單元 2</a><a href="#u3">單元 3</a><a href="#u4">單元 4</a><a href="#ach">我的成就</a><a href="#advice">預掃建議</a><a href="#coach">AI 助教</a><a href="#rubric">怎麼評分</a><a href="#common">常見狀況</a>
+</div>
+
+<div class="box qrbox">
+  <div class="t">手機掃這裡打開這一頁</div>
+  <div id="qrcanvas"></div>
 </div>
 
 <section id="when">
@@ -229,6 +239,21 @@ firebase.initializeApp({
   databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId:"gen-lang-client-0929530380"
 });
+</script>
+<script>
+(function renderQR(){
+  var SITE="https://scatjay.github.io/wenhua-designjam-site/mid.html";
+  var holder=document.getElementById("qrcanvas");
+  if(!holder) return;
+  try{
+    var qr=qrcode(0,"M"); qr.addData(SITE); qr.make();
+    holder.innerHTML=qr.createSvgTag({cellSize:4,margin:2});
+  }catch(e){
+    holder.innerHTML="";
+    var b=holder.closest(".qrbox"); if(b) b.style.display="none";
+    console.warn("QR 載入失敗（不影響其他功能）：",e);
+  }
+})();
 </script>
 <script>window.DJ_BIND_UNIT='mid';</script>
 <script src="js/gate_i18n.js?v=202609290955"></script>

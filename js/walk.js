@@ -152,6 +152,7 @@
   function buildQR() {
     var box = $('qr-box'); if (!box || !window.qrcode) return;
     var url = location.origin + location.pathname;
+    if (window.WalkMorph) WalkMorph.mount($('morph'), url, effectiveStyle() === 'night');
     try { var q = qrcode(0, 'M'); q.addData(url); q.make(); box.innerHTML = q.createImgTag(6, 2); var im = box.querySelector('img'); if (im) { im.style.width = '200px'; im.style.height = '200px'; im.style.imageRendering = 'pixelated'; im.alt = '掃這個進入走讀頁'; } $('qr-url').textContent = url; } catch (e) { box.textContent = ''; }
   }
   function loginErr(e) { $('login-msg').textContent = '登入沒完成（' + ((e && e.code) || 'unknown') + '）。可以換瀏覽器或重試一次。'; }

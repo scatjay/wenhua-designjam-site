@@ -201,7 +201,7 @@
       var rec = { env: v, unit: 'walk', uid: uid, email: em || null, name: (cu && cu.displayName) || null, ts: firebase.database.ServerValue.TIMESTAMP };
       var jobs = [];
       if (!ei || !ei.uid) { jobs.push(db.ref(BIND + '/envIndex/' + v).update(rec)); jobs.push(db.ref(BIND + '/identity/' + uid).update(rec)); }
-      return Promise.all(jobs).then(function () { return ROOT.child('claim/' + uid).set(String(v)); }).then(function () { envNo = v; log('claim', '', String(v)); afterVerified(); });
+      return Promise.all(jobs).then(function () { return ROOT.child('claim/' + uid).set(String(v)); }).then(function () { return ROOT.child('players/' + uid + '/env').set(v); }).then(function () { envNo = v; log('claim', '', String(v)); afterVerified(); });
     }).catch(function () { bad('編號和帳號對不起來，進不去。請確認信封號碼；還是不行請按下面的「回報」。'); });
   }
 

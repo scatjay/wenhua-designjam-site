@@ -30,7 +30,7 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 <div id="gate"><h2>走讀 · 帶隊總覽</h2><div class="sub">只有老師能看。</div><p><button id="btn-g">用 Google 帳號登入</button></p><div class="sub" id="gmsg"></div></div>
 <div id="dash" hidden>
 <header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge">整併過小的隊</button><button id="b-clear">清除所有位置</button><button id="b-phase">階段：<span id="pl">—</span></button><button id="b-test">切換：<span id="tl">正式</span></button></header>
-<div class="wrap"><div><div id="map"></div></div><div><div class="card"><b>隊伍</b><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><b>📷 照片牆</b> <span class="sub" id="phn"></span><div id="phw" class="pw"></div></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
+<div class="wrap"><div><div id="map"></div></div><div><div class="card"><b>隊伍</b><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card"><b>📷 照片牆</b> <span class="sub" id="phn"></span><div id="phw" class="pw"></div></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
@@ -81,6 +81,24 @@ function start(){
   try{var u=location.origin+location.pathname.replace('walk_teacher.html','walk.html');var q=qrcode(0,'M');q.addData(u);q.make();$('qr').innerHTML=q.createImgTag(5,2);var im=$('qr').querySelector('img');if(im){im.style.width='180px';im.style.height='180px';im.style.imageRendering='pixelated'}$('qru').textContent=u}catch(e){}
   setInterval(render,15000);
 }
+var BIND='whgm/analysis/w3game';
+function renderCl(){
+  var us=Object.keys(claims).sort(function(a,b){return (+claims[a])-(+claims[b])});$('cln').textContent=us.length+' 人';
+  $('clt').innerHTML='<tr><th>編號</th><th>暱稱</th><th>隊</th><th></th></tr>'+us.map(function(u){var pl=players[u]||{},t=teams[pl.team]||{};
+    return '<tr><td>#'+esc(claims[u])+'</td><td>'+esc(pl.nick||'—')+'</td><td>'+esc(t.kind==='room'?'房 '+t.code:(t.name||'—'))+'</td><td><button id="ub'+u+'" data-ub="'+u+'">解除</button></td></tr>'}).join('');
+  [].forEach.call(document.querySelectorAll('[data-ub]'),function(b){b.onclick=function(){var u=b.dataset.ub;if(!confirmTwice('ub'+u,'再按一次確認'))return;unbind(u)}});
+}
+function unbind(u){
+  var env=claims[u];
+  Promise.all([db.ref(BIND+'/identity/'+u).once('value'),db.ref(BIND+'/envIndex/'+env).once('value')]).then(function(r){
+    var ups={};ups[(TEST?'whgm/analysis/walk1114test':'stwalk1114')+'/claim/'+u]=null;
+    /* 只清「走讀自己建立的」綁定；其他學習單建立的綁定不動（要改請在那邊處理） */
+    if(r[0].val()&&r[0].val().unit==='walk')ups[BIND+'/identity/'+u]=null;
+    if(r[1].val()&&r[1].val().unit==='walk'&&r[1].val().uid===u)ups[BIND+'/envIndex/'+env]=null;
+    var keepNote=(r[0].val()&&r[0].val().unit!=='walk')?'（這個帳號的綁定是別的學習單建的，沒有動；他重新輸入時只能輸入原本綁定的那個編號）':'';
+    return db.ref().update(ups).then(function(){$('stat').textContent='已解除 #'+env+keepNote})
+  }).catch(function(e){$('stat').textContent='解除失敗：'+e.message});
+}
 function renderPh(){
   var ids=Object.keys(PH).sort(function(a,b){return PH[b].t-PH[a].t});$('phn').textContent=ids.length+' 張（最新 60）';
   $('phw').innerHTML=ids.map(function(id){var p=PH[id],tn=(teams[p.tid]||{}),nm=tn.kind==='room'?'房 '+tn.code:(tn.name||'');var st=(S.filter(function(x){return x.id===p.stop})[0]||{}).name||p.stop||'';
@@ -104,6 +122,7 @@ function render(){
     if(on<m.length)al.push((t.name||'房 '+t.code)+' 有 '+(m.length-on)+' 人離線或沒開定位');
     h+='<tr><td>'+esc(t.kind==='room'?'房 '+t.code:t.name)+'</td><td>'+m.length+'</td><td>'+fr+'/4</td><td>'+((board[id]||{}).score||0)+'</td><td class="'+(on===m.length?'ok':'warn')+'">'+on+'/'+m.length+'</td></tr>'});
   $('tbl').innerHTML=h;$('alerts').innerHTML=al.length?al.map(esc).join('<br>'):'沒有。';
+  renderCl();
   $('stat').textContent=ids.length+' 隊・'+total+' 人・在線 '+online;
   var pc=Object.keys(players).length,withTeam=Object.keys(players).filter(function(u){return players[u].team}).length,full=Object.keys(reh).filter(function(u){return Object.keys(reh[u]||{}).length>=5}).length;
   var sizes={};ids.forEach(function(id){var n=Object.keys(teams[id].members||{}).length;sizes[n]=(sizes[n]||0)+1});

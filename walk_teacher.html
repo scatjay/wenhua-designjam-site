@@ -15,7 +15,7 @@ header b{font-size:16px}.sub{font-size:12px;color:var(--mute)}
 button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 12px;cursor:pointer}
 .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px;padding:12px}
 @media (max-width:900px){.wrap{grid-template-columns:1fr}}
-#map{height:520px;border-radius:10px;border:1px solid var(--line)}
+#map{height:520px;max-height:70vh;border-radius:10px;border:1px solid var(--line)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
 table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
 .ok{color:var(--ok);font-weight:700}.warn{color:var(--warn);font-weight:700}
@@ -24,14 +24,14 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 .pw{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}.pw figure{margin:0;font-size:11px}.pw img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:zoom-in;display:block}.pw .x{float:right;cursor:pointer;color:var(--warn)}
 #pbig{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff}#pbig img{max-width:96vw;max-height:84vh}
 .dot{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;text-align:center;line-height:22px;font-size:12px;font-weight:700;border:2px solid #fff}
-</style>
+.pdot{display:block;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);margin:0 auto 2px}.mate{text-align:center}.mate b{display:inline-block;font-size:11px;background:#fff;border:1.5px solid #333;border-radius:99px;padding:0 6px;white-space:nowrap}.dot{width:18px;height:18px;border-radius:50%;background:#b8402a;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff}</style>
 </head>
 <body>
 <div id="gate"><h2>走讀 · 帶隊總覽</h2><div class="sub">只有老師能看。</div><p><button id="btn-g">用 Google 帳號登入</button></p><div class="sub" id="gmsg"></div></div>
 <div id="dash" hidden>
 <header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge" title="把只有 1～2 人的小隊併進較大的隊，讓大家有隊友。會改動隊伍，按兩次才會執行。">🤝 整併小隊</button><button id="b-clear" title="清掉地圖上所有人的舊定位點（不影響分數與進度）。畫面上有人已經離開卻還留著點時用。">🧹 清掉定位點</button><button id="b-adv" title="進階：階段切換（上課中請勿按）">⚙ 進階</button><button id="b-phase" hidden style="border-color:#c0392b;color:#c0392b">階段：<span id="pl">—</span></button><button id="b-test" hidden>切換：<span id="tl">正式</span></button><button id="b-out" title="登出老師帳號">🚪 登出</button></header>
 <div class="sub" style="padding:6px 14px;background:var(--panel2,#f3f3f3)">🤝 整併小隊＝把 1～2 人的隊併起來　🧹 清掉定位點＝移除地圖舊點（不影響分數）　⚙ 進階＝階段與測試切換，<b>上課中請勿按</b>　下方各卡片標題旁有一行說明。</div>
-<div class="wrap"><div><div id="map"></div></div><div><div class="card"><b>隊伍</b><div class="sub">每隊一列：路線（夜間／白天／台文館）、人數、碎片（到手數／總數）、分數、最近到的一站、在線人數／全隊人數。</div><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div class="sub">已登入多少人、分到隊的人數、教學關六項都完成的人數，以及隊伍人數分佈。</div><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div class="sub">投影或貼給學生掃，會開到遊戲首頁。</div><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card"><b>📷 照片牆</b> <span class="sub" id="phn"></span><div class="sub">學生拍的照片即時出現。發現不適當的照片，按照片下方的「刪除」（要按兩次）。</div><div id="phw" class="pw"></div></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
+<div class="wrap"><div><button id="b-map" style="margin-bottom:6px">▾ 收合地圖</button><div id="map"></div></div><div><div class="card"><b>隊伍</b><div class="sub">每隊一列：路線（夜間／白天／台文館）、人數、碎片（到手數／總數）、分數、最近到的一站、在線人數／全隊人數。</div><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div class="sub">已登入多少人、分到隊的人數、教學關六項都完成的人數，以及隊伍人數分佈。</div><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div class="sub">投影或貼給學生掃，會開到遊戲首頁。</div><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card"><b>📷 照片牆</b> <span class="sub" id="phn"></span><div class="sub">學生拍的照片即時出現。發現不適當的照片，按照片下方的「刪除」（要按兩次）。</div><div id="phw" class="pw"></div></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
@@ -44,8 +44,9 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 'use strict';
 var S=window.WALK_ROUTE.stops, TEACHERS=['scatjay@gmail.com','yib@stust.edu.tw'];
 var progr={},boardr={};
-var ALLS=(window.WALK_ROUTE.campusW?window.WALK_ROUTE.campusW.stops:[]).concat(window.WALK_ROUTE.campus?window.WALK_ROUTE.campus.stops:[]).concat(S);
+var ALLS=(window.WALK_ROUTE.campusW?window.WALK_ROUTE.campusW.stops:[]).concat(window.WALK_ROUTE.campus?window.WALK_ROUTE.campus.stops:[]);
 var NM_A=['夜班','月光','提燈','蓋章','守夜','迷路','飄飄','八億','審查','鐘樓','牌樓','涼亭'],NM_B=['小隊','偵探團','巡守隊','探險隊','審查組','幽靈團','蓋章組','守衛隊'];
+function pcolor(id){var C=['#c0392b','#1e7a4c','#2f5fb3','#8a3fb0','#b35a00','#00727a','#a0276a','#4a5d1a','#5b3fc0','#0a6e9e'],h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return C[h%C.length]}
 function storyName(id){var h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return NM_A[h%NM_A.length]+NM_B[Math.floor(h/13)%NM_B.length]}
 function label(t,id){return t&&t.kind==='room'?'房 '+t.code:storyName(id)}
 function sc(id){return Math.max((board[id]||{}).score||0,(boardr[id]||{}).score||0)}
@@ -61,6 +62,7 @@ firebase.initializeApp({apiKey:'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng',authDom
 var db=firebase.database(),auth=firebase.auth(),ROOT=db.ref(TEST?'whgm/analysis/walk1114test':'stwalk1114'),claims={};
 var teams={},pos={},prog={},board={},map,markers={},players={},reh={},phase=null,fbs={};
 $('tl').textContent=TEST?'測試':'正式';
+$('b-map').onclick=function(){var m=$('map'),hid=m.style.display==='none';m.style.display=hid?'':'none';$('b-map').textContent=hid?'▾ 收合地圖':'▸ 展開地圖';if(hid&&map)setTimeout(function(){map.invalidateSize()},50)};
 $('b-adv').onclick=function(){var h=!$('b-phase').hidden;$('b-phase').hidden=h;$('b-test').hidden=h;$('b-adv').textContent=h?'⚙ 進階':'⚙ 收起（小心，這些會影響所有學生）'};
 $('b-phase').onclick=function(){var cur=phase||((Date.now()<Date.parse(window.WALK_ROUTE.liveStart))?'rehearsal':'live');if(confirmTwice('b-phase','切換為'+(cur==='rehearsal'?'正式':'練習日')+'（再按一次確認）'))ROOT.child('cfg/phase').set(cur==='rehearsal'?'live':'rehearsal')};
 $('b-out').onclick=function(){if(confirmTwice('b-out','再按一次登出'))auth.signOut().then(function(){location.reload()})};
@@ -80,7 +82,7 @@ $('btn-g').onclick=function(){if(inApp)return;var p=new firebase.auth.GoogleAuth
 function start(){
   map=L.map('map').setView([ALLS[0].lat,ALLS[0].lon],16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-  ALLS.forEach(function(s,i){L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+i+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(map);L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,fillOpacity:.04}).addTo(map)});
+  ALLS.forEach(function(s,i){L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+i+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(map);L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,opacity:.35,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(map)});
   ROOT.child('teams').on('value',function(s){teams=s.val()||{};render()});
   ROOT.child('pos').on('value',function(s){pos=s.val()||{};render()});
   ROOT.child('prog').on('value',function(s){prog=s.val()||{};render()});
@@ -149,7 +151,7 @@ function render(){
   if(!map)return;
   Object.keys(markers).forEach(function(k){map.removeLayer(markers[k]);delete markers[k]});
   ids.forEach(function(id){Object.keys(pos[id]||{}).forEach(function(u){var p=pos[id][u];if(!fresh(p))return;
-    markers[id+u]=L.marker([p.lat,p.lon],{icon:L.divIcon({className:'',html:'<div class="mate">'+esc(p.ava||'🙂')+'<b>'+esc(p.nick||'')+'</b></div>',iconSize:[44,32],iconAnchor:[22,16]})}).addTo(map)})});
+    markers[id+u]=L.marker([p.lat,p.lon],{icon:L.divIcon({className:'',html:'<div class="mate"><span class="pdot" style="background:'+pcolor(u)+'"></span><b>'+esc(p.nick||'')+'</b></div>',iconSize:[44,32],iconAnchor:[22,16]})}).addTo(map)})});
 }
 $('b-clear').onclick=function(){if(confirmTwice('b-clear','清除所有位置（再按一次確認）'))ROOT.child('pos').remove()};
 $('b-merge').onclick=function(){

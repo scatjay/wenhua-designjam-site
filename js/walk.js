@@ -185,7 +185,7 @@
   function startUser(u) {
     uid = u; $('screen-login').hidden = true;
     var cu = auth.currentUser, em = ((cu && cu.email) || '').toLowerCase();
-    isTeacher = !TEST && !!cu && cu.emailVerified !== false && TEACHERS.indexOf(em) >= 0;
+    isTeacher = !TEST && qs.get('asstudent') !== '1' && !!cu && cu.emailVerified !== false && TEACHERS.indexOf(em) >= 0;   /* ?asstudent=1：老師帳號預覽學生流程（會出現輸入信封編號的畫面） */
     if (TEST && qs.get('env')) envNo = parseInt(qs.get('env'), 10);
     if (TEST || isTeacher) { afterVerified(); return; }
     ROOT.child('claim/' + uid).once('value').then(function (s) {

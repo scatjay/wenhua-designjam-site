@@ -84,8 +84,9 @@ function start(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
   /* 關卡分章節：每章一個圖層，可單獨顯示或關閉 */
   var CW=window.WALK_ROUTE.campusW,CC=window.WALK_ROUTE.campus,CH=[];
-  if(CW){CH.push({k:'c1',name:'夜間・第 1 章：夜班審查單',stops:CW.stops.filter(function(x){return x.id!=='ws'}),on:true});
-         var w2=CW.stops.filter(function(x){return x.id==='ws'});if(w2.length)CH.push({k:'c2',name:'夜間・第 2 章：三連堂與銅像（選修）',stops:w2,on:true});}
+  if(CW){CH.push({k:'c1',name:'夜間・第 1 章：夜班審查單',stops:CW.stops.filter(function(x){return x.id!=='ws'&&!x.chapter}),on:true});
+         var w2=CW.stops.filter(function(x){return x.id==='ws'});if(w2.length)CH.push({k:'c2',name:'夜間・第 2 章：三連堂與銅像（選修）',stops:w2,on:true});
+    [[3,'通識的最後一格（圖書館、優活館）'],[4,'水力加工坊'],[5,'天圓地方']].forEach(function(g){var st=CW.stops.filter(function(x){return x.chapter===g[0]});if(st.length)CH.push({k:'ch'+g[0],name:'夜間・第 '+g[0]+' 章：'+g[1],stops:st,on:true})});}
   if(CC)CH.push({k:'c0',name:'白天・校內導覽（E 棟出發）',stops:CC.stops,on:false});
   var PAL=['#d9534f','#2f6690','#2e8b57','#c08a1e','#8e44ad','#d35400','#16a085','#7f8c8d','#c2185b','#5d4037'];
   CH.forEach(function(c,ci){c.col=PAL[ci%PAL.length];c.lg=L.layerGroup();c.stops.forEach(function(s,i){

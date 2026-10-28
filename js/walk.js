@@ -147,8 +147,11 @@
     firebase.initializeApp({ apiKey: 'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng', authDomain: 'gen-lang-client-0929530380.firebaseapp.com', databaseURL: 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', projectId: 'gen-lang-client-0929530380' });
     db = firebase.database(); auth = firebase.auth();
     ROOT = db.ref(TEST ? 'whgm/analysis/walk1114test' : 'stwalk1114');   /* 正式資料在專用區塊 stwalk1114（要登入且登記過信封編號）；測試模式用開放的測試節點 */
-    buildOnboarding(); applyStyle(); buildQR();
+    try { buildOnboarding(); } catch (e) { errBuf.push('buildOnboarding ' + e.message); }
+    try { applyStyle(); } catch (e) { errBuf.push('applyStyle ' + e.message); }
+    try { buildQR(); } catch (e) { errBuf.push('buildQR ' + e.message); }   /* 動畫出錯也不能擋住登入鈕 */
     $('btn-google').onclick = googleLogin;
+    if (inAppBrowser()) $('login-msg').innerHTML = '⚠️ 你現在是在 LINE／臉書／Instagram 這類 App 裡面開的，Google 不允許在這裡登入。請點右上角「⋯」→「用瀏覽器開啟」，改用 Chrome 或 Safari。';
     if (TEST) { $('btn-test').hidden = false; $('btn-test').onclick = function () { startUser(qs.get('uid') || ('dev-' + Math.random().toString(36).slice(2, 8))); }; if (qs.get('uid')) startUser(qs.get('uid')); }
     auth.getRedirectResult().catch(loginErr);
     auth.onAuthStateChanged(function (u) { if (u && !uid) startUser(u.uid); });
@@ -165,8 +168,10 @@
     }
     if (!ok3d && window.WalkMorph) WalkMorph.mount($('morph'), url, night);
   }
-  function loginErr(e) { $('login-msg').textContent = '登入沒完成（' + ((e && e.code) || 'unknown') + '）。可以換瀏覽器或重試一次。'; }
+  function loginErr(e) { $('login-msg').textContent = '登入沒完成（' + ((e && e.code) || (e && e.message) || 'unknown') + '）。可以換瀏覽器（Chrome／Safari）或重試一次；還是不行請按下面的回報。'; }
+  function inAppBrowser() { return /Line\/|FBAN|FBAV|FB_IAB|Instagram|MicroMessenger|; wv\)|GSA\//i.test(navigator.userAgent); }
   function googleLogin() {
+    if (inAppBrowser()) { $('login-msg').innerHTML = '⚠️ 這個 App 內建的瀏覽器不能用 Google 登入。請點右上角「⋯」→「用瀏覽器開啟」，改用 Chrome 或 Safari 再試。'; return; }
     var p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
     var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
     $('login-msg').textContent = mobile ? '轉到 Google 登入頁…登入完會自動回來。' : '開啟 Google 登入視窗…';

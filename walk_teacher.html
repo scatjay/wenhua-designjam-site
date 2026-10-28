@@ -59,8 +59,10 @@ function accept(u){
 }
 auth.getRedirectResult().then(function(r){if(r&&r.user)accept(r.user)}).catch(function(e){$('gmsg').textContent='登入沒完成（'+((e&&e.code)||'unknown')+'）'});
 auth.onAuthStateChanged(function(u){if(u&&$('dash').hidden)accept(u)});
-$('btn-g').onclick=function(){var p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
-  if(/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)){auth.signInWithRedirect(p);return}
+var inApp=/Line\/|FBAN|FBAV|FB_IAB|Instagram|MicroMessenger|; wv\)|GSA\//i.test(navigator.userAgent);
+if(inApp)$('gmsg').textContent='⚠️ 這個 App 內建的瀏覽器不能用 Google 登入。請點右上角「⋯」→「用瀏覽器開啟」，改用 Chrome 或 Safari。';
+$('btn-g').onclick=function(){if(inApp)return;var p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+  if(/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)){auth.signInWithRedirect(p).catch(function(e){$('gmsg').textContent='登入沒完成（'+(e.code||e.message)+'）'});return}
   auth.signInWithPopup(p).catch(function(e){if(/popup/.test(e.code||''))auth.signInWithRedirect(p);else $('gmsg').textContent='登入沒完成（'+e.code+'）'})};
 function start(){
   map=L.map('map').setView([S[0].lat,S[0].lon],16);

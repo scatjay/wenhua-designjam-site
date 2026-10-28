@@ -525,7 +525,7 @@
     S.forEach(function (s) {
       var p = prog[s.id] || {}; if (p.arrived) sc += P.arrive;
       (s.tasks || []).forEach(function (t) { if (p.tasks && p.tasks[t.id]) sc += (t.bonus ? P.bonus : P.task) + roleTaskBonus(t); });
-      if (p.frag) sc += P.frag; if (p.secret) sc += 15 + 10 * rlvA('偵查員'); sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
+      if (p.frag) sc += P.frag + speedBonus(p.frag && p.frag.t); if (p.secret) sc += 15 + 10 * rlvA('偵查員'); sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
     });
     if (hasGear('kit') && hn > 0) sc -= hintPenalty(P);
     if (prog.final && prog.final.done) sc += P.final + (rlvA('記錄官') >= 3 ? 10 : 0);
@@ -533,9 +533,9 @@
   }
   function fragCount() { var n = 0; S.forEach(function (s) { if (s.frag !== undefined && prog[s.id] && prog[s.id].frag) n++; }); return n; }
   function writeScore() {
-    if (!team) return; var sc = scoreOf(), key = sc + '|' + fragCount() + '|' + team.n;
+    if (!team) return; var sc = scoreOf(), key = sc + '|' + fragCount() + '|' + team.n + '|' + modeOf() + '|' + (hqState().pk || '');
     if (key === lastScoreWritten) return; lastScoreWritten = key;
-    ROOT.child((REH ? 'boardr/' : 'board/') + teamId).set({ name: teamLabel(), score: sc, frags: fragCount(), n: Object.keys(team.members || {}).length, t: nowMs() });
+    ROOT.child((REH ? 'boardr/' : 'board/') + teamId).update({ name: teamLabel(), score: sc, frags: fragCount(), n: Object.keys(team.members || {}).length, t: nowMs(), pk: (modeOf() === 'pk' && hqState().pk) || null, mode: modeOf() });
   }
   /* 隊名：不用系名，依隊伍代號固定產生和故事有關的名字（每個人看到的一樣） */
   var NM_A = ['夜班', '月光', '提燈', '蓋章', '守夜', '迷路', '飄飄', '八億', '審查', '鐘樓', '牌樓', '涼亭'], NM_B = ['小隊', '偵探團', '巡守隊', '探險隊', '審查組', '幽靈團', '蓋章組', '守衛隊'];
@@ -704,7 +704,7 @@
   }
   function renderHq() {
     var el = $('pane-hq'); if (!el) return; hqNew = false; hqBadge();
-    var h = '<div class="card"><h2>🏢 任務簡報室</h2>' + briefingHtml() + '</div>' + roleCard() + growHtml() + shopHtml();
+    var h = '<div class="card"><h2>🏢 任務簡報室</h2>' + briefingHtml() + '</div>' + modeHtml() + roleCard() + growHtml() + shopHtml();
     h += '<button class="btn" id="hq-go">✔ 我準備好了，出發！</button>';
     el.innerHTML = h;
     [].forEach.call(el.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
@@ -718,9 +718,41 @@
     });
     [].forEach.call(el.querySelectorAll('[data-grow]'), function (b) { b.onclick = function () { var r = b.dataset.grow, lv = rlv(r); if (lv >= 3) return; hqBuy('grow', r, GROW_COST[lv], function (c) { c.rlv = c.rlv || {}; if ((c.rlv[r] || 0) !== lv) return false; c.rlv[r] = lv + 1; }, r + ' 升到 ' + (lv + 1) + ' 級'); }; });
     [].forEach.call(el.querySelectorAll('[data-skin]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/_hq/skin/' + uid).set(b.dataset.skin || null); log('skin', '', b.dataset.skin || 'default'); }; });
+    bindModes(el);
     var go = $('hq-go'); if (go) go.onclick = function () { setView('map'); };
   }
   function hqBadge() { var b = document.querySelector('#nav button[data-v="hq"]'); if (b) b.textContent = hqNew ? '🏢 簡報室 🆕' : '🏢 簡報室'; }
+  /* ================= 遊戲模式：自在悠閒、計時賽、兩隊 PK ================= */
+  function modeOf() { return hqState().mode || 'relax'; }
+  function timerState() { var t = hqState().timer; return (modeOf() === 'timed' && t && t.start) ? { start: t.start, total: t.total || 90, end: t.start + (t.total || 90) * 60000 } : null; }
+  function timeLeftMin() { var t = timerState(); return t ? Math.max(0, Math.ceil((t.end - nowMs()) / 60000)) : null; }
+  function speedBonus(fragT) { var t = timerState(); if (!t || !fragT) return 0; var rem = (t.end - fragT) / 60000; return rem > 0 ? Math.min(40, Math.floor(rem / 2)) : 0; }
+  function pkInfo() {
+    var mine = hqState().pk; if (modeOf() !== 'pk' || !mine) return null; var o = board && board[mine];
+    return { id: mine, name: (o && o.name) || '對手', mutual: !!(o && o.pk === teamId), their: o ? (o.score || 0) : 0, theirFrags: o ? (o.frags || 0) : 0 };
+  }
+  function modeHtml() {
+    var m = modeOf(), cap = myRole() === '隊長', h = '<div class="card"><h2>🎮 這一趟怎麼玩</h2><div class="sub">' + (cap ? '隊長決定模式；' : '只有隊長可以改模式；') + '隨時可以換。</div>';
+    h += '<div class="rolerow' + (m === 'relax' ? ' mine' : '') + '"><div class="rr1"><b>🌿 自在悠閒</b>' + (m === 'relax' ? ' <span class="tag">目前</span>' : '') + '</div><div class="sub">不計時、不比速度。慢慢逛、拍照、跟 NPC 聊。適合第一次走或想好好看建築的人。</div>' + (m === 'relax' || !cap ? '' : '<button class="btn2" data-mode="relax">改成自在悠閒</button>') + '</div>';
+    var tm = timerState(), left = timeLeftMin();
+    h += '<div class="rolerow' + (m === 'timed' ? ' mine' : '') + '"><div class="rr1"><b>⏱ 計時賽</b>' + (m === 'timed' ? ' <span class="tag">' + (tm ? (left > 0 ? '剩 ' + left + ' 分' : '時間到') : '尚未開始') + '</span>' : '') + '</div><div class="sub">限時完成：每取得一格碎片，依剩餘時間加速度分（剩餘每 2 分鐘 +1 分，每格最多 +40）。時間到不再加分，但遊戲照玩。</div>';
+    if (cap) h += [60, 90, 120].map(function (n) { return '<button class="btn2" data-timer="' + n + '">' + (tm && tm.total === n && m === 'timed' ? '重新開始 ' : '開始 ') + n + ' 分鐘</button>'; }).join(' ');
+    h += '</div>';
+    var pk = pkInfo(), others = Object.keys(board || {}).filter(function (k) { return k !== teamId; });
+    h += '<div class="rolerow' + (m === 'pk' ? ' mine' : '') + '"><div class="rr1"><b>⚔ 兩隊 PK</b>' + (m === 'pk' ? ' <span class="tag">' + (pk ? (pk.mutual ? '對戰中' : '等對方接受') : '選對手') + '</span>' : '') + '</div><div class="sub">跟另一隊比：同樣的路線，誰的積分高、誰先集滿碎片。雙方都按下才成立，隨時可以取消。</div>';
+    if (pk) h += '<div class="bub ' + (pk.mutual ? 'secret' : 'dim') + '">' + (pk.mutual ? '⚔ ' + esc(teamLabel()) + ' ' + scoreOf() + ' 分（碎片 ' + fragCount() + '）　對　' + esc(pk.name) + ' ' + pk.their + ' 分（碎片 ' + pk.theirFrags + '）' : '已向「' + esc(pk.name) + '」發出挑戰，等他們在簡報室按接受。') + '</div>';
+    var inc = others.filter(function (k) { return board[k] && board[k].pk === teamId && !(pk && pk.id === k); });
+    inc.forEach(function (k) { h += '<div class="bub hint">📨 「' + esc(board[k].name || k) + '」向你們下戰帖！' + (cap ? '<button class="btn2" data-pkset="' + k + '">接受挑戰</button>' : '請隊長按接受。') + '</div>'; });
+    if (cap) { h += '<div class="sub">挑戰哪一隊：</div>' + (others.length ? others.map(function (k) { return '<button class="btn2" data-pkset="' + k + '">' + esc((board[k] && board[k].name) || k) + '（' + ((board[k] && board[k].score) || 0) + ' 分）</button>'; }).join(' ') : '<div class="sub">目前沒有其他隊上線。</div>'); if (m === 'pk') h += '<button class="btn2" data-mode="relax">取消 PK</button>'; }
+    return h + '</div></div>';
+  }
+  function bindModes(el) {
+    [].forEach.call(el.querySelectorAll('[data-mode]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/_hq').update({ mode: b.dataset.mode, pk: b.dataset.mode === 'pk' ? (hqState().pk || null) : null }); log('mode', '', b.dataset.mode); }; });
+    [].forEach.call(el.querySelectorAll('[data-timer]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/_hq').update({ mode: 'timed', timer: { start: nowMs(), total: parseInt(b.dataset.timer, 10) }, pk: null }); log('mode', '', 'timed' + b.dataset.timer); toast('⏱ 開始計時 ' + b.dataset.timer + ' 分鐘！'); }; });
+    [].forEach.call(el.querySelectorAll('[data-pkset]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/_hq').update({ mode: 'pk', pk: b.dataset.pkset }); log('mode', '', 'pk'); setTimeout(writeScoreForce, 300); }; });
+  }
+  function writeScoreForce() { lastScoreWritten = ''; writeScore(); }
+  var modeTick = setInterval(function () { if (team) updateGoal(true); }, 30000);
   /* 目標列：打開遊戲就知道要做什麼、現在到哪、下一步去哪 */
   function goalText() {
     if (!team || !S || !S.length) return '';
@@ -732,8 +764,9 @@
     var d = myPos ? ' ・約 ' + Math.round(dist(myPos, nxt)) + ' 公尺' + (myRole() === '領航員' && rlvA('領航員') >= 3 ? '，往' + bearingText(nxt) : '') : '';
     var wf = farthestMate(); if (rlvA('安全官') >= 3 && wf !== null && wf > 200) d += ' ・⚠ 有隊友離你 ' + wf + ' 公尺，等一等';
     var UN = (TWR && R0.tw) ? '案件章' : '審查單';
-    if (got >= total) return '🎯 目標：' + total + ' 格都蓋滿了！回「' + nxt.name + '」交' + (UN === '案件章' ? '案件檔' : '審查單') + '，寫下最後一句。';
-    return '🎯 目標：集滿 ' + total + ' 格' + UN + '（已 ' + got + '/' + total + '）・下一站：' + nxt.name + d;
+    var mx = ''; if (modeOf() === 'timed' && timerState()) { var tl = timeLeftMin(); mx = tl > 0 ? ' ・⏱ 剩 ' + tl + ' 分' : ' ・⏱ 時間到（不再加速度分）'; } var pki = pkInfo(); if (pki && pki.mutual) mx += ' ・⚔ ' + scoreOf() + ' 對 ' + pki.their + '（' + esc(pki.name) + '）';
+    if (got >= total) return '🎯 目標：' + total + ' 格都蓋滿了！回「' + nxt.name + '」交' + (UN === '案件章' ? '案件檔' : '審查單') + '，寫下最後一句。' + mx;
+    return '🎯 目標：集滿 ' + total + ' 格' + UN + '（已 ' + got + '/' + total + '）・下一站：' + nxt.name + d + mx;
   }
   var goalT = 0;
   function updateGoal(force) {

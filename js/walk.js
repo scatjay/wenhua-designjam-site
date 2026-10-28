@@ -398,6 +398,7 @@
     if (!meMarker) { meMarker = L.marker([myPos.lat, myPos.lon], { icon: mic, zIndexOffset: 800 }).addTo(map); if (!REH) map.setView([myPos.lat, myPos.lon], 17); }
     else meMarker.setLatLng([myPos.lat, myPos.lon]).setIcon(mic);
     if (phase() === 'rehearsal') pmark('g1');
+    updateGoal();
     if (!uploadPos._last || nowMs() - uploadPos._last > 15000) uploadPos();
     checkTasks();
   }
@@ -532,6 +533,25 @@
     $('hd-team').textContent = teamLabel() + '・' + Object.keys(team.members).length + ' 人';
     $('hd-score').textContent = scoreOf() + ' 分・碎片 ' + fragCount() + '/' + totalFrags();
     if (view === 'task') renderTask(); if (view === 'team') renderTeam(); if (view === 'rank') renderRank();
+    updateGoal(true);
+  }
+  /* 目標列：打開遊戲就知道要做什麼、現在到哪、下一步去哪 */
+  function goalText() {
+    if (!team || !S || !S.length) return '';
+    if (REH && !tutorialOk()) { var left = R0.practice.filter(function (t) { return !pdone(t.id); }).length; return '🎯 目標：先完成教學關（還剩 ' + left + ' 項），再出發去蓋審查單。'; }
+    var total = totalFrags(), got = fragCount();
+    if (prog.final && prog.final.done) return '🎉 完成了！把「練習日全破」那一頁截圖交上來。';
+    var nxt = null, i; for (i = 0; i < S.length; i++) { if (S[i].frag !== undefined && !(prog[S[i].id] && prog[S[i].id].frag)) { nxt = S[i]; break; } }
+    if (!nxt) nxt = S.filter(function (x) { return x.final; })[0] || S[S.length - 1];
+    var d = myPos ? ' ・約 ' + Math.round(dist(myPos, nxt)) + ' 公尺' : '';
+    if (got >= total) return '🎯 目標：三格都蓋滿了！回「' + nxt.name + '」交審查單，寫下最後一句。';
+    return '🎯 目標：集滿 ' + total + ' 格審查單（已 ' + got + '/' + total + '）・下一站：' + nxt.name + d;
+  }
+  var goalT = 0;
+  function updateGoal(force) {
+    var g = $('goal'); if (!g) return; var n = Date.now(); if (!force && n - goalT < 4000) return; goalT = n;
+    var t = goalText(); g.textContent = t; g.style.display = t ? '' : 'none';
+    g.onclick = function () { var nx = S.filter(function (x) { return x.frag !== undefined && !(prog[x.id] && prog[x.id].frag); })[0] || S[S.length - 1]; if (nx) { curStop = nx.id; setView('task'); } };
   }
   function myRole() { return (team && team.members[uid] && team.members[uid].role) || ROLES[0]; }
   function renderTask() {
@@ -691,15 +711,27 @@
     if (r === '隊長') h += '<button class="btn2" data-call="' + s.id + '">📣 號召全隊到這一站集合</button>';
     return h + '</div>';
   }
+  /* 題型 → 負責角色。隊裡有這個角色的人，就由他作答；沒有這個角色（人不夠）就任何人都能答 */
+  var TASK_ROLE = { choice: '軍師', order: '軍師', text: '偵查員', ack: '隊長' };
+  function roleHolder(role) { var m = (team && team.members) || {}, k; for (k in m) if (m[k].role === role) return { uid: k, nick: m[k].nick }; return null; }
+  function blockedBy(t) {
+    var r = TASK_ROLE[t.type]; if (!r || t.bonus) return null;
+    var h = roleHolder(r); if (!h || h.uid === uid) return null;
+    return { role: r, nick: h.nick };
+  }
   function taskHtml(s, t) {
     var d = taskDone(s.id, t.id), h = '<div class="task' + (d ? ' done' : '') + (t.bonus ? ' bonus' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + (t.bonus ? '<span class="tag">協力加分</span> ' : '') + esc(t.title) + '</div>';
     if (!d) {
       if (t.type === 'zone') h += '<div class="sub">走到圍欄裡就會自動完成（地圖上的綠色虛線圈）。</div><button class="btn2" data-sos="' + t.id + '" data-s="' + s.id + '">🆘 找不到這裡？</button>';
       if (t.type === 'together' || t.type === 'cross') h += '<div class="sub">隊友同時到位就會自動完成，沒做到也不影響主線。</div>';
+      var bk = blockedBy(t);
+      if (bk) h += '<div class="sub">👥 這題由 ' + ROLE_ICON[bk.role] + bk.role + '「' + esc(bk.nick || '') + '」來回答。你可以在隊內訊息提供意見，或到「隊伍」頁換角色。</div>';
+      else {
       if (t.type === 'ack') h += '<button class="btn2" data-ack="' + t.id + '" data-s="' + s.id + '">我拍好了</button>';
       if (t.type === 'choice') h += '<div class="opts">' + t.options.map(function (o) { return '<button class="btn2" data-s="' + s.id + '" data-t="' + t.id + '" data-ans="' + esc(o) + '">' + esc(o) + '</button>'; }).join('') + '</div>';
       if (t.type === 'text') h += '<input id="tx-' + t.id + '" class="inp" placeholder="寫在這裡"><button class="btn2" data-text="1" data-s="' + s.id + '" data-t="' + t.id + '">送出</button>';
       if (t.type === 'order') h += orderHtml(s, t);
+      }
     }
     return h + '</div>';
   }
@@ -743,6 +775,7 @@
     var ok = fragCount() >= totalFrags(), d = prog.final && prog.final.done, h = '<div class="card"><b>' + esc(R.finalTask.title) + '</b>';
     if (d) return h + '<div class="bub done">交給時安局了：「' + esc(prog.final.text) + '」</div></div>';
     if (!ok) return h + '<div class="sub">還差 ' + (totalFrags() - fragCount()) + ' 塊碎片。</div></div>';
+    var cap = roleHolder('隊長'); if (cap && cap.uid !== uid) return h + '<div class="sub">三格都蓋滿了！最後一句話由 👑隊長「' + esc(cap.nick || '') + '」寫，大家可以在隊內訊息一起想。</div></div>';
     return h + '<textarea id="final-tx" class="inp" rows="3" placeholder="寫一句話"></textarea><button id="final-go" class="btn2">交給時安局</button></div>';
   }
   function submitFinal() {

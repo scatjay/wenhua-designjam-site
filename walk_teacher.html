@@ -31,7 +31,7 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 <div id="dash" hidden>
 <header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge" title="把只有 1～2 人的小隊併進較大的隊，讓大家有隊友。會改動隊伍，按兩次才會執行。">🤝 整併小隊</button><button id="b-clear" title="清掉地圖上所有人的舊定位點（不影響分數與進度）。畫面上有人已經離開卻還留著點時用。">🧹 清掉定位點</button><button id="b-adv" title="進階：階段切換（上課中請勿按）">⚙ 進階</button><button id="b-phase" hidden style="border-color:#c0392b;color:#c0392b">階段：<span id="pl">—</span></button><button id="b-test" hidden>切換：<span id="tl">正式</span></button><button id="b-out" title="登出老師帳號">🚪 登出</button></header>
 <div class="sub" style="padding:6px 14px;background:var(--panel2,#f3f3f3)">🤝 整併小隊＝把 1～2 人的隊併起來　🧹 清掉定位點＝移除地圖舊點（不影響分數）　⚙ 進階＝階段與測試切換，<b>上課中請勿按</b>　下方各卡片標題旁有一行說明。</div>
-<div class="wrap"><div><button id="b-map" style="margin-bottom:6px">▾ 收合地圖</button><span id="rtbtn" style="margin-left:6px"><button data-r="夜間">🌙 夜間關卡</button> <button data-r="白天">☀ 白天關卡</button> <button data-r="全部">全部</button></span><div id="map"></div><div id="rtleg" class="sub" style="margin-top:6px;line-height:1.7"></div></div><div><div class="card"><b>隊伍</b><div class="sub">每隊一列：路線（夜間／白天／台文館）、人數、碎片（到手數／總數）、分數、最近到的一站、在線人數／全隊人數。</div><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div class="sub">已登入多少人、分到隊的人數、教學關六項都完成的人數，以及隊伍人數分佈。</div><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div class="sub">投影或貼給學生掃，會開到遊戲首頁。</div><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card"><details open><summary style="cursor:pointer"><b>📷 照片牆</b> <span class="sub" id="phn"></span>（點標題收合／展開）</summary><div class="sub">學生拍的照片即時出現，依隊伍分組，每組可單獨收合。發現不適當的照片，按照片右上角「✕」（要按兩次）。</div><div id="phw"></div></details></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
+<div class="wrap"><div><button id="b-map" style="margin-bottom:6px">▾ 收合地圖</button><div id="map"></div><div id="rtleg" class="sub" style="margin-top:6px;line-height:1.7"></div></div><div><div class="card"><b>隊伍</b><div class="sub">每隊一列：路線（夜間／白天／台文館）、人數、碎片（到手數／總數）、分數、最近到的一站、在線人數／全隊人數。</div><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div class="sub">已登入多少人、分到隊的人數、教學關六項都完成的人數，以及隊伍人數分佈。</div><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div class="sub">投影或貼給學生掃，會開到遊戲首頁。</div><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><details><summary><b>信封編號登記</b> <span class="sub" id="cln"></span></summary><div class="sub">學生輸錯編號時，按「解除」，他重新登入就能再輸入一次。</div><table id="clt"></table></details></div><div class="card"><details open><summary style="cursor:pointer"><b>📷 照片牆</b> <span class="sub" id="phn"></span>（點標題收合／展開）</summary><div class="sub">學生拍的照片即時出現，依隊伍分組，每組可單獨收合。發現不適當的照片，按照片右上角「✕」（要按兩次）。</div><div id="phw"></div></details></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
@@ -82,17 +82,20 @@ $('btn-g').onclick=function(){if(inApp)return;var p=new firebase.auth.GoogleAuth
 function start(){
   map=L.map('map').setView([ALLS[0].lat,ALLS[0].lon],16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-  var RT={'夜間':window.WALK_ROUTE.campusW,'白天':window.WALK_ROUTE.campus},lg={};
-  Object.keys(RT).forEach(function(k){if(!RT[k])return;lg[k]=L.layerGroup();RT[k].stops.forEach(function(s,i){
-    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+i+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).bindTooltip(i+'・'+s.name).addTo(lg[k]);
-    L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,opacity:.35,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(lg[k])})});
-  window.showRoute=function(k){Object.keys(lg).forEach(function(n){if(n===k||k==='全部')lg[n].addTo(map);else map.removeLayer(lg[n])});
-    [].forEach.call(document.querySelectorAll('#rtbtn button'),function(b){b.style.fontWeight=b.dataset.r===k?'800':'400';b.style.borderColor=b.dataset.r===k?'#b8402a':''});
-    var leg=(k==='全部'?Object.keys(RT):[k]).filter(function(n){return RT[n]}).map(function(n){return '<b>'+n+'路線</b>：'+RT[n].stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')}).join('<br>');
-    $('rtleg').innerHTML='地圖上的數字＝<b>關卡編號</b>（該路線的第幾站，從 0 開始，滑過數字會顯示站名）。紅色虛線圈是到站範圍。<br>'+leg;
-    var r=RT[k==='全部'?'夜間':k];if(r&&map)map.setView([r.stops[0].lat,r.stops[0].lon],17)};
-  [].forEach.call(document.querySelectorAll('#rtbtn button'),function(b){b.onclick=function(){showRoute(b.dataset.r)}});
-  showRoute('夜間');
+  /* 關卡分章節：每章一個圖層，可單獨顯示或關閉 */
+  var CW=window.WALK_ROUTE.campusW,CC=window.WALK_ROUTE.campus,CH=[];
+  if(CW){CH.push({k:'c1',name:'夜間・第 1 章：夜班審查單',stops:CW.stops.filter(function(x){return x.id!=='ws'}),on:true});
+         var w2=CW.stops.filter(function(x){return x.id==='ws'});if(w2.length)CH.push({k:'c2',name:'夜間・第 2 章：三連堂與銅像（選修）',stops:w2,on:true});}
+  if(CC)CH.push({k:'c0',name:'白天・校內導覽（E 棟出發）',stops:CC.stops,on:false});
+  CH.forEach(function(c){c.lg=L.layerGroup();c.stops.forEach(function(s,i){
+    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+(c.k==='c2'?'★':i)+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).bindTooltip(c.name.split('：')[0]+'・'+i+'・'+s.name).addTo(c.lg);
+    L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,opacity:.35,dashArray:'2 6',fillOpacity:.01,interactive:false}).addTo(c.lg)})});
+  window.drawChapters=function(){
+    CH.forEach(function(c){if(c.on)c.lg.addTo(map);else map.removeLayer(c.lg)});
+    $('rtleg').innerHTML='<div style="margin-bottom:4px"><b>關卡定位點</b>（勾選要顯示的章節；地圖上的數字＝該章的關卡編號，滑過數字看站名，紅色虛線圈是到站範圍）</div>'+CH.map(function(c){return '<label style="display:block;margin:2px 0;cursor:pointer"><input type="checkbox" data-ch="'+c.k+'"'+(c.on?' checked':'')+'> <b>'+esc(c.name)+'</b>：'+c.stops.map(function(x,i){return i+'＝'+esc(x.name.replace(/（.*?）/g,''))}).join('　')+'</label>'}).join('');
+    [].forEach.call(document.querySelectorAll('#rtleg [data-ch]'),function(b){b.onchange=function(){CH.forEach(function(c){if(c.k===b.dataset.ch)c.on=b.checked});drawChapters()}})};
+  drawChapters();
+  var first=CH[0]&&CH[0].stops[0];if(first)map.setView([first.lat,first.lon],17);
   ROOT.child('teams').on('value',function(s){teams=s.val()||{};render()});
   ROOT.child('pos').on('value',function(s){pos=s.val()||{};render()});
   ROOT.child('prog').on('value',function(s){prog=s.val()||{};render()});

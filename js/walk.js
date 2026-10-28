@@ -461,12 +461,12 @@
     if (!teamId || !uid || !team) return;
     S.forEach(function (s) {
       // 到點打卡
-      if (myPos && dist(myPos, s) <= s.r && !(prog[s.id] && prog[s.id].arrived)) {
+      if (myPos && dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) && !(prog[s.id] && prog[s.id].arrived)) {
         ROOT.child(PR_(teamId) + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) toast('📍 到達：' + s.name); });
       }
       (s.tasks || []).forEach(function (t) {
         if (taskDone(s.id, t.id)) return;
-        if (t.type === 'zone' && myPos) { var z = zoneOf(s, t.zone); if (z && dist(myPos, z) <= z.r + Math.min(myPos.acc || 0, 20)) markTask(s.id, t.id); }
+        if (t.type === 'zone' && myPos) { var z = zoneOf(s, t.zone); if (z && dist(myPos, z) <= z.r + Math.min(myPos.acc || 0, 40) + 12) markTask(s.id, t.id); }
         if (t.type === 'together') {
           var n = 0; Object.keys(teamPos).forEach(function (k) { var p = teamPos[k]; if (fresh(p) && dist(p, s) <= s.r) n++; });
           if (n >= (t.min || 2)) markTask(s.id, t.id);

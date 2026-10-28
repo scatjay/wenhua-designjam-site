@@ -100,6 +100,7 @@
       });
       h += '<label class="f">指令全文 <small>（連結看不到指令時一定要貼；看得到也鼓勵貼，老師端才有東西可以看。不要放真名、學號）</small></label><textarea id="pr_' + u.key + '" style="min-height:120px"></textarea>' +
         '<div id="warn_' + u.key + '"></div>' +
+        '<div class="sub" style="margin:8px 0 0;font-size:13px">AI 預掃審核一天一輪（晚上跑），只審你當天最後一次送出的內容；今天送出，明天看得到審核結果。</div>' +
         '<div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap"><button data-send="' + u.key + '">送出單元 ' + u.n + '</button><span class="sub" style="margin:0" id="cnt_' + u.key + '"></span></div>' +
         '<div class="msg" id="msg_' + u.key + '"></div>' +
         '<div class="hist" id="hist_' + u.key + '"></div></div>';

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>走讀 · 帶隊總覽</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#f7f2e8;--fg:#262019;--mute:#6c6254;--card:#fffdf7;--line:#ddd2bd;--acc:#b8402a;--ok:#2f7d4f;--warn:#b7791f}
+@media (prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#ece4d3;--mute:#a69a85;--card:#211d16;--line:#3a3327;--acc:#e0705a;--ok:#6fc08c;--warn:#e0b04a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 system-ui,"Noto Sans TC",sans-serif}
+[hidden]{display:none!important}
+header{padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header b{font-size:16px}.sub{font-size:12px;color:var(--mute)}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 12px;cursor:pointer}
+.wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px;padding:12px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}}
+#map{height:520px;border-radius:10px;border:1px solid var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+.ok{color:var(--ok);font-weight:700}.warn{color:var(--warn);font-weight:700}
+#gate{max-width:420px;margin:60px auto;padding:0 16px}#gate button{width:100%;padding:12px;background:var(--acc);color:#fff;border:0;font-weight:700}
+.mate{font-size:18px;text-align:center}.mate b{display:block;font-size:10px;background:var(--card);border-radius:6px;padding:0 3px}
+.dot{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;text-align:center;line-height:22px;font-size:12px;font-weight:700;border:2px solid #fff}
+</style>
+</head>
+<body>
+<div id="gate"><h2>走讀 · 帶隊總覽</h2><div class="sub">只有老師能看。</div><p><button id="btn-g">用 Google 帳號登入</button></p><div class="sub" id="gmsg"></div></div>
+<div id="dash" hidden>
+<header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge">整併過小的隊</button><button id="b-clear">清除所有位置</button><button id="b-test">切換：<span id="tl">正式</span></button></header>
+<div class="wrap"><div><div id="map"></div></div><div><div class="card"><b>隊伍</b><table id="tbl"></table></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
+<script src="js/walk_route.js?v=202610281330"></script>
+<script>
+(function(){
+'use strict';
+var S=window.WALK_ROUTE.stops, TEACHERS=['scatjay@gmail.com','yib@stust.edu.tw'];
+var qs=new URLSearchParams(location.search), TEST=qs.get('test')==='1';
+var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+firebase.initializeApp({apiKey:'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng',authDomain:'gen-lang-client-0929530380.firebaseapp.com',databaseURL:'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app',projectId:'gen-lang-client-0929530380'});
+var db=firebase.database(),auth=firebase.auth(),ROOT=db.ref('whgm/analysis/'+(TEST?'walk1114test':'walk1114'));
+var teams={},pos={},prog={},board={},map,markers={};
+$('tl').textContent=TEST?'測試':'正式';
+$('b-test').onclick=function(){location.search=TEST?'':'?test=1'};
+function accept(u){
+  var em=(u.email||'').toLowerCase();
+  if(TEACHERS.indexOf(em)<0){$('gmsg').textContent='這個帳號（'+em+'）不在老師名單裡。';auth.signOut();return}
+  $('gate').hidden=true;$('dash').hidden=false;start();
+}
+auth.getRedirectResult().then(function(r){if(r&&r.user)accept(r.user)}).catch(function(e){$('gmsg').textContent='登入沒完成（'+((e&&e.code)||'unknown')+'）'});
+auth.onAuthStateChanged(function(u){if(u&&$('dash').hidden)accept(u)});
+$('btn-g').onclick=function(){var p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+  if(/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)){auth.signInWithRedirect(p);return}
+  auth.signInWithPopup(p).catch(function(e){if(/popup/.test(e.code||''))auth.signInWithRedirect(p);else $('gmsg').textContent='登入沒完成（'+e.code+'）'})};
+function start(){
+  map=L.map('map').setView([S[0].lat,S[0].lon],16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+  S.forEach(function(s,i){L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',html:'<div class="dot">'+i+'</div>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(map);L.circle([s.lat,s.lon],{radius:s.r,color:'#b8402a',weight:1,fillOpacity:.04}).addTo(map)});
+  ROOT.child('teams').on('value',function(s){teams=s.val()||{};render()});
+  ROOT.child('pos').on('value',function(s){pos=s.val()||{};render()});
+  ROOT.child('prog').on('value',function(s){prog=s.val()||{};render()});
+  ROOT.child('board').on('value',function(s){board=s.val()||{};render()});
+  setInterval(render,15000);
+}
+function fresh(p){return p&&Date.now()-p.t<120000}
+function render(){
+  var ids=Object.keys(teams),total=0,online=0,al=[],h='<tr><th>隊</th><th>人</th><th>碎片</th><th>分</th><th>在線</th></tr>';
+  ids.sort(function(a,b){return ((board[b]||{}).score||0)-((board[a]||{}).score||0)});
+  ids.forEach(function(id){var t=teams[id],m=Object.keys(t.members||{}),on=0,fr=0;total+=m.length;
+    m.forEach(function(u){if(fresh((pos[id]||{})[u]))on++});online+=on;
+    S.forEach(function(s){if(s.frag!==undefined&&(prog[id]||{})[s.id]&&prog[id][s.id].frag)fr++});
+    if(m.length<=2&&!t.closed)al.push((t.name||'房 '+t.code)+' 只有 '+m.length+' 人');
+    if(on<m.length)al.push((t.name||'房 '+t.code)+' 有 '+(m.length-on)+' 人離線或沒開定位');
+    h+='<tr><td>'+esc(t.kind==='room'?'房 '+t.code:t.name)+'</td><td>'+m.length+'</td><td>'+fr+'/4</td><td>'+((board[id]||{}).score||0)+'</td><td class="'+(on===m.length?'ok':'warn')+'">'+on+'/'+m.length+'</td></tr>'});
+  $('tbl').innerHTML=h;$('alerts').innerHTML=al.length?al.map(esc).join('<br>'):'沒有。';
+  $('stat').textContent=ids.length+' 隊・'+total+' 人・在線 '+online;
+  if(!map)return;
+  Object.keys(markers).forEach(function(k){map.removeLayer(markers[k]);delete markers[k]});
+  ids.forEach(function(id){Object.keys(pos[id]||{}).forEach(function(u){var p=pos[id][u];if(!fresh(p))return;
+    markers[id+u]=L.marker([p.lat,p.lon],{icon:L.divIcon({className:'',html:'<div class="mate">'+esc(p.ava||'🙂')+'<b>'+esc(p.nick||'')+'</b></div>',iconSize:[44,32],iconAnchor:[22,16]})}).addTo(map)})});
+}
+$('b-clear').onclick=function(){if(confirmTwice('b-clear','清除所有位置（再按一次確認）'))ROOT.child('pos').remove()};
+$('b-merge').onclick=function(){
+  if(!confirmTwice('b-merge','整併過小的隊（再按一次確認）'))return;
+  var small=Object.keys(teams).filter(function(id){var t=teams[id];return !t.closed&&t.open!==false&&Object.keys(t.members||{}).length<=2}).sort(function(a,b){return Object.keys(teams[a].members).length-Object.keys(teams[b].members).length});
+  var ups={};
+  while(small.length>1){var a=small.shift(),b=small.pop(),ma=teams[a].members,mb=teams[b].members;
+    if(Object.keys(ma).length+Object.keys(mb).length>4){continue}
+    Object.keys(ma).forEach(function(u){mb[u]=ma[u];ups['players/'+u+'/team']=b});
+    ups['teams/'+b+'/members']=mb;ups['teams/'+b+'/n']=Object.keys(mb).length;ups['teams/'+a]=null;
+    if(Object.keys(mb).length>=4)ups['teams/'+b+'/closed']=true}
+  ROOT.update(ups).then(function(){$('stat').textContent='已整併，學生端會自動切到新隊。'});
+};
+var armed={};function confirmTwice(id,label){var b=$(id);if(armed[id]){clearTimeout(armed[id]);armed[id]=0;b.textContent=b.dataset.t;return true}b.dataset.t=b.textContent;b.textContent=label;armed[id]=setTimeout(function(){armed[id]=0;b.textContent=b.dataset.t},6000);return false}
+})();
+</script>
+</body>
+</html>

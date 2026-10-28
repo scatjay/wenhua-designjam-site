@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>走讀 · 鯨骨碎片</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#f7f2e8;--fg:#262019;--mute:#6c6254;--card:#fffdf7;--line:#ddd2bd;--acc:#b8402a;--acc2:#1f6f68;--blue:#2f6690;--chip:#efe6d2}
+@media (prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#ece4d3;--mute:#a69a85;--card:#211d16;--line:#3a3327;--acc:#e0705a;--acc2:#5cb8ae;--blue:#7fb0d6;--chip:#2c261c}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Noto Sans TC","PingFang TC",sans-serif;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.screen{max-width:520px;margin:0 auto;padding:24px 16px 40px}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:18px;margin:6px 0 2px}h3{font-size:15px;margin:14px 0 4px}
+.sub{font-size:12.5px;color:var(--mute)}
+.btn{display:block;width:100%;padding:12px;border:0;border-radius:10px;background:var(--acc);color:#fff;font-weight:700;margin:10px 0}
+.btn.g{background:#fff;color:#222;border:1px solid var(--line)}
+.btn2{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;margin:4px 6px 4px 0;cursor:pointer}
+.btn2:active{background:var(--chip)}
+.inp,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;margin:4px 0}
+label{display:block;font-size:13px;margin-top:10px;font-weight:600}
+.msg{color:var(--acc);font-size:13px;min-height:1.2em;margin-top:6px}
+.avas{display:flex;flex-wrap:wrap;gap:6px}.ava{font-size:24px;border:2px solid transparent;border-radius:10px;background:var(--card);padding:2px 6px}.ava.on{border-color:var(--acc)}
+.notice{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;margin:12px 0}
+#app{display:flex;flex-direction:column;height:100%}
+#hd{padding:calc(env(safe-area-inset-top,0px) + 6px) 12px 6px;background:var(--card);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-size:13px}
+#banner{padding:5px 12px;background:var(--chip);font-size:13px}
+#body{flex:1;position:relative;min-height:0}
+#map{position:absolute;inset:0}
+.pane{position:absolute;inset:0;overflow:auto;padding:12px 14px 20px;background:var(--bg)}
+#nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+#nav button{flex:1;padding:10px 0;border:0;background:none;font-size:13px}
+#nav button.on{color:var(--acc);font-weight:700;border-top:2px solid var(--acc)}
+.mapbtns{position:absolute;right:10px;top:10px;z-index:500;display:flex;flex-direction:column;gap:6px}
+.mapbtns button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:18px}
+.mapbtns .off{opacity:.45}
+#gps{position:absolute;left:8px;bottom:8px;z-index:500;background:var(--card);padding:2px 8px;border-radius:8px;font-size:11px}
+.stopdot{width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;text-align:center;line-height:26px;font-weight:700;font-size:13px;border:2px solid #fff}
+.mate{text-align:center;font-size:20px;line-height:1}.mate b{display:block;font-size:10px;background:var(--card);color:var(--fg);border-radius:6px;padding:0 4px;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}.card.big{font-size:18px;text-align:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.chip{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card)}.chip.cur{border:2px solid var(--acc)}.chip.half{background:var(--chip)}.chip.ok{background:var(--acc2);color:#fff}
+.npc{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc2);border-radius:10px;padding:10px 12px;margin:8px 0}
+.nhd{display:flex;align-items:center;gap:8px;margin-bottom:4px}.nava{font-size:26px}
+.bub{background:var(--chip);border-radius:10px;padding:7px 10px;margin:5px 0;font-size:14px}.bub.clue{border-left:3px solid var(--acc)}.bub.hint{border-left:3px solid var(--blue)}.bub.done{border-left:3px solid var(--acc2)}.bub.reward{border-left:3px solid #c08a1e}.bub.dim{opacity:.6}
+.task{border-top:1px solid var(--line);padding:8px 0}.task.done{opacity:.6}.task .tt{font-weight:600}.task.bonus .tt{font-weight:500}
+.tag{display:inline-block;font-size:11px;background:var(--chip);border-radius:99px;padding:0 7px}
+.ocard{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:8px;margin:4px 0;background:var(--chip)}
+.ocard button{width:32px;height:30px;margin-left:4px}.src{font-style:normal;font-size:11px;border-radius:99px;padding:0 6px;background:#e9d9bf;color:#5a3d12}.src.f{background:#cfe0f0;color:#1d4468}
+.mem{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}.mava{font-size:26px}
+.rk{display:flex;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:5px 0;background:var(--card)}.rk.me{border-color:var(--acc)}.rk .n{width:24px;font-weight:700}.rk .nm{flex:1}
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 56px);transform:translateX(-50%);max-width:90%;background:#222;color:#fff;padding:8px 14px;border-radius:99px;font-size:13px;z-index:2000}
+details summary{cursor:pointer;font-size:13px}
+</style>
+</head>
+<body>
+<div id="toast" hidden></div>
+
+<div class="screen" id="screen-login">
+  <h1>走讀 · 鯨骨碎片</h1>
+  <div class="sub">11/14 文化遊戲松走讀（台文館出發）</div>
+  <div class="notice">登入只用來讓你回來時還是同一個人。你的姓名、電子郵件不會寫進遊戲資料；遊戲裡只有你自己取的暱稱。位置只在走讀期間分享給同隊與老師，結束後清除。</div>
+  <button class="btn" id="btn-google">用 Google 帳號登入</button>
+  <button class="btn g" id="btn-test" hidden>測試模式（不登入）</button>
+  <div class="msg" id="login-msg"></div>
+</div>
+
+<div class="screen" id="screen-ob" hidden>
+  <h1>加入隊伍</h1>
+  <label>暱稱（不是真實姓名）</label>
+  <input class="inp" id="ob-nick" maxlength="12" placeholder="例：阿凱">
+  <label>角色頭像</label>
+  <div class="avas" id="ob-ava"></div>
+  <label>你的系（只用來分隊）</label>
+  <select id="ob-dept"></select>
+  <label>班級（可不選）</label>
+  <select id="ob-cls"><option value="">不選</option><option>一甲</option><option>一乙</option><option>一丙</option><option>一丁</option><option>二甲</option><option>二乙</option><option>二丙</option><option>二丁</option><option>三</option><option>四</option></select>
+  <label>有朋友開了房？輸入房碼（沒有就留空，系統自動幫你分隊）</label>
+  <input class="inp" id="ob-code" maxlength="4" placeholder="4 碼房碼">
+  <div class="notice">系與班只在分隊的這一刻使用，不會存成你個人的資料；隊伍只留一個標籤。遊戲裡的對話、答案與位置會記錄下來，用於這次走讀與教學，記錄只以暱稱與編號處理。</div>
+  <label style="font-weight:400"><input type="checkbox" id="ob-ok"> 我了解並同意</label>
+  <button class="btn" id="ob-go">開始</button>
+  <div class="msg" id="ob-msg"></div>
+</div>
+
+<div id="app" hidden>
+  <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span></div>
+  <div id="banner"></div>
+  <div id="body">
+    <div class="pane" id="pane-map" style="padding:0;overflow:hidden">
+      <div id="map"></div>
+      <div class="mapbtns"><button id="btn-mates" title="顯示或隱藏隊友">👥</button><button id="btn-locate" title="回到我的位置">📍</button></div>
+      <div id="gps">定位中…</div>
+    </div>
+    <div class="pane" id="pane-task" hidden></div>
+    <div class="pane" id="pane-team" hidden></div>
+    <div class="pane" id="pane-rank" hidden></div>
+  </div>
+  <div id="nav"><button data-v="map" class="on">🗺 地圖</button><button data-v="task">🧩 任務</button><button data-v="team">👥 隊伍</button><button data-v="rank">🏆 排行</button></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
+<script src="js/walk_route.js?v=202610281330"></script>
+<script src="js/walk.js?v=202610281330"></script>
+</body>
+</html>

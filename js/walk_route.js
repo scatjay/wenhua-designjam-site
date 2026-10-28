@@ -383,6 +383,23 @@ window.WALK_ROUTE.campusW = {
   ]
 };
 
+/* 第 6–8 章：校史館、西淮館、E 棟——白天路線本來就有（主線），夜間路線複製成加分站（不影響三格審查單）。
+   第 9 章承樸、第 10 章台文館：座標與內容待補／11/14 現場，先只在後台章節清單出現。 */
+(function () {
+  var W = window.WALK_ROUTE, C = W.campus, N = W.campusW; if (!C || !N) return;
+  var CHN = { c1: [6, 'y1'], c2: [7, 'y2'], c0: [8, 'y0'] };
+  C.stops.forEach(function (st) { var m = CHN[st.id]; if (!m) return; st.chapter = m[0]; });
+  var at = N.stops.map(function (x) { return x.id; }).indexOf('w1'); if (at < 0) at = N.stops.length;
+  var add = [];
+  C.stops.forEach(function (st) {
+    var m = CHN[st.id]; if (!m) return;
+    var c = JSON.parse(JSON.stringify(st)); c.id = m[1]; c.chapter = m[0]; delete c.frag; delete c.final; delete c.plain;
+    c.name = '第 ' + m[0] + ' 章｜' + st.name.replace(/^出發：/, ''); c.tip = '加分章節，不影響三格審查單。' + (c.tip || '');
+    add.push(c);
+  });
+  Array.prototype.splice.apply(N.stops, [at, 0].concat(add));
+})();
+
 /* 白天與夜間是學姊的「同一天」：白天她在校內蓋前兩格、留紙條，夜裡回來補蓋。
    這裡只加台詞（附在各站 NPC 開場白最後一句），不動關卡與題目。 */
 (function () {
@@ -405,6 +422,9 @@ window.WALK_ROUTE.campusW = {
       x4: '學姊的便條：「白天我在這附近晃過，沒蓋章，只留了一句話。夜裡的優活館比白天熱鬧。」',
       x5: '學姊的便條：「白天我在這附近晃過，沒蓋章，只留了一句話。夜裡的水聲比白天清楚。」',
       x6: '學姊的便條：「白天我在這附近晃過，沒蓋章，只留了一句話。夜裡看它，影子比白天長。」',
+      y1: '學姊的便條：「白天第一格我就是在這裡蓋的。晚上回來，是怕自己漏蓋了什麼。」',
+      y2: '學姊的便條：「白天我在這棟館的走廊睡著了，晚上特地回來確認有沒有人撿到我的筆。」',
+      y0: '學姊的便條：「這是我今天出發的地方，也是最後要回來交單的地方。」',
       w1: '學姊的便條：「白天我說過晚上要來牌樓補章。我來了，但天黑找不到，所以才請你們幫忙。」',
       w2: '學姊的便條：「白天在西淮館我說要來涼亭補第三格。涼亭有人在等車，別嚇到人家。」',
       w3: '學姊的便條：「白天走了一整天，晚上我就坐在廟前等你們。最後一行，我留給你們寫。」',

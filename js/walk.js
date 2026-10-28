@@ -201,11 +201,15 @@
   }
   function buildQR() {
     var box = $('qr-box'); if (!box || !window.qrcode) return;
+    /* 角色主題：用上次選的角色，換主角、QR 配色、特效色與首頁風格 */
+    var aid = ''; try { aid = localStorage.getItem('walk_ava') || ''; } catch (e) { }
+    var TH0 = window.WalkThemes && WalkThemes.get(aid);
+    if (TH0) { var lg = $('screen-login'); if (lg) lg.dataset.home = TH0.home; if (!buildQR._v) { return WalkThemes.vox(aid, function (v) { buildQR._v = { th: TH0, vox: v }; buildQR(); }); } }
     var url = location.origin + location.pathname;
     var night = effectiveStyle() === 'night', ok3d = false, wrap = $('morph-wrap');
     if (window.WalkMorph3D && WalkMorph3D.supported()) {   /* 有 WebGL：等角體素 3D 場景，運鏡變成 QR；沒有就退回 2D 像素版 */
       try {
-        var api = WalkMorph3D.mount(wrap, url, night, { onToggle: function (toQR) { $('morph-hint').textContent = toQR ? '朋友掃這個就能加入・再點一下回場景' : '點一下運鏡成 QR，朋友掃了就能加入'; } });
+        var api = WalkMorph3D.mount(wrap, url, night, { onToggle: function (toQR) { $('morph-hint').textContent = toQR ? '朋友掃這個就能加入・再點一下回場景' : '點一下運鏡成 QR，朋友掃了就能加入'; } }, buildQR._v || null);
         if (api) { var old = $('morph'); if (old && old !== api.canvas) old.remove(); wrap.insertBefore(api.canvas, $('morph-hint')); window.__morph3d = api; ok3d = true; }
       } catch (e) { ok3d = false; }
     }
@@ -238,7 +242,7 @@
   function afterVerified() {
     $('screen-vf').hidden = true;
     ROOT.child('players/' + uid).once('value').then(function (s) {
-      profile = s.val();
+      profile = s.val(); try { if (profile && profile.ava) localStorage.setItem('walk_ava', profile.ava); } catch (e) { }
       if (profile && profile.team) {
         return ROOT.child('teams/' + profile.team).once('value').then(function (t) {
           if (t.val() && t.val().members && t.val().members[uid]) { enterGame(profile.team); } else { showOnboarding(); }
@@ -284,7 +288,7 @@
     if (!$('ob-ok').checked) { $('ob-msg').textContent = '請先勾選同意。'; return; }
     var code = $('ob-code').value.trim().toUpperCase();
     if (!code && !dept) { $('ob-msg').textContent = '請選你的系（只用來分隊）。'; return; }
-    profile = { nick: nick.slice(0, 12), ava: ava, ts: nowMs() };
+    profile = { nick: nick.slice(0, 12), ava: ava, ts: nowMs() }; try { localStorage.setItem('walk_ava', ava); } catch (e) { }
     if (envNo != null) profile.env = envNo;
     $('ob-go').disabled = true; $('ob-msg').textContent = '分隊中…';
     ROOT.child('players/' + uid).update(profile).then(function () {

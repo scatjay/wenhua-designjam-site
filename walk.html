@@ -177,6 +177,19 @@ body.dk.st-night #hd{background:#05080a!important}body.dk.st-night #banner{backg
 body.dk.raster .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}
 .mate .spr:not(.walk),.sicon img{animation:none}
 body.eco *,body.eco *::before,body.eco *::after{animation:none!important;transition:none!important}
+/* 角色主題：登入畫面（首頁）六種風格，隨上次選的角色而變 */
+#screen-login[data-home]{background:var(--hb);color:var(--hf);border-radius:18px;padding:12px 16px 16px}
+#screen-login[data-home] .sub,#screen-login[data-home] .notice{color:var(--hf)}
+#screen-login[data-home] .notice{background:rgba(127,127,127,.16);border-color:var(--ha)!important}
+#screen-login[data-home] .btn:not(.g){background:var(--ha)!important;color:var(--hbt)!important;border:var(--hbd)!important;border-radius:var(--hr)!important;box-shadow:var(--hsh)!important;font-weight:800}
+#screen-login[data-home] h1{font-family:var(--hff);letter-spacing:var(--hls);text-shadow:var(--hts)}
+#screen-login[data-home] .btn2{background:transparent;color:var(--hf);border:1.5px solid var(--ha)!important}
+#screen-login[data-home=fire]{--hb:linear-gradient(180deg,#3a140c,#5a2314);--hf:#fff1e6;--ha:#ff8a5c;--hbt:#1b0a05;--hbd:3px solid #fff1e6;--hr:4px;--hsh:4px 4px 0 #1b0a05;--hff:inherit;--hls:.12em;--hts:3px 3px 0 #b8321f}
+#screen-login[data-home=ocean]{--hb:linear-gradient(180deg,#e6f4ff,#bfe3ff);--hf:#0e2a47;--ha:#1f6fc4;--hbt:#ffffff;--hbd:0 solid transparent;--hr:999px;--hsh:0 4px 14px rgba(31,111,196,.35);--hff:inherit;--hls:.02em;--hts:none}
+#screen-login[data-home=forest]{--hb:#eef3e4;--hf:#1d3b24;--ha:#2f6b3a;--hbt:#ffffff;--hbd:1.5px solid #1d3b24;--hr:6px;--hsh:none;--hff:'Noto Serif TC',serif;--hls:.06em;--hts:none}
+#screen-login[data-home=sakura]{--hb:linear-gradient(180deg,#fff0f6,#ffd9e8);--hf:#5a1f3d;--ha:#c2327a;--hbt:#ffffff;--hbd:2px dotted #fff;--hr:22px;--hsh:0 4px 0 #8a1f57;--hff:inherit;--hls:.04em;--hts:2px 2px 0 #ffd0e6}
+#screen-login[data-home=night]{--hb:radial-gradient(circle at 20% 15%,#ffffff22 0 1.5px,transparent 2px),radial-gradient(circle at 75% 30%,#ffffff22 0 1.5px,transparent 2px),radial-gradient(circle at 40% 70%,#ffffff1a 0 1.5px,transparent 2px),#14102a;--hf:#ece6ff;--ha:#b79bff;--hbt:#14102a;--hbd:0 solid transparent;--hr:10px;--hsh:0 0 14px #b79bff;--hff:inherit;--hls:.1em;--hts:0 0 10px #b79bff}
+#screen-login[data-home=sun]{--hb:#fff3b8;--hf:#2b2100;--ha:#ffb300;--hbt:#2b2100;--hbd:3px solid #2b2100;--hr:12px;--hsh:4px 4px 0 #2b2100;--hff:inherit;--hls:.02em;--hts:2px 2px 0 #ffd54a}
 </style>
 </head>
 <body>
@@ -267,14 +280,15 @@ body.eco *,body.eco *::before,body.eco *::after{animation:none!important;transit
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/walk_morph.js?v=202610282215"></script>
-<script src="js/walk_morph3d.js?v=202610282215"></script>
+<script src="js/walk_themes.js?v=202610290640"></script>
+<script src="js/walk_morph3d.js?v=202610290630"></script>
 <script src="js/walk_route.js?v=202610282336"></script>
 <script src="js/walk_route_tw.js?v=202610290541"></script>
 <script src="js/walk_npc_types.js?v=202610282256"></script>
 <script src="js/walk_npc_drama.js?v=202610290600"></script>
 <script src="js/walk_sprites.js?v=202610282215"></script>
 <script src="js/walk_i18n_id.js?v=202610282215"></script>
-<script src="js/walk.js?v=202610290552"></script>
+<script src="js/walk.js?v=202610290630"></script>
 <script src="js/walk_i18n.js?v=202610282215"></script>
 </body>
 </html>

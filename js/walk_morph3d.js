@@ -88,10 +88,11 @@
 
   /* 場景模型。單位：48 格寬的平台（會依實際 QR 格數縮放）；+z 朝向鏡頭。
      方柱 B(x0, z0, 寬, 深, 離地 y0, 高 h, 色, {bob, ph})；手臂／馬尾 A(...) 繞肩膀擺動。 */
-  function build(night) {
+  function build(night, TH, VX) {
     var P = night
       ? { dress: '#8e7cf0', dress2: '#6f5fd0', grass: '#6fb58f', dirt: '#8a6a52', dirt2: '#6e533f', sign: '#fff1b8', a1: '#ff9bb0', a2: '#ffd36b', a3: '#9bd1ff', glow: '#ffd36b' }
       : { dress: '#ff8fa3', dress2: '#ff6f91', grass: '#8fd18a', dirt: '#b9845a', dirt2: '#9a6a44', sign: '#fff3c4', a1: '#ff6f91', a2: '#ffd54a', a3: '#7ec8ff', glow: '#ff6f91' };
+    if (TH && TH.P) for (var pk in TH.P) P[pk] = TH.P[pk];
     var skin = '#ffd9b8', hair = '#4a3326', E = [];
     var B = function (x, z, w, d, y0, h, c, o) { E.push({ k: 'b', x: x, z: z, w: w, d: d, y0: y0, h: h, c: c, bob: (o && o.bob) || 0, ph: (o && o.ph) || 0, g: (o && o.g) || 'p' }); };
     var A = function (px, py, pz, off, len, th, c, side, base, amp, spd, ph) { E.push({ k: 'a', px: px, py: py, pz: pz, off: off, len: len, th: th, c: c, side: side, base: base, amp: amp, spd: spd, ph: ph || 0, g: 'girl' }); };
@@ -125,11 +126,18 @@
       if (e.k === 'b') { e.x *= K; e.z *= K; e.w *= K; e.d *= K; e.y0 *= K; e.h *= K; }
       else { e.px *= K; e.py *= K; e.pz *= K; e.off *= K; e.len *= K; e.th *= K; }
     });
+    /* 角色主題：把場景主角換成玩家自己的角色（精靈第一格做成體素），刪掉原本的小女孩 */
+    if (VX && VX.px && VX.px.length) {
+      E = E.filter(function (e) { return e.g !== 'girl'; });
+      var cs = 1.7, w2 = VX.w * cs / 2;
+      VX.px.forEach(function (p) { E.push({ k: 'b', x: p.i * cs - w2, z: -cs * 0.9, w: cs, d: cs * 1.8, y0: (VX.h - 1 - p.j) * cs, h: cs, c: p.c, bob: 0, ph: 0, g: 'girl' }); });
+    }
     return { entries: E, P: P };
   }
 
-  function mount(host, url, night, handlers) {
-    var THREE = window.THREE, q;
+  function mount(host, url, night, handlers, themeOpt) {
+    var THREE = window.THREE, q, TH = themeOpt && themeOpt.th, VX = themeOpt && themeOpt.vox;
+    var burstGeom = function () { var g = TH && TH.geom; return g === 'ico' ? new THREE.IcosahedronGeometry(1, 0) : g === 'tet' ? new THREE.TetrahedronGeometry(1.3, 0) : g === 'box' ? new THREE.BoxGeometry(1.3, 0.5, 1.3) : new THREE.OctahedronGeometry(1, 0); };
     try { q = qrcode(0, 'M'); q.addData(url); q.make(); } catch (e) { return null; }
     var n = q.getModuleCount(), N = n + 4, S = 280, f = N / 48;
     var renderer;
@@ -138,13 +146,13 @@
     renderer.setPixelRatio(dpr); renderer.setSize(S, S, false); renderer.setClearColor(0x000000, 0);
     var cv = renderer.domElement; cv.id = 'morph'; cv.style.width = cv.style.height = S + 'px'; cv.setAttribute('aria-label', '揮手邀請的小女孩與漂浮小島，會變成進入遊戲的 QR Code');
     /* 背景不畫：透明，讓頁面底色透出來 */
-    var light = night ? '#efe6d2' : '#fffaf0', dark = night ? '#2c2150' : '#4a2c6b';
+    var light = TH ? TH.qrL : (night ? '#efe6d2' : '#fffaf0'), dark = TH ? TH.qrD : (night ? '#2c2150' : '#4a2c6b');
     var scene = new THREE.Scene();
     scene.add(new THREE.AmbientLight(0xffffff, night ? 0.72 : 0.8));
     var dl = new THREE.DirectionalLight(0xffffff, night ? 0.55 : 0.6); dl.position.set(-30, 60, 40); scene.add(dl);
     var cam = new THREE.OrthographicCamera(-1, 1, 1, -1, -400, 400);
 
-    var slab = new THREE.Mesh(new THREE.BoxGeometry(N, 2.4, N), new THREE.MeshLambertMaterial({ color: night ? '#5a4b8a' : '#e6c9b4' }));
+    var slab = new THREE.Mesh(new THREE.BoxGeometry(N, 2.4, N), new THREE.MeshLambertMaterial({ color: TH ? TH.slab : (night ? '#5a4b8a' : '#e6c9b4') }));
     slab.position.y = -1.4; scene.add(slab);
     var tiles = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.4, 1), new THREE.MeshBasicMaterial({ color: 0xffffff }), N * N), mm = new THREE.Matrix4(), col = new THREE.Color(), k = 0, darkCells = [], origCols = [], sceneCols = [], qrCols = [], lastCur = -1;
     for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
@@ -154,16 +162,16 @@
       var hue = (((r * 0.013 + c * 0.021 + Math.sin(r * 0.7) * 0.05 + Math.cos(c * 0.5) * 0.05) % 1) + 1) % 1;
       /* 場景地板：花草地（綠色漸層＋零星花朵），和 QR 的深淺格完全無關，一開始看不出是 QR；轉向 QR 時圖案才浮現 */
       var nz = Math.sin(r * 0.37 + 1.3) * Math.cos(c * 0.29) + 0.5 * Math.sin((r + c) * 0.21), rr9 = rnd(r * 131 + c * 7 + 5), meadow;
-      if (rr9 < 0.075) meadow = new THREE.Color().setHSL(rnd(r * 17 + c * 3) , 0.85, night ? 0.74 : 0.8);          /* 花朵點點 */
-      else meadow = new THREE.Color().setHSL(0.27 + nz * 0.025 + rnd(r * 3 + c * 11) * 0.02, night ? 0.38 : 0.52, (night ? 0.5 : 0.66) + nz * 0.035 + rnd(r * 19 + c) * 0.035);
+      if (rr9 < 0.075) meadow = new THREE.Color().setHSL(TH ? ((TH.hue + 0.5 + rnd(r * 17 + c * 3) * 0.16) % 1) : rnd(r * 17 + c * 3), 0.85, night ? 0.74 : 0.8);          /* 花朵點點 */
+      else meadow = new THREE.Color().setHSL((TH ? TH.floorH : 0.27) + nz * 0.025 + rnd(r * 3 + c * 11) * 0.02, night ? 0.38 : 0.52, (night ? 0.5 : 0.66) + nz * 0.035 + rnd(r * 19 + c) * 0.035);
       sceneCols.push(meadow);
-      qrCols.push(fitLuma(hue, isDark ? 0.8 : 0.45, isDark ? (night ? 0.2 : 0.22) : 0.965));            /* QR：同色相，但用灰階亮度定色——深格一律夠暗（約 0.22）、淺格一律近白（約 0.965），對比不看色相 */
+      qrCols.push(fitLuma(TH ? ((TH.hue + (hue - 0.5) * 0.16 + 1) % 1) : hue, isDark ? 0.8 : 0.45, isDark ? (night ? 0.2 : 0.22) : 0.965));            /* QR：同色相，但用灰階亮度定色——深格一律夠暗（約 0.22）、淺格一律近白（約 0.965），對比不看色相 */
       tiles.setColorAt(k, sceneCols[k]);   /* 第一幀就是繽紛色 */
       k++;
     }
     tiles.instanceMatrix.needsUpdate = true; tiles.instanceColor.needsUpdate = true; scene.add(tiles);
 
-    var M = build(night), info = M.entries.map(function (b) {
+    var M = build(night, TH, VX), info = M.entries.map(function (b) {
       var cx = b.k === 'b' ? b.x + b.w / 2 : b.px, cz = b.k === 'b' ? b.z + b.d / 2 : b.pz, top = b.k === 'b' ? b.y0 + b.h : b.py;
       b.delay = Math.min(1, Math.sqrt(cx * cx + cz * cz) / 30) * 0.45 + top / 45 * 0.3 + (b.g === 'girl' ? 0 : 0.12);
       return b;
@@ -194,17 +202,17 @@
     var heads = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshLambertMaterial({ color: 0xffffff }), plants.length);
     plants.forEach(function (p, i) {
       stems.setColorAt(i, new THREE.Color(rnd(i * 3 + 1) < 0.5 ? '#5da35a' : '#7bc76b'));
-      heads.setColorAt(i, p.flower ? new THREE.Color().setHSL(rnd(i * 9 + 5), 0.9, night ? 0.68 : 0.62) : new THREE.Color(rnd(i * 9 + 5) < 0.5 ? '#a8e87a' : '#8fd18a'));
+      heads.setColorAt(i, p.flower ? new THREE.Color().setHSL(TH ? ((TH.burstH[i % 2] + rnd(i * 9 + 5) * 0.08) % 1) : rnd(i * 9 + 5), 0.9, night ? 0.68 : 0.62) : new THREE.Color(rnd(i * 9 + 5) < 0.5 ? '#a8e87a' : '#8fd18a'));
     });
     scene.add(stems); scene.add(heads);
     /* 小女孩消失／出現的戲劇性閃光：全身先變白→光柱衝天→地面光環擴散→放射狀碎片 */
     var addMat = function (c) { return new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }); };
     var beam = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), addMat(0xffffff)); scene.add(beam);
-    var beam2 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), addMat(night ? 0xffd36b : 0xff9bd0)); scene.add(beam2);
+    var beam2 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), addMat(TH ? TH.beam2 : (night ? 0xffd36b : 0xff9bd0))); scene.add(beam2);
     var ringA = new THREE.Mesh(new THREE.RingGeometry(0.82, 1, 64), addMat(0xffffff)); ringA.rotation.x = -Math.PI / 2; ringA.position.y = 0.6; scene.add(ringA);
-    var ringB = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 64), addMat(night ? 0x9bd1ff : 0xffd54a)); ringB.rotation.x = -Math.PI / 2; ringB.position.y = 0.7; scene.add(ringB);
-    var BN = 90, burst = new THREE.InstancedMesh(new THREE.OctahedronGeometry(1, 0), new THREE.MeshBasicMaterial({ color: 0xffffff }), BN);
-    for (var bi = 0; bi < BN; bi++) burst.setColorAt(bi, bi % 4 === 0 ? new THREE.Color('#ffffff') : new THREE.Color().setHSL(rnd(bi * 5 + 2), 1, 0.66)); scene.add(burst);
+    var ringB = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 64), addMat(TH ? TH.ringB : (night ? 0x9bd1ff : 0xffd54a))); ringB.rotation.x = -Math.PI / 2; ringB.position.y = 0.7; scene.add(ringB);
+    var BN = 90, burst = new THREE.InstancedMesh(burstGeom(), new THREE.MeshBasicMaterial({ color: 0xffffff }), BN);
+    for (var bi = 0; bi < BN; bi++) burst.setColorAt(bi, bi % 4 === 0 ? new THREE.Color('#ffffff') : new THREE.Color().setHSL(TH ? ((TH.burstH[bi % 2] + rnd(bi * 5 + 2) * 0.06) % 1) : rnd(bi * 5 + 2), 1, 0.66)); scene.add(burst);
     var sfxFired = false, lastTickK = -1, wasMoving = false, girlIdx = [], girlBase = [], flashAmt = 0, lastW = 0;
     info.forEach(function (b, i) { if (b.g === 'girl') { girlIdx.push(i); girlBase.push(new THREE.Color(b.c)); } });
     var tinted = new Uint8Array(N * N), tileFlat = true, ev = new THREE.Euler(), qv = new THREE.Quaternion();
@@ -218,7 +226,7 @@
           col.copy(qrCols[tk]).lerp(sceneCols[tk], mcol);
           if (active) {
             var back0 = front - dd, inBand = back0 > -1 && back0 < 7;
-            if (inBand) { y = A * s * Math.sin(Math.min(1, Math.max(0, (back0 + 1) / 8)) * Math.PI) * Math.exp(-dd / 34); var wgt = Math.min(1, y / (A * 0.5)); hc.setHSL(((dd * 0.03 + t * 0.35) % 1 + 1) % 1, 0.9, 0.7); col.lerp(hc, wgt * 0.5); }
+            if (inBand) { y = A * s * Math.sin(Math.min(1, Math.max(0, (back0 + 1) / 8)) * Math.PI) * Math.exp(-dd / 34); var wgt = Math.min(1, y / (A * 0.5)); hc.setHSL(TH ? ((TH.hue + Math.sin(dd * 0.12 - t * 1.5) * 0.06 + 1) % 1) : (((dd * 0.03 + t * 0.35) % 1 + 1) % 1), 0.9, 0.7); col.lerp(hc, wgt * 0.5); }
           }
           tiles.setColorAt(tk, col);
           mm.makeTranslation(dx, -0.2 + y, dz); tiles.setMatrixAt(tk, mm);

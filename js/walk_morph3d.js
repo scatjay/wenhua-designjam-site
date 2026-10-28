@@ -96,13 +96,19 @@
        粒子的位置與顏色都取自地板上真正的 QR 深色格；全部用時間算出來（不存狀態），收回 QR 時一起歸零。 */
     var PERIOD = 1.5, SPD = 22, LIFE = 1.25, rnd = function (i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
     /* 種在地上的草與花：站在 QR 的格子上，隨風輕晃；衝擊波一到，被彈上天、轉幾圈再落回原位重新長好 */
-    var PL = 130, plants = [];
+    var PL = 100, plants = [];
     for (var pi = 0; pi < PL * 6 && plants.length < PL; pi++) {
       var rr1 = 2 + Math.floor(rnd(pi * 5 + 1) * (N - 4)), cc1 = 2 + Math.floor(rnd(pi * 5 + 2) * (N - 4)), pxx = cc1 - N / 2 + 0.5, pzz = rr1 - N / 2 + 0.5;
       if (Math.sqrt(pxx * pxx + pzz * pzz) < 4.2 * f * 1.45) continue;   /* 小女孩腳邊留空 */
       var flower = rnd(pi * 5 + 3) < 0.62;
       plants.push({ x: pxx, z: pzz, dist: Math.sqrt(pxx * pxx + pzz * pzz), h: (flower ? 1.5 + rnd(pi * 5 + 4) * 1.6 : 1.1 + rnd(pi * 5 + 4) * 1.4), flower: flower, hs: flower ? 0.9 + rnd(pi * 7 + 1) * 0.5 : 0.45, ph: rnd(pi * 3 + 8) * 6.28, i: plants.length });
     }
+    /* 大小錯落：多數小、少數大；平台四個角（對應 QR 三個大定位塊與右下角）各種一朵特大的 */
+    plants.forEach(function (p, i) { var z = rnd(i * 13 + 7); var k2 = z < 0.05 ? 1.9 : (z < 0.24 ? 1.35 : (z < 0.6 ? 1 : 0.75)); p.h *= k2; p.hs *= k2 * (k2 > 1 ? 0.8 : 1); });
+    [[5, 5], [5, N - 6], [N - 6, 5], [N - 6, N - 6]].forEach(function (rc, bi) {
+      var bx = rc[1] - N / 2 + 0.5, bz = rc[0] - N / 2 + 0.5;
+      plants.push({ x: bx, z: bz, dist: Math.sqrt(bx * bx + bz * bz), h: 4.2, flower: true, hs: 2.5, ph: bi * 1.7, i: plants.length, big: true });
+    });
     var stems = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshLambertMaterial({ color: 0xffffff }), plants.length);
     var heads = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshLambertMaterial({ color: 0xffffff }), plants.length);
     plants.forEach(function (p, i) {
@@ -132,12 +138,12 @@
       for (i = 0; i < plants.length; i++) {
         var pl = plants[i], gr = Math.max(TINY, back((cur - 0.42 - pl.dist * 0.006) / 0.4));
         if (cur <= 0.4 || gr < 0.01) { Sc.set(TINY, TINY, TINY); V.set(0, 0, 0); qv.identity(); mm.compose(V, qv, Sc); stems.setMatrixAt(i, mm); heads.setMatrixAt(i, mm); continue; }
-        var tt = t - pl.dist / SPD, kq = Math.floor(tt / PERIOD), age = tt - kq * PERIOD, flew = rnd(kq * 31 + i * 3 + 1) < 0.6, fly = flew && age < LIFE, yL = 0, spin = 0, squash = 1;
+        var tt = t - pl.dist / SPD, kq = Math.floor(tt / PERIOD), age = tt - kq * PERIOD, flew = !pl.big && rnd(kq * 31 + i * 3 + 1) < 0.6, fly = flew && age < LIFE, yL = 0, spin = 0, squash = 1;
         if (fly) { var vy0 = 20 * f * LIFE / 2 * (0.75 + rnd(kq * 17 + i) * 0.6); yL = Math.max(0, vy0 * age - 0.5 * 20 * f * age * age); spin = age * (4 + rnd(i + 3) * 5); }
         else if (flew && age < LIFE + 0.3) squash = 1 - 0.3 * Math.sin(Math.PI * (age - LIFE) / 0.3);   /* 落地時壓扁一下再彈回來，像重新種好 */
         var sw = Math.sin(t * 2 + pl.ph) * 0.12 * (fly ? 0 : 1), hh = pl.h * f * gr * squash;
         ev.set(sw * 0.8 + spin, spin * 0.6, sw + spin * 0.4); qv.setFromEuler(ev);
-        V.set(pl.x, yL + hh / 2 + 0.1, pl.z); Sc.set(0.28 * f * 1.4, hh, 0.28 * f * 1.4); mm.compose(V, qv, Sc); stems.setMatrixAt(i, mm);
+        V.set(pl.x, yL + hh / 2 + 0.1, pl.z); var th = 0.28 * f * 1.4 * (pl.big ? 2.2 : 1 + (pl.hs > 1.6 ? 0.6 : 0)); Sc.set(th, hh, th); mm.compose(V, qv, Sc); stems.setMatrixAt(i, mm);
         var hsz = pl.hs * f * 1.3 * gr; V.set(pl.x + Math.sin(sw) * hh * 0.5, yL + hh + hsz * 0.35 + 0.1, pl.z); Sc.set(hsz, hsz * (pl.flower ? 1 : 1.6), hsz); mm.compose(V, qv, Sc); heads.setMatrixAt(i, mm);
       }
       stems.instanceMatrix.needsUpdate = true; heads.instanceMatrix.needsUpdate = true;

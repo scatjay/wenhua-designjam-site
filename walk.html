@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>走讀 · 鯨骨碎片</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <style>
@@ -77,6 +78,64 @@ body.st-night #hd,body.st-night #banner{background:#14202b;color:#cfe0ef}.mate b
 .rk{display:flex;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:5px 0;background:var(--card)}.rk.me{border-color:var(--acc)}.rk .n{width:24px;font-weight:700}.rk .nm{flex:1}
 #toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 56px);transform:translateX(-50%);max-width:90%;background:#222;color:#fff;padding:8px 14px;border-radius:99px;font-size:13px;z-index:2000}
 details summary{cursor:pointer;font-size:13px}
+/* cute-theme：整體更可愛——粉彩底、厚描邊、圓角貼紙感、彈跳動畫（描邊色取自像素角色的深藍） */
+:root{--bg:#fff4e6;--fg:#3b3350;--mute:#8a7d98;--card:#fffaf2;--line:#f0d9c0;--acc:#ff7a8a;--acc2:#58c4b5;--blue:#6aa7ff;--chip:#ffe6d0;--ink:#3b3350;--mint:#c9f1e6;--lav:#e4dcff;--sun:#ffe28a}
+@media (prefers-color-scheme:dark){:root{--bg:#241f33;--fg:#f4ecff;--mute:#b8aacb;--card:#322a47;--line:#4b4068;--acc:#ff8fa0;--acc2:#6fd6c6;--blue:#8dbaff;--chip:#3d3356;--ink:#120f1d;--mint:#24463f;--lav:#403566;--sun:#6b5a22}}
+body{font-family:'Huninn','Noto Sans TC',system-ui,sans-serif;background:var(--bg)}
+h1,h2{letter-spacing:.02em}
+.btn,.btn2,.inp,select,.card,.npc,.task,.rk,.ocard,.notice,.chip,.bub{border:2.5px solid var(--ink)!important;border-radius:16px!important;box-shadow:0 3px 0 var(--ink)!important}
+.btn{background:var(--acc)!important;color:#fff!important;font-size:16px;border-radius:99px!important}
+.btn.g{background:var(--card)!important;color:var(--fg)!important}
+.btn2{border-radius:99px!important;padding:7px 14px;transition:transform .12s}
+.btn2:active,.btn:active{transform:translateY(3px)!important;box-shadow:0 0 0 var(--ink)!important}
+.btn2.on{background:var(--sun)!important}
+.card,.npc,.notice{background:var(--card)}
+.task{border-top:0!important;box-shadow:none!important;border-radius:12px!important;margin:6px 0;padding:8px 10px;background:var(--card)}
+.task.done{background:var(--mint);opacity:1}
+.task.done .tt{text-decoration:none}
+.task.bonus{background:var(--lav)}
+.tag{background:var(--sun);color:var(--ink);border:2px solid var(--ink);font-weight:700}
+.npc{border-left-width:2.5px!important;background:linear-gradient(135deg,var(--card),var(--lav))}
+.nhd{gap:10px}.nava{width:46px;height:46px;border-radius:50%;background:var(--sun);border:2.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:26px;animation:bob 2.4s ease-in-out infinite}
+.bub{position:relative;background:var(--card)!important;box-shadow:0 2px 0 var(--ink)!important;margin:8px 0 8px 14px}
+.bub::before{content:'';position:absolute;left:-9px;top:12px;width:12px;height:12px;background:var(--card);border-left:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg)}
+.bub.clue{background:var(--sun)!important}.bub.clue::before{background:var(--sun)}
+.bub.hint{background:#dcebff!important}.bub.hint::before{background:#dcebff}
+.bub.done{background:var(--mint)!important}.bub.done::before{background:var(--mint)}
+.bub.reward{background:#ffd9e6!important}.bub.reward::before{background:#ffd9e6}
+.bub.dim{opacity:.7}
+#hd{background:var(--acc)!important;color:#fff;border-bottom:3px solid var(--ink)!important;font-size:14px;padding-bottom:8px}
+#hd .fb-open{background:#fff!important;color:var(--ink)!important;border:2px solid var(--ink)!important;border-radius:99px!important;box-shadow:0 2px 0 var(--ink)!important;font-size:12px}
+#hd-score{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:99px;padding:0 10px;font-weight:700}
+#banner{background:var(--sun)!important;color:var(--ink);border-bottom:3px solid var(--ink);font-size:13px}
+#nav{background:var(--card)!important;border-top:3px solid var(--ink)!important}
+#nav button{font-size:12px;padding:6px 0 8px;font-family:inherit}
+#nav button.on{color:var(--acc)!important;border-top:0!important;font-weight:700}
+#nav button.on::first-line{font-size:15px}
+#nav button.on{animation:hop .5s}
+.chip{width:36px;height:36px;border-radius:50%!important;font-weight:700}
+.chip.cur{background:var(--sun)}.chip.ok{background:var(--acc2)!important;color:#fff}
+.mapbtns button{border:2.5px solid var(--ink)!important;box-shadow:0 3px 0 var(--ink)!important}
+#gps{border:2px solid var(--ink);font-size:11px}
+.rk{background:var(--card)}.rk.me{background:var(--sun)}
+.rk:nth-child(2)::before{content:'🥇';margin-right:2px}.rk:nth-child(3)::before{content:'🥈';margin-right:2px}.rk:nth-child(4)::before{content:'🥉';margin-right:2px}
+.mate b{border:2px solid var(--ink);border-radius:99px;padding:0 7px;font-size:11px;background:#fff;color:var(--ink)}
+.mate .spr{animation:bob 1.8s ease-in-out infinite}
+.mate.me b{background:var(--sun)}
+.sicon img{animation:float 2.2s ease-in-out infinite}
+.sicon b{border:2px solid var(--ink);border-radius:99px;background:var(--acc)!important}
+.sicon.done b{background:var(--acc2)!important}
+#toast{background:#fff!important;color:var(--ink)!important;border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);font-size:14px}
+.ava{border:2.5px solid var(--ink)!important;border-radius:14px!important;background:var(--card)}.ava.on{background:var(--sun)!important;transform:translateY(-3px)}
+.avas{gap:8px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes hop{0%{transform:translateY(0)}40%{transform:translateY(-5px)}100%{transform:translateY(0)}}
+.cf{position:fixed;z-index:3500;font-size:22px;pointer-events:none;animation:cfly 1.1s ease-out forwards}
+@keyframes cfly{0%{opacity:1;transform:translate(0,0) scale(.6)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(var(--r))}}
+.login-hero{text-align:center;font-size:44px;margin:6px 0}
+body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
+/* /cute-theme */
 </style>
 </head>
 <body>
@@ -92,7 +151,8 @@ details summary{cursor:pointer;font-size:13px}
 </div>
 
 <div class="screen" id="screen-login">
-  <h1>走讀 · 鯨骨碎片</h1>
+  <div class="login-hero">🎒🗺️✨</div>
+  <h1 style="text-align:center">走讀 · 鯨骨碎片</h1>
   <div class="sub">11/14 文化遊戲松走讀（台文館出發）</div>
   <div class="notice">登入只用來讓你回來時還是同一個人。你的姓名、電子郵件不會寫進遊戲資料；遊戲裡只有你自己取的暱稱。位置只在走讀期間分享給同隊與老師，結束後清除。</div>
   <button class="btn" id="btn-google">用 Google 帳號登入</button>
@@ -144,8 +204,8 @@ details summary{cursor:pointer;font-size:13px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="js/walk_route.js?v=202610281530"></script>
-<script src="js/walk_sprites.js?v=202610281530"></script>
-<script src="js/walk.js?v=202610281530"></script>
+<script src="js/walk_route.js?v=202610281600"></script>
+<script src="js/walk_sprites.js?v=202610281600"></script>
+<script src="js/walk.js?v=202610281600"></script>
 </body>
 </html>

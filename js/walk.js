@@ -113,7 +113,12 @@
     var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a.lat * tr) * Math.cos(b.lat * tr) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     return 2 * R0 * Math.asin(Math.sqrt(x));
   }
-  function toast(m) { var t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 3200); }
+  function confetti() {
+    var em = ['⭐', '✨', '🎉', '💖', '🧩', '🌸']; for (var i = 0; i < 14; i++) { var e = document.createElement('span'); e.className = 'cf'; e.textContent = em[i % em.length];
+      e.style.left = (30 + Math.random() * 40) + 'vw'; e.style.top = (40 + Math.random() * 15) + 'vh'; e.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px'); e.style.setProperty('--dy', (-60 - Math.random() * 140) + 'px'); e.style.setProperty('--r', (Math.random() * 360 - 180) + 'deg');
+      document.body.appendChild(e); (function (x) { setTimeout(function () { x.remove(); }, 1200); })(e); }
+  }
+  function toast(m) { if (/^(✔|🧩|🎉)/.test(m)) confetti(); var t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 3200); }
   function stopById(id) { for (var i = 0; i < S.length; i++) if (S[i].id === id) return S[i]; return null; }
   function mkcode() { var a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', s = ''; for (var i = 0; i < 4; i++) s += a[Math.floor(Math.random() * a.length)]; return s; }
   function on(ref, ev, fn) { ref.on(ev, fn); listeners.push([ref, ev, fn]); }

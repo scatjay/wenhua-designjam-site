@@ -554,27 +554,32 @@
     [].forEach.call(document.querySelectorAll('[data-mv]'), function (b) { b.onclick = function () { moveCard(b.dataset.s, +b.dataset.i, +b.dataset.mv); }; });
     [].forEach.call(document.querySelectorAll('[data-ord]'), function (b) { b.onclick = function () { checkOrder(b.dataset.s, b.dataset.t); }; });
     var fb = document.getElementById('final-go'); if (fb) fb.onclick = submitFinal;
-    var pf = $('ph-file'); if (pf) { pf.onchange = function () { if (pf.files && pf.files[0]) sendPhoto(pf.files[0]); pf.value = ''; }; $('ph-wall').onclick = openWall; }
+    var pf = $('ph-file'), pf2 = $('ph-file2'); if (pf) { pf.onchange = function () { if (pf.files && pf.files[0]) sendPhoto(pf.files[0]); pf.value = ''; }; if (pf2) pf2.onchange = function () { if (pf2.files && pf2.files[0]) sendPhoto(pf2.files[0]); pf2.value = ''; }; $('ph-wall').onclick = openWall; }
   }
   /* ---------- 照片：拍照 → 縮成原圖(老師看)＋縮圖(照片牆) → 一次寫入 ---------- */
   var photoN = 0;
   function photoCardHtml() {
-    return '<div class="card"><b>📷 拍一張</b><div class="sub">拍這一站看到的東西，會放上照片牆。請不要拍到別人的臉。</div><input class="inp" id="ph-cap" maxlength="40" placeholder="一句話說明（可不寫）"><label class="btn2" style="display:inline-block">拍照／選照片<input id="ph-file" type="file" accept="image/*" capture="environment" hidden></label><button class="btn2" id="ph-wall">🖼 看照片牆</button><div class="sub" id="ph-msg"></div></div>';
+    return '<div class="card"><b>📷 拍一張</b><div class="sub">拍這一站看到的東西，會放上照片牆。請不要拍到別人的臉。</div><input class="inp" id="ph-cap" maxlength="40" placeholder="一句話說明（可不寫）"><label class="btn2" style="display:inline-block">📸 拍照<input id="ph-file" type="file" accept="image/*" capture="environment" hidden></label> <label class="btn2" style="display:inline-block">🖼 從相簿選<input id="ph-file2" type="file" accept="image/*" hidden></label><button class="btn2" id="ph-wall">🖼 看照片牆</button><div class="sub" id="ph-msg"></div></div>';
   }
   function shrink(file, max, q, limit) {
+    function fin(src, w, h, ok, no) {
+      var k = Math.min(1, max / Math.max(w, h)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+      c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+      var d = c.toDataURL('image/jpeg', q);
+      while (d.length > limit && q > 0.2) { q -= 0.1; d = c.toDataURL('image/jpeg', q); }
+      d.length > limit ? no(new Error('照片太大，換一張試試')) : ok(d);
+    }
     return new Promise(function (ok, no) {
-      var url = URL.createObjectURL(file), im = new Image();
-      im.onerror = function () { URL.revokeObjectURL(url); no(new Error('讀不到這張照片')); };
-      im.onload = function () {
-        URL.revokeObjectURL(url);
-        var k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
-        c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
-        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-        var d = c.toDataURL('image/jpeg', q);
-        while (d.length > limit && q > 0.2) { q -= 0.1; d = c.toDataURL('image/jpeg', q); }
-        d.length > limit ? no(new Error('照片太大，換一張試試')) : ok(d);
+      var viaImg = function () {
+        var url = URL.createObjectURL(file), im = new Image();
+        im.onerror = function () { URL.revokeObjectURL(url); no(new Error('讀不到這張照片（可能是 HEIC 等特殊格式）。請改按「拍照」，或選別張 JPG／PNG')); };
+        im.onload = function () { URL.revokeObjectURL(url); fin(im, im.width, im.height, ok, no); };
+        im.src = url;
       };
-      im.src = url;
+      if (window.createImageBitmap) {
+        createImageBitmap(file, { imageOrientation: 'from-image' }).then(function (b) { fin(b, b.width, b.height, ok, no); }).catch(viaImg);
+      } else viaImg();
     });
   }
   function sendPhoto(file) {
@@ -587,7 +592,11 @@
       ups['photos/' + id] = Object.assign({ d: r[0] }, base);
       ups['pth/' + id] = Object.assign({ th: r[1], nick: (profile && profile.nick) || '' }, base);
       return ROOT.update(ups).then(function () { photoN++; $('ph-cap').value = ''; msg.textContent = '已傳上去 ✔（' + Math.round(r[0].length / 1024) + ' KB）'; log('photo', curStop, id); toast('📷 照片傳好了'); });
-    }).catch(function (e) { msg.textContent = '傳不出去：' + (e.message || e); });
+    }).catch(function (e) {
+      var perm = e && /PERMISSION_DENIED|permission/i.test((e.code || '') + (e.message || ''));
+      msg.textContent = perm ? '傳不出去：你的隊伍資料對不上。請按右上角重新整理後再傳，還是不行請按「回報」。' : '傳不出去：' + (e.message || e);
+      log('photo_err', curStop, String((e && (e.code || e.message)) || e).slice(0, 120));
+    });
   }
   function openWall() {
     $('phm').hidden = false; $('ph-grid').innerHTML = '<div class="sub">載入中…</div>';

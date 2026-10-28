@@ -27,14 +27,15 @@ table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px
 <body>
 <div id="gate"><h2>走讀 · 帶隊總覽</h2><div class="sub">只有老師能看。</div><p><button id="btn-g">用 Google 帳號登入</button></p><div class="sub" id="gmsg"></div></div>
 <div id="dash" hidden>
-<header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge">整併過小的隊</button><button id="b-clear">清除所有位置</button><button id="b-test">切換：<span id="tl">正式</span></button></header>
-<div class="wrap"><div><div id="map"></div></div><div><div class="card"><b>隊伍</b><table id="tbl"></table></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
+<header><b>走讀 · 帶隊總覽</b><span class="sub" id="stat">—</span><button id="b-merge">整併過小的隊</button><button id="b-clear">清除所有位置</button><button id="b-phase">階段：<span id="pl">—</span></button><button id="b-test">切換：<span id="tl">正式</span></button></header>
+<div class="wrap"><div><div id="map"></div></div><div><div class="card"><b>隊伍</b><table id="tbl"></table></div><div class="card"><b>練習日進度</b><div id="reh" class="sub">—</div></div><div class="card"><b>學生入口 QR</b><div id="qr" style="text-align:center"></div><div class="sub" id="qru" style="text-align:center"></div></div><div class="card"><b>學生回報（最新 30 則）</b><div id="fbl" class="sub">—</div></div><div class="card"><b>需要注意</b><div id="alerts" class="sub">—</div></div></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
-<script src="js/walk_route.js?v=202610281330"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="js/walk_route.js?v=202610281530"></script>
 <script>
 (function(){
 'use strict';
@@ -44,8 +45,9 @@ var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 firebase.initializeApp({apiKey:'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng',authDomain:'gen-lang-client-0929530380.firebaseapp.com',databaseURL:'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app',projectId:'gen-lang-client-0929530380'});
 var db=firebase.database(),auth=firebase.auth(),ROOT=db.ref('whgm/analysis/'+(TEST?'walk1114test':'walk1114'));
-var teams={},pos={},prog={},board={},map,markers={};
+var teams={},pos={},prog={},board={},map,markers={},players={},reh={},phase=null,fbs={};
 $('tl').textContent=TEST?'測試':'正式';
+$('b-phase').onclick=function(){var cur=phase||((Date.now()<Date.parse(window.WALK_ROUTE.liveStart))?'rehearsal':'live');if(confirmTwice('b-phase','切換為'+(cur==='rehearsal'?'正式':'練習日')+'（再按一次確認）'))ROOT.child('cfg/phase').set(cur==='rehearsal'?'live':'rehearsal')};
 $('b-test').onclick=function(){location.search=TEST?'':'?test=1'};
 function accept(u){
   var em=(u.email||'').toLowerCase();
@@ -65,7 +67,17 @@ function start(){
   ROOT.child('pos').on('value',function(s){pos=s.val()||{};render()});
   ROOT.child('prog').on('value',function(s){prog=s.val()||{};render()});
   ROOT.child('board').on('value',function(s){board=s.val()||{};render()});
+  ROOT.child('players').on('value',function(s){players=s.val()||{};render()});
+  ROOT.child('fb').limitToLast(30).on('value',function(s){fbs=s.val()||{};renderFb()});
+  ROOT.child('rehearsal').on('value',function(s){reh=s.val()||{};render()});
+  ROOT.child('cfg/phase').on('value',function(s){phase=s.val();render()});
+  try{var u=location.origin+location.pathname.replace('walk_teacher.html','walk.html');var q=qrcode(0,'M');q.addData(u);q.make();$('qr').innerHTML=q.createImgTag(5,2);var im=$('qr').querySelector('img');if(im){im.style.width='180px';im.style.height='180px';im.style.imageRendering='pixelated'}$('qru').textContent=u}catch(e){}
   setInterval(render,15000);
+}
+function renderFb(){
+  var ids=Object.keys(fbs).sort(function(a,b){return fbs[b].t-fbs[a].t});var T={bug:'🐞',idea:'💡',content:'📜',gps:'📍'};
+  $('fbl').innerHTML=ids.length?ids.map(function(id){var f=fbs[id];return '<div style="border-top:1px solid var(--line);padding:4px 0;'+(f.done?'opacity:.5':'')+'">'+(T[f.type]||'')+' <b>'+esc(f.text)+'</b><br><span class="sub">'+new Date(f.t).toLocaleString('zh-TW',{hour12:false})+'・'+esc(f.route||'')+'・'+esc(f.stop||'')+'・'+esc(f.view||'')+(f.pos?'・'+f.pos.lat+','+f.pos.lon+'±'+f.pos.acc:'')+(f.errs&&f.errs.length?'<br>錯誤：'+esc(f.errs.join(' | ')):'')+'<br>'+esc((f.ua||'').slice(0,90))+' <button data-fbd="'+id+'">'+(f.done?'已處理':'標為已處理')+'</button></span></div>'}).join(''):'目前沒有。';
+  [].forEach.call(document.querySelectorAll('[data-fbd]'),function(b){b.onclick=function(){ROOT.child('fb/'+b.dataset.fbd+'/done').set(true)}});
 }
 function fresh(p){return p&&Date.now()-p.t<120000}
 function render(){
@@ -79,6 +91,10 @@ function render(){
     h+='<tr><td>'+esc(t.kind==='room'?'房 '+t.code:t.name)+'</td><td>'+m.length+'</td><td>'+fr+'/4</td><td>'+((board[id]||{}).score||0)+'</td><td class="'+(on===m.length?'ok':'warn')+'">'+on+'/'+m.length+'</td></tr>'});
   $('tbl').innerHTML=h;$('alerts').innerHTML=al.length?al.map(esc).join('<br>'):'沒有。';
   $('stat').textContent=ids.length+' 隊・'+total+' 人・在線 '+online;
+  var pc=Object.keys(players).length,withTeam=Object.keys(players).filter(function(u){return players[u].team}).length,full=Object.keys(reh).filter(function(u){return Object.keys(reh[u]||{}).length>=5}).length;
+  var sizes={};ids.forEach(function(id){var n=Object.keys(teams[id].members||{}).length;sizes[n]=(sizes[n]||0)+1});
+  $('reh').innerHTML='已登入 <b>'+pc+'</b> 人（全班 52）・已分到隊 <b>'+withTeam+'</b>・練習 5 項全做完 <b>'+full+'</b><br>隊伍人數分佈：'+(Object.keys(sizes).sort().map(function(k){return k+' 人 × '+sizes[k]}).join('、')||'—')+'<br>還沒登入的人要在教室裡提醒；人數 1–2 的隊用上方「整併過小的隊」。';
+  var ph=phase||((Date.now()<Date.parse(window.WALK_ROUTE.liveStart))?'rehearsal':'live');$('pl').textContent=(ph==='rehearsal'?'練習日':'正式')+(phase?'（手動）':'（依日期）');
   if(!map)return;
   Object.keys(markers).forEach(function(k){map.removeLayer(markers[k]);delete markers[k]});
   ids.forEach(function(id){Object.keys(pos[id]||{}).forEach(function(u){var p=pos[id][u];if(!fresh(p))return;

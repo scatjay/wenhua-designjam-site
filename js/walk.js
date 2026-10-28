@@ -4,7 +4,17 @@
    隱私：系／班只在分隊當下使用，隊伍只留「標籤」（建隊者的系），個人不存；位置只給同隊與老師，結束後清除。 */
 (function () {
   'use strict';
-  var R = window.WALK_ROUTE, S = R.stops;
+  var R0 = window.WALK_ROUTE, R = R0, S = R0.stops, REH = false;
+  function selectRoute(reh) {
+    REH = !!reh;
+    R = REH ? Object.assign({}, R0, { stops: R0.campus.stops, fragmentNames: R0.campus.fragmentNames, finalTask: R0.campus.finalTask }) : R0;
+    S = R.stops; curStop = S[0].id;
+  }
+  function PR_(id) { return (REH ? 'progr/' : 'prog/') + id; }
+  function totalFrags() { return S.filter(function (x) { return x.frag !== undefined; }).length; }
+  var errBuf = [];
+  window.addEventListener('error', function (e) { errBuf.push(String(e.message || e).slice(0, 160)); if (errBuf.length > 12) errBuf.shift(); });
+  window.addEventListener('unhandledrejection', function (e) { errBuf.push('promise: ' + String((e.reason && e.reason.message) || e.reason).slice(0, 160)); if (errBuf.length > 12) errBuf.shift(); });
   var qs = new URLSearchParams(location.search);
   var TEST = qs.get('test') === '1';
   var $ = function (id) { return document.getElementById(id); };
@@ -12,7 +22,80 @@
   var ROLES = ['隊長', '領航員', '軍師', '偵查員'];
   var ROLE_ICON = { '隊長': '👑', '領航員': '🧭', '軍師': '📜', '偵查員': '🔍' };
   var ROLE_DESC = { '隊長': '分工調節：決定誰去哪、何時用提示', '領航員': '空間方位：看得到方位與距離提示', '軍師': '推理知識：看得到年代與排序提示', '偵查員': '觀察比對：看得到現場特徵提示' };
-  var AVAS = ['🦊', '🐯', '🐼', '🐸', '🦉', '🐙', '🦄', '🐧', '🐢', '🦁', '🐰', '🐻'];
+  var AVAS = Object.keys(window.WALK_SPRITES || {});
+  var SPR = window.WALK_SPRITES || {}, SPRL = window.WALK_SPRITE_LABELS || {};
+  /* 像素角色：精靈圖 8 格（前×2、右×2、左×2、背×2，每格 10×14）；walking 時前面兩格交替 */
+  function avaHtml(id, scale, walking, name) {
+    scale = scale || 3;
+    if (!SPR[id]) return '<span class="emo" style="font-size:' + (scale * 7) + 'px">' + esc(id || '🙂') + '</span>';
+    var w = 10 * scale, h = 14 * scale;
+    return '<span class="spr' + (walking ? ' walk' : '') + '" style="width:' + w + 'px;height:' + h + 'px;background-image:url(' + SPR[id] + ');background-size:' + (80 * scale) + 'px ' + h + 'px;--w:' + w + 'px" title="' + esc(name || SPRL[id] || '') + '"></span>';
+  }
+  /* 風格包：只改自己看到的地圖與色調；auto＝晚上 18:00–06:00 自動換夜景 */
+  var STYLES = [
+    { id: 'pixel', name: '像素街景', desc: '預設：清楚的街道＋像素角色' },
+    { id: 'toy', name: '軟膠公仔', desc: '暖色柔霧、角色加圓潤陰影（參考：台灣街景微縮公仔質感）' },
+    { id: 'ink', name: '墨線古地圖', desc: '米黃褪色、像一張舊地圖' },
+    { id: 'night', name: '夜景', desc: '深色地圖，適合傍晚（18:00 後可選自動）' }
+  ];
+  var styleSel = 'pixel';
+  try { styleSel = localStorage.getItem('walk_style') || 'pixel'; } catch (e) {}
+  function effectiveStyle() {
+    if (styleSel === 'auto') { var h = new Date(nowMs() + 8 * 3600 * 1000).getUTCHours(); return (h >= 18 || h < 6) ? 'night' : 'pixel'; }
+    return styleSel;
+  }
+  /* 向量底圖（OpenFreeMap，免金鑰）＋依風格重新上色；沒有 WebGL 時退回一般圖磚加 CSS 濾鏡 */
+  var PAL = {
+    pixel: { land: '#f1ead6', water: '#78bde3', park: '#b6d98f', bld: '#d99a72', bldLine: '#9b6445', road: '#ffffff', casing: '#c9b890', rail: '#8a8a8a', text: '#3a3326', halo: '#fff8e6' },
+    toy:   { land: '#fff0de', water: '#9edbe0', park: '#c9ebb3', bld: '#ffbfa3', bldLine: '#ee9d82', road: '#ffffff', casing: '#ffd9b8', rail: '#c9a9a6', text: '#7a4a3a', halo: '#fff6ec' },
+    ink:   { land: '#ecdfbd', water: '#c7cdb9', park: '#d5cf9f', bld: '#bba878', bldLine: '#7d6a45', road: '#fbf3dc', casing: '#8b7650', rail: '#6d5c3c', text: '#4b3a22', halo: '#f5ebcf' },
+    night: { land: '#1a2530', water: '#0e3a57', park: '#1d3a33', bld: '#34475c', bldLine: '#4f6a86', road: '#4e6a86', casing: '#0f1820', rail: '#7a8ca0', text: '#b9d3ea', halo: '#0f1820' }
+  };
+  var vecLayer = null, mlMap = null, rasterMode = false, curPR = null, PR = { pixel: 0.4, toy: 0.9, ink: 0.9, night: 0.6 };
+  function paintVec(e) {
+    if (!mlMap || !mlMap.getStyle) return; var P = PAL[e] || PAL.pixel, st = mlMap.getStyle(); if (!st) return;
+    st.layers.forEach(function (l) {
+      var id = l.id, set = function (k, v) { try { mlMap.setPaintProperty(id, k, v); } catch (x) {} };
+      if (l.type === 'background') set('background-color', P.land);
+      else if (l.type === 'raster') { try { mlMap.setLayoutProperty(id, 'visibility', 'none'); } catch (x) {} }
+      else if (l.type === 'fill' && id === 'water') set('fill-color', P.water);
+      else if (l.type === 'fill' && id === 'building') { set('fill-color', P.bld); set('fill-outline-color', P.bldLine); set('fill-opacity', 1); }
+      else if (l.type === 'fill-extrusion') { set('fill-extrusion-color', P.bld); }
+      else if (l.type === 'fill' && (/^landcover_(wood|grass|wetland)/.test(id) || id === 'park' || id === 'landuse_pitch' || id === 'landuse_track')) set('fill-color', P.park);
+      else if (l.type === 'fill' && /^landuse_(residential|hospital|school|cemetery)/.test(id)) set('fill-color', P.land);
+      else if (l.type === 'fill' && id === 'road_area_pattern') { }
+      else if (l.type === 'line' && /^waterway/.test(id)) set('line-color', P.water);
+      else if (l.type === 'line' && /rail/.test(id)) set('line-color', P.rail);
+      else if (l.type === 'line' && /casing/.test(id)) set('line-color', P.casing);
+      else if (l.type === 'line' && /^(road|bridge|tunnel)_/.test(id)) set('line-color', P.road);
+      else if (l.type === 'line' && id === 'park_outline') set('line-color', P.park);
+      else if (l.type === 'symbol') { set('text-color', P.text); set('text-halo-color', P.halo); }
+    });
+  }
+  function applyStyle() {
+    var e = effectiveStyle(), b = document.body;
+    STYLES.forEach(function (x) { b.classList.remove('st-' + x.id); }); b.classList.add('st-' + e); b.classList.toggle('raster', rasterMode);
+    if (vecLayer && (PR[e] || 0.9) !== curPR) buildVec(e); else paintVec(e);
+    if (map && window.refreshStopIcons) refreshStopIcons();
+  }
+  function buildVec(e) {
+    var pr = PR[e] || 0.9;
+    if (vecLayer) { try { map.removeLayer(vecLayer); } catch (x) {} vecLayer = null; mlMap = null; }
+    vecLayer = L.maplibreGL({ style: 'https://tiles.openfreemap.org/styles/liberty', pixelRatio: pr, attribution: '© OpenStreetMap · OpenFreeMap · OpenMapTiles' }).addTo(map);
+    vecLayer.getContainer && vecLayer.getContainer();
+    mlMap = vecLayer.getMaplibreMap(); curPR = pr;
+    mlMap.on('load', function () { paintVec(effectiveStyle()); });
+    mlMap.on('styledata', function () { if (mlMap.isStyleLoaded()) paintVec(effectiveStyle()); });
+    mlMap.on('error', function () { });
+  }
+  function initBasemap() {
+    var ok = false;
+    try { var cv = document.createElement('canvas'); ok = !!(window.maplibregl && L.maplibreGL && (cv.getContext('webgl') || cv.getContext('experimental-webgl'))); } catch (x) { ok = false; }
+    if (ok) { try { buildVec(effectiveStyle()); return; } catch (x) { ok = false; } }
+    rasterMode = true;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+    applyStyle();
+  }
   var DEPTS = ['多樂', '資工', '資管', '半導體', '電機', '電子', '化材', '機械', '企管', '工管', '流音', '應日', '資傳', '視傳', '永續', '其他'];
 
   var db, auth, ROOT, uid = null, profile = null, team = null, teamId = null, prog = {}, teamPos = {}, posTimer = null;
@@ -42,11 +125,16 @@
     firebase.initializeApp({ apiKey: 'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng', authDomain: 'gen-lang-client-0929530380.firebaseapp.com', databaseURL: 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', projectId: 'gen-lang-client-0929530380' });
     db = firebase.database(); auth = firebase.auth();
     ROOT = db.ref('whgm/analysis/' + (TEST ? 'walk1114test' : 'walk1114'));
-    buildOnboarding();
+    buildOnboarding(); applyStyle(); buildQR();
     $('btn-google').onclick = googleLogin;
     if (TEST) { $('btn-test').hidden = false; $('btn-test').onclick = function () { startUser(qs.get('uid') || ('dev-' + Math.random().toString(36).slice(2, 8))); }; if (qs.get('uid')) startUser(qs.get('uid')); }
     auth.getRedirectResult().catch(loginErr);
     auth.onAuthStateChanged(function (u) { if (u && !uid) startUser(u.uid); });
+  }
+  function buildQR() {
+    var box = $('qr-box'); if (!box || !window.qrcode) return;
+    var url = location.origin + location.pathname;
+    try { var q = qrcode(0, 'M'); q.addData(url); q.make(); box.innerHTML = q.createImgTag(6, 2); var im = box.querySelector('img'); if (im) { im.style.width = '200px'; im.style.height = '200px'; im.style.imageRendering = 'pixelated'; im.alt = '掃這個進入走讀頁'; } $('qr-url').textContent = url; } catch (e) { box.textContent = ''; }
   }
   function loginErr(e) { $('login-msg').textContent = '登入沒完成（' + ((e && e.code) || 'unknown') + '）。可以換瀏覽器或重試一次。'; }
   function googleLogin() {
@@ -76,7 +164,7 @@
   /* ---------- 加入畫面（暱稱、系／班、同意） ---------- */
   function buildOnboarding() {
     var d = $('ob-dept'); d.innerHTML = '<option value="">請選擇</option>' + DEPTS.map(function (x) { return '<option>' + x + '</option>'; }).join('');
-    var g = $('ob-ava'); g.innerHTML = AVAS.map(function (a, i) { return '<button type="button" class="ava' + (i === 0 ? ' on' : '') + '" data-a="' + a + '">' + a + '</button>'; }).join('');
+    var g = $('ob-ava'); g.innerHTML = AVAS.map(function (a, i) { return '<button type="button" class="ava' + (i === 0 ? ' on' : '') + '" data-a="' + a + '">' + avaHtml(a, 3, false) + '</button>'; }).join('');
     g.onclick = function (e) { var b = e.target.closest('.ava'); if (!b) return; [].forEach.call(g.children, function (x) { x.classList.remove('on'); }); b.classList.add('on'); };
     $('ob-go').onclick = onboardGo;
     var j = qs.get('join'); if (j) $('ob-code').value = j.toUpperCase();
@@ -84,7 +172,7 @@
   function showOnboarding() { $('screen-ob').hidden = false; }
   function onboardGo() {
     var nick = $('ob-nick').value.trim(), dept = $('ob-dept').value, cls = $('ob-cls').value;
-    var ava = ($('ob-ava').querySelector('.on') || {}).dataset ? $('ob-ava').querySelector('.on').dataset.a : AVAS[0];
+    var onb = $('ob-ava').querySelector('.on'), ava = onb ? onb.dataset.a : AVAS[0];
     if (!nick) { $('ob-msg').textContent = '請取一個暱稱（不是真實姓名）。'; return; }
     if (!$('ob-ok').checked) { $('ob-msg').textContent = '請先勾選同意。'; return; }
     var code = $('ob-code').value.trim().toUpperCase();
@@ -153,35 +241,52 @@
 
   /* ---------- 進入遊戲 ---------- */
   function enterGame(id) {
+    ROOT.child('cfg/phase').once('value').then(function (sn) { cfgPhase = sn.val(); selectRoute(phase() === 'rehearsal'); enterGame2(id); }).catch(function (e) { console.log('ENTER_ERR', e && e.stack); });
+  }
+  function enterGame2(id) {
     teamId = id; offAll();
     ROOT.child('players/' + uid).update({ team: id }); if (profile) profile.team = id;
     $('app').hidden = false; $('screen-ob').hidden = true; $('screen-login').hidden = true;
-    initMap(); wireTabs(); startLocation();
+    initMap(); wireTabs(); startLocation(); if (phase() === 'rehearsal') pmark('g0');
     on(ROOT.child('teams/' + id), 'value', function (s) {
       team = s.val();
       if (!team || !team.members || !team.members[uid]) { toast('你已不在這個隊了。'); $('app').hidden = true; showOnboarding(); return; }
       render();
     });
     on(ROOT.child('players/' + uid + '/team'), 'value', function (sn) { var nt = sn.val(); if (nt && nt !== teamId) { toast('你的隊伍被整併了，已切到新隊。'); enterGame(nt); } });
-    on(ROOT.child('prog/' + id), 'value', function (s) { prog = s.val() || {}; render(); checkTasks(); });
+    on(ROOT.child(PR_(id)), 'value', function (s) { prog = s.val() || {}; render(); checkTasks(); });
     on(ROOT.child('pos/' + id), 'value', function (s) { teamPos = s.val() || {}; renderMates(); checkTasks(); });
-    on(ROOT.child('board'), 'value', function (s) { board = s.val() || {}; if (view === 'rank') render(); });
+    on(ROOT.child('cfg/phase'), 'value', function (sn) { cfgPhase = sn.val(); if ((phase() === 'rehearsal') !== REH) { console.log('RELOAD', phase(), REH, cfgPhase, R.liveStart); location.reload(); return; } render(); renderBanner(); });
+    on(ROOT.child('rehearsal/' + uid), 'value', function (sn) { rehearsal = sn.val() || {}; render(); });
+    on(ROOT.child(REH ? 'boardr' : 'board'), 'value', function (s) { board = s.val() || {}; if (view === 'rank') render(); });
     schedLoop();
   }
-  var board = {};
+  var board = {}, cfgPhase = null, rehearsal = {};
+  function phase() { if (cfgPhase === 'live' || cfgPhase === 'rehearsal') return cfgPhase; return nowMs() < Date.parse(R.liveStart) ? 'rehearsal' : 'live'; }
+  function pdone(id) { return !!rehearsal[id]; }
+  function pmark(id) { if (pdone(id)) return; ROOT.child('rehearsal/' + uid + '/' + id).set(nowMs()); }
 
   /* ---------- 地圖與定位 ---------- */
   function initMap() {
     if (map) return;
     map = L.map('map', { zoomControl: false, attributionControl: true }).setView([S[0].lat, S[0].lon], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+    initBasemap();
+    if (REH) { var bb = L.latLngBounds(S.map(function (x) { return [x.lat, x.lon]; })); map.fitBounds(bb, { padding: [50, 50], maxZoom: 18 }); }
     S.forEach(function (s, i) {
-      var ic = L.divIcon({ className: '', html: '<div class="stopdot">' + i + '</div>', iconSize: [26, 26], iconAnchor: [13, 13] });
-      stopMarkers[s.id] = L.marker([s.lat, s.lon], { icon: ic }).addTo(map).on('click', function () { curStop = s.id; setView('task'); });
+      stopMarkers[s.id] = L.marker([s.lat, s.lon], { icon: stopIcon(s, i, false) }).addTo(map).on('click', function () { curStop = s.id; setView('task'); });
       L.circle([s.lat, s.lon], { radius: s.r, color: '#b8402a', weight: 1, fillOpacity: 0.05 }).addTo(map);
       if (s.zones) Object.keys(s.zones).forEach(function (k) { var z = s.zones[k]; L.circle([z.lat, z.lon], { radius: z.r, color: '#1f6f68', weight: 1, dashArray: '4', fillOpacity: 0.08 }).addTo(map).bindTooltip(z.name); });
     });
   }
+  var ICONS = window.WALK_ICONS || {};
+  function stopIcon(s, i, done) {
+    var k = s.final ? 'star' : (s.id === 's0' ? 'sign' : (s.frag !== undefined ? (done ? 'star' : 'chest') : 'house')), it = ICONS[k], sc = 3;
+    var img = it ? '<img src="' + it.src + '" style="width:' + (it.w * sc) + 'px;height:' + (it.h * sc) + 'px;image-rendering:pixelated">' : '';
+    return L.divIcon({ className: '', html: '<div class="sicon' + (done ? ' done' : '') + '">' + img + '<b>' + i + '</b></div>', iconSize: [44, 48], iconAnchor: [22, 38] });
+  }
+  window.refreshStopIcons = function () {
+    if (!map) return; S.forEach(function (s, i) { var m = stopMarkers[s.id]; if (m) m.setIcon(stopIcon(s, i, !!(prog[s.id] && prog[s.id].frag))); });
+  };
   function startLocation() {
     var sim = qs.get('sim');
     if (sim) { var p = sim.split(',').map(Number); gotPos({ coords: { latitude: p[0], longitude: p[1], accuracy: 5 } }); window.__walkSim = function (lat, lon) { gotPos({ coords: { latitude: lat, longitude: lon, accuracy: 5 } }); }; return; }
@@ -190,11 +295,15 @@
     if (!posTimer) posTimer = setInterval(uploadPos, 25000);
   }
   window.__walkSim2 = function () { };
+  var lastMe = null, lastMoveT = 0, mateLast = {};
   function gotPos(p) {
     myPos = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy || 0, t: nowMs() };
     $('gps').textContent = '定位精度約 ' + Math.round(myPos.acc) + ' 公尺';
-    if (!meMarker) { meMarker = L.circleMarker([myPos.lat, myPos.lon], { radius: 8, color: '#fff', weight: 2, fillColor: '#2f6690', fillOpacity: 1 }).addTo(map); map.setView([myPos.lat, myPos.lon], 17); }
-    else meMarker.setLatLng([myPos.lat, myPos.lon]);
+    var moved = lastMe && dist(lastMe, myPos) > 3; lastMe = { lat: myPos.lat, lon: myPos.lon }; if (moved) lastMoveT = nowMs();
+    var mic = L.divIcon({ className: '', html: '<div class="mate me">' + avaHtml(profile && profile.ava, 3, nowMs() - lastMoveT < 12000) + '<b>' + esc((profile && profile.nick) || '我') + '</b></div>', iconSize: [48, 56], iconAnchor: [24, 44] });
+    if (!meMarker) { meMarker = L.marker([myPos.lat, myPos.lon], { icon: mic, zIndexOffset: 800 }).addTo(map); if (!REH) map.setView([myPos.lat, myPos.lon], 17); }
+    else meMarker.setLatLng([myPos.lat, myPos.lon]).setIcon(mic);
+    if (phase() === 'rehearsal') pmark('g1');
     if (!uploadPos._last || nowMs() - uploadPos._last > 15000) uploadPos();
     checkTasks();
   }
@@ -203,18 +312,20 @@
     ROOT.child('pos/' + teamId + '/' + uid).set({ lat: +myPos.lat.toFixed(5), lon: +myPos.lon.toFixed(5), acc: Math.round(myPos.acc), t: myPos.t, nick: profile.nick, ava: profile.ava });
   }
   function renderMates() {
+    if (phase() === 'rehearsal') { var n = 0; Object.keys(teamPos).forEach(function (k) { if (fresh(teamPos[k])) n++; }); if (n >= 2) pmark('g2'); }
     Object.keys(mateMarkers).forEach(function (k) { if (!teamPos[k] || !showMates) { map.removeLayer(mateMarkers[k]); delete mateMarkers[k]; } });
     if (!showMates) return;
     Object.keys(teamPos).forEach(function (k) {
       if (k === uid) return; var p = teamPos[k];
-      var html = '<div class="mate">' + esc(p.ava || '🙂') + '<b>' + esc(p.nick || '') + '</b></div>';
-      var ic = L.divIcon({ className: '', html: html, iconSize: [48, 34], iconAnchor: [24, 17] });
+      var ml = mateLast[k], mv = ml && (Math.abs(ml.lat - p.lat) > 0.00003 || Math.abs(ml.lon - p.lon) > 0.00003); mateLast[k] = { lat: p.lat, lon: p.lon, mv: mv ? nowMs() : (ml ? ml.mv : 0) };
+      var html = '<div class="mate">' + avaHtml(p.ava, 3, nowMs() - (mateLast[k].mv || 0) < 40000) + '<b>' + esc(p.nick || '') + '</b></div>';
+      var ic = L.divIcon({ className: '', html: html, iconSize: [48, 56], iconAnchor: [24, 44] });
       if (mateMarkers[k]) mateMarkers[k].setLatLng([p.lat, p.lon]).setIcon(ic); else mateMarkers[k] = L.marker([p.lat, p.lon], { icon: ic }).addTo(map);
     });
   }
 
   /* ---------- 時程（自動模式：依時鐘提示現在該在哪） ---------- */
-  function stopStartMs(s) { var m = /(\d{1,2}):(\d{2})/.exec(s.time); var d = new Date(R.date + 'T00:00:00+08:00'); return d.getTime() + (+m[1] * 3600 + +m[2] * 60) * 1000; }
+  function stopStartMs(s) { var m = /(\d{1,2}):(\d{2})/.exec(s.time || ''); if (!m) return Infinity; var d = new Date(R.date + 'T00:00:00+08:00'); return d.getTime() + (+m[1] * 3600 + +m[2] * 60) * 1000; }
   function schedNow() {
     var t = nowMs(), cur = null;
     for (var i = 0; i < S.length; i++) if (stopStartMs(S[i]) <= t) cur = S[i];
@@ -222,7 +333,9 @@
   }
   function schedLoop() { renderBanner(); setInterval(renderBanner, 20000); }
   function renderBanner() {
-    var c = schedNow(), b = $('banner');
+    var b = $('banner');
+    if (phase() === 'rehearsal') { b.innerHTML = '🎒 <b>練習日</b>：先在教室登入、分好隊、試試看地圖與任務。11/14 當天直接登入，會回到同一隊。'; return; }
+    var c = schedNow();
     if (!c) { var first = S[0]; b.innerHTML = '走讀 ' + esc(first.time) + ' 在 <b>' + esc(first.name) + '</b> 集合。'; return; }
     var end = stopStartMs(c) + c.min * 60000, left = Math.round((end - nowMs()) / 60000);
     b.innerHTML = '現在：<b>' + esc(c.name) + '</b>' + (left > 0 ? '（約剩 ' + left + ' 分鐘）' : '（時間到，跟著承樸走）');
@@ -234,7 +347,7 @@
   function markTask(stopId, tid, extra) {
     if (taskDone(stopId, tid)) return;
     var rec = { by: uid, t: nowMs() }; if (extra) for (var k in extra) rec[k] = extra[k];
-    ROOT.child('prog/' + teamId + '/' + stopId + '/tasks/' + tid).transaction(function (c) { return c === null ? rec : undefined; }).then(function (r) { if (r.committed) { log('task', stopId, tid + (extra && extra.soft ? ' (soft)' : '')); toast('✔ 完成：' + (taskTitle(stopId, tid) || tid)); } });
+    ROOT.child(PR_(teamId) + '/' + stopId + '/tasks/' + tid).transaction(function (c) { return c === null ? rec : undefined; }).then(function (r) { if (r.committed) { log('task', stopId, tid + (extra && extra.soft ? ' (soft)' : '')); toast('✔ 完成：' + (taskTitle(stopId, tid) || tid)); } });
   }
   function taskTitle(sid, tid) { var s = stopById(sid); if (!s || !s.tasks) return ''; for (var i = 0; i < s.tasks.length; i++) if (s.tasks[i].id === tid) return s.tasks[i].title; return ''; }
   function zoneOf(s, key) { return s.zones && s.zones[key]; }
@@ -244,7 +357,7 @@
     S.forEach(function (s) {
       // 到點打卡
       if (myPos && dist(myPos, s) <= s.r && !(prog[s.id] && prog[s.id].arrived)) {
-        ROOT.child('prog/' + teamId + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) toast('📍 到達：' + s.name); });
+        ROOT.child(PR_(teamId) + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) toast('📍 到達：' + s.name); });
       }
       (s.tasks || []).forEach(function (t) {
         if (taskDone(s.id, t.id)) return;
@@ -270,7 +383,7 @@
     if (s.frag === undefined || (prog[s.id] && prog[s.id].frag)) return;
     var need = (s.tasks || []).filter(function (t) { return !t.bonus && t.type !== 'together' && t.type !== 'cross'; });
     if (need.every(function (t) { return taskDone(s.id, t.id); })) {
-      ROOT.child('prog/' + teamId + '/' + s.id + '/frag').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🧩 取得碎片：' + R.fragmentNames[s.frag]); log('frag', s.id, R.fragmentNames[s.frag]); } });
+      ROOT.child(PR_(teamId) + '/' + s.id + '/frag').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🧩 取得碎片：' + R.fragmentNames[s.frag]); log('frag', s.id, R.fragmentNames[s.frag]); } });
     }
   }
   function scoreOf() {
@@ -287,7 +400,7 @@
   function writeScore() {
     if (!team) return; var sc = scoreOf(), key = sc + '|' + fragCount() + '|' + team.n;
     if (key === lastScoreWritten) return; lastScoreWritten = key;
-    ROOT.child('board/' + teamId).set({ name: teamLabel(), score: sc, frags: fragCount(), n: Object.keys(team.members || {}).length, t: nowMs() });
+    ROOT.child((REH ? 'boardr/' : 'board/') + teamId).set({ name: teamLabel(), score: sc, frags: fragCount(), n: Object.keys(team.members || {}).length, t: nowMs() });
   }
   function teamLabel() { return (team.kind === 'room' ? '房 ' + team.code : team.name) || '隊'; }
 
@@ -299,23 +412,24 @@
     $('btn-locate').onclick = function () { if (myPos) map.setView([myPos.lat, myPos.lon], 18); };
   }
   function setView(v) {
-    view = v; [].forEach.call(document.querySelectorAll('.pane'), function (p) { p.hidden = p.id !== 'pane-' + v; });
+    view = v; if (phase() === 'rehearsal' && v === 'task') setTimeout(function () { pmark('g4'); }, 4000); if (phase() === 'rehearsal' && v === 'team') pmark('g3'); [].forEach.call(document.querySelectorAll('.pane'), function (p) { p.hidden = p.id !== 'pane-' + v; });
     [].forEach.call(document.querySelectorAll('#nav button'), function (b) { b.classList.toggle('on', b.dataset.v === v); });
     if (v === 'map' && map) setTimeout(function () { map.invalidateSize(); }, 50);
     render();
   }
   function render() {
-    if (!team) return;
+    if (!team) return; if (window.refreshStopIcons) refreshStopIcons();
     $('hd-team').textContent = teamLabel() + '・' + Object.keys(team.members).length + ' 人';
-    $('hd-score').textContent = scoreOf() + ' 分・碎片 ' + fragCount() + '/4';
+    $('hd-score').textContent = scoreOf() + ' 分・碎片 ' + fragCount() + '/' + totalFrags();
     if (view === 'task') renderTask(); if (view === 'team') renderTeam(); if (view === 'rank') renderRank();
   }
   function myRole() { return (team && team.members[uid] && team.members[uid].role) || ROLES[0]; }
   function renderTask() {
     var s = stopById(curStop || S[0].id) || S[0], p = prog[s.id] || {}, h = '';
+    if (REH) h = practiceHtml() + '<h2>校園試玩：' + esc(R0.campus.name) + '</h2><div class="sub">從 E 棟出發繞一圈，約 10–15 分鐘；校史小知識都來自學校通識電子報。</div>';
     h += '<div class="chips">' + S.map(function (x, i) { var st = (prog[x.id] && prog[x.id].frag) ? 'ok' : (prog[x.id] && prog[x.id].arrived ? 'half' : ''); return '<button class="chip ' + st + (x.id === s.id ? ' cur' : '') + '" data-s="' + x.id + '">' + i + '</button>'; }).join('') + '</div>';
-    h += '<h2>' + esc(s.name) + '</h2><div class="sub">' + esc(s.time) + ' 起・約 ' + s.min + ' 分' + (s.frag !== undefined ? '・碎片「' + esc(R.fragmentNames[s.frag]) + '」' + (p.frag ? ' ✔' : '') : '') + '</div>';
-    if (s.plain) { h += '<div class="card">' + esc(s.tip || '') + '</div>'; if (s.id === 's0') h += '<div class="card">你的角色：<b>' + ROLE_ICON[myRole()] + myRole() + '</b><br><span class="sub">' + esc(ROLE_DESC[myRole()]) + '</span></div>'; }
+    h += '<h2>' + esc(s.name) + '</h2><div class="sub">' + (REH ? '' : esc(s.time) + ' 起・') + '約 ' + s.min + ' 分' + (s.frag !== undefined ? '・碎片「' + esc(R.fragmentNames[s.frag]) + '」' + (p.frag ? ' ✔' : '') : '') + '</div>';
+    if (s.tip) { h += '<div class="card">' + esc(s.tip || '') + '</div>'; if (s.id === 's0' || s.id === 'c0') h += '<div class="card">你的角色：<b>' + ROLE_ICON[myRole()] + myRole() + '</b><br><span class="sub">' + esc(ROLE_DESC[myRole()]) + '</span></div>'; }
     if (s.final) h += finalHtml();
     if (s.npc) h += npcHtml(s, p);
     if (s.tasks) {
@@ -325,6 +439,7 @@
     if (s.note) h += '<details class="card"><summary>給老師看的備註</summary><div class="sub">' + esc(s.note) + '</div></details>';
     $('pane-task').innerHTML = h;
     [].forEach.call(document.querySelectorAll('.chip'), function (b) { b.onclick = function () { curStop = b.dataset.s; renderTask(); }; });
+    [].forEach.call(document.querySelectorAll('[data-pack]'), function (b) { b.onclick = function () { pmark(b.dataset.pack); }; });
     [].forEach.call(document.querySelectorAll('[data-hint]'), function (b) { b.onclick = function () { useHint(b.dataset.hint); }; });
     [].forEach.call(document.querySelectorAll('[data-ans]'), function (b) { b.onclick = function () { answer(b.dataset.s, b.dataset.t, b.dataset.ans); }; });
     [].forEach.call(document.querySelectorAll('[data-text]'), function (b) { b.onclick = function () { submitText(b.dataset.s, b.dataset.t); }; });
@@ -333,13 +448,21 @@
     [].forEach.call(document.querySelectorAll('[data-ord]'), function (b) { b.onclick = function () { checkOrder(b.dataset.s, b.dataset.t); }; });
     var fb = document.getElementById('final-go'); if (fb) fb.onclick = submitFinal;
   }
+  function practiceHtml() {
+    var P = R0.practice, done = P.filter(function (t) { return pdone(t.id); }).length;
+    var h = '<div class="card"><b>🎒 練習日清單</b>（不計分）<div class="sub">完成 ' + done + ' / ' + P.length + '。同隊的人一起做比較容易。</div>';
+    P.forEach(function (t) { var d = pdone(t.id); h += '<div class="task' + (d ? ' done' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + esc(t.title) + '</div>' + ((!d && t.type === 'ack') ? '<button class="btn2" data-pack="' + t.id + '">做好了</button>' : '') + (!d && t.type === 'gps' ? '<div class="sub">到「地圖」頁並允許定位，會自動完成。</div>' : '') + (!d && t.type === 'mates' ? '<div class="sub">同隊兩人以上同時開著，會自動完成。</div>' : '') + (!d && t.type === 'auto' ? '<div class="sub">自動完成。</div>' : '') + '</div>'; });
+    if (done === P.length) h += '<div class="bub done">🎉 清單完成！接著出 E 棟繞一圈，完成下面的校園試玩關卡。11/14 當天直接登入就會回到同一隊。</div>';
+    return h + '</div>';
+  }
+  var practiceHooked = false;
   function npcHtml(s, p) {
     var n = s.npc, used = p.hints || 0, h = '<div class="npc"><div class="nhd"><span class="nava">' + n.ava + '</span><b>' + esc(n.name) + '</b></div>';
     if (!(p.arrived || TEST)) { h += '<div class="bub dim">（還沒走到這裡，' + esc(n.name) + '還在趕路…）</div></div>'; return h; }
     n.open.forEach(function (l) { h += '<div class="bub">' + esc(l) + '</div>'; });
     h += '<div class="bub clue">' + esc(n.clue) + '</div>';
     for (var i = 0; i < used && i < n.hints.length; i++) h += '<div class="bub hint">' + esc(n.hints[i]) + '</div>';
-    if (p.frag) h += '<div class="bub done">' + esc(n.done) + '</div>';
+    if (p.frag || (s.final && prog.final && prog.final.done)) h += '<div class="bub done">' + esc(n.done) + '</div>';
     Object.keys(p.tasks || {}).forEach(function (k) { var t = (s.tasks || []).filter(function (x) { return x.id === k; })[0]; if (t && t.reward) h += '<div class="bub reward">' + esc(t.reward) + '</div>'; });
     if (!p.frag && used < n.hints.length) h += '<button class="btn2" data-hint="' + s.id + '">再給我一點提示（−10 分，剩 ' + (n.hints.length - used) + ' 次）</button>';
     return h + '</div>';
@@ -388,25 +511,27 @@
   }
   function useHint(sid) {
     var s = stopById(sid), p = prog[sid] || {}, n = p.hints || 0; if (n >= s.npc.hints.length) return;
-    ROOT.child('prog/' + teamId + '/' + sid + '/hints').transaction(function (c) { return (c || 0) === n ? n + 1 : undefined; }).then(function (r) { if (r.committed) log('hint', sid, 'level ' + (n + 1)); });
+    ROOT.child(PR_(teamId) + '/' + sid + '/hints').transaction(function (c) { return (c || 0) === n ? n + 1 : undefined; }).then(function (r) { if (r.committed) log('hint', sid, 'level ' + (n + 1)); });
   }
   function finalHtml() {
-    var ok = fragCount() >= 4, d = prog.final && prog.final.done, h = '<div class="card"><b>' + esc(R.finalTask.title) + '</b>';
+    var ok = fragCount() >= totalFrags(), d = prog.final && prog.final.done, h = '<div class="card"><b>' + esc(R.finalTask.title) + '</b>';
     if (d) return h + '<div class="bub done">交給時安局了：「' + esc(prog.final.text) + '」</div></div>';
-    if (!ok) return h + '<div class="sub">還差 ' + (4 - fragCount()) + ' 塊碎片。</div></div>';
+    if (!ok) return h + '<div class="sub">還差 ' + (totalFrags() - fragCount()) + ' 塊碎片。</div></div>';
     return h + '<textarea id="final-tx" class="inp" rows="3" placeholder="寫一句話"></textarea><button id="final-go" class="btn2">交給時安局</button></div>';
   }
   function submitFinal() {
     var v = ($('final-tx').value || '').trim(); if (v.length < R.finalTask.min) { toast('至少 ' + R.finalTask.min + ' 個字。'); return; }
-    ROOT.child('prog/' + teamId + '/final').transaction(function (c) { return c === null ? { done: true, by: uid, t: nowMs(), text: v.slice(0, 200) } : undefined; }).then(function (r) { if (r.committed) { log('final', 's7', v); toast('🎉 完成！'); } });
+    ROOT.child(PR_(teamId) + '/final').transaction(function (c) { return c === null ? { done: true, by: uid, t: nowMs(), text: v.slice(0, 200) } : undefined; }).then(function (r) { if (r.committed) { log('final', 's7', v); toast('🎉 完成！'); } });
   }
   function renderTeam() {
     var m = team.members, h = '<h2>' + esc(teamLabel()) + '</h2><div class="sub">' + Object.keys(m).length + ' / 4 人' + (team.closed ? '・已關門' : '・可加入') + '</div>';
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
-    h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + esc(x.ava) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span></div>'; }).join('') + '</div>';
+    h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + avaHtml(x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span></div>'; }).join('') + '</div>';
     h += '<div class="card"><b>你的角色：' + ROLE_ICON[myRole()] + myRole() + '</b><div class="sub">' + esc(ROLE_DESC[myRole()]) + '。角色只是看到的提示不同，缺人也不影響過關。</div><div class="opts">' + ROLES.map(function (r) { return '<button class="btn2" data-role="' + r + '">' + ROLE_ICON[r] + r + '</button>'; }).join('') + '</div></div>';
     h += '<div class="card"><b>開房間／加入別的房</b><div class="opts"><button class="btn2" id="mk-room">開一個臨時房間</button></div><div class="opts"><input id="jn-code" class="inp" maxlength="4" placeholder="輸入 4 碼房碼"><button class="btn2" id="jn-go">加入</button></div>' + (team.kind === 'room' && team.owner === uid ? '<div class="opts"><button class="btn2" id="rm-open">' + (team.open === false ? '開放補位：關（按此開啟）' : '開放補位：開（按此關閉）') + '</button><button class="btn2" id="rm-close">' + (team.closed ? '重新開門' : '提早關門') + '</button></div>' : '') + '<div class="msg" id="tm-msg"></div></div>';
+    h += '<div class="card"><b>地圖風格</b><div class="sub">只改你自己看到的地圖，隊友不受影響。</div><div class="opts">' + ([{ id: 'auto', name: '自動（晚上換夜景）' }].concat(STYLES)).map(function (x) { return '<button class="btn2' + (styleSel === x.id ? ' on' : '') + '" data-style="' + x.id + '">' + esc(x.name) + '</button>'; }).join('') + '</div></div>';
     $('pane-team').innerHTML = h;
+    [].forEach.call(document.querySelectorAll('[data-style]'), function (b) { b.onclick = function () { styleSel = b.dataset.style; try { localStorage.setItem('walk_style', styleSel); } catch (e) {} applyStyle(); if (phase() === 'rehearsal') pmark('g5'); renderTeam(); }; });
     [].forEach.call(document.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { ROOT.child('teams/' + teamId + '/members/' + uid + '/role').set(b.dataset.role); }; });
     $('mk-room').onclick = function () { leaveTeam().then(function () { return createTeam('room', ($('ob-dept').value || ''), ''); }).then(function (id) { enterGame(id); }).catch(function (e) { $('tm-msg').textContent = e.message; }); };
     $('jn-go').onclick = function () { var c = $('jn-code').value.trim().toUpperCase(); if (c.length !== 4) { $('tm-msg').textContent = '請輸入 4 碼。'; return; } joinByCode(c).then(function (id) { enterGame(id); }).catch(function (e) { $('tm-msg').textContent = e.message || '加入失敗。'; }); };
@@ -420,5 +545,17 @@
     $('pane-rank').innerHTML = h;
   }
 
-  window.addEventListener('load', boot);
+  /* ---------- 臭蟲與建議回報 ---------- */
+  function openFb() { $('fbm').hidden = false; $('fb-msg').textContent = ''; $('fb-tx').focus(); }
+  function sendFb() {
+    var tx = ($('fb-tx').value || '').trim(); if (tx.length < 4) { $('fb-msg').textContent = '請多寫幾個字，讓我們看得懂。'; return; }
+    var rec = { t: nowMs(), uid: uid || '', team: teamId || '', type: $('fb-type').value, text: tx.slice(0, 600), stop: curStop || '', view: view, route: REH ? 'campus' : 'live', phase: phase(), style: effectiveStyle(), pos: myPos ? { lat: +myPos.lat.toFixed(5), lon: +myPos.lon.toFixed(5), acc: Math.round(myPos.acc) } : null, ua: navigator.userAgent.slice(0, 140), errs: errBuf.slice(-5), ver: R0.version };
+    var root = ROOT || db.ref('whgm/analysis/walk1114');
+    root.child('fb').push(rec).then(function () { $('fb-tx').value = ''; $('fbm').hidden = true; toast('已送出，謝謝！'); }).catch(function (e) { $('fb-msg').textContent = '送不出去：' + e.message; });
+  }
+  window.addEventListener('load', function () {
+    boot();
+    [].forEach.call(document.querySelectorAll('.fb-open'), function (b) { b.onclick = openFb; });
+    $('fb-send').onclick = sendFb; $('fb-close').onclick = function () { $('fbm').hidden = true; };
+  });
 })();

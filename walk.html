@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>走讀 · 鯨骨碎片</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <style>
 :root{--bg:#f7f2e8;--fg:#262019;--mute:#6c6254;--card:#fffdf7;--line:#ddd2bd;--acc:#b8402a;--acc2:#1f6f68;--blue:#2f6690;--chip:#efe6d2}
 @media (prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#ece4d3;--mute:#a69a85;--card:#211d16;--line:#3a3327;--acc:#e0705a;--acc2:#5cb8ae;--blue:#7fb0d6;--chip:#2c261c}}
@@ -39,7 +40,30 @@ label{display:block;font-size:13px;margin-top:10px;font-weight:600}
 .mapbtns .off{opacity:.45}
 #gps{position:absolute;left:8px;bottom:8px;z-index:500;background:var(--card);padding:2px 8px;border-radius:8px;font-size:11px}
 .stopdot{width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;text-align:center;line-height:26px;font-weight:700;font-size:13px;border:2px solid #fff}
-.mate{text-align:center;font-size:20px;line-height:1}.mate b{display:block;font-size:10px;background:var(--card);color:var(--fg);border-radius:6px;padding:0 4px;margin-top:2px}
+.spr{display:inline-block;image-rendering:pixelated;background-repeat:no-repeat;vertical-align:bottom}
+.spr.walk{animation:wk .45s steps(1) infinite}
+@keyframes wk{0%{background-position:0 0}50%{background-position:calc(var(--w) * -1) 0}}
+.emo{display:inline-block;line-height:1}
+.mate{text-align:center;font-size:20px;line-height:1}.mate .spr{filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))}.mate.me .spr{filter:drop-shadow(0 0 3px #2f6690) drop-shadow(0 2px 1px rgba(0,0,0,.35))}
+.btn2.on{border-color:var(--acc);font-weight:700}
+#qr-box{display:flex;justify-content:center;margin:12px 0 4px}#qr-box img{background:#fff;padding:6px;border-radius:8px;border:1px solid var(--line)}
+.leaflet-gl-layer canvas{image-rendering:pixelated}
+body.st-toy .leaflet-gl-layer canvas,body.st-ink .leaflet-gl-layer canvas,body.st-night .leaflet-gl-layer canvas{image-rendering:auto}
+.sicon{position:relative;width:44px;height:48px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35))}
+.sicon b{position:absolute;top:0;right:2px;min-width:16px;height:16px;line-height:16px;background:#2a2a3e;color:#fff;font-size:11px;border-radius:2px;padding:0 3px}
+.sicon.done b{background:#2f7d4f}
+/* 遊戲美術：像素風格下，介面也用硬邊框與階梯陰影（取自角色的深藍描邊色） */
+body.st-pixel .card,body.st-pixel .npc,body.st-pixel .bub,body.st-pixel .task,body.st-pixel .btn2,body.st-pixel .btn,body.st-pixel .inp,body.st-pixel select,body.st-pixel .rk,body.st-pixel .ocard,body.st-pixel .notice{border-radius:2px;border:2px solid #2a2a3e;box-shadow:3px 3px 0 #2a2a3e}
+body.st-pixel .btn2:active,body.st-pixel .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #2a2a3e}
+body.st-pixel #hd,body.st-pixel #nav{border-color:#2a2a3e;border-width:0 0 3px 0}
+body.st-pixel #nav{border-width:3px 0 0 0}
+body.st-pixel .chip{border-radius:2px;border:2px solid #2a2a3e}
+/* 風格包：只動地圖色調與少數強調色 */
+body.raster.st-toy .leaflet-tile-pane{filter:saturate(1.35) hue-rotate(-10deg) brightness(1.06) contrast(.92) blur(.3px)}
+body.st-toy .mate .spr{filter:drop-shadow(0 3px 2px rgba(120,60,20,.45))}
+body.raster.st-ink .leaflet-tile-pane{filter:sepia(.8) saturate(.8) contrast(.95) brightness(1.04)}
+body.raster.st-night .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}
+body.st-night #hd,body.st-night #banner{background:#14202b;color:#cfe0ef}.mate b{display:block;font-size:10px;background:var(--card);color:var(--fg);border-radius:6px;padding:0 4px;margin-top:2px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}.card.big{font-size:18px;text-align:center}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.chip{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card)}.chip.cur{border:2px solid var(--acc)}.chip.half{background:var(--chip)}.chip.ok{background:var(--acc2);color:#fff}
 .npc{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc2);border-radius:10px;padding:10px 12px;margin:8px 0}
@@ -57,6 +81,15 @@ details summary{cursor:pointer;font-size:13px}
 </head>
 <body>
 <div id="toast" hidden></div>
+<div id="fbm" hidden style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center">
+  <div style="background:var(--card);width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px))">
+    <b>回報問題或建議</b>
+    <select id="fb-type" class="inp"><option value="bug">🐞 有東西壞了／怪怪的</option><option value="idea">💡 我有建議</option><option value="content">📜 內容或史實有疑問</option><option value="gps">📍 定位或位置不準</option></select>
+    <textarea id="fb-tx" class="inp" rows="4" placeholder="發生什麼事？在哪個畫面？（系統會自動附上你的位置與裝置資訊，不含姓名）"></textarea>
+    <div class="msg" id="fb-msg"></div>
+    <div style="display:flex;gap:8px"><button class="btn" id="fb-send" style="margin:6px 0">送出</button><button class="btn g" id="fb-close" style="margin:6px 0">取消</button></div>
+  </div>
+</div>
 
 <div class="screen" id="screen-login">
   <h1>走讀 · 鯨骨碎片</h1>
@@ -65,6 +98,9 @@ details summary{cursor:pointer;font-size:13px}
   <button class="btn" id="btn-google">用 Google 帳號登入</button>
   <button class="btn g" id="btn-test" hidden>測試模式（不登入）</button>
   <div class="msg" id="login-msg"></div>
+  <div class="sub" style="text-align:center;margin-top:18px">朋友沒有網址？讓他掃這個</div>
+  <div id="qr-box"></div><div class="sub" style="text-align:center" id="qr-url"></div>
+  <p style="text-align:center"><button class="btn2 fb-open">⚑ 登入有問題？回報給老師</button></p>
 </div>
 
 <div class="screen" id="screen-ob" hidden>
@@ -86,7 +122,7 @@ details summary{cursor:pointer;font-size:13px}
 </div>
 
 <div id="app" hidden>
-  <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span></div>
+  <div id="hd"><b id="hd-team">—</b><span id="hd-score">—</span><button class="fb-open" title="回報問題或建議" style="padding:0 8px">⚑ 回報</button></div>
   <div id="banner"></div>
   <div id="body">
     <div class="pane" id="pane-map" style="padding:0;overflow:hidden">
@@ -102,10 +138,14 @@ details summary{cursor:pointer;font-size:13px}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-database-compat.js"></script>
-<script src="js/walk_route.js?v=202610281330"></script>
-<script src="js/walk.js?v=202610281330"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="js/walk_route.js?v=202610281530"></script>
+<script src="js/walk_sprites.js?v=202610281530"></script>
+<script src="js/walk.js?v=202610281530"></script>
 </body>
 </html>

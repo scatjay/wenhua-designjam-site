@@ -169,7 +169,7 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <div id="toast" hidden></div>
 <div id="phm" hidden style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center">
   <div style="background:var(--card);color:var(--fg,inherit);width:100%;max-width:520px;max-height:85vh;overflow:auto;border-radius:14px 14px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px))">
-    <b>🖼 照片牆</b> <span class="sub">最新 40 張縮圖，點一下放大</span>
+    <div style="position:sticky;top:-14px;margin:-14px -16px 6px;padding:10px 16px;background:var(--card);border-bottom:2px solid var(--line);display:flex;align-items:center;gap:8px;z-index:2"><b>🖼 同隊照片牆</b> <span class="sub" style="flex:1">點一下放大</span><button class="btn" id="ph-x" style="margin:0;padding:6px 14px;font-weight:800">✕ 關閉</button></div>
     <div id="ph-grid" class="phg"></div>
     <div style="display:flex;gap:8px"><button class="btn g" id="ph-ref" style="margin:6px 0">重新整理</button><button class="btn" id="ph-close" style="margin:6px 0">關閉</button></div>
   </div>
@@ -255,7 +255,7 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 <script src="js/walk_route.js?v=202610282032"></script>
 <script src="js/walk_sprites.js?v=202610282215"></script>
 <script src="js/walk_i18n_id.js?v=202610282215"></script>
-<script src="js/walk.js?v=202610282036"></script>
+<script src="js/walk.js?v=202610282040"></script>
 <script src="js/walk_i18n.js?v=202610282215"></script>
 </body>
 </html>

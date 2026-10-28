@@ -623,9 +623,9 @@
   }
   function openWall() {
     $('phm').hidden = false; $('ph-grid').innerHTML = '<div class="sub">載入中…</div>';
-    ROOT.child('pth').limitToLast(40).once('value').then(function (s) {
+    ROOT.child('pth').orderByChild('tid').equalTo(teamId).limitToLast(40).once('value').then(function (s) {
       var v = s.val() || {}, ids = Object.keys(v).sort(function (a, b) { return v[b].t - v[a].t; });
-      $('ph-grid').innerHTML = ids.length ? ids.map(function (id) { var p = v[id]; return '<figure class="phi"><img src="' + p.th + '" alt=""><figcaption><b>' + esc(p.nick || '') + '</b> ' + esc(p.cap || '') + '</figcaption></figure>'; }).join('') : '<div class="sub">還沒有照片，你來拍第一張！</div>';
+      $('ph-grid').innerHTML = ids.length ? ids.map(function (id) { var p = v[id]; return '<figure class="phi"><img src="' + p.th + '" alt=""><figcaption><b>' + esc(p.nick || '') + '</b> ' + esc(p.cap || '') + '</figcaption></figure>'; }).join('') : '<div class="sub">你們隊還沒有照片，你來拍第一張！</div>';
       [].forEach.call(document.querySelectorAll('.phi img'), function (im) { im.onclick = function () { im.parentNode.classList.toggle('big'); }; });
     }).catch(function (e) { $('ph-grid').innerHTML = '<div class="sub">載入失敗：' + esc(e.message) + '</div>'; });
   }
@@ -892,7 +892,7 @@
   window.addEventListener('load', function () {
     boot();
     [].forEach.call(document.querySelectorAll('.fb-open'), function (b) { b.onclick = openFb; });
-    $('ph-close').onclick = function () { $('phm').hidden = true; }; $('ph-ref').onclick = openWall;
+    $('ph-close').onclick = function () { $('phm').hidden = true; }; $('ph-x').onclick = function () { $('phm').hidden = true; }; $('phm').onclick = function (e) { if (e.target === $('phm')) $('phm').hidden = true; }; $('ph-ref').onclick = openWall;
     bindLo();
     if ($('btn-mapclose')) $('btn-mapclose').onclick = function () { mapFolded = true; setView('task'); };
     $('fb-send').onclick = sendFb; $('fb-close').onclick = function () { $('fbm').hidden = true; };

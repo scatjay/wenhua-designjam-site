@@ -45,6 +45,63 @@
     return '<td style="background:' + bg + ';color:' + col + ';font-size:12px;line-height:1.5">' + txt + tail + '</td>';
   }
 
+
+  /* ───────── 助教發問總覽與整體分析（全班，只用編號） ───────── */
+  var TOPICS = [['改動句', /改動句|40\s*字|縮短|一句話/], ['三人例子／自尊值', /自尊|三人|A7|黃金|最終/], ['卡號卡名', /卡號|卡名|卡\s*\d+/], ['連結／分享權限', /連結|分享|權限|打不開|無痕/],
+                ['指令怎麼寫', /指令|提示詞|prompt|怎麼問|怎麼下/], ['Canvas', /canvas/i], ['AI Studio／原型', /ai\s*studio|原型|遊戲|能玩/], ['NotebookLM', /notebook|nblm|簡報|語音|資訊圖表/],
+                ['前後銜接', /銜接|對不上|不一致|一樣|一致/], ['Deep Research／R1-R3', /deep\s*research|R1|R2|R3|案例/i], ['檢核／交什麼', /檢核|交什麼|怎麼交|期限|繳交|自查/]];
+  function allChats() {
+    var out = [];
+    Object.keys(D.chat || {}).forEach(function (env) { arr(D.chat[env]).forEach(function (m) { m._env = env; out.push(m); }); });
+    return out.sort(function (a, b) { return b.ts - a.ts; });
+  }
+  function chatStats(list) {
+    var n = list.length, people = {}, byUnit = {}, len = 0, yn = 0, withData = 0, follow = 0, topic = {}, byEnv = {};
+    list.forEach(function (m) {
+      var q = String(m.q || ''); people[m._env] = 1; byUnit[m.unit || 'all'] = (byUnit[m.unit || 'all'] || 0) + 1; len += q.length;
+      if (q.length <= 22 && /嗎|是不是|對不對|可不可以|能不能|要不要/.test(q)) yn++;
+      if (/卡\s*\d+|「[^」]{2,}」|A\d\s*B\d|\d{2,}/.test(q) || q.length >= 60) withData++;
+      TOPICS.forEach(function (t) { if (t[1].test(q)) topic[t[0]] = (topic[t[0]] || 0) + 1; });
+      (byEnv[m._env] = byEnv[m._env] || []).push(m);
+    });
+    Object.keys(byEnv).forEach(function (e) {
+      var a = byEnv[e].sort(function (x, y) { return x.ts - y.ts; });
+      for (var i = 1; i < a.length; i++) if (a[i].ts - a[i - 1].ts <= 15 * 60 * 1000 && a[i].unit === a[i - 1].unit) follow++;
+    });
+    return { n: n, people: Object.keys(people).length, byUnit: byUnit, avgLen: n ? Math.round(len / n) : 0, yn: yn, withData: withData, follow: follow, topic: topic };
+  }
+  function chatOverview() {
+    var list = allChats(), st = chatStats(list);
+    var h = '<h2 style="font-size:16px;margin:22px 0 8px">助教發問總覽與整體分析<span class="mini" style="font-weight:400"> · 共 ' + st.n + ' 則、' + st.people + ' 人（資料同時是指令工程分析材料，只記編號）</span></h2>';
+    if (!st.n) return h + '<div class="mini">還沒有人發問。學生開始問之後，這裡會出現整體分析與每一則提問。</div>';
+    var pct = function (x) { return Math.round(x / st.n * 100) + '%'; };
+    var UNN = { u1: '單元1', u2: '單元2', u3: '單元3', u4: '單元4', all: '整體銜接' };
+    var topics = Object.keys(st.topic).sort(function (a, b) { return st.topic[b] - st.topic[a]; });
+    h += '<div class="stats"><div class="stat"><div class="n">' + st.avgLen + '</div><div class="l">平均提問字數</div></div>' +
+      '<div class="stat"><div class="n">' + pct(st.withData) + '</div><div class="l">有附自己的內容或數字</div></div>' +
+      '<div class="stat"><div class="n">' + pct(st.yn) + '</div><div class="l">只是簡短是非題</div></div>' +
+      '<div class="stat"><div class="n">' + st.follow + '</div><div class="l">15 分鐘內追問</div></div></div>';
+    h += '<div class="box" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:13.5px;margin:8px 0">' +
+      '<b>各單元：</b>' + Object.keys(st.byUnit).map(function (u) { return (UNN[u] || u) + ' ' + st.byUnit[u]; }).join('　') +
+      '<br><b>被問最多的主題：</b>' + (topics.length ? topics.slice(0, 6).map(function (t) { return esc(t) + ' ' + st.topic[t]; }).join('　') : '（還分不出主題）') +
+      '<br><b>觀察：</b>' + obs(st).map(esc).join('；') + '</div>';
+    h += '<details open><summary class="mini" style="cursor:pointer"><b>最近的提問（最多 60 則，點「答」展開）</b></summary><div class="w3scroll"><table class="w3tbl"><thead><tr><th>時間</th><th>編號</th><th>單元</th><th>問</th><th>答</th></tr></thead><tbody>' +
+      list.slice(0, 60).map(function (m, i) { return '<tr><td class="small">' + fmt(m.ts) + '</td><td><a href="#" data-mid="' + esc(m._env) + '">#' + esc(m._env) + '</a></td><td>' + esc(UNN[m.unit] || m.unit || '') + '</td><td>' + esc(m.q) + '</td><td>' + (m.a ? '<details><summary class="mini">展開</summary><div class="mini" style="white-space:pre-wrap;max-width:420px">' + esc(m.a) + '</div></details>' : '<span class="mini">' + esc(m.status || '') + '</span>') + '</td></tr>'; }).join('') +
+      '</tbody></table></div></details>';
+    return h;
+  }
+  function obs(st) {
+    var o = [], n = st.n;
+    if (n < 5) o.push('提問還少，樣本不足，先看個別提問');
+    if (n >= 5 && st.avgLen < 25) o.push('提問偏短，多半沒有附上自己的內容；可以提醒學生「貼出你寫的那句話或數字再問」');
+    if (n >= 5 && st.yn / n >= 0.4) o.push('近四成以上是簡短是非題，建議引導改問「怎麼改」「差在哪」');
+    if (n >= 5 && st.withData / n < 0.3) o.push('附上具體內容的提問不到三成，助教很難給精準建議');
+    if (st.follow === 0 && n >= 5) o.push('幾乎沒有人在同一單元追問，可能是答案看完就走，或不知道可以接著問');
+    if (st.follow / Math.max(1, n) >= 0.3) o.push('追問比例高，學生有在對話式修正');
+    if (!o.length) o.push('目前沒有明顯的偏誤，持續觀察');
+    return o;
+  }
+
   function render() {
     var box = $('tabMid'), envs = []; for (var i = 1; i <= 52; i++) envs.push(String(i));
     [D.sub, D.fb, D.chat].forEach(function (o) { Object.keys(o || {}).forEach(function (k) { if (/^\d+$/.test(k) && envs.indexOf(k) < 0) envs.push(k); }); });
@@ -70,6 +127,7 @@
       '<div class="mini" style="margin-top:6px">開關寫到 whgm/analysis/midcfg；後端常駐程式要在跑，學生提問才會有回答。' + (D.cfg.chatEnabled ? '' : '目前關閉時學生看到的是自助檢查清單。') + '</div>' +
       '<div id="midChatTop" class="mini" style="margin-top:6px"></div></div>';
 
+    h += chatOverview();
     h += '<h2 style="font-size:16px;margin:18px 0 8px">進度矩陣（點編號看詳情）</h2><div class="w3scroll"><table class="w3tbl"><thead><tr><th>編號</th><th>W4–7 提交天數</th>' + UN.map(function (u) { return '<th>' + u[1] + '</th>'; }).join('') + '<th>回報</th><th>提醒</th></tr></thead><tbody>';
     envs.forEach(function (e) {
       var days = D.w47[e] ? Object.keys(D.w47[e]).length : 0, fb = fbsOf(e), pf = pendingFb(e), flags = [];

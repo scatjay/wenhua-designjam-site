@@ -668,6 +668,30 @@
       if (Object.keys(by).length >= Math.min(3, nTeam)) awardAch(ACHS[2]);
     });
   }
+
+  /* 走讀貼紙本：每完成一案得一張「案件貼紙」，每個隊伍成就一張「成就章」；空格是暗凹槽。貼紙＝NPC 圖示＋厚白描邊＋日期與地點 */
+  function stickerSeen() { try { return JSON.parse(localStorage.getItem('walk_stk_' + teamId) || '[]'); } catch (e) { return []; } }
+  function stickerMark(ids) { try { localStorage.setItem('walk_stk_' + teamId, JSON.stringify(ids)); } catch (e) { } }
+  function fmtD(t) { var d = new Date(t || 0); return t ? (d.getMonth() + 1) + '/' + d.getDate() : ''; }
+  function stickerBook() {
+    var seen = stickerSeen(), now = [], cases = S.filter(function (x) { return x.frag !== undefined; });
+    var got = 0, h = '<div class="card"><h2 class="cl-h">📒 走讀貼紙本</h2><div class="stk-grid">';
+    cases.forEach(function (s) {
+      var f = prog[s.id] && prog[s.id].frag, nm = s.name.replace(/^第 \d (案|章)｜/, '');
+      if (f) { got++; now.push(s.id); var who = (team.members && team.members[f.by] && team.members[f.by].nick) || '';
+        h += '<div class="stk' + (seen.indexOf(s.id) < 0 ? ' new' : '') + '" title="' + esc(nm) + '"><div class="stk-i">' + ((s.npc && s.npc.ava) || '📍') + '</div><div class="stk-n">' + esc(nm) + '</div><div class="stk-d">' + fmtD(f.t) + (who ? '・' + esc(who) : '') + '</div></div>';
+      } else h += '<div class="stk empty" title="尚未取得"><div class="stk-i">？</div><div class="stk-n">' + esc(nm) + '</div></div>';
+    });
+    ACHS.forEach(function (a) {
+      var ok = achDone(a.k); if (ok) { got++; now.push('a_' + a.k); }
+      h += ok ? '<div class="stk seal' + (seen.indexOf('a_' + a.k) < 0 ? ' new' : '') + '" title="' + esc(a.desc) + '"><div class="stk-i">' + a.icon + '</div><div class="stk-n">' + esc(a.name) + '</div></div>'
+              : '<div class="stk seal empty" title="' + esc(a.desc) + '"><div class="stk-i">？</div><div class="stk-n">' + esc(a.name) + '</div></div>';
+    });
+    h += '</div><div class="sub">已收集 ' + got + '／' + (cases.length + ACHS.length) + '　圓章是隊伍成就，方貼是案件。</div></div>';
+    var fresh = now.filter(function (k) { return seen.indexOf(k) < 0; });
+    if (fresh.length) setTimeout(function () { stickerMark(now); }, 1500);
+    return h;
+  }
   function achCard() {
     return '<div class="card"><b>🏅 隊伍成就（每個 +10 分）</b>' + ACHS.map(function (a) { return '<div class="sub">' + (achDone(a.k) ? '✔ ' : '🔒 ') + a.icon + '<b>' + a.name + '</b>：' + esc(a.desc) + '</div>'; }).join('') + '</div>';
   }
@@ -1271,6 +1295,7 @@
     var m = team.members, h = '<h2>隊員 ' + Object.keys(m).length + ' / 4</h2><div class="sub">' + (team.closed ? '已關門，不能再加入' : '還可以加入') + '</div>';   /* 隊名與人數頂列已經有了，這裡不再重複 */
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
     h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span>' + (k !== uid && p ? '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(p) + '">🧭 導航' + (myPos ? '（' + dTxt(dist(myPos, p)) + '）' : '') + '</a>' : '') + (myRole() === '隊長' && k !== uid ? '<button class="btn2" data-kick="' + k + '">請出隊伍</button>' : '') + '</div>'; }).join('') + '</div>';
+    h += stickerBook();
     h += achCard();
     h += roleCard();
     h += chatBox();

@@ -638,7 +638,7 @@
     if (hasGear('kit') && hn > 0) sc -= hintPenalty(P);
     if (prog.final && prog.final.done) sc += P.final + (rlvA('記錄官') >= 3 ? 10 : 0);
     var pk0 = pkInfo(); if (pk0 && pk0.mutual && prog.final && prog.final.done && sc > pk0.their) sc += 20;
-    sc += 10 * achCount();
+    sc += 10 * achCount() + 5 * pairBonusN() * fragCount();
     return Math.max(0, sc);
   }
   /* ---------- 隊伍成就（每個 +10 分，隊伍第一次達成時記一筆）---------- */
@@ -848,7 +848,7 @@
   }
   function renderHq() {
     var el = $('pane-hq'); if (!el) return; hqNew = false; hqBadge();
-    var h = modeHtml() + '<div class="card"><h2>🏢 任務簡報室</h2>' + briefingHtml() + '</div>' + roleCard() + growHtml() + shopHtml();
+    var h = modeHtml() + '<div class="card"><h2>🏢 任務簡報室</h2>' + briefingHtml() + '</div>' + roleCard() + orgHtml() + growHtml() + shopHtml();
     h += '<button class="btn" id="hq-go">✔ 我準備好了，出發！</button>';
     el.innerHTML = h;
     [].forEach.call(el.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
@@ -1160,6 +1160,41 @@
   }
   /* 題型 → 負責角色。隊裡有這個角色的人，就由他作答；沒有這個角色（人不夠）就任何人都能答 */
   var TASK_ROLE = { choice: ['軍師'], order: ['軍師'], text: ['記錄官', '偵查員'], ack: ['蒐證員', '隊長'], cu: ['文化設計員', '記錄官', '偵查員'] };
+  /* ---------- 時安局探員：16 個職務各有一位探員（名字、個性、屬性、技能、搭檔）。頭像第一次進簡報室才載入；省電模式用職務圖示 ---------- */
+  function agOf(r) { return window.WALK_AGENTS ? WALK_AGENTS.get(r) : null; }
+  var AG_IMG_ON = false;   /* 頭像要等重新設計（臺灣人長相、真實參考照片）後才開 */
+  function agImg(r, px) {
+    var g = agOf(r); if (!g || !AG_IMG_ON || ecoOn || (navigator.connection && navigator.connection.saveData)) return '';
+    return '<img class="agimg" src="' + g.img + '" width="' + px + '" height="' + px + '" loading="lazy" decoding="async" alt="">';
+  }
+  function agStats(g) {
+    if (!g || !g.stats || !window.WALK_AGENT_STATS) return '';
+    return WALK_AGENT_STATS.names.map(function (n, i) { var v = g.stats[i] || 0; return n + ' ' + '●●●●●'.slice(0, v) + '○○○○○'.slice(0, 5 - v); }).join('　');
+  }
+  var ST_TAG = { done: '已啟用', part: '部分啟用', plan: '設計中' };
+  function agSummary(r) {
+    var g = agOf(r); if (!g) return '';
+    var t = '<div class="agbox">' + agImg(r, 72) + '<div><b>' + esc(g.name) + '</b>（' + esc(g.nick) + '）・' + esc(g.mbti) + '・' + esc(g.dept) + '處<br><span class="sub">「' + esc(g.motto) + '」</span></div></div>';
+    t += '<div class="sub">' + esc(g.bio || '') + '</div>';
+    if (g.stats) t += '<div class="sub">屬性：' + esc(agStats(g)) + '</div>';
+    if (g.active) t += '<div class="sub">主動技「' + esc(g.active.name) + '」：' + esc(g.active.desc) + (g.grow && g.grow[1] ? '（' + (ST_TAG[g.grow[1].st] || '') + '）' : '') + '</div>';
+    if (g.rel) t += '<div class="sub">搭檔：' + esc(g.rel.partner || g.pair || '') + '。' + esc(g.rel.note || '') + '</div>';
+    return t;
+  }
+  function pairActive() {
+    if (!window.WALK_AGENTS) return [];
+    return WALK_AGENTS.pairs().filter(function (p) { var a = roleHolder(p[0]), b = roleHolder(p[1]); return a && b && a.uid !== b.uid; });
+  }
+  function pairBonusN() { try { return pairActive().length; } catch (e) { return 0; } }
+  function orgHtml() {
+    if (!window.WALK_AGENTS) return '';
+    var W = WALK_AGENTS, pa = pairActive(), h = '<div class="card"><h2>🧭 時安局編制與搭檔</h2><div class="sub">十六位探員分七個處。搭檔的兩個職務由不同的人擔任時，每取得一格碎片，全隊 +5 分（現在成立 ' + pa.length + ' 組' + (pa.length ? '：' + pa.map(function (p) { return p[0] + '＋' + p[1]; }).join('、') : '') + '）。</div>';
+    Object.keys(W.depts).forEach(function (d) {
+      var rs = W.order.filter(function (r) { return W.get(r).dept === d; }); if (!rs.length) return;
+      h += '<div class="rolerow"><div class="rr1"><b>' + esc(d) + '處</b> <span class="sub">' + esc(W.depts[d].line) + '（上司：' + esc(W.depts[d].boss) + '）</span></div><div class="orgrow">' + rs.map(function (r) { var g = W.get(r), hd = roleHolder(r); return '<span class="orgm' + (hd ? ' on' : '') + '">' + (agImg(r, 40) || ROLE_ICON[r]) + '<br>' + esc(g.name) + '<br><span class="sub">' + r + (hd ? '・' + esc(hd.nick || '') : '') + '</span></span>'; }).join('') + '</div></div>';
+    });
+    return h + '</div>';
+  }
   function roleHolder(role) { var m = (team && team.members) || {}, k; for (k in m) if (m[k].role === role) return { uid: k, nick: m[k].nick }; return null; }
   function blockedBy(t) {
     var list = TASK_ROLE[t.id === 'cu' ? 'cu' : t.type]; if (!list || t.bonus) return null;
@@ -1268,13 +1303,13 @@
     var m = team.members, owner = {}, left = swapsLeft();
     Object.keys(m).forEach(function (k) { owner[m[k].role] = k; });
     var meM = m[uid] || {}, pl = Object.keys(meM.played || {}).filter(function (r) { return r !== meM.role && ROLE_DESC[r]; });
-    function abil(r) { var lv = rlv(r), g = ROLE_GROW[r] || [], t = '<div class="sub">' + esc(ROLE_DESC[r]) + '</div>'; for (var i = 0; i < 3; i++) t += '<div class="sub">' + (i < lv ? '✔ ' : '🔒 ') + (i + 1) + ' 級：' + esc(g[i] || '') + '</div>'; return t; }
+    function abil(r) { var lv = rlv(r), g = ROLE_GROW[r] || [], t = agSummary(r) + '<div class="sub">' + esc(ROLE_DESC[r]) + '</div>'; for (var i = 0; i < 3; i++) t += '<div class="sub">' + (i < lv ? '✔ ' : '🔒 ') + (i + 1) + ' 級：' + esc(g[i] || '') + '</div>'; return t; }
     var h = '<div class="card"><b>你現在的能力：' + ROLE_ICON[myRole()] + myRole() + '（' + rlv(myRole()) + '／3 級）</b>' + abil(myRole());
     if (pl.length) h += '<b>你扮演過的所有角色與等級</b>' + pl.map(function (r) { return '<div class="rolerow"><div class="rr1"><b>' + ROLE_ICON[r] + r + '</b> <span class="tag">' + rlv(r) + '／3 級</span></div>' + abil(r) + '</div>'; }).join('');
     h += '</div><div class="card"><b>角色（每種只能一個人當，被挑走的會變灰）</b><div class="sub">你現在是 ' + ROLE_ICON[myRole()] + myRole() + '。' + (left === Infinity ? '隊長可以隨時換角色，沒有次數限制。' : left > 0 ? '你還可以換 1 次角色。' : '你已經換過一次了，不能再換（除非當上隊長）。') + '</div>';
     ROLES.forEach(function (r) {
       var o = owner[r], mine = o === uid, taken = o && !mine, can = !mine && !taken && left > 0;
-      h += '<div class="rolerow' + (taken ? ' taken' : '') + (mine ? ' mine' : '') + '"><div class="rr1"><b>' + ROLE_ICON[r] + r + '</b>' + (mine ? ' <span class="tag">你</span>' : '') + (taken ? ' <span class="sub">' + esc((m[o] && m[o].nick) || '隊友') + ' 已選</span>' : '') + '</div><div class="sub">' + esc(ROLE_DESC[r]) + '</div>' + (can ? '<button class="btn2" data-role="' + r + '">換成' + r + '</button>' : '') + '</div>';
+      h += '<div class="rolerow' + (taken ? ' taken' : '') + (mine ? ' mine' : '') + '"><div class="rr1">' + agImg(r, 36) + '<b>' + ROLE_ICON[r] + r + '</b>' + (agOf(r) ? ' <span class="sub">' + esc(agOf(r).name) + '</span>' : '') + (mine ? ' <span class="tag">你</span>' : '') + (taken ? ' <span class="sub">' + esc((m[o] && m[o].nick) || '隊友') + ' 已選</span>' : '') + '</div><div class="sub">' + esc(ROLE_DESC[r]) + '</div>' + (can ? '<button class="btn2" data-role="' + r + '">換成' + r + '</button>' : '') + '</div>';
     });
     return h + '</div>';
   }

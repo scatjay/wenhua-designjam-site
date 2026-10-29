@@ -32,7 +32,7 @@
   };
   var ORDER = ['隊長', '領航員', '軍師', '偵查員', '檔案官', '訪談員', '蒐證員', '記錄官', '文化設計員', '通訊官', '安全官', '補給官', '鑑識員', '技術專家', '在地嚮導', '扮演專員'];
   var EN = { '隊長': 'captain', '領航員': 'navigator', '軍師': 'strategist', '偵查員': 'scout', '檔案官': 'archivist', '訪談員': 'interviewer', '蒐證員': 'photographer', '記錄官': 'recorder', '文化設計員': 'designer', '通訊官': 'radio', '安全官': 'safety', '補給官': 'supply', '鑑識員': 'forensic', '技術專家': 'tech', '在地嚮導': 'local_guide', '扮演專員': 'actor' };
-  ORDER.forEach(function (r, i) { var a = A[r]; a.role = r; a.idx = i + 1; a.img = 'art/agents/' + (i < 9 ? '0' : '') + (i + 1) + '_' + EN[r] + '.png'; });
+  ORDER.forEach(function (r, i) { var a = A[r]; a.role = r; a.idx = i + 1; a.img = 'art/agents16/' + (i < 9 ? '0' : '') + (i + 1) + '_' + EN[r] + '_128.png'; });
   /* 同隊的搭檔配對（去重）：兩個職務由不同人擔任時成立 */
   function pairs() { var seen = {}, out = []; ORDER.forEach(function (r) { var p = A[r].pair; if (!p) return; var k = [r, p].sort().join('|'); if (!seen[k]) { seen[k] = 1; out.push([r, p]); } }); return out; }
   window.WALK_AGENTS = { all: A, order: ORDER, depts: DEPTS, pairs: pairs, get: function (r) { return A[r] || null; } };

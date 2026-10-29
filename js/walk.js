@@ -1198,7 +1198,7 @@
   var ST_TAG = { done: '已啟用', part: '部分啟用', plan: '設計中' };
   function agSummary(r) {
     var g = agOf(r); if (!g) return '';
-    var t = '<div class="agbox">' + agImg(r, 72) + '<div><b>' + esc(g.name) + '</b>（' + esc(g.nick) + '）・' + esc(g.mbti) + '・' + esc(g.dept) + '處<br><span class="sub">「' + esc(g.motto) + '」</span></div></div>';
+    var t = '<div class="agbox">' + agImg(r, 72) + '<div><b>' + esc(g.name) + '</b>（' + esc(g.nick) + '）・' + esc(g.mbti) + '・' + esc(g.dept) + '處' + (g.fl ? '<br><span class="tag">' + ({ A: '廟埕科技', B: '老街職人', C: '台江海風', D: '古蹟修復' }[g.fl[0]]) + '・' + esc(g.fl[1]) + '</span>' : '') + '<br><span class="sub">「' + esc(g.motto) + '」</span></div></div>';
     t += '<div class="sub">' + esc(g.bio || '') + '</div>';
     if (g.stats) t += '<div class="sub">屬性：' + esc(agStats(g)) + '</div>';
     if (g.active) t += '<div class="sub">主動技「' + esc(g.active.name) + '」：' + esc(g.active.desc) + (g.grow && g.grow[1] ? '（' + (ST_TAG[g.grow[1].st] || '') + '）' : '') + '</div>';

@@ -277,6 +277,7 @@
   }
   function startUser(u) {
     uid = u; $('screen-login').hidden = true;
+    try { window.WalkPet && WalkPet.init({ uid: u, toast: function (m) { toast(m); } }); } catch (e) { }
     var cu = auth.currentUser, em = ((cu && cu.email) || '').toLowerCase();
     isTeacher = !TEST && qs.get('asstudent') !== '1' && !!cu && cu.emailVerified !== false && TEACHERS.indexOf(em) >= 0;   /* ?asstudent=1：老師帳號預覽學生流程（會出現輸入信封編號的畫面） */
     if (TEST && qs.get('env')) envNo = parseInt(qs.get('env'), 10);
@@ -598,6 +599,7 @@
     S.forEach(function (s) {
       // 到點打卡
       if (myPos && dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) + 10 * hqLv('range') + 5 * rlvA('技術專家') && !(prog[s.id] && prog[s.id].arrived)) {
+        try { window.WalkPet && WalkPet.roll(s.id); } catch (e) { }   /* 抵達景點：有機率遇到小精靈（每站每人只擲一次） */
         ROOT.child(PR_(teamId) + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) toast('📍 到達：' + s.name); });
       }
       (s.tasks || []).forEach(function (t) {
@@ -1304,7 +1306,7 @@
     h += '<div class="card"><b>開房間／加入別的房</b><div class="opts"><button class="btn2" id="mk-room">開一個臨時房間</button><button class="btn2" id="leave-team">退出這個隊伍</button></div><div class="opts"><input id="jn-code" class="inp" maxlength="4" placeholder="輸入 4 碼房碼"><button class="btn2" id="jn-go">加入</button></div>' + (team.kind === 'room' && team.owner === uid ? '<div class="opts"><button class="btn2" id="rm-open">' + (team.open === false ? '開放補位：關（按此開啟）' : '開放補位：開（按此關閉）') + '</button><button class="btn2" id="rm-close">' + (team.closed ? '重新開門' : '提早關門') + '</button></div>' : '') + '<div class="msg" id="tm-msg"></div></div>';
     h += dispCard();
     h += '<div class="card"><b>地圖風格</b><div class="sub">只改你自己看到的地圖，隊友不受影響。</div><div class="opts">' + ([{ id: 'auto', name: '自動（晚上換夜景）' }].concat(STYLES)).map(function (x) { return '<button class="btn2' + (styleSel === x.id ? ' on' : '') + '" data-style="' + x.id + '">' + esc(x.name) + '</button>'; }).join('') + '</div></div>';
-    $('pane-team').innerHTML = h; bindLo(); bindChat(); bindDisp(); collapsify('pane-team'); var pb = $('pet-open'); if (pb) pb.onclick = function () { try { window.WalkPet && WalkPet.open(); } catch (e) { } };
+    $('pane-team').innerHTML = h; bindLo(); bindChat(); bindDisp(); collapsify('pane-team'); var pb = $('pet-open'); if (pb) pb.onclick = function () { try { window.WalkPet && WalkPet.open(uid); } catch (e) { } };
     [].forEach.call(document.querySelectorAll('[data-style]'), function (b) { b.onclick = function () { styleSel = b.dataset.style; try { localStorage.setItem('walk_style', styleSel); } catch (e) {} applyStyle(); if (phase() === 'rehearsal') pmark('g5'); renderTeam(); }; });
     [].forEach.call(document.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
     [].forEach.call(document.querySelectorAll('[data-kick]'), function (b) { b.onclick = function () {

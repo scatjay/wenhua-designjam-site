@@ -1295,6 +1295,7 @@
     var m = team.members, h = '<h2>隊員 ' + Object.keys(m).length + ' / 4</h2><div class="sub">' + (team.closed ? '已關門，不能再加入' : '還可以加入') + '</div>';   /* 隊名與人數頂列已經有了，這裡不再重複 */
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
     h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span>' + (k !== uid && p ? '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(p) + '">🧭 導航' + (myPos ? '（' + dTxt(dist(myPos, p)) + '）' : '') + '</a>' : '') + (myRole() === '隊長' && k !== uid ? '<button class="btn2" data-kick="' + k + '">請出隊伍</button>' : '') + '</div>'; }).join('') + '</div>';
+    h += '<div class="card"><b>🐾 療育小角落</b><div class="sub">和小精靈玩一下。點、搓、滑、按住，牠會有不同的萌反應。不計分、不用做任務，累了就來放鬆。</div><div class="opts"><button class="btn2" id="pet-open">進去玩</button></div></div>';
     h += stickerBook();
     h += achCard();
     h += roleCard();
@@ -1303,7 +1304,7 @@
     h += '<div class="card"><b>開房間／加入別的房</b><div class="opts"><button class="btn2" id="mk-room">開一個臨時房間</button><button class="btn2" id="leave-team">退出這個隊伍</button></div><div class="opts"><input id="jn-code" class="inp" maxlength="4" placeholder="輸入 4 碼房碼"><button class="btn2" id="jn-go">加入</button></div>' + (team.kind === 'room' && team.owner === uid ? '<div class="opts"><button class="btn2" id="rm-open">' + (team.open === false ? '開放補位：關（按此開啟）' : '開放補位：開（按此關閉）') + '</button><button class="btn2" id="rm-close">' + (team.closed ? '重新開門' : '提早關門') + '</button></div>' : '') + '<div class="msg" id="tm-msg"></div></div>';
     h += dispCard();
     h += '<div class="card"><b>地圖風格</b><div class="sub">只改你自己看到的地圖，隊友不受影響。</div><div class="opts">' + ([{ id: 'auto', name: '自動（晚上換夜景）' }].concat(STYLES)).map(function (x) { return '<button class="btn2' + (styleSel === x.id ? ' on' : '') + '" data-style="' + x.id + '">' + esc(x.name) + '</button>'; }).join('') + '</div></div>';
-    $('pane-team').innerHTML = h; bindLo(); bindChat(); bindDisp(); collapsify('pane-team');
+    $('pane-team').innerHTML = h; bindLo(); bindChat(); bindDisp(); collapsify('pane-team'); var pb = $('pet-open'); if (pb) pb.onclick = function () { try { window.WalkPet && WalkPet.open(); } catch (e) { } };
     [].forEach.call(document.querySelectorAll('[data-style]'), function (b) { b.onclick = function () { styleSel = b.dataset.style; try { localStorage.setItem('walk_style', styleSel); } catch (e) {} applyStyle(); if (phase() === 'rehearsal') pmark('g5'); renderTeam(); }; });
     [].forEach.call(document.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
     [].forEach.call(document.querySelectorAll('[data-kick]'), function (b) { b.onclick = function () {

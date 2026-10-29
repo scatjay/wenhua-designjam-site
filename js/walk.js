@@ -978,8 +978,13 @@
     var t = window.WALK_NPC_TYPE && window.WALK_NPC_TYPE(n.name); if (!t) return '';
     return '<div class="mbti" style="background:' + t.q.bg + ';border:2px solid ' + t.q.color + ';color:#1b1b1b"><b>' + t.type + '・' + esc(t.label) + '</b>　' + esc(t.q.short) + (myRole() === '訪談員' ? '<div class="sub" style="color:#333">💡 問法：' + esc(t.open) + '。<br>⚠ 容易被冷處理：' + esc(t.cold) + '。</div>' : '<div class="sub" style="color:#333">🎤 想知道怎麼問他才會開口？請隊裡的「訪談員」來看。</div>') + '</div>';
   }
+  /* NPC 簡短故事與設定：一眼看懂這個人是誰、怎麼跟他說話、他能給你什麼 */
+  function npcBlurbHtml(n) {
+    var b = window.WALK_NPC_BLURB && window.WALK_NPC_BLURB(n.name); if (!b) return '';
+    return '<div class="nblurb"><div>📖 ' + esc(b.story) + '</div><div class="sub">特色：' + esc(b.trait) + '　給你：' + esc(b.gives) + '</div><div>' + (b.tag || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join(' ') + '</div></div>';
+  }
   function npcHtml(s, p) {
-    var n = s.npc, used = p.hints || 0, h = '<div class="npc"><div class="nhd"><span class="nava">' + n.ava + '</span><b>' + esc(n.name) + '</b></div>' + npcTypeHtml(n);
+    var n = s.npc, used = p.hints || 0, h = '<div class="npc"><div class="nhd"><span class="nava">' + n.ava + '</span><b>' + esc(n.name) + '</b></div>' + npcBlurbHtml(n) + npcTypeHtml(n);
     if (!(p.arrived || TEST)) { h += '<div class="bub dim">（還沒走到這裡，' + esc(n.name) + '還在趕路…）</div><button class="btn2" data-arr="' + s.id + '">我不在現場，先聊聊</button></div>'; return h; }
     n.open.forEach(function (l) { h += '<div class="bub">' + esc(l) + '</div>'; });
     h += '<div class="bub clue">' + esc(n.clue) + '</div>';

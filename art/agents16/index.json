@@ -1,0 +1,66 @@
+{
+ "隊長": {
+  "png_x8": "01_captain.png",
+  "png_128": "01_captain_128.png"
+ },
+ "領航員": {
+  "png_x8": "02_navigator.png",
+  "png_128": "02_navigator_128.png"
+ },
+ "軍師": {
+  "png_x8": "03_strategist.png",
+  "png_128": "03_strategist_128.png"
+ },
+ "偵查員": {
+  "png_x8": "04_scout.png",
+  "png_128": "04_scout_128.png"
+ },
+ "檔案官": {
+  "png_x8": "05_archivist.png",
+  "png_128": "05_archivist_128.png"
+ },
+ "訪談員": {
+  "png_x8": "06_interviewer.png",
+  "png_128": "06_interviewer_128.png"
+ },
+ "蒐證員": {
+  "png_x8": "07_photographer.png",
+  "png_128": "07_photographer_128.png"
+ },
+ "記錄官": {
+  "png_x8": "08_recorder.png",
+  "png_128": "08_recorder_128.png"
+ },
+ "文化設計員": {
+  "png_x8": "09_designer.png",
+  "png_128": "09_designer_128.png"
+ },
+ "通訊官": {
+  "png_x8": "10_radio.png",
+  "png_128": "10_radio_128.png"
+ },
+ "安全官": {
+  "png_x8": "11_safety.png",
+  "png_128": "11_safety_128.png"
+ },
+ "補給官": {
+  "png_x8": "12_supply.png",
+  "png_128": "12_supply_128.png"
+ },
+ "鑑識員": {
+  "png_x8": "13_forensic.png",
+  "png_128": "13_forensic_128.png"
+ },
+ "技術專家": {
+  "png_x8": "14_tech.png",
+  "png_128": "14_tech_128.png"
+ },
+ "在地嚮導": {
+  "png_x8": "15_local_guide.png",
+  "png_128": "15_local_guide_128.png"
+ },
+ "扮演專員": {
+  "png_x8": "16_actor.png",
+  "png_128": "16_actor_128.png"
+ }
+}

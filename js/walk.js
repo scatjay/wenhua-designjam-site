@@ -15,6 +15,9 @@
     S = R.stops; curStop = S[0].id;
   }
   function PR_(id) { return (REH ? 'progr/' : 'prog/') + id; }
+  /* 角色與造型依章節解鎖：隊伍完成幾個案件（拿到幾格碎片）才開放；一開始只有 2 款可選。角色的「等級」是另一回事（簡報室升級） */
+  var AVA_CH = [0, 0, 1, 2, 3, 4], SKIN_CH = [1, 1, 2, 2, 3, 4, 5, 6];
+  function chDone() { try { return fragCount(); } catch (e) { return 0; } }
   function totalFrags() { return S.filter(function (x) { return x.frag !== undefined; }).length; }
   var errBuf = [];
   window.addEventListener('error', function (e) { errBuf.push(String(e.message || e).slice(0, 160)); if (errBuf.length > 12) errBuf.shift(); });
@@ -175,6 +178,47 @@
     var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a.lat * tr) * Math.cos(b.lat * tr) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     return 2 * R0 * Math.asin(Math.sqrt(x));
   }
+  /* ---------- 導航：點隊友或地點 → 設成目標，距離與方位常駐顯示，一鍵開 Google 地圖（步行）---------- */
+  var NAVT = null, navBarEl = null;
+  function navUrl(ll) { return 'https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=' + ll.lat + ',' + ll.lon; }
+  function dTxt(d) { return d < 1000 ? Math.round(d) + ' 公尺' : (d / 1000).toFixed(1) + ' 公里'; }
+  function distLine(s) {
+    return (myPos ? '📏 距離你 <b>' + dTxt(dist(myPos, s)) + '</b>・約 ' + Math.max(1, Math.round(dist(myPos, s) / 70)) + ' 分鐘・' : '（開定位會顯示距離）') + '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(s) + '">🧭 Google 地圖導航</a> <button class="btn2" data-navset="' + s.id + '">📌 設為目標</button>';
+  }
+  function setNavTarget(t) { NAVT = t; navBarRender(); }
+  function navBarRender() {
+    if (!navBarEl) { navBarEl = document.createElement('div'); navBarEl.id = 'navbar'; document.body.appendChild(navBarEl); }
+    if (!NAVT) { navBarEl.className = ''; navBarEl.innerHTML = ''; return; }
+    var ll = NAVT.get(); if (!ll) { NAVT = null; navBarEl.className = ''; return; }
+    var d = myPos ? dist(myPos, ll) : null;
+    if (d !== null && d < 20 && NAVT.auto) { toast('📍 到了：' + NAVT.name); NAVT = null; navBarEl.className = ''; navBarEl.innerHTML = ''; return; }
+    navBarEl.className = 'on';
+    navBarEl.innerHTML = '<span class="nbt">🧭 ' + esc(NAVT.name) + (d !== null ? '・' + dTxt(d) + '・' + bearingText(ll) : '') + '</span><a class="btn2" target="_blank" rel="noopener" href="' + navUrl(ll) + '">Google 地圖</a><button class="btn2" id="nb-x">✕</button>';
+    $('nb-x').onclick = function () { NAVT = null; navBarRender(); };
+  }
+  function updDist() {
+    if (document.hidden) return;
+    if (myPos) {
+      [].forEach.call(document.querySelectorAll('[data-cd]'), function (e) { var x = stopById(e.dataset.cd); if (x) e.textContent = dTxt(dist(myPos, x)); });
+      var cd = $('cur-dist'), st = stopById(curStop || S[0].id); if (cd && st) { cd.innerHTML = distLine(st); bindNavSet(); }
+    }
+    if (NAVT) navBarRender();
+  }
+  function bindNavSet() {
+    [].forEach.call(document.querySelectorAll('[data-navset]'), function (b) { b.onclick = function () { var x = stopById(b.dataset.navset); if (x) setNavTarget({ name: x.name, get: function () { return x; }, auto: true }); }; });
+  }
+  function bindNav(marker, title, getLL, extraLabel, extraFn) {
+    var box = document.createElement('div'); box.style.minWidth = '150px';
+    box.innerHTML = '<b>' + esc(title) + '</b><div class="sub pd"></div><a class="btn2 gm" target="_blank" rel="noopener" style="display:block;margin-top:4px;text-align:center">🧭 Google 地圖導航</a><button class="btn2 pset" style="display:block;margin-top:4px;width:100%">📌 設為導航目標</button>' + (extraLabel ? '<button class="btn2 px" style="display:block;margin-top:4px;width:100%">' + extraLabel + '</button>' : '');
+    marker.bindPopup(box);
+    marker.on('popupopen', function () {
+      var ll = getLL(); if (!ll) return;
+      box.querySelector('.gm').href = navUrl(ll);
+      box.querySelector('.pd').textContent = myPos ? '距離你 ' + dTxt(dist(myPos, ll)) : '';
+    });
+    box.querySelector('.pset').onclick = function () { setNavTarget({ name: title, get: getLL, auto: false }); try { marker.closePopup(); } catch (e) { } };
+    if (extraFn) box.querySelector('.px').onclick = function () { try { marker.closePopup(); } catch (e) { } extraFn(); };
+  }
   function confetti() {
     var em = ['⭐', '✨', '🎉', '💖', '🧩', '🌸']; for (var i = 0; i < 14; i++) { var e = document.createElement('span'); e.className = 'cf'; e.textContent = em[i % em.length];
       e.style.left = (30 + Math.random() * 40) + 'vw'; e.style.top = (40 + Math.random() * 15) + 'vh'; e.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px'); e.style.setProperty('--dy', (-60 - Math.random() * 140) + 'px'); e.style.setProperty('--r', (Math.random() * 360 - 180) + 'deg');
@@ -277,8 +321,8 @@
   /* ---------- 加入畫面（暱稱、系／班、同意） ---------- */
   function buildOnboarding() {
     var d = $('ob-dept'); d.innerHTML = '<option value="">請選擇</option>' + DEPTS.map(function (x) { return '<option>' + x + '</option>'; }).join('');
-    var g = $('ob-ava'); g.innerHTML = AVAS.map(function (a, i) { return '<button type="button" class="ava' + (i === 0 ? ' on' : '') + '" data-a="' + a + '">' + avaHtml(a, 3, false) + '</button>'; }).join('');
-    g.onclick = function (e) { var b = e.target.closest('.ava'); if (!b) return; [].forEach.call(g.children, function (x) { x.classList.remove('on'); }); b.classList.add('on'); };
+    var g = $('ob-ava'); g.innerHTML = AVAS.map(function (a, i) { var lk = (AVA_CH[i] || 0) > 0; return '<button type="button" class="ava' + (i === 0 ? ' on' : '') + (lk ? ' lock' : '') + '" data-a="' + a + '"' + (lk ? ' data-lock="1" title="完成 ' + AVA_CH[i] + ' 個案件後解鎖"' : '') + '>' + avaHtml(a, 3, false) + (lk ? '<br><span class="sub">🔒 完成 ' + AVA_CH[i] + ' 案</span>' : '') + '</button>'; }).join('');
+    g.onclick = function (e) { var b = e.target.closest('.ava'); if (!b || b.dataset.lock) return; [].forEach.call(g.children, function (x) { x.classList.remove('on'); }); b.classList.add('on'); };
     $('ob-go').onclick = onboardGo;
     var j = qs.get('join'); if (j) $('ob-code').value = j.toUpperCase();
   }
@@ -344,12 +388,26 @@
       return leaveTeam().then(function () { return tryJoin(id); });
     });
   }
+  function kickMember(k) {
+    if (myRole() !== '隊長' || k === uid) return;
+    ROOT.child('teams/' + teamId).transaction(function (t) {
+      if (!t || !t.members || !t.members[k]) return t;
+      var me = t.members[uid]; if (!me || me.role !== '隊長') return;
+      delete t.members[k]; t.n = Object.keys(t.members).length; if (t.n < 4) t.closed = false; return t;
+    }).then(function (r) { if (r.committed) { ROOT.child('pos/' + teamId + '/' + k).remove(); ROOT.child('players/' + k + '/team').remove(); toast('已請他離開隊伍。'); log('kick', '', k); } });
+  }
   function leaveTeam() {
     var old = (profile && profile.team) || teamId; if (!old) return Promise.resolve();
     return ROOT.child('teams/' + old).transaction(function (t) {
       if (t === null) return t; var m = t.members || {}; if (!m[uid]) return t;
+      var wasCap = m[uid].role === '隊長';
       delete m[uid]; var n = Object.keys(m).length; if (n === 0) return null;
-      t.members = m; t.n = n; if (n < 4) t.closed = false; if (t.owner === uid) t.owner = Object.keys(m)[0]; return t;
+      var nk = null;
+      if (wasCap) {   /* 隊長離開：從還在的隊員裡隨機指定新隊長（優先挑在線的） */
+        var ks = Object.keys(m), on = ks.filter(function (k) { return teamPos[k] && fresh(teamPos[k]); }), pool = on.length ? on : ks;
+        nk = pool[Math.floor(Math.random() * pool.length)]; m[nk].role = '隊長'; m[nk].swaps = 0;
+      }
+      t.members = m; t.n = n; if (n < 4) t.closed = false; if (t.owner === uid) t.owner = nk || Object.keys(m)[0]; return t;
     }).then(function () { ROOT.child('pos/' + old + '/' + uid).remove(); });
   }
 
@@ -389,9 +447,24 @@
     if (map) return;
     map = L.map('map', { zoomControl: false, attributionControl: true }).setView([S[0].lat, S[0].lon], 16);
     initBasemap(); addBldgLabels();
+    /* 地圖右上角：回到現在開放的關卡、回到我的位置 */
+    var MapBtns = L.Control.extend({
+      options: { position: 'topright' },
+      onAdd: function () {
+        var d = L.DomUtil.create('div', 'mapbtns'); L.DomEvent.disableClickPropagation(d);
+        d.innerHTML = '<button type="button" class="btn2" id="mb-stops">🎯 回到關卡</button><button type="button" class="btn2" id="mb-me">📍 我的位置</button>';
+        d.querySelector('#mb-stops').onclick = function () {
+          var cur = (!REH && typeof schedNow === 'function') ? schedNow() : null;
+          if (cur) map.flyTo([cur.lat, cur.lon], 17); else map.fitBounds(L.latLngBounds(S.map(function (x) { return [x.lat, x.lon]; })), { padding: [50, 50], maxZoom: 18 });
+        };
+        d.querySelector('#mb-me').onclick = function () { if (myPos) map.flyTo([myPos.lat, myPos.lon], Math.max(map.getZoom(), 17)); else toast('還沒有定位，請允許定位後再試。'); };
+        return d;
+      }
+    });
+    map.addControl(new MapBtns());
     if (REH) { var bb = L.latLngBounds(S.map(function (x) { return [x.lat, x.lon]; })); map.fitBounds(bb, { padding: [50, 50], maxZoom: 18 }); }
     S.forEach(function (s, i) {
-      stopMarkers[s.id] = L.marker([s.lat, s.lon], { icon: stopIcon(s, i, false) }).addTo(map).on('click', function () { curStop = s.id; setView('task'); });
+      stopMarkers[s.id] = L.marker([s.lat, s.lon], { icon: stopIcon(s, i, false) }).addTo(map); bindNav(stopMarkers[s.id], s.name, function () { return s; }, '📋 看這一站的任務', function () { curStop = s.id; setView('task'); });
       stopCircles[s.id] = [L.circle([s.lat, s.lon], { radius: s.r, color: '#b8402a', weight: 1, opacity: 0.45, dashArray: '2 6', fillOpacity: 0.015, interactive: false }).addTo(map)];
       if (s.zones) Object.keys(s.zones).forEach(function (k) { var z = s.zones[k]; stopCircles[s.id].push(L.circle([z.lat, z.lon], { radius: z.r, color: '#1f6f68', weight: 1, opacity: 0.4, dashArray: '4', fillOpacity: 0.02, interactive: false }).addTo(map)); });
     });
@@ -451,6 +524,7 @@
   }
   function gotPos(p) {
     myPos = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy || 0, t: nowMs() };
+    try { updDist(); } catch (e) { }
     if (!window.__walkSim && gotPos._t && nowMs() - gotPos._t < (ecoOn ? 8000 : 3000) && gotPos._p && dist(gotPos._p, myPos) < 4) return;
     gotPos._t = nowMs(); gotPos._p = { lat: myPos.lat, lon: myPos.lon };
     $('gps').textContent = '定位精度約 ' + Math.round(myPos.acc) + ' 公尺';
@@ -487,7 +561,7 @@
       var pp = spreadPos(k, p), ml = mateLast[k], mv = ml && (Math.abs(ml.lat - p.lat) > 0.00003 || Math.abs(ml.lon - p.lon) > 0.00003); mateLast[k] = { lat: p.lat, lon: p.lon, mv: mv ? nowMs() : (ml ? ml.mv : 0) };
       var html = '<div class="mate mt">' + skinAva(k, p.ava, 3, nowMs() - (mateLast[k].mv || 0) < 40000) + '<b>👥 ' + esc(p.nick || '') + '</b></div>';
       var ic = L.divIcon({ className: '', html: html, iconSize: [48, 56], iconAnchor: [24, 44] });
-      if (mateMarkers[k]) mateMarkers[k].setLatLng([pp.lat, pp.lon]).setIcon(ic); else mateMarkers[k] = L.marker([pp.lat, pp.lon], { icon: ic, zIndexOffset: 600 }).addTo(map).on('click', function () { talkTo(p.nick || ''); });
+      if (mateMarkers[k]) mateMarkers[k].setLatLng([pp.lat, pp.lon]).setIcon(ic); else { mateMarkers[k] = L.marker([pp.lat, pp.lon], { icon: ic, zIndexOffset: 600 }).addTo(map); bindNav(mateMarkers[k], '👥 ' + (p.nick || '隊友'), function () { return teamPos[k] || p; }, '💬 跟他說話', function () { talkTo(p.nick || ''); }); }
     });
   }
 
@@ -541,6 +615,7 @@
       });
       checkFrag(s);
     });
+    try { checkAch(); } catch (e) { }
     var allFrag = S.every(function (s) { return s.frag === undefined || (prog[s.id] && prog[s.id].frag); });
     if (allFrag && !finalOpen) { finalOpen = true; toast('🧩 四塊碎片到手了！回終點拼成一句話。'); }
     writeScore();
@@ -557,18 +632,50 @@
     var sc = 0, P = R.score, hn = 0;
     S.forEach(function (s) {
       var p = prog[s.id] || {}; if (p.arrived) sc += P.arrive;
-      (s.tasks || []).forEach(function (t) { if (p.tasks && p.tasks[t.id]) sc += (t.bonus ? P.bonus : P.task) + roleTaskBonus(t); });
-      if (p.frag) sc += P.frag + speedBonus(p.frag && p.frag.t); if (p.secret) sc += 15 + 10 * rlvA('偵查員'); sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
+      (s.tasks || []).forEach(function (t) { if (p.tasks && p.tasks[t.id]) sc += (t.bonus ? P.bonus + (modeOf() === 'relax' ? 3 : 0) : P.task) + roleTaskBonus(t); });
+      if (p.frag) sc += P.frag + speedBonus(p.frag && p.frag.t) + ((pkInfo() && pkInfo().mutual) ? 5 : 0); if (p.secret) sc += 15 + 10 * rlvA('偵查員'); sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
     });
     if (hasGear('kit') && hn > 0) sc -= hintPenalty(P);
     if (prog.final && prog.final.done) sc += P.final + (rlvA('記錄官') >= 3 ? 10 : 0);
+    var pk0 = pkInfo(); if (pk0 && pk0.mutual && prog.final && prog.final.done && sc > pk0.their) sc += 20;
+    sc += 10 * achCount();
     return Math.max(0, sc);
+  }
+  /* ---------- 隊伍成就（每個 +10 分，隊伍第一次達成時記一筆）---------- */
+  var ACHS = [
+    { k: 'split', icon: '🧭', name: '分頭探索', desc: '隊員同時分散在不同案件的現場，每人各在一案（至少 2 人在線）' },
+    { k: 'gather', icon: '🤝', name: '全員集合', desc: '全隊同時聚在同一個案件現場，一個都不少' },
+    { k: 'roles', icon: '🎭', name: '各司其職', desc: '同一個案件的任務，由 3 位不同隊員分別完成（不到 3 人的隊伍需全員參與）' }
+  ];
+  function achDone(k) { return !!((hqState().ach || {})[k]); }
+  function achCount() { var n = 0; ACHS.forEach(function (a) { if (achDone(a.k)) n++; }); return n; }
+  function awardAch(a) {
+    if (achDone(a.k)) return;
+    ROOT.child(PR_(teamId) + '/_hq/ach/' + a.k).transaction(function (c) { return c === null ? { t: nowMs(), by: uid } : undefined; }).then(function (r) { if (r.committed) { toast('🎉 隊伍成就：' + a.icon + a.name + '（+10 分）'); log('ach', '', a.k); } });
+  }
+  function checkAch() {
+    if (!team || !teamId || !S.length) return;
+    var nTeam = Object.keys(team.members || {}).length, ks = Object.keys(teamPos).filter(function (k) { return fresh(teamPos[k]); });
+    function at(p) { for (var i = 0; i < S.length; i++) if (S[i].frag !== undefined && dist(p, S[i]) <= S[i].r + 30) return i; return -1; }
+    if (ks.length >= 2 && ks.length >= Math.min(nTeam, 3)) {
+      var where = ks.map(function (k) { return at(teamPos[k]); });
+      var uniq = {}; where.forEach(function (w) { uniq[w] = 1; });
+      if (where.every(function (w) { return w >= 0; }) && Object.keys(uniq).length === ks.length) awardAch(ACHS[0]);
+      if (nTeam >= 2 && ks.length === nTeam && where[0] >= 0 && where.every(function (w) { return w === where[0]; })) awardAch(ACHS[1]);
+    }
+    if (nTeam >= 2) S.forEach(function (s) {
+      var by = {}, tk = (prog[s.id] && prog[s.id].tasks) || {}; Object.keys(tk).forEach(function (t) { if (tk[t] && tk[t].by) by[tk[t].by] = 1; });
+      if (Object.keys(by).length >= Math.min(3, nTeam)) awardAch(ACHS[2]);
+    });
+  }
+  function achCard() {
+    return '<div class="card"><b>🏅 隊伍成就（每個 +10 分）</b>' + ACHS.map(function (a) { return '<div class="sub">' + (achDone(a.k) ? '✔ ' : '🔒 ') + a.icon + '<b>' + a.name + '</b>：' + esc(a.desc) + '</div>'; }).join('') + '</div>';
   }
   function fragCount() { var n = 0; S.forEach(function (s) { if (s.frag !== undefined && prog[s.id] && prog[s.id].frag) n++; }); return n; }
   function writeScore() {
-    if (!team) return; var sc = scoreOf(), key = sc + '|' + fragCount() + '|' + team.n + '|' + modeOf() + '|' + (hqState().pk || '');
+    if (!team) return; var sc = scoreOf(), key = sc + '|' + achCount() + '|' + fragCount() + '|' + team.n + '|' + modeOf() + '|' + (hqState().pk || '');
     if (key === lastScoreWritten) return; lastScoreWritten = key;
-    ROOT.child((REH ? 'boardr/' : 'board/') + teamId).update({ name: teamLabel(), score: sc, frags: fragCount(), n: Object.keys(team.members || {}).length, t: nowMs(), pk: (modeOf() === 'pk' && hqState().pk) || null, mode: modeOf() });
+    ROOT.child((REH ? 'boardr/' : 'board/') + teamId).update({ name: teamLabel(), score: sc, frags: fragCount(), ach: achCount(), n: Object.keys(team.members || {}).length, t: nowMs(), pk: (modeOf() === 'pk' && hqState().pk) || null, mode: modeOf() });
   }
   /* 隊名：不用系名，依隊伍代號固定產生和故事有關的名字（每個人看到的一樣） */
   var NM_A = ['夜班', '月光', '提燈', '蓋章', '守夜', '迷路', '飄飄', '八億', '審查', '鐘樓', '牌樓', '涼亭'], NM_B = ['小隊', '偵探團', '巡守隊', '探險隊', '審查組', '幽靈團', '蓋章組', '守衛隊'];
@@ -664,7 +771,7 @@
   function hasGear(k) { return !!((hqState().gear || {})[k]); }
   function hqSpent() { return hqState().spent || 0; }
   function hqPoints() { return Math.max(0, scoreOf() - hqSpent()); }
-  function hintPenalty(P) { return Math.min(0, (P.hint || 0) + [0, 3, 5, 7][Math.min(3, hqLv('hint'))]); }
+  function hintPenalty(P) { var v = Math.min(0, (P.hint || 0) + [0, 3, 5, 7][Math.min(3, hqLv('hint'))]), m = modeOf(), pk = pkInfo(); return Math.round(v * (m === 'relax' ? 0.5 : m === 'timed' ? 2 : (m === 'pk' && pk && pk.mutual) ? 1.5 : 1)); }
   function canShop() { var r = myRole(); return r === '隊長' || r === '補給官'; }
   function skinOf(k) { var sk = ((hqState().skin || {})[k]); if (!sk) return null; for (var i = 0; i < SKINS.length; i++) if (SKINS[i].k === sk && (hqState().skins || {})[sk]) return SKINS[i]; return null; }
   function skinAva(k, ava, scale, walking) { var sk = skinOf(k); return sk ? '<span class="skinav">' + sk.e + '</span>' : avaHtml(ava, scale, walking); }
@@ -714,11 +821,15 @@
       var own = hasGear(g.k);
       h += '<div class="rolerow' + (own ? ' mine' : '') + '"><div class="rr1"><b>' + g.icon + g.name + '</b>' + (own ? ' <span class="tag">已擁有</span>' : '') + '</div><div class="sub">' + esc(g.desc) + '</div>' + (own ? '' : '<button class="btn2" data-buy="gear:' + g.k + '"' + (cs ? '' : ' disabled') + '>購買（' + effCost(g.cost) + ' 點）</button>') + '</div>';
     });
+    h += '<b>我的角色（隊伍已完成 ' + chDone() + ' 案）</b><div class="sub">隨著章節完成，更多角色慢慢開放。</div><div class="skins">';
+    AVAS.forEach(function (a, i) { var need = AVA_CH[i] || 0, cur = (profile && profile.ava) === a; h += need <= chDone() ? '<button class="skinb' + (cur ? ' on' : '') + '" data-ava="' + a + '">' + avaHtml(a, 3, false) + '</button>' : '<button class="skinb lock" disabled>' + avaHtml(a, 3, false) + '<br><span class="sub">🔒 完成 ' + need + ' 案</span></button>'; });
+    h += '</div>';
     h += '<b>造型（地圖上的你）</b><div class="sub">先由隊長或補給官解鎖（每款 ' + SKIN_COST + ' 點，全隊都能用），每個人再選自己要穿哪一款。</div><div class="skins">';
     var mine = (st.skin || {})[uid];
     h += '<button class="skinb' + (!mine ? ' on' : '') + '" data-skin="">預設</button>';
     SKINS.forEach(function (k) {
-      var un = !!(st.skins || {})[k.k];
+      var un = !!(st.skins || {})[k.k], si = SKINS.indexOf(k), need = SKIN_CH[si] || 0;
+      if (!un && chDone() < need) { h += '<button class="skinb lock" disabled><span class="skinav">' + k.e + '</span>' + k.n + '<br><span class="sub">🔒 完成 ' + need + ' 案</span></button>'; return; }
       h += un ? '<button class="skinb' + (mine === k.k ? ' on' : '') + '" data-skin="' + k.k + '"><span class="skinav">' + k.e + '</span>' + k.n + '</button>'
               : '<button class="skinb lock" data-buy="skin:' + k.k + '"' + (cs ? '' : ' disabled') + '><span class="skinav">' + k.e + '</span>' + k.n + '<br><span class="sub">🔒 ' + effCost(SKIN_COST) + ' 點</span></button>';
     });
@@ -737,7 +848,7 @@
   }
   function renderHq() {
     var el = $('pane-hq'); if (!el) return; hqNew = false; hqBadge();
-    var h = '<div class="card"><h2>🏢 任務簡報室</h2>' + briefingHtml() + '</div>' + modeHtml() + roleCard() + growHtml() + shopHtml();
+    var h = modeHtml() + '<div class="card"><h2>🏢 任務簡報室</h2>' + briefingHtml() + '</div>' + roleCard() + growHtml() + shopHtml();
     h += '<button class="btn" id="hq-go">✔ 我準備好了，出發！</button>';
     el.innerHTML = h;
     [].forEach.call(el.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
@@ -751,7 +862,8 @@
     });
     [].forEach.call(el.querySelectorAll('[data-grow]'), function (b) { b.onclick = function () { var r = b.dataset.grow, lv = rlv(r); if (lv >= 3) return; hqBuy('grow', r, GROW_COST[lv], function (c) { c.rlv = c.rlv || {}; if ((c.rlv[r] || 0) !== lv) return false; c.rlv[r] = lv + 1; }, r + ' 升到 ' + (lv + 1) + ' 級'); }; });
     [].forEach.call(el.querySelectorAll('[data-skin]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/_hq/skin/' + uid).set(b.dataset.skin || null); log('skin', '', b.dataset.skin || 'default'); }; });
-    bindModes(el);
+    [].forEach.call(el.querySelectorAll('[data-ava]'), function (b) { b.onclick = function () { var a = b.dataset.ava; if (!profile) return; profile.ava = a; try { localStorage.setItem('walk_ava', a); } catch (e) { } ROOT.child('players/' + uid + '/ava').set(a); ROOT.child('teams/' + teamId + '/members/' + uid + '/ava').set(a); renderHq(); }; });
+    collapsify('pane-hq'); bindModes(el);
     var go = $('hq-go'); if (go) go.onclick = function () { setView('map'); };
   }
   function hqBadge() { var b = document.querySelector('#nav button[data-v="hq"]'); if (b) b.textContent = hqNew ? '🏢 簡報室 🆕' : '🏢 簡報室'; }
@@ -766,13 +878,13 @@
   }
   function modeHtml() {
     var m = modeOf(), cap = myRole() === '隊長', h = '<div class="card"><h2>🎮 這一趟怎麼玩</h2><div class="sub">' + (cap ? '隊長決定模式；' : '只有隊長可以改模式；') + '隨時可以換。</div>';
-    h += '<div class="rolerow' + (m === 'relax' ? ' mine' : '') + '"><div class="rr1"><b>🌿 自在悠閒</b>' + (m === 'relax' ? ' <span class="tag">目前</span>' : '') + '</div><div class="sub">不計時、不比速度。慢慢逛、拍照、跟 NPC 聊。適合第一次走或想好好看建築的人。</div>' + (m === 'relax' || !cap ? '' : '<button class="btn2" data-mode="relax">改成自在悠閒</button>') + '</div>';
+    h += '<div class="rolerow' + (m === 'relax' ? ' mine' : '') + '"><div class="rr1"><b>🌿 自在悠閒</b>' + (m === 'relax' ? ' <span class="tag">目前</span>' : '') + '</div><div class="sub">不計時、不比速度。慢慢逛、拍照、跟 NPC 聊。適合第一次走或想好好看建築的人。<b>得分：</b>加分題每題多 +3，提示扣分減半。</div>' + (m === 'relax' || !cap ? '' : '<button class="btn2" data-mode="relax">改成自在悠閒</button>') + '</div>';
     var tm = timerState(), left = timeLeftMin();
-    h += '<div class="rolerow' + (m === 'timed' ? ' mine' : '') + '"><div class="rr1"><b>⏱ 計時賽</b>' + (m === 'timed' ? ' <span class="tag">' + (tm ? (left > 0 ? '剩 ' + left + ' 分' : '時間到') : '尚未開始') + '</span>' : '') + '</div><div class="sub">限時完成：每取得一格碎片，依剩餘時間加速度分（剩餘每 2 分鐘 +1 分，每格最多 +40）。時間到不再加分，但遊戲照玩。</div>';
+    h += '<div class="rolerow' + (m === 'timed' ? ' mine' : '') + '"><div class="rr1"><b>⏱ 計時賽</b>' + (m === 'timed' ? ' <span class="tag">' + (tm ? (left > 0 ? '剩 ' + left + ' 分' : '時間到') : '尚未開始') + '</span>' : '') + '</div><div class="sub">限時完成：每取得一格碎片，依剩餘時間加速度分（剩餘每 2 分鐘 +1 分，每格最多 +40）。時間到不再加分，但遊戲照玩。<b>得分：</b>速度分之外，提示扣分加倍。</div>';
     if (cap) h += [60, 90, 120].map(function (n) { return '<button class="btn2" data-timer="' + n + '">' + (tm && tm.total === n && m === 'timed' ? '重新開始 ' : '開始 ') + n + ' 分鐘</button>'; }).join(' ');
     h += '</div>';
     var pk = pkInfo(), others = Object.keys(board || {}).filter(function (k) { return k !== teamId; });
-    h += '<div class="rolerow' + (m === 'pk' ? ' mine' : '') + '"><div class="rr1"><b>⚔ 兩隊 PK</b>' + (m === 'pk' ? ' <span class="tag">' + (pk ? (pk.mutual ? '對戰中' : '等對方接受') : '選對手') + '</span>' : '') + '</div><div class="sub">跟另一隊比：同樣的路線，誰的積分高、誰先集滿碎片。雙方都按下才成立，隨時可以取消。</div>';
+    h += '<div class="rolerow' + (m === 'pk' ? ' mine' : '') + '"><div class="rr1"><b>⚔ 兩隊 PK</b>' + (m === 'pk' ? ' <span class="tag">' + (pk ? (pk.mutual ? '對戰中' : '等對方接受') : '選對手') + '</span>' : '') + '</div><div class="sub">跟另一隊比：同樣的路線，誰的積分高、誰先集滿碎片。雙方都按下才成立，隨時可以取消。<b>得分：</b>每格碎片 +5，終點交單時分數較高的一隊再 +20，提示扣分 ×1.5。</div>';
     if (pk) h += '<div class="bub ' + (pk.mutual ? 'secret' : 'dim') + '">' + (pk.mutual ? '⚔ ' + esc(teamLabel()) + ' ' + scoreOf() + ' 分（碎片 ' + fragCount() + '）　對　' + esc(pk.name) + ' ' + pk.their + ' 分（碎片 ' + pk.theirFrags + '）' : '已向「' + esc(pk.name) + '」發出挑戰，等他們在簡報室按接受。') + '</div>';
     var inc = others.filter(function (k) { return board[k] && board[k].pk === teamId && !(pk && pk.id === k); });
     inc.forEach(function (k) { h += '<div class="bub hint">📨 「' + esc(board[k].name || k) + '」向你們下戰帖！' + (cap ? '<button class="btn2" data-pkset="' + k + '">接受挑戰</button>' : '請隊長按接受。') + '</div>'; });
@@ -797,7 +909,7 @@
     var d = myPos ? ' ・約 ' + Math.round(dist(myPos, nxt)) + ' 公尺' + (myRole() === '領航員' && rlvA('領航員') >= 3 ? '，往' + bearingText(nxt) : '') : '';
     var wf = farthestMate(); if (rlvA('安全官') >= 3 && wf !== null && wf > 200) d += ' ・⚠ 有隊友離你 ' + wf + ' 公尺，等一等';
     var UN = (TWR && R0.tw) ? '案件章' : '審查單';
-    var mx = ''; if (modeOf() === 'timed' && timerState()) { var tl = timeLeftMin(); mx = tl > 0 ? ' ・⏱ 剩 ' + tl + ' 分' : ' ・⏱ 時間到（不再加速度分）'; } var pki = pkInfo(); if (pki && pki.mutual) mx += ' ・⚔ ' + scoreOf() + ' 對 ' + pki.their + '（' + esc(pki.name) + '）';
+    var mx = ''; if (modeOf() === 'timed' && timerState()) { var tl = timeLeftMin(); mx = tl > 0 ? ' ・⏱ 剩 ' + tl + ' 分' : ' ・⏱ 時間到（不再加速度分）'; } if (modeOf() === 'relax') mx += ' ・🌿 悠閒模式'; var pki = pkInfo(); if (pki && pki.mutual) mx += ' ・⚔ ' + scoreOf() + ' 對 ' + pki.their + '（' + esc(pki.name) + '）';
     if (got >= total) return '🎯 目標：' + total + ' 格都蓋滿了！回「' + nxt.name + '」交' + (UN === '案件章' ? '案件檔' : '審查單') + '，寫下最後一句。' + mx;
     return '🎯 目標：集滿 ' + total + ' 格' + UN + '（已 ' + got + '/' + total + '）・下一站：' + nxt.name + d + mx;
   }
@@ -818,8 +930,9 @@
       return;
     }
     if (REH) h = (allDone() ? certHtml() : '') + practiceHtml() + '<h2>' + ((TWR && R0.tw) ? '中西區九案：' : '校園試玩：') + esc(CAMP.name) + '</h2><div class="sub">' + ((TWR && R0.tw) ? '九個案子同時在地圖上，不分先後，挑你想去的；每一案的事實都有出處，每一站都有一題「文化怎麼變成遊戲規則」。到不了現場可以按 🆘 或「我不在現場，先聊聊」。' : WR ? '從 W 棟出發，到門口繞一圈，約 10–15 分鐘；鬼故事都是工坊編的，姑婆廟是真的廟，請小聲、尊重。' : '從 E 棟出發繞一圈，約 10–15 分鐘；校史小知識都來自學校通識電子報。') + '</div>';
-    h += '<div class="chips">' + S.map(function (x, i) { var st = (prog[x.id] && prog[x.id].frag) ? 'ok' : (prog[x.id] && prog[x.id].arrived ? 'half' : ''); return '<button class="chip ' + st + (x.id === s.id ? ' cur' : '') + '" data-s="' + x.id + '">' + i + '</button>'; }).join('') + '</div>';
+    h += '<div class="chips">' + S.map(function (x, i) { var st = (prog[x.id] && prog[x.id].frag) ? 'ok' : (prog[x.id] && prog[x.id].arrived ? 'half' : ''); return '<button class="chip ' + st + (x.id === s.id ? ' cur' : '') + '" data-s="' + x.id + '">' + i + '<br><span class="cd" data-cd="' + x.id + '">' + (myPos ? dTxt(dist(myPos, x)) : '') + '</span></button>'; }).join('') + '</div>';
     h += '<h2>' + esc(s.name) + '</h2><div class="sub">' + (REH ? '' : esc(s.time) + ' 起・') + '約 ' + s.min + ' 分' + (s.frag !== undefined ? '・碎片「' + esc(R.fragmentNames[s.frag]) + '」' + (p.frag ? ' ✔' : '') : '') + '</div>';
+    h += '<div class="sub" id="cur-dist">' + distLine(s) + '</div>';
     if (s.tip) { h += '<div class="card">' + esc(s.tip || '') + '</div>'; if (s.id === 's0' || s.id === 'c0') h += '<div class="card">你的角色：<b>' + ROLE_ICON[myRole()] + myRole() + '</b><br><span class="sub">' + esc(ROLE_DESC[myRole()]) + '</span></div>'; }
     if (s.final) h += finalHtml();
     if (s.npc) h += npcHtml(s, p);
@@ -830,7 +943,7 @@
     h += photoCardHtml();
     if (s.note) h += '<details class="card"><summary>給老師看的備註</summary><div class="sub">' + esc(s.note) + '</div></details>';
     $('pane-task').innerHTML = h;
-    collapsify();
+    collapsify(); bindNavSet();
     [].forEach.call(document.querySelectorAll('.chip'), function (b) { b.onclick = function () { curStop = b.dataset.s; renderTask(); }; });
     [].forEach.call(document.querySelectorAll('[data-pack]'), function (b) { b.onclick = function () { pmark(b.dataset.pack); }; });
     [].forEach.call(document.querySelectorAll('[data-arr]'), function (b) { b.onclick = function () { ROOT.child(PR_(teamId) + '/' + b.dataset.arr + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs(), manual: 1 } : undefined; }); }; });
@@ -922,12 +1035,13 @@
   var practiceHooked = false;
   /* 任務頁的小卡片可收合：點卡片標題（第一行）收起／展開；記住每張卡的狀態 */
   var clState = {};
-  function collapsify() {
-    var pane = $('pane-task'); if (!pane) return;
+  function collapsify(pid) {
+    var pane = $(pid || 'pane-task'); if (!pane) return;
     [].forEach.call(pane.children, function (el, i) {
       if (!/(^|\s)(card|npc|task)(\s|$)/.test(el.className)) return;
       var hd = el.firstElementChild; if (!hd || el.children.length < 2) return;
-      var key = (curStop || '') + ':' + i + ':' + el.className.split(' ')[0];
+      if (pid && !/^(B|H2|H3|STRONG)$/.test(hd.tagName)) return;
+      var key = (pid || '') + (curStop || '') + ':' + i + ':' + el.className.split(' ')[0];
       hd.classList.add('cl-h'); if (clState[key]) el.classList.add('cl-collapsed');
       hd.onclick = function (e) { if (e.target.closest('button,a,input,textarea')) return; var c = el.classList.toggle('cl-collapsed'); clState[key] = c; };
     });
@@ -1057,6 +1171,8 @@
     if (!d) {
       if (t.type === 'zone') h += '<div class="sub">走到圍欄裡就會自動完成（地圖上的綠色虛線圈）。</div><button class="btn2" data-sos="' + t.id + '" data-s="' + s.id + '">🆘 找不到這裡？</button>';
       if (t.type === 'together' || t.type === 'cross') h += '<div class="sub">隊友同時到位就會自動完成，沒做到也不影響主線。</div>';
+      var zl = t.type === 'zone' ? [zoneOf(s, t.zone)] : t.type === 'cross' ? [zoneOf(s, t.zones[0]), zoneOf(s, t.zones[1])] : t.type === 'together' ? [s] : [];
+      zl.forEach(function (z) { if (z) h += '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(z) + '">🧭 導航到' + esc(z.name || s.name) + (myPos ? '（' + dTxt(dist(myPos, z)) + '）' : '') + '</a>'; });
       var bk = blockedBy(t);
       if (bk) h += '<div class="sub">👥 這題由 ' + ROLE_ICON[bk.role] + bk.role + '「' + esc(bk.nick || '') + '」來回答。你可以在隊內訊息提供意見，或到「隊伍」頁換角色。</div>';
       else {
@@ -1119,16 +1235,24 @@
   function renderTeam() {
     var m = team.members, h = '<h2>隊員 ' + Object.keys(m).length + ' / 4</h2><div class="sub">' + (team.closed ? '已關門，不能再加入' : '還可以加入') + '</div>';   /* 隊名與人數頂列已經有了，這裡不再重複 */
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
-    h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span></div>'; }).join('') + '</div>';
+    h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span>' + (k !== uid && p ? '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(p) + '">🧭 導航' + (myPos ? '（' + dTxt(dist(myPos, p)) + '）' : '') + '</a>' : '') + (myRole() === '隊長' && k !== uid ? '<button class="btn2" data-kick="' + k + '">請出隊伍</button>' : '') + '</div>'; }).join('') + '</div>';
+    h += achCard();
     h += roleCard();
     h += chatBox();
     h += '<div class="card"><b>帳號與語言</b><div class="opts"><button class="btn2 lo">登出，換 Google 帳號</button><button class="btn2 lang"></button></div></div>';
-    h += '<div class="card"><b>開房間／加入別的房</b><div class="opts"><button class="btn2" id="mk-room">開一個臨時房間</button></div><div class="opts"><input id="jn-code" class="inp" maxlength="4" placeholder="輸入 4 碼房碼"><button class="btn2" id="jn-go">加入</button></div>' + (team.kind === 'room' && team.owner === uid ? '<div class="opts"><button class="btn2" id="rm-open">' + (team.open === false ? '開放補位：關（按此開啟）' : '開放補位：開（按此關閉）') + '</button><button class="btn2" id="rm-close">' + (team.closed ? '重新開門' : '提早關門') + '</button></div>' : '') + '<div class="msg" id="tm-msg"></div></div>';
+    h += '<div class="card"><b>開房間／加入別的房</b><div class="opts"><button class="btn2" id="mk-room">開一個臨時房間</button><button class="btn2" id="leave-team">退出這個隊伍</button></div><div class="opts"><input id="jn-code" class="inp" maxlength="4" placeholder="輸入 4 碼房碼"><button class="btn2" id="jn-go">加入</button></div>' + (team.kind === 'room' && team.owner === uid ? '<div class="opts"><button class="btn2" id="rm-open">' + (team.open === false ? '開放補位：關（按此開啟）' : '開放補位：開（按此關閉）') + '</button><button class="btn2" id="rm-close">' + (team.closed ? '重新開門' : '提早關門') + '</button></div>' : '') + '<div class="msg" id="tm-msg"></div></div>';
     h += dispCard();
     h += '<div class="card"><b>地圖風格</b><div class="sub">只改你自己看到的地圖，隊友不受影響。</div><div class="opts">' + ([{ id: 'auto', name: '自動（晚上換夜景）' }].concat(STYLES)).map(function (x) { return '<button class="btn2' + (styleSel === x.id ? ' on' : '') + '" data-style="' + x.id + '">' + esc(x.name) + '</button>'; }).join('') + '</div></div>';
-    $('pane-team').innerHTML = h; bindLo(); bindChat(); bindDisp();
+    $('pane-team').innerHTML = h; bindLo(); bindChat(); bindDisp(); collapsify('pane-team');
     [].forEach.call(document.querySelectorAll('[data-style]'), function (b) { b.onclick = function () { styleSel = b.dataset.style; try { localStorage.setItem('walk_style', styleSel); } catch (e) {} applyStyle(); if (phase() === 'rehearsal') pmark('g5'); renderTeam(); }; });
     [].forEach.call(document.querySelectorAll('[data-role]'), function (b) { b.onclick = function () { switchRole(b.dataset.role); }; });
+    [].forEach.call(document.querySelectorAll('[data-kick]'), function (b) { b.onclick = function () {
+      if (!b.dataset.arm) { b.dataset.arm = '1'; b.textContent = '再按一次確認'; setTimeout(function () { b.dataset.arm = ''; b.textContent = '請出隊伍'; }, 6000); return; }
+      kickMember(b.dataset.kick); }; });
+    var lt = $('leave-team'); if (lt) lt.onclick = function () {
+      if (!lt.dataset.arm) { lt.dataset.arm = '1'; lt.textContent = (myRole() === '隊長' ? '你是隊長，退出後會隨機指定新隊長。' : '') + '再按一次確認退出'; setTimeout(function () { lt.dataset.arm = ''; lt.textContent = '退出這個隊伍'; }, 6000); return; }
+      leaveTeam().then(function () { try { ROOT.child('players/' + uid + '/team').remove(); } catch (e) { } log('leave', '', ''); });
+    };
     $('mk-room').onclick = function () { leaveTeam().then(function () { return createTeam('room', ($('ob-dept').value || ''), ''); }).then(function (id) { enterGame(id); }).catch(function (e) { $('tm-msg').textContent = e.message; }); };
     $('jn-go').onclick = function () { var c = $('jn-code').value.trim().toUpperCase(); if (c.length !== 4) { $('tm-msg').textContent = '請輸入 4 碼。'; return; } joinByCode(c).then(function (id) { enterGame(id); }).catch(function (e) { $('tm-msg').textContent = e.message || '加入失敗。'; }); };
     if ($('rm-open')) $('rm-open').onclick = function () { ROOT.child('teams/' + teamId + '/open').set(team.open === false); };
@@ -1143,7 +1267,11 @@
   function roleCard() {
     var m = team.members, owner = {}, left = swapsLeft();
     Object.keys(m).forEach(function (k) { owner[m[k].role] = k; });
-    var h = '<div class="card"><b>角色（每種只能一個人當，被挑走的會變灰）</b><div class="sub">你現在是 ' + ROLE_ICON[myRole()] + myRole() + '。' + (left === Infinity ? '隊長可以隨時換角色，沒有次數限制。' : left > 0 ? '你還可以換 1 次角色。' : '你已經換過一次了，不能再換（除非當上隊長）。') + '</div>';
+    var meM = m[uid] || {}, pl = Object.keys(meM.played || {}).filter(function (r) { return r !== meM.role && ROLE_DESC[r]; });
+    function abil(r) { var lv = rlv(r), g = ROLE_GROW[r] || [], t = '<div class="sub">' + esc(ROLE_DESC[r]) + '</div>'; for (var i = 0; i < 3; i++) t += '<div class="sub">' + (i < lv ? '✔ ' : '🔒 ') + (i + 1) + ' 級：' + esc(g[i] || '') + '</div>'; return t; }
+    var h = '<div class="card"><b>你現在的能力：' + ROLE_ICON[myRole()] + myRole() + '（' + rlv(myRole()) + '／3 級）</b>' + abil(myRole());
+    if (pl.length) h += '<b>你扮演過的所有角色與等級</b>' + pl.map(function (r) { return '<div class="rolerow"><div class="rr1"><b>' + ROLE_ICON[r] + r + '</b> <span class="tag">' + rlv(r) + '／3 級</span></div>' + abil(r) + '</div>'; }).join('');
+    h += '</div><div class="card"><b>角色（每種只能一個人當，被挑走的會變灰）</b><div class="sub">你現在是 ' + ROLE_ICON[myRole()] + myRole() + '。' + (left === Infinity ? '隊長可以隨時換角色，沒有次數限制。' : left > 0 ? '你還可以換 1 次角色。' : '你已經換過一次了，不能再換（除非當上隊長）。') + '</div>';
     ROLES.forEach(function (r) {
       var o = owner[r], mine = o === uid, taken = o && !mine, can = !mine && !taken && left > 0;
       h += '<div class="rolerow' + (taken ? ' taken' : '') + (mine ? ' mine' : '') + '"><div class="rr1"><b>' + ROLE_ICON[r] + r + '</b>' + (mine ? ' <span class="tag">你</span>' : '') + (taken ? ' <span class="sub">' + esc((m[o] && m[o].nick) || '隊友') + ' 已選</span>' : '') + '</div><div class="sub">' + esc(ROLE_DESC[r]) + '</div>' + (can ? '<button class="btn2" data-role="' + r + '">換成' + r + '</button>' : '') + '</div>';
@@ -1158,6 +1286,7 @@
       if (me.role === nr) return undefined;
       for (k in c) if (k !== uid && c[k].role === nr) return undefined;   /* 被別人先挑走了 */
       if (me.role !== '隊長' && (me.swaps || 0) >= swapLim) return undefined;
+      me.played = me.played || {}; me.played[me.role] = 1; me.played[nr] = 1;
       me.role = nr; me.swaps = (me.swaps || 0) + 1; return c;
     }).then(function (r) { if (!r.committed) toast('這個角色已被挑走，或你已經換過一次了。'); else log('role', '', nr); });
   }
@@ -1237,7 +1366,10 @@
   function renderRank() {
     var arr = Object.keys(board).map(function (k) { return { id: k, b: board[k] }; }).sort(function (a, b) { return b.b.score - a.b.score; });
     var h = '<h2>排行榜</h2><div class="sub">隊與隊競爭積分；落單的人也有完整的單人路徑。</div>';
-    h += arr.map(function (x, i) { return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(/^房 /.test(x.b.name || '') ? x.b.name : storyName(x.id)) + '・' + x.b.n + ' 人</span><span class="sc">' + x.b.score + ' 分・🧩' + x.b.frags + '</span></div>'; }).join('') || '<div class="card">還沒有分數。</div>';
+    h += arr.map(function (x, i) { return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(/^房 /.test(x.b.name || '') ? x.b.name : storyName(x.id)) + '・' + x.b.n + ' 人' + ({ relax: ' 🌿悠閒', timed: ' ⏱計時', pk: ' ⚔PK' }[x.b.mode] || '') + '</span><span class="sc">' + x.b.score + ' 分・🧩' + x.b.frags + '</span></div>'; }).join('') || '<div class="card">還沒有分數。</div>';
+    var ar = arr.slice().sort(function (a, b) { return ((b.b.ach || 0) - (a.b.ach || 0)) || (b.b.score - a.b.score); });
+    h += '<h2>🏅 成就排行</h2><div class="sub">隊伍成就（' + ACHS.map(function (a) { return a.icon + a.name; }).join('、') + '）達成幾個。</div>';
+    h += ar.map(function (x, i) { var n = x.b.ach || 0; return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 && n > 0 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(/^房 /.test(x.b.name || '') ? x.b.name : storyName(x.id)) + '</span><span class="sc">' + ACHS.map(function (a, j) { return j < n ? a.icon : '・'; }).join('') + ' ' + n + '／' + ACHS.length + '</span></div>'; }).join('') || '';
     $('pane-rank').innerHTML = h;
   }
 

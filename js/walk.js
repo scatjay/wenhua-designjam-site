@@ -78,10 +78,12 @@
     var T = [['auto', '跟著手機'], ['dark', '深色'], ['light', '淺色']], E = [['auto', '電量低時自動'], ['on', '一律開'], ['off', '關']];
     return '<div class="card"><b>顯示與省電</b><div class="sub">深色背景較省電（OLED 螢幕）。省電模式會停掉動畫、降低定位與上傳的頻率。只影響你自己的手機。</div>'
       + '<div class="opts">' + T.map(function (x) { return '<button class="btn2' + (themePref === x[0] ? ' on' : '') + '" data-theme="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'
-      + '<div class="opts">' + E.map(function (x) { return '<button class="btn2' + (ecoPref === x[0] ? ' on' : '') + '" data-eco="' + x[0] + '">省電：' + x[1] + '</button>'; }).join('') + '</div></div>';
+      + '<div class="opts">' + E.map(function (x) { return '<button class="btn2' + (ecoPref === x[0] ? ' on' : '') + '" data-eco="' + x[0] + '">省電：' + x[1] + '</button>'; }).join('') + '</div>'
+      + '<div class="opts"><button class="btn2' + (window.WalkSfx && WalkSfx.isOn() ? ' on' : '') + '" data-sfxset="1">音效：開</button><button class="btn2' + (window.WalkSfx && !WalkSfx.isOn() ? ' on' : '') + '" data-sfxset="0">音效：關</button></div></div>';
   }
   function bindDisp() {
     [].forEach.call(document.querySelectorAll('[data-theme]'), function (b) { b.onclick = function () { themePref = b.dataset.theme; try { localStorage.setItem('walk_theme', themePref); } catch (e) {} applyTheme(); applyStyle(); renderTeam(); }; });
+    [].forEach.call(document.querySelectorAll('[data-sfxset]'), function (b) { b.onclick = function () { if (window.WalkSfx) WalkSfx.setOn(b.dataset.sfxset === '1'); renderTeam(); }; });
     [].forEach.call(document.querySelectorAll('[data-eco]'), function (b) { b.onclick = function () { ecoPref = b.dataset.eco; try { localStorage.setItem('walk_eco', ecoPref); } catch (e) {} applyTheme(); renderTeam(); }; });
   }
   applyTheme();
@@ -178,7 +180,7 @@
       e.style.left = (30 + Math.random() * 40) + 'vw'; e.style.top = (40 + Math.random() * 15) + 'vh'; e.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px'); e.style.setProperty('--dy', (-60 - Math.random() * 140) + 'px'); e.style.setProperty('--r', (Math.random() * 360 - 180) + 'deg');
       document.body.appendChild(e); (function (x) { setTimeout(function () { x.remove(); }, 1200); })(e); }
   }
-  function toast(m) { if (/^(✔|🧩|🎉)/.test(m)) confetti(); var t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 3200); }
+  function toast(m) { try { window.WalkSfx && WalkSfx.forToast(m); } catch (e) { } if (/^(✔|🧩|🎉)/.test(m)) confetti(); var t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 3200); }
   function stopById(id) { for (var i = 0; i < S.length; i++) if (S[i].id === id) return S[i]; return null; }
   function mkcode() { var a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', s = ''; for (var i = 0; i < 4; i++) s += a[Math.floor(Math.random() * a.length)]; return s; }
   function on(ref, ev, fn) { ref.on(ev, fn); listeners.push([ref, ev, fn]); }
@@ -371,7 +373,7 @@
     on(ROOT.child('cfg/phase'), 'value', function (sn) { cfgPhase = sn.val(); if (!(TWR && R0.tw) && (phase() === 'rehearsal') !== REH) { console.log('RELOAD', phase(), REH, cfgPhase, R.liveStart); location.reload(); return; } render(); renderBanner(); });
     on(ROOT.child('cfg/npcd'), 'value', function (sn) { npcd = sn.val() || {}; refreshNpcBox(); });
     db.ref('.info/serverTimeOffset').on('value', function (sn) { svOff = sn.val() || 0; });
-    on(ROOT.child('npca/' + uid), 'value', function (sn) { var v = sn.val() || {}; Object.keys(v).forEach(function (k) { npcAns[k] = v[k]; }); refreshNpcBox(); });
+    on(ROOT.child('npca/' + uid), 'value', function (sn) { var v = sn.val() || {}; Object.keys(v).forEach(function (k) { if (!npcAns[k] && window.WalkSfx) WalkSfx.play('npc'); npcAns[k] = v[k]; }); refreshNpcBox(); });
     on(ROOT.child('rehearsal/' + uid), 'value', function (sn) { rehearsal = sn.val() || {}; render(); });
     on(ROOT.child(REH ? 'boardr' : 'board'), 'value', function (s) { board = s.val() || {}; if (view === 'rank') render(); });
     schedLoop();
@@ -1099,6 +1101,7 @@
     log('keyword', sid, v); markTask(sid, tid, { text: v.slice(0, 60) });
   }
   function useHint(sid) {
+    try { window.WalkSfx && WalkSfx.play('hint'); } catch (e) { }
     var s = stopById(sid), p = prog[sid] || {}, n = p.hints || 0; if (n >= s.npc.hints.length) return;
     ROOT.child(PR_(teamId) + '/' + sid + '/hints').transaction(function (c) { return (c || 0) === n ? n + 1 : undefined; }).then(function (r) { if (r.committed) log('hint', sid, 'level ' + (n + 1)); });
   }

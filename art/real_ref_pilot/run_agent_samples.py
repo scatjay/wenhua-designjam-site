@@ -21,7 +21,7 @@ def lease():
     if pr: subprocess.run([sys.executable, 'E:/Downloads/mcp-governance/tools/mem_lease.py', 'set', '--pid', str(pr[0].pid), '--line', 'course-walk-agents', '--job', 'agent_samples', '--minutes', '30', '--cap-gb', '24', '--est-gb', '14'], capture_output=True, text=True, timeout=30)
 def release(): subprocess.run([sys.executable, 'E:/Downloads/mcp-governance/tools/mem_lease.py', 'release'], capture_output=True, text=True, timeout=30)
 def wf(prompt, seed, prefix):
-    return {'1': {'class_type': 'CheckpointLoaderSimple', 'inputs': {'ckpt_name': 'RunDiffusion' + BS + 'Juggernaut-XI-byRunDiffusion-Lightning.safetensors'}},
+    return {'1': {'class_type': 'CheckpointLoaderSimple', 'inputs': {'ckpt_name': 'RunDiffusion' + BS + 'Juggernaut-XI-Lightning-unetfp8.safetensors'}},
      '2': {'class_type': 'LoraLoader', 'inputs': {'model': ['1', 0], 'clip': ['1', 1], 'lora_name': 'pixel' + BS + 'pixel-art-xl.safetensors', 'strength_model': 1.0, 'strength_clip': 1.0}},
      '3': {'class_type': 'CLIPTextEncode', 'inputs': {'text': prompt, 'clip': ['2', 1]}}, '4': {'class_type': 'CLIPTextEncode', 'inputs': {'text': NEG, 'clip': ['2', 1]}},
      '5': {'class_type': 'EmptyLatentImage', 'inputs': {'width': 768, 'height': 768, 'batch_size': 1}},
@@ -39,11 +39,18 @@ rec = []
 def guard():
     while True:
         c, l = W.perf()
-        if c / l >= 0.89 and cc.server_procs(): print('SELF_ABORT', round(c / l, 3), flush=True); cc.stop_server()
+        if c / l >= 0.899 and cc.server_procs(): print('SELF_ABORT', round(c / l, 3), flush=True); cc.stop_server()
         time.sleep(1)
 threading.Thread(target=guard, daemon=True).start()
 try:
-    cc.stop_server(); assert cc.start_server(str(OUT / 'server_agents.log')); lease()
+    cc.stop_server()
+    B = cc.INSTALL['dir']; lg = open(str(OUT / 'server_agents.log'), 'a', encoding='utf-8', errors='replace')
+    subprocess.Popen([B + '/python_embeded/python.exe', '-s', B + '/ComfyUI/main.py', '--windows-standalone-build', '--port', str(cc.INSTALL['port']), '--listen', '127.0.0.1', '--disable-auto-launch', '--disable-all-custom-nodes', '--disable-cuda-malloc', '--gpu-only',
+                      '--disable-smart-memory'], cwd=B, stdout=lg, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, creationflags=cc.NO_WINDOW)
+    for _ in range(120):
+        time.sleep(2)
+        if cc.server_up(): break
+    assert cc.server_up(); lease()
     D = Path(cc.INSTALL['dir']) / 'ComfyUI'
     for k, lst in CH.items():
         for i, d in enumerate(lst):

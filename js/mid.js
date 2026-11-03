@@ -383,13 +383,35 @@
   }
 
   /* ───────── 啟動 ───────── */
+  /* 文化遊戲松（47602）期中作業 11-03 延長成 W8~11：期限改 11/25；遊戲設計學維持 11/18，頁面其他課程不動 */
+  function applyDates(c) {
+    if (c !== '47602') return;
+    var tag = document.querySelector('#when h2 .tag');
+    if (tag) tag.textContent = '從 10/28 起四週';
+    var tl = document.querySelector('#when .timeline');
+    if (tl && !tl.getAttribute('data-4w')) {
+      tl.setAttribute('data-4w', '1');
+      var rows = tl.querySelectorAll('.wk'), lastRow = rows[rows.length - 1];
+      if (lastRow) {
+        var nb = lastRow.cloneNode(true);
+        nb.querySelector('b').textContent = '11/18 第 11 週';
+        nb.querySelector('span').textContent = '單元 3、4 繼續做，把差異對一次';
+        tl.insertBefore(nb, lastRow);
+        lastRow.querySelector('b').textContent = '11/25 09:10 期限';
+      }
+    }
+    var sub = document.querySelector('#u4 > p.sub');
+    if (sub) sub.textContent = '第 9–12 週（期限 11/25）· 前置：單元 1–3';
+  }
   buildUnits(); initFb(); initChat(); refreshProgress(); renderAdvice(); renderChat(); renderAch();
+  applyDates(courseOf(envNow() || 0));
   var last;
   setInterval(function () {
     var e = envNow(); if (e === last) return; last = e; ENV = e;
     var w = $('who');
     if (e == null) { w.textContent = '先在頁面最上方綁定你的編號，才能提交。'; return; }
     COURSE = courseOf(e);
+    applyDates(COURSE);
     w.textContent = '你的編號：#' + e + '（提交只記編號，不記姓名）';
     listen(); renderAdvice(); renderChat();
   }, 1500);

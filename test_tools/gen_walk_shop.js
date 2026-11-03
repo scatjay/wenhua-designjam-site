@@ -288,7 +288,7 @@ function gen(write, ser, Raw) {
     looks: looks,
     eggs: [
       { id: 'egg_speedup', name: '孵蛋加速', zone: '蛋鋪', cat: '蛋', price: 20, desc: '讓一顆蛋縮短孵化時間。', key: 'hatchSpeedup', value: 0.5 },
-      { id: 'egg_common', name: '普通蛋', zone: '蛋鋪', cat: '蛋', price: 100, rarity: '普通', needChapterDone: true, desc: '只賣已完成章節的普通蛋；稀有與傳說不能購買。' }
+      { id: 'egg_common', name: '普通蛋', zone: '蛋鋪', cat: '蛋', price: 100, rarity: '普通', needChapterDone: true, pool: S.SP.filter(function (d) { return d.rarity === '普通'; }).map(function (d) { return d.id; }), desc: '只賣已完成章節的普通蛋；稀有與傳說不能購買。' }
     ],
     nestUpgrade: { from: 'spirit_nest', to: 'plush_nest' },
     exchange: {

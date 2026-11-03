@@ -348,8 +348,21 @@
     }
     if (!r) return null;
     var era = r.era !== undefined ? r.era : (r.eras !== undefined ? r.eras : (r.spec !== undefined ? r.spec : r.specialty));
+    if ((era === undefined || era === null) && (r.role || typeof role === 'string') && isObj(root.WALK_AGENT_ERAS)) {   /* 探員歷史專長資料檔 */
+      var T = root.WALK_AGENT_ERAS[r.role || role];
+      if (isObj(T)) era = T.eras;
+    }
     if (era === undefined || era === null || era === '' || (isArr(era) && !era.length)) return null;
     return era;
+  }
+  /* 探員熟悉的時期（2 級）；沒有資料回傳空陣列 */
+  function roleFam(role) {
+    var r = null, f, T;
+    if (isObj(role)) r = role;
+    else if (typeof role === 'string' && root.WALK_AGENTS && typeof root.WALK_AGENTS.get === 'function') { try { r = root.WALK_AGENTS.get(role); } catch (e) { r = null; } }
+    f = r && r.famEras !== undefined ? r.famEras : null;
+    if (f === null && isObj(root.WALK_AGENT_ERAS)) { T = root.WALK_AGENT_ERAS[(r && r.role) || role]; if (isObj(T)) f = T.famEras; }
+    return isArr(f) ? f : [];
   }
 
   /* ---------------------------------------------------------------- 共用情境（計時器、倒數、兩段式確認、渲染） */
@@ -1089,9 +1102,14 @@
     rows.push(resRow('共鳴', res.resonance, '勘察收穫品質 ×1.5；助理技冷卻 −20%', '小精靈的屬性要和探員最高的屬性一樣'));
     rows.push(resRow('補位', res.fill, '探員在這項屬性視為 +1，補足短板', '小精靈的屬性要剛好是探員最低（2 以下）的那項'));
     if (era === null) rows.push(h('li', { 'data-state': 'wait' }, [h('b', { text: '歷史共鳴' }), '：還沒開放（等待資料）']));
-    else rows.push(resRow('歷史共鳴', res.history, '每趟勘察多帶 1 件情報', '小精靈的時期要和探員專精的時期一樣'));
+    else {
+      var eraTxt = isArr(era) ? era.join('、') : String(era), fam = roleFam(role);
+      rows.push(resRow('歷史共鳴', res.history, res.historyLevel === 'familiar' ? '探員熟悉這個時期：每趟勘察多帶 0.5 件情報（效果減半）' : '探員專精這個時期：每趟勘察多帶 1 件情報，專家補充解鎖',
+        '小精靈的時期要和探員專精（或熟悉）的時期一樣；這位探員專精「' + eraTxt + '」' + (fam.length ? '、熟悉「' + fam.join('、') + '」' : '')));
+    }
     rows.push(resRow('專屬', !!res.special, res.special ? '「' + res.special.label + '」' + res.special.desc : '', '這個組合沒有特別搭檔'));
     card.appendChild(h('ul', { class: 'wsu-note' }, rows));
+    if (era !== null) { var fam2 = roleFam(role); card.appendChild(h('p', { class: 'wsu-note', 'data-role': 'eraInfo', text: '探員的歷史時期：專精「' + (isArr(era) ? era.join('、') : String(era)) + '」' + (fam2.length ? '、熟悉「' + fam2.join('、') + '」' : '') + '；小精靈的時期：' + ((def.scout && def.scout.era) || def.era || '') })); }
     card.appendChild(h('p', { text: res.kinds && res.kinds.length ? '現在的搭配：' + res.kinds.join('、') : '現在的搭配：平常（小精靈自己的技能照樣有效）' }));
   }
   function resRow(name, on, onText, offText) {
@@ -1262,7 +1280,7 @@
 
   function estimate(ctx, o, tierKey, res, remaining) {
     var tiers = ctx.store.TIERS || TIER_DEF, tier = tiers[tierKey] || TIER_DEF[tierKey], adult = o.stage === 'adult' || o.stage === 'awake' ? 1 : 0, e = num(o.efficiency, 1);
-    var raw = (tier.base + adult) * (res && res.resonance ? 1.5 : 1) + (res && res.history ? 1 : 0), n;
+    var raw = (tier.base + adult) * (res && res.resonance ? 1.5 : 1) + (res ? (res.extraItems !== undefined ? num(res.extraItems) : (res.history ? 1 : 0)) : 0), n;
     raw = Math.min(5, raw);
     n = Math.min(5, Math.max(1, Math.round(raw * e)));
     if (remaining !== undefined) n = Math.max(0, Math.min(n, remaining));

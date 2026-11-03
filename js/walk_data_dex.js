@@ -228,7 +228,12 @@
         ]
       }
     ],
-    "spiritBook": {"total":16,"forms":48,"formsPer":3,"note":"小精靈另有自己的圖鑑冊（16 隻），不算在六類完成度內；第 16 隻只在圖鑑 100% 出現。","unlock":{"sp_marrow":100}},
+    "spiritBook": {
+      "total": 24,
+      "forms": 72,
+      "note": "小精靈另有自己的圖鑑冊（24 隻，每隻 3 種形態共 72 項），不算在六類完成度內；第 16 隻只在圖鑑 100% 出現。",
+      "unlock": {"sp_marrow":100}
+    },
     "milestones": [
       {"pct":25,"once":true,"reward":{"points":50,"title":"ti_dex25"}},
       {

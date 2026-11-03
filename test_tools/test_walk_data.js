@@ -42,7 +42,7 @@ function mdRows(file) {
     if (ln.charAt(0) !== '|') return;
     var c = ln.split('|').map(function (x) { return x.trim(); });
     var n = parseInt(c[1], 10);
-    if (!(n >= 1 && n <= 16) || String(n) !== c[1] || /^[\d.]+$/.test(c[2]) || c.length < 8) return;
+    if (!(n >= 1 && n <= 24) || String(n) !== c[1] || /^[\d.]+$/.test(c[2]) || c.length < 8) return;
     out[n] = c;
   });
   return out;
@@ -53,14 +53,14 @@ function cdText(a) { if (a.cd > 0) return '（' + a.cd + ' 分）'; if (a.perCha
 
 /* ================= 小精靈 ================= */
 G('小精靈：欄位與圖');
-ok(Array.isArray(SP) && SP.length === 16, '應有 16 隻，實際 ' + (SP && SP.length));
+ok(Array.isArray(SP) && SP.length === 24, '應有 24 隻，實際 ' + (SP && SP.length));
 var ids = {}, names = {};
 SP.forEach(function (s, i) {
   var L = '#' + (i + 1) + ' ' + s.name;
   ['id', 'name', 'nick', 'era', 'eraId', 'anchor', 'attr', 'rarity', 'favFood'].forEach(function (k) { ok(isStr(s[k]), L + ' 缺欄位 ' + k); });
   ok(s.no === i + 1, L + ' no 應為 ' + (i + 1));
   ok(!ids[s.id], L + ' id 重複'); ids[s.id] = 1; ok(!names[s.name], L + ' 名稱重複'); names[s.name] = 1;
-  ok(/^sp_[a-z]+$/.test(s.id), L + ' id 格式');
+  ok(/^sp_[a-z]+$/.test(s.id), L + ' id 格式'); ok(['fantasy', 'scifi', 'cute', 'relic'].indexOf(s.genre) >= 0, L + ' genre 欄');
   ok(ATTRS.indexOf(s.attr) >= 0, L + ' 屬性不合法'); ok(RAR.indexOf(s.rarity) >= 0, L + ' 稀有度不合法');
   ok(s.anchor.indexOf('待文史把關') >= 0 && s.anchor.length <= 48, L + ' anchor 要含「待文史把關」且 ≤48 字');
   ok(!SENSITIVE.test(JSON.stringify(s)), L + ' 含敏感題材或真實院名');
@@ -77,26 +77,30 @@ SP.forEach(function (s, i) {
   });
   ok(rowsKey(s.stages.adult.sprite) !== rowsKey(s.stages.awake.sprite), L + ' 成體與覺醒圖不應相同');
   ok(rowsKey(s.stages.adult.sprite) !== rowsKey(s.stages.baby.sprite), L + ' 成體與幼體圖不應相同');
-  ok(s.stages.egg.sprite === EGGS[{ '普通': 'common', '稀有': 'rare', '傳說': 'legend' }[s.rarity]], L + ' 蛋圖應共用對應稀有度的蛋');
+  ok(s.stages.egg.sprite === EGGS[s.id], L + ' 蛋圖是自己的蛋（WALK_SPIRIT_EGGS[id]）');
 });
-['common', 'rare', 'legend'].forEach(function (k) { spriteOk(EGGS[k], '蛋 ' + k, 60); });
-eq(Object.keys(EGGS).sort(), ['common', 'legend', 'rare'], '蛋只有三種');
-ok(rowsKey(EGGS.common) !== rowsKey(EGGS.rare) && rowsKey(EGGS.rare) !== rowsKey(EGGS.legend), '三種蛋圖要彼此不同');
+SP.forEach(function (s) { spriteOk(EGGS[s.id], '蛋 ' + s.name, 40); });
+eq(Object.keys(EGGS).sort(), SP.map(function (s) { return s.id; }).sort(), '24 種各有自己的蛋');
+ok(new Set(SP.map(function (s) { return rowsKey(EGGS[s.id]); })).size === 24, '24 張蛋圖彼此不同');
+ok(new Set(SP.map(function (s) { return rowsKey(s.stages.baby.sprite); })).size === 24, '24 張幼體圖彼此不同');
 var advPx = {}; SP.forEach(function (s) { var k = rowsKey(s.stages.adult.sprite); ok(!advPx[k], s.name + ' 成體圖與別隻重複'); advPx[k] = 1; });
 
 G('小精靈：稀有度分佈與起始（對照設計稿）');
 var cnt = { '普通': 0, '稀有': 0, '傳說': 0 }; SP.forEach(function (s) { cnt[s.rarity]++; });
-eq(cnt, { '普通': 7, '稀有': 7, '傳說': 2 }, '稀有度分佈（設計稿：普通 7、稀有 7、傳說 2）');
+eq(cnt, { '普通': 12, '稀有': 10, '傳說': 2 }, '稀有度分佈（普通 12、稀有 10、傳說 2：普通多、稀有次之、傳說最少）');
 eq(SP.filter(function (s) { return s.starter; }).map(function (s) { return s.no; }), [1, 2, 5], '起始可選＝潮汐鯨魂、鹿影、書卷蠹魚');
 eq(SP.filter(function (s) { return s.hidden; }).map(function (s) { return s.no; }), [16], '只有第 16 隻在圖鑑 100% 出現');
 eq(SP.filter(function (s) { return s.rarity === '傳說'; }).map(function (s) { return s.no; }), [1, 16], '傳說＝潮與髓');
-var eraCnt = {}; SP.slice(0, 15).forEach(function (s) { eraCnt[s.eraId] = (eraCnt[s.eraId] || 0) + 1; });
-ok(Object.keys(eraCnt).every(function (k) { return eraCnt[k] >= 1; }) && Object.keys(eraCnt).length === 7, '前 15 隻涵蓋七個歷史時期');
+var eraCnt = {}; SP.forEach(function (s) { eraCnt[s.eraId] = (eraCnt[s.eraId] || 0) + 1; });
+eq(eraCnt, { pre: 3, dutch: 3, zheng: 3, qing: 3, japan: 4, postwar: 4, heritage: 3, core: 1 }, '各時期物種數（七個時期各 ≥3，時安局核心 1 隻）');
+var gCnt = {}; SP.forEach(function (s) { gCnt[s.genre] = (gCnt[s.genre] || 0) + 1; });
+ok(['fantasy', 'scifi', 'cute', 'relic'].every(function (g) { return gCnt[g] >= 5 && gCnt[g] <= 10; }), '各 genre 至少 5 種、不超過 45%：' + JSON.stringify(gCnt));
+eq(SP.slice(16).map(function (s) { return s.name + '/' + s.genre + '/' + s.era; }), ['螺殼蟹/cute/西拉雅與大員前史', '雲豹幼靈/fantasy/西拉雅與大員前史', '風帆海馬/fantasy/荷治', '鐵蟹機甲/scifi/明鄭', '風箏小龍/fantasy/清領', '糖鐵小汽笛/cute/日治', '唱盤鸚鵡/scifi/戰後', '點雲幽浮/scifi/當代文資'], '新增 8 隻的名稱、類型、時期照 BUILD_SPEC 第 13 節');
 eq(SP.filter(function (s) { return s.attr === '全'; }).map(function (s) { return s.no; }), [16], '只有第 16 隻是全屬性');
 
 if (ROOMMD && SKILLMD) {
   G('小精靈：技能表與名冊逐項對照設計稿（' + Object.keys(SKILLMD).length + ' 列技能表、' + Object.keys(ROOMMD).length + ' 列名冊）');
-  eq(Object.keys(ROOMMD).length, 16, '名冊表應抽到 16 列'); eq(Object.keys(SKILLMD).length, 16, '技能表應抽到 16 列');
+  eq(Object.keys(ROOMMD).length, 24, '名冊表應抽到 24 列'); eq(Object.keys(SKILLMD).length, 24, '技能表應抽到 24 列');
   SP.forEach(function (s) {
     var r = ROOMMD[s.no], k = SKILLMD[s.no], L = '#' + s.no + ' ' + s.name;
     var m = r[2].match(/^(.+)（(.+)）$/);
@@ -124,7 +128,20 @@ SP.forEach(function (s) {
   });
   var all = [].concat(s.lines.idle, s.lines.pet, s.lines.feed, s.lines.awake); ok(new Set(all).size === all.length, s.name + ' 台詞有重複');
 });
-var nickSet = {}; SP.forEach(function (s) { nickSet[s.lines.idle.join()] = 1; }); ok(Object.keys(nickSet).length === 16, '每隻待機台詞各不相同');
+var nickSet = {}; SP.forEach(function (s) { nickSet[s.lines.idle.join()] = 1; }); ok(Object.keys(nickSet).length === 24, '每隻待機台詞各不相同');
+var allLines = {}, dupLines = 0; SP.forEach(function (s) { ['idle', 'pet', 'feed', 'awake'].forEach(function (k) { s.lines[k].forEach(function (t) { if (allLines[t]) dupLines++; allLines[t] = 1; }); }); });
+eq(dupLines, 0, '24 隻之間台詞沒有重複');
+
+G('章節蛋（eggChapter）涵蓋新物種');
+var chapIds = {}; (function () {
+  ['js/walk_data_intel_a.js', 'js/walk_data_intel_b.js', 'js/walk_data_intel.js'].forEach(function (f) { (0, eval)(read(f)); });
+  (global.window.WALK_INTEL || []).forEach(function (c) { chapIds[c.chapter] = 1; }); })();
+var egged = SP.filter(function (s) { return s.eggChapter !== undefined; });
+eq(egged.length, 23, '除了第 16 隻，23 隻都有章節蛋');
+ok(new Set(egged.map(function (s) { return s.eggChapter; })).size === 23, '每章只掉一種蛋，章節不重複');
+egged.forEach(function (s) { ok(chapIds[s.eggChapter], s.name + ' 的 eggChapter 要是情報卡裡真實存在的章節：' + s.eggChapter); });
+ok(SP.slice(16).every(function (s) { return s.eggChapter !== undefined; }), '新增 8 隻都分配到章節');
+ok(SP.filter(function (s) { return s.hidden; }).every(function (s) { return s.eggChapter === undefined && s.needDexPct === 100; }), '第 16 隻不掉章節蛋');
 
 G('點心、玩具、特別搭檔、共用設定');
 var snacks = FOODS.filter(function (f) { return f.kind === 'snack'; }), plain = FOODS.filter(function (f) { return f.kind === 'plain'; });
@@ -142,12 +159,12 @@ TOYS.forEach(function (t) { ok(!tid[t.id], t.id + ' 重複'); tid[t.id] = 1; ok(
 ok(TOYS.length >= 3, '玩具至少 3 種（追光點、接球、拋小卡）');
 eq(PAIRS.map(function (p) { return p.role; }), AGENTS.order, '特別搭檔涵蓋 16 職務且順序同名冊');
 PAIRS.forEach(function (p) { ok(ids[p.spirit], p.role + ' 搭檔小精靈 id 存在'); ok(isStr(p.name) && isStr(p.desc) && p.effect && isStr(p.effect.key) && typeof p.effect.value === 'number', p.role + ' 搭檔欄位'); });
-eq(META.maxOwned, 3, '最多養 3 隻'); eq(META.slots, { follow: 1, scout: 2 }, '隨行位 1、勘察位 2'); eq(META.vigor.min, 20, '活力下限 20'); eq(META.vigor.dailyDrop, 10, '每日自然下降 10');
+eq([META.count, META.forms], [24, 72], 'META 小精靈 24、形態 72'); eq(META.maxOwned, 3, '最多養 3 隻'); eq(META.slots, { follow: 1, scout: 2 }, '隨行位 1、勘察位 2'); eq(META.vigor.min, 20, '活力下限 20'); eq(META.vigor.dailyDrop, 10, '每日自然下降 10');
 eq(META.daily, { feed: 3, play: 3, pet: 5, tidy: 1, chat: 20 }, '每日互動上限');
 eq(META.scoutKinds, KINDS, '情報六類'); SP.forEach(function (s) { ok(META.eras.some(function (e) { return e.id === s.eraId; }), s.name + ' 時期 id 在 META.eras'); });
 eq(Object.keys(META.rarity), RAR, '稀有度形狀表');
 var triples = 0;
-for (var a = 0; a < 16; a++) for (var b = a + 1; b < 16; b++) for (var c = b + 1; c < 16; c++) {
+for (var a = 0; a < 24; a++) for (var b = a + 1; b < 24; b++) for (var c = b + 1; c < 24; c++) {
   var t3 = [SP[a], SP[b], SP[c]];
   if (['eraId', 'attr'].every(function (f) { return new Set(t3.map(function (x) { return x[f]; })).size === 3; }) && new Set(t3.map(function (x) { return x.scout.kind[0]; })).size === 3) triples++;
 }
@@ -192,8 +209,9 @@ ok(['arrive', 'feed', 'visit'].every(function (e) { return SHOP.board.pool.some(
 SHOP.exchange.furniture.forEach(function (i) { var f = FU.filter(function (x) { return x.id === i; })[0]; ok(f && f.noBuy && f.unlock.type === 'shards', i + ' 換物所家具要是 noBuy 且以碎屑換取'); });
 eq(SHOP.exchange.rate, { snack: 3, furniture: 10 }, '碎屑兌換率');
 ok(SHOP.exchange.frames.length >= 3 && SHOP.exchange.frames.every(function (f) { return f.shards > 0 && isHex(f.color); }), '稱號邊框');
+var common12 = SP.filter(function (s) { return s.rarity === '普通'; }).map(function (s) { return s.id; });
 var speed = SHOP.eggs.filter(function (e) { return e.id === 'egg_speedup'; })[0], egg1 = SHOP.eggs.filter(function (e) { return e.id === 'egg_common'; })[0];
-eq([speed.price, egg1.price, egg1.rarity], [20, 100, '普通'], '蛋鋪：加速 20、普通蛋 100、不賣稀有與傳說');
+eq([speed.price, egg1.price, egg1.rarity], [20, 100, '普通'], '蛋鋪：加速 20、普通蛋 100、不賣稀有與傳說'); eq(egg1.pool, common12, '蛋鋪普通蛋只從 12 種普通小精靈裡出（含新物種）');
 var wk = read('js/walk.js'), skinIds = []; wk.replace(/\{ k: '(sk_[a-z]+)', e: '[^']+', n: '([^']+)' \}/g, function (m, k) { skinIds.push(k); return m; });
 var skinsShop = SHOP.looks.filter(function (l) { return l.skin; }), themesShop = SHOP.looks.filter(function (l) { return l.theme; });
 eq(skinsShop.map(function (s) { return s.skin; }), skinIds, '造型屋 8 款與 walk.js 的 SKINS 一致'); ok(themesShop.length >= 3 && SHOP.looks.every(function (s) { return s.price >= 50; }), '造型 50 點起、登入畫面主題至少 3 款');
@@ -283,7 +301,7 @@ FU.filter(function (f) { return f.unlock && f.unlock.type === 'dexPct'; }).forEa
 eq(DEX.spiritBook.unlock, { sp_marrow: 100 }, '第 16 隻在圖鑑 100% 解鎖');
 var tri = cat('titles').items.filter(function (t) { return t.id === DEX.tripod.titleId; })[0];
 ok(tri && tri.name === '三足鼎立' && tri.cond.key === 'tripod', '含三足鼎立稱號'); eq(DEX.tripod.distinct, ['eraId', 'attr', 'scoutKind0'], '三足鼎立：時期、屬性、專長各異'); eq(DEX.tripod.size, 3, '三隻');
-eq(DEX.spiritBook.total, 16, '小精靈冊 16 隻');
+eq([DEX.spiritBook.total, DEX.spiritBook.forms], [24, 72], '小精靈冊 24 隻、形態 72 項（24×3）');
 
 /* ================= 通用 ================= */
 G('檔案：ES5 與禁用項');

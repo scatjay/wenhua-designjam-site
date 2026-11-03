@@ -1,11 +1,379 @@
-/* 走讀：小精靈資料（16 隻）、點心、玩具、特別搭檔、共用設定。
+/* 走讀：小精靈資料（24 隻）、點心、玩具、特別搭檔、共用設定。
    純資料（ES5、掛 window），由 test_tools/gen_walk_data.js 排版產生；數值來源見 BUILD_SPEC_ROOM_SPIRIT_1103.md 第 3 節。
    精靈圖＝16×16 字串矩陣 rows（'.' 透明）＋調色盤 pal（字元→色碼）；歷史錨點全部待文史把關。 */
 (function () {
   'use strict';
-  /* 三種蛋圖：普通／稀有／傳說，16 隻共用 */
+  /* 蛋圖：每隻小精靈各有自己的蛋（輪廓、花紋、配色獨有），以小精靈 id 為鍵 */
   var EGGS = {
-    "common": {
+    "sp_tide": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "......oooo......",
+        ".....oaaaao.....",
+        "....odaaaaao....",
+        "...oadacacaao...",
+        "..oacacacacaao..",
+        "..oaaaaaaaaaao..",
+        "..oaaaaaaaaaao..",
+        "..oaabababaaao..",
+        "..oababababaao..",
+        "...oaaaaaaaao...",
+        "....oaaaaaao....",
+        ".....oaaaao.....",
+        "......oooo......",
+        "................"
+      ],
+      "pal": {"o":"#14235a","a":"#4b6fd6","d":"#dff3ff","c":"#9ad7ff","b":"#2f4a9c"}
+    },
+    "sp_deer": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "........o.......",
+        ".......obo......",
+        ".....ooobooo....",
+        "....obbbbbbbo...",
+        "...obcbcbcbcbo..",
+        "...obbbbbbbbbo..",
+        "....oobbbbboo...",
+        "....oaaaaaaao...",
+        "....oaadaaaao...",
+        "....oaaaaaaao...",
+        "....oaaaadaao...",
+        ".....oadaaao....",
+        "......oaaao.....",
+        ".......obo......",
+        "........o......."
+      ],
+      "pal": {"o":"#3d2209","b":"#7a4a22","c":"#e8c98a","a":"#b9763a","d":"#f4e3c0"}
+    },
+    "sp_gull": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "................",
+        "................",
+        "...oooooooooo...",
+        "..oaacaabaacaoo.",
+        ".oaaacaabaacaaao",
+        "oawaacdabaacaaaa",
+        "oaaaacaabadcaaaa",
+        "oaaaacaabaacaeaa",
+        ".oaaacaabaacaaao",
+        "..ooooooooooooo.",
+        "................",
+        "................",
+        "................",
+        "................"
+      ],
+      "pal": {"o":"#38485c","a":"#eaf0f7","c":"#f0a030","b":"#9fb0c4","w":"#ffffff","d":"#6b7a8f","e":"#e04a3a"}
+    },
+    "sp_sail": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "........oo......",
+        ".......obeo.....",
+        "......oaboeo....",
+        "......oabao.....",
+        ".....oaabao.....",
+        ".....oaabaao....",
+        "....oaaabaao....",
+        "....oacabaaao...",
+        "...oaaaabacao...",
+        "...oaaaabaaaao..",
+        "..oaaaaabaaaaao.",
+        "...oaaaabaaaao..",
+        "....odddddddo...",
+        ".....ooooooo....",
+        "................"
+      ],
+      "pal": {"o":"#2a3a5a","b":"#7a4a22","e":"#d95b43","a":"#d8ecf4","c":"#f0a860","d":"#4b6fd6"}
+    },
+    "sp_bookworm": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "................",
+        "........o.......",
+        "..oo.oooeooo.oo.",
+        ".oddocccecccoddo",
+        ".oddcbbceccccddo",
+        "oddddcccebccdddd",
+        "oddddcccecccdddd",
+        "oddddcbbecbcdddd",
+        ".oddcccceccccddo",
+        ".oddocccecccoddo",
+        "..oo.oooeooo.oo.",
+        "........o.......",
+        "................",
+        "................"
+      ],
+      "pal": {"o":"#284a2c","e":"#d95b43","d":"#7a4a22","c":"#f6efd8","b":"#6f9468"}
+    },
+    "sp_abacus": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "...oooooooooo...",
+        "..obbbbbbbbbbo..",
+        "..obeeeeeeeebo..",
+        "..obecedecedbo..",
+        "..obeeeeeeeebo..",
+        "..obaaaaaaaabo..",
+        "..obeeeeeeeebo..",
+        "..obedecedecbo..",
+        "..obedecedecbo..",
+        "..obbbbbbbbbbo..",
+        "...obboooobbo...",
+        "...obbo..obbo...",
+        "....oo....oo....",
+        "................"
+      ],
+      "pal": {"o":"#4a2a08","b":"#7a4a14","e":"#fff3d6","c":"#4b6fd6","d":"#c4553b","a":"#e8d8a8"}
+    },
+    "sp_lion": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "........o.......",
+        "......ooaoo.....",
+        ".....oaaaaao....",
+        "....oaacaaaao...",
+        "...oaacaaaaaao..",
+        "...oaaaaaaaaao..",
+        "...oaaddaaaaao..",
+        "...oaaaaaabaao..",
+        "....oaaaabaao...",
+        "....ooaaaaao....",
+        "...oeeeeeeeeo...",
+        "...oedeeedeeo...",
+        "...oeeeedeeeo...",
+        "....oooooooo....",
+        "................"
+      ],
+      "pal": {"o":"#40281a","a":"#c8b8a0","c":"#e0d4c0","d":"#5aa8a0","b":"#8a7660","e":"#8d6a3a"}
+    },
+    "sp_brick": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "................",
+        "................",
+        "..oooooooooooo..",
+        ".oaaaaaaaaaaaao.",
+        ".oaccaaaabaaaao.",
+        ".oaabaaaabaaaao.",
+        ".obbbbbbbbbbbbo.",
+        ".oaaaabaaaabaao.",
+        ".oaaaabaaaabeao.",
+        ".oaaaabaaaabaao.",
+        "..oooooooooooo..",
+        "................",
+        "................",
+        "................"
+      ],
+      "pal": {"o":"#4a1a10","a":"#c4553b","c":"#f0b090","b":"#8f3a28","e":"#f2c14e"}
+    },
+    "sp_watch": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "........o.......",
+        ".......obo......",
+        "......obobo.....",
+        "......obbbo.....",
+        ".....oaabaao....",
+        "....oaaakaaao...",
+        "...oaacckccaao..",
+        "..oaaccckcccaao.",
+        "..oaaccckcccaao.",
+        "..oacccceccccao.",
+        "..oaacccckkcaao.",
+        "..oaacccccccaao.",
+        "...oaacccccaao..",
+        "....oaaakaaao...",
+        ".....oaaaaao....",
+        "......ooooo....."
+      ],
+      "pal": {"o":"#3a2a08","b":"#8a6a1c","a":"#c8a040","k":"#1d1504","c":"#fff6dc","e":"#d95b43"}
+    },
+    "sp_telegraph": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "........o.......",
+        "......ooaoo.....",
+        ".....oaacaao....",
+        ".....oadaaao....",
+        "....oaadaaaao...",
+        ".....oaaaaao....",
+        ".....oaaaaao....",
+        ".....ooaaoo.....",
+        "....oaaaaaao....",
+        "....oaaaaaaao...",
+        "....obbbbbbbo...",
+        "..ooaacaaacaao..",
+        ".obbbbbbbbbbbbo.",
+        ".obbbbbbbbbbbbo.",
+        "..oooooooooooo..",
+        "................"
+      ],
+      "pal": {"o":"#12305a","a":"#5aa0e0","c":"#f2c14e","d":"#e8f0f8","b":"#2f6aa8"}
+    },
+    "sp_radio": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "...o.........o..",
+        "..oco.......oco.",
+        "..oocoooooooco..",
+        ".oaaacaaaaacaao.",
+        ".oabbbbbbbbbbao.",
+        ".oabaaaabbebbao.",
+        ".oabacacbccccao.",
+        ".oabacacbceccao.",
+        ".oabacacbccccao.",
+        ".oabacacbbbbbao.",
+        ".oabbbbbbbbbbao.",
+        ".oaaaaaaaaaaaao.",
+        "..oooooooooooo..",
+        "................",
+        "................"
+      ],
+      "pal": {"o":"#2a1608","c":"#c9ccd2","a":"#8b5a2b","b":"#5a3a1e","e":"#f2c14e"}
+    },
+    "sp_neon": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "........o.......",
+        ".....ooodooo....",
+        "....oaaaaaaao...",
+        "...oaaaaaaadao..",
+        "..oaeaacccaaaao.",
+        "..oaaacooocaaao.",
+        "..oaaco...ocaao.",
+        ".oaaaco...ocaaao",
+        "..oaaco...ocaao.",
+        "..oaaacooocaaao.",
+        "..oaadacccaeaao.",
+        "...oaaaaaaaaao..",
+        "....oaaaaaaao...",
+        ".....oooaooo....",
+        "........o......."
+      ],
+      "pal": {"o":"#3a0f52","d":"#ffe6fa","a":"#e048c8","e":"#fff27a","c":"#58e8f0"}
+    },
+    "sp_ink": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "........o.......",
+        ".......oao......",
+        "......oaaao.....",
+        "......oaaao.....",
+        ".....oaaaaao....",
+        ".....oaaaaao....",
+        "....oaacaaaao...",
+        "...oaacaaaaao...",
+        "...oaacaaaaao...",
+        "...oaaaaaaaaao..",
+        "...oaaaaadaao...",
+        "....oaaaaabao...",
+        ".....oaaaaao....",
+        "......ooooo.....",
+        "................"
+      ],
+      "pal": {"o":"#0c1230","a":"#33406e","c":"#8fa0e8","d":"#d9d2c0","b":"#1e2748"}
+    },
+    "sp_bee": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        ".....oooooo.....",
+        "....oaaaaaao....",
+        "....oaaaaaaao...",
+        "...oaaccccaaao..",
+        "...oaaccbccaao..",
+        "..oaacccccccaao.",
+        ".oaacbbbbbbbaao.",
+        "..oaacecccccaao.",
+        "...oaaccbccaao..",
+        "...oaaaaaaaaao..",
+        "....oaaaaaaao...",
+        ".....ooooooo....",
+        "................",
+        "................"
+      ],
+      "pal": {"o":"#3b2f10","a":"#ffd23a","c":"#cfeaf5","b":"#3b2f2f","e":"#f08a24"}
+    },
+    "sp_rubbing": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "....oooooooo....",
+        "...oeeaaaaaao...",
+        "...oeeacacaao...",
+        "...oaacacacao...",
+        "...oacacacaao...",
+        "...oaabbbbcao...",
+        "...oacbdbbaao...",
+        "...oaabbdbcao...",
+        "...oacbbbbaao...",
+        "...oaacacacao...",
+        "...oacacacaao...",
+        "...oaacacaeeo...",
+        "...oaaaaaaeeo...",
+        "....oooooooo....",
+        "................"
+      ],
+      "pal": {"o":"#0f4a42","e":"#f2c14e","a":"#46c7b0","c":"#9ef0dc","b":"#2a8d7e","d":"#ff6fb5"}
+    },
+    "sp_marrow": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "......ooooo.....",
+        ".....oaaaaao....",
+        "....oaacccaao...",
+        "...oawwcccccao..",
+        "..oaawccccccaao.",
+        "..oacccyyycccao.",
+        "..oacccyyycccao.",
+        "..oacccyyycccao.",
+        "..oaaccccccdaao.",
+        "...oacccccdcao..",
+        "....oaacccaao...",
+        ".....oaaaaao....",
+        "......ooooo.....",
+        "................"
+      ],
+      "pal": {"o":"#2a1a6a","a":"#b9a0f0","c":"#e8dcff","w":"#ffffff","y":"#fff3b0","d":"#8fe0ff"}
+    },
+    "sp_snailcrab": {
       "w": 16,
       "h": 16,
       "rows": [
@@ -13,69 +381,184 @@
         "................",
         ".......ooo......",
         "......oaaao.....",
-        ".....oaaaaao....",
+        "......oaaao.....",
+        ".....obbbbbo....",
         "....oaaaaaaao...",
-        "....owwaaaaao...",
-        "....owwaaabao...",
-        "...oawwaaabaao..",
-        "...oaabbaaaaao..",
-        "..oaaabaaaaaaao.",
+        "....oaaaaaaao...",
+        "...obbbbbbbbbo..",
         "...oaaaaaaaaao..",
-        "...oaaaaabbaao..",
-        "....oaabaabao...",
-        ".....oaaaaao....",
-        "......ooooo....."
+        "..obbbbbbbbbbbo.",
+        "..oaaaaaaaaaaao.",
+        "..oaacaaaaacaao.",
+        "...oaaaaaaaaao..",
+        "....oooaaaooo...",
+        ".......ooo......"
       ],
-      "pal": {"o":"#1b1b2f","a":"#f3e6c8","w":"#ffffff","b":"#b58a52"}
+      "pal": {"o":"#5a2a3a","a":"#f4b8c8","b":"#c87890","c":"#fff0f4"}
     },
-    "rare": {
+    "sp_leopard": {
       "w": 16,
       "h": 16,
       "rows": [
+        "................",
         "................",
         "................",
         ".......ooo......",
-        "......oaaao..w..",
-        "..w..oaaaaao....",
-        "....oaaaaaaao...",
-        "....owwabaaao...",
-        "....owwbwbaao...",
-        "...oawwabaaaao..",
+        "....oooaaaooo...",
         "...oaaaaaaaaao..",
-        "..oaaaaaaaaaaao.",
-        "...oaabaaaabao..",
-        "...oabwbaabwbow.",
-        "....oabaaaabo...",
-        ".....oaaaaao....",
-        "......ooooo....."
+        "..oabbabbaaabbo.",
+        ".oaadaadaabbdaao",
+        ".oacaaaaaadaaaao",
+        ".oaaabbabbabbaao",
+        "..oaadaadaadaao.",
+        "...oaaaaaaaaao..",
+        "....oooaaaooo...",
+        ".......ooo......",
+        "................",
+        "................"
       ],
-      "pal": {"o":"#1b1b2f","a":"#7fb5f0","w":"#ffffff","b":"#3f78c4"}
+      "pal": {"o":"#2a2214","a":"#d8c890","b":"#5a4a30","d":"#8a8a78","c":"#f4ecd0"}
     },
-    "legend": {
+    "sp_seahorse": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        ".......ooo......",
+        ".....ooaaeoo....",
+        "....oaaaaaaao...",
+        "....oaaaaaoo....",
+        "...oaaaaao......",
+        "...oadaaao......",
+        "..oaaaaao.......",
+        "..oaaaaaco......",
+        "..oaabaaco......",
+        "...oaaaaao......",
+        "...oaabaao......",
+        "....oaaaaaoo....",
+        "....oaaaaaaao...",
+        ".....ooaaaoo....",
+        ".......ooo......"
+      ],
+      "pal": {"o":"#0a3a38","a":"#3fb8b0","e":"#d95b43","d":"#f0c040","c":"#f4ecd8","b":"#1f7a78"}
+    },
+    "sp_ironcrab": {
       "w": 16,
       "h": 16,
       "rows": [
         "................",
         "................",
-        "..y....ooo......",
-        ".ygy..oaaao..y..",
-        "..y..oaaaaaoygy.",
-        "....oaaaaaaaoy..",
-        "....owwaaaaao...",
-        "....owwayaaao...",
-        "...oawwayaaaao..",
-        "...oaayyyyyaao..",
-        "..oaaaayyyaaaao.",
-        "...oaaayayaaao..",
-        "...oaaaaaaaaao..",
-        "....oaaaaaaao...",
-        ".....oaaaaao....",
-        "......ooooo....."
+        "................",
+        "................",
+        "..oooooooooooo..",
+        ".obbbbbbbbbbbbo.",
+        ".oaaabbbbbbaaao.",
+        ".oaaabddddbaaao.",
+        ".oawabdeedbawao.",
+        ".oaaabbbbbbaaao.",
+        ".oaaaaaaaaaaaao.",
+        ".obbbbbbbbbbbbo.",
+        "..obboooooobbo..",
+        "..obbo....obbo..",
+        "...oo......oo...",
+        "................"
       ],
-      "pal": {"y":"#fff3b0","o":"#1b1b2f","g":"#f2c14e","a":"#f2c14e","w":"#ffffff"}
+      "pal": {"o":"#1a2230","b":"#4a5868","a":"#8a98a8","d":"#e04a3a","w":"#ffffff","e":"#58e8f0"}
+    },
+    "sp_kitedragon": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "........o.......",
+        ".......obo......",
+        "......oabo......",
+        ".....oaabao.....",
+        "....oacabaco....",
+        "...oaaaabaaaoo..",
+        "..obbbbbbbbbbbo.",
+        "...oaaaabaaaao..",
+        "....ocaabaaco...",
+        "....oaaabeaao...",
+        ".....oaebaao....",
+        "......oabao.....",
+        "......oadao.....",
+        ".......obo......",
+        ".......obo......",
+        "........o......."
+      ],
+      "pal": {"o":"#4a0f20","b":"#a02a48","a":"#e8506a","c":"#ffd86a","e":"#ffffff","d":"#58c8e8"}
+    },
+    "sp_sugartrain": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "......oooo......",
+        "....ooccccoo....",
+        "..ooccccccccoo..",
+        ".occccccdccccco.",
+        ".oaaccccccccbbo.",
+        ".oaaaaccccbbbbo.",
+        ".oaaeaaabbbbbbo.",
+        ".oaaaaaabbbbbbo.",
+        ".oaaadaabbbbbbo.",
+        ".oaaaaaabbbdbbo.",
+        "..ooaaaabbbboo..",
+        "....ooaabboo....",
+        "......oooo......",
+        "................"
+      ],
+      "pal": {"o":"#5a1a38","c":"#fff0a8","d":"#6fcfae","a":"#f6a0c0","b":"#b8587c","e":"#f2c14e"}
+    },
+    "sp_parrot": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "........o.......",
+        ".....oookooo....",
+        "....okkkbkkko...",
+        "...okekkbkkbko..",
+        "..okekbkkkbkbko.",
+        "..okkbkkakkbkko.",
+        "..okkkkaaakkkko.",
+        ".okbbkaadaakbbko",
+        "..okkkkaaakkkko.",
+        "..okkbkkakkbkko.",
+        "..okbkbkkkbkbko.",
+        "...okbkkbkkbko..",
+        "....okkkbkkko...",
+        ".....oookooo....",
+        "........o......."
+      ],
+      "pal": {"o":"#0f3a18","k":"#081d0c","b":"#207a30","e":"#f2c14e","a":"#4fc05a","d":"#d02a3a"}
+    },
+    "sp_ufo": {
+      "w": 16,
+      "h": 16,
+      "rows": [
+        "................",
+        "................",
+        "................",
+        "........o.......",
+        "......oocoo.....",
+        ".....occwcco....",
+        "....occdcccco...",
+        "..ooacccccccaoo.",
+        ".oaaaacccccaaaao",
+        "oaaeaaeacaeaaeaa",
+        ".oaaaaaabaaaaaao",
+        "..oobbbbbbbbboo.",
+        "....ooooboooo...",
+        "........o.......",
+        "................",
+        "................"
+      ],
+      "pal": {"o":"#1a2040","c":"#58e8f0","w":"#ffffff","d":"#a0f0ff","a":"#9aa8c0","e":"#ff6fb5","b":"#5a6888"}
     }
   };
-  /* 16 隻小精靈；效果一律 {key,value}，由 WalkStore.talents() 彙整給 walk.js 讀 */
+  /* 24 隻小精靈；效果一律 {key,value}，由 WalkStore.talents() 彙整給 walk.js 讀 */
   var SPIRITS = [
     {
       "id": "sp_tide",
@@ -84,9 +567,11 @@
       "nick": "潮",
       "era": "西拉雅與大員前史",
       "eraId": "pre",
+      "genre": "fantasy",
       "anchor": "與台江內海地形變遷有關的海洋生物，待文史把關",
       "attr": "觀察",
       "rarity": "傳說",
+      "eggChapter": "c4",
       "starter": true,
       "assist": {"name":"指路","desc":"標出下一站方向","cd":3,"key":"showNextDir","value":1},
       "talent": {"name":"寬步","desc":"到站判定範圍 +3 公尺","key":"arriveRange","value":3},
@@ -102,7 +587,7 @@
       "hatchHours": 2,
       "stages": {
         "egg": {
-          "sprite": EGGS.legend,
+          "sprite": EGGS.sp_tide,
           "line": "蛋殼裡傳出低低的歌聲。"
         },
         "baby": {
@@ -115,19 +600,28 @@
               "................",
               "................",
               "................",
-              ".........oo.....",
-              "........occo....",
-              "..o....oceeo....",
-              ".obo...ooeeo....",
-              ".obboooaaaaoo...",
-              ".obbaaaaaakkao..",
-              ".oaaaaaaaakkao..",
+              "................",
+              "................",
+              ".........ooo....",
+              "........owwwo...",
+              "..ooooooaeeo....",
+              ".obbaaaaaakko...",
+              ".obaaaaaaakkao..",
               "..oaaaaaaaaaao..",
-              "...oaadccccddo..",
-              "....oadbbdddo...",
-              ".....ooooooo...."
+              "...ooadccccdo...",
+              ".....oabbbdo....",
+              "......ooooo....."
             ],
-            "pal": {"o":"#1b1b2f","c":"#9ad7ff","e":"#6fe0e8","b":"#2f4a9c","a":"#4b6fd6","k":"#1b1b2f","d":"#dff3ff"}
+            "pal": {
+              "o": "#14235a",
+              "w": "#ffffff",
+              "a": "#4b6fd6",
+              "e": "#6fe0e8",
+              "b": "#2f4a9c",
+              "k": "#0a122d",
+              "d": "#dff3ff",
+              "c": "#9ad7ff"
+            }
           },
           "line": "我是潮，請多指教。"
         },
@@ -136,24 +630,24 @@
             "w": 16,
             "h": 16,
             "rows": [
+              "................",
+              "................",
+              "................",
               "..........o.....",
-              "........oocoo...",
-              ".......ocoeoco..",
-              "o.......oceco...",
-              "bo.......oeo....",
-              "bbo...ooooeo....",
-              "bbboooaaaaaaoo..",
-              "bbaaaaaaaaaaaao.",
-              "oaaaaaaaaaaakaao",
+              ".........oco....",
+              "........oceco...",
+              "ooo..oooaaeoo...",
+              "bbbooaaaaaaaao..",
+              "bbaaaaaaaaaakao.",
               "oaaaaaaaaaaaaaao",
-              ".oaaaaaddddbbbao",
-              "..oaadcccccccdao",
-              "...oaddbbbddddo.",
-              "....ooadbdddoo..",
-              "......oooooo....",
+              ".oaaaadddddbbbao",
+              "..ooadcccccccdo.",
+              "....oadbbbdddo..",
+              ".....oooaaooo...",
+              "........oo......",
               "................"
             ],
-            "pal": {"o":"#1b1b2f","c":"#9ad7ff","e":"#6fe0e8","b":"#2f4a9c","a":"#4b6fd6","k":"#1b1b2f","d":"#dff3ff"}
+            "pal": {"o":"#14235a","c":"#9ad7ff","e":"#6fe0e8","a":"#4b6fd6","b":"#2f4a9c","k":"#0a122d","d":"#dff3ff"}
           },
           "line": "海風今天很輕。"
         },
@@ -162,32 +656,32 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g.........O.....",
-              "..y.....OOcOO...",
-              ".ygy...OcOeOcO..",
-              "O.y.....OcecO...",
-              "bO.......OeO....",
-              "bbO...OOOOeO....",
-              "bbbOOOaaaaaaOO..",
-              "bbaaaaaaaaaaaaO.",
-              "OaaaaaaaaaaakaaO",
+              "................",
+              "................",
+              "................",
+              ".y........O.....",
+              "ygy......OcO....",
+              ".y......OcecO...",
+              "OOO..OOOaaeOO...",
+              "bbbOOaaaaaaaaO..",
+              "bbaaaaaaaaaakaO.",
               "OaaaaaaaaaaaaaaO",
-              ".OaaaaaddddbbbaO",
-              "..OaadcccccccdaO",
-              "..yOaddbbbddddO.",
-              ".ygyOOadbdddOO..",
-              "..y...OOOOOO....",
+              ".OaaaadddddbbbaO",
+              "..OOadcccccccdO.",
+              ".y..OadbbbdddOy.",
+              "ygy..OOOaaOOOygy",
+              ".y......OO....y.",
               "................"
             ],
             "pal": {
-              "g": "#f2c14e",
-              "O": "#8a5a10",
               "y": "#fff3b0",
+              "O": "#6d6255",
+              "g": "#f2c14e",
               "c": "#9ad7ff",
               "e": "#6fe0e8",
-              "b": "#2f4a9c",
               "a": "#4b6fd6",
-              "k": "#1b1b2f",
+              "b": "#2f4a9c",
+              "k": "#0a122d",
               "d": "#dff3ff"
             }
           },
@@ -209,9 +703,11 @@
       "nick": "斑",
       "era": "荷治",
       "eraId": "dutch",
+      "genre": "fantasy",
       "anchor": "與荷治時期鹿皮貿易有關的森林生物，待文史把關",
       "attr": "觀察",
       "rarity": "普通",
+      "eggChapter": "t7,s6",
       "starter": true,
       "assist": {"name":"整理筆記","desc":"把本章線索排成清單","cd":0,"key":"listClues","value":1},
       "talent": {"name":"先機","desc":"每章第一則提示免費","key":"freeFirstHint","value":1},
@@ -226,7 +722,7 @@
       "hatchHours": 0.5,
       "stages": {
         "egg": {
-          "sprite": EGGS.common,
+          "sprite": EGGS.sp_deer,
           "line": "蛋殼裡有輕輕的動靜。"
         },
         "baby": {
@@ -238,20 +734,20 @@
               "................",
               "................",
               "................",
-              ".........ooo....",
-              "........occco...",
-              "........occco...",
-              "........okkko...",
-              "........okkko...",
-              "...oooooaaaao...",
-              "..odaaaaaaao....",
-              "..oaaaaaaaao....",
-              "..oaaddddao.....",
-              "..obbddddbo.....",
-              "..okkookko......",
-              "...oo..oo......."
+              "................",
+              "........oooo....",
+              ".......ocwwwo...",
+              ".......ockabo...",
+              ".......oakako...",
+              "....ooooaaoo....",
+              "...oaaaaaao.....",
+              "..odaaaaao......",
+              "..oaadddao......",
+              "..obbdddbo......",
+              "..okkoooko......",
+              "...oo...o......."
             ],
-            "pal": {"o":"#1b1b2f","c":"#e8c98a","k":"#1b1b2f","a":"#b9763a","d":"#f4e3c0","b":"#7a4a22"}
+            "pal": {"o":"#3d2209","c":"#e8c98a","w":"#ffffff","k":"#1f1105","a":"#b9763a","b":"#7a4a22","d":"#f4e3c0"}
           },
           "line": "我是斑，請多指教。"
         },
@@ -260,24 +756,24 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "..........ooo.o.",
-              ".........occcoco",
-              "..........oococo",
-              ".........obbcco.",
-              "..........ooaao.",
-              "..........oakako",
-              ".......o.oaaaado",
-              "..o.oooaooaaaao.",
-              ".odoaaadaaaaao..",
-              ".odaadaaaaaaao..",
-              ".oaaaadaadaaao..",
-              "..oadddddddao...",
-              "..obdddddddbo...",
-              "..oboboaobobo...",
-              "..okokoookoko...",
-              "...o.o...o.o...."
+              ".........oo.oo..",
+              "........occocco.",
+              ".......ococaabo.",
+              "........oobkaao.",
+              ".........oaaadko",
+              "........oaaaaoo.",
+              "....oooooaaao...",
+              "..ooaaaaaaaao...",
+              ".odadadaaaao....",
+              ".odaaaaadaao....",
+              "..oaddddddao....",
+              "..obaddddabo....",
+              "..oboboobobo....",
+              "..okokookoko....",
+              "...o.o..o.o.....",
+              "................"
             ],
-            "pal": {"o":"#1b1b2f","c":"#e8c98a","b":"#7a4a22","a":"#b9763a","k":"#1b1b2f","d":"#f4e3c0"}
+            "pal": {"o":"#3d2209","c":"#e8c98a","a":"#b9763a","b":"#7a4a22","k":"#1f1105","d":"#f4e3c0"}
           },
           "line": "我躲在樹影後面看你。"
         },
@@ -286,31 +782,31 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g.........OOO.Og",
-              "..y......OcccOcO",
-              ".ygy......OOcOcO",
-              "..y......ObbccO.",
-              "..........OOaaO.",
-              "..........OakakO",
-              ".......O.OaaaadO",
-              "..O.OOOaOOaaaaO.",
-              ".OdOaaadaaaaaO..",
-              ".OdaadaaaaaaaO..",
-              ".OaaaadaadaaaO..",
-              "..OadddddddaO...",
-              "..ObdddddddbO...",
-              "..ObObOaObObO...",
-              "..OkOkOOOkOkO...",
-              "...O.O...O.O...."
+              "..y..y...OO.OO..",
+              ".ygyygy.OccOccO.",
+              "..y..y.OcOcaabO.",
+              "........OObkaaO.",
+              ".........OaaadkO",
+              "........OaaaaOO.",
+              "....OOOOOaaaO...",
+              "..OOaaaaaaaaO...",
+              ".OdadadaaaaO....",
+              ".OdaaaaadaaO....",
+              "..OaddddddaO....",
+              "..ObaddddabO....",
+              "..ObObOObObO..y.",
+              "..OkOkOOkOkO.ygy",
+              "...O.O..O.O...y.",
+              "................"
             ],
             "pal": {
-              "g": "#f2c14e",
-              "O": "#8a5a10",
               "y": "#fff3b0",
+              "O": "#856225",
+              "g": "#f2c14e",
               "c": "#e8c98a",
-              "b": "#7a4a22",
               "a": "#b9763a",
-              "k": "#1b1b2f",
+              "b": "#7a4a22",
+              "k": "#1f1105",
               "d": "#f4e3c0"
             }
           },
@@ -332,9 +828,11 @@
       "nick": "鷗",
       "era": "荷治",
       "eraId": "dutch",
+      "genre": "scifi",
       "anchor": "與大員港一帶海岸有關的機械鳥，待文史把關",
       "attr": "行動",
       "rarity": "普通",
+      "eggChapter": "wt",
       "assist": {"name":"遠望","desc":"預告 300 公尺內的站點","cd":5,"key":"previewStops","value":300},
       "talent": {"name":"加速齒輪","desc":"計時賽速度分上限 +2","key":"timedSpeedCap","value":2},
       "scout": {"kind":["路況"],"era":"荷治"},
@@ -348,7 +846,7 @@
       "hatchHours": 0.5,
       "stages": {
         "egg": {
-          "sprite": EGGS.common,
+          "sprite": EGGS.sp_gull,
           "line": "蛋殼裡有輕輕的動靜。"
         },
         "baby": {
@@ -360,20 +858,20 @@
               "................",
               "................",
               "................",
-              "...........o....",
-              "..........oeo...",
-              "........ooodo...",
-              ".......obbddo...",
-              "......obbbaaao..",
-              "..ooooabbdaaco..",
-              ".obbaabddbaao...",
-              ".obbaadddaaao...",
-              "..ooaaadaaao....",
-              "....oocccco.....",
-              ".....ococco.....",
-              "......o.oo......"
+              "................",
+              "................",
+              "................",
+              "..........ooo...",
+              "..oo....oowwwo..",
+              ".obdoooobbddao..",
+              ".obbbaabbbaaao..",
+              ".obbbabddbaaco..",
+              ".obbaadddaaoo...",
+              "..oooaadaaao....",
+              "....oacccco.....",
+              ".....ooooo......"
             ],
-            "pal": {"o":"#1b1b2f","e":"#e04a3a","d":"#6b7a8f","b":"#9fb0c4","a":"#eaf0f7","c":"#f0a030"}
+            "pal": {"o":"#38485c","w":"#ffffff","b":"#9fb0c4","d":"#6b7a8f","a":"#eaf0f7","c":"#f0a030"}
           },
           "line": "我是鷗，請多指教。"
         },
@@ -382,24 +880,24 @@
             "w": 16,
             "h": 16,
             "rows": [
+              "................",
+              "................",
+              "................",
               "............o...",
-              "...........oeo..",
               "...........odo..",
-              "........oo.odo..",
-              ".......obboodo..",
-              "......obbbdaeao.",
-              ".....oobbdbaaaco",
-              "ooo.oabbbdbaacco",
-              "bbboaabbdbaaaao.",
-              "bbbaabdddbaaao..",
+              "ooo.....oooodoo.",
+              "bdbo.ooobbdaeaao",
+              "obddoaabbdbaaaco",
+              "oobbdabbdbaaacco",
+              "bbbaabdddbaaaoo.",
               "bbbaaadadaaaao..",
               "ooooaadddaaao...",
               "....oacaacao....",
-              ".....ocooco.....",
               "....occoocco....",
-              ".....oo..oo....."
+              ".....oo..oo.....",
+              "................"
             ],
-            "pal": {"o":"#1b1b2f","e":"#e04a3a","d":"#6b7a8f","b":"#9fb0c4","a":"#eaf0f7","c":"#f0a030"}
+            "pal": {"o":"#38485c","d":"#6b7a8f","b":"#9fb0c4","a":"#eaf0f7","e":"#e04a3a","c":"#f0a030"}
           },
           "line": "回報：天氣晴，視野良好。"
         },
@@ -408,31 +906,31 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "............O...",
-              "..y........OeO..",
-              ".ygy.......OdO..",
-              "..y.....OO.OdO..",
-              ".......ObbOOdO..",
-              "......ObbbdaeaO.",
-              ".....OObbdbaaacO",
-              "OOO.OabbbdbaaccO",
-              "bbbOaabbdbaaaaO.",
-              "bbbaabdddbaaaO..",
+              "................",
+              "................",
+              "................",
+              "...y........O...",
+              "..ygy......OdO..",
+              "OOOy....OOOOdOO.",
+              "bdbO.OOObbdaeaaO",
+              "ObddOaabbdbaaacO",
+              "OObbdabbdbaaaccO",
+              "bbbaabdddbaaaOO.",
               "bbbaaadadaaaaO..",
               "OOOOaadddaaaO...",
-              "..y.OacaacaO.y..",
-              ".ygy.OcOOcO.ygy.",
-              "..y.OccOOccO.y..",
-              ".....OO..OO....."
+              ".y..OacaacaO..y.",
+              "ygy.OccOOccO.ygy",
+              ".y...OO..OO...y.",
+              "................"
             ],
             "pal": {
-              "O": "#8a5a10",
               "y": "#fff3b0",
-              "e": "#e04a3a",
+              "O": "#827856",
               "g": "#f2c14e",
               "d": "#6b7a8f",
               "b": "#9fb0c4",
               "a": "#eaf0f7",
+              "e": "#e04a3a",
               "c": "#f0a030"
             }
           },
@@ -454,9 +952,11 @@
       "nick": "帆",
       "era": "明鄭",
       "eraId": "zheng",
+      "genre": "relic",
       "anchor": "與海上航行和水師有關的船帆靈體，不涉及人物，待文史把關",
       "attr": "行動",
       "rarity": "稀有",
+      "eggChapter": "t6,s5",
       "assist": {"name":"集合信號","desc":"全隊目標列指向你","cd":10,"key":"rallySignal","value":1},
       "talent": {"name":"順風隊形","desc":"全隊到站速度 +5%","key":"teamArriveSpeed","value":0.05},
       "scout": {"kind":["方位"],"era":"明鄭"},
@@ -471,7 +971,7 @@
       "hatchHours": 1,
       "stages": {
         "egg": {
-          "sprite": EGGS.rare,
+          "sprite": EGGS.sp_sail,
           "line": "蛋殼閃著淡淡的光。"
         },
         "baby": {
@@ -484,19 +984,19 @@
               "................",
               "................",
               ".......ooo......",
-              "......obeeo.....",
-              "......obeeo.....",
-              ".....oaaeo......",
-              ".....oaacco.....",
-              "....oaaacco.....",
-              "....okkaccco....",
-              "...okkkacccco...",
-              "..oaaaabcccco...",
-              "..obbbbbbbbbo...",
-              "..obbbbbbbbbo...",
-              "...ooooooooo...."
+              "......owwwo.....",
+              "......obbeo.....",
+              "......obbo......",
+              "......oabco.....",
+              "......oabco.....",
+              ".....okkbkko....",
+              "....okkkbcco....",
+              "....oaabbcco....",
+              "....obbbbbbo....",
+              "....obbbbbbo....",
+              ".....oooooo....."
             ],
-            "pal": {"o":"#1b1b2f","b":"#7a4a22","e":"#d95b43","a":"#f4ecd8","c":"#7fd0cf","k":"#1b1b2f"}
+            "pal": {"o":"#2a3a5a","w":"#ffffff","b":"#7a4a22","e":"#d95b43","a":"#d8ecf4","c":"#f0a860","k":"#151d2d"}
           },
           "line": "我是帆，請多指教。"
         },
@@ -506,29 +1006,29 @@
             "h": 16,
             "rows": [
               ".......o........",
-              "......oboooo....",
-              "......obeeeeo...",
-              ".....oabeeoo....",
+              "......obooo.....",
+              "......obeeeo....",
+              "......obeoo.....",
+              ".....oaboo......",
               ".....oaboco.....",
-              "....oaaboco.....",
-              "....oaabocco....",
-              "...oaaabocco....",
+              ".....oaboco.....",
+              "....oaabocoo....",
+              "....oaabokcko...",
+              "...okakbocco....",
+              "...oapabocco....",
               "...oaaaboccco...",
-              "..okakabocccco..",
-              ".oaapaabocccco..",
-              ".oaaaaaboccccco.",
-              "obbbbbbbbbbbbbo.",
-              ".obbbbbbbbbbbo..",
-              ".odoooodoooodo..",
-              "..o....o....o..."
+              "..obbbbbbbbbo...",
+              "...obbbbbbbo....",
+              "...odoodoodo....",
+              "....o..o..o....."
             ],
             "pal": {
-              "o": "#1b1b2f",
+              "o": "#2a3a5a",
               "b": "#7a4a22",
               "e": "#d95b43",
-              "a": "#f4ecd8",
-              "c": "#7fd0cf",
-              "k": "#1b1b2f",
+              "a": "#d8ecf4",
+              "c": "#f0a860",
+              "k": "#151d2d",
               "p": "#e87fa8",
               "d": "#4b6fd6"
             }
@@ -540,32 +1040,32 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g......O........",
-              "..y...ObOOOO....",
-              ".ygy..ObeeeeOy..",
-              "..y..OabeeOOygy.",
-              ".....OabOcO..y..",
-              "....OaabOcO.....",
-              "....OaabOccO....",
-              "...OaaabOccO....",
+              "...y...O........",
+              "..ygy.ObOOO.....",
+              "...yy.ObeeeO....",
+              "...ygyObeOOy....",
+              "....yOabOOygy...",
+              ".....OabOcOy....",
+              ".....OabOcO.....",
+              "....OaabOcOO....",
+              "....OaabOkckO...",
+              "...OkakbOccO....",
+              "...OapabOccO....",
               "...OaaabOcccO...",
-              "..OkakabOccccO..",
-              ".OaapaabOccccO..",
-              ".OaaaaabOcccccO.",
-              "ObbbbbbbbbbbbbO.",
-              ".ObbbbbbbbbbbO..",
-              ".OdOOOOdOOOOdO..",
-              "..O....O....O..."
+              "..ObbbbbbbbbO...",
+              "...ObbbbbbbO....",
+              "...OdOOdOOdO....",
+              "....O..O..O....."
             ],
             "pal": {
-              "g": "#f2c14e",
-              "O": "#8a5a10",
               "y": "#fff3b0",
+              "O": "#7a7055",
+              "g": "#f2c14e",
               "b": "#7a4a22",
               "e": "#d95b43",
-              "a": "#f4ecd8",
-              "c": "#7fd0cf",
-              "k": "#1b1b2f",
+              "a": "#d8ecf4",
+              "c": "#f0a860",
+              "k": "#151d2d",
               "p": "#e87fa8",
               "d": "#4b6fd6"
             }
@@ -588,9 +1088,11 @@
       "nick": "蠹",
       "era": "明鄭",
       "eraId": "zheng",
+      "genre": "cute",
       "anchor": "與府城教育和孔廟有關的書卷生物，待文史把關",
       "attr": "智識",
       "rarity": "稀有",
+      "eggChapter": "c1,y1",
       "starter": true,
       "assist": {"name":"查證","desc":"顯示這題的出處與可信度","cd":0,"perChapter":2,"key":"showSource","value":1},
       "talent": {"name":"出處標記","desc":"選擇題顯示「有出處」標記","key":"showSourceBadge","value":1},
@@ -605,7 +1107,7 @@
       "hatchHours": 1,
       "stages": {
         "egg": {
-          "sprite": EGGS.rare,
+          "sprite": EGGS.sp_bookworm,
           "line": "蛋殼閃著淡淡的光。"
         },
         "baby": {
@@ -618,19 +1120,19 @@
               "................",
               "................",
               "................",
-              "...o...o........",
-              "..obo.obo.......",
-              "..obbobbo.......",
-              "...obabo........",
-              "...okkkaoooo....",
-              "...okkkaaaaao...",
-              "..odccaaaaaaao..",
-              "..odccccccbcco..",
-              "..odccccdcccco..",
-              "..odccccdccedo..",
+              "................",
+              "................",
+              "................",
+              "...oooo.........",
+              "..oewwwo........",
+              "..obooboooo.....",
+              "..obaaaaaaaoo...",
+              "..okkkaaaaaaao..",
+              "..ocaacbccaaco..",
+              "..occcccccccco..",
               "...oooooooooo..."
             ],
-            "pal": {"o":"#1b1b2f","b":"#8d9bb0","a":"#c9d3df","k":"#1b1b2f","d":"#7a4a22","c":"#f6efd8","e":"#d95b43"}
+            "pal": {"o":"#284a2c","e":"#d95b43","w":"#ffffff","b":"#6f9468","a":"#a8c8a0","k":"#142516","c":"#f6efd8"}
           },
           "line": "我是蠹，請多指教。"
         },
@@ -640,32 +1142,23 @@
             "h": 16,
             "rows": [
               "................",
-              ".o.....o........",
-              "obo...obo.......",
-              ".obo.obo........",
-              ".obo.obo........",
-              "..obobo.........",
-              "..oaaaooo.......",
-              ".oakakabaoooo.o.",
-              ".oaaaaaaaabaaobo",
-              ".ooapaabaaaaaao.",
-              "odcccccaacbacabo",
-              "odcbbcccdcbbccdo",
-              "odcbccccdccbccdo",
-              "odccccccdcccecdo",
-              "odddddddddddeddo",
-              ".oooooooooooooo."
+              "................",
+              "................",
+              ".o...o..........",
+              "oeo.oeo.........",
+              "obo.obo.........",
+              "oboooboooooo....",
+              ".obabaaaabaao.o.",
+              ".oaaaabaaaabaobo",
+              "oakakaaaaaaaaaao",
+              ".oapaabaababaabo",
+              "occacccbcccbccco",
+              "occcbcccccbccbco",
+              ".oooooooooooooo.",
+              "................",
+              "................"
             ],
-            "pal": {
-              "o": "#1b1b2f",
-              "b": "#8d9bb0",
-              "a": "#c9d3df",
-              "k": "#1b1b2f",
-              "p": "#e87fa8",
-              "d": "#7a4a22",
-              "c": "#f6efd8",
-              "e": "#d95b43"
-            }
+            "pal": {"o":"#284a2c","e":"#d95b43","b":"#6f9468","a":"#a8c8a0","k":"#142516","p":"#e87fa8","c":"#f6efd8"}
           },
           "line": "這句話，出處在哪裡？"
         },
@@ -674,34 +1167,33 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "...y........y...",
-              ".Oygy..O...ygy..",
-              "ObOy..ObO...yy..",
-              ".ObO.ObO....ygy.",
-              ".ObO.ObO.....y..",
-              "..ObObO.........",
-              "..OaaaOOO.......",
-              ".OakakabaOOOO.O.",
-              ".OaaaaaaaabaaObO",
-              ".OOapaabaaaaaaO.",
-              "OdcccccaacbacabO",
-              "OdcbbcccdcbbccdO",
-              "OdcbccccdccbccdO",
-              "OdccccccdcccecdO",
-              "OdddddddddddeddO",
-              ".OOOOOOOOOOOOOO."
+              "................",
+              "................",
+              "................",
+              ".O...O.....y..y.",
+              "OeO.OeO...ygyygy",
+              "ObO.ObO....y.yy.",
+              "ObOOObOOOOOOygy.",
+              ".ObabaaaabaaOyO.",
+              ".OaaaabaaaabaObO",
+              "OakakaaaaaaaaaaO",
+              ".OapaabaababaabO",
+              "OccacccbcccbcccO",
+              "OcccbcccccbccbcO",
+              ".OOOOOOOOOOOOOO.",
+              "................",
+              "................"
             ],
             "pal": {
+              "O": "#797a3a",
               "y": "#fff3b0",
-              "O": "#8a5a10",
+              "e": "#d95b43",
               "g": "#f2c14e",
-              "b": "#8d9bb0",
-              "a": "#c9d3df",
-              "k": "#1b1b2f",
+              "b": "#6f9468",
+              "a": "#a8c8a0",
+              "k": "#142516",
               "p": "#e87fa8",
-              "d": "#7a4a22",
-              "c": "#f6efd8",
-              "e": "#d95b43"
+              "c": "#f6efd8"
             }
           },
           "line": "我把線索串成一條線了。"
@@ -722,9 +1214,11 @@
       "nick": "珠珠",
       "era": "清領",
       "eraId": "qing",
+      "genre": "relic",
       "anchor": "與三郊商貿和行郊有關的算盤生物，待文史把關",
       "attr": "智識",
       "rarity": "普通",
+      "eggChapter": "c3,ws",
       "assist": {"name":"結算","desc":"顯示可用點數與最划算的採購","cd":0,"key":"showBudget","value":1},
       "talent": {"name":"九五折","desc":"簡報室採購打 95 折（與補給官不疊加，取較大者）","key":"shopDiscount","value":0.05,"stack":"max"},
       "scout": {"kind":["路況"],"extra":"點數情報","era":"清領"},
@@ -738,7 +1232,7 @@
       "hatchHours": 0.5,
       "stages": {
         "egg": {
-          "sprite": EGGS.common,
+          "sprite": EGGS.sp_abacus,
           "line": "蛋殼裡有輕輕的動靜。"
         },
         "baby": {
@@ -749,21 +1243,30 @@
               "................",
               "................",
               "................",
-              "................",
-              "................",
-              "....oo....ooo...",
-              "...obboooobbbo..",
-              "..obbbbbbbbbbo..",
-              "..obekkkkkkebo..",
-              "..obekkkkkkeeo..",
-              "..obeeceeceebo..",
-              "..obeeeeeeeebo..",
-              "..obeceacceebo..",
-              "..obbbbbbbbbbo..",
-              "...obbboobbbo...",
-              "....ooo..ooo...."
+              ".......ooo......",
+              ".....oowwwo.....",
+              "....obobbbbo....",
+              "...obbbbbbbo....",
+              "..obbkkeekbbo...",
+              "..obbkkkkkcbo...",
+              "..obbakkkcbbo...",
+              "..obbaaaaabbo...",
+              ".oabbcddcdbbao..",
+              "..oobbbbbbbbao..",
+              "....obbobboodo..",
+              "....oabobaooco..",
+              ".....oo.oo..o..."
             ],
-            "pal": {"o":"#1b1b2f","b":"#6b3f1e","e":"#fff3d6","k":"#1b1b2f","c":"#f2c14e","a":"#d95b43"}
+            "pal": {
+              "o": "#4a2a08",
+              "w": "#ffffff",
+              "b": "#7a4a14",
+              "k": "#251504",
+              "e": "#fff3d6",
+              "c": "#4b6fd6",
+              "a": "#e8d8a8",
+              "d": "#c4553b"
+            }
           },
           "line": "我是珠珠，請多指教。"
         },
@@ -772,24 +1275,24 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "................",
-              "...o........oo..",
-              "..obo......obbo.",
-              ".oobboooooobbbo.",
-              "obbbbbbbbbbbbbbo",
-              "obeeccceeccceebo",
-              "obeeckckkckceebo",
-              "obeeccceeccceebo",
-              "obddddddddddddbo",
-              "obeeeeeeeeeeeebo",
-              "obecceaecceaecbo",
-              "obecceaecceaecbo",
-              "obbbbbbbbbbbbbbo",
-              ".oobbboooobbboo.",
-              "..obbbo..obbbo..",
-              "...ooo....ooo..."
+              "........o.......",
+              ".....o.odo.o....",
+              "....obooboobo...",
+              "...oobbobobbo...",
+              "..obbbbbbbbbbo..",
+              "..obeeeeeeeebo..",
+              "..obeckceckcbo..",
+              "..obecckkcccbo..",
+              "..obaaaaaaaabo..",
+              ".obbccddccddbbo.",
+              "oaobccddccddboao",
+              "oaobbbbbbbbbboao",
+              ".o.oobboobboodo.",
+              "....obboobbo.oco",
+              "...oaaaooaaaoodo",
+              "....ooo..ooo..o."
             ],
-            "pal": {"o":"#1b1b2f","b":"#6b3f1e","e":"#fff3d6","c":"#f2c14e","k":"#1b1b2f","d":"#c98f63","a":"#d95b43"}
+            "pal": {"o":"#4a2a08","d":"#c4553b","b":"#7a4a14","e":"#fff3d6","c":"#4b6fd6","k":"#251504","a":"#e8d8a8"}
           },
           "line": "噼啪，今天花了多少？"
         },
@@ -798,32 +1301,33 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g..............g",
-              "...O........OO..",
-              "..ObO......ObbO.",
-              ".OObbOOOOOObbbO.",
-              "ObbbbbbbbbbbbbbO",
-              "ObeeccceeccceebO",
-              "ObeeckckkckceebO",
-              "ObeeccceeccceebO",
-              "ObddddddddddddbO",
-              "ObeeeeeeeeeeeebO",
-              "ObecceaecceaecbO",
-              "ObecceaecceaecbO",
-              "ObbbbbbbbbbbbbbO",
-              ".OObbbOOOObbbOO.",
-              "..ObbbO..ObbbO..",
-              "g..OOO....OOO..."
+              ".y......O.....y.",
+              "ygy..O.OdO.O.ygy",
+              ".y..ObOObOObO.y.",
+              "...OObbObObbO...",
+              "..ObbbbbbbbbbO..",
+              "..ObeeeeeeeebO..",
+              "..ObeckceckcbO..",
+              "..ObecckkcccbO..",
+              "..ObaaaaaaaabO..",
+              ".ObbccddccddbbO.",
+              "OaObccddccddbOaO",
+              "OaObbbbbbbbbbOaO",
+              ".O.OObbOObbOOdO.",
+              ".y..ObbOObbO.OcO",
+              "ygyOaaaOOaaaOOdO",
+              ".y..OOO..OOO..O."
             ],
             "pal": {
+              "y": "#fff3b0",
+              "O": "#8d6624",
               "g": "#f2c14e",
-              "O": "#8a5a10",
-              "b": "#6b3f1e",
+              "d": "#c4553b",
+              "b": "#7a4a14",
               "e": "#fff3d6",
-              "c": "#f2c14e",
-              "k": "#1b1b2f",
-              "d": "#c98f63",
-              "a": "#d95b43"
+              "c": "#4b6fd6",
+              "k": "#251504",
+              "a": "#e8d8a8"
             }
           },
           "line": "精打細算，一分不浪費。"
@@ -844,9 +1348,11 @@
       "nick": "獅",
       "era": "清領",
       "eraId": "qing",
+      "genre": "relic",
       "anchor": "與府城城門和防禦有關的石獅守護獸，待文史把關",
       "attr": "守護",
       "rarity": "稀有",
+      "eggChapter": "t4,s3",
       "assist": {"name":"警戒","desc":"標出隊友位置與離隊距離","cd":5,"key":"showMates","value":1},
       "talent": {"name":"穩住","desc":"提示扣分 −1","key":"hintPenaltyDelta","value":-1},
       "scout": {"kind":["路況"],"note":"安全","era":"清領"},
@@ -860,7 +1366,7 @@
       "hatchHours": 1,
       "stages": {
         "egg": {
-          "sprite": EGGS.rare,
+          "sprite": EGGS.sp_lion,
           "line": "蛋殼閃著淡淡的光。"
         },
         "baby": {
@@ -872,20 +1378,20 @@
               "................",
               "................",
               "................",
+              "................",
               ".....oooo.......",
-              "....obbbboo.....",
-              "...obbbbbobo....",
+              "...oobwwwooo....",
               "..obbbbbbbbbo...",
               "..obbbbbbbbbo...",
               "..obbkkakkbbo...",
-              "..obbaaaaaabo...",
+              "..obbkkakkbbo...",
               "..obbakkaaabo...",
-              "...obkkkkkbo....",
-              "..oeekkkkkeo....",
+              "..obbakkaabbo...",
+              "..oebkkkkkbo....",
               "..oeeceeceeeo...",
               "...ooooooooo...."
             ],
-            "pal": {"o":"#1b1b2f","b":"#7d7a70","k":"#1b1b2f","a":"#b9b4aa","e":"#8d6a3a","c":"#d6d2c8"}
+            "pal": {"o":"#40281a","b":"#8a7660","w":"#ffffff","k":"#20140d","a":"#c8b8a0","e":"#8d6a3a","c":"#e0d4c0"}
           },
           "line": "我是獅，請多指教。"
         },
@@ -912,14 +1418,14 @@
               "..oooooooooooo.."
             ],
             "pal": {
-              "o": "#1b1b2f",
-              "b": "#7d7a70",
-              "a": "#b9b4aa",
-              "k": "#1b1b2f",
+              "o": "#40281a",
+              "b": "#8a7660",
+              "a": "#c8b8a0",
+              "k": "#20140d",
               "d": "#5aa8a0",
               "w": "#ffffff",
               "e": "#8d6a3a",
-              "c": "#d6d2c8"
+              "c": "#e0d4c0"
             }
           },
           "line": "我守著，你放心走。"
@@ -929,9 +1435,9 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g....OO..OO....g",
-              "....ObbOObbO....",
-              "...OObbbbbbOOO..",
+              "..y..OO..OO...y.",
+              ".ygyObbOObbO.ygy",
+              "..yOObbbbbbOOOy.",
               "..ObbOOObOOObbO.",
               ".ObbbbbbbbbbbbbO",
               "..ObbbbbbbbbbbO.",
@@ -944,18 +1450,19 @@
               "..OOObkkkkkbOO..",
               ".OeecccebccceeO.",
               ".OeeeeeeeeeeeeO.",
-              "g.OOOOOOOOOOOO.."
+              "..OOOOOOOOOOOO.."
             ],
             "pal": {
+              "y": "#fff3b0",
+              "O": "#87652f",
               "g": "#f2c14e",
-              "O": "#8a5a10",
-              "b": "#7d7a70",
-              "a": "#b9b4aa",
-              "k": "#1b1b2f",
+              "b": "#8a7660",
+              "a": "#c8b8a0",
+              "k": "#20140d",
               "d": "#5aa8a0",
               "w": "#ffffff",
               "e": "#8d6a3a",
-              "c": "#d6d2c8"
+              "c": "#e0d4c0"
             }
           },
           "line": "鎮守此處，大家別走散。"
@@ -976,9 +1483,11 @@
       "nick": "磚",
       "era": "日治",
       "eraId": "japan",
+      "genre": "cute",
       "anchor": "與磚造公共建築有關的貓形生物，待文史把關",
       "attr": "觀察",
       "rarity": "普通",
+      "eggChapter": "t1,s1",
       "assist": {"name":"細看","desc":"給本站「形狀、材質、新舊」三個觀察提示","cd":0,"perChapter":3,"key":"observeHints","value":3},
       "talent": {"name":"利眼","desc":"觀察題字數門檻 −1","key":"observeMinChars","value":-1},
       "scout": {"kind":["觀察"],"era":"日治"},
@@ -992,7 +1501,7 @@
       "hatchHours": 0.5,
       "stages": {
         "egg": {
-          "sprite": EGGS.common,
+          "sprite": EGGS.sp_brick,
           "line": "蛋殼裡有輕輕的動靜。"
         },
         "baby": {
@@ -1004,20 +1513,20 @@
               "................",
               "................",
               "................",
-              "....oo...o......",
-              "...oaaoooao.....",
-              "...ocaaaaao.....",
-              "...oakakkao.....",
-              "..oaakakkaao....",
-              "..oaakakkaao....",
-              "...oaaaaaaaao...",
-              "..oaabaabaaao...",
-              "..oaabbbbaaao...",
-              "...oabbbbaaao...",
-              "...oaaaaaooo....",
-              "....ooooo......."
+              ".....ooooo......",
+              "....oawwwao.....",
+              "....ocaaaao.....",
+              "....oakakao.....",
+              "...oaakakeao....",
+              "...oaakakaao....",
+              "....oaaaaaaao...",
+              "...oaababbaao...",
+              "...oaabbbbaao...",
+              "....oabbbbaao...",
+              "....oaaaaaoo....",
+              ".....ooooo......"
             ],
-            "pal": {"o":"#1b1b2f","a":"#c4553b","c":"#f0b090","k":"#1b1b2f","b":"#8f3a28"}
+            "pal": {"o":"#4a1a10","a":"#c4553b","w":"#ffffff","c":"#f0b090","k":"#250d08","e":"#f2c14e","b":"#8f3a28"}
           },
           "line": "我是磚，請多指教。"
         },
@@ -1044,11 +1553,11 @@
               ".....oooooo....."
             ],
             "pal": {
-              "o": "#1b1b2f",
+              "o": "#4a1a10",
               "a": "#c4553b",
               "c": "#f0b090",
               "e": "#f2c14e",
-              "k": "#1b1b2f",
+              "k": "#250d08",
               "d": "#e8d0b0",
               "p": "#e87fa8",
               "b": "#8f3a28"
@@ -1061,31 +1570,31 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g....O.....O....",
-              "..y.OaO...OaO...",
-              ".ygyOcaOOOcaO...",
-              "..y.OaaaaaaaO...",
-              "....OaaaaaaaO...",
-              "...OaekaakeaaO..",
+              ".....O.....O..y.",
+              "....OaO...OaOygy",
+              "....OcaOOOcaO.y.",
+              "....OaaaaaaaO.y.",
+              "....OaaaaaaaOygy",
+              "...OaekaakeaaOy.",
               "...OaekaakeaaO..",
               "..OdOaaapaaadOO.",
               "...OOaaaaaaaOOaO",
               "...OaabaaabaaaO.",
               "...OabbbbbbbaaaO",
               "...OaaaabaaaaaaO",
-              "..yOabbbbbbbaaaO",
-              ".ygyOaaaaaaaOaO.",
-              "..y.OaaaaaaO.O..",
+              "...OabbbbbbbaaaO",
+              "....OaaaaaaaOaO.",
+              "....OaaaaaaO.O..",
               ".....OOOOOO....."
             ],
             "pal": {
-              "g": "#f2c14e",
-              "O": "#8a5a10",
+              "O": "#8d5d29",
               "y": "#fff3b0",
               "a": "#c4553b",
+              "g": "#f2c14e",
               "c": "#f0b090",
               "e": "#f2c14e",
-              "k": "#1b1b2f",
+              "k": "#250d08",
               "d": "#e8d0b0",
               "p": "#e87fa8",
               "b": "#8f3a28"
@@ -1109,9 +1618,11 @@
       "nick": "滴答",
       "era": "日治",
       "eraId": "japan",
+      "genre": "relic",
       "anchor": "與近代時間制度和時鐘有關的懷錶昆蟲，待文史把關",
       "attr": "智識",
       "rarity": "普通",
+      "eggChapter": "t2",
       "assist": {"name":"倒數","desc":"顯示計時賽剩餘與建議節奏","cd":0,"key":"timerPace","value":1},
       "talent": {"name":"快一拍","desc":"提示等待時間縮短","key":"hintWaitCut","value":0.2},
       "scout": {"kind":["路況"],"era":"日治"},
@@ -1126,7 +1637,7 @@
       "hatchHours": 0.5,
       "stages": {
         "egg": {
-          "sprite": EGGS.common,
+          "sprite": EGGS.sp_watch,
           "line": "蛋殼裡有輕輕的動靜。"
         },
         "baby": {
@@ -1138,8 +1649,8 @@
               "................",
               "................",
               "................",
-              "....o..o..o.....",
-              "...oeoobooeo....",
+              "....o.ooo.o.....",
+              "...oeowwwoeo....",
               "....odabado.....",
               "....oakkaao.....",
               "...oackkccao....",
@@ -1151,7 +1662,16 @@
               "...odoaaaodo....",
               "....o.ooo.o....."
             ],
-            "pal": {"o":"#1b1b2f","e":"#d95b43","b":"#b8892a","d":"#7a8fa0","a":"#f2c14e","k":"#1b1b2f","c":"#fff6dc"}
+            "pal": {
+              "o": "#3a2a08",
+              "e": "#d95b43",
+              "w": "#ffffff",
+              "d": "#7a8fa0",
+              "a": "#c8a040",
+              "b": "#8a6a1c",
+              "k": "#1d1504",
+              "c": "#fff6dc"
+            }
           },
           "line": "我是滴答，請多指教。"
         },
@@ -1178,12 +1698,12 @@
               "...o..o..o..o..."
             ],
             "pal": {
-              "o": "#1b1b2f",
+              "o": "#3a2a08",
               "e": "#d95b43",
-              "b": "#b8892a",
+              "b": "#8a6a1c",
               "d": "#7a8fa0",
-              "a": "#f2c14e",
-              "k": "#1b1b2f",
+              "a": "#c8a040",
+              "k": "#1d1504",
               "c": "#fff6dc",
               "p": "#e87fa8"
             }
@@ -1195,11 +1715,11 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g..O...OO...O..g",
-              "..OeO.ObbO.OeO..",
-              "...OdOObbOOdOy..",
-              "....OdaaaadOygy.",
-              "....OaakcaaO.y..",
+              "...O...OO...O...",
+              "..OeOgObbOgOeO..",
+              "...OdOObbOOdO...",
+              "....OdaaaadO....",
+              "....OaakcaaO....",
               "...OacckcccaO...",
               "..OaccckccccaO..",
               "..OaccckccccaO..",
@@ -1213,14 +1733,13 @@
               "...O..O..O..O..."
             ],
             "pal": {
-              "g": "#f2c14e",
-              "O": "#8a5a10",
+              "O": "#846624",
               "e": "#d95b43",
-              "b": "#b8892a",
+              "g": "#f2c14e",
+              "b": "#8a6a1c",
               "d": "#7a8fa0",
-              "y": "#fff3b0",
-              "a": "#f2c14e",
-              "k": "#1b1b2f",
+              "a": "#c8a040",
+              "k": "#1d1504",
               "c": "#fff6dc",
               "p": "#e87fa8"
             }
@@ -1243,9 +1762,11 @@
       "nick": "嘀",
       "era": "日治",
       "eraId": "japan",
+      "genre": "scifi",
       "anchor": "與電信和郵政有關的電報鳥，待文史把關",
       "attr": "溝通",
       "rarity": "稀有",
+      "eggChapter": "t3,s2",
       "assist": {"name":"傳話","desc":"把一句話貼到隊內與全場","cd":3,"key":"broadcastMsg","value":1},
       "talent": {"name":"快回","desc":"求援回應變快","key":"helpReplyCut","value":0.2},
       "scout": {"kind":["人物"],"era":"日治"},
@@ -1259,7 +1780,7 @@
       "hatchHours": 1,
       "stages": {
         "egg": {
-          "sprite": EGGS.rare,
+          "sprite": EGGS.sp_telegraph,
           "line": "蛋殼閃著淡淡的光。"
         },
         "baby": {
@@ -1272,19 +1793,28 @@
               "................",
               "................",
               "................",
-              ".........oo.....",
-              "........oeeo....",
-              "......oooeeoo...",
-              ".....oaaaakaco..",
-              "..oooaaaaaaaco..",
-              ".obbbbbbaaaoo...",
-              ".obbbabbdddo....",
-              ".obbbaadddboo...",
-              "..odkddkdddkko..",
-              ".oddkdkkdkkkkdo.",
-              "..oooooooooooo.."
+              "................",
+              "........ooo.....",
+              ".......owwwo....",
+              ".....ooooeao....",
+              "....oaaaakkco...",
+              "..oooaaaaaaco...",
+              ".obbbbbbdaoo....",
+              ".obbbabdddooo...",
+              ".obbbbaabbbbbo..",
+              "..ooooodooooo...",
+              ".......o........"
             ],
-            "pal": {"o":"#1b1b2f","e":"#d95b43","a":"#5aa0e0","k":"#1b1b2f","c":"#f2c14e","b":"#2f6aa8","d":"#e8f0f8"}
+            "pal": {
+              "o": "#12305a",
+              "w": "#ffffff",
+              "e": "#d95b43",
+              "a": "#5aa0e0",
+              "k": "#09182d",
+              "c": "#f2c14e",
+              "b": "#2f6aa8",
+              "d": "#e8f0f8"
+            }
           },
           "line": "我是嘀，請多指教。"
         },
@@ -1305,12 +1835,12 @@
               "bbbbabbbdddo....",
               "bbbbaadddddooooo",
               "bbbbbbaaabbbbbbb",
-              "oooooocoocoooooo",
-              "oddkdddkdddddkdo",
-              "odddddkdddkddddo",
-              ".oooooooooooooo."
+              "ooodoocdocodoooo",
+              "...odooodo.odo..",
+              "....o...o...o...",
+              "................"
             ],
-            "pal": {"o":"#1b1b2f","e":"#d95b43","a":"#5aa0e0","k":"#1b1b2f","c":"#f2c14e","b":"#2f6aa8","d":"#e8f0f8"}
+            "pal": {"o":"#12305a","e":"#d95b43","a":"#5aa0e0","k":"#09182d","c":"#f2c14e","b":"#2f6aa8","d":"#e8f0f8"}
           },
           "line": "嘀嘀嗒，有消息要傳！"
         },
@@ -1319,10 +1849,10 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g...........y...",
-              "..y.......Oygy..",
-              ".ygy.....OeOy...",
-              "..y......OeeO...",
+              "................",
+              ".y..y.....O...y.",
+              "ygyygy...OeO.ygy",
+              ".y..y....OeeO.y.",
               "......OOOOaaaO..",
               "....OOaaaaakacO.",
               "...OaaaaaaaaaccO",
@@ -1331,18 +1861,18 @@
               "bbbbabbbdddO....",
               "bbbbaadddddOOOOO",
               "bbbbbbaaabbbbbbb",
-              "OOOOOOcOOcOOOOOO",
-              "OddkdddkdddddkdO",
-              "OdddddkdddkddddO",
-              ".OOOOOOOOOOOOOO."
+              "OOOdOOcdOcOdOOOO",
+              "...OdOOOdO.OdO..",
+              "....O...O...O...",
+              "................"
             ],
             "pal": {
-              "g": "#f2c14e",
               "y": "#fff3b0",
-              "O": "#8a5a10",
+              "O": "#6c6a55",
+              "g": "#f2c14e",
               "e": "#d95b43",
               "a": "#5aa0e0",
-              "k": "#1b1b2f",
+              "k": "#09182d",
               "c": "#f2c14e",
               "b": "#2f6aa8",
               "d": "#e8f0f8"
@@ -1366,9 +1896,11 @@
       "nick": "沙沙",
       "era": "戰後",
       "eraId": "postwar",
+      "genre": "relic",
       "anchor": "與廣播和街頭聲音有關的老收音機精怪，待文史把關",
       "attr": "溝通",
       "rarity": "稀有",
+      "eggChapter": "t8",
       "assist": {"name":"說書","desc":"用說書人口吻講這一站","cd":0,"perChapter":1,"key":"storyteller","value":1},
       "talent": {"name":"氛圍","desc":"NPC 回話多一句氛圍","key":"npcExtraLine","value":1},
       "scout": {"kind":["人物","彩蛋"],"era":"戰後"},
@@ -1382,7 +1914,7 @@
       "hatchHours": 1,
       "stages": {
         "egg": {
-          "sprite": EGGS.rare,
+          "sprite": EGGS.sp_radio,
           "line": "蛋殼閃著淡淡的光。"
         },
         "baby": {
@@ -1394,28 +1926,28 @@
               "................",
               "................",
               "................",
-              "................",
-              ".....o....o.....",
-              "....ocooooco....",
-              "...oaaaaaaaao...",
-              "..oaabweebbbao..",
-              "..oaawwwbwwaao..",
-              ".odaakkwbkkaado.",
-              "..oaabwwbbwbao..",
-              "..oaaaaaaaaaao..",
-              "...oaaaaaaaao...",
-              "...obboooobbo...",
-              "....oo....oo...."
+              "...o..ooo..o....",
+              "..oeoowwwooeo...",
+              "...ooooooooo....",
+              "...oaaaaaaaoo...",
+              "...oabeeewaodo..",
+              "...oawwwwwwodo..",
+              "...ockkwkkwoo...",
+              "..ocabwbbwaco...",
+              ".oeoaaaaaaaoeo..",
+              "..o.obbobbo.o...",
+              "...oabboabo.....",
+              "....ooo.oo......"
             ],
             "pal": {
-              "o": "#1b1b2f",
-              "c": "#c9ccd2",
+              "o": "#2a1608",
+              "e": "#f2c14e",
+              "w": "#ffffff",
               "a": "#8b5a2b",
               "b": "#5a3a1e",
-              "w": "#ffffff",
-              "e": "#f2c14e",
               "d": "#8fd3f4",
-              "k": "#1b1b2f"
+              "c": "#c9ccd2",
+              "k": "#150b04"
             }
           },
           "line": "我是沙沙，請多指教。"
@@ -1425,32 +1957,32 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "...o........o...",
-              "..oeo......oeo..",
-              "...oco....oco...",
-              "..oocoooooocoo..",
-              ".oaaaaaaaaaaaao.",
-              ".oabbbeeeebbbao.",
-              ".oabbwwbbbwwbao.",
-              "odabwwwwbwwwwado",
-              "doabwkwwbwkwwaod",
-              "odabbwwbbbwwbado",
-              ".oabacacacacbao.",
-              ".oabacacacacbao.",
-              ".oaaaaaaaaaaaao.",
-              "..obboooooobbo..",
-              "..obbo....obbo..",
-              "...oo......oo..."
+              "..oo.........oo.",
+              ".oeeo.......oeeo",
+              "..ooco.....ocoo.",
+              "....ocooooooco..",
+              "...oaaaaaaaaaoo.",
+              "...oabeeeeebaodo",
+              "...oabwwbbwwaood",
+              "...oawwwwwwwwodo",
+              "...ocwkwwwkwcoo.",
+              "..ocabwwbbwwaco.",
+              ".ocoaacacacaaoco",
+              "oeeoaaaaaaaaaoee",
+              ".oo.obbooobbo.oo",
+              "....obbo.obbo...",
+              "...oaaaooaaao...",
+              "....ooo..ooo...."
             ],
             "pal": {
-              "o": "#1b1b2f",
+              "o": "#2a1608",
               "e": "#f2c14e",
               "c": "#c9ccd2",
               "a": "#8b5a2b",
               "b": "#5a3a1e",
-              "w": "#ffffff",
               "d": "#8fd3f4",
-              "k": "#1b1b2f"
+              "w": "#ffffff",
+              "k": "#150b04"
             }
           },
           "line": "沙沙…各位聽眾晚安。"
@@ -1460,33 +1992,34 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g..O........O..g",
-              "..OeO......OeO..",
-              "...OcO....OcO...",
-              "..OOcOOOOOOcOO..",
-              ".OaaaaaaaaaaaaO.",
-              ".OabbbeeeebbbaO.",
-              ".OabbwwbbbwwbaO.",
-              "OdabwwwwbwwwwadO",
-              "dOabwkwwbwkwwaOd",
-              "OdabbwwbbbwwbadO",
-              ".OabacacacacbaO.",
-              ".OabacacacacbaO.",
-              ".OaaaaaaaaaaaaO.",
-              "..ObbOOOOOObbO..",
-              "..ObbO....ObbO..",
-              "g..OO......OO..."
+              "..OO.........OO.",
+              ".OeeO.......OeeO",
+              ".yOOcO.....OcOO.",
+              "ygy.OcOOOOOOcO..",
+              ".y.OaaaaaaaaaOO.",
+              "...OabeeeeebaOdO",
+              "...OabwwbbwwaOOd",
+              "...OawwwwwwwwOdO",
+              "...OcwkwwwkwcOO.",
+              "..OcabwwbbwwacO.",
+              ".OcOaacacacaaOcO",
+              "OeeOaaaaaaaaaOee",
+              ".OO.ObbOOObbO.OO",
+              ".y..ObbO.ObbO.y.",
+              "ygyOaaaOOaaaOygy",
+              ".y..OOO..OOO..y."
             ],
             "pal": {
-              "g": "#f2c14e",
-              "O": "#8a5a10",
+              "O": "#7a5a24",
               "e": "#f2c14e",
+              "y": "#fff3b0",
               "c": "#c9ccd2",
+              "g": "#f2c14e",
               "a": "#8b5a2b",
               "b": "#5a3a1e",
-              "w": "#ffffff",
               "d": "#8fd3f4",
-              "k": "#1b1b2f"
+              "w": "#ffffff",
+              "k": "#150b04"
             }
           },
           "line": "轉台！換個說法講給你聽。"
@@ -1507,9 +2040,11 @@
       "nick": "霓",
       "era": "戰後",
       "eraId": "postwar",
+      "genre": "fantasy",
       "anchor": "與夜間商街有關的霓虹蛾，待文史把關",
       "attr": "行動",
       "rarity": "普通",
+      "eggChapter": "t5,s4",
       "assist": {"name":"夜行","desc":"夜間顯示最亮的路線","cd":5,"key":"nightRoute","value":1},
       "talent": {"name":"夜眼","desc":"夜間定位判定 +3 公尺","key":"nightArriveRange","value":3},
       "scout": {"kind":["路況","彩蛋"],"era":"戰後"},
@@ -1523,7 +2058,7 @@
       "hatchHours": 0.5,
       "stages": {
         "egg": {
-          "sprite": EGGS.common,
+          "sprite": EGGS.sp_neon,
           "line": "蛋殼裡有輕輕的動靜。"
         },
         "baby": {
@@ -1536,11 +2071,11 @@
               "................",
               "................",
               "................",
-              "......o...o.....",
-              "..oo.oeo.oeooo..",
-              ".oaaooeeoeeaaao.",
-              ".oaaacdkkdcaaao.",
-              ".oaacccddccccao.",
+              ".....ooo........",
+              "...oowwwooooo...",
+              "..oaooeeoeeaao..",
+              "..oaacdkkdcaao..",
+              "..oacccddcccco..",
               "..oaccaadaccao..",
               "...oaaaadaaao...",
               "....ooaddooo....",
@@ -1548,7 +2083,16 @@
               "....obbbbbo.....",
               ".....ooooo......"
             ],
-            "pal": {"o":"#1b1b2f","e":"#fff27a","a":"#e048c8","c":"#58e8f0","d":"#ffe6fa","k":"#1b1b2f","b":"#7a2a9c"}
+            "pal": {
+              "o": "#3a0f52",
+              "w": "#ffffff",
+              "a": "#e048c8",
+              "e": "#fff27a",
+              "c": "#58e8f0",
+              "d": "#ffe6fa",
+              "k": "#1d0829",
+              "b": "#7a2a9c"
+            }
           },
           "line": "我是霓，請多指教。"
         },
@@ -1567,14 +2111,14 @@
               "oaaccaaddaaccaao",
               ".oaaaaabdaaaaao.",
               "..oaaaaddaaaao..",
-              "o..oooodboooo..o",
-              "eo...obddo....oe",
-              "oo..obbobbo...oo",
-              "ocoobbboobbo.oco",
-              ".o..ooo..oo...o.",
+              "...oooodboooo...",
+              ".....obddo......",
+              "....obbobbo.....",
+              "...obbboobbo....",
+              "....ooo..oo.....",
               "................"
             ],
-            "pal": {"o":"#1b1b2f","e":"#fff27a","a":"#e048c8","d":"#ffe6fa","c":"#58e8f0","k":"#1b1b2f","b":"#7a2a9c"}
+            "pal": {"o":"#3a0f52","e":"#fff27a","a":"#e048c8","d":"#ffe6fa","c":"#58e8f0","k":"#1d0829","b":"#7a2a9c"}
           },
           "line": "夜晚才是我的舞台。"
         },
@@ -1583,7 +2127,7 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g....O.....O...g",
+              ".....O.....O....",
               ".O..OeO...OeO.O.",
               "OaO..OeOOOeOOOaO",
               "OaaOOOeddOeOaaaO",
@@ -1592,23 +2136,24 @@
               "OaccccaddaccccaO",
               "OaaccaaddaaccaaO",
               ".OaaaaabdaaaaaO.",
-              "..OaaaaddaaaaO..",
-              "O..OOOOdbOOOO..O",
-              "eO...ObddO....Oe",
-              "OO..ObbObbO...OO",
-              "OcOObbbOObbO.OcO",
-              ".O..OOO..OO...O.",
-              "g..............."
+              ".yOaaaaddaaaaO..",
+              "ygyOOOOdbOOOO...",
+              ".y...ObddO......",
+              ".y..ObbObbO...y.",
+              "ygyObbbOObbO.ygy",
+              ".y..OOO..OO...y.",
+              "................"
             ],
             "pal": {
-              "g": "#f2c14e",
-              "O": "#8a5a10",
+              "O": "#845650",
               "e": "#fff27a",
               "a": "#e048c8",
               "d": "#ffe6fa",
               "c": "#58e8f0",
-              "k": "#1b1b2f",
-              "b": "#7a2a9c"
+              "k": "#1d0829",
+              "b": "#7a2a9c",
+              "y": "#fff3b0",
+              "g": "#f2c14e"
             }
           },
           "line": "趨光而行，夜更亮了。"
@@ -1629,9 +2174,11 @@
       "nick": "墨",
       "era": "戰後與文學",
       "eraId": "postwar",
+      "genre": "fantasy",
       "anchor": "與在地文學和民間文學有關的墨汁精靈，待文史把關",
       "attr": "溝通",
       "rarity": "稀有",
+      "eggChapter": "c2,y2",
       "assist": {"name":"起筆","desc":"給書寫題三種開頭句型","cd":0,"perQuestion":1,"key":"writeStarters","value":3},
       "talent": {"name":"語氣","desc":"書寫題多一句語氣建議","key":"writeToneHint","value":1},
       "scout": {"kind":["彩蛋"],"era":"戰後與文學"},
@@ -1645,7 +2192,7 @@
       "hatchHours": 1,
       "stages": {
         "egg": {
-          "sprite": EGGS.rare,
+          "sprite": EGGS.sp_ink,
           "line": "蛋殼閃著淡淡的光。"
         },
         "baby": {
@@ -1658,19 +2205,19 @@
               "................",
               "................",
               "................",
-              ".......o........",
-              "......obo.......",
-              ".....oaaao......",
-              "....ocaaaao.....",
-              "...oaawaaaao....",
-              "...oakkwkkao....",
-              "...oakkwkkao....",
-              "....oaaaaaao....",
-              "....oaaaaeeo....",
-              ".....oaaaeo.....",
-              "......oooo......"
+              "................",
+              "................",
+              "......oooo......",
+              ".....ocwwwo.....",
+              ".....occaao.....",
+              "....oakkkkao....",
+              "...ooakkkkaoo...",
+              "..oaaoaaaaeaao..",
+              "..ocooaaaaebbo..",
+              "...o.oaaaaaoo...",
+              "......ooooo....."
             ],
-            "pal": {"o":"#1b1b2f","b":"#1e2748","a":"#33406e","c":"#8fa0e8","w":"#ffffff","k":"#1b1b2f","e":"#d95b43"}
+            "pal": {"o":"#0c1230","c":"#8fa0e8","w":"#ffffff","a":"#33406e","k":"#060918","e":"#d95b43","b":"#1e2748"}
           },
           "line": "我是墨，請多指教。"
         },
@@ -1679,24 +2226,24 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "................",
-              "........o....o..",
-              "..o....obo..oco.",
-              ".oco..obboo..oo.",
-              "..o..oaaaaao.oco",
-              "....occaaaaao.o.",
-              "...oaccaaaaaao..",
-              "...oawwwawwwao..",
-              "..oaawkwawkwaao.",
-              "...oawkwawkwao..",
-              "...oaaaaaaaaao..",
-              "....oaaacaaeeo..",
-              ".....oaaaaaeeo..",
-              "......oaaoooo...",
+              ".......o........",
+              "......oco.......",
               ".......oo.......",
+              "......obbo......",
+              ".....oaaaao.....",
+              "....occaaaao....",
+              "....occaaaao....",
+              "...oawwwawwao...",
+              "...oawkwakwao...",
+              "..oaoaaaaaaoao..",
+              ".oaooaacaaaeeao.",
+              "ocao.oaaaaoeebco",
+              ".oo..oaoaaooboo.",
+              ".....oaooaaao...",
+              "......o..ooo....",
               "................"
             ],
-            "pal": {"o":"#1b1b2f","b":"#1e2748","c":"#8fa0e8","a":"#33406e","w":"#ffffff","k":"#1b1b2f","e":"#d95b43"}
+            "pal": {"o":"#0c1230","c":"#8fa0e8","b":"#1e2748","a":"#33406e","w":"#ffffff","k":"#060918","e":"#d95b43"}
           },
           "line": "我在想一句開頭。"
         },
@@ -1705,32 +2252,32 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g..y............",
-              "..ygy...O....O..",
-              "..Oy...ObO..OcO.",
-              ".OcO..ObbOO..OO.",
-              "..O..OaaaaaO.OcO",
-              "....OccaaaaaO.O.",
-              "...OaccaaaaaaO..",
-              "...OawwwawwwaO..",
-              "..OaawkwawkwaaO.",
-              "...OawkwawkwaO..",
-              "...OaaaaaaaaaO..",
-              "....OaaacaaeeO..",
-              "..y..OaaaaaeeO..",
-              ".ygy..OaaOOOO...",
-              "..y....OO.......",
+              ".y..y..O......y.",
+              "ygyygyOcO....ygy",
+              ".y..y..OO.....y.",
+              "......ObbO......",
+              ".....OaaaaO.....",
+              "....OccaaaaO....",
+              "....OccaaaaO....",
+              "...OawwwawwaO...",
+              "...OawkwakwaO...",
+              "..OaOaaaaaaOaO..",
+              ".OaOOaacaaaeeaO.",
+              "OcaO.OaaaaOeebcO",
+              ".OO..OaOaaOObOO.",
+              ".....OaOOaaaO...",
+              "......O..OOO....",
               "................"
             ],
             "pal": {
-              "g": "#f2c14e",
               "y": "#fff3b0",
-              "O": "#8a5a10",
-              "b": "#1e2748",
+              "O": "#68583c",
+              "g": "#f2c14e",
               "c": "#8fa0e8",
+              "b": "#1e2748",
               "a": "#33406e",
               "w": "#ffffff",
-              "k": "#1b1b2f",
+              "k": "#060918",
               "e": "#d95b43"
             }
           },
@@ -1752,9 +2299,11 @@
       "nick": "蜜",
       "era": "當代文資",
       "eraId": "heritage",
+      "genre": "cute",
       "anchor": "與古蹟修復有關的工匠蜜蜂，待文史把關",
       "attr": "守護",
       "rarity": "普通",
+      "eggChapter": "t9",
       "assist": {"name":"補漏","desc":"列出本章還沒完成的任務","cd":0,"key":"listTodo","value":1},
       "talent": {"name":"減半","desc":"提示扣分只扣一半（每章 1 次）","key":"hintPenaltyHalf","value":0.5,"perChapter":1},
       "scout": {"kind":["觀察"],"era":"當代文資"},
@@ -1769,7 +2318,7 @@
       "hatchHours": 0.5,
       "stages": {
         "egg": {
-          "sprite": EGGS.common,
+          "sprite": EGGS.sp_bee,
           "line": "蛋殼裡有輕輕的動靜。"
         },
         "baby": {
@@ -1783,7 +2332,7 @@
               "................",
               "................",
               "......ooo.......",
-              "....ooeeeoo.....",
+              "....oowwwoo.....",
               "...oceeeeeco....",
               "..occeeeeecco...",
               "..occkkakkcco...",
@@ -1794,7 +2343,16 @@
               ".....oaaao.o....",
               "......ooo......."
             ],
-            "pal": {"o":"#1b1b2f","e":"#f08a24","c":"#cfeaf5","k":"#1b1b2f","a":"#f2c14e","d":"#9aa3ad","b":"#3b2f2f"}
+            "pal": {
+              "o": "#3b2f10",
+              "w": "#ffffff",
+              "c": "#cfeaf5",
+              "e": "#f08a24",
+              "k": "#1e1808",
+              "a": "#ffd23a",
+              "d": "#9aa3ad",
+              "b": "#3b2f2f"
+            }
           },
           "line": "我是蜜，請多指教。"
         },
@@ -1821,12 +2379,12 @@
               ".......ooo......"
             ],
             "pal": {
-              "o": "#1b1b2f",
+              "o": "#3b2f10",
               "w": "#ffffff",
               "e": "#f08a24",
               "c": "#cfeaf5",
-              "a": "#f2c14e",
-              "k": "#1b1b2f",
+              "a": "#ffd23a",
+              "k": "#1e1808",
               "p": "#e87fa8",
               "d": "#9aa3ad",
               "b": "#3b2f2f"
@@ -1839,10 +2397,10 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "............y...",
-              "..y.....O..ygy..",
-              ".ygy.OOOwOOOy...",
-              "..yOOeeeeeeeOO..",
+              "................",
+              "..y.....O.....y.",
+              ".ygy.OOOwOOO.ygy",
+              "..yOOeeeeeeeOOy.",
               "..OcceeeeeeeccO.",
               ".OcceeeeeeeecccO",
               ".OcccaaaaaaacccO",
@@ -1851,20 +2409,20 @@
               ".OcccaaaaaaacddO",
               "..OcabbbbbbaacdO",
               "...OaaaaaaaaaOdO",
-              "..y.ObbbbbbaOOdO",
-              ".ygyOaaaaaaaOOdO",
-              "..y..OOabaOO..O.",
-              ".......OOO......"
+              "....ObbbbbbaOOdO",
+              "..y.OaaaaaaaOOdO",
+              ".ygy.OOabaOO..O.",
+              "..y....OOO......"
             ],
             "pal": {
               "y": "#fff3b0",
-              "O": "#8a5a10",
+              "O": "#846929",
               "g": "#f2c14e",
               "w": "#ffffff",
               "e": "#f08a24",
               "c": "#cfeaf5",
-              "a": "#f2c14e",
-              "k": "#1b1b2f",
+              "a": "#ffd23a",
+              "k": "#1e1808",
               "p": "#e87fa8",
               "d": "#9aa3ad",
               "b": "#3b2f2f"
@@ -1888,9 +2446,11 @@
       "nick": "拓",
       "era": "當代文資",
       "eraId": "heritage",
+      "genre": "scifi",
       "anchor": "與數位典藏和三維掃描有關的拓印魚，待文史把關",
       "attr": "觀察",
       "rarity": "稀有",
+      "eggChapter": "x3",
       "assist": {"name":"構圖","desc":"拍照任務給取景建議","cd":0,"perQuestion":1,"key":"photoComposition","value":1},
       "talent": {"name":"好取景","desc":"拍照任務加分 +2","key":"photoBonus","value":2},
       "scout": {"kind":["觀察","方位"],"era":"當代文資"},
@@ -1904,7 +2464,7 @@
       "hatchHours": 1,
       "stages": {
         "egg": {
-          "sprite": EGGS.rare,
+          "sprite": EGGS.sp_rubbing,
           "line": "蛋殼閃著淡淡的光。"
         },
         "baby": {
@@ -1912,24 +2472,24 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "eee..........eee",
-              "e..............e",
-              "e..............e",
               "................",
               "................",
-              ".........o......",
-              "........obo.....",
-              ".......obbbo....",
-              "...ooooabbaoo...",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "........ooo.....",
+              "......oowwwo....",
+              "...oooaabbaao...",
               "..obbaaaaaakko..",
-              "..obbaaaaaakko..",
-              "..obbdaaddadao..",
-              "..obooaaaaaao...",
-              "e..o..oaaaao...e",
-              "e......obbbo...e",
-              "eee.....ooo..eee"
+              "..obbbaaddakko..",
+              "..oboaaaaaaaao..",
+              "...o.oaaaaaao...",
+              "......oooooo...."
             ],
-            "pal": {"e":"#f2c14e","o":"#1b1b2f","b":"#2a8d7e","a":"#46c7b0","k":"#1b1b2f","d":"#ff6fb5"}
+            "pal": {"o":"#0f4a42","w":"#ffffff","a":"#46c7b0","b":"#2a8d7e","k":"#082521","d":"#ff6fb5"}
           },
           "line": "我是拓，請多指教。"
         },
@@ -1938,33 +2498,24 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "eee..........eee",
-              "e........o.....e",
-              "e.......obo....e",
+              "................",
+              "................",
+              "................",
+              "........oo......",
               ".......obbo.....",
-              ".....oobbbbo....",
-              "oo..oaaaaaaao...",
-              "bbooaacaaacwwo..",
-              "bbbaacaaacawkao.",
-              "bbbaaaaacabacao.",
-              "bbddddddddbddao.",
-              "bbooaacaaabaao..",
-              "oo..oaaaaaaao...",
-              ".....ooobbbo....",
-              "e......obbo....e",
-              "e.......oo.....e",
-              "eee..........eee"
+              "....ooobbbboo...",
+              "oo.oaaaaaaaaao..",
+              "bboaacaaacawwao.",
+              "bbbaaaaacaawkao.",
+              "bbbdddddddbdddo.",
+              "bboaaacaaabaaao.",
+              "oo.oaaaaaaaaao..",
+              "....oooobbooo...",
+              "........oo......",
+              "................",
+              "................"
             ],
-            "pal": {
-              "e": "#f2c14e",
-              "o": "#1b1b2f",
-              "b": "#2a8d7e",
-              "a": "#46c7b0",
-              "c": "#9ef0dc",
-              "w": "#ffffff",
-              "k": "#1b1b2f",
-              "d": "#ff6fb5"
-            }
+            "pal": {"o":"#0f4a42","b":"#2a8d7e","a":"#46c7b0","c":"#9ef0dc","w":"#ffffff","k":"#082521","d":"#ff6fb5"}
           },
           "line": "框好了嗎？再往左一點。"
         },
@@ -1973,33 +2524,32 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "eee..........eee",
-              "e.y......O.....e",
-              "eygy....ObO..y.e",
-              "..y....ObbO.ygy.",
-              ".....OObbbbO.y..",
-              "OO..OaaaaaaaO...",
-              "bbOOaacaaacwwO..",
-              "bbbaacaaacawkaO.",
-              "bbbaaaaacabacaO.",
-              "bbddddddddbddaO.",
-              "bbOOaacaaabaaO..",
-              "OO..OaaaaaaaO...",
-              "..y..OOObbbO....",
-              "eygy...ObbO....e",
-              "e.y.....OO.....e",
-              "eee..........eee"
+              "................",
+              "................",
+              "................",
+              ".y......OO...y..",
+              "ygy....ObbO.ygy.",
+              ".y..OOObbbbOOy..",
+              "OO.OaaaaaaaaaO..",
+              "bbOaacaaacawwaO.",
+              "bbbaaaaacaawkaO.",
+              "bbbdddddddbdddO.",
+              "bbOaaacaaabaaaO.",
+              "OOyOaaaaaaaaaO..",
+              ".ygyOOOObbOOO...",
+              "..y.....OO......",
+              "................",
+              "................"
             ],
             "pal": {
-              "e": "#f2c14e",
               "y": "#fff3b0",
-              "O": "#8a5a10",
+              "O": "#6a7a47",
               "g": "#f2c14e",
               "b": "#2a8d7e",
               "a": "#46c7b0",
               "c": "#9ef0dc",
               "w": "#ffffff",
-              "k": "#1b1b2f",
+              "k": "#082521",
               "d": "#ff6fb5"
             }
           },
@@ -2021,6 +2571,7 @@
       "nick": "髓",
       "era": "時安局核心",
       "eraId": "core",
+      "genre": "fantasy",
       "anchor": "虛構的時安局核心生物，藍鯨與時之髓設定尚為候選，待文史把關",
       "attr": "全",
       "rarity": "傳說",
@@ -2039,7 +2590,7 @@
       "needDexPct": 100,
       "stages": {
         "egg": {
-          "sprite": EGGS.legend,
+          "sprite": EGGS.sp_marrow,
           "line": "蛋殼裡傳出低低的歌聲。"
         },
         "baby": {
@@ -2053,7 +2604,7 @@
               "................",
               "................",
               ".....ooooo......",
-              "....oaaaaao.....",
+              "....oawwwao.....",
               "...oaaaaaaao....",
               "..oaaacccaaao...",
               "..oaakcyckaao...",
@@ -2064,7 +2615,16 @@
               "....odbbdbbo....",
               ".....oooooo....."
             ],
-            "pal": {"o":"#1b1b2f","a":"#b9a0f0","c":"#e8dcff","k":"#1b1b2f","y":"#fff3b0","d":"#8fe0ff","b":"#7a5af8"}
+            "pal": {
+              "o": "#2a1a6a",
+              "a": "#b9a0f0",
+              "w": "#ffffff",
+              "c": "#e8dcff",
+              "k": "#150d35",
+              "y": "#fff3b0",
+              "d": "#8fe0ff",
+              "b": "#7a5af8"
+            }
           },
           "line": "我是髓，請多指教。"
         },
@@ -2091,12 +2651,12 @@
               ".....oo..oo..o.."
             ],
             "pal": {
-              "o": "#1b1b2f",
+              "o": "#2a1a6a",
               "c": "#e8dcff",
               "a": "#b9a0f0",
               "w": "#ffffff",
               "y": "#fff3b0",
-              "k": "#1b1b2f",
+              "k": "#150d35",
               "p": "#e87fa8",
               "d": "#8fe0ff",
               "b": "#7a5af8"
@@ -2109,10 +2669,10 @@
             "w": 16,
             "h": 16,
             "rows": [
-              "g..............g",
-              "..y..OOOOOOO....",
-              ".ygyOcaaaaaaO...",
-              "..yOcaaaaaawaO..",
+              "................",
+              "..y..OOOOOOO..y.",
+              ".ygyOcaaaaaaOygy",
+              "..yOcaaaaaawaOy.",
               "..OaaaacccaaaaO.",
               ".OaaaaccyccaaaaO",
               ".OaaaccyyyccaaaO",
@@ -2122,18 +2682,18 @@
               "..O.OddOOddOOdO.",
               "...ObOObbOObbO..",
               "....OddOOddOOdO.",
-              "...ObOObbOObbO..",
-              "....OddOOddOOdO.",
-              ".....OO..OO..O.."
+              "..yObOObbOObbO..",
+              ".ygyOddOOddOOdO.",
+              "..y..OO..OO..O.."
             ],
             "pal": {
-              "g": "#f2c14e",
               "y": "#fff3b0",
-              "O": "#8a5a10",
+              "O": "#7a5d5f",
+              "g": "#f2c14e",
               "c": "#e8dcff",
               "a": "#b9a0f0",
               "w": "#ffffff",
-              "k": "#1b1b2f",
+              "k": "#150d35",
               "p": "#e87fa8",
               "d": "#8fe0ff",
               "b": "#7a5af8"
@@ -2148,6 +2708,1073 @@
         "pet": ["好輕的觸碰，像水波。","再摸一下，時間就慢了。","光在你手心打轉。"],
         "feed": ["溫暖，像回到起點。","謝謝，髓更亮了。","我記下這一刻。"],
         "awake": ["髓動，時間為你加速。","所有技能，都醒著。","我們一起穿過時代。"]
+      }
+    },
+    {
+      "id": "sp_snailcrab",
+      "no": 17,
+      "name": "螺殼蟹",
+      "nick": "殼殼",
+      "era": "西拉雅與大員前史",
+      "eraId": "pre",
+      "genre": "cute",
+      "anchor": "與海岸潮間帶的貝類和寄居生物有關的小蟹，待文史把關",
+      "attr": "守護",
+      "rarity": "普通",
+      "eggChapter": "x5",
+      "assist": {"name":"背殼清單","desc":"列出已取得的碎片與剩餘提示數","cd":0,"perChapter":3,"key":"listFragments","value":1},
+      "talent": {"name":"窩心","desc":"小精靈羈絆增加 +10%","key":"bondGain","value":0.1},
+      "scout": {"kind":["彩蛋"],"era":"西拉雅與大員前史"},
+      "awaken": {
+        "name": "殼中屋",
+        "desc": "每章多一次背殼清單",
+        "key": "extraUse",
+        "value": 1,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":15,"desc":"羈絆 30 且圖鑑完成 15%"}
+      },
+      "hatchHours": 0.5,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_snailcrab,
+          "line": "蛋殼裡有輕輕的動靜。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "....ooo.........",
+              "...owwwo........",
+              "..oaaaaaooo.....",
+              "..oabbbakkko....",
+              "..oaabbaaddeo...",
+              "..oaaaaaddddo...",
+              "...oaaadkkkdo...",
+              "....oddddddo....",
+              "...ododdddo.....",
+              "....o.oooo......"
+            ],
+            "pal": {"o":"#5a2a3a","w":"#ffffff","a":"#f4b8c8","b":"#c87890","k":"#2d151d","d":"#f08050","e":"#d95b43"}
+          },
+          "line": "我是殼殼，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "....oo..........",
+              "...oaaoo........",
+              "..oaaaaao.o.o...",
+              "..obabbaaokoko..",
+              ".oaabaabaadodo..",
+              ".oaabbbbaadodeo.",
+              ".oaaabaaaadoddeo",
+              "..oaaabaaddddddo",
+              "...oaaaaddkdkdo.",
+              "....oddddddpddo.",
+              "...odoodddddoo..",
+              "..odoodooodoodo.",
+              "...o..o...o..o.."
+            ],
+            "pal": {"o":"#5a2a3a","a":"#f4b8c8","b":"#c87890","k":"#2d151d","d":"#f08050","e":"#d95b43","p":"#e87fa8"}
+          },
+          "line": "我把家背在身上喔。"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "....OO.....y..y.",
+              "...OaaOO..ygyygy",
+              "..OaaaaaO.OyO.y.",
+              "..ObabbaaOkOkO..",
+              ".OaabaabaadOdO..",
+              ".OaabbbbaadOdeO.",
+              ".OaaabaaaadOddeO",
+              "..OaaabaaddddddO",
+              "..yOaaaaddkdkdO.",
+              ".ygyOddddddpddO.",
+              "..yOdOOdddddOO..",
+              "..OdOOdOOOdOOdO.",
+              "...O..O...O..O.."
+            ],
+            "pal": {
+              "O": "#976642",
+              "y": "#fff3b0",
+              "a": "#f4b8c8",
+              "g": "#f2c14e",
+              "b": "#c87890",
+              "k": "#2d151d",
+              "d": "#f08050",
+              "e": "#d95b43",
+              "p": "#e87fa8"
+            }
+          },
+          "line": "新殼亮亮的，來看！"
+        }
+      },
+      "favFood": "彩蛋",
+      "lines": {
+        "idle": ["我把家背在身上喔。","殼裡很安靜，進來嗎？","橫著走，也能到終點。","潮來了，我縮一縮。"],
+        "pet": ["別戳殼，我會躲進去。","摸摸蟹鉗就好。","殼殼溫溫的，舒服。"],
+        "feed": ["喀滋喀滋，好脆。","謝謝，殼裡也留一點。","吃飽了，換新殼也不怕。"],
+        "awake": ["新殼亮亮的，來看！","殼中小屋，開門囉。","清單背好了，隨時查。"]
+      }
+    },
+    {
+      "id": "sp_leopard",
+      "no": 18,
+      "name": "雲豹幼靈",
+      "nick": "雲雲",
+      "era": "西拉雅與大員前史",
+      "eraId": "pre",
+      "genre": "fantasy",
+      "anchor": "與台灣山林動物意象有關的幼獸靈體，只畫動物，待文史把關",
+      "attr": "行動",
+      "rarity": "稀有",
+      "eggChapter": "x6",
+      "assist": {"name":"循跡","desc":"顯示下一站的走路分鐘與路況","cd":5,"key":"walkInfo","value":1},
+      "talent": {"name":"輕步","desc":"到站判定範圍 +2 公尺","key":"arriveRange","value":2},
+      "scout": {"kind":["路況"],"era":"西拉雅與大員前史"},
+      "awaken": {
+        "name": "雲影",
+        "desc": "30 秒內標出 100 公尺內的小路與捷徑",
+        "key": "trailReveal",
+        "value": 100,
+        "seconds": 30,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":30,"desc":"羈絆 30 且圖鑑完成 30%"}
+      },
+      "hatchHours": 1,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_leopard,
+          "line": "蛋殼閃著淡淡的光。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "....o..oooooo...",
+              "...oaoowwwakko..",
+              "..oaabbbbaakko..",
+              "..oaobbbbbaako..",
+              "...oaaabbaaao...",
+              "....oacdaaao....",
+              ".....oaacao.....",
+              "......oooo......"
+            ],
+            "pal": {"o":"#2a2214","a":"#d8c890","w":"#ffffff","k":"#15110a","b":"#5a4a30","c":"#f4ecd0","d":"#8a8a78"}
+          },
+          "line": "我是雲雲，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "...........o..o.",
+              "..ooo.....oboobo",
+              ".oabbooooooaakao",
+              "oaooabbbbabbaako",
+              "oaoabbadabdaacco",
+              ".oaadabbbbaaaao.",
+              "..ooacdcdacaoo..",
+              "...oaoaocaoao...",
+              "...ococoococo...",
+              "....o.o..o.o....",
+              "................",
+              "................"
+            ],
+            "pal": {"o":"#2a2214","b":"#5a4a30","a":"#d8c890","k":"#15110a","d":"#8a8a78","c":"#f4ecd0"}
+          },
+          "line": "我用尾巴量一量路。"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "...........O..O.",
+              "..OOO.....ObOObO",
+              ".OabbOOOOOOaakaO",
+              "OaOOabbbbabbaakO",
+              "OaOabbadabdaaccO",
+              ".OaadabbbbaaaaO.",
+              "..OOacdcdacaOO..",
+              ".y.OaOaOcaOaO.y.",
+              "ygyOcOcOOcOcOygy",
+              ".y..O.O..O.O..y.",
+              "................",
+              "................"
+            ],
+            "pal": {
+              "O": "#7a622b",
+              "b": "#5a4a30",
+              "a": "#d8c890",
+              "k": "#15110a",
+              "d": "#8a8a78",
+              "c": "#f4ecd0",
+              "y": "#fff3b0",
+              "g": "#f2c14e"
+            }
+          },
+          "line": "雲影一晃，路都看清了。"
+        }
+      },
+      "favFood": "路況",
+      "lines": {
+        "idle": ["我用尾巴量一量路。","腳步輕輕，不吵醒樹。","前面有岔路，我先去。","雲在山上，我在這裡。"],
+        "pet": ["嗚…尾巴不要抓。","摸頭可以，慢一點。","我的斑紋在發癢。"],
+        "feed": ["好吃，我叼回窩慢慢吃。","謝謝，肚子暖暖的。","嗯，這個味道很山林。"],
+        "awake": ["雲影一晃，路都看清了。","我跑得比雲還輕。","跟我來，抄近路。"]
+      }
+    },
+    {
+      "id": "sp_seahorse",
+      "no": 19,
+      "name": "風帆海馬",
+      "nick": "帆馬",
+      "era": "荷治",
+      "eraId": "dutch",
+      "genre": "fantasy",
+      "anchor": "與大航海時代海上航行有關的小海馬，待文史把關",
+      "attr": "觀察",
+      "rarity": "普通",
+      "eggChapter": "w2",
+      "assist": {"name":"順風指引","desc":"標出下一站的方向與距離","cd":3,"key":"showNextDist","value":1},
+      "talent": {"name":"穩舵","desc":"集合圈範圍 +10 公尺","key":"rallyRange","value":10},
+      "scout": {"kind":["觀察"],"era":"荷治"},
+      "awaken": {
+        "name": "揚帆",
+        "desc": "10 分鐘內全隊到站速度 +10%",
+        "key": "teamArriveSpeed",
+        "value": 0.1,
+        "minutes": 10,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":15,"desc":"羈絆 30 且圖鑑完成 15%"}
+      },
+      "hatchHours": 0.5,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_seahorse,
+          "line": "蛋殼裡有輕輕的動靜。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              ".......ooo......",
+              "......owwwo.....",
+              ".....odakaao....",
+              "....obbaaaao....",
+              "....occabbo.....",
+              "....ocaaaao.....",
+              "....occaaaao....",
+              "....ocaabaao....",
+              "....obaaaao.....",
+              "....oaaaao......",
+              "....oaaaao......",
+              ".....oooo......."
+            ],
+            "pal": {"o":"#0a3a38","w":"#ffffff","d":"#f0c040","a":"#3fb8b0","k":"#051d1c","b":"#1f7a78","c":"#f4ecd8"}
+          },
+          "line": "我是帆馬，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "........oo......",
+              ".......oddo.....",
+              "......odakaoo...",
+              ".....obaaaaaao..",
+              ".....oboaaaoo...",
+              ".....ocaabbpo...",
+              ".....ocaaaao....",
+              "....oceaabbo....",
+              ".....ocaaaaao...",
+              ".....ocaabbao...",
+              ".....obaaaaao...",
+              ".....obaaaaao...",
+              ".....oaaaaoo....",
+              "....oaaoaaao....",
+              ".....oaaaoo.....",
+              "......ooo......."
+            ],
+            "pal": {
+              "o": "#0a3a38",
+              "d": "#f0c040",
+              "a": "#3fb8b0",
+              "k": "#051d1c",
+              "b": "#1f7a78",
+              "c": "#f4ecd8",
+              "p": "#e87fa8",
+              "e": "#d95b43"
+            }
+          },
+          "line": "我站得直直的看風。"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              ".....y..OO......",
+              "....ygyOddO.....",
+              ".....yOdakaOO...",
+              ".....ObaaaaaaO..",
+              ".....ObOaaaOO...",
+              ".....OcaabbpO...",
+              ".....OcaaaaO....",
+              "....OceaabbO....",
+              ".....OcaaaaaO...",
+              ".....OcaabbaO...",
+              ".....ObaaaaaO...",
+              ".....ObaaaaaO...",
+              ".....OaaaaOO....",
+              "....OaaOaaaOy...",
+              ".....OaaaOOygy..",
+              "......OOO...y..."
+            ],
+            "pal": {
+              "y": "#fff3b0",
+              "O": "#677041",
+              "g": "#f2c14e",
+              "d": "#f0c040",
+              "a": "#3fb8b0",
+              "k": "#051d1c",
+              "b": "#1f7a78",
+              "c": "#f4ecd8",
+              "p": "#e87fa8",
+              "e": "#d95b43"
+            }
+          },
+          "line": "風來了，揚帆！"
+        }
+      },
+      "favFood": "觀察",
+      "lines": {
+        "idle": ["我站得直直的看風。","小帆今天鼓鼓的。","尾巴捲住東西，就不會飄走。","你看，浪在排隊。"],
+        "pet": ["別碰帆，會歪掉。","癢！尾巴捲起來了。","再摸一下，我轉個圈。"],
+        "feed": ["好吃，吃了更有力氣。","謝謝，小帆更鼓了。","一口小蝦，航行無憂。"],
+        "awake": ["風來了，揚帆！","大帆一展，全隊跟上。","我看見很遠的海面了。"]
+      }
+    },
+    {
+      "id": "sp_ironcrab",
+      "no": 20,
+      "name": "鐵蟹機甲",
+      "nick": "鐵鉗",
+      "era": "明鄭",
+      "eraId": "zheng",
+      "genre": "scifi",
+      "anchor": "與海防和鐵甲意象有關的小型機甲蟹，待文史把關",
+      "attr": "守護",
+      "rarity": "稀有",
+      "eggChapter": "w1",
+      "assist": {"name":"護甲提示","desc":"顯示目前路段的注意事項","cd":5,"key":"riskNotice","value":1},
+      "talent": {"name":"鐵殼","desc":"夜間與雨天自動提醒注意路面","key":"safetyBadge","value":1},
+      "scout": {"kind":["觀察"],"era":"明鄭"},
+      "awaken": {
+        "name": "重裝",
+        "desc": "隊友位置更新加快為 15 秒一次",
+        "key": "matesRefresh",
+        "value": 15,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":30,"desc":"羈絆 30 且圖鑑完成 30%"}
+      },
+      "hatchHours": 1,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_ironcrab,
+          "line": "蛋殼閃著淡淡的光。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "......oooo......",
+              "...ooodwwwooo...",
+              "..ocbaaaaaabco..",
+              "..occaabaaacco..",
+              "...ocbbbbbaao...",
+              "...obbbaaabbo...",
+              "..obbboooobbbo..",
+              "...ooo....ooo..."
+            ],
+            "pal": {"o":"#1a2230","d":"#e04a3a","w":"#ffffff","c":"#c8d4e0","b":"#4a5868","a":"#8a98a8"}
+          },
+          "line": "我是鐵鉗，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              ".....o....o.....",
+              "..o.odo..odo.o..",
+              ".oboobooooboobo.",
+              "occaoaabaaaoacco",
+              "obccawabaawaccbo",
+              ".ocabaebaeabaco.",
+              "..obbbbbbbbbao..",
+              "..oobbaaaabboo..",
+              ".obbboooooobbbo.",
+              "obobbo....obbobo",
+              ".o.oo......oo.o.",
+              "................",
+              "................"
+            ],
+            "pal": {"o":"#1a2230","d":"#e04a3a","b":"#4a5868","c":"#c8d4e0","a":"#8a98a8","w":"#ffffff","e":"#58e8f0"}
+          },
+          "line": "系統正常，鉗子上油中。"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              ".....O....O.....",
+              ".gO.OdO..OdO.Og.",
+              ".ObOObOOOObOObO.",
+              "OccaOaabaaaOaccO",
+              "ObccawabaawaccbO",
+              ".OcabaebaeabacO.",
+              "..ObbbbbbbbbaO..",
+              "..OObbaaaabbOO..",
+              ".ObbbOOOOOObbbO.",
+              "ObObbO....ObbObO",
+              ".O.OO......OO.O.",
+              "................",
+              "................"
+            ],
+            "pal": {
+              "O": "#70623c",
+              "g": "#f2c14e",
+              "d": "#e04a3a",
+              "b": "#4a5868",
+              "c": "#c8d4e0",
+              "a": "#8a98a8",
+              "w": "#ffffff",
+              "e": "#58e8f0"
+            }
+          },
+          "line": "重裝啟動，全員安心。"
+        }
+      },
+      "favFood": "觀察",
+      "lines": {
+        "idle": ["系統正常，鉗子上油中。","偵測前方：安全。","裝甲很重，但我很穩。","齒輪聲是我的呼吸。"],
+        "pet": ["接觸感應，嗶。","輕一點，漆會掉。","再摸一次，我就舉鉗。"],
+        "feed": ["燃料補充完畢。","味道資料已存檔。","電量上升，鉗力加倍。"],
+        "awake": ["重裝啟動，全員安心。","雷達全開，位置更新！","鐵殼之下，我守著你。"]
+      }
+    },
+    {
+      "id": "sp_kitedragon",
+      "no": 21,
+      "name": "風箏小龍",
+      "nick": "紙鳶",
+      "era": "清領",
+      "eraId": "qing",
+      "genre": "fantasy",
+      "anchor": "與民間風箏和紙藝有關的玩具龍，不是廟宇神獸，待文史把關",
+      "attr": "溝通",
+      "rarity": "普通",
+      "eggChapter": "wc",
+      "assist": {"name":"高飛","desc":"預告 500 公尺內的地標方向","cd":5,"key":"previewLandmarks","value":500},
+      "talent": {"name":"順風線","desc":"計時賽速度分上限 +1","key":"timedSpeedCap","value":1},
+      "scout": {"kind":["人物"],"era":"清領"},
+      "awaken": {
+        "name": "御風",
+        "desc": "10 分鐘內預告範圍加倍",
+        "key": "previewScale",
+        "value": 2,
+        "minutes": 10,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":15,"desc":"羈絆 30 且圖鑑完成 15%"}
+      },
+      "hatchHours": 0.5,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_kitedragon,
+          "line": "蛋殼裡有輕輕的動靜。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              ".......ooo......",
+              "......owwwo.....",
+              ".....ocabco.....",
+              "....obabbabo....",
+              "....obkbbkbo....",
+              ".....okaako.....",
+              ".....oobboo.....",
+              "....obobbobo....",
+              ".....oodo.o.....",
+              "......oedo......",
+              ".......odo......",
+              "........o......."
+            ],
+            "pal": {
+              "o": "#4a0f20",
+              "w": "#ffffff",
+              "c": "#ffd86a",
+              "a": "#e8506a",
+              "b": "#a02a48",
+              "k": "#250810",
+              "d": "#58c8e8",
+              "e": "#ffffff"
+            }
+          },
+          "line": "我是紙鳶，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "........o.......",
+              "......ooboo.....",
+              ".....ocabaco....",
+              "....ocaabaaco...",
+              "....oaaabaaao...",
+              "...obbbbbbbbbo..",
+              "....oakabakao...",
+              ".....oaapaao....",
+              ".....ooabaoo....",
+              "....obooboobo...",
+              "...obooodo.obo..",
+              "....oocdo.o.o...",
+              "......oedoco....",
+              ".....ocoodo.....",
+              "......oodo......",
+              "........o......."
+            ],
+            "pal": {
+              "o": "#4a0f20",
+              "b": "#a02a48",
+              "c": "#ffd86a",
+              "a": "#e8506a",
+              "k": "#250810",
+              "p": "#e87fa8",
+              "d": "#58c8e8",
+              "e": "#ffffff"
+            }
+          },
+          "line": "線在你手上，別放喔。"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "....y...O...y...",
+              "...ygyOObOOygy..",
+              "....yOcabacOy...",
+              "....OcaabaacO...",
+              "....OaaabaaaO...",
+              "...ObbbbbbbbbO..",
+              "....OakabakaO...",
+              ".....OaapaaO....",
+              ".....OOabaOO....",
+              "....ObOObOObO...",
+              "...ObOOOdO.ObO..",
+              "....OOcdO.O.O...",
+              "......OedOcO....",
+              ".....OcOOdO.y...",
+              "......OOdO.ygy..",
+              "........O...y..."
+            ],
+            "pal": {
+              "y": "#fff3b0",
+              "O": "#8d5632",
+              "g": "#f2c14e",
+              "b": "#a02a48",
+              "c": "#ffd86a",
+              "a": "#e8506a",
+              "k": "#250810",
+              "p": "#e87fa8",
+              "d": "#58c8e8",
+              "e": "#ffffff"
+            }
+          },
+          "line": "御風而上，看得更遠！"
+        }
+      },
+      "favFood": "人物",
+      "lines": {
+        "idle": ["線在你手上，別放喔。","我是紙做的，怕雨。","風大一點，我飛更高。","尾巴的緞帶在跳舞。"],
+        "pet": ["別拉線，會歪啦！","紙翅膀沙沙響。","摸摸頭，我飄起來了。"],
+        "feed": ["好吃，肚子鼓鼓的。","謝謝，我又輕了一點。","吃飽就能飛更遠。"],
+        "awake": ["御風而上，看得更遠！","線越長，我飛越高。","地標都在我腳下。"]
+      }
+    },
+    {
+      "id": "sp_sugartrain",
+      "no": 22,
+      "name": "糖鐵小汽笛",
+      "nick": "嗚嗚",
+      "era": "日治",
+      "eraId": "japan",
+      "genre": "cute",
+      "anchor": "與糖業鐵道和蒸汽小火車有關的玩具火車，待文史把關",
+      "attr": "行動",
+      "rarity": "普通",
+      "eggChapter": "x4",
+      "assist": {"name":"鳴笛","desc":"全隊收到集合提醒音","cd":10,"key":"rallyWhistle","value":1},
+      "talent": {"name":"長程","desc":"全隊到站判定範圍 +1 公尺","key":"teamArriveRange","value":1},
+      "scout": {"kind":["史料"],"era":"日治"},
+      "awaken": {
+        "name": "加煤",
+        "desc": "30 分鐘內隨行時活力不下降",
+        "key": "vigorHold",
+        "value": 1,
+        "minutes": 30,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":15,"desc":"羈絆 30 且圖鑑完成 15%"}
+      },
+      "hatchHours": 0.5,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_sugartrain,
+          "line": "蛋殼裡有輕輕的動靜。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "...oooooooooo...",
+              "..oddddwwwdddo..",
+              "..odddddooobbo..",
+              "..obbcbbaakkko..",
+              "..obbbbbeakkko..",
+              "...ookkokkokko..",
+              "....okkokkokko..",
+              ".....oo.oo.oo..."
+            ],
+            "pal": {
+              "o": "#5a1a38",
+              "d": "#6fcfae",
+              "w": "#ffffff",
+              "b": "#b8587c",
+              "c": "#fff0a8",
+              "a": "#f6a0c0",
+              "k": "#2d0d1c",
+              "e": "#f2c14e"
+            }
+          },
+          "line": "我是嗚嗚，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "..........oooo..",
+              "ooooooo..oddddo.",
+              "dddddddo..obbo..",
+              "obbbbbooooobbo..",
+              "obccbbaaaaaaaao.",
+              "obccbbaeeaakako.",
+              "obbbbbaaaaaapao.",
+              ".ookkookkkookko.",
+              "..okcookckookco.",
+              "..okko.oko.okko.",
+              "...oo...o...oo..",
+              "................",
+              "................"
+            ],
+            "pal": {
+              "o": "#5a1a38",
+              "d": "#6fcfae",
+              "b": "#b8587c",
+              "c": "#fff0a8",
+              "a": "#f6a0c0",
+              "e": "#f2c14e",
+              "k": "#2d0d1c",
+              "p": "#e87fa8"
+            }
+          },
+          "line": "嗚嗚，進站囉。"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "..........OOOO..",
+              "OOOOOOO..OddddO.",
+              "dddddddO..ObbO..",
+              "ObbbbbOOOOObbO..",
+              "ObccbbaaaaaaaaO.",
+              "ObccbbaeeaakakO.",
+              "ObbbbbaaaaaapaO.",
+              ".OOkkOOkkkOOkkO.",
+              ".gOkcOOkckOOkcO.",
+              ".gOkkO.OkO.OkkO.",
+              "...OO...O...OO..",
+              "................",
+              "................"
+            ],
+            "pal": {
+              "O": "#975d41",
+              "d": "#6fcfae",
+              "b": "#b8587c",
+              "c": "#fff0a8",
+              "a": "#f6a0c0",
+              "e": "#f2c14e",
+              "k": "#2d0d1c",
+              "p": "#e87fa8",
+              "g": "#f2c14e"
+            }
+          },
+          "line": "加滿煤，全速前進！"
+        }
+      },
+      "favFood": "史料",
+      "lines": {
+        "idle": ["嗚嗚，進站囉。","鐵軌的聲音，咔噠咔噠。","甘蔗甜甜，煙囪也甜甜。","我跑得慢，但不誤點。"],
+        "pet": ["嗚！按到汽笛啦。","摸摸煙囪，暖暖的。","再摸，我冒小煙圈。"],
+        "feed": ["加煤加糖，開車！","好甜，鍋爐也開心。","謝謝，今天跑更遠。"],
+        "awake": ["加滿煤，全速前進！","汽笛一響，大家集合。","這條線，我跑了好久。"]
+      }
+    },
+    {
+      "id": "sp_parrot",
+      "no": 23,
+      "name": "唱盤鸚鵡",
+      "nick": "唱唱",
+      "era": "戰後",
+      "eraId": "postwar",
+      "genre": "scifi",
+      "anchor": "與老式唱片機和街頭流行聲音有關的鸚鵡，待文史把關",
+      "attr": "溝通",
+      "rarity": "普通",
+      "eggChapter": "tx",
+      "assist": {"name":"複誦","desc":"把剛才 NPC 說的話重播一次","cd":0,"perChapter":2,"key":"npcReplay","value":1},
+      "talent": {"name":"好耳","desc":"附近有隱藏關卡時播放提示音","key":"sfxHint","value":1},
+      "scout": {"kind":["方位"],"era":"戰後"},
+      "awaken": {
+        "name": "換片",
+        "desc": "切換旁白音色（說書或廣播）",
+        "key": "narrationVoice",
+        "value": 1,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":15,"desc":"羈絆 30 且圖鑑完成 15%"}
+      },
+      "hatchHours": 0.5,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_parrot,
+          "line": "蛋殼裡有輕輕的動靜。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "...o.oooo.......",
+              "..oeowwwdo......",
+              "..oeeooadao.....",
+              "..oeeoaakkao....",
+              "..oeooaaaaco....",
+              "...ooaaaaaaoo...",
+              "....obbbeeoowo..",
+              "....obbbeeowwo..",
+              "....okbbkkkko...",
+              "...okkkkkkkkko..",
+              "..okkkkkkkkkko..",
+              "...oooooooooo..."
+            ],
+            "pal": {
+              "o": "#0f3a18",
+              "e": "#f2c14e",
+              "w": "#ffffff",
+              "d": "#d02a3a",
+              "a": "#4fc05a",
+              "k": "#081d0c",
+              "c": "#f08a24",
+              "b": "#207a30"
+            }
+          },
+          "line": "我是唱唱，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "........o.......",
+              ".oo....odo......",
+              "oeeoo.odddo.....",
+              "oeceeoaaaaao....",
+              "oeeeooaaakaoo...",
+              "oeeo.oaaaaacco..",
+              ".oo.oaaaaaaco...",
+              "...oabbaaaao..o.",
+              "...obbbeeeao.owo",
+              "...obbbeeeeoowo.",
+              "...obbbeeeeoowo.",
+              "...oobbeeeoowo..",
+              "..okdbaaakkkwko.",
+              ".okdbkkdddkkkkko",
+              ".odkbkkkkkkkkko.",
+              "..oooooooooooo.."
+            ],
+            "pal": {
+              "o": "#0f3a18",
+              "d": "#d02a3a",
+              "e": "#f2c14e",
+              "c": "#f08a24",
+              "a": "#4fc05a",
+              "k": "#081d0c",
+              "b": "#207a30",
+              "w": "#ffffff"
+            }
+          },
+          "line": "嘎，這首我會唱！"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "........O..y..y.",
+              ".OO....OdOygyygy",
+              "OeeOO.OdddOy.yy.",
+              "OeceeOaaaaaOygy.",
+              "OeeeOOaaakaOOy..",
+              "OeeO.OaaaaaccO..",
+              ".OO.OaaaaaacO...",
+              "...OabbaaaaO..O.",
+              "...ObbbeeeaO.OwO",
+              "...ObbbeeeeOOwO.",
+              "...ObbbeeeeOOwO.",
+              "...OObbeeeOOwO..",
+              "..OkdbaaakkkwkO.",
+              ".OkdbkkdddkkkkkO",
+              ".OdkbkkkkkkkkkO.",
+              "..OOOOOOOOOOOO.."
+            ],
+            "pal": {
+              "O": "#6a702e",
+              "y": "#fff3b0",
+              "d": "#d02a3a",
+              "g": "#f2c14e",
+              "e": "#f2c14e",
+              "c": "#f08a24",
+              "a": "#4fc05a",
+              "k": "#081d0c",
+              "b": "#207a30",
+              "w": "#ffffff"
+            }
+          },
+          "line": "換一張，新的旁白！"
+        }
+      },
+      "favFood": "方位",
+      "lines": {
+        "idle": ["嘎，這首我會唱！","唱針一放，我就跟著轉。","再說一次？我最會學舌。","沙沙的聲音也是歌。"],
+        "pet": ["嘎！羽毛別亂摸。","摸一下，我唱一句。","轉轉轉，頭暈了。"],
+        "feed": ["嘎，好吃，再來一首。","謝謝，嗓子更亮了。","吃飽才有力氣開唱。"],
+        "awake": ["換一張，新的旁白！","這一片，只唱給你聽。","聽，我學得一模一樣。"]
+      }
+    },
+    {
+      "id": "sp_ufo",
+      "no": 24,
+      "name": "點雲幽浮",
+      "nick": "點點",
+      "era": "當代文資",
+      "eraId": "heritage",
+      "genre": "scifi",
+      "anchor": "與三維掃描和點雲建模有關的小飛碟，待文史把關",
+      "attr": "觀察",
+      "rarity": "稀有",
+      "eggChapter": "c0,y0",
+      "assist": {"name":"掃描","desc":"標出 80 公尺內適合拍照的地點","cd":5,"key":"scanPhotoSpots","value":80},
+      "talent": {"name":"精準","desc":"顯示與目標的精確距離","key":"distanceExact","value":1},
+      "scout": {"kind":["史料"],"era":"當代文資"},
+      "awaken": {
+        "name": "點雲成像",
+        "desc": "把本章走過的路線畫成立體點雲圖",
+        "key": "routePointCloud",
+        "value": 1,
+        "cond": {"key":"bondAndDex","bond":30,"dexPct":30,"desc":"羈絆 30 且圖鑑完成 30%"}
+      },
+      "hatchHours": 1,
+      "stages": {
+        "egg": {
+          "sprite": EGGS.sp_ufo,
+          "line": "蛋殼閃著淡淡的光。"
+        },
+        "baby": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              "................",
+              ".......ooo......",
+              "......owwwo.....",
+              "....ooddadooo...",
+              "...oaaaaaaaaao..",
+              "..oaaabbbbbaao..",
+              "..odobbbbbbodo..",
+              "...o.oooooo.o..."
+            ],
+            "pal": {"o":"#1a2040","w":"#ffffff","d":"#a0f0ff","a":"#9aa8c0","b":"#5a6888"}
+          },
+          "line": "我是點點，請多指教。"
+        },
+        "adult": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              ".......ooo......",
+              "......odddo.....",
+              ".....oddeddo....",
+              "..ooooaaaaaoooo.",
+              ".oaeaaaaaaaaaeao",
+              ".oaaaaebbbeaaaao",
+              "odoobbbbbbbbbodo",
+              ".oeoowwwwwwwooeo",
+              "..o..ooooooo..o.",
+              "................",
+              "................",
+              "................",
+              "................"
+            ],
+            "pal": {"o":"#1a2040","d":"#a0f0ff","e":"#ff6fb5","a":"#9aa8c0","b":"#5a6888","w":"#ffffff"}
+          },
+          "line": "掃描中，請勿移動。"
+        },
+        "awake": {
+          "sprite": {
+            "w": 16,
+            "h": 16,
+            "rows": [
+              "................",
+              "................",
+              "................",
+              ".y..y..OOO....y.",
+              "ygyygyOdddO..ygy",
+              ".y..yOddeddO..y.",
+              "..OOOOaaaaaOOOO.",
+              ".OaeaaaaaaaaaeaO",
+              ".OaaaaebbbeaaaaO",
+              "OdOObbbbbbbbbOdO",
+              ".OeOOwwwwwwwOOeO",
+              "..O..OOOOOOO..O.",
+              "................",
+              "................",
+              "................",
+              "................"
+            ],
+            "pal": {
+              "y": "#fff3b0",
+              "O": "#706046",
+              "g": "#f2c14e",
+              "d": "#a0f0ff",
+              "e": "#ff6fb5",
+              "a": "#9aa8c0",
+              "b": "#5a6888",
+              "w": "#ffffff"
+            }
+          },
+          "line": "點雲成像，立體重現。"
+        }
+      },
+      "favFood": "史料",
+      "lines": {
+        "idle": ["掃描中，請勿移動。","一顆一顆點，拼成一座樓。","光束掃過，細節都在。","嗡——資料存好了。"],
+        "pet": ["嗡，感應到溫度。","別擋光束，會糊掉。","再摸一下，旋轉一圈。"],
+        "feed": ["能量補充，點數增加。","好吃，解析度上升。","謝謝，點雲更密了。"],
+        "awake": ["點雲成像，立體重現。","全域掃描，沒有死角。","看，這是你走過的路。"]
       }
     }
   ];
@@ -2670,6 +4297,8 @@
     ],
     "slots": {"follow":1,"scout":2},
     "maxOwned": 3,
+    "count": 24,
+    "forms": 72,
     "vigor": {"min":20,"max":100,"dailyDrop":10,"eMin":0.5,"eSlope":0.7,"lowWarn":40},
     "daily": {"feed":3,"play":3,"pet":5,"tidy":1,"chat":20},
     "roomGain": {"feed":15,"play":10,"pet":3,"tidy":5},

@@ -218,8 +218,8 @@ function ownedOf(id) { return WalkStore.owned().filter(function (o) { return o.i
   check('舊成體計數全為 0：平手由性格偏好決定（好奇＝學者型）', WalkStore.formOf('sp_deer') === 'lore');
   var e = evolveWith('lazy', { care: 11, adv: 3, lore: 1 });
   check('陪伴傾向高 → 陪伴型（care 12/12 最高）', e.form === 'care');
-  check('進化後圖鑑形態收集 +1', WalkStore.dex().forms.have === 1 && WalkStore.dex().forms.total === 48, JSON.stringify(WalkStore.dex().forms));
-  check('dex().spiritBook 含形態：總數 16＋48', WalkStore.dex().spiritBook.total === 64, JSON.stringify(WalkStore.dex().spiritBook));
+  check('進化後圖鑑形態收集 +1', WalkStore.dex().forms.have === 1 && WalkStore.dex().forms.total === 72, JSON.stringify(WalkStore.dex().forms));
+  check('dex().spiritBook 含形態：總數 24＋72', WalkStore.dex().spiritBook.total === 96, JSON.stringify(WalkStore.dex().spiritBook));
   /* 冒險計數：進化當下的觸發動作也算進去 */
   mk('e2', [rec('sp_deer', 'baby', 9, 'lazy', { care: 0, adv: 9, lore: 0 }, { slot: 'follow' })]);
   var r2 = WalkStore.event('chapter', 'z1');

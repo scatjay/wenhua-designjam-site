@@ -140,7 +140,7 @@ function reset(uid, extra) {
 /* 讓 tide 成體：隨行位上完成 10 章 */
 function makeAdultTide() {
   WalkStore.setSlot('tide', 'follow');
-  for (var i = 0; i < 10; i++) WalkStore.event('chapter', 'x' + i);
+  for (var i = 0; i < 10; i++) WalkStore.event('chapter', 'qx' + i);
   WalkStore.setSlot('tide', 'scout');
 }
 
@@ -692,7 +692,7 @@ function scripted() {
   var eb = WalkStore.buy('egg_common');
   var eggId = eb.egg;
   check('普通蛋：完成章節後可買，得到一顆普通小精靈的蛋', eb.ok && eggId && window.WALK_SPIRITS.filter(function (s) { return s.id === eggId; })[0].rarity === '普通' && WalkStore.eggs().length === 1, JSON.stringify(eb));
-  check('蛋圖依稀有度取 WALK_SPIRIT_EGGS', WalkStore.eggSprite('sp_tide') === window.WALK_SPIRIT_EGGS.legend && WalkStore.eggSprite('sp_deer') === window.WALK_SPIRIT_EGGS.common && WalkStore.eggSprite('sp_sail') === window.WALK_SPIRIT_EGGS.rare);
+  check('蛋圖依小精靈 id 取 WALK_SPIRIT_EGGS（每種各有自己的蛋）', WalkStore.eggSprite('sp_tide') === window.WALK_SPIRIT_EGGS.sp_tide && WalkStore.eggSprite('sp_deer') === window.WALK_SPIRIT_EGGS.sp_deer && WalkStore.eggSprite('sp_ufo') === window.WALK_SPIRIT_EGGS.sp_ufo && WalkStore.eggSprite('sp_tide') !== WalkStore.eggSprite('sp_deer'));
   WalkStore.buy('egg_speedup');
   var rem0 = WalkStore.eggs()[0].remainMs, sp1 = WalkStore.speedEgg(eggId);
   check('孵蛋加速：剩餘格數減半（至少 1 格）、消耗一份加速', sp1.ok && sp1.remainTicks === Math.max(1, Math.floor(rem0 / K.TICK / 2)) && !WalkStore.state().shop.owned.egg_speedup, rem0 + ' → ' + sp1.remainMs);
@@ -882,7 +882,7 @@ function scripted() {
   /* 準備：甲有 鹿影(成體、有形態) + 紅磚貓；乙有 書卷蠹魚 + 算盤獸 */
   as('ta'); WalkStore.chooseStarter('sp_deer'); gain('sp_brick');
   WalkStore.setFollow('sp_deer');
-  for (var i = 0; i < 11; i++) WalkStore.event('chapter', 'c' + i);
+  for (var i = 0; i < 11; i++) WalkStore.event('chapter', 'qc' + i);
   WalkStore.setSlot('sp_deer', 'scout');
   var deerA = WalkStore.owned().filter(function (o) { return o.id === 'sp_deer'; })[0];
   WalkStore.publish();

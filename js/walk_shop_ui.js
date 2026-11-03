@@ -135,7 +135,13 @@
     for (k in it) if (Object.prototype.hasOwnProperty.call(it, k)) o[k] = it[k];
     return o;
   }
-  function eggSprite(id) { var e = root.WALK_SPIRIT_EGGS; return id === 'egg_common' && isObj(e) ? e.common : null; }
+  function eggSprite(id, it) {
+    var e = root.WALK_SPIRIT_EGGS, pool;
+    if (id !== 'egg_common' || !isObj(e)) return null;
+    if (e.common) return e.common;                          /* 舊資料：共用普通蛋 */
+    pool = it && Array.isArray(it.pool) ? it.pool : [];
+    return pool.length && e[pool[0]] ? e[pool[0]] : null;   /* 每種各有自己的蛋：商店示意圖取池中第一種 */
+  }
   function dayKeyBoard(uid) { return 'walkshopui_board_' + (uid || 'anon'); }
 
   /* 老闆任務板的本機備援（WalkStore.board／opts.board 都沒有時用）：每天從任務池挑 perDay 個，進度存 localStorage。 */
@@ -205,7 +211,7 @@
 
     /* ---- 圖 */
     function picOf(it) {
-      var pic = el('div', { cls: 'ws-pic' }), cv, sp = it.sprite || eggSprite(it.id), sw;
+      var pic = el('div', { cls: 'ws-pic' }), cv, sp = it.sprite || eggSprite(it.id, it), sw;
       cv = sp ? pixCanvas(sp, 3, it.name) : null;
       if (cv) { add(pic, cv); return pic; }
       if (it.theme && isArr(it.colors)) {

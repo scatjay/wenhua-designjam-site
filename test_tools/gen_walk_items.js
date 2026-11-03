@@ -94,6 +94,7 @@ var META = {
   ],
   slots: { follow: 1, scout: 2 },
   maxOwned: 3,
+  count: 24, forms: 72,
   vigor: { min: 20, max: 100, dailyDrop: 10, eMin: 0.5, eSlope: 0.7, lowWarn: 40 },
   daily: { feed: 3, play: 3, pet: 5, tidy: 1, chat: 20 },
   roomGain: { feed: 15, play: 10, pet: 3, tidy: 5 },

@@ -1424,6 +1424,20 @@
         "price": 100,
         "rarity": "普通",
         "needChapterDone": true,
+        "pool": [
+          "sp_deer",
+          "sp_gull",
+          "sp_abacus",
+          "sp_brick",
+          "sp_watch",
+          "sp_neon",
+          "sp_bee",
+          "sp_snailcrab",
+          "sp_seahorse",
+          "sp_kitedragon",
+          "sp_sugartrain",
+          "sp_parrot"
+        ],
         "desc": "只賣已完成章節的普通蛋；稀有與傳說不能購買。"
       }
     ],

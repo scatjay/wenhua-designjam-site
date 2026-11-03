@@ -31,6 +31,12 @@ function sheet(list, cols, file) {
   writePng(file, w, h, buf);
 }
 var out = process.argv[2] || 'sheet.png', mode = process.argv[3] || 'all';
+if (mode === 'stages' && window.WALK_SPIRITS) {
+  /* 四張聯絡表：蛋、幼體、成體、覺醒；每列 6 隻，依編號排列 */
+  ['egg', 'baby', 'adult', 'awake'].forEach(function (st) {
+    sheet(window.WALK_SPIRITS.map(function (s) { return s.stages[st].sprite; }), 6, path.join(out, 'sheet_spirit_' + st + '.png'));
+  });
+}
 if ((mode === 'spirit' || mode === 'all') && window.WALK_SPIRITS) {
   var list = [];
   window.WALK_SPIRITS.forEach(function (s) { list.push(s.stages.egg.sprite, s.stages.baby.sprite, s.stages.adult.sprite, s.stages.awake.sprite); });

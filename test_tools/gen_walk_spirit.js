@@ -1,211 +1,7 @@
-/* 走讀小精靈：16 隻的像素圖畫法與文字資料。由 gen_walk_data.js 呼叫，輸出 js/walk_data_spirit.js。 */
+/* 走讀小精靈：24 隻的文字資料（畫法在 gen_walk_art.js）。由 gen_walk_data.js 呼叫，輸出 js/walk_data_spirit.js。 */
 'use strict';
-var L = require('./gen_walk_lib.js'), Cv = L.Cv;
-var BASE = { o: '#1b1b2f', O: '#8a5a10', k: '#1b1b2f', w: '#ffffff', p: '#e87fa8', g: '#f2c14e', y: '#fff3b0' };
-
-/* ---------- 16 隻成體畫法（填色層，尚未加外框）---------- */
-var DRAW = {};
-DRAW.tide = function (c) {
-  c.line(10, 5, 10, 3, 'e'); c.px(8, 2, 'c'); c.px(10, 1, 'c'); c.px(12, 2, 'c'); c.px(9, 3, 'c'); c.px(11, 3, 'c'); c.px(10, 2, 'e');
-  c.poly([[0, 3], [3, 6], [4, 8], [3, 10], [0, 7]], 'b'); c.ell(3.5, 8.5, 2.6, 2, 'a');
-  c.ell(8.5, 9.5, 6, 4, 'a'); c.ell(9, 11.5, 4.6, 1.8, 'd');
-  c.line(6, 11, 12, 11, 'c'); c.poly([[7, 12], [10, 12], [7.5, 14]], 'b');
-  c.px(12, 8, 'k'); c.px(12, 10, 'p'); c.line(13, 10, 11, 10, 'b');
-};
-DRAW.deer = function (c) {
-  c.line(12, 3, 12, 1, 'c'); c.line(12, 2, 10, 1, 'c'); c.line(13, 3, 14, 1, 'c'); c.px(11, 3, 'c');
-  c.rect(3, 12, 1, 2, 'b'); c.rect(5, 12, 1, 2, 'b'); c.rect(9, 12, 1, 2, 'b'); c.rect(11, 12, 1, 2, 'b');
-  c.px(3, 14, 'k'); c.px(5, 14, 'k'); c.px(9, 14, 'k'); c.px(11, 14, 'k');
-  c.ell(7, 10, 5, 3, 'a'); c.ell(7, 11.6, 3.6, 1.2, 'd');
-  c.poly([[9, 8], [11, 4], [13, 5], [12, 10]], 'a'); c.ell(12.5, 5.5, 2.2, 1.8, 'a');
-  c.poly([[10, 4], [10, 2], [12, 3.5]], 'b');
-  c.px(14, 6, 'd'); c.px(14, 5, 'k'); c.px(12, 5, 'k');
-  [[5, 9], [7, 8], [9, 10], [4, 11], [6, 10]].forEach(function (p) { c.pxo(p[0], p[1], 'd'); });
-  c.px(2, 8, 'd'); c.px(2, 9, 'd');
-};
-DRAW.gull = function (c) {
-  c.line(12, 4, 12, 2, 'd'); c.px(12, 1, 'e');
-  c.poly([[0, 8], [3, 8], [4, 11], [0, 11]], 'b'); c.ell(7.5, 9.5, 5, 3, 'a'); c.ell(12, 6.5, 2.3, 2.2, 'a');
-  c.poly([[4, 10], [8, 3], [11, 5], [9, 10]], 'b'); c.line(10, 5, 8, 8, 'd');
-  c.px(14, 6, 'c'); c.px(14, 7, 'c'); c.px(13, 7, 'c'); c.px(12, 5, 'e');
-  c.ell(6.8, 10, 1.7, 1.7, 'd'); c.px(7, 10, 'a');
-  c.line(6, 12, 6, 14, 'c'); c.line(9, 12, 9, 14, 'c'); c.px(5, 14, 'c'); c.px(10, 14, 'c');
-};
-DRAW.sail = function (c) {
-  c.rect(7, 1, 1, 11, 'b'); c.poly([[6.5, 2], [6.5, 11.5], [1, 11.5]], 'a'); c.poly([[8.5, 3], [8.5, 11.5], [13.5, 11.5]], 'c');
-  c.poly([[8, 1], [11.5, 2], [8, 3.5]], 'e');
-  c.poly([[1, 12], [14, 12], [12, 14], [3, 14]], 'b');
-  c.px(3, 9, 'k'); c.px(5, 9, 'k'); c.px(4, 10, 'p');
-  c.px(2, 14, 'd'); c.px(7, 14, 'd'); c.px(12, 14, 'd');
-};
-DRAW.bookworm = function (c) {
-  c.rect(1, 10, 14, 5, 'd'); c.rect(2, 10, 6, 4, 'c'); c.rect(8, 10, 6, 4, 'c'); c.line(8, 10, 8, 13, 'd');
-  c.px(3, 11, 'b'); c.px(4, 11, 'b'); c.px(3, 12, 'b'); c.px(10, 11, 'b'); c.px(11, 11, 'b'); c.px(11, 12, 'b');
-  c.px(12, 13, 'e'); c.px(12, 14, 'e');
-  c.line(3, 5, 1, 2, 'b'); c.line(5, 5, 7, 2, 'b');
-  c.ell(4, 7.5, 2.4, 2.2, 'a'); c.ell(7.5, 8.5, 2, 1.8, 'a'); c.ell(10.5, 8.8, 1.8, 1.6, 'a'); c.ell(12.8, 9.2, 1.2, 1, 'a');
-  c.px(7, 7, 'b'); c.px(7, 9, 'b'); c.px(10, 8, 'b'); c.px(10, 10, 'b');
-  c.px(3, 7, 'k'); c.px(5, 7, 'k'); c.px(4, 9, 'p'); c.px(14, 8, 'b'); c.px(14, 10, 'b');
-};
-DRAW.abacus = function (c) {
-  c.poly([[2, 4], [3, 1], [6, 4]], 'b'); c.poly([[10, 4], [13, 1], [14, 4]], 'b');
-  c.rect(1, 4, 14, 9, 'b'); c.rect(2, 5, 12, 7, 'e'); c.line(2, 8, 13, 8, 'd');
-  c.ell(5, 6, 1.7, 1.4, 'c'); c.ell(10, 6, 1.7, 1.4, 'c'); c.px(5, 6, 'k'); c.px(10, 6, 'k'); c.rect(7, 6, 2, 1, 'k');
-  [3.5, 6, 8.5, 11, 13].forEach(function (x, i) { c.ell(x, 10.5, 1, 1.1, i % 2 ? 'a' : 'c'); });
-  c.rect(3, 13, 3, 2, 'b'); c.rect(10, 13, 3, 2, 'b');
-};
-DRAW.lion = function (c) {
-  c.rect(5, 1, 2, 2, 'b'); c.rect(9, 1, 2, 2, 'b'); c.rect(7, 2, 2, 1, 'b');
-  c.rect(2, 13, 12, 2, 'e');
-  c.ell(8, 8, 6.5, 5, 'b'); c.ell(3.5, 4, 1.6, 1.6, 'b'); c.ell(12.5, 4, 1.6, 1.6, 'b');
-  c.ell(8, 9, 4.3, 3.6, 'a');
-  c.line(5, 7, 6, 7, 'k'); c.line(10, 7, 11, 7, 'k'); c.rect(5, 8, 2, 1, 'd'); c.rect(10, 8, 2, 1, 'd');
-  c.rect(7, 10, 2, 1, 'k'); c.line(6, 12, 10, 12, 'k'); c.px(7, 11, 'w'); c.px(9, 11, 'w');
-  c.rect(4, 13, 3, 1, 'c'); c.rect(9, 13, 3, 1, 'c');
-};
-DRAW.brick = function (c) {
-  c.ell(13, 11, 1.3, 2.4, 'a'); c.px(14, 8, 'a');
-  c.poly([[4.5, 3.5], [5, 0.5], [7.5, 2.5]], 'a'); c.poly([[8.5, 2.5], [11, 0.5], [11.5, 3.5]], 'a');
-  c.ell(8, 10.5, 4.6, 3.8, 'a'); c.ell(8, 5.5, 4.2, 3.2, 'a');
-  c.px(5, 2, 'c'); c.px(10, 2, 'c');
-  c.rect(5, 5, 2, 2, 'e'); c.rect(9, 5, 2, 2, 'e'); c.px(6, 5, 'k'); c.px(6, 6, 'k'); c.px(9, 5, 'k'); c.px(9, 6, 'k'); c.px(8, 7, 'p');
-  c.px(3, 7, 'd'); c.px(12, 7, 'd');
-  c.line(5, 10, 11, 10, 'b'); c.line(5, 12, 11, 12, 'b');
-  [6, 10].forEach(function (x) { c.pxo(x, 9, 'b'); c.pxo(x, 13, 'b'); }); c.pxo(8, 11, 'b');
-  c.rect(5, 13, 2, 2, 'a'); c.rect(9, 13, 2, 2, 'a');
-};
-DRAW.watch = function (c) {
-  c.line(5, 3, 3, 1, 'd'); c.line(10, 3, 12, 1, 'd'); c.px(3, 1, 'e'); c.px(12, 1, 'e');
-  c.rect(7, 1, 2, 2, 'b');
-  c.ell(7.5, 8, 5.3, 5.3, 'a'); c.ell(7.5, 8, 4.2, 4.2, 'c');
-  c.px(7, 4, 'k'); c.px(7, 12, 'k'); c.px(4, 8, 'k'); c.px(11, 8, 'k');
-  c.line(7, 8, 7, 5, 'k'); c.line(7, 8, 10, 9, 'k'); c.px(7, 8, 'e'); c.px(6, 10, 'e'); c.px(8, 11, 'p');
-  c.px(4, 13, 'd'); c.px(3, 14, 'd'); c.px(6, 14, 'd'); c.px(9, 14, 'd'); c.px(11, 13, 'd'); c.px(12, 14, 'd');
-};
-DRAW.telegraph = function (c) {
-  c.rect(0, 11, 16, 1, 'b');
-  c.poly([[0, 8], [3, 7], [4, 10], [0, 11]], 'b'); c.ell(7, 8, 4, 3.2, 'a'); c.ell(8, 9.4, 2.4, 1.2, 'd'); c.ell(6, 8, 2.4, 1.6, 'b');
-  c.ell(11, 5.5, 2.5, 2.4, 'a'); c.px(10, 2, 'e'); c.px(10, 3, 'e'); c.px(11, 3, 'e');
-  c.px(13, 5, 'c'); c.px(14, 6, 'c'); c.px(13, 6, 'c'); c.px(11, 5, 'k');
-  c.px(6, 12, 'c'); c.px(9, 12, 'c');
-  c.rect(1, 13, 14, 2, 'd'); [3, 6, 7, 10, 13].forEach(function (x, i) { c.px(x, i % 2 ? 14 : 13, 'k'); });
-};
-DRAW.radio = function (c) {
-  c.line(5, 4, 3, 1, 'c'); c.line(10, 4, 12, 1, 'c'); c.px(3, 1, 'e'); c.px(12, 1, 'e');
-  c.px(1, 7, 'd'); c.px(0, 8, 'd'); c.px(1, 9, 'd'); c.px(14, 7, 'd'); c.px(15, 8, 'd'); c.px(14, 9, 'd');
-  c.rect(2, 4, 12, 9, 'a'); c.rect(3, 5, 10, 7, 'b');
-  c.rect(6, 5, 4, 1, 'e');
-  c.ell(5.5, 7.5, 1.8, 1.7, 'w'); c.ell(10.5, 7.5, 1.8, 1.7, 'w'); c.px(5, 8, 'k'); c.px(10, 8, 'k');
-  c.rect(4, 10, 8, 2, 'a'); [5, 7, 9, 11].forEach(function (x) { c.px(x, 10, 'c'); c.px(x, 11, 'c'); });
-  c.rect(3, 13, 2, 2, 'b'); c.rect(11, 13, 2, 2, 'b');
-};
-DRAW.neon = function (c) {
-  c.line(7, 4, 5, 1, 'e'); c.line(9, 4, 11, 1, 'e');
-  c.poly([[7, 6], [1, 1.5], [0.5, 7], [3, 10], [7, 10]], 'a'); c.poly([[8, 6], [14, 1.5], [14.5, 7], [12, 10], [8, 10]], 'a');
-  c.poly([[7, 10], [3, 14], [6, 14], [7, 12]], 'b'); c.poly([[8, 10], [12, 14], [9, 14], [8, 12]], 'b');
-  c.ell(3.5, 5.5, 1.7, 1.7, 'c'); c.ell(11.5, 5.5, 1.7, 1.7, 'c'); c.px(3, 5, 'e'); c.px(12, 5, 'e');
-  c.rect(7, 6, 2, 6, 'd'); c.px(7, 8, 'b'); c.px(8, 10, 'b'); c.ell(7.5, 4.5, 1.8, 1.6, 'd'); c.px(7, 4, 'k'); c.px(8, 4, 'k');
-  c.px(0, 11, 'e'); c.px(15, 11, 'e'); c.px(1, 13, 'c'); c.px(14, 13, 'c');
-};
-DRAW.ink = function (c) {
-  c.px(13, 2, 'c'); c.px(14, 4, 'c'); c.px(2, 3, 'c');
-  c.poly([[6.5, 4], [8, 1], [9.5, 4]], 'b');
-  c.ell(8, 8, 5, 4.5, 'a'); c.poly([[4, 10], [8, 14], [12, 10]], 'a');
-  c.ell(5.5, 6, 1, 1.6, 'c');
-  c.ell(6, 8, 1.4, 1.7, 'w'); c.ell(10, 8, 1.4, 1.7, 'w'); c.px(6, 8, 'k'); c.px(6, 9, 'k'); c.px(10, 8, 'k'); c.px(10, 9, 'k');
-  c.rect(11, 11, 2, 2, 'e'); c.px(8, 11, 'c');
-};
-DRAW.bee = function (c) {
-  c.ell(3.5, 7, 2.2, 3.2, 'c'); c.ell(12.5, 7, 2.2, 3.2, 'c');
-  c.ell(8, 10.5, 4.2, 3.8, 'a'); c.ell(8, 6.5, 3.2, 2.8, 'a');
-  c.rect(5, 10, 6, 1, 'b'); c.rect(5, 12, 6, 1, 'b');
-  c.ell(8, 4, 3.6, 1.9, 'e'); c.rect(4, 5, 8, 1, 'e'); c.px(8, 2, 'w');
-  c.px(6, 7, 'k'); c.px(10, 7, 'k'); c.px(8, 8, 'p'); c.px(8, 14, 'b');
-  c.line(14, 13, 14, 10, 'd'); c.poly([[13, 9], [15, 9], [14, 11]], 'd');
-};
-DRAW.rubbing = function (c) {
-  c.poly([[0, 5], [4, 8], [0, 11]], 'b'); c.poly([[6, 4.5], [9, 1.5], [11, 4.5]], 'b'); c.poly([[7, 11.5], [8, 14], [11, 11.5]], 'b');
-  c.ell(8, 8, 5.8, 3.8, 'a');
-  for (var y = 6; y <= 10; y++) for (var x = 5; x <= 12; x++) if ((x + y) % 4 === 0) c.pxo(x, y, 'c');
-  c.line(3, 9, 12, 9, 'd'); c.pxo(2, 9, 'd');
-  c.rect(11, 6, 2, 2, 'w'); c.px(12, 7, 'k'); c.line(10, 8, 10, 10, 'b');
-};
-DRAW.marrow = function (c) {
-  c.ell(8, 6, 6.2, 4.8, 'a'); c.clearBelow(8);
-  for (var x = 2; x <= 14; x += 2) c.px(x, 9, 'a');
-  c.ell(8, 6, 3, 2.4, 'c'); c.ell(8, 6, 1.3, 1.2, 'y');
-  c.px(4, 3, 'c'); c.px(5, 2, 'c'); c.px(11, 3, 'w');
-  [4, 6, 8, 10, 12].forEach(function (x, i) { for (var y = 10; y <= 14; y++) c.px(x + ((y + i) % 2 ? 0 : 1), y, (y % 2) ? 'b' : 'd'); });
-  c.px(5, 7, 'k'); c.px(11, 7, 'k'); c.px(8, 8, 'p');
-};
-
-/* 外框之後才畫的覆蓋層（取景框） */
-var POST = {
-  rubbing: function (c) { [[0, 0, 1, 1], [15, 0, -1, 1], [0, 15, 1, -1], [15, 15, -1, -1]].forEach(function (b) { for (var i = 0; i < 3; i++) { c.free(b[0] + b[2] * i, b[1], 'e'); c.free(b[0], b[1] + b[3] * i, 'e'); } }); }
-};
-
-/* ---------- 調色盤（a 主色、b 暗部、c/d/e 配色，各隻不同）---------- */
-var PAL = {
-  tide: { a: '#4b6fd6', b: '#2f4a9c', c: '#9ad7ff', d: '#dff3ff', e: '#6fe0e8' },
-  deer: { a: '#b9763a', b: '#7a4a22', c: '#e8c98a', d: '#f4e3c0' },
-  gull: { a: '#eaf0f7', b: '#9fb0c4', c: '#f0a030', d: '#6b7a8f', e: '#e04a3a' },
-  sail: { a: '#f4ecd8', b: '#7a4a22', c: '#7fd0cf', d: '#4b6fd6', e: '#d95b43' },
-  bookworm: { a: '#c9d3df', b: '#8d9bb0', c: '#f6efd8', d: '#7a4a22', e: '#d95b43' },
-  abacus: { a: '#d95b43', b: '#6b3f1e', c: '#f2c14e', d: '#c98f63', e: '#fff3d6' },
-  lion: { a: '#b9b4aa', b: '#7d7a70', c: '#d6d2c8', d: '#5aa8a0', e: '#8d6a3a' },
-  brick: { a: '#c4553b', b: '#8f3a28', c: '#f0b090', d: '#e8d0b0', e: '#f2c14e' },
-  watch: { a: '#f2c14e', b: '#b8892a', c: '#fff6dc', d: '#7a8fa0', e: '#d95b43' },
-  telegraph: { a: '#5aa0e0', b: '#2f6aa8', c: '#f2c14e', d: '#e8f0f8', e: '#d95b43' },
-  radio: { a: '#8b5a2b', b: '#5a3a1e', c: '#c9ccd2', d: '#8fd3f4', e: '#f2c14e' },
-  neon: { a: '#e048c8', b: '#7a2a9c', c: '#58e8f0', d: '#ffe6fa', e: '#fff27a' },
-  ink: { a: '#33406e', b: '#1e2748', c: '#8fa0e8', d: '#d9d2c0', e: '#d95b43' },
-  bee: { a: '#f2c14e', b: '#3b2f2f', c: '#cfeaf5', d: '#9aa3ad', e: '#f08a24' },
-  rubbing: { a: '#46c7b0', b: '#2a8d7e', c: '#9ef0dc', d: '#ff6fb5', e: '#f2c14e' },
-  marrow: { a: '#b9a0f0', b: '#7a5af8', c: '#e8dcff', d: '#8fe0ff' }
-};
-
-function pack(c, pal) {
-  var p = {}, used = c.chars();
-  used.forEach(function (ch) { p[ch] = pal[ch] || BASE[ch]; if (!p[ch]) throw new Error('未定義調色盤字元 ' + ch); });
-  return { w: 16, h: 16, rows: c.rows(), pal: p };
-}
-
-/* ---------- 三種蛋 ---------- */
-function egg(kind) {
-  var c = new Cv(), pal;
-  c.ell(8, 6.5, 3.8, 4, 'a'); c.ell(8, 10, 5, 4.4, 'a');
-  c.ell(5.6, 7, 0.9, 1.6, 'w', true);
-  if (kind === 'common') {
-    [[6, 9], [7, 9], [6, 10], [10, 7], [10, 8], [9, 12], [10, 12], [10, 13], [7, 13]].forEach(function (p) { c.pxo(p[0], p[1], 'b'); });
-    pal = { a: '#f3e6c8', b: '#b58a52' };
-  } else if (kind === 'rare') {
-    [[8, 6], [7, 7], [9, 7], [8, 8], [6, 11], [5, 12], [7, 12], [6, 13], [11, 11], [10, 12], [12, 12], [11, 13]].forEach(function (p) { c.pxo(p[0], p[1], 'b'); });
-    c.pxo(8, 7, 'w'); c.pxo(6, 12, 'w'); c.pxo(11, 12, 'w');
-    pal = { a: '#7fb5f0', b: '#3f78c4' };
-  } else {
-    [[8, 7], [8, 8], [6, 9], [7, 9], [8, 9], [9, 9], [10, 9], [7, 10], [8, 10], [9, 10], [7, 11], [9, 11]].forEach(function (p) { c.pxo(p[0], p[1], 'y'); });
-    pal = { a: '#f2c14e', b: '#c98a1e' };
-  }
-  c.outline('o');
-  if (kind === 'legend') { c.plusFree(2, 3, 'g', 'y'); c.plusFree(13, 4, 'g', 'y'); c.plusFree(13, 13, 'g', 'y'); }
-  if (kind === 'rare') { c.free(2, 4, 'w'); c.free(13, 3, 'w'); c.free(14, 12, 'w'); }
-  return pack(c, pal);
-}
-
-function stagesOf(key) {
-  var pal = PAL[key], fn = DRAW[key], post = POST[key];
-  var full = {}; Object.keys(BASE).forEach(function (k) { full[k] = BASE[k]; }); Object.keys(pal).forEach(function (k) { full[k] = pal[k]; });
-  var fill = new Cv(); fn(fill);
-  var adult = fill.clone().outline('o'); if (post) post(adult);
-  var baby = L.shrink(fill, 0.72, 14).outline('o'); if (post) post(baby);
-  var awake = fill.clone().outline('o'); if (post) post(awake);
-  /* 覺醒：外框換成金棕色，再補金色閃光（空位不夠的就補單點） */
-  awake.g = awake.g.map(function (r) { return r.map(function (ch) { return ch === 'o' ? 'O' : ch; }); });
-  var n = 0;
-  [[2, 2], [13, 3], [2, 13], [13, 13], [3, 1], [12, 1]].forEach(function (p) { if (n < 3 && awake.plusFree(p[0], p[1], 'g', 'y')) n++; });
-  [[0, 0], [15, 0], [0, 15], [15, 15], [1, 0], [14, 0]].forEach(function (p) { if (n < 3) { awake.free(p[0], p[1], 'g'); n++; } });
-  return { baby: pack(baby, full), adult: pack(adult, full), awake: pack(awake, full) };
-}
+var A = require('./gen_walk_art.js');
+var BASE = A.BASE;
 
 /* ---------- 文字資料（照 ROOM_SPIRIT_DESIGN 第 3 節與 SPIRIT_SKILLS 第 1 節逐字）---------- */
 var SP = [
@@ -304,10 +100,60 @@ var SP = [
     talent: { name: '全屬性', desc: '全屬性 +1', key: 'allAttr', value: 1 },
     scout: { kind: ['史料', '路況', '人物', '觀察', '彩蛋', '方位'], era: '全部時期' },
     awaken: { name: '髓動', desc: '覺醒後所有助理技冷卻 −30%', effect: { key: 'allCooldownCut', value: 0.3 } },
-    lines: { idle: ['我在時間裡漂著。', '很輕…很遠…', '你聽，髓在發光。', '所有時代，都在我身上。'], pet: ['好輕的觸碰，像水波。', '再摸一下，時間就慢了。', '光在你手心打轉。'], feed: ['溫暖，像回到起點。', '謝謝，髓更亮了。', '我記下這一刻。'], awake: ['髓動，時間為你加速。', '所有技能，都醒著。', '我們一起穿過時代。'] } }
+    lines: { idle: ['我在時間裡漂著。', '很輕…很遠…', '你聽，髓在發光。', '所有時代，都在我身上。'], pet: ['好輕的觸碰，像水波。', '再摸一下，時間就慢了。', '光在你手心打轉。'], feed: ['溫暖，像回到起點。', '謝謝，髓更亮了。', '我記下這一刻。'], awake: ['髓動，時間為你加速。', '所有技能，都醒著。', '我們一起穿過時代。'] } },
+  { key: 'snailcrab', id: 'sp_snailcrab', no: 17, name: '螺殼蟹', nick: '殼殼', era: '西拉雅與大員前史', eraId: 'pre', anchor: '與海岸潮間帶的貝類和寄居生物有關的小蟹，待文史把關', attr: '守護', rarity: '普通',
+    assist: { name: '背殼清單', desc: '列出已取得的碎片與剩餘提示數', cd: 0, perChapter: 3, effect: { key: 'listFragments', value: 1 } },
+    talent: { name: '窩心', desc: '小精靈羈絆增加 +10%', key: 'bondGain', value: 0.1 },
+    scout: { kind: ['彩蛋'], era: '西拉雅與大員前史' },
+    awaken: { name: '殼中屋', desc: '每章多一次背殼清單', effect: { key: 'extraUse', value: 1 } },
+    lines: { idle: ['我把家背在身上喔。', '殼裡很安靜，進來嗎？', '橫著走，也能到終點。', '潮來了，我縮一縮。'], pet: ['別戳殼，我會躲進去。', '摸摸蟹鉗就好。', '殼殼溫溫的，舒服。'], feed: ['喀滋喀滋，好脆。', '謝謝，殼裡也留一點。', '吃飽了，換新殼也不怕。'], awake: ['新殼亮亮的，來看！', '殼中小屋，開門囉。', '清單背好了，隨時查。'] } },
+  { key: 'leopard', id: 'sp_leopard', no: 18, name: '雲豹幼靈', nick: '雲雲', era: '西拉雅與大員前史', eraId: 'pre', anchor: '與台灣山林動物意象有關的幼獸靈體，只畫動物，待文史把關', attr: '行動', rarity: '稀有',
+    assist: { name: '循跡', desc: '顯示下一站的走路分鐘與路況', cd: 5, effect: { key: 'walkInfo', value: 1 } },
+    talent: { name: '輕步', desc: '到站判定範圍 +2 公尺', key: 'arriveRange', value: 2 },
+    scout: { kind: ['路況'], era: '西拉雅與大員前史' },
+    awaken: { name: '雲影', desc: '30 秒內標出 100 公尺內的小路與捷徑', effect: { key: 'trailReveal', value: 100, seconds: 30 } },
+    lines: { idle: ['我用尾巴量一量路。', '腳步輕輕，不吵醒樹。', '前面有岔路，我先去。', '雲在山上，我在這裡。'], pet: ['嗚…尾巴不要抓。', '摸頭可以，慢一點。', '我的斑紋在發癢。'], feed: ['好吃，我叼回窩慢慢吃。', '謝謝，肚子暖暖的。', '嗯，這個味道很山林。'], awake: ['雲影一晃，路都看清了。', '我跑得比雲還輕。', '跟我來，抄近路。'] } },
+  { key: 'seahorse', id: 'sp_seahorse', no: 19, name: '風帆海馬', nick: '帆馬', era: '荷治', eraId: 'dutch', anchor: '與大航海時代海上航行有關的小海馬，待文史把關', attr: '觀察', rarity: '普通',
+    assist: { name: '順風指引', desc: '標出下一站的方向與距離', cd: 3, effect: { key: 'showNextDist', value: 1 } },
+    talent: { name: '穩舵', desc: '集合圈範圍 +10 公尺', key: 'rallyRange', value: 10 },
+    scout: { kind: ['觀察'], era: '荷治' },
+    awaken: { name: '揚帆', desc: '10 分鐘內全隊到站速度 +10%', effect: { key: 'teamArriveSpeed', value: 0.1, minutes: 10 } },
+    lines: { idle: ['我站得直直的看風。', '小帆今天鼓鼓的。', '尾巴捲住東西，就不會飄走。', '你看，浪在排隊。'], pet: ['別碰帆，會歪掉。', '癢！尾巴捲起來了。', '再摸一下，我轉個圈。'], feed: ['好吃，吃了更有力氣。', '謝謝，小帆更鼓了。', '一口小蝦，航行無憂。'], awake: ['風來了，揚帆！', '大帆一展，全隊跟上。', '我看見很遠的海面了。'] } },
+  { key: 'ironcrab', id: 'sp_ironcrab', no: 20, name: '鐵蟹機甲', nick: '鐵鉗', era: '明鄭', eraId: 'zheng', anchor: '與海防和鐵甲意象有關的小型機甲蟹，待文史把關', attr: '守護', rarity: '稀有',
+    assist: { name: '護甲提示', desc: '顯示目前路段的注意事項', cd: 5, effect: { key: 'riskNotice', value: 1 } },
+    talent: { name: '鐵殼', desc: '夜間與雨天自動提醒注意路面', key: 'safetyBadge', value: 1 },
+    scout: { kind: ['觀察'], era: '明鄭' },
+    awaken: { name: '重裝', desc: '隊友位置更新加快為 15 秒一次', effect: { key: 'matesRefresh', value: 15 } },
+    lines: { idle: ['系統正常，鉗子上油中。', '偵測前方：安全。', '裝甲很重，但我很穩。', '齒輪聲是我的呼吸。'], pet: ['接觸感應，嗶。', '輕一點，漆會掉。', '再摸一次，我就舉鉗。'], feed: ['燃料補充完畢。', '味道資料已存檔。', '電量上升，鉗力加倍。'], awake: ['重裝啟動，全員安心。', '雷達全開，位置更新！', '鐵殼之下，我守著你。'] } },
+  { key: 'kitedragon', id: 'sp_kitedragon', no: 21, name: '風箏小龍', nick: '紙鳶', era: '清領', eraId: 'qing', anchor: '與民間風箏和紙藝有關的玩具龍，不是廟宇神獸，待文史把關', attr: '溝通', rarity: '普通',
+    assist: { name: '高飛', desc: '預告 500 公尺內的地標方向', cd: 5, effect: { key: 'previewLandmarks', value: 500 } },
+    talent: { name: '順風線', desc: '計時賽速度分上限 +1', key: 'timedSpeedCap', value: 1 },
+    scout: { kind: ['人物'], era: '清領' },
+    awaken: { name: '御風', desc: '10 分鐘內預告範圍加倍', effect: { key: 'previewScale', value: 2, minutes: 10 } },
+    lines: { idle: ['線在你手上，別放喔。', '我是紙做的，怕雨。', '風大一點，我飛更高。', '尾巴的緞帶在跳舞。'], pet: ['別拉線，會歪啦！', '紙翅膀沙沙響。', '摸摸頭，我飄起來了。'], feed: ['好吃，肚子鼓鼓的。', '謝謝，我又輕了一點。', '吃飽就能飛更遠。'], awake: ['御風而上，看得更遠！', '線越長，我飛越高。', '地標都在我腳下。'] } },
+  { key: 'sugartrain', id: 'sp_sugartrain', no: 22, name: '糖鐵小汽笛', nick: '嗚嗚', era: '日治', eraId: 'japan', anchor: '與糖業鐵道和蒸汽小火車有關的玩具火車，待文史把關', attr: '行動', rarity: '普通',
+    assist: { name: '鳴笛', desc: '全隊收到集合提醒音', cd: 10, effect: { key: 'rallyWhistle', value: 1 } },
+    talent: { name: '長程', desc: '全隊到站判定範圍 +1 公尺', key: 'teamArriveRange', value: 1 },
+    scout: { kind: ['史料'], era: '日治' },
+    awaken: { name: '加煤', desc: '30 分鐘內隨行時活力不下降', effect: { key: 'vigorHold', value: 1, minutes: 30 } },
+    lines: { idle: ['嗚嗚，進站囉。', '鐵軌的聲音，咔噠咔噠。', '甘蔗甜甜，煙囪也甜甜。', '我跑得慢，但不誤點。'], pet: ['嗚！按到汽笛啦。', '摸摸煙囪，暖暖的。', '再摸，我冒小煙圈。'], feed: ['加煤加糖，開車！', '好甜，鍋爐也開心。', '謝謝，今天跑更遠。'], awake: ['加滿煤，全速前進！', '汽笛一響，大家集合。', '這條線，我跑了好久。'] } },
+  { key: 'parrot', id: 'sp_parrot', no: 23, name: '唱盤鸚鵡', nick: '唱唱', era: '戰後', eraId: 'postwar', anchor: '與老式唱片機和街頭流行聲音有關的鸚鵡，待文史把關', attr: '溝通', rarity: '普通',
+    assist: { name: '複誦', desc: '把剛才 NPC 說的話重播一次', cd: 0, perChapter: 2, effect: { key: 'npcReplay', value: 1 } },
+    talent: { name: '好耳', desc: '附近有隱藏關卡時播放提示音', key: 'sfxHint', value: 1 },
+    scout: { kind: ['方位'], era: '戰後' },
+    awaken: { name: '換片', desc: '切換旁白音色（說書或廣播）', effect: { key: 'narrationVoice', value: 1 } },
+    lines: { idle: ['嘎，這首我會唱！', '唱針一放，我就跟著轉。', '再說一次？我最會學舌。', '沙沙的聲音也是歌。'], pet: ['嘎！羽毛別亂摸。', '摸一下，我唱一句。', '轉轉轉，頭暈了。'], feed: ['嘎，好吃，再來一首。', '謝謝，嗓子更亮了。', '吃飽才有力氣開唱。'], awake: ['換一張，新的旁白！', '這一片，只唱給你聽。', '聽，我學得一模一樣。'] } },
+  { key: 'ufo', id: 'sp_ufo', no: 24, name: '點雲幽浮', nick: '點點', era: '當代文資', eraId: 'heritage', anchor: '與三維掃描和點雲建模有關的小飛碟，待文史把關', attr: '觀察', rarity: '稀有',
+    assist: { name: '掃描', desc: '標出 80 公尺內適合拍照的地點', cd: 5, effect: { key: 'scanPhotoSpots', value: 80 } },
+    talent: { name: '精準', desc: '顯示與目標的精確距離', key: 'distanceExact', value: 1 },
+    scout: { kind: ['史料'], era: '當代文資' },
+    awaken: { name: '點雲成像', desc: '把本章走過的路線畫成立體點雲圖', effect: { key: 'routePointCloud', value: 1 } },
+    lines: { idle: ['掃描中，請勿移動。', '一顆一顆點，拼成一座樓。', '光束掃過，細節都在。', '嗡——資料存好了。'], pet: ['嗡，感應到溫度。', '別擋光束，會糊掉。', '再摸一下，旋轉一圈。'], feed: ['能量補充，點數增加。', '好吃，解析度上升。', '謝謝，點雲更密了。'], awake: ['點雲成像，立體重現。', '全域掃描，沒有死角。', '看，這是你走過的路。'] } }
 ];
+var GENRE = { tide: 'fantasy', deer: 'fantasy', gull: 'scifi', sail: 'relic', bookworm: 'cute', abacus: 'relic', lion: 'relic', brick: 'cute', watch: 'relic', telegraph: 'scifi', radio: 'relic', neon: 'fantasy', ink: 'fantasy', bee: 'cute', rubbing: 'scifi', marrow: 'fantasy',
+  snailcrab: 'cute', leopard: 'fantasy', seahorse: 'fantasy', ironcrab: 'scifi', kitedragon: 'fantasy', sugartrain: 'cute', parrot: 'scifi', ufo: 'scifi' };
 var EGG_LINE = { '普通': '蛋殼裡有輕輕的動靜。', '稀有': '蛋殼閃著淡淡的光。', '傳說': '蛋殼裡傳出低低的歌聲。' };
-var EGG_KIND = { '普通': 'common', '稀有': 'rare', '傳說': 'legend' };
 var AWAKE_COND = { '普通': 15, '稀有': 30, '傳說': 50 };
 
-module.exports = { SP: SP, stagesOf: stagesOf, egg: egg, pack: pack, EGG_LINE: EGG_LINE, EGG_KIND: EGG_KIND, AWAKE_COND: AWAKE_COND, BASE: BASE, PAL: PAL };
+SP.forEach(function (d) { d.genre = GENRE[d.key]; });
+module.exports = { SP: SP, stagesOf: A.stagesOf, egg: A.eggOf, pack: A.pack, EGG_LINE: EGG_LINE, AWAKE_COND: AWAKE_COND, BASE: BASE, PAL: A.PAL };

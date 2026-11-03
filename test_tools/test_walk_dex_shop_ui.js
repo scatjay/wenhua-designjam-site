@@ -133,7 +133,7 @@ function allIds(cat) { return window.WALK_DEX.categories.filter(function (c) { r
   check('首頁初始：人物 0／20、地點 0／17、造型 0／8、職務 0／16、稱號 0／15',
     /0／20/.test(countOf('people')) && /0／17/.test(countOf('places')) && /0／8/.test(countOf('looks')) && /0／16/.test(countOf('roles')) && /0／15/.test(countOf('titles')));
   check('線索卡總數＝WALK_INTEL 筆數（0／10）', /0／10/.test(countOf('clue')));
-  check('小精靈冊 0／16', /0／16/.test(countOf('spirit')));
+  check('小精靈冊 0／24', /0／24/.test(countOf('spirit')));
 
   seeds('people', allIds('people').slice(0, 5));
   seeds('places', allIds('places').slice(0, 3));
@@ -210,7 +210,7 @@ function allIds(cat) { return window.WALK_DEX.categories.filter(function (c) { r
   click(byAttr(root0, 'data-cat', 'spirit')[0]);
   root0 = c.children[0];
   var spTiles = findAll(root0, function (n) { return n.attrs['data-id'] && /^sp_/.test(n.attrs['data-id']); });
-  check('小精靈冊 16 格', spTiles.length === 16);
+  check('小精靈冊 24 格', spTiles.length === 24);
   var gotTile = byId(root0, 'sp_deer'), lockTile = byId(root0, 'sp_tide');
   var gotCv = findAll(gotTile, function (n) { return n.tag === 'canvas'; })[0], lockCv = findAll(lockTile, function (n) { return n.tag === 'canvas'; })[0];
   check('已取得的小精靈用像素圖（canvas、整數放大），未取得的是剪影', gotCv && lockCv && gotCv.style.width === '48px' && !hasCls(gotCv, 'wd-pxsil') && hasCls(lockCv, 'wd-pxsil') && hasCls(lockTile, 'wd-sil'));
@@ -290,22 +290,22 @@ function allIds(cat) { return window.WALK_DEX.categories.filter(function (c) { r
   check('完成度數字等於 store.dex()（含稱號自動頒發）', text(c3.children[0]).indexOf('已收集 ' + dx.have + '／' + dx.total + '（' + dx.pct + '%）') >= 0 && /1／15/.test(text(byAttr(c3.children[0], 'data-cat', 'titles')[0])), dx.have);
   u3.unmount();
 
-  /* 小精靈形態：16 隻 × 3 形態 = 48 */
+  /* 小精靈形態：24 隻 × 3 形態 = 72 */
   freshStore('d5', { dex: { claimed: {}, seen: { spirit: { sp_deer: 1 }, form: { 'sp_deer:care': 1 } }, visited: {} } });
   resetDom();
   var c4 = container(), u4 = WalkDexUI.mount(c4, {}), fx = WalkStore.dex();
   var fcard = text(byAttr(c4.children[0], 'data-cat', 'forms')[0]);
-  check('store.dex().forms 與 spiritBook：形態 1／48、冊合計 2／64', fx.forms.have === 1 && fx.forms.total === 48 && fx.spiritBook.total === 64 && fx.spiritBook.have === 2, JSON.stringify(fx.forms));
-  check('首頁「小精靈形態」卡：1／48，並顯示圖鑑合計 2／64', /1／48/.test(fcard) && text(c4.children[0]).indexOf('小精靈圖鑑合計：2／64') >= 0, fcard);
+  check('store.dex().forms 與 spiritBook：形態 1／72、冊合計 2／96', fx.forms.have === 1 && fx.forms.total === 72 && fx.spiritBook.total === 96 && fx.spiritBook.have === 2, JSON.stringify(fx.forms));
+  check('首頁「小精靈形態」卡：1／72，並顯示圖鑑合計 2／96', /1／72/.test(fcard) && text(c4.children[0]).indexOf('小精靈圖鑑合計：2／96') >= 0, fcard);
   click(byAttr(c4.children[0], 'data-cat', 'forms')[0]);
   var root4 = c4.children[0];
   var ftiles = findAll(root4, function (n) { return n.attrs['data-id'] && /^sp_[a-z]+:(care|adv|lore)$/.test(n.attrs['data-id']); });
-  check('形態清單 48 格（16 隻 × 陪伴型🏠、冒險型🧭、學者型📚）', ftiles.length === 48 && text(root4).indexOf('陪伴型 🏠') >= 0 && text(root4).indexOf('冒險型 🧭') >= 0 && text(root4).indexOf('學者型 📚') >= 0);
+  check('形態清單 72 格（24 隻 × 陪伴型🏠、冒險型🧭、學者型📚）', ftiles.length === 72 && text(root4).indexOf('陪伴型 🏠') >= 0 && text(root4).indexOf('冒險型 🧭') >= 0 && text(root4).indexOf('學者型 📚') >= 0);
   var gt = byId(root4, 'sp_deer:care'), lt = byId(root4, 'sp_deer:adv');
   check('已取得的形態顯示「🏠 鹿影・陪伴型」', hasCls(gt, 'wd-got') === true && text(gt).indexOf('🏠 鹿影・陪伴型') >= 0 && !hasCls(gt, 'wd-sil'));
   var lcv = findAll(lt, function (n) { return n.tag === 'canvas'; })[0];
   check('未取得的形態是剪影（單色 canvas）並附怎麼取得的提示', hasCls(lt, 'wd-sil') && lcv && hasCls(lcv, 'wd-pxsil') && text(lt).indexOf('？？？') >= 0 && text(lt).indexOf('怎麼拿：讓「鹿影」長到成體') >= 0 && text(lt).indexOf('就會分化成這個形態') >= 0, text(lt));
-  check('形態清單頂端進度＝1／48', /1／48/.test(text(root4)));
+  check('形態清單頂端進度＝1／72', /1／72/.test(text(root4)));
   u4.unmount();
 })();
 

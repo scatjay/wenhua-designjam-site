@@ -505,17 +505,29 @@
       if (isObj(br) && isArr(br[role])) st = br[role];
     }
     era = r.era !== undefined ? r.era : (r.eras !== undefined ? r.eras : (r.spec !== undefined ? r.spec : (r.specialty !== undefined ? r.specialty : null)));
-    return { role: r.role || (typeof role === 'string' ? role : ''), stats: isArr(st) ? st : null, era: era };
+    var fam = r.famEras !== undefined ? r.famEras : null, rn = r.role || (typeof role === 'string' ? role : '');
+    if ((era === null || era === undefined) && fam === null && rn && isObj(w.WALK_AGENT_ERAS) && isObj(w.WALK_AGENT_ERAS[rn])) {   /* 探員歷史專長資料檔：專精＝eras（3 級）、熟悉＝famEras（2 級） */
+      era = w.WALK_AGENT_ERAS[rn].eras; fam = w.WALK_AGENT_ERAS[rn].famEras;
+    }
+    return { role: rn, stats: isArr(st) ? st : null, era: era, fam: fam };
   }
   function attrIndex(sp) {
     if (!sp) return -1;
     return ATTR_NAMES.indexOf(sp.attr);
   }
+  /* 小精靈的時期名：資料欄 scout.era，以及 eraId 對應 WALK_SPIRIT_META.eras 的基本時期名（例如「戰後與文學」也算「戰後」） */
+  function spiritEraNames(sp) {
+    var out = [], m = win().WALK_SPIRIT_META, i;
+    if (sp && sp.scout && sp.scout.era) out.push(String(sp.scout.era));
+    if (sp && sp.era) out.push(String(sp.era));
+    if (sp && sp.eraId && isObj(m) && isArr(m.eras)) for (i = 0; i < m.eras.length; i++) if (m.eras[i].id === sp.eraId) out.push(String(m.eras[i].name));
+    return out;
+  }
   function eraMatch(sp, era) {
-    var se = sp && sp.scout ? sp.scout.era : null, i;
-    if (!se || era === null || era === undefined) return false;
-    if (isArr(era)) { for (i = 0; i < era.length; i++) if (String(era[i]) === String(se)) return true; return false; }
-    return String(era) === String(se);
+    var names = spiritEraNames(sp), i, j;
+    if (!names.length || era === null || era === undefined) return false;
+    if (isArr(era)) { for (i = 0; i < era.length; i++) for (j = 0; j < names.length; j++) if (String(era[i]) === names[j]) return true; return false; }
+    return names.indexOf(String(era)) >= 0;
   }
   function computeResonance(sp, role) {
     var res = { kinds: [], primary: '平常', resonance: false, fill: false, history: false, special: null,
@@ -531,10 +543,11 @@
       if (st[ai] === max) res.resonance = true;
       else if (st[ai] === min && st[ai] <= 2) res.fill = true;
     }
-    if (eraMatch(sp, ro.era)) res.history = true;
+    if (eraMatch(sp, ro.era)) { res.history = true; res.historyLevel = 'expert'; }       /* 專精時期（3 級）＝小精靈時期 → 歷史共鳴 */
+    else if (eraMatch(sp, ro.fam)) { res.history = true; res.historyLevel = 'familiar'; } /* 熟悉時期（2 級）→ 較弱的歷史共鳴，效果減半 */
     if (res.resonance) { res.kinds.push('共鳴'); res.qualityMul = 1.5; res.cdMul = 0.8; }
     if (res.fill) { res.kinds.push('補位'); res.statBonus = {}; res.statBonus[ai] = 1; }
-    if (res.history) { res.kinds.push('歷史共鳴'); res.extraItems = 1; }
+    if (res.history) { res.kinds.push('歷史共鳴'); res.extraItems = res.historyLevel === 'familiar' ? 0.5 : 1; res.expertUnlock = res.historyLevel === 'expert'; }
     var i, pairs = win().WALK_SPIRIT_PAIRS;
     if (isArr(pairs)) {
       for (i = 0; i < pairs.length; i++) {
@@ -928,7 +941,7 @@
         if (hr >= NIGHT_FROM || hr < NIGHT_TO) stt.night = num(stt.night) + 1;
       }
       if (kind === 'chapter') {
-        spirits().forEach(function (s) { if (!egg && s.eggChapter !== undefined && s.eggChapter === arg) egg = s.id; });
+        spirits().forEach(function (s) { if (!egg && s.eggChapter !== undefined && (s.eggChapter === arg || String(s.eggChapter).split(',').indexOf(String(arg)) >= 0)) egg = s.id; });   /* eggChapter 可寫成情報卡章節 id（如 't1,s1'），任一段相符即算 */
         if (egg) self.giveEgg(egg, arg);
       }
       commit(['spirit', 'dex'], 'event');
@@ -1026,7 +1039,7 @@
       seed = C.uid + '|' + t + '|' + p.chapterId + '|' + p.spiritId;
       S.expedition = {
         spiritId: p.spiritId, chapterId: p.chapterId, tier: p.tier, startTs: t, endTs: t + tier.ticks * TICK, ticks: tier.ticks,
-        seed: seed, e: e, res: res ? { resonance: res.resonance, history: res.history, kinds: res.kinds } : { resonance: false, history: false, kinds: [] },
+        seed: seed, e: e, res: res ? { resonance: res.resonance, history: res.history, extraItems: res.extraItems || 0, kinds: res.kinds } : { resonance: false, history: false, kinds: [] },
         last: S.expedition.last
       };
       b.dispatch = num(b.dispatch) + 1;
@@ -1052,7 +1065,7 @@
       tier = TIERS[x.tier];
       o = rec(x.spiritId); sp = spiritDef(x.spiritId);
       adult = o && (o.stage === 'adult' || o.stage === 'awake') ? 1 : 0;
-      raw = (tier.base + adult) * (x.res && x.res.resonance ? 1.5 : 1) + (x.res && x.res.history ? 1 : 0);
+      raw = (tier.base + adult) * (x.res && x.res.resonance ? 1.5 : 1) + (x.res ? (x.res.extraItems !== undefined ? num(x.res.extraItems) : (x.res.history ? 1 : 0)) : 0);
       raw = Math.min(EXPEDITION_MAX_CARDS, raw);
       n = Math.min(EXPEDITION_MAX_CARDS, Math.max(1, Math.round(raw * num(x.e, 1))));
       pool = intelByChapter(x.chapterId);
@@ -1132,7 +1145,8 @@
     eggSprite: function (spiritId) {
       var sp = spiritDef(spiritId), E = win().WALK_SPIRIT_EGGS, k;
       if (!sp || !isObj(E)) return null;
-      k = sp.rarity === '傳說' ? 'legend' : (sp.rarity === '稀有' ? 'rare' : 'common');
+      if (E[spiritId]) return E[spiritId];            /* 每種小精靈各有自己的蛋 */
+      k = sp.rarity === '傳說' ? 'legend' : (sp.rarity === '稀有' ? 'rare' : 'common');   /* 舊資料：依稀有度共用 */
       return E[k] || E.common || null;
     },
     /* 套裝集滿小加成（純裝飾，不加分） */

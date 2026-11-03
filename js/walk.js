@@ -420,7 +420,7 @@
     teamId = id; offAll();
     ROOT.child('players/' + uid).update({ team: id }); if (profile) profile.team = id;
     $('app').hidden = false; $('screen-ob').hidden = true; $('screen-login').hidden = true;
-    initMap(); wireTabs(); startLocation(); startChat(); if (phase() === 'rehearsal') pmark('g0');
+    initMap(); wireTabs(); startLocation(); startChat(); try { homeBoot(); } catch (e) { } if (phase() === 'rehearsal') pmark('g0');
     on(ROOT.child('teams/' + id), 'value', function (s) {
       team = s.val();
       if (!team || !team.members || !team.members[uid]) { toast('你已不在這個隊了。'); $('app').hidden = true; showOnboarding(); return; }
@@ -589,7 +589,7 @@
   function markTask(stopId, tid, extra) {
     if (taskDone(stopId, tid)) return;
     var rec = { by: uid, t: nowMs() }; if (extra) for (var k in extra) rec[k] = extra[k];
-    ROOT.child(PR_(teamId) + '/' + stopId + '/tasks/' + tid).transaction(function (c) { return c === null ? rec : undefined; }).then(function (r) { if (r.committed) { log('task', stopId, tid + (extra && extra.soft ? ' (soft)' : '')); toast('✔ 完成：' + (taskTitle(stopId, tid) || tid)); } });
+    ROOT.child(PR_(teamId) + '/' + stopId + '/tasks/' + tid).transaction(function (c) { return c === null ? rec : undefined; }).then(function (r) { if (r.committed) { log('task', stopId, tid + (extra && extra.soft ? ' (soft)' : '')); toast('✔ 完成：' + (taskTitle(stopId, tid) || tid)); homeEvent('task', stopId); } });
   }
   function taskTitle(sid, tid) { var s = stopById(sid); if (!s || !s.tasks) return ''; for (var i = 0; i < s.tasks.length; i++) if (s.tasks[i].id === tid) return s.tasks[i].title; return ''; }
   function zoneOf(s, key) { return s.zones && s.zones[key]; }
@@ -598,9 +598,9 @@
     if (!teamId || !uid || !team) return;
     S.forEach(function (s) {
       // 到點打卡
-      if (myPos && dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) + 10 * hqLv('range') + 5 * rlvA('技術專家') && !(prog[s.id] && prog[s.id].arrived)) {
+      if (myPos && dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) + 10 * hqLv('range') + 5 * rlvA('技術專家') + homeArriveRange() && !(prog[s.id] && prog[s.id].arrived)) {
         try { window.WalkPet && WalkPet.roll(s.id); } catch (e) { }   /* 抵達景點：有機率遇到小精靈（每站每人只擲一次） */
-        ROOT.child(PR_(teamId) + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) toast('📍 到達：' + s.name); });
+        ROOT.child(PR_(teamId) + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('📍 到達：' + s.name); homeEvent('arrive', s.id); } });
       }
       (s.tasks || []).forEach(function (t) {
         if (taskDone(s.id, t.id)) return;
@@ -627,7 +627,7 @@
     if (s.frag === undefined || (prog[s.id] && prog[s.id].frag)) return;
     var need = (s.tasks || []).filter(function (t) { return !t.bonus && t.type !== 'together' && t.type !== 'cross'; });
     if (need.every(function (t) { return taskDone(s.id, t.id); })) {
-      ROOT.child(PR_(teamId) + '/' + s.id + '/frag').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('🧩 取得碎片：' + R.fragmentNames[s.frag] + '　回「簡報室」領補給！'); hqNew = true; hqBadge(); if (myRole() === '通訊官' && rlvA('通訊官') >= 3) { try { ROOT.child('gchat').push({ uid: uid, n: (profile && profile.nick) || '', x: ('🎉 ' + teamLabel() + '完成了「' + s.name.replace(/^第 \d (案|章)｜/, '') + '」').slice(0, 40), t: nowMs() }); } catch (e) { } } log('frag', s.id, R.fragmentNames[s.frag]); } });
+      ROOT.child(PR_(teamId) + '/' + s.id + '/frag').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { homeEvent('chapter', s.id); toast('🧩 取得碎片：' + R.fragmentNames[s.frag] + '　回「簡報室」領補給！'); hqNew = true; hqBadge(); if (myRole() === '通訊官' && rlvA('通訊官') >= 3) { try { ROOT.child('gchat').push({ uid: uid, n: (profile && profile.nick) || '', x: ('🎉 ' + teamLabel() + '完成了「' + s.name.replace(/^第 \d (案|章)｜/, '') + '」').slice(0, 40), t: nowMs() }); } catch (e) { } } log('frag', s.id, R.fragmentNames[s.frag]); } });
     }
   }
   function scoreOf() {
@@ -718,9 +718,10 @@
   }
   function setView(v) {
     view = v; if (phase() === 'rehearsal' && v === 'task') setTimeout(function () { pmark('g4'); }, 4000); if (phase() === 'rehearsal' && v === 'team') pmark('g3'); [].forEach.call(document.querySelectorAll('.pane'), function (p) { p.hidden = (p.id !== 'pane-' + v) && p.id !== 'pane-map'; });
-    var pm = $('pane-map'); pm.classList.toggle('mini', v !== 'map'); pm.classList.toggle('folded', v !== 'map' && mapFolded); $('btn-fold').textContent = mapFolded ? '展開 ▾' : '收合 ▴';
+    var pm = $('pane-map'); pm.classList.toggle('mini', v !== 'map'); pm.classList.toggle('folded', v !== 'map' && (mapFolded || v === 'home')); $('btn-fold').textContent = (mapFolded || v === 'home') && v !== 'map' ? '展開 ▾' : '收合 ▴';
     if (map) setTimeout(function () { map.invalidateSize(); }, 80);
     [].forEach.call(document.querySelectorAll('#nav button'), function (b) { b.classList.toggle('on', b.dataset.v === v); });
+    try { if (v === 'home') homeShow(); else homeLeave(); } catch (e) { }
     render();
   }
   function render() {
@@ -732,6 +733,110 @@
     updateGoal(true);
     if (!hqChecked && team && uid && teamId) { hqChecked = true; var kk = 'walk_hq_seen_' + teamId, seen = false; try { seen = !!localStorage.getItem(kk); } catch (e) { } if (!seen) { try { localStorage.setItem(kk, '1'); } catch (e) { } setTimeout(function () { setView('hq'); }, 250); } }
   }
+  /* ================= 我的房間：房間、小精靈、派遣、情報、圖鑑、商店、房間街（預設關閉）=================
+     開啟方式：網址加 ?home=1（存在這支手機，?home=0 關掉），或老師把 cfg/features/home 設成 true。
+     各畫面由 walk_room.js、walk_spirit_ui.js、walk_dex_ui.js、walk_shop_ui.js 提供，資料與規則在 walk_store.js。 */
+  var homeOn = false, homeBooted = false, homeSub = 'room', homeInst = null, cfgHome = false, homeReady = false;
+  function homeFlag() {
+    var v = qs.get('home');
+    try {
+      if (v === '1') localStorage.setItem('walk_home', '1');
+      if (v === '0') { localStorage.removeItem('walk_home'); return false; }
+      if (localStorage.getItem('walk_home') === '1') return true;
+    } catch (e) { }
+    return cfgHome === true;
+  }
+  function homeSess() { return REH ? 'rehearsal' : 'live'; }
+  function homeRole() { var m = team && team.members && team.members[uid]; return m ? m.role : ''; }
+  function homeAddSpent(n) {
+    if (!teamId || !n) return;
+    ROOT.child(PR_(teamId) + '/_hq').transaction(function (c) { c = c || {}; c.spent = Math.round(((c.spent || 0) + n) * 100) / 100; return c; });
+  }
+  function homeProfile() {
+    var h = hqState();
+    return { nick: (profile && profile.nick) || '', skin: (h.skin || {})[uid] || null, badges: Object.keys(h.ach || {}), closet: Object.keys(h.skins || {}), photos: [] };
+  }
+  function homeNick(u) { var m = team && team.members && team.members[u]; return m ? String(m.nick || '').slice(0, 12) : ''; }
+  function homeTeammates() { var o = []; Object.keys((team && team.members) || {}).forEach(function (u) { if (u !== uid) o.push({ uid: u, nick: homeNick(u) }); }); return o; }
+  function homeChapterName(id) { var s = stopById(id); return s ? s.name : String(id || ''); }
+  function homeChapters() {
+    var o = []; S.forEach(function (s) { if (s.tasks && s.tasks.length && prog[s.id] && (prog[s.id].arrived || prog[s.id].frag)) o.push({ id: s.id, name: s.name }); });
+    return o;
+  }
+  /* 小精靈聊天：問題寫 spiritq，電腦端常駐程式回 spirita/{uid}/{id}；沒有心跳或逾時就退回預寫台詞 */
+  function homeChat(spiritId, text, cb) {
+    var done = false, ref, k = ROOT.child('spiritq').push().key, q = String(text || '').slice(0, 100), cur = null, t0 = Date.now();
+    function fin(r) { if (done) return; done = true; try { if (cur) cur.off(); } catch (e) { } cb(r); }
+    if (!npcLive()) { fin({ ok: false, offline: true }); return; }
+    ROOT.child('spiritq/' + k).set({ uid: uid, q: q, sid: String(spiritId || '').slice(0, 16), t: Date.now() }).then(function () {
+      cur = ROOT.child('spirita/' + uid + '/' + k);
+      cur.on('value', function (sn) { var v = sn.val(); if (v && v.a) fin({ ok: !v.err, text: v.a, cap: !!v.cap }); });
+      setTimeout(function () { fin({ ok: false, timeout: true }); }, 20000);
+    }).catch(function () { fin({ ok: false, offline: true }); });
+  }
+  function homeInit() {
+    if (homeReady || !window.WalkStore) return;
+    homeReady = true;
+    WalkStore.init({
+      uid: uid, root: ROOT, sess: homeSess(),
+      getPoints: hqPoints, addSpent: homeAddSpent, grantPoints: function (n) { homeAddSpent(-n); },
+      chaptersDone: chDone, progress: function () { return prog; }, toast: toast,
+      profile: homeProfile, isTeammate: function (u) { return u !== uid && !!(team && team.members && team.members[u]); }, role: homeRole,
+      teamId: function () { return teamId; }, nickOf: homeNick,
+      now: function () { return Date.now(); }
+    });
+  }
+  var HOME_JS = ['walk_sprites2.js', 'walk_data_spirit.js', 'walk_data_traits.js', 'walk_data_shop.js', 'walk_data_dex.js', 'walk_data_intel_a.js', 'walk_data_intel_b.js', 'walk_data_intel.js', 'walk_store.js', 'walk_room.js', 'walk_spirit_ui.js', 'walk_dex_ui.js', 'walk_shop_ui.js'], HOME_V = '202611031230', homeLoading = false;
+  /* 只有功能開啟才載入（約 300 KB），依序載入以保證順序；關閉時網頁與原本完全一樣 */
+  function homeLoad(cb) {
+    if (window.WalkStore) { cb(); return; }
+    if (homeLoading) return; homeLoading = true;
+    var i = 0;
+    (function next() {
+      if (i >= HOME_JS.length) { cb(); return; }
+      var sc = document.createElement('script'); sc.src = 'js/' + HOME_JS[i++] + '?v=' + HOME_V;
+      sc.onload = next; sc.onerror = function () { try { console.log('HOME_LOAD_ERR', sc.src); } catch (e) { } next(); };
+      document.head.appendChild(sc);
+    })();
+  }
+  function homeBoot() {
+    if (homeBooted) return; homeBooted = true;
+    ROOT.child('cfg/features/home').once('value').then(function (s) { cfgHome = s.val() === true; }, function () { }).then(function () {
+      homeOn = homeFlag(); var b = $('nav-home'); if (b) b.hidden = !homeOn;
+      if (homeOn) homeLoad(function () { homeInit(); if (view === 'home') homeShow(); });
+    });
+  }
+  function homeLeave() { try { if (homeInst && homeInst.unmount) homeInst.unmount(); } catch (e) { } homeInst = null; }
+  function homeShow() {
+    var el = $('pane-home'); if (!el) return;
+    if (!homeOn) { el.innerHTML = '<div class="card">這個功能還沒開放。</div>'; return; }
+    if (!window.WalkStore) { el.innerHTML = '<div class="card">載入中…</div>'; return; }
+    var T = [['room', '🏠 房間'], ['spirit', '🧚 小精靈'], ['exp', '🧭 派遣'], ['intel', '📜 情報'], ['dex', '📖 圖鑑'], ['shop', '🏪 商店'], ['street', '🚪 房間街']];
+    el.innerHTML = '<div class="card"><div class="opts" id="home-tabs">' + T.map(function (x) { return '<button class="btn2' + (homeSub === x[0] ? ' on' : '') + '" data-hs="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div><div id="home-body"></div>';
+    [].forEach.call(el.querySelectorAll('[data-hs]'), function (b) { b.onclick = function () { homeSub = b.dataset.hs; homeShow(); }; });
+    homeMount(homeSub);
+  }
+  function homeMount(sub) {
+    var box = $('home-body'); if (!box) return; homeLeave();
+    var common = {
+      now: function () { return Date.now(); }, role: homeRole, chapterName: homeChapterName, toast: toast,
+      isSaver: function () { return !!ecoOn; }, store: window.WalkStore
+    };
+    function mix(o) { for (var k in common) if (!(k in o)) o[k] = common[k]; return o; }
+    try {
+      if (sub === 'room' && window.WalkRoom) homeInst = WalkRoom.mount(box, mix({ onArea: function (name, d) { var m = { dex: 'dex', closet: 'shop', nest: 'spirit', achievements: 'dex', map: 'room', photos: 'room' }; if (m[name] && m[name] !== 'room') { homeSub = m[name]; homeShow(); } } }));
+      else if (sub === 'spirit' && window.WalkSpiritUI) homeInst = WalkSpiritUI.mount(box, mix({ teammates: homeTeammates, nickOf: homeNick, chat: homeChat, online: npcLive, getPoints: hqPoints, chapterId: function () { return null; } }));
+      else if (sub === 'exp' && window.WalkSpiritUI) homeInst = WalkSpiritUI.mountExpedition(box, mix({ chapters: homeChapters }));
+      else if (sub === 'intel' && window.WalkSpiritUI) homeInst = WalkSpiritUI.mountIntel(box, mix({}));
+      else if (sub === 'dex' && window.WalkDexUI) homeInst = WalkDexUI.mount(box, mix({ onOpenSpirit: function () { homeSub = 'spirit'; homeShow(); }, onOpenRoom: function () { homeSub = 'room'; homeShow(); } }));
+      else if (sub === 'shop' && window.WalkShopUI) homeInst = WalkShopUI.mount(box, mix({ uid: uid, chaptersDone: chDone, onOpenRoom: function () { homeSub = 'room'; homeShow(); } }));
+      else if (sub === 'street' && window.WalkRoom) homeInst = WalkRoom.mountStreet(box, mix({ listRooms: function (tab, cb) { WalkStore.listRooms(tab, cb); } }));
+      else box.innerHTML = '<div class="card">這個畫面還沒準備好。</div>';
+    } catch (e) { box.innerHTML = '<div class="card">畫面載入失敗：' + esc(String(e && e.message || e)) + '</div>'; try { console.log('HOME_ERR', e && e.stack); } catch (e2) { } }
+  }
+  function homeEvent(kind, arg) { try { if (homeOn && window.WalkStore && homeReady) WalkStore.event(kind, arg); } catch (e) { } }
+  function homeArriveRange() { try { if (homeOn && homeReady) { var t = WalkStore.talents(homeRole()); return (t && t.effects && +t.effects.arriveRange) || 0; } } catch (e) { } return 0; }
+
   /* ================= 簡報室（HQ）：任務簡報、角色、點數商店、造型 ================= */
   var SKILLS = [
     { k: 'scout', icon: '🔍', name: '偵查範圍', desc: '偵查員看得到「隱藏關卡」的距離 +20 公尺／級', max: 3, cost: [60, 120, 180] },

@@ -42,12 +42,14 @@ DRAW.sail = function (c) {
   c.px(4, 14, 'd'); c.px(7, 14, 'd'); c.px(10, 14, 'd');
 };
 DRAW.bookworm = function (c) {
-  c.rect(1, 11, 14, 2, 'c');
-  [3, 4, 7, 10, 11, 13].forEach(function (x, i) { c.px(x, i % 2 ? 12 : 11, 'b'); });
-  c.line(2, 7, 1, 5, 'b'); c.line(4, 7, 5, 5, 'b'); c.px(1, 4, 'e'); c.px(5, 4, 'e');
-  c.ell(3, 9, 2.3, 2, 'a'); c.ell(6, 8.6, 2, 1.9, 'a'); c.ell(8.5, 8.2, 2, 1.9, 'a'); c.ell(11, 8.6, 1.8, 1.7, 'a'); c.ell(13, 9.2, 1.2, 1.1, 'a');
-  c.px(6, 8, 'b'); c.px(9, 7, 'b'); c.px(11, 8, 'b'); c.px(3, 10, 'b'); c.px(6, 10, 'b'); c.px(9, 10, 'b'); c.px(11, 10, 'b');
-  c.px(2, 9, 'k'); c.px(4, 9, 'k'); c.px(3, 10, 'p'); c.px(14, 10, 'b'); c.px(14, 8, 'b');
+  /* 蠹蟲坐在翻開的書上 */
+  c.rect(1, 12, 14, 2, 'd');
+  c.poly([[1, 10], [8, 11], [8, 13], [1, 12.5]], 'c'); c.poly([[15, 10], [8, 11], [8, 13], [15, 12.5]], 'c'); c.line(8, 11, 8, 13, 'd');
+  [[2, 11], [3, 11], [5, 11], [10, 11], [12, 11], [13, 11], [3, 12], [5, 12], [11, 12], [13, 12]].forEach(function (p) { c.px(p[0], p[1], 'b'); });
+  c.line(3, 6, 2, 5, 'b'); c.line(5, 6, 6, 5, 'b'); c.px(2, 4, 'e'); c.px(6, 4, 'e');
+  c.ell(4, 8, 2.3, 2.1, 'a'); c.ell(7, 8.4, 2, 1.9, 'a'); c.ell(9.5, 8.8, 1.9, 1.8, 'a'); c.ell(11.8, 9.2, 1.5, 1.4, 'a'); c.ell(13.5, 9.8, 1, 1, 'a');
+  c.px(7, 7, 'b'); c.px(9, 8, 'b'); c.px(11, 8, 'b'); c.px(4, 10, 'b'); c.px(7, 10, 'b'); c.px(10, 10, 'b');
+  c.px(3, 8, 'k'); c.px(5, 8, 'k'); c.px(4, 9, 'p'); c.px(14, 9, 'b'); c.px(14, 11, 'b');
 };
 DRAW.abacus = function (c) {
   c.poly([[4, 4], [5, 1.5], [7, 4]], 'b'); c.poly([[9, 4], [11, 1.5], [12, 4]], 'b'); c.line(8, 4, 8, 2, 'b'); c.px(8, 1, 'd');
@@ -150,20 +152,23 @@ DRAW.snailcrab = function (c) {
   c.px(10, 11, 'k'); c.px(12, 11, 'k'); c.px(11, 12, 'p');
 };
 DRAW.leopard = function (c) {
-  [[3, 9], [2, 9], [1, 8], [1, 7], [2, 6], [3, 6]].forEach(function (p) { c.px(p[0], p[1], 'a'); }); c.px(3, 6, 'b'); c.px(4, 6, 'b');
-  c.ell(7.5, 8.5, 5, 2.5, 'a'); c.ell(8, 10, 3.5, 1, 'c');
-  [4, 6, 9, 11].forEach(function (x) { c.rect(x, 10, 1, 3, 'a'); c.px(x, 12, 'c'); });
-  c.ell(12.8, 7.2, 2.2, 2, 'a'); c.px(14, 8, 'c'); c.px(13, 8, 'c'); c.px(14, 7, 'k'); c.px(13, 6, 'k');
-  c.px(11, 5, 'b'); c.px(14, 5, 'b'); c.px(11, 6, 'a'); c.px(14, 6, 'a');
-  [[5, 7], [7, 7], [9, 8], [6, 9], [8, 9], [10, 7], [4, 8]].forEach(function (p) { c.pxo(p[0], p[1], 'b'); c.pxo(p[0] + 1, p[1], 'b'); c.pxo(p[0], p[1] + 1, 'd'); });
+  /* 長尾、雲紋斑、圓耳 */
+  [[3, 9], [2, 9], [1, 8], [1, 7], [1, 6], [2, 5], [3, 5]].forEach(function (p) { c.px(p[0], p[1], 'a'); }); c.px(3, 5, 'b'); c.px(4, 6, 'b'); c.px(2, 5, 'b');
+  c.ell(7.5, 9, 5, 2.6, 'a'); c.ell(8, 10.6, 3.5, 1, 'c');
+  c.rect(4, 11, 2, 3, 'a'); c.rect(10, 11, 2, 3, 'a'); c.rect(6, 11, 1, 2, 'd'); c.rect(9, 11, 1, 2, 'd'); c.px(4, 13, 'c'); c.px(5, 13, 'c'); c.px(10, 13, 'c'); c.px(11, 13, 'c');
+  c.ell(12.5, 6.6, 2.5, 2.3, 'a'); c.ell(10.8, 4.2, 1, 1, 'a'); c.ell(14, 4.2, 1, 1, 'a'); c.px(11, 4, 'b'); c.px(14, 4, 'b');
+  c.px(14, 8, 'c'); c.px(13, 8, 'c'); c.px(14, 7, 'k'); c.px(13, 6, 'k'); c.px(11, 6, 'k');
+  [[5, 8], [8, 8], [6, 10], [10, 9]].forEach(function (p) { c.pxo(p[0], p[1], 'd'); c.pxo(p[0] - 1, p[1], 'b'); c.pxo(p[0] + 1, p[1], 'b'); c.pxo(p[0], p[1] - 1, 'b'); });
 };
 DRAW.seahorse = function (c) {
-  c.px(7, 2, 'd'); c.px(8, 1, 'd'); c.px(9, 1, 'd');
-  c.ell(8.5, 6.5, 2.2, 2.8, 'a'); c.ell(9, 9.5, 2.6, 2.6, 'a'); c.ell(9, 3, 2.2, 1.9, 'a'); c.rect(11, 3, 2, 1, 'a'); c.px(9, 2, 'k');
-  c.rect(7, 11, 3, 2, 'a'); c.ell(7, 13, 2.2, 1.6, 'a'); c.g[13][7] = '.'; c.px(10, 13, 'a');
-  c.line(6, 3, 6, 11, 'b'); c.poly([[6.5, 4], [5, 7], [6.5, 10]], 'c'); c.px(6, 7, 'e');
-  [5, 7, 9].forEach(function (y) { c.pxo(9, y, 'b'); c.pxo(10, y, 'b'); });
-  c.px(11, 5, 'p');
+  /* 馬頭（向右）、捲尾、背鰭帆 */
+  c.px(8, 2, 'd'); c.px(9, 1, 'd'); c.px(10, 1, 'd'); c.px(7, 3, 'd');
+  c.ell(10, 3.5, 2.3, 1.9, 'a'); c.rect(12, 4, 2, 1, 'a'); c.px(13, 3, 'a'); c.px(10, 3, 'k'); c.px(13, 4, 'b');
+  c.poly([[8.5, 5], [11.5, 5], [11.5, 8], [8.5, 8]], 'a'); c.ell(9.5, 8.5, 2.5, 3, 'a'); c.ell(10.2, 10, 2.3, 2.2, 'a');
+  [7, 8, 9, 10, 11].forEach(function (y) { c.pxo(11, y, 'c'); });
+  c.rect(7, 11, 3, 2, 'a'); c.ell(6.5, 12.5, 2, 1.7, 'a'); c.g[12][6] = '.'; c.px(9, 13, 'a'); c.px(8, 14, 'b');
+  c.poly([[7.5, 5], [5, 7], [5, 9.5], [7.5, 10.5]], 'c'); c.line(7, 5, 5, 7, 'b'); c.line(7, 7, 5, 8, 'b'); c.line(7, 9, 5, 9, 'b'); c.line(7, 5, 7, 11, 'b');
+  c.px(9, 6, 'e'); c.px(10, 6, 'e'); c.px(12, 5, 'p');
 };
 DRAW.ironcrab = function (c) {
   [5, 10].forEach(function (x) { c.rect(x, 5, 1, 2, 'b'); c.px(x, 4, 'd'); });
@@ -175,11 +180,14 @@ DRAW.ironcrab = function (c) {
   });
 };
 DRAW.kitedragon = function (c) {
-  c.poly([[8, 1], [12.5, 5], [8, 9.5], [3.5, 5]], 'a'); c.line(8, 1, 8, 9, 'b'); c.line(4, 5, 12, 5, 'b');
-  c.px(6, 6, 'k'); c.px(10, 6, 'k'); c.px(8, 7, 'p'); c.px(6, 2, 'c'); c.px(10, 2, 'c'); c.px(5, 3, 'c'); c.px(11, 3, 'c');
-  c.px(5, 9, 'b'); c.px(11, 9, 'b'); c.px(4, 10, 'b'); c.px(12, 10, 'b');
-  [[8, 10], [7, 11], [8, 12], [9, 13], [8, 14]].forEach(function (p) { c.px(p[0], p[1], 'd'); });
-  c.px(6, 11, 'c'); c.px(10, 12, 'c'); c.px(6, 13, 'c'); c.px(7, 12, 'e');
+  /* 菱形紙風箏骨架、龍臉、尾巴飄帶 */
+  c.poly([[8, 1], [12.5, 6], [8, 11], [3.5, 6]], 'a');
+  c.line(8, 1, 12, 6, 'b'); c.line(12, 6, 8, 11, 'b'); c.line(8, 11, 4, 6, 'b'); c.line(4, 6, 8, 1, 'b'); c.line(8, 1, 8, 11, 'b'); c.line(4, 6, 12, 6, 'b');
+  c.px(7, 2, 'c'); c.px(6, 1, 'c'); c.px(9, 2, 'c'); c.px(10, 1, 'c');
+  c.rect(5, 7, 2, 1, 'k'); c.rect(9, 7, 2, 1, 'k'); c.px(8, 8, 'p'); c.px(7, 9, 'k'); c.px(9, 9, 'k');
+  c.px(6, 4, 'c'); c.px(10, 4, 'c'); c.px(8, 5, 'e'); c.px(5, 8, 'd'); c.px(11, 8, 'd');
+  [[8, 12], [7, 13], [8, 14], [9, 14]].forEach(function (p) { c.px(p[0], p[1], 'd'); });
+  c.px(6, 12, 'c'); c.px(10, 13, 'c'); c.px(6, 14, 'e'); c.px(10, 12, 'e'); c.px(5, 13, 'c');
 };
 DRAW.sugartrain = function (c) {
   c.rect(5, 7, 9, 3, 'a'); c.rect(1, 6, 5, 4, 'b'); c.rect(0, 5, 7, 1, 'd');
@@ -203,6 +211,65 @@ DRAW.ufo = function (c) {
   [[3, 7], [6, 8], [10, 8], [13, 7]].forEach(function (p) { c.px(p[0], p[1], 'e'); });
   c.poly([[6, 9.5], [10, 9.5], [12, 10.4], [4, 10.4]], 'c'); c.line(5, 10, 11, 10, 'w');
   c.px(2, 10, 'e'); c.px(14, 10, 'e'); c.px(1, 9, 'd'); c.px(14, 9, 'd');
+};
+
+/* ===================== 幼體（前 12 隻另外設計：頭大身小；其餘仍由成體縮小）===================== */
+var BABY = {};
+function eyes(c, x1, x2, y) { [x1, x2].forEach(function (x) { c.rect(x, y, 2, 2, 'k'); c.px(x, y, 'w'); }); }
+BABY.tide = function (c) {
+  c.px(8, 4, 'e'); c.px(8, 5, 'c'); c.poly([[12, 9], [14.5, 7], [14.5, 11]], 'b');
+  c.ell(8, 9, 5, 4, 'a'); c.ell(8, 11.2, 3.6, 1.8, 'd'); eyes(c, 5, 10, 8); c.px(4, 10, 'p'); c.px(12, 10, 'p'); c.px(8, 10, 'b'); c.px(3, 11, 'b'); c.px(2, 11, 'b');
+};
+BABY.deer = function (c) {
+  c.ell(3.5, 5.8, 1.5, 2, 'b'); c.ell(12.5, 5.8, 1.5, 2, 'b'); c.px(6, 3, 'c'); c.px(6, 2, 'c'); c.px(10, 3, 'c'); c.px(10, 2, 'c');
+  c.ell(8, 8.2, 4.6, 3.8, 'a'); c.px(8, 5, 'd'); c.px(7, 6, 'd'); c.px(9, 6, 'd'); eyes(c, 5, 9, 7); c.px(7, 10, 'd'); c.px(9, 10, 'd'); c.px(8, 10, 'k');
+  c.rect(5, 12, 6, 2, 'a'); c.px(5, 14, 'b'); c.px(10, 14, 'b'); c.px(4, 11, 'd');
+};
+BABY.gull = function (c) {
+  c.px(8, 3, 'b'); c.px(7, 4, 'b'); c.px(9, 4, 'b'); c.line(12, 5, 12, 3, 'd'); c.px(12, 2, 'e');
+  c.ell(8, 9, 5, 4, 'a'); c.ell(3.6, 9.5, 1.5, 2.2, 'b'); c.ell(12.4, 9.5, 1.5, 2.2, 'b'); eyes(c, 5, 9, 7); c.px(8, 10, 'c'); c.px(7, 10, 'c'); c.px(9, 10, 'c'); c.px(12, 10, 'd');
+  c.px(6, 13, 'c'); c.px(10, 13, 'c'); c.px(5, 13, 'c'); c.px(11, 13, 'c');
+};
+BABY.sail = function (c) {
+  c.rect(7, 2, 1, 9, 'b'); c.poly([[6.5, 3], [6.5, 11], [2, 11]], 'a'); c.poly([[8.5, 5], [8.5, 11], [12, 11]], 'c'); c.poly([[8, 2], [10.5, 2.5], [8, 4]], 'e');
+  c.poly([[3, 11.5], [13, 11.5], [11, 14], [5, 14]], 'b'); c.rect(3, 8, 2, 2, 'k'); c.px(3, 8, 'w'); c.rect(9, 9, 2, 2, 'k'); c.px(9, 9, 'w'); c.px(4, 10, 'p'); c.px(5, 12, 'd'); c.px(8, 12, 'd');
+};
+BABY.bookworm = function (c) {
+  c.line(5, 5, 4, 3, 'b'); c.line(11, 5, 12, 3, 'b'); c.px(4, 2, 'e'); c.px(12, 2, 'e');
+  c.ell(8, 8, 4.8, 3.9, 'a'); c.ell(13, 11.5, 1.5, 1.5, 'a'); c.px(14, 12, 'b'); eyes(c, 5, 9, 7); c.px(8, 10, 'p'); c.px(7, 5, 'b'); c.px(9, 5, 'b');
+  c.rect(2, 12, 10, 2, 'd'); c.rect(3, 12, 4, 1, 'c'); c.rect(7, 12, 4, 1, 'c');
+};
+BABY.abacus = function (c) {
+  c.line(8, 4, 8, 2, 'b'); c.px(8, 1, 'd'); c.poly([[4, 5], [5, 3], [7, 5]], 'b'); c.poly([[9, 5], [11, 3], [12, 5]], 'b');
+  c.rect(4, 5, 8, 7, 'b'); c.rect(5, 6, 6, 5, 'e'); eyes(c, 5, 9, 7); c.line(5, 10, 10, 10, 'a'); c.px(6, 9, 'p'); c.px(10, 9, 'p');
+  c.rect(5, 12, 2, 2, 'b'); c.rect(9, 12, 2, 2, 'b'); c.px(3, 8, 'd'); c.px(12, 8, 'c');
+};
+BABY.lion = function (c) {
+  c.rect(5, 2, 2, 2, 'b'); c.rect(9, 2, 2, 2, 'b');
+  c.ell(8, 8, 5.2, 4.6, 'b'); c.ell(8, 9, 3.6, 3.2, 'a'); eyes(c, 5, 9, 7); c.px(8, 10, 'k'); c.px(7, 11, 'k'); c.px(9, 11, 'k'); c.rect(4, 13, 8, 2, 'e');
+};
+BABY.brick = function (c) {
+  c.poly([[3.5, 6], [4, 2], [7, 4.5]], 'a'); c.poly([[9, 4.5], [12, 2], [12.5, 6]], 'a'); c.px(4, 4, 'c'); c.px(11, 4, 'c');
+  c.ell(8, 8.5, 5, 4, 'a'); c.line(5, 6, 10, 6, 'b'); c.px(7, 5, 'b'); c.px(10, 5, 'b'); c.rect(5, 8, 2, 2, 'e'); c.rect(9, 8, 2, 2, 'e'); c.px(6, 8, 'k'); c.px(6, 9, 'k'); c.px(9, 8, 'k'); c.px(9, 9, 'k');
+  c.px(8, 10, 'p'); c.px(3, 10, 'd'); c.px(13, 10, 'd'); c.ell(8, 13, 3, 1.4, 'a'); c.px(12, 12, 'a'); c.px(13, 11, 'a');
+};
+BABY.watch = function (c) {
+  c.rect(7, 2, 2, 2, 'b'); c.ell(8, 8.5, 5.2, 5, 'a'); c.ell(8, 8.5, 4.1, 3.9, 'c'); c.line(8, 8, 8, 5, 'k'); c.line(8, 8, 10, 9, 'k'); c.px(8, 8, 'e'); c.px(5, 10, 'p'); c.px(11, 10, 'p');
+  c.px(5, 14, 'd'); c.px(6, 13, 'd'); c.px(10, 13, 'd'); c.px(11, 14, 'd'); c.px(3, 3, 'd'); c.px(4, 4, 'd'); c.px(12, 3, 'd'); c.px(12, 4, 'd');
+};
+BABY.telegraph = function (c) {
+  c.rect(1, 13, 14, 1, 'b'); c.px(8, 3, 'e'); c.px(7, 4, 'e'); c.px(9, 4, 'e');
+  c.ell(8, 8.8, 4.6, 4, 'a'); c.ell(5, 10, 1.8, 2, 'b'); eyes(c, 8, 10, 7); c.px(12, 9, 'c'); c.px(13, 9, 'c'); c.px(12, 10, 'c'); c.px(6, 13, 'c'); c.px(10, 13, 'c');
+};
+BABY.radio = function (c) {
+  c.line(6, 5, 4, 2, 'c'); c.line(10, 5, 12, 2, 'c'); c.px(4, 1, 'e'); c.px(12, 1, 'e');
+  c.rect(3, 5, 10, 7, 'a'); c.rect(4, 6, 8, 5, 'b'); c.ell(6, 8, 1.8, 1.8, 'w'); c.ell(10, 8, 1.8, 1.8, 'w'); c.px(6, 8, 'k'); c.px(6, 9, 'k'); c.px(10, 8, 'k'); c.px(10, 9, 'k');
+  c.rect(6, 11, 4, 1, 'c'); c.rect(4, 12, 2, 2, 'b'); c.rect(10, 12, 2, 2, 'b'); c.px(7, 6, 'e'); c.px(8, 6, 'e');
+};
+BABY.neon = function (c) {
+  c.px(6, 4, 'e'); c.px(5, 3, 'e'); c.px(10, 4, 'e'); c.px(11, 3, 'e');
+  c.ell(3.5, 8, 2.6, 3.2, 'a'); c.ell(12.5, 8, 2.6, 3.2, 'a'); c.px(3, 7, 'c'); c.px(4, 8, 'c'); c.px(12, 7, 'c'); c.px(11, 8, 'c');
+  c.ell(8, 9, 3.9, 3.6, 'd'); eyes(c, 5, 9, 8); c.px(8, 11, 'p'); c.rect(7, 12, 2, 2, 'd'); c.px(5, 13, 'b'); c.px(10, 13, 'b');
 };
 
 /* ===================== 蛋（24 種各自的形狀、花紋、配色）===================== */
@@ -279,8 +346,9 @@ function stagesOf(key) {
   var fn = DRAW[key], pal = fullPal(key), palA = fullPal(key, true);
   var fill = new Cv(); fn(fill);
   var adult = fill.clone().outline('o');
-  var bf = L.shrink(fill, BABY_SCALE[key] || 0.7, 14);
-  (function () {                       /* 蛋殼帽：頭頂一小片白色殼，表示剛孵化 */
+  var bf = BABY[key] ? new Cv() : L.shrink(fill, BABY_SCALE[key] || 0.7, 14);
+  if (BABY[key]) BABY[key](bf);
+  if (!BABY[key]) (function () {                       /* 蛋殼帽：頭頂一小片白色殼，表示剛孵化 */
     var top = 16, left = 16, right = -1;
     bf.g.forEach(function (r, y) { r.forEach(function (ch, x) { if (ch !== '.') { if (y < top) top = y; } }); });
     bf.g[top].forEach(function (ch, x) { if (ch !== '.') { if (x < left) left = x; if (x > right) right = x; } });

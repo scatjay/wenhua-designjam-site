@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>呼呼醫院樣板・開通後台</title>
+<style>
+:root{--bg:#f3f7f8;--card:#fff;--fg:#1d2b30;--mut:#5d6b70;--ac:#1f7a8c;--ok:#2e7d32;--bad:#b3261e;--line:#dbe4e7;--warn:#8a5a00}
+@media (prefers-color-scheme:dark){:root{--bg:#10191c;--card:#182428;--fg:#e8f0f2;--mut:#9fb0b5;--ac:#52b6c9;--ok:#7bc67e;--bad:#ff8a80;--line:#2b3b40;--warn:#f2c26b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 "Noto Sans TC",system-ui,sans-serif;padding:16px}
+main{max-width:1000px;margin:0 auto}
+h1{font-size:21px;margin:6px 0}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 14px}
+h2{font-size:16px;margin:0 0 8px}
+button{font:inherit;font-weight:700;padding:8px 12px;border:0;border-radius:9px;background:var(--ac);color:#fff;cursor:pointer;min-height:38px;margin:2px 4px 2px 0}
+button.g{background:var(--bg);color:var(--fg);border:1px solid var(--line)}
+input{font:inherit;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);width:130px}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;white-space:nowrap}
+th{color:var(--mut);font-weight:600}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.w{color:var(--warn)}.mut{color:var(--mut)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#msg{min-height:1.4em;margin:6px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>呼呼醫院樣板・開通後台</h1>
+<div id="gate" class="section"><section><button id="login">用 Google 登入（限老師帳號）</button><div id="msg"></div></section></div>
+<div id="app" hidden>
+<section>
+<h2>今日練習碼（放進樣板檔案裡，學生回報時要填）</h2>
+<div class="row">
+<label>Claude Design <input id="d_dsg"></label>
+<label>Figma <input id="d_fig"></label>
+<label>AI Studio <input id="d_ais"></label>
+<button id="saveDaily">儲存</button><button class="g" id="rndDaily">隨機產生三組</button>
+</div>
+<div class="mut" id="dailyNote"></div>
+</section>
+<section>
+<h2>學生名單</h2>
+<div class="row"><button id="gen">替還沒有碼的申請者產生開通碼</button><button class="g" id="reload">重新整理</button><button class="g" id="copyMails">複製已申請信箱（加進 AI Studio 用）</button><button class="g" id="copyCodes">複製「學號,開通碼」</button></div>
+<div class="mut" id="sum"></div>
+<div class="wrap"><table id="tb"><thead><tr><th>學號</th><th>班</th><th>信箱</th><th>開通碼</th><th>AI Studio（自動）</th><th>Claude Design</th><th>Figma</th><th>AI Studio（回報）</th></tr></thead><tbody></tbody></table></div>
+</section>
+<div class="mut">自動＝樣板程式載入時自己記錄（開了幾次、最近何時）；回報＝學生自己填今日練習碼，碼對才會記進來。<span class="w">黃色</span>＝有申請但還沒發碼或沒開過，<span class="ok">綠色</span>＝今天有開。</div>
+</div>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  firebase.initializeApp({apiKey:"AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",authDomain:"gen-lang-client-0929530380.firebaseapp.com",databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"gen-lang-client-0929530380"});
+  var db=firebase.database(),auth=firebase.auth(),ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var D={req:{},code:{},open:{},rep:{},daily:{}};
+  function say(t){$('msg').textContent=t}
+  function prov(){var p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});return p}
+  function accept(u){
+    if(!u)return;
+    if(u.email!=='scatjay@gmail.com'){say('這個帳號沒有權限：'+u.email);auth.signOut();return}
+    $('gate').hidden=true;$('app').hidden=false;load();
+  }
+  auth.onAuthStateChanged(accept);
+  $('login').onclick=function(){
+    say('開啟 Google 登入視窗…');
+    auth.signInWithPopup(prov()).catch(function(e){
+      var c=(e&&e.code)||'';
+      if(/popup|cancelled|operation-not-supported/.test(c)){say('視窗被擋，改用轉頁登入…');auth.signInWithRedirect(prov())}
+      else say('登入沒完成（'+(c||'unknown')+'）');
+    });
+  };
+  auth.getRedirectResult().catch(function(e){say('登入沒完成（'+((e&&e.code)||'')+'）')});
+  function rnd(n){var s='';for(var i=0;i<n;i++)s+=ALPHA[Math.floor(Math.random()*ALPHA.length)];return s}
+  function fmt(t){if(!t)return '';var d=new Date(t);return (d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+  function today0(){var d=new Date();d.setHours(0,0,0,0);return d.getTime()}
+  function load(){
+    var ks=['req','code','open','rep','daily'];
+    Promise.all(ks.map(function(k){return db.ref('hhopen/'+k).once('value')})).then(function(s){
+      ks.forEach(function(k,i){D[k]=s[i].val()||{}});render();
+    }).catch(function(e){say('讀取失敗：'+e.message)});
+  }
+  function codeOf(sid){for(var c in D.code){if(D.code[c]===sid)return c}return ''}
+  function render(){
+    ['dsg','fig','ais'].forEach(function(t){$('d_'+t).value=D.daily[t]||''});
+    $('dailyNote').textContent='尚未設定的工具，學生回報會一律失敗。';
+    var tb=$('tb').querySelector('tbody');tb.innerHTML='';
+    var sids=Object.keys(D.req).sort(),t0=today0(),n={req:sids.length,code:0,opened:0,today:0};
+    sids.forEach(function(sid){
+      var r=D.req[sid],c=codeOf(sid),o=c?D.open[c]:null,rp=c?(D.rep[c]||{}):{},any=false,todayAny=false;
+      if(c)n.code++;
+      var tr=document.createElement('tr');
+      function td(h,cls){var e=document.createElement('td');e.innerHTML=h;if(cls)e.className=cls;tr.appendChild(e);return e}
+      td(sid);td(r.cls||'');td(r.email||'');
+      td(c||'<span class="w">未發</span>');
+      var a=o?(o.n+' 次，最近 '+fmt(o.last)):'';if(o){any=true;if(o.last>=t0)todayAny=true}
+      td(a||'<span class="mut">—</span>',o&&o.last>=t0?'ok':'');
+      ['dsg','fig','ais'].forEach(function(t){var x=rp[t];if(x){any=true;if(x.last>=t0)todayAny=true}
+        td(x?fmt(x.last)+(x.day===D.daily[t]?'':' (舊碼)'):'<span class="mut">—</span>',x&&x.last>=t0?'ok':'')});
+      if(any)n.opened++;if(todayAny)n.today++;
+      if(!c||!any)tr.style.background='rgba(242,194,107,.12)';
+      tb.appendChild(tr);
+    });
+    $('sum').textContent='申請 '+n.req+' 人｜已發碼 '+n.code+'｜開過任一檔案 '+n.opened+'｜今天有開 '+n.today;
+  }
+  $('reload').onclick=load;
+  $('saveDaily').onclick=function(){
+    var u={};['dsg','fig','ais'].forEach(function(t){var v=$('d_'+t).value.trim();if(v)u[t]=v});
+    db.ref('hhopen/daily').update(u).then(function(){say('已儲存今日練習碼');load()}).catch(function(e){say('儲存失敗：'+e.message)});
+  };
+  $('rndDaily').onclick=function(){['dsg','fig','ais'].forEach(function(t){$('d_'+t).value=rnd(5)})};
+  $('gen').onclick=function(){
+    var sids=Object.keys(D.req).filter(function(s){return !codeOf(s)}),u={};
+    sids.forEach(function(s){var c;do{c=rnd(6)}while(D.code[c]||u[c]);u[c]=s});
+    if(!sids.length){say('沒有需要發碼的申請者');return}
+    db.ref('hhopen/code').update(u).then(function(){say('已替 '+sids.length+' 人產生開通碼');load()}).catch(function(e){say('失敗：'+e.message)});
+  };
+  function copy(t){navigator.clipboard.writeText(t).then(function(){say('已複製')},function(){say('複製失敗，請手動選取')})}
+  $('copyMails').onclick=function(){copy(Object.keys(D.req).map(function(s){return D.req[s].email}).join(', '))};
+  $('copyCodes').onclick=function(){copy(Object.keys(D.req).map(function(s){return s+','+codeOf(s)}).join('\n'))};
+})();
+</script>
+</body>
+</html>

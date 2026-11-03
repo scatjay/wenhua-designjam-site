@@ -272,6 +272,65 @@ BABY.neon = function (c) {
   c.ell(8, 9, 3.9, 3.6, 'd'); eyes(c, 5, 9, 8); c.px(8, 11, 'p'); c.rect(7, 12, 2, 2, 'd'); c.px(5, 13, 'b'); c.px(10, 13, 'b');
 };
 
+/* 第 13～24 隻幼體 */
+BABY.ink = function (c) {
+  c.poly([[7, 5], [8, 2], [9, 5]], 'b'); c.px(8, 2, 'c'); c.ell(8, 8.5, 4.8, 4.2, 'a'); c.ell(5.5, 6.2, 1, 1.4, 'c'); eyes(c, 5, 9, 7);
+  c.px(8, 10, 'c'); c.px(3, 10, 'a'); c.px(2, 11, 'a'); c.px(13, 10, 'a'); c.px(14, 11, 'a'); c.px(8, 13, 'a'); c.px(8, 14, 'b'); c.rect(10, 11, 2, 2, 'e');
+};
+BABY.bee = function (c) {
+  c.ell(3, 6, 1.8, 2.4, 'c'); c.ell(13, 6, 1.8, 2.4, 'c'); c.ell(8, 9, 5, 4.2, 'a'); c.ell(8, 5.2, 3.8, 1.7, 'e'); c.rect(4, 6, 8, 1, 'e'); c.px(8, 3, 'w');
+  eyes(c, 5, 9, 8); c.px(8, 11, 'p'); c.rect(5, 12, 6, 1, 'b'); c.ell(8, 13.5, 2.6, 1, 'a'); c.px(8, 14, 'b');
+};
+BABY.rubbing = function (c) {
+  c.poly([[1, 6], [3.5, 8.5], [1, 11]], 'b'); c.poly([[6, 5], [8, 2.5], [10, 5]], 'b'); c.ell(8, 8.5, 5.2, 4.2, 'a');
+  [[6, 6], [8, 6], [10, 6], [5, 10], [7, 11], [10, 11]].forEach(function (p) { c.pxo(p[0], p[1], 'c'); });
+  c.rect(9, 7, 2, 2, 'k'); c.px(9, 7, 'w'); c.px(12, 10, 'b'); c.px(13, 10, 'b'); c.line(5, 9, 11, 9, 'd'); c.px(7, 13, 'b'); c.px(10, 13, 'b');
+};
+BABY.marrow = function (c) {
+  c.ell(8, 7.5, 5.2, 4.2, 'a'); c.clearBelow(10); for (var x = 3; x <= 13; x += 2) c.px(x, 11, 'a');
+  c.ell(8, 7, 2.4, 2, 'c'); c.ell(8, 7, 1.1, 1, 'y'); eyes(c, 4, 10, 8); c.px(8, 10, 'p');
+  [5, 8, 11].forEach(function (x, i) { for (var y = 12; y <= 14; y++) c.px(x + (y % 2 ? 0 : 1), y, i % 2 ? 'd' : 'b'); });
+};
+BABY.snailcrab = function (c) {
+  c.ell(7, 7.5, 4.6, 4.2, 'a'); c.px(5, 3, 'a'); c.px(4, 4, 'a');
+  [[6, 7], [7, 7], [8, 7], [8, 6], [7, 5], [6, 5], [5, 6], [5, 7], [6, 8], [7, 9]].forEach(function (p) { c.pxo(p[0], p[1], 'b'); });
+  c.line(11, 10, 11, 8, 'd'); c.line(13, 10, 13, 8, 'd'); c.px(11, 7, 'k'); c.px(13, 7, 'k'); c.ell(12, 12, 3.2, 2.2, 'd'); c.px(11, 12, 'k'); c.px(13, 12, 'k'); c.px(12, 13, 'p');
+  c.px(5, 13, 'd'); c.px(4, 14, 'd'); c.px(8, 13, 'd'); c.px(9, 14, 'd'); c.px(14, 9, 'e');
+};
+BABY.leopard = function (c) {
+  c.ell(4.8, 4.8, 1.6, 1.6, 'a'); c.ell(11.2, 4.8, 1.6, 1.6, 'a'); c.px(5, 5, 'b'); c.px(11, 5, 'b');
+  c.ell(8, 8.6, 5.2, 4.3, 'a'); eyes(c, 5, 9, 7); c.ell(8, 11, 2.2, 1.2, 'c'); c.px(8, 10, 'k'); c.px(7, 6, 'b'); c.px(9, 6, 'b'); c.px(8, 5, 'b');
+  c.pxo(4, 9, 'b'); c.pxo(12, 9, 'b'); c.pxo(3, 8, 'd'); c.pxo(13, 8, 'd'); c.ell(8, 13.3, 3.6, 1.2, 'a'); c.px(12, 13, 'a'); c.px(13, 12, 'a'); c.px(13, 11, 'b');
+};
+BABY.seahorse = function (c) {
+  c.px(5, 3, 'd'); c.px(6, 2, 'd'); c.px(8, 2, 'd'); c.px(10, 3, 'd');
+  c.ell(8, 6, 4, 3.6, 'a'); c.rect(11, 6, 3, 2, 'a'); c.rect(7, 5, 2, 2, 'k'); c.px(7, 5, 'w'); c.px(13, 7, 'b'); c.px(11, 8, 'p');
+  c.ell(7.5, 11, 2.4, 2.4, 'a'); c.ell(8.5, 13, 2, 1.3, 'a'); c.g[13][8] = '.'; c.poly([[5.5, 9], [3, 11], [5.5, 13]], 'c'); c.px(8, 10, 'c'); c.px(8, 11, 'c');
+};
+BABY.ironcrab = function (c) {
+  c.rect(4, 3, 2, 2, 'd'); c.rect(10, 3, 2, 2, 'd'); c.rect(5, 5, 1, 2, 'b'); c.rect(10, 5, 1, 2, 'b');
+  c.ell(8, 9, 5.6, 3.5, 'a'); c.rect(5, 8, 6, 2, 'k'); c.px(6, 8, 'e'); c.px(9, 8, 'e'); c.px(4, 11, 'w'); c.px(12, 11, 'w');
+  c.ell(2.2, 8, 1.6, 1.6, 'c'); c.ell(13.8, 8, 1.6, 1.6, 'c'); c.px(1, 7, 'b'); c.px(14, 7, 'b'); [4, 6, 10, 12].forEach(function (x) { c.px(x, 12, 'b'); c.px(x - (x < 8 ? 1 : -1), 13, 'b'); });
+};
+BABY.kitedragon = function (c) {
+  c.poly([[8, 3], [12.5, 8], [8, 13], [3.5, 8]], 'a'); c.line(8, 3, 8, 13, 'b'); c.line(4, 8, 12, 8, 'b'); c.px(6, 4, 'c'); c.px(5, 3, 'c'); c.px(10, 4, 'c'); c.px(11, 3, 'c');
+  c.rect(5, 6, 2, 2, 'k'); c.px(5, 6, 'w'); c.rect(9, 6, 2, 2, 'k'); c.px(9, 6, 'w'); c.px(8, 9, 'p'); c.px(6, 10, 'c'); c.px(10, 10, 'c'); c.px(8, 14, 'd'); c.px(7, 13, 'c'); c.px(9, 14, 'c');
+};
+BABY.sugartrain = function (c) {
+  c.rect(7, 3, 2, 2, 'b'); c.rect(6, 2, 4, 1, 'd'); c.ell(8, 8.5, 5.2, 3.8, 'a'); c.rect(3, 6, 3, 1, 'b'); eyes(c, 5, 9, 6);
+  c.px(8, 10, 'p'); c.poly([[6, 11], [10, 11], [11.5, 13], [4.5, 13]], 'd'); c.ell(5, 13.5, 1.3, 1.2, 'k'); c.ell(11, 13.5, 1.3, 1.2, 'k'); c.px(5, 13, 'c'); c.px(11, 13, 'c'); c.px(13, 5, 'c');
+};
+BABY.parrot = function (c) {
+  c.poly([[3, 5], [1, 3], [1, 7.5]], 'e'); c.px(7, 3, 'd'); c.px(8, 2, 'd'); c.px(9, 3, 'd');
+  c.ell(8, 8.5, 4.8, 4.2, 'a'); c.poly([[7, 9], [9, 9], [8, 12]], 'c'); eyes(c, 5, 9, 6); c.ell(4, 11.5, 1.5, 2, 'b'); c.ell(12, 11.5, 1.5, 2, 'b');
+  c.ell(8, 14, 5, 0.9, 'k'); c.px(8, 14, 'd');
+};
+BABY.ufo = function (c) {
+  c.ell(8, 6.5, 4, 3.5, 'd'); c.rect(5, 5, 2, 2, 'k'); c.px(5, 5, 'w'); c.rect(9, 5, 2, 2, 'k'); c.px(9, 5, 'w'); c.px(8, 8, 'p');
+  c.ell(8, 10.5, 6.6, 2, 'a'); c.ell(8, 11.5, 4.5, 0.8, 'b'); [[3, 10], [6, 11], [10, 11], [13, 10]].forEach(function (p) { c.px(p[0], p[1], 'e'); });
+  c.px(7, 13, 'c'); c.px(8, 13, 'c'); c.px(9, 13, 'c'); c.px(8, 14, 'd');
+};
+
 /* ===================== 蛋（24 種各自的形狀、花紋、配色）===================== */
 var EGG = {};
 EGG.tide = function (c) { c.ell(7.5, 8, 4.8, 5.8, 'a'); [[4, 6], [5, 5], [6, 6], [7, 5], [8, 6], [9, 5], [10, 6]].forEach(function (p) { c.pxo(p[0], p[1], 'c'); }); [[4, 10], [5, 9], [6, 10], [7, 9], [8, 10], [9, 9], [10, 10]].forEach(function (p) { c.pxo(p[0], p[1], 'b'); }); c.pxo(5, 4, 'd'); c.pxo(5, 5, 'd'); };
@@ -298,6 +357,37 @@ EGG.kitedragon = function (c) { c.poly([[8, 1], [13, 6], [8, 14], [3, 6]], 'a');
 EGG.sugartrain = function (c) { c.poly([[8, 2], [14, 5], [8, 8], [2, 5]], 'c'); c.poly([[2, 5], [8, 8], [8, 14], [2, 11]], 'a'); c.poly([[14, 5], [8, 8], [8, 14], [14, 11]], 'b'); c.px(8, 5, 'd'); c.px(5, 10, 'd'); c.px(11, 11, 'd'); c.px(4, 8, 'e'); };
 EGG.parrot = function (c) { c.ell(8, 8, 6, 6, 'k'); [5, 4].forEach(function (r, i) { for (var y = 0; y < 16; y++) for (var x = 0; x < 16; x++) { var dx = x - 8, dy = y - 8, d = dx * dx + dy * dy; if (d > (r - 0.5) * (r - 0.5) && d <= r * r) c.pxo(x, y, 'b'); } }); c.ell(8, 8, 2, 2, 'a'); c.px(8, 8, 'd'); c.px(4, 5, 'e'); c.px(5, 4, 'e'); };
 EGG.ufo = function (c) { c.ell(8, 9, 7, 2.8, 'a'); c.ell(8, 6.5, 3.2, 2.6, 'c'); c.ell(8, 11, 4.5, 1, 'b'); [3, 6, 10, 13].forEach(function (x) { c.px(x, 9, 'e'); }); c.px(7, 6, 'd'); c.px(8, 5, 'w'); };
+
+/* ===================== 覺醒：每隻專屬的一個強化（換色、光環、展開、發光）===================== */
+function recolor(c, f, t) { c.g = c.g.map(function (r) { return r.map(function (ch) { return ch === f ? t : ch; }); }); }
+function ringFree(c, cx, cy, rx, ry, ch) { for (var a = 0; a < 6.2832; a += 0.22) c.free(Math.round(cx + rx * Math.cos(a)), Math.round(cy + ry * Math.sin(a)), ch); }
+function dots(c, list, ch) { list.forEach(function (p) { c.free(p[0], p[1], ch); }); }
+var AWAKE = {
+  tide: function (c) { recolor(c, 'd', 'y'); dots(c, [[6, 3], [8, 2], [10, 2], [12, 3], [13, 4], [5, 4]], 'y'); },          /* 水珠光環、腹部發光 */
+  deer: function (c) { recolor(c, 'c', 'g'); recolor(c, 'd', 'y'); dots(c, [[9, 0], [11, 0], [13, 0]], 'g'); },            /* 金色鹿角、發光斑點 */
+  gull: function (c) { recolor(c, 'b', 'g'); recolor(c, 'd', 'y'); dots(c, [[0, 4], [1, 3], [2, 4]], 'y'); },             /* 金屬翼換成金翼 */
+  sail: function (c) { recolor(c, 'c', 'g'); recolor(c, 'e', 'y'); dots(c, [[1, 7], [2, 8], [1, 9], [12, 7], [13, 8]], 'y'); }, /* 金色大帆 */
+  bookworm: function (c) { recolor(c, 'c', 'y'); ringFree(c, 4, 7, 4.5, 3.5, 'g'); },                                    /* 頭上金色光環、書頁發光 */
+  abacus: function (c) { recolor(c, 'c', 'g'); dots(c, [[8, 0], [7, 0], [9, 0]], 'g'); },  /* 藍色算珠轉金，頂端算珠發光 */
+  lion: function (c) { recolor(c, 'd', 'y'); recolor(c, 'e', 'g'); },  /* 眼睛發光、底座轉金 */
+  brick: function (c) { recolor(c, 'e', 'g'); recolor(c, 'c', 'y'); dots(c, [[13, 13], [14, 12]], 'y'); },  /* 眼睛與腮紅發金光 */
+  watch: function (c) { recolor(c, 'c', 'y'); dots(c, [[3, 1], [12, 1], [1, 5], [14, 5]], 'g'); },  /* 錶面發光、刻度星光 */
+  telegraph: function (c) { recolor(c, 'd', 'y'); dots(c, [[1, 2], [2, 3], [1, 4], [2, 5], [13, 1], [14, 2], [13, 3]], 'y'); }, /* 電弧火花 */
+  radio: function (c) { recolor(c, 'e', 'g'); dots(c, [[0, 5], [0, 6], [0, 7], [1, 4], [1, 8], [15, 5], [15, 6], [15, 7], [14, 4], [14, 8]], 'y'); }, /* 聲波擴散 */
+  neon: function (c) { recolor(c, 'c', 'y'); recolor(c, 'd', 'w'); dots(c, [[0, 1], [15, 1], [1, 12], [14, 12]], 'g'); },  /* 翅膀斑紋發光 */
+  ink: function (c) { recolor(c, 'c', 'g'); recolor(c, 'b', 'g'); dots(c, [[13, 2], [14, 3]], 'y'); },                    /* 金墨筆鋒 */
+  bee: function (c) { recolor(c, 'c', 'y'); ringFree(c, 8, 3, 3.6, 1.6, 'g'); },                                        /* 頭頂金色光環、翅膀發光 */
+  rubbing: function (c) { recolor(c, 'd', 'y'); for (var y = 0; y < 16; y++) c.free(8, y, 'y'); },                       /* 掃描光束穿過魚身 */
+  marrow: function (c) { recolor(c, 'c', 'y'); dots(c, [[3, 0], [5, 0], [8, 0], [11, 0], [13, 0], [1, 3], [14, 3]], 'g'); },  /* 髓核心大放光、頂端光點 */
+  snailcrab: function (c) { recolor(c, 'b', 'g'); recolor(c, 'c', 'y'); },                                              /* 螺殼螺旋發金光 */
+  leopard: function (c) { recolor(c, 'b', 'g'); recolor(c, 'd', 'y'); dots(c, [[3, 14], [5, 15], [8, 15], [11, 15], [13, 14]], 'w'); }, /* 雲紋發光、腳下雲朵 */
+  seahorse: function (c) { recolor(c, 'c', 'g'); recolor(c, 'd', 'y'); dots(c, [[3, 6], [3, 8], [2, 7]], 'y'); },         /* 鰭帆化成金帆 */
+  ironcrab: function (c) { recolor(c, 'd', 'y'); recolor(c, 'e', 'g'); recolor(c, 'c', 'y'); },                          /* 鏡頭與鉗子發光 */
+  kitedragon: function (c) { recolor(c, 'd', 'g'); recolor(c, 'c', 'y'); dots(c, [[8, 15], [7, 15], [9, 15]], 'g'); },   /* 飄帶變金、拖得更長 */
+  sugartrain: function (c) { recolor(c, 'e', 'g'); recolor(c, 'd', 'y'); dots(c, [[11, 2], [12, 1], [13, 2], [12, 0]], 'w'); }, /* 煙囪噴出白煙 */
+  parrot: function (c) { recolor(c, 'd', 'g'); recolor(c, 'e', 'y'); dots(c, [[0, 8], [1, 9], [15, 8], [14, 9]], 'y'); }, /* 羽冠與翅膀轉金 */
+  ufo: function (c) { recolor(c, 'c', 'y'); recolor(c, 'd', 'w'); dots(c, [[0, 11], [1, 12], [15, 11], [14, 12], [3, 14], [12, 14]], 'y'); } /* 掃描光束變強 */
+};
 
 /* ===================== 調色盤：a 主色、b 暗部、c/d/e 配色、o 專屬外框 ===================== */
 var PAL = {
@@ -358,13 +448,14 @@ function stagesOf(key) {
   var baby = bf.outline('o');
   var awake = fill.clone().outline('o');
   awake.g = awake.g.map(function (r) { return r.map(function (ch) { return ch === 'o' ? 'O' : ch; }); });
+  AWAKE[key](awake);
   /* 閃光只放在原本外框範圍內的空格，不撐大輪廓 */
   var n = 0, minx = 16, maxx = -1, miny = 16, maxy = -1;
   awake.g.forEach(function (r, y) { r.forEach(function (ch, x) { if (ch !== '.') { if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y; } }); });
   var cand = [];
   for (var y = miny + 1; y < maxy; y++) for (var x = minx + 1; x < maxx; x++) cand.push([x, y]);
   cand.sort(function (a, b) { return (Math.abs(b[0] - 7.5) + Math.abs(b[1] - 7.5)) - (Math.abs(a[0] - 7.5) + Math.abs(a[1] - 7.5)); });
-  cand.forEach(function (p) { if (n < 3 && awake.plusFree(p[0], p[1], 'g', 'y')) n++; });
+  cand.forEach(function (p) { if (n < 2 && awake.plusFree(p[0], p[1], 'g', 'y')) n++; });
   cand.forEach(function (p) { if (n < 2) { if (awake.get(p[0], p[1]) === '.') { awake.px(p[0], p[1], 'g'); n++; } } });
   return { baby: pack(baby, pal), adult: pack(adult, pal), awake: pack(awake, palA) };
 }

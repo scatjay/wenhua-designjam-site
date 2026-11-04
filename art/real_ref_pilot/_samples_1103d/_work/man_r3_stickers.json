@@ -1,0 +1,155 @@
+{
+ "items": [
+  {
+   "id": "stk_seal_split_r3",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_seal_split_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形金邊琺瑯章",
+    "中央羅盤玫瑰",
+    "三條向不同方向分岔的小足跡"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "圓章：分頭探索"
+  },
+  {
+   "id": "stk_seal_gather_r3",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_seal_gather_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形金邊琺瑯章",
+    "五個相同的彩色圓棋子",
+    "聚在一面小紅旗旁"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "圓章：全員集合"
+  },
+  {
+   "id": "stk_seal_roles_r3",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_seal_roles_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形金邊琺瑯章",
+    "放大鏡、筆記本、相機三個工具呈三角排列"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "圓章：各司其職"
+  },
+  {
+   "id": "stk_fp_like_r3",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_fp_like_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形金邊琺瑯章",
+    "一顆大紅心與小閃光"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "貼圖：讚"
+  },
+  {
+   "id": "stk_fp_wow_r3",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_fp_wow_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形金邊琺瑯章",
+    "黃色放射星芒與小閃光"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "貼圖：好厲害"
+  },
+  {
+   "id": "stk_first_room_r3",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_first_room_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓角方形貼紙",
+    "圓門小屋",
+    "屋前一把黃銅小鑰匙"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "方貼：第一次進房（工坊創作）"
+  },
+  {
+   "id": "stk_dex_collect_r3",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_dex_collect_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓角方形貼紙",
+    "翻開的圖鑑書",
+    "書頁上有一顆斑點蛋"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "方貼：圖鑑收集（工坊創作）"
+  }
+ ]
+}

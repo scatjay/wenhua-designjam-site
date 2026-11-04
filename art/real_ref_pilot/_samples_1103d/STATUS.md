@@ -2,7 +2,7 @@
 
 # 走讀美術接力 STATUS
 
-更新：2026-11-05 03:25
+更新：2026-11-05 03:40
 
 ## 起始狀態
 - 監督員 cwd：worktree sleepy-poitras-5fdf1d，分支 claude/sleepy-poitras-5fdf1d
@@ -29,6 +29,8 @@
 
 | r3_props（03:21 完成，QA_r3_props.md；第 2 輪） | 14 | 1（watch） | 9（inkline、roadsign、document、liftbtn、facebrick、oldkey、lantern、scanner、trowel） | 4（abacus、compass、gong、broom） | 見下 | 已達 2 輪上限，不再重排 |
 
+| r3_stickers（03:34 完成，QA_r3_stickers.md；第 2 輪） | 7 | 2（roles、like） | 4（split、gather、first_room、dex） | 1（wow：外輪廓鋸齒星芒、與圓章不成套） | 見下 | 已達 2 輪上限，不再重排 |
+
 ## 道具 32×32 縮圖驗收（S6，thumb32_r2_props.png）
 - 平底的 6 張（墨斗、夾板、懷錶、紅磚、鑰匙、剪黏龍）縮到 32 像素輪廓仍認得；懷錶與鑰匙偏糊。
 - 帶照片場景的約 8 張縮小後只剩色塊，退回重生。
@@ -45,4 +47,5 @@
 - 警察署 A 2 張（s2311、s2312）：橫額花飾與貝殼棕葉飾畫不出。
 - r3_retry 需人眼 6 張：剪黏藝師 s4311/s4312（毛巾、性別比）、門廊 s1311/s1312（石獅狀雕像、破風板有無字）、側面 s1321/s1322（鴟尾樣式、s1322 左上角雜點與山牆徽章）。
 - r3 道具退回 9 張（見 QA_r3_props.md）：墨斗 L 形曲尺與紅磚雙色磚兩輪都畫不出，建議改成程式補畫或後處理，請楊老師決定。
+- r3 貼紙退回 4 張：split 足跡、gather 棋子數、first_room 與 dex 的圓角方形底形兩輪都畫不出；建議改成程式先畫底板再貼固定數量與位置的元件，請楊老師決定。
 - 劉永福 liu_r2_C_feature_s7103：臉部不在監督範圍，未品檢。

@@ -166,6 +166,14 @@ body.st-pixel #hd,body.st-pixel #nav{border-width:3px 0 0 0}
 /* 手機介面優化（1029）：點擊區至少 44px、字至少 12px。量測：test_tools/walk_ui_audit.py */
 .btn,.btn2,button.chip,.inp,select{min-height:44px}
 button.chip{min-width:44px}
+/* 地圖右上角按鈕：地圖控制（🎯回到關卡、📍我的位置）與 👥隊友開關原本都釘在右上角、疊在一起（手機回報 11/4）。控制鈕改成直排的圓形圖示鈕，隊友開關排在它們下方 */
+.leaflet-control.mapbtns{position:relative!important;right:auto!important;top:auto!important;display:flex;flex-direction:column;gap:6px}
+.leaflet-control.mapbtns button,#mapwrap>.mapbtns button{width:44px!important;height:44px!important;min-width:44px;padding:0!important;border-radius:50%!important;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center}
+#mapwrap>.mapbtns{top:112px;right:16px}
+/* 地圖上的名牌：標記容器只有 48px 寬，名字會被擠成 2、3 行。改成單行、依名字長度撐寬、置中在頭像下方，太長才用 … 截斷（手機回報 11/4） */
+.mate b{display:block!important;width:max-content;max-width:150px;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;position:relative;left:50%;transform:translateX(-50%);margin-top:3px!important;padding:1px 10px!important;line-height:1.4;font-size:12px!important;font-weight:700;letter-spacing:.2px}
+/* 站點圓圈：有定位時第二行會顯示距離；圓圈固定高度會讓小字溢出、壓到下面的標題（桌面版回報 11/4）。改成隨內容長高的膠囊 */
+.chips .chip{height:auto!important;min-height:44px;width:auto!important;min-width:48px;padding:4px 9px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;border-radius:24px!important}.chips .chip br{display:none}.chips .chip .cd{display:block;font-size:11px;font-weight:600;white-space:nowrap;opacity:.85}
 #hd button{min-height:44px;min-width:44px;padding:0 12px}
 #nav button{min-height:56px;font-size:14px}
 #mapbar .btn2{min-height:44px;padding:0 14px;font-size:13px}
@@ -260,7 +268,7 @@ body.eco *,body.eco *::before,body.eco *::after{animation:none!important;transit
       <div id="mapbar"><span>🗺 地圖</span><button id="btn-fold" class="btn2">收合 ▴</button></div>
       <div id="mapwrap"><button id="btn-mapclose" class="btn2" title="把地圖收起來，看任務">▾ 收合地圖</button>
         <div id="map"></div>
-        <div class="mapbtns"><button id="btn-mates" title="顯示或隱藏隊友">👥</button><button id="btn-locate" title="回到我的位置">📍</button></div>
+        <div class="mapbtns"><button id="btn-mates" title="顯示或隱藏隊友" aria-label="顯示或隱藏隊友">👥</button></div>
         <div id="gps">定位中…</div>
       </div>
     </div>
@@ -295,7 +303,7 @@ body.eco *,body.eco *::before,body.eco *::after{animation:none!important;transit
 <script src="js/walk_agent_skills.js?v=202610291030"></script>
 <script src="js/walk_sprites.js?v=202610282215"></script>
 <script src="js/walk_i18n_id.js?v=202611041400"></script>
-<script src="js/walk.js?v=202611041400"></script>
+<script src="js/walk.js?v=202611041955"></script>
 <script src="js/walk_i18n.js?v=202611031045"></script>
 </body>
 </html>

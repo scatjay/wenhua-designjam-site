@@ -470,7 +470,7 @@
       options: { position: 'topright' },
       onAdd: function () {
         var d = L.DomUtil.create('div', 'mapbtns'); L.DomEvent.disableClickPropagation(d);
-        d.innerHTML = '<button type="button" class="btn2" id="mb-stops">🎯 回到關卡</button><button type="button" class="btn2" id="mb-me">📍 我的位置</button>';
+        d.innerHTML = '<button type="button" class="btn2" id="mb-stops" title="回到關卡" aria-label="回到關卡">🎯</button><button type="button" class="btn2" id="mb-me" title="我的位置" aria-label="我的位置">📍</button>';
         d.querySelector('#mb-stops').onclick = function () {
           var cur = (!REH && typeof schedNow === 'function') ? schedNow() : null;
           if (cur) map.flyTo([cur.lat, cur.lon], 17); else map.fitBounds(L.latLngBounds(S.map(function (x) { return [x.lat, x.lon]; })), { padding: [50, 50], maxZoom: 18 });
@@ -761,7 +761,7 @@
     [].forEach.call(document.querySelectorAll('#nav button'), function (b) { b.onclick = function () { setView(b.dataset.v); }; });
     $('btn-mates').onclick = function () { showMates = !showMates; $('btn-mates').classList.toggle('off', !showMates); renderMates(); };
     $('btn-fold').onclick = function () { mapFolded = !mapFolded; try { localStorage.setItem('walk_fold', mapFolded ? '1' : '0'); } catch (e) {} setView(view); };
-    $('btn-locate').onclick = function () { if (myPos) map.setView([myPos.lat, myPos.lon], 18); };
+    if ($('btn-locate')) $('btn-locate').onclick = function () { if (myPos) map.setView([myPos.lat, myPos.lon], 18); };
   }
   function setView(v) {
     view = v; if (phase() === 'rehearsal' && v === 'task') setTimeout(function () { pmark('g4'); }, 4000); if (phase() === 'rehearsal' && v === 'team') pmark('g3'); [].forEach.call(document.querySelectorAll('.pane'), function (p) { p.hidden = (p.id !== 'pane-' + v) && p.id !== 'pane-map'; });

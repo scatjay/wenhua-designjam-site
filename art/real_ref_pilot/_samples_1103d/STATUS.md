@@ -2,7 +2,7 @@
 
 # 走讀美術接力 STATUS
 
-更新：2026-11-05 03:55
+更新：2026-11-05 04:15（佇列已結束，見 FINAL_REPORT.md）
 
 ## 起始狀態
 - 監督員 cwd：worktree sleepy-poitras-5fdf1d，分支 claude/sleepy-poitras-5fdf1d
@@ -32,6 +32,8 @@
 | r3_stickers（03:34 完成，QA_r3_stickers.md；第 2 輪） | 7 | 2（roles、like） | 4（split、gather、first_room、dex） | 1（wow：外輪廓鋸齒星芒、與圓章不成套） | 見下 | 已達 2 輪上限，不再重排 |
 
 | r3_scene（03:49 完成，QA_r3_scene.md；第 2 輪） | 7 | 0 | 7（全部） | 0 | 見下 | 已達 2 輪上限，不再重排 |
+
+| r3_char（04:10 完成，QA_r3_char.md；第 2 輪） | 11 | 1（wutai_f） | 9 | 1（cehui_f） | 全程最高 73°C／215 W | 已達 2 輪上限 |
 
 ## 道具 32×32 縮圖驗收（S6，thumb32_r2_props.png）
 - 平底的 6 張（墨斗、夾板、懷錶、紅磚、鑰匙、剪黏龍）縮到 32 像素輪廓仍認得；懷錶與鑰匙偏糊。

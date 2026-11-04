@@ -610,17 +610,23 @@
   function taskTitle(sid, tid) { var s = stopById(sid); if (!s || !s.tasks) return ''; for (var i = 0; i < s.tasks.length; i++) if (s.tasks[i].id === tid) return s.tasks[i].title; return ''; }
   function zoneOf(s, key) { return s.zones && s.zones[key]; }
   function fresh(p) { return p && nowMs() - p.t < 90000; }
+  /* 隊友互證：定位會偏。我離某位「也在這個區裡」的新鮮隊友 40 公尺內，就算我到了（回報：明明跟大家一起，卻被判不在區內） */
+  function mateVouch(z, extra) {
+    if (!myPos) return false; var ks = Object.keys(teamPos || {}), i, p;
+    for (i = 0; i < ks.length; i++) { if (ks[i] === uid) continue; p = teamPos[ks[i]]; if (fresh(p) && dist(p, z) <= z.r + Math.min(p.acc || 0, 40) + (extra || 0) && dist(myPos, p) <= 40) return true; }
+    return false;
+  }
   function checkTasks() {
     if (!teamId || !uid || !team) return;
     S.forEach(function (s) {
       // 到點打卡
-      if (myPos && dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) + 10 * hqLv('range') + 5 * rlvA('技術專家') + homeArriveRange() && !(prog[s.id] && prog[s.id].arrived)) {
+      if (myPos && (dist(myPos, s) <= s.r + Math.min(myPos.acc || 0, 40) + 10 * hqLv('range') + 5 * rlvA('技術專家') + homeArriveRange() || mateVouch(s, 0)) && !(prog[s.id] && prog[s.id].arrived)) {
         try { window.WalkPet && WalkPet.roll(s.id); } catch (e) { }   /* 抵達景點：有機率遇到小精靈（每站每人只擲一次） */
         ROOT.child(PR_(teamId) + '/' + s.id + '/arrived').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { toast('📍 到達：' + s.name); homeEvent('arrive', s.id); } });
       }
       (s.tasks || []).forEach(function (t) {
         if (taskDone(s.id, t.id)) return;
-        if (t.type === 'zone' && myPos) { var z = zoneOf(s, t.zone); if (z && dist(myPos, z) <= z.r + Math.min(myPos.acc || 0, 40) + 12 + 10 * hqLv('range') + 5 * rlvA('技術專家')) markTask(s.id, t.id); }
+        if (t.type === 'zone' && myPos) { var z = zoneOf(s, t.zone); if (z && (dist(myPos, z) <= z.r + Math.min(myPos.acc || 0, 40) + 12 + 10 * hqLv('range') + 5 * rlvA('技術專家') || mateVouch(z, 12))) markTask(s.id, t.id); }
         if (t.type === 'together') {
           var n = 0; Object.keys(teamPos).forEach(function (k) { var p = teamPos[k]; if (fresh(p) && dist(p, s) <= s.r) n++; });
           if (n >= (t.min || 2)) markTask(s.id, t.id);
@@ -646,6 +652,11 @@
       ROOT.child(PR_(teamId) + '/' + s.id + '/frag').transaction(function (c) { return c === null ? { by: uid, t: nowMs() } : undefined; }).then(function (r) { if (r.committed) { homeEvent('chapter', s.id); toast('🧩 取得碎片：' + R.fragmentNames[s.frag] + '　回「簡報室」領補給！'); hqNew = true; hqBadge(); if (myRole() === '通訊官' && rlvA('通訊官') >= 3) { try { ROOT.child('gchat').push({ uid: uid, n: (profile && profile.nick) || '', x: ('🎉 ' + teamLabel() + '完成了「' + s.name.replace(/^第 \d (案|章)｜/, '') + '」').slice(0, 40), t: nowMs() }); } catch (e) { } } log('frag', s.id, R.fragmentNames[s.frag]); } });
     }
   }
+  /* 每個人完成過幾題（任務紀錄有 by）；全隊每位成員都完成過至少 1 題＝「人人有貢獻」，全隊加 30 分（隊伍至少 2 人才算） */
+  function contribOf() {
+    var c = {}; S.forEach(function (s) { var tk = (prog[s.id] && prog[s.id].tasks) || {}; Object.keys(tk).forEach(function (k) { var b = tk[k] && tk[k].by; if (b) c[b] = (c[b] || 0) + 1; }); }); return c;
+  }
+  function allContributed() { var m = (team && team.members) ? Object.keys(team.members) : [], c = contribOf(); return m.length >= 2 && m.every(function (k) { return c[k] > 0; }); }
   function scoreOf() {
     var sc = 0, P = R.score, hn = 0;
     S.forEach(function (s) {
@@ -654,7 +665,7 @@
       if (p.frag) sc += P.frag + speedBonus(p.frag && p.frag.t) + ((pkInfo() && pkInfo().mutual) ? 5 : 0); var phn = Math.min(Object.keys(p.photo || {}).length, 3); if (phn) sc += 10 + 5 * (phn - 1); if (p.secret) sc += 15 + 10 * rlvA('偵查員'); sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
     });
     if (hasGear('kit') && hn > 0) sc -= hintPenalty(P);
-    if (prog.final && prog.final.done) sc += P.final + (rlvA('記錄官') >= 3 ? 10 : 0);
+    if (allContributed()) sc += 30; if (prog.final && prog.final.done) sc += P.final + (rlvA('記錄官') >= 3 ? 10 : 0);
     var pk0 = pkInfo(); if (pk0 && pk0.mutual && prog.final && prog.final.done && sc > pk0.their) sc += 20;
     sc += 10 * achCount() + 5 * pairBonusN() * fragCount();
     return Math.max(0, sc);
@@ -1441,7 +1452,7 @@
   function renderTeam() {
     var m = team.members, h = '<h2>隊員 ' + Object.keys(m).length + ' / 4</h2><div class="sub">' + (team.closed ? '已關門，不能再加入' : '還可以加入') + '</div>';   /* 隊名與人數頂列已經有了，這裡不再重複 */
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
-    h += '<div class="card">' + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + '</span></span>' + (k !== uid && p ? '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(p) + '">🧭 導航' + (myPos ? '（' + dTxt(dist(myPos, p)) + '）' : '') + '</a>' : '') + (myRole() === '隊長' && k !== uid ? '<button class="btn2" data-kick="' + k + '">請出隊伍</button>' : '') + '</div>'; }).join('') + '</div>';
+    h += '<div class="card">' + (Object.keys(m).length >= 2 ? '<div class="bub ' + (allContributed() ? 'done' : 'hint') + '">' + (allContributed() ? '🤝 人人有貢獻，全隊 +30 分已到手！' : '🤝 每位隊員都完成至少 1 題，全隊 +30 分。下面看得到每個人完成幾題；角色不同，能做的題目也不同，一起分工。') + '</div>' : '') + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + ' ・ ✔ ' + (contribOf()[k] || 0) + ' 題</span></span>' + (k !== uid && p ? '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(p) + '">🧭 導航' + (myPos ? '（' + dTxt(dist(myPos, p)) + '）' : '') + '</a>' : '') + (myRole() === '隊長' && k !== uid ? '<button class="btn2" data-kick="' + k + '">請出隊伍</button>' : '') + '</div>'; }).join('') + '</div>';
     h += '<div class="card"><b>🐾 療育小角落</b><div class="sub">和小精靈玩一下。點、搓、滑、按住，牠會有不同的萌反應。不計分、不用做任務，累了就來放鬆。</div><div class="opts"><button class="btn2" id="pet-open">進去玩</button></div></div>';
     h += stickerBook();
     h += achCard();

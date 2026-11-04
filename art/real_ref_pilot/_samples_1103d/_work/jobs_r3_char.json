@@ -1,0 +1,90 @@
+[
+ {
+  "name": "char_yangzhi_f_r3_s6321",
+  "framing": "r3 yangzhi_f",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, young Taiwanese woman fish farmer, Taiwanese features, black hair in a ponytail, baseball cap, light blue polo shirt, in her right hand a slender silver milkfish with a deeply forked tail held up, in her left hand a smartphone held up, a small paddlewheel aerator with two dark blue floats drawn small behind her shoulder, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6321,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_yangzhi_m_r3_s6322",
+  "framing": "r3 yangzhi_m",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, young Taiwanese man fish farmer, Taiwanese features, short black hair, baseball cap, light blue polo shirt, in his right hand a slender silver milkfish with a deeply forked tail held up, in his left hand a smartphone held up, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6322,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_cehui_f_r3_s6341",
+  "framing": "r3 cehui_f",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, Taiwanese woman heritage surveyor, Taiwanese features, short black hair, round glasses, utility vest over a plain shirt, in her right hand a white sphere target on a thin pole held up, in her left hand a tablet, a small tripod with a boxy laser scanner beside her, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6341,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_caihui_f_r3_s6351",
+  "framing": "r3 caihui_f",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, Taiwanese woman temple painter craftsperson, Taiwanese features, black hair tied back, simple dark apron over a work shirt, in her right hand a long thin paintbrush held up, in her left hand a flat wooden straightedge ruler held up, a half-finished red wooden door board behind her with thin gold lines, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6351,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_wutai_f_r3_s6371",
+  "framing": "r3 wutai_f",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, cheerful Taiwanese woman stage truck host, Taiwanese features, black hair, wireless headset microphone, shiny dark jacket with colorful neon stripes only on the sleeves, one hand holding a handheld microphone, the other hand pointing to the side, two stacked black speaker boxes beside her, completely plain chest, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6371,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_dengji_m_r3_s6381",
+  "framing": "r3 dengji_m",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, Taiwanese man lantern painter, Taiwanese features, black hair, paint-spotted apron over a long-sleeve shirt, in one hand a big round white paper lantern painted with a green coiling Chinese dragon with red flames, in the other hand a fine paintbrush, the lantern has no writing, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6381,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_muzuo_f_r3_s6391",
+  "framing": "r3 muzuo_f",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, Taiwanese woman carpenter, Taiwanese features, black hair tied back, canvas apron with wood shavings, in her right hand a boat-shaped wooden ink line marker with a thin black string held up at chest height, in her left hand a wooden L-shaped try square with two arms at a right angle held up at chest height, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6391,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_muzuo_m_r3_s6392",
+  "framing": "r3 muzuo_m",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, Taiwanese man carpenter, Taiwanese features, black hair, canvas apron with wood shavings, in his right hand a boat-shaped wooden ink line marker with a thin black string held up at chest height, in his left hand a wooden L-shaped try square with two arms at a right angle held up at chest height, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6392,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_danzai_f_r3_s6401",
+  "framing": "r3 danzai_f",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, middle-aged Taiwanese woman street noodle vendor, Taiwanese features, black hair in a bun, white sleeveless undershirt and clean apron, a wooden shoulder pole across her shoulder with a bamboo basket hanging at each end, one hand holding a small light blue porcelain bowl of noodles, a small blank red paper lantern hanging from the pole, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6401,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_danzai_m_r3_s6402",
+  "framing": "r3 danzai_m",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, middle-aged Taiwanese man street noodle vendor, Taiwanese features, black hair, white sleeveless undershirt and clean apron, a thin wooden shoulder pole across his shoulder with a bamboo basket hanging at each end, one hand holding a small light blue porcelain bowl of noodles, a small blank red paper lantern hanging from the pole, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6402,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_budaixi_f_r3_s6411",
+  "framing": "r3 budaixi_f",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, no writing on clothes, Taiwanese woman glove puppet master, Taiwanese features, black hair, simple dark traditional shirt, one raised hand inside a cloth glove puppet that is only a head and a robe over her hand with no legs and no feet, white porcelain painted head, pink embroidered robe, small headdress, the puppeteer's face and body clearly visible, plain clothes with nothing on the chest or shoulders, no badge, no label, no patch, no logo, bust portrait cropped at the waist, a person clearly visible filling most of the frame",
+  "seed": 6411,
+  "w": 768,
+  "h": 768
+ }
+]

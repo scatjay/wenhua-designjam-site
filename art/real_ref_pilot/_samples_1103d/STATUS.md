@@ -2,7 +2,7 @@
 
 # 走讀美術接力 STATUS
 
-更新：2026-11-05 01:58
+更新：2026-11-05 02:40
 
 ## 起始狀態
 - 監督員 cwd：worktree sleepy-poitras-5fdf1d，分支 claude/sleepy-poitras-5fdf1d
@@ -22,6 +22,8 @@
 | r2_stickers（01:18 完成，QA_r2_stickers.md） | 10 | 3（learn、pass、case_done） | 5（split、gather、like、first_room、dex） | 2（roles、wow：章偏小） | 待補 | jobs_r3_stickers 7 張已排入 |
 
 | r2_scene（01:48 完成，QA_r2_scene.md） | 15 | 4（twl_A、twl_B_tower、chikan_A、hall_A） | 7（hayashi_A/B、matsu_A/B、lingyou_A、hall_B_aerial、patriotic_A） | 4（twh_A、twh_B_bridge、tang_A、patriotic_B） | 66°C／147 W（01:20 取樣） | jobs_r3_scene 7 張已排入（strength 降到 0.35–0.4、補空白牆面負向） |
+
+| r2_char（02:30 完成，QA_r2_char.md） | 22 | 4（yantian s6111、jianzhu 兩張、dengji s6181） | 11 | 7 | 全程最高 73°C／215 W；高負載最低時脈 1695 MHz（02:20 統計） | jobs_r3_char 11 張已排入（不帶 Redux、改相反性別、手持物簡化；Redux 第二張 8 張失敗 6 張） |
 
 ## 道具 32×32 縮圖驗收（S6，thumb32_r2_props.png）
 - 平底的 6 張（墨斗、夾板、懷錶、紅磚、鑰匙、剪黏龍）縮到 32 像素輪廓仍認得；懷錶與鑰匙偏糊。

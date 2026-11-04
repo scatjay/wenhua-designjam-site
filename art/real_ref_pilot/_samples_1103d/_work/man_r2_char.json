@@ -1,0 +1,592 @@
+{
+ "items": [
+  {
+   "id": "char_yantian_r2_s6111",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_yantian_r2_s6111_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持小型望遠鏡",
+    "手持長柄木鹽耙",
+    "身旁白色鹽堆",
+    "臺灣人長相、黑髮、斗笠",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "槍（鹽警槍樓只當背景，人不持槍）",
+    "沙漠或雪地般的白",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/P13_Salt_Mountain.jpg",
+    "E:/Downloads/_walk_refs/_cand/P11_七股頂山鹽警槍樓.jpg"
+   ],
+   "notes": "鹽田巡望員（工坊創作：服裝與工具臺南出處不足；BY-SA 照片只供審核器對照形狀）"
+  },
+  {
+   "id": "char_yantian_r2_s6112",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_yantian_r2_s6112_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持小型望遠鏡",
+    "手持長柄木鹽耙",
+    "身旁白色鹽堆",
+    "臺灣人長相、黑髮、斗笠",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "槍（鹽警槍樓只當背景，人不持槍）",
+    "沙漠或雪地般的白",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/P13_Salt_Mountain.jpg",
+    "E:/Downloads/_walk_refs/_cand/P11_七股頂山鹽警槍樓.jpg"
+   ],
+   "notes": "鹽田巡望員（工坊創作：服裝與工具臺南出處不足；BY-SA 照片只供審核器對照形狀）"
+  },
+  {
+   "id": "char_yangzhi_r2_s6121",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_yangzhi_r2_s6121_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持銀白側扁、尾鰭深叉的虱目魚",
+    "手持手機",
+    "身旁小水車（兩個藍黑浮筒、水花）",
+    "臺灣人長相、黑髮、帽子",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "金魚或鯉魚",
+    "木製水輪或風車",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/P20_Poisson_lait_(Chanos_chanos)_(Ifremer_00763-87541).jpg",
+    "E:/Downloads/_walk_refs/_cand2/chargap/A01_Fish_farm_water_aeration_system_in_operation_-_01.JPG"
+   ],
+   "notes": "養殖青農；seed 2 另用 A01（CC0）低強度 Redux；水車照片皆非臺灣，只當形狀"
+  },
+  {
+   "id": "char_yangzhi_r2_s6122",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_yangzhi_r2_s6122_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持銀白側扁、尾鰭深叉的虱目魚",
+    "手持手機",
+    "身旁小水車（兩個藍黑浮筒、水花）",
+    "臺灣人長相、黑髮、帽子",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "金魚或鯉魚",
+    "木製水輪或風車",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/P20_Poisson_lait_(Chanos_chanos)_(Ifremer_00763-87541).jpg",
+    "E:/Downloads/_walk_refs/_cand2/chargap/A01_Fish_farm_water_aeration_system_in_operation_-_01.JPG"
+   ],
+   "notes": "養殖青農；seed 2 另用 A01（CC0）低強度 Redux；水車照片皆非臺灣，只當形狀"
+  },
+  {
+   "id": "char_jianzhu_r2_s6131",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_jianzhu_r2_s6131_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "白色安全帽後推、整張臉露出",
+    "腋下夾捲起的圖筒",
+    "手持一排面磚樣本卡（黃褐色系）",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "船長帽與錨形別針",
+    "告示牌文字",
+    "紅磚（日治建築是面磚）",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/chargap/H01_臺南總趕宮.JPG"
+   ],
+   "notes": "古蹟修復建築師（工坊創作：圖筒與面磚樣本卡缺臺南照片；H01 為 BY-SA 只供對照）"
+  },
+  {
+   "id": "char_jianzhu_r2_s6132",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_jianzhu_r2_s6132_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "白色安全帽後推、整張臉露出",
+    "腋下夾捲起的圖筒",
+    "手持一排面磚樣本卡（黃褐色系）",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "船長帽與錨形別針",
+    "告示牌文字",
+    "紅磚（日治建築是面磚）",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/chargap/H01_臺南總趕宮.JPG"
+   ],
+   "notes": "古蹟修復建築師（工坊創作：圖筒與面磚樣本卡缺臺南照片；H01 為 BY-SA 只供對照）"
+  },
+  {
+   "id": "char_cehui_r2_s6141",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_cehui_r2_s6141_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持白色球標靶（細桿）",
+    "手持平板，螢幕上是小點組成的屋簷輪廓",
+    "身旁三腳架上方塊機身掃描儀",
+    "臺灣人長相、黑髮、背心",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "把掃描儀畫成槍或遊戲手把",
+    "廠商標誌",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_ref_cehui.png"
+   ],
+   "notes": "古蹟測繪師；seed 2 另用 C01（CC BY 2.0）低強度 Redux；C01 是 3D 列印示範品，不是現場標靶"
+  },
+  {
+   "id": "char_cehui_r2_s6142",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_cehui_r2_s6142_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持白色球標靶（細桿）",
+    "手持平板，螢幕上是小點組成的屋簷輪廓",
+    "身旁三腳架上方塊機身掃描儀",
+    "臺灣人長相、黑髮、背心",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "把掃描儀畫成槍或遊戲手把",
+    "廠商標誌",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_ref_cehui.png"
+   ],
+   "notes": "古蹟測繪師；seed 2 另用 C01（CC BY 2.0）低強度 Redux；C01 是 3D 列印示範品，不是現場標靶"
+  },
+  {
+   "id": "char_caihui_r2_s6151",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_caihui_r2_s6151_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持長細畫筆",
+    "手持木製界尺",
+    "半成品紅色門板上有細金線",
+    "臺灣人長相、黑髮略有灰",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "神像或門神的面容",
+    "具體色名宣稱為史實",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/P41_臺南三山國王廟天后聖母祠門神.JPG",
+    "E:/Downloads/_walk_refs/_cand2/chargap/G01_Entrance_of_the_Sanshan_Guowang_Temple_of_Tainan.jpg"
+   ],
+   "notes": "彩繪匠（工坊創作：作畫中匠師與半成品門板缺照片；兩張皆 BY-SA，只供對照色彩與線條）"
+  },
+  {
+   "id": "char_caihui_r2_s6152",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_caihui_r2_s6152_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持長細畫筆",
+    "手持木製界尺",
+    "半成品紅色門板上有細金線",
+    "臺灣人長相、黑髮略有灰",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "神像或門神的面容",
+    "具體色名宣稱為史實",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/P41_臺南三山國王廟天后聖母祠門神.JPG",
+    "E:/Downloads/_walk_refs/_cand2/chargap/G01_Entrance_of_the_Sanshan_Guowang_Temple_of_Tainan.jpg"
+   ],
+   "notes": "彩繪匠（工坊創作：作畫中匠師與半成品門板缺照片；兩張皆 BY-SA，只供對照色彩與線條）"
+  },
+  {
+   "id": "char_niuzuo_r2_s6161",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_niuzuo_r2_s6161_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持寬平鐵片木柄抹刀",
+    "身旁牆板：一半露底灰、一半抹白灰",
+    "石灰漿桶",
+    "頸上毛巾、沾灰工作服、臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "把雷射測距儀當主要辨識物",
+    "紅磚畫在日治建築上",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/chargap/D01_Mud_knives.jpg",
+    "E:/Downloads/_walk_refs/_cand2/chargap/D02_Clay,_straw_lime_on_wall_lath_closeup.jpg"
+   ],
+   "notes": "磚瓦泥作（工坊創作：半抹白灰牆缺臺灣照片；D01、D02 為 BY-SA 且非臺灣，只供形狀對照）"
+  },
+  {
+   "id": "char_niuzuo_r2_s6162",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_niuzuo_r2_s6162_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持寬平鐵片木柄抹刀",
+    "身旁牆板：一半露底灰、一半抹白灰",
+    "石灰漿桶",
+    "頸上毛巾、沾灰工作服、臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "把雷射測距儀當主要辨識物",
+    "紅磚畫在日治建築上",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/chargap/D01_Mud_knives.jpg",
+    "E:/Downloads/_walk_refs/_cand2/chargap/D02_Clay,_straw_lime_on_wall_lath_closeup.jpg"
+   ],
+   "notes": "磚瓦泥作（工坊創作：半抹白灰牆缺臺灣照片；D01、D02 為 BY-SA 且非臺灣，只供形狀對照）"
+  },
+  {
+   "id": "char_wutai_r2_s6171",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_wutai_r2_s6171_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持麥克風、戴頭戴式麥克風",
+    "亮面外套配霓虹色條紋",
+    "身旁成疊黑色音響",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "表演者",
+    "車身招牌字",
+    "任何連到喪事的元素",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/S1_Truck_Stage.jpg",
+    "E:/Downloads/_walk_refs/_cand/S2_夜間的電子舞台車.jpg"
+   ],
+   "notes": "舞台車技師／司儀（工坊創作：臺南油壓舞台車與音響照片缺；S1、S2 為 BY-SA 只供對照；舞台車本體不入畫以守平底背景）"
+  },
+  {
+   "id": "char_wutai_r2_s6172",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_wutai_r2_s6172_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持麥克風、戴頭戴式麥克風",
+    "亮面外套配霓虹色條紋",
+    "身旁成疊黑色音響",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "表演者",
+    "車身招牌字",
+    "任何連到喪事的元素",
+    "文字、數字、徽章符號",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/S1_Truck_Stage.jpg",
+    "E:/Downloads/_walk_refs/_cand/S2_夜間的電子舞台車.jpg"
+   ],
+   "notes": "舞台車技師／司儀（工坊創作：臺南油壓舞台車與音響照片缺；S1、S2 為 BY-SA 只供對照；舞台車本體不入畫以守平底背景）"
+  },
+  {
+   "id": "char_dengji_r2_s6181",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_dengji_r2_s6181_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持白底綠龍紅焰的圓燈籠（燈面無字）",
+    "手持細畫筆",
+    "身旁紅綠顏料小罐",
+    "臺灣人長相、黑髮盤髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "燈籠上的文字",
+    "神像",
+    "有清楚人臉的新加坡燈籠畫師構圖",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_ref_dengji.png"
+   ],
+   "notes": "燈籠畫師；seed 2 另用 L2（CC BY 2.0）低強度 Redux，原圖背景全黑，平底背景可能被拖黑；作畫姿勢缺臺南照片，標工坊創作"
+  },
+  {
+   "id": "char_dengji_r2_s6182",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_dengji_r2_s6182_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持白底綠龍紅焰的圓燈籠（燈面無字）",
+    "手持細畫筆",
+    "身旁紅綠顏料小罐",
+    "臺灣人長相、黑髮盤髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "燈籠上的文字",
+    "神像",
+    "有清楚人臉的新加坡燈籠畫師構圖",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_ref_dengji.png"
+   ],
+   "notes": "燈籠畫師；seed 2 另用 L2（CC BY 2.0）低強度 Redux，原圖背景全黑，平底背景可能被拖黑；作畫姿勢缺臺南照片，標工坊創作"
+  },
+  {
+   "id": "char_muzuo_r2_s6191",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_muzuo_r2_s6191_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持雕刻造型墨斗與細線",
+    "手持木質曲尺（L 形）",
+    "圍裙口袋裡的鑿與木槌、肩上木屑刨花",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "鑑識員造型",
+    "告示牌文字",
+    "曲尺上的文字標籤",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/W1_桃園市立大溪木藝生態博物館所藏墨斗.jpg",
+    "E:/Downloads/_walk_refs/_cand/W3_木製魯班曲尺.jpg"
+   ],
+   "notes": "木作（老街木作為工坊創作名；W1 為 BY-SA 只供對照；W3 為 CC0 但帶文字標籤與舊照人物，未用作 Redux 輸入）"
+  },
+  {
+   "id": "char_muzuo_r2_s6192",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_muzuo_r2_s6192_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持雕刻造型墨斗與細線",
+    "手持木質曲尺（L 形）",
+    "圍裙口袋裡的鑿與木槌、肩上木屑刨花",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "鑑識員造型",
+    "告示牌文字",
+    "曲尺上的文字標籤",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/W1_桃園市立大溪木藝生態博物館所藏墨斗.jpg",
+    "E:/Downloads/_walk_refs/_cand/W3_木製魯班曲尺.jpg"
+   ],
+   "notes": "木作（老街木作為工坊創作名；W1 為 BY-SA 只供對照；W3 為 CC0 但帶文字標籤與舊照人物，未用作 Redux 輸入）"
+  },
+  {
+   "id": "char_danzai_r2_s6201",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_danzai_r2_s6201_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "肩上扁擔掛兩個竹籃",
+    "手持淺藍瓷碗小碗麵（肉燥、一隻蝦）",
+    "扁擔上掛一盞空白紅燈籠",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "店家招牌與度小月字樣",
+    "燈籠上的文字",
+    "路人面孔",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/chargap/E03_Taiwanese_dànzǎimiàn.jpg",
+    "E:/Downloads/_walk_refs/_cand/N4_Shoulder_pole_detail_01.jpg"
+   ],
+   "notes": "擔仔麵挑擔攤主；seed 2 另用 E03（CC BY 2.0）低強度 Redux；臺南挑擔本人與寫字燈籠缺照片，標工坊創作"
+  },
+  {
+   "id": "char_danzai_r2_s6202",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_danzai_r2_s6202_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "肩上扁擔掛兩個竹籃",
+    "手持淺藍瓷碗小碗麵（肉燥、一隻蝦）",
+    "扁擔上掛一盞空白紅燈籠",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "店家招牌與度小月字樣",
+    "燈籠上的文字",
+    "路人面孔",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/chargap/E03_Taiwanese_dànzǎimiàn.jpg",
+    "E:/Downloads/_walk_refs/_cand/N4_Shoulder_pole_detail_01.jpg"
+   ],
+   "notes": "擔仔麵挑擔攤主；seed 2 另用 E03（CC BY 2.0）低強度 Redux；臺南挑擔本人與寫字燈籠缺照片，標工坊創作"
+  },
+  {
+   "id": "char_budaixi_r2_s6211",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_budaixi_r2_s6211_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手上戴著粉紅繡衣旦角手套戲偶（瓷白戲偶頭）",
+    "另一手持藍袍小戲偶",
+    "不戴面具",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "半面具",
+    "真人表演者的臉當作戲偶",
+    "車上文字、姓名電話",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_ref_budaixi.png"
+   ],
+   "notes": "布袋戲演師；seed 2 另用 P4（CC BY 2.0）低強度 Redux；鑼鼓後場照片缺（Commons 無臺灣的）"
+  },
+  {
+   "id": "char_budaixi_r2_s6212",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_budaixi_r2_s6212_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手上戴著粉紅繡衣旦角手套戲偶（瓷白戲偶頭）",
+    "另一手持藍袍小戲偶",
+    "不戴面具",
+    "臺灣人長相、黑髮",
+    "背景是單一平底色"
+   ],
+   "forbid": [
+    "半面具",
+    "真人表演者的臉當作戲偶",
+    "車上文字、姓名電話",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_ref_budaixi.png"
+   ],
+   "notes": "布袋戲演師；seed 2 另用 P4（CC BY 2.0）低強度 Redux；鑼鼓後場照片缺（Commons 無臺灣的）"
+  }
+ ]
+}

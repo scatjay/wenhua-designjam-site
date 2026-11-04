@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>呼呼醫院樣板・開通與回報</title>
+<style>
+:root{--bg:#f3f7f8;--card:#fff;--fg:#1d2b30;--mut:#5d6b70;--ac:#1f7a8c;--ok:#2e7d32;--bad:#b3261e;--line:#dbe4e7}
+@media (prefers-color-scheme:dark){:root{--bg:#10191c;--card:#182428;--fg:#e8f0f2;--mut:#9fb0b5;--ac:#52b6c9;--ok:#7bc67e;--bad:#ff8a80;--line:#2b3b40}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 "Noto Sans TC",system-ui,sans-serif;padding:16px}
+main{max-width:560px;margin:0 auto}
+h1{font-size:22px;margin:8px 0 4px}
+.sub{color:var(--mut);margin:0 0 16px;font-size:14px}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px}
+h2{font-size:17px;margin:0 0 6px}
+label{display:block;font-size:14px;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+button{margin-top:12px;font:inherit;font-weight:700;padding:11px 16px;border:0;border-radius:10px;background:var(--ac);color:#fff;cursor:pointer;min-height:44px}
+button[disabled]{opacity:.5}
+.msg{margin-top:10px;font-size:14px;min-height:1.4em}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+small{color:var(--mut)}
+</style>
+</head>
+<body>
+<main>
+<h1>呼呼醫院樣板・開通與回報</h1>
+<p class="sub">三步：申請開通 → 老師給你個人開通碼 → 開了樣板檔案後回來回報。練習用，不要填真實病歷或個資。</p>
+
+<section id="s1">
+<h2>① 申請開通</h2>
+<small>老師收到後，會把你加進可以開樣板的名單，並給你一組個人開通碼。</small>
+<label for="sid">學號</label><input id="sid" autocomplete="off" placeholder="例：4B4K0001">
+<label for="em">用來開 Figma／AI Studio／Claude 的信箱</label><input id="em" type="email" placeholder="例：xxx@gmail.com 或學校信箱">
+<label for="cls">班級</label>
+<select id="cls"><option>二甲</option><option>二乙</option><option>二丙</option></select>
+<button id="b1">送出申請</button><div class="msg" id="m1"></div>
+</section>
+
+<section id="s2">
+<h2>② 開了檔案之後，回來回報</h2>
+<small>每個樣板檔案裡都有一組「今日練習碼」（Figma 在畫面角落、Claude Design 在畫板角落、AI Studio 在畫面底部）。打開檔案找到它，填在這裡。</small>
+<label for="code">個人開通碼</label><input id="code" autocomplete="off" placeholder="老師給你的 6～8 碼" style="text-transform:uppercase">
+<label for="tool">你開的是</label>
+<select id="tool"><option value="dsg">Claude Design 樣板</option><option value="fig">Figma 樣板</option><option value="ais">AI Studio 作品</option></select>
+<label for="day">今日練習碼</label><input id="day" autocomplete="off" placeholder="在檔案裡找到的那組字">
+<button id="b2">回報我開了</button><div class="msg" id="m2"></div>
+</section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var db=null;
+  try{
+    firebase.initializeApp({apiKey:"AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",authDomain:"gen-lang-client-0929530380.firebaseapp.com",databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"gen-lang-client-0929530380"});
+    db=firebase.database();
+  }catch(e){}
+  function say(id,t,ok){var m=$(id);m.textContent=t;m.className='msg '+(ok?'ok':'bad')}
+  try{var c0=localStorage.getItem('hh_code');if(c0)$('code').value=c0;var s0=localStorage.getItem('hh_sid');if(s0)$('sid').value=s0}catch(e){}
+  $('b1').onclick=function(){
+    var sid=$('sid').value.trim().toUpperCase(),em=$('em').value.trim(),cls=$('cls').value;
+    if(!/^[0-9A-Z]{6,12}$/.test(sid)){say('m1','學號格式不對（6～12 碼英數字）');return}
+    if(!/^[^@ ]+@[^@ ]+$/.test(em)){say('m1','信箱格式不對');return}
+    if(!db){say('m1','連不上資料庫，請換瀏覽器或稍後再試');return}
+    $('b1').disabled=true;
+    db.ref('hhopen/req/'+sid).set({email:em,ts:Date.now(),cls:cls}).then(function(){
+      try{localStorage.setItem('hh_sid',sid)}catch(e){}
+      say('m1','已送出。老師開通後會把個人開通碼交給你。',true);
+    }).catch(function(){say('m1','這個學號已經申請過了（或暫時送不出去）。如果還沒收到開通碼，請直接跟老師說。')}).then(function(){$('b1').disabled=false});
+  };
+  $('b2').onclick=function(){
+    var code=$('code').value.trim().toUpperCase(),tool=$('tool').value,day=$('day').value.trim();
+    if(!/^[A-Z2-9]{6,8}$/.test(code)){say('m2','開通碼格式不對（6～8 碼）');return}
+    if(!day){say('m2','請填今日練習碼');return}
+    if(!db){say('m2','連不上資料庫');return}
+    var now=Date.now(),k='hh_first_'+code+tool,first=now;
+    try{first=+localStorage.getItem(k)||now;localStorage.setItem(k,first);localStorage.setItem('hh_code',code)}catch(e){}
+    $('b2').disabled=true;
+    db.ref('hhopen/rep/'+code+'/'+tool).set({day:day,first:first,last:now,n:1}).then(function(){
+      say('m2','收到了，已記錄你今天開過這個檔案。',true);
+    }).catch(function(){say('m2','沒有記錄成功：開通碼或今日練習碼不對。回到檔案再找一次，或問老師。')}).then(function(){$('b2').disabled=false});
+  };
+})();
+</script>
+</body>
+</html>

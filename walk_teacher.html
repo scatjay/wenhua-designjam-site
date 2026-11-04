@@ -66,7 +66,14 @@ var progr={},boardr={},PH={};
 var ALLS=(window.WALK_ROUTE.campusW?window.WALK_ROUTE.campusW.stops:[]).concat(window.WALK_ROUTE.campus?window.WALK_ROUTE.campus.stops:[]).concat(window.WALK_ROUTE.tw?window.WALK_ROUTE.tw.stops:[]);
 var NM_A=['夜班','月光','提燈','蓋章','守夜','迷路','飄飄','八億','審查','鐘樓','牌樓','涼亭'],NM_B=['小隊','偵探團','巡守隊','探險隊','審查組','幽靈團','蓋章組','守衛隊'];
 function pcolor(id){var C=['#c0392b','#1e7a4c','#2f5fb3','#8a3fb0','#b35a00','#00727a','#a0276a','#4a5d1a','#5b3fc0','#0a6e9e'],h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return C[h%C.length]}
-function storyName(id){var h=0,i;id=String(id||'');for(i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return NM_A[h%NM_A.length]+NM_B[Math.floor(h/13)%NM_B.length]}
+/* 隊名不重複：與學生端同一套算法（撞名時先建的保留、後建的往下一格；push id 依時間排序）。名單取 board 與 boardr 的聯集（不含房間隊） */
+var nmCache={sig:'',map:{}};
+function nmBase(id){var h=0,k;id=String(id||'');for(k=0;k<id.length;k++)h=(h*31+id.charCodeAt(k))>>>0;return (h%NM_A.length)*NM_B.length+Math.floor(h/13)%NM_B.length}
+function nmAt(i){var n=NM_A.length*NM_B.length,r=i%n;return NM_A[Math.floor(r/NM_B.length)]+NM_B[r%NM_B.length]+(i>=n?Math.floor(i/n)+1:'')}
+function storyName(id){id=String(id||'');var seen={},keys=[];[board,boardr].forEach(function(b){Object.keys(b||{}).forEach(function(k){if(!seen[k]&&!/^房 /.test((b[k]&&b[k].name)||'')){seen[k]=1;keys.push(k)}})});
+  if(id&&!seen[id])keys.push(id);keys.sort();var sig=keys.join(',');
+  if(nmCache.sig!==sig){var used={},map={},N=NM_A.length*NM_B.length;keys.forEach(function(k){var i=nmBase(k),t=0;while(used[i]&&t<N*3){i++;t++}used[i]=1;map[k]=nmAt(i)});nmCache={sig:sig,map:map}}
+  return nmCache.map[id]||nmAt(nmBase(id))}
 function label(t,id){return t&&t.kind==='room'?'房 '+t.code:storyName(id)}
 function sc(id){return Math.max((board[id]||{}).score||0,(boardr[id]||{}).score||0)}
 function mergedProg(id){var a=prog[id]||{},b=progr[id]||{},o={};Object.keys(a).forEach(function(k){o[k]=a[k]});Object.keys(b).forEach(function(k){o[k]=b[k]});return o}
@@ -79,7 +86,7 @@ var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 firebase.initializeApp({apiKey:'AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng',authDomain:'gen-lang-client-0929530380.firebaseapp.com',databaseURL:'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app',projectId:'gen-lang-client-0929530380'});
 var db=firebase.database(),auth=firebase.auth(),ROOT=db.ref(TEST?'whgm/analysis/walk1114test':'stwalk1114'),claims={};
-var teams={},pos={},prog={},board={},map,markers={},players={},reh={},phase=null,fbs={};
+var pres={},teams={},pos={},prog={},board={},map,markers={},players={},reh={},phase=null,fbs={};
 $('tl').textContent=TEST?'測試':'正式';
 $('b-map').onclick=function(){var m=$('map'),hid=m.style.display==='none';m.style.display=hid?'':'none';$('b-map').textContent=hid?'▾ 收合地圖':'▸ 展開地圖';if(hid&&map)setTimeout(function(){map.invalidateSize()},50)};
 $('b-adv').onclick=function(){var h=!$('b-phase').hidden;$('b-phase').hidden=h;$('b-test').hidden=h;$('b-adv').textContent=h?'⚙ 進階':'⚙ 收起（小心，這些會影響所有學生）'};
@@ -131,6 +138,7 @@ function start(){
   var first=CH[0]&&CH[0].stops[0];if(first)map.setView([first.lat,first.lon],17);
   ROOT.child('teams').on('value',function(s){teams=s.val()||{};render()});
   ROOT.child('pos').on('value',function(s){pos=s.val()||{};render()});
+  ROOT.child('pres').on('value',function(s){pres=s.val()||{};render()});
   ROOT.child('prog').on('value',function(s){prog=s.val()||{};render()});
   ROOT.child('progr').on('value',function(s){progr=s.val()||{};render()});
   ROOT.child('boardr').on('value',function(s){boardr=s.val()||{};render()});
@@ -276,7 +284,7 @@ function render(){
     h+='<tr><td>'+esc(label(t,id))+'</td><td>'+routeName(id)+'</td><td>'+m.length+'</td><td>'+fr+'/'+totOf(id)+'</td><td>'+sc(id)+'</td><td class="small">'+esc(stopNow(id))+'</td><td class="'+(on===m.length?'ok':'warn')+'">'+on+'/'+m.length+'</td></tr>'});
   $('tbl').innerHTML=h;$('alerts').innerHTML=al.length?al.map(esc).join('<br>'):'沒有。';
   renderCl();
-  $('stat').textContent=ids.length+' 隊・'+total+' 人・在線 '+online;
+  $('stat').textContent=ids.length+' 隊・'+total+' 人・🟢 現在線上 '+Object.keys(pres).length+' 人（定位中 '+online+'）';
   var pc=Object.keys(players).length,withTeam=Object.keys(players).filter(function(u){return players[u].team}).length,full=Object.keys(reh).filter(function(u){return Object.keys(reh[u]||{}).length>=5}).length;
   var sizes={};ids.forEach(function(id){var n=Object.keys(teams[id].members||{}).length;sizes[n]=(sizes[n]||0)+1});
   $('reh').innerHTML='已登入 <b>'+pc+'</b> 人（全班 52）・已分到隊 <b>'+withTeam+'</b>・練習 5 項全做完 <b>'+full+'</b><br>隊伍人數分佈：'+(Object.keys(sizes).sort().map(function(k){return k+' 人 × '+sizes[k]}).join('、')||'—')+'<br>已登記信封編號 <b>'+Object.keys(claims).length+'</b> 人；1–52 裡還沒登記的編號：'+(function(){var got={};Object.keys(claims).forEach(function(u){got[claims[u]]=1});var m=[];for(var i=1;i<=52;i++)if(!got[i])m.push(i);return m.length?m.join('、'):'無'})()+'；遊戲設計學 101–130 未登記：'+(function(){var got={};Object.keys(claims).forEach(function(u){got[claims[u]]=1});var m=[];for(var i=101;i<=130;i++)if(!got[i])m.push(i);return m.length===30?'全部（還沒人進來）':(m.length?m.join('、'):'無')})()+'<br>還沒登入的人要在教室裡提醒；人數 1–2 的隊用上方「整併過小的隊」。';

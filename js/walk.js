@@ -160,6 +160,8 @@
 
   /* ---- 信封編號登記：編號要和「已綁定的編號＋Google 帳號」對得上才能進（不收姓名學號） ---- */
   var TEACHERS = ['scatjay@gmail.com', 'yib@stust.edu.tw'];
+  /* 訪客（外部來賓，例如招生單位主任）：不是老師、不能看認領與研究資料；第一次登入自動認領 97 號，之後和學生一樣玩（97 在學生範圍 1–52 之外，分析時自然排除） */
+  var GUESTS = ['ymhuang@stust.edu.tw', 'ym.huang.tw@gmail.com'], GUEST_ENV = '97';
   var BIND = 'whgm/analysis/w3game';   /* 其他學習單頁共用的綁定資料（envIndex／identity） */
   var envNo = null, isTeacher = false;
   function validEnv(v) { return v === parseInt(v, 10) && ((v >= 1 && v <= 60) || (v >= 101 && v <= 130) || v === 99 || v === 0); }
@@ -283,10 +285,25 @@
     if (TEST && qs.get('env')) envNo = parseInt(qs.get('env'), 10);
     if (TEST || isTeacher) { afterVerified(); return; }
     ROOT.child('claim/' + uid).once('value').then(function (s) {
-      if (s.exists() && qs.get('asstudent') !== '1') { envNo = parseInt(s.val(), 10); afterVerified(); } else showEnv();   /* 預覽模式：就算已有綁定也顯示輸入畫面 */
+      if (s.exists() && qs.get('asstudent') !== '1') { envNo = parseInt(s.val(), 10); afterVerified(); }
+      else if (GUESTS.indexOf(em) >= 0 && cu && cu.emailVerified !== false && qs.get('asstudent') !== '1') { ROOT.child('claim/' + uid).set(GUEST_ENV).then(function () { envNo = parseInt(GUEST_ENV, 10); afterVerified(); }).catch(function () { showEnv(); }); }
+      else showEnv();   /* 預覽模式：就算已有綁定也顯示輸入畫面 */
     }).catch(function (e) { $('screen-login').hidden = false; $('login-msg').textContent = '資料庫連線被拒絕（' + (e.code || e.message) + '）。請確認用 Google 帳號登入後再試。'; });
   }
+  /* 線上狀態：連上資料庫就掛一筆 pres/{uid}，斷線（關頁、沒網路）自動消失；後台數筆數就是「現在線上幾個人」。老師與測試不算 */
+  var presOn = false;
+  function startPresence() {
+    if (presOn || TEST || isTeacher || !uid) return; presOn = true;
+    try {
+      var me = ROOT.child('pres/' + uid);
+      ROOT.root.child('.info/connected').on('value', function (sn) {
+        if (sn.val() !== true) return;
+        me.onDisconnect().remove().then(function () { me.set({ t: firebase.database.ServerValue.TIMESTAMP }); }).catch(function () { });
+      });
+    } catch (e) { }
+  }
   function afterVerified() {
+    startPresence();
     $('screen-vf').hidden = true;
     ROOT.child('players/' + uid).once('value').then(function (s) {
       profile = s.val(); try { if (profile && profile.ava) localStorage.setItem('walk_ava', profile.ava); } catch (e) { }
@@ -634,7 +651,7 @@
     S.forEach(function (s) {
       var p = prog[s.id] || {}; if (p.arrived) sc += P.arrive;
       (s.tasks || []).forEach(function (t) { if (p.tasks && p.tasks[t.id]) sc += (t.bonus ? P.bonus + (modeOf() === 'relax' ? 3 : 0) : P.task) + roleTaskBonus(t); });
-      if (p.frag) sc += P.frag + speedBonus(p.frag && p.frag.t) + ((pkInfo() && pkInfo().mutual) ? 5 : 0); if (p.secret) sc += 15 + 10 * rlvA('偵查員'); sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
+      if (p.frag) sc += P.frag + speedBonus(p.frag && p.frag.t) + ((pkInfo() && pkInfo().mutual) ? 5 : 0); var phn = Math.min(Object.keys(p.photo || {}).length, 3); if (phn) sc += 10 + 5 * (phn - 1); if (p.secret) sc += 15 + 10 * rlvA('偵查員'); sc += hintPenalty(P) * (p.hints || 0); hn += (p.hints || 0);
     });
     if (hasGear('kit') && hn > 0) sc -= hintPenalty(P);
     if (prog.final && prog.final.done) sc += P.final + (rlvA('記錄官') >= 3 ? 10 : 0);
@@ -704,7 +721,27 @@
   }
   /* 隊名：不用系名，依隊伍代號固定產生和故事有關的名字（每個人看到的一樣） */
   var NM_A = ['夜班', '月光', '提燈', '蓋章', '守夜', '迷路', '飄飄', '八億', '審查', '鐘樓', '牌樓', '涼亭'], NM_B = ['小隊', '偵探團', '巡守隊', '探險隊', '審查組', '幽靈團', '蓋章組', '守衛隊'];
-  function storyName(id) { if (TWR && R0.tw) { var g = 0, j; id = String(id || ''); for (j = 0; j < id.length; j++) g = (g * 31 + id.charCodeAt(j)) >>> 0; return ['時安局', '案件', '檔案室', '守時', '校時', '鐘樓'][g % 6] + ['一組', '二組', '三組', '調查隊', '特勤組', '巡查隊'][Math.floor(g / 7) % 6]; } var h = 0, i; id = String(id || ''); for (i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0; return NM_A[h % NM_A.length] + NM_B[Math.floor(h / 13) % NM_B.length]; }
+  /* 隊名不重複：名字由隊伍 id 算出「首選」，撞名時依建立先後（push id 依時間排序）讓先建的保留、後建的往下一格挪。
+     所有人用同一份 board 名單算，結果一致；新隊只會挪自己，不會改掉既有隊伍的名字。 */
+  var nmCache = { sig: '', map: {} };
+  function nmSpace() { return (TWR && R0.tw) ? { A: ['時安局', '案件', '檔案室', '守時', '校時', '鐘樓'], B: ['一組', '二組', '三組', '調查隊', '特勤組', '巡查隊'], tw: 1 } : { A: NM_A, B: NM_B }; }
+  function nmBase(id, sp) {
+    var h = 0, k; id = String(id || ''); for (k = 0; k < id.length; k++) h = (h * 31 + id.charCodeAt(k)) >>> 0;
+    var a = sp.tw ? h % sp.A.length : h % sp.A.length, b = sp.tw ? Math.floor(h / 7) % sp.B.length : Math.floor(h / 13) % sp.B.length;
+    return a * sp.B.length + b;
+  }
+  function nmAt(i, sp) { var n = sp.A.length * sp.B.length, r = i % n; return sp.A[Math.floor(r / sp.B.length)] + sp.B[r % sp.B.length] + (i >= n ? Math.floor(i / n) + 1 : ''); }
+  function storyName(id) {
+    id = String(id || ''); var sp = nmSpace(), keys = Object.keys(board || {}).filter(function (k) { return !/^房 /.test((board[k] && board[k].name) || ''); });
+    if (id && keys.indexOf(id) < 0) keys.push(id); keys.sort();
+    var sig = (sp.tw ? 't' : 'd') + keys.join(',');
+    if (nmCache.sig !== sig) {
+      var used = {}, map = {}, N = sp.A.length * sp.B.length;
+      keys.forEach(function (k) { var i = nmBase(k, sp), tries = 0; while (used[i % N + '#' + Math.floor(i / N)] && tries < N * 3) { i++; tries++; } used[i % N + '#' + Math.floor(i / N)] = 1; map[k] = nmAt(i, sp); });
+      nmCache = { sig: sig, map: map };
+    }
+    return nmCache.map[id] || nmAt(nmBase(id, sp), sp);
+  }
   function teamLabel() { return (team.kind === 'room' ? '房 ' + team.code : storyName(teamId)) || '隊'; }
 
   /* ---------- 介面渲染 ---------- */
@@ -1101,7 +1138,7 @@
   /* ---------- 照片：拍照 → 縮成原圖(老師看)＋縮圖(照片牆) → 一次寫入 ---------- */
   var photoN = 0;
   function photoCardHtml() {
-    return '<div class="card"><b>📷 拍一張</b><div class="sub">拍這一站看到的東西，會放上照片牆。請不要拍到別人的臉。</div><input class="inp" id="ph-cap" maxlength="40" placeholder="一句話說明（可不寫）"><label class="btn2" style="display:inline-block">📸 拍照<input id="ph-file" type="file" accept="image/*" capture="environment" hidden></label> <label class="btn2" style="display:inline-block">🖼 從相簿選<input id="ph-file2" type="file" accept="image/*" hidden></label><button class="btn2" id="ph-wall">🖼 看照片牆</button><div class="sub" id="ph-msg"></div></div>';
+    return '<div class="card"><b>📷 拍一張</b><div class="sub">拍這一站看到的東西，會放上照片牆。請不要拍到別人的臉。到站後拍：這一站全隊第一張 +10 分，隊友也拍再各 +5（最多再兩人）。</div><input class="inp" id="ph-cap" maxlength="40" placeholder="一句話說明（可不寫）"><label class="btn2" style="display:inline-block">📸 拍照<input id="ph-file" type="file" accept="image/*" capture="environment" hidden></label> <label class="btn2" style="display:inline-block">🖼 從相簿選<input id="ph-file2" type="file" accept="image/*" hidden></label><button class="btn2" id="ph-wall">🖼 看照片牆</button><div class="sub" id="ph-msg"></div></div>';
   }
   function shrink(file, max, q, limit) {
     function fin(src, w, h, ok, no) {
@@ -1133,7 +1170,11 @@
       var base = { uid: uid, tid: teamId, stop: curStop || '', t: t, cap: cap, route: REH ? 'campus' : 'live' };
       ups['photos/' + id] = Object.assign({ d: r[0] }, base);
       ups['pth/' + id] = Object.assign({ th: r[1], nick: (profile && profile.nick) || '' }, base);
-      return ROOT.update(ups).then(function () { photoN++; $('ph-cap').value = ''; msg.textContent = '已傳上去 ✔（' + Math.round(r[0].length / 1024) + ' KB）'; log('photo', curStop, id); toast('📷 照片傳好了'); });
+      return ROOT.update(ups).then(function () { photoN++; $('ph-cap').value = ''; msg.textContent = '已傳上去 ✔（' + Math.round(r[0].length / 1024) + ' KB）'; log('photo', curStop, id);
+        /* 拍照加分：要先到達該站；一站第一張 +10，另有隊友也拍 +5（最多再兩人），每人每站只算一次 */
+        var ps = curStop && prog[curStop];
+        if (ps && ps.arrived && !(ps.photo && ps.photo[uid])) { ROOT.child(PR_(teamId) + '/' + curStop + '/photo/' + uid).set(t).then(function () { var n = Object.keys(((prog[curStop] || {}).photo) || {}).length; toast('📷 照片傳好了，這一站拍照 +' + (n <= 1 ? 10 : n <= 3 ? 5 : 0) + ' 分'); }).catch(function () { toast('📷 照片傳好了'); }); }
+        else toast(ps && ps.photo && ps.photo[uid] ? '📷 照片傳好了（這一站你已經拿過拍照分了）' : '📷 照片傳好了（到站再拍才有拍照分）'); });
     }).catch(function (e) {
       var perm = e && /PERMISSION_DENIED|permission/i.test((e.code || '') + (e.message || ''));
       msg.textContent = perm ? '傳不出去：你的隊伍資料對不上。請按右上角重新整理後再傳，還是不行請按「回報」。' : '傳不出去：' + (e.message || e);

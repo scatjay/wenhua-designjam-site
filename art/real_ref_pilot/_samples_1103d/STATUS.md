@@ -2,7 +2,7 @@
 
 # 走讀美術接力 STATUS
 
-更新：2026-11-05 01:07
+更新：2026-11-05 01:25
 
 ## 起始狀態
 - 監督員 cwd：worktree sleepy-poitras-5fdf1d，分支 claude/sleepy-poitras-5fdf1d
@@ -18,6 +18,8 @@
 | b1（QA_b1.md） | 11 | 0 | 7 | 4 | — | 進入 jobs_r2_retry |
 | r2_retry（00:02 完成，QA_r2_retry.md） | 14 | 0 | 7 | 7 | 約 61°C／約 50 W（23:52 取樣；全程最高待補） | jobs_r3_retry 11 張已排入佇列（觀測員3、剪黏1+1、警察署2、門廊2、側面B 2） |
 | r2_props（00:02–00:59，QA_r2_props.md） | 17 | 1（jianjian） | 14 | 2（clipboard、noodle） | 00:36 取樣 60°C／143 W 峰值 | jobs_r3_props 14 張已排入（去掉 Redux 參考照、前置單一物件平底、補必現項） |
+
+| r2_stickers（01:18 完成，QA_r2_stickers.md） | 10 | 3（learn、pass、case_done） | 5（split、gather、like、first_room、dex） | 2（roles、wow：章偏小） | 待補 | jobs_r3_stickers 7 張已排入 |
 
 ## 道具 32×32 縮圖驗收（S6，thumb32_r2_props.png）
 - 平底的 6 張（墨斗、夾板、懷錶、紅磚、鑰匙、剪黏龍）縮到 32 像素輪廓仍認得；懷錶與鑰匙偏糊。

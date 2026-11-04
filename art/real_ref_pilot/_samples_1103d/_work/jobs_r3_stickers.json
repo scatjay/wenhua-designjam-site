@@ -1,0 +1,58 @@
+[
+ {
+  "name": "stk_seal_split_r3",
+  "framing": "圓章：分頭探索（🧭）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, game sticker icon, round enamel medal badge with a clear gold rim, a compass rose in the middle and exactly three separate small footprint trails clearly branching out in three different directions from the center, each trail made of 3 to 4 tiny footprints, the badge fills about 90 percent of the frame, large and centered, plain flat beige background, thick white sticker outline, clean dark outlines, soft shading, bright cheerful colors, no people, no faces, no text, no letters, no numbers, no logos, no writing",
+  "seed": 7101,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "stk_seal_gather_r3",
+  "framing": "圓章：全員集合（🤝）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, game sticker icon, round enamel medal badge with a clear gold rim, exactly five small identical round pawn tokens all in the same color, closely gathered around one small red flag, count them: five, the badge fills about 90 percent of the frame, large and centered, plain flat beige background, thick white sticker outline, clean dark outlines, soft shading, bright cheerful colors, no people, no faces, no text, no letters, no numbers, no logos, no writing",
+  "seed": 7102,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "stk_seal_roles_r3",
+  "framing": "圓章：各司其職（🎭）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, game sticker icon, round enamel medal badge with a clear gold rim, three different tool icons arranged in a triangle: a magnifying glass, a notebook and a camera, the badge fills about 90 percent of the frame, large and centered, plain flat beige background, thick white sticker outline, clean dark outlines, soft shading, bright cheerful colors, no people, no faces, no text, no letters, no numbers, no logos, no writing",
+  "seed": 7103,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "stk_fp_like_r3",
+  "framing": "足跡貼圖：讚",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, game sticker icon, one big red heart with small sparkles inside a round enamel medal badge with a gold rim, the heart sits in the middle of the round gold-rimmed badge, the badge fills about 90 percent of the frame, large and centered, plain flat beige background, thick white sticker outline, clean dark outlines, soft shading, bright cheerful colors, no people, no faces, no text, no letters, no numbers, no logos, no writing",
+  "seed": 7104,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "stk_fp_wow_r3",
+  "framing": "足跡貼圖：好厲害",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, game sticker icon, round enamel medal badge with a clear gold rim, a big yellow star burst with radiating lines and several small separate white sparkles around it, the badge fills about 90 percent of the frame, large and centered, plain flat beige background, thick white sticker outline, clean dark outlines, soft shading, bright cheerful colors, no people, no faces, no text, no letters, no numbers, no logos, no writing",
+  "seed": 7105,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "stk_first_room_r3",
+  "framing": "方貼：第一次進房（工坊創作）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, game sticker icon, a small cozy house with a round door and a small golden-yellow brass key with a ring bow clearly drawn in front of the house, the sticker has a clean rounded-corner SQUARE shape as its base, filling about 90 percent of the frame, a flat colored square tile background inside the white outline, plain flat beige background, thick white sticker outline, clean dark outlines, soft shading, bright cheerful colors, no people, no faces, no text, no letters, no numbers, no logos, no writing",
+  "seed": 7106,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "stk_dex_collect_r3",
+  "framing": "方貼：圖鑑收集（工坊創作）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, game sticker icon, an open picture book with a small spotted egg resting on its pages, the sticker has a clean rounded-corner SQUARE shape as its base, filling about 90 percent of the frame, a flat colored square tile background inside the white outline, plain flat beige background, thick white sticker outline, clean dark outlines, soft shading, bright cheerful colors, no people, no faces, no text, no letters, no numbers, no logos, no writing",
+  "seed": 7107,
+  "w": 768,
+  "h": 768
+ }
+]

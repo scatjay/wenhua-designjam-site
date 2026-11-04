@@ -543,8 +543,7 @@
     ROOT.child('pos/' + teamId + '/' + uid).set({ lat: +myPos.lat.toFixed(5), lon: +myPos.lon.toFixed(5), acc: Math.round(myPos.acc), t: myPos.t, nick: profile.nick, ava: profile.ava });
   }
   function talkTo(nick) {
-    setView('team');
-    setTimeout(function () { var i = $('tc-in'); if (i) { i.value = '@' + nick + ' '; i.focus(); try { i.scrollIntoView({ block: 'center' }); } catch (e) {} } }, 250);
+    setTimeout(function () { openSay('team', '@' + nick + ' '); }, 100);
   }
   var placedPos = {};
   function spreadPos(k, p) {   /* 兩人距離 < 12 公尺就沿圓周錯開，免得頭像疊在一起 */
@@ -786,7 +785,7 @@
       now: function () { return Date.now(); }
     });
   }
-  var HOME_JS = ['walk_sprites2.js', 'walk_data_spirit.js', 'walk_data_traits.js', 'walk_data_shop.js', 'walk_data_dex.js', 'walk_data_intel_a.js', 'walk_data_intel_b.js', 'walk_data_intel.js', 'walk_store.js', 'walk_room.js', 'walk_spirit_ui.js', 'walk_dex_ui.js', 'walk_shop_ui.js'], HOME_V = '202611031230', homeLoading = false;
+  var HOME_JS = ['walk_sprites2.js', 'walk_data_spirit.js', 'walk_data_traits.js', 'walk_data_shop.js', 'walk_data_dex.js', 'walk_data_intel_a.js', 'walk_data_intel_b.js', 'walk_data_intel.js', 'walk_store.js', 'walk_room.js', 'walk_spirit_ui.js', 'walk_dex_ui.js', 'walk_shop_ui.js'], HOME_V = '202611041210', homeLoading = false;
   /* 只有功能開啟才載入（約 300 KB），依序載入以保證順序；關閉時網頁與原本完全一樣 */
   function homeLoad(cb) {
     if (window.WalkStore) { cb(); return; }
@@ -1333,7 +1332,7 @@
     return null;
   }
   function taskHtml(s, t) {
-    var d = taskDone(s.id, t.id), h = '<div class="task' + (d ? ' done' : '') + (t.bonus ? ' bonus' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + (t.bonus ? '<span class="tag">協力加分</span> ' : '') + esc(t.title) + '</div>';
+    var d = taskDone(s.id, t.id), h = '<div class="task' + (d ? ' done' : '') + (t.bonus ? ' bonus' : '') + '"><div class="tt">' + (d ? '✔ ' : '') + (t.bonus ? '<span class="tag">' + (t.type === 'together' || t.type === 'cross' ? '協力加分' : '加分題') + '</span> ' : '') + esc(t.title) + '</div>';
     if (!d) {
       if (t.type === 'zone') h += '<div class="sub">走到圍欄裡就會自動完成（地圖上的綠色虛線圈）。</div><button class="btn2" data-sos="' + t.id + '" data-s="' + s.id + '">🆘 找不到這裡？</button>';
       if (t.type === 'together' || t.type === 'cross') h += '<div class="sub">隊友同時到位就會自動完成，沒做到也不影響主線。</div>';
@@ -1459,7 +1458,7 @@
     }).then(function (r) { if (!r.committed) toast('這個角色已被挑走，或你已經換過一次了。'); else log('role', '', nr); });
   }
   /* ---------- 隊內訊息、全場彈幕 ---------- */
-  var tchat = [], lastSend = 0, dmStart = 0, lastCall = 0, dmShow = true, dmLane = 0;
+  var tchat = [], tcFlown = 0, dmScope = 'team', lastSend = 0, dmStart = 0, lastCall = 0, dmShow = true, dmLane = 0;
   function chatSend(path, obj) { var n = Date.now(); if (n - lastSend < 2000) { toast('慢一點，2 秒一則～'); return false; } lastSend = n; ROOT.child(path).push(obj); return true; }
   function hhmm(t) { var d = new Date(t); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
   function dayLabel(t) {
@@ -1477,18 +1476,17 @@
     el.scrollTop = el.scrollHeight;
   }
   function chatBox() {
-    return '<div class="card"><b>💬 隊內訊息</b><div id="tc-list" class="tclist"></div><div class="opts"><input id="tc-in" class="inp" maxlength="100" placeholder="只有隊友看得到"><button class="btn2 tcsend" id="tc-go">送出</button></div></div>';
+    return '<div class="card"><b>💬 隊內訊息紀錄</b><div id="tc-list" class="tclist"></div><div class="opts"><button class="btn2 tcsend" id="tc-go">💬 說話（隊內）</button></div><div class="sub">隊內訊息和全場彈幕共用同一個輸入框，按左下的 💬 也可以。</div></div>';
   }
   function bindChat() {
     drawTchat(); var go = $('tc-go'); if (!go) return;
-    var send = function () { var v = ($('tc-in').value || '').trim(); if (!v) return; if (chatSend('tchat/' + teamId, { uid: uid, n: (profile && profile.nick) || '?', x: v.slice(0, 100), t: nowMs() })) $('tc-in').value = ''; };
-    go.onclick = send; $('tc-in').onkeydown = function (e) { if (e.key === 'Enter') send(); };
+    go.onclick = function () { openSay('team', ''); };
   }
   var DMC = ['#c0392b', '#1e7a4c', '#2f5fb3', '#8a3fb0', '#b35a00', '#00727a', '#a0276a', '#4a5d1a', '#5b3fc0', '#0a6e9e'];   /* 白字在上面都 ≥4.5:1 */
   function userColor(id) { var h = 0, i; id = String(id || ''); for (i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0; return DMC[h % DMC.length]; }
   function flyDanmaku(v) {
     var box = document.getElementById('dm'); if (!box || !dmShow || box.children.length > 14) return;
-    var e = document.createElement('div'); e.className = 'dmk'; e.textContent = (v.n ? v.n + '：' : '') + v.x; e.style.background = userColor(v.uid); e.style.borderColor = '#fff';
+    var e = document.createElement('div'); e.className = 'dmk'; e.textContent = (v.n ? v.n + '：' : '') + v.x; e.style.background = userColor(v.uid); e.style.borderColor = '#fff'; if (v.team) { e.textContent = '👥 ' + e.textContent; e.style.borderStyle = 'dashed'; e.style.borderWidth = '2.5px'; }
     dmLane = (dmLane + 1) % 6; e.style.top = (14 + dmLane * 9) + 'vh'; e.style.animationDuration = (8 + Math.random() * 2) + 's';
     box.appendChild(e); e.addEventListener('animationend', function () { e.remove(); }); setTimeout(function () { e.remove(); }, 14000);
   }
@@ -1507,6 +1505,17 @@
       a._icon.style.opacity = behind ? 0.4 : 1; a._icon.style.transition = 'opacity .25s';
     });
   }
+  /* 隊內／全場共用同一個輸入框：上面的切換鈕決定送去哪裡；隊內訊息也會飛過畫面（虛線框，前面有 👥） */
+  function setScope(sc) {
+    dmScope = sc; var b = document.getElementById('dm-sc'), i = document.getElementById('dm-in'); if (!b || !i) return;
+    b.textContent = sc === 'team' ? '👥 隊內' : '📢 全場';
+    i.maxLength = sc === 'team' ? 60 : 40; i.placeholder = sc === 'team' ? '隊內訊息（只有隊友看得到）' : '全場彈幕（40 字內，所有人看得到）';
+    if (i.value.length > i.maxLength) i.value = i.value.slice(0, i.maxLength);
+  }
+  function openSay(sc, pre) {
+    var bar = document.getElementById('dm-bar'); if (!bar) return; setScope(sc); bar.classList.add('on');
+    var i = document.getElementById('dm-in'); if (pre) i.value = pre; i.focus();
+  }
   function startChat() {
     dmStart = nowMs();
     if (!fadeT) fadeT = setInterval(fadeOverlaps, 2500);
@@ -1515,18 +1524,25 @@
       st.textContent = '#dm{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:2500;overflow:hidden}.dmk{position:absolute;left:100%;white-space:nowrap;font-weight:800;font-size:19px;line-height:1.3;color:#fff;background:rgba(24,12,36,.78);padding:4px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 8px rgba(0,0,0,.35);animation:dmkgo linear forwards}@keyframes dmkgo{to{transform:translateX(calc(-100vw - 100% - 24px))}}#dm-btn{position:fixed;left:10px;bottom:76px;z-index:2600;height:46px;padding:0 16px;border-radius:999px;border:3px solid #3a2a4a;background:#ff5c7a;color:#fff;font-size:16px;font-weight:800;box-shadow:0 4px 0 #3a2a4a,0 6px 14px rgba(0,0,0,.3);cursor:pointer}#dm-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #3a2a4a}#dm-bar .btn2,.tcsend{background:#ff5c7a!important;color:#fff!important;border:2px solid #3a2a4a!important;font-weight:800}#dm-bar{position:fixed;left:8px;right:8px;bottom:128px;z-index:2600;display:none;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px}#dm-bar.on{display:flex}#dm-bar input{flex:1;min-width:0}.tclist{max-height:180px;overflow:auto;margin:6px 0;display:flex;flex-direction:column;gap:4px}.tcm{font-size:14px;background:rgba(127,127,127,.12);border-radius:8px;padding:4px 8px}.mate.mt b{background:#2f6690!important;color:#fff!important;border:2px solid #1b3f5c!important;cursor:pointer}.mate.me b{background:#e0821f!important;color:#fff!important;border:2px solid #7a4710!important}.mate.mt .spr{filter:drop-shadow(0 0 4px #2f6690)}.tcm.at{outline:2px solid #2f6690}.tcday{align-self:center;font-size:12px;color:#fff;background:rgba(80,60,100,.75);border-radius:999px;padding:1px 10px;margin:4px 0}.tctime{font-size:11px;opacity:.6;margin-left:4px}.tcm.me{background:rgba(255,160,60,.22)}.tcm.call{background:rgba(255,90,90,.22);font-weight:700}.cl-h{cursor:pointer;position:relative;padding-right:22px}.cl-h::after{content:"▾";position:absolute;right:4px;top:0;opacity:.55;font-size:14px}.cl-collapsed>.cl-h::after{content:"▸"}.cl-collapsed>*:not(.cl-h){display:none!important}.rolerow{border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:6px}.rolerow.taken{opacity:.42;filter:grayscale(1)}.rolerow.mine{border-color:#e0821f;background:rgba(224,130,31,.1)}.bub.secret{background:#fff3c4;color:#4a3a00;border:1px dashed #c9a400}';
       document.head.appendChild(st);
       var d = document.createElement('div'); d.id = 'dm'; document.body.appendChild(d);
-      var b = document.createElement('button'); b.id = 'dm-btn'; b.textContent = '💬 彈幕'; b.title = '全場彈幕（所有人都看得到）'; document.body.appendChild(b);
+      var b = document.createElement('button'); b.id = 'dm-btn'; b.textContent = '💬 說話'; b.title = '隊內訊息與全場彈幕'; document.body.appendChild(b);
       var bar = document.createElement('div'); bar.id = 'dm-bar';
-      bar.innerHTML = '<input id="dm-in" class="inp" maxlength="40" placeholder="全場彈幕（40 字內，所有人看得到）"><button class="btn2" id="dm-go">送出</button><button class="btn2" id="dm-eye" title="顯示或隱藏彈幕">👁</button>';
+      bar.innerHTML = '<button class="btn2" id="dm-sc" title="切換：隊內（只有隊友看得到）／全場（所有人看得到）"></button><input id="dm-in" class="inp"><button class="btn2" id="dm-go">送出</button><button class="btn2" id="dm-eye" title="顯示或隱藏彈幕">👁</button>';
       document.body.appendChild(bar);
-      b.onclick = function () { bar.classList.toggle('on'); if (bar.classList.contains('on')) $('dm-in').focus(); };
-      var sd = function () { var v = ($('dm-in').value || '').trim(); if (!v) return; if (chatSend('gchat', { uid: uid, n: (profile && profile.nick) || '', x: v.slice(0, 40), t: nowMs() })) $('dm-in').value = ''; };
+      b.onclick = function () { if (bar.classList.contains('on')) bar.classList.remove('on'); else openSay(dmScope, ''); };
+      $('dm-sc').onclick = function () { setScope(dmScope === 'team' ? 'all' : 'team'); $('dm-in').focus(); };
+      setScope(dmScope);
+      var sd = function () {
+        var v = ($('dm-in').value || '').trim(); if (!v) return;
+        var ok = dmScope === 'team' ? chatSend('tchat/' + teamId, { uid: uid, n: (profile && profile.nick) || '?', x: v.slice(0, 60), t: nowMs() }) : chatSend('gchat', { uid: uid, n: (profile && profile.nick) || '', x: v.slice(0, 40), t: nowMs() });
+        if (ok) $('dm-in').value = '';
+      };
       $('dm-go').onclick = sd; $('dm-in').onkeydown = function (e) { if (e.key === 'Enter') sd(); };
       $('dm-eye').onclick = function () { dmShow = !dmShow; $('dm-eye').style.opacity = dmShow ? 1 : 0.4; if (!dmShow) d.innerHTML = ''; };
     }
     on(ROOT.child('tchat/' + teamId).limitToLast(30), 'value', function (sn) {
       tchat = []; sn.forEach(function (c) { tchat.push(c.val()); }); drawTchat();
       var l = tchat[tchat.length - 1];
+      if (l && l.t > dmStart && l.t > tcFlown) { tcFlown = l.t; flyDanmaku({ uid: l.uid, n: l.n, x: l.x, team: 1 }); }
       if (l && l.call && l.uid !== uid && l.t > Math.max(dmStart, lastCall)) { lastCall = l.t; toast('📣 ' + l.n + '：' + l.x); }
     });
     on(ROOT.child('gchat').limitToLast(1), 'child_added', function (sn) { var v = sn.val(); if (v && v.t > dmStart) flyDanmaku(v); });

@@ -1,0 +1,285 @@
+{
+ "items": [
+  {
+   "id": "char_observer_r3_s3311",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_observer_r3_s3311_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持短桿上的三角形暴風信號旗（白、綠、紅、藍；樣式為工坊創作）",
+    "手持杯式風速計（桿上三個小杯）",
+    "臺灣人長相、黑髮",
+    "素面工作外套與帽子（帽前空白）",
+    "背景是單一平底色（沒有場景、天空、雲或建築）"
+   ],
+   "forbid": [
+    "燈塔",
+    "雷達罩或衛星天線",
+    "文字、數字、徽章符號（星形）",
+    "金髮或歐美臉孔",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [],
+   "notes": "測候所觀測員（工坊創作；信號旗樣式不當史實；平底背景版）"
+  },
+  {
+   "id": "char_observer_r3_s3312",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_observer_r3_s3312_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持短桿上的三角形暴風信號旗（白、綠、紅、藍；樣式為工坊創作）",
+    "手持杯式風速計（桿上三個小杯）",
+    "臺灣人長相、黑髮",
+    "素面工作外套與帽子（帽前空白）",
+    "背景是單一平底色（沒有場景、天空、雲或建築）"
+   ],
+   "forbid": [
+    "燈塔",
+    "雷達罩或衛星天線",
+    "文字、數字、徽章符號（星形）",
+    "金髮或歐美臉孔",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [],
+   "notes": "測候所觀測員（工坊創作；信號旗樣式不當史實；平底背景版）"
+  },
+  {
+   "id": "char_observer_r3_s3313",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_observer_r3_s3313_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持短桿上的三角形暴風信號旗（白、綠、紅、藍；樣式為工坊創作）",
+    "手持杯式風速計（桿上三個小杯）",
+    "臺灣人長相、黑髮",
+    "素面工作外套與帽子（帽前空白）",
+    "背景是單一平底色（沒有場景、天空、雲或建築）"
+   ],
+   "forbid": [
+    "燈塔",
+    "雷達罩或衛星天線",
+    "文字、數字、徽章符號（星形）",
+    "金髮或歐美臉孔",
+    "背景有場景、天空、雲或建築（不是平底單色）"
+   ],
+   "refs": [],
+   "notes": "測候所觀測員（工坊創作；信號旗樣式不當史實；平底背景版）"
+  },
+  {
+   "id": "char_jianjian_r3_s4311",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_jianjian_r3_s4311_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持彩色碎瓷片或碗片、彩色玻璃",
+    "手持灰泥剪黏龍浮雕（表面有綠色與橘色小鱗片）",
+    "臺灣人長相、黑髮",
+    "毛巾掛頸的工作衣",
+    "背景是單一平底色（沒有屋脊或場景）"
+   ],
+   "forbid": [
+    "西方龍（有翅膀、噴火）",
+    "鋒利尖銳的碎玻璃",
+    "文字",
+    "背景有屋脊、天空或場景"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/../../_samples_1103/_work/j3_ref_sq.png"
+   ],
+   "notes": "剪黏藝師（平底背景版）"
+  },
+  {
+   "id": "char_jianjian_r3_s4312",
+   "kind": "portrait",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/char_jianjian_r3_s4312_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "手持彩色碎瓷片或碗片、彩色玻璃",
+    "手持灰泥剪黏龍浮雕（表面有綠色與橘色小鱗片）",
+    "臺灣人長相、黑髮",
+    "毛巾掛頸的工作衣",
+    "背景是單一平底色（沒有屋脊或場景）"
+   ],
+   "forbid": [
+    "西方龍（有翅膀、噴火）",
+    "鋒利尖銳的碎玻璃",
+    "文字",
+    "背景有屋脊、天空或場景"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/../../_samples_1103/_work/j3_ref_sq.png"
+   ],
+   "notes": "剪黏藝師（平底背景版）"
+  },
+  {
+   "id": "scene_police_A_r3_s2311",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_police_A_r3_s2311_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "土黃／金黃色面磚外牆（不是紅色或橘紅色）",
+    "中央半圓弧形凸出，弧形女牆頂有貝殼棕葉飾",
+    "弧牆下方矩形橫額，內一排中性幾何花飾",
+    "兩翼二樓一排半圓拱窗",
+    "中央門廊由圓柱圍出，上頂弧形陽台"
+   ],
+   "forbid": [
+    "紅色或橘紅色牆",
+    "黃色遮陽篷、國旗、國徽、招牌文字",
+    "現代新館",
+    "行人、機車與車牌",
+    "文字"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/pol2_clean_full.png"
+   ],
+   "notes": "警察署 取景A 整棟含兩翼；Redux 參考＝POL2（CC BY 2.0 Jun）清理後調土黃"
+  },
+  {
+   "id": "scene_police_A_r3_s2312",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_police_A_r3_s2312_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "土黃／金黃色面磚外牆（不是紅色或橘紅色）",
+    "中央半圓弧形凸出，弧形女牆頂有貝殼棕葉飾",
+    "弧牆下方矩形橫額，內一排中性幾何花飾",
+    "兩翼二樓一排半圓拱窗",
+    "中央門廊由圓柱圍出，上頂弧形陽台"
+   ],
+   "forbid": [
+    "紅色或橘紅色牆",
+    "黃色遮陽篷、國旗、國徽、招牌文字",
+    "現代新館",
+    "行人、機車與車牌",
+    "文字"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/pol2_clean_full.png"
+   ],
+   "notes": "警察署 取景A 整棟含兩翼；Redux 參考＝POL2（CC BY 2.0 Jun）清理後調土黃"
+  },
+  {
+   "id": "scene_butokuden_porch_r3_s1311",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_butokuden_porch_r3_s1311_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "正面唐破風門廊，弧形綠銅色屋頂",
+    "二層奶黃牆、深棕木窗、外圍白色欄杆陽台"
+   ],
+   "forbid": [
+    "閩南廟燕尾脊與剪黏",
+    "鳥居與注連繩",
+    "石燈籠",
+    "人物（學童、老人、遊客）",
+    "文字"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/but_ref_porch_closeup.png"
+   ],
+   "notes": "武德殿 門廊特寫（只核對門廊與二層）；Redux 參考＝butokuden.jpg 裁切"
+  },
+  {
+   "id": "scene_butokuden_porch_r3_s1312",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_butokuden_porch_r3_s1312_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "正面唐破風門廊，弧形綠銅色屋頂",
+    "二層奶黃牆、深棕木窗、外圍白色欄杆陽台"
+   ],
+   "forbid": [
+    "閩南廟燕尾脊與剪黏",
+    "鳥居與注連繩",
+    "石燈籠",
+    "人物（學童、老人、遊客）",
+    "文字"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/but_ref_porch_closeup.png"
+   ],
+   "notes": "武德殿 門廊特寫（只核對門廊與二層）；Redux 參考＝butokuden.jpg 裁切"
+  },
+  {
+   "id": "scene_butokuden_sideB_r3_s1321",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_butokuden_sideB_r3_s1321_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "入母屋（歇山）屋頂、深灰瓦，山面白色博風板",
+    "屋脊兩端是短而直立的鰭狀鴟尾，不是翹起的燕尾",
+    "二層奶黃牆、深棕木窗、外圍白色欄杆陽台",
+    "灰色洗石子基座、方格通風窗"
+   ],
+   "forbid": [
+    "閩南廟燕尾脊與剪黏",
+    "鳥居與注連繩",
+    "石燈籠",
+    "人物（學童、老人、遊客）",
+    "文字"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/but_ref_sideB_but2.png"
+   ],
+   "notes": "武德殿 側面取景B 右側3/4山面（此視角看不到唐破風門廊，故必現清單不含門廊）；Redux 參考＝BUT2（CC BY 3.0 lienyuan lee）"
+  },
+  {
+   "id": "scene_butokuden_sideB_r3_s1322",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_butokuden_sideB_r3_s1322_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "入母屋（歇山）屋頂、深灰瓦，山面白色博風板",
+    "屋脊兩端是短而直立的鰭狀鴟尾，不是翹起的燕尾",
+    "二層奶黃牆、深棕木窗、外圍白色欄杆陽台",
+    "灰色洗石子基座、方格通風窗"
+   ],
+   "forbid": [
+    "閩南廟燕尾脊與剪黏",
+    "鳥居與注連繩",
+    "石燈籠",
+    "人物（學童、老人、遊客）",
+    "文字"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/but_ref_sideB_but2.png"
+   ],
+   "notes": "武德殿 側面取景B 右側3/4山面（此視角看不到唐破風門廊，故必現清單不含門廊）；Redux 參考＝BUT2（CC BY 3.0 lienyuan lee）"
+  }
+ ]
+}

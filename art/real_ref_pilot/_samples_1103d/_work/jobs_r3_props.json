@@ -1,0 +1,114 @@
+[
+ {
+  "name": "prop_abacus_r3",
+  "framing": "算盤：斜放、8～9 排珠、橫樑加粗（錨點 abacus_landbank CC0）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a rectangular dark brown wooden abacus frame lying flat seen from above, one horizontal beam dividing the beads into an upper and a lower section, about nine rows of round beads strung on vertical rods, beads a bit lighter than the frame, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7101,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_inkline_r3",
+  "framing": "墨斗：船形木體＋線輪＋墨線＋曲尺（工坊創作，W1/W2 BY-SA 只看形狀）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a boat-shaped wooden carpenter ink line tool with a small ink pot, a thin black string pulled out from the front, next to it a clearly L-shaped light wooden try square with two arms at a right angle, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7102,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_compass_r3",
+  "framing": "羅盤：橘黃漆盤＋中心小指南針＋同心環色塊（錨點 R06 CC BY 3.0）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a round orange-yellow lacquered geomantic compass disc, small round center compass with a red needle, concentric ring color bands without readable characters, red lacquer rim, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7103,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_roadsign_r3",
+  "framing": "路牌：綠底白框四角螺絲，牌面只用白色色塊（錨點 R01 CC BY 4.0，字已抹）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a green rectangular street sign plate with a thin white border and four tiny corner screws, the face completely blank plain green, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7104,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_watch_r3",
+  "framing": "懷錶：金殼＋錶冠環＋長鍊＋翻蓋（工坊創作；R07/R08 BY-SA 只看形狀）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a gold round pocket watch with the lid open, crown and ring on top, a long chain hanging down, cream watch face with only small dots and two hands, no numbers, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7106,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_document_r3",
+  "framing": "簽呈／清冊／地契：淡黃紙紅直罫＋紅方印＋線裝冊（錨點 R10 PD，文字改成色塊；非臺南件，樣式工坊創作）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, an old Chinese thread-bound book lying closed, cream paper cover with a blank label strip, stitched spine on the left with red thread, no writing anywhere, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7107,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_gong_r3",
+  "framing": "遶境鑼：紅漆雕花鑼架＋黃銅鑼＋紅頭鑼槌（錨點 R24 CC0；人物已裁小，需人眼）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a round bronze gong hanging in a dark red lacquered wooden frame with a small mallet, only the gong and its frame, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7108,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_liftbtn_r3",
+  "framing": "電梯按鈕：黃銅小板＋兩顆圓形箭頭鈕＋深褐木門邊（錨點 hayashi_lift CC BY 4.0）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a small vertical wall panel with one round elevator call button glowing, and above it a fan-shaped floor indicator with unlabeled dots, just the panel object, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7109,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_facebrick_r3",
+  "framing": "面磚：小塊規則薄磚錯縫、酒紅與褐黃並存、細灰縫（工坊創作；R15/R16/police_wall BY-SA 只看形狀）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a small stack pattern of old face bricks in mixed reddish-brown and yellow-brown tones, clearly some bricks yellow-brown and some red-brown, mortar lines, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7110,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_broom_r3",
+  "framing": "掃把：扇形草掃毛綁帶＋長柄＋小畚箕（錨點 R17 CC BY 2.0；原照為非臺灣草紮掃把）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a straw hand broom with a wooden handle and a small metal dustpan beside it, only these two objects, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7111,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_oldkey_r3",
+  "framing": "舊鑰匙：黃銅平齒鑰匙串（工坊創作；錨點 R25 CC BY 2.0，原照非臺灣）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, an old brass key, golden-yellow brass color, round ring bow with a hole at the top, long shaft with teeth, a single key only, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7112,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_lantern_r3",
+  "framing": "手繪燈籠：奶白橢圓燈身＋黑骨架＋綠龍橘焰藍浪＋洋紅蓋＋紅流蘇（錨點 L2 CC BY 2.0；不畫字）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a round white paper lantern with a painted pattern of blue waves and magenta clouds in traditional style without any characters, hanging cord on top, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7113,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_scanner_r3",
+  "framing": "白球標靶與掃描儀：綠白方箱掃描頭＋三腳架＋白球立桿（錨點 R21 PD；白球工坊創作）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a total station surveying instrument on a tripod, white ball-shaped lens housing, three tripod legs clearly visible, no logo, plain gray body, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7116,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "prop_trowel_r3",
+  "framing": "抹刀與灰牆：木柄平板抹刀＋半褐底層半白灰的小牆面（錨點 R22 PD；灰牆工坊創作）",
+  "prompt": "chunky 16-bit pixel art, a single isolated object centered on a completely plain flat beige background, no scene, no floor, no wall, no sky, no table, no shadow scene, nothing else in the picture, no person, no hands, no text, no letters, no numbers, a plasterer's trowel with a wooden handle and steel blade, resting next to a small square patch of half-plastered gray cement wall, no marks on the handle, clean dark outlines, soft shading, 16-bit SNES JRPG item icon style, no text, no letters, no numbers, no logos",
+  "seed": 7117,
+  "w": 768,
+  "h": 768
+ }
+]

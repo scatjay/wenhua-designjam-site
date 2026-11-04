@@ -1,0 +1,391 @@
+{
+ "items": [
+  {
+   "id": "prop_abacus_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_abacus_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "長方形深褐木框",
+    "一根橫樑把算珠分成上下兩區",
+    "算珠成排串在直桿上（約 8–10 排）",
+    "珠色比木框亮一階",
+    "縮到 32 像素仍分得出「一格一格的珠排」"
+   ],
+   "forbid": [
+    "珠式寫成確定的上1下4或上2下5（待查）",
+    "整條 20 排以上的細長算盤",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/prop/abacus_landbank.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_abacus.png"
+   ],
+   "notes": "錨點 abacus_landbank（CC0）；珠式未定，標需人眼；對應第 6 案三郊老帳房"
+  },
+  {
+   "id": "prop_inkline_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_inkline_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "船形或長形木體",
+    "前端線輪或後端線輪",
+    "小墨罐",
+    "從斗口拉出的一條細黑線",
+    "旁有淺色 L 形曲尺"
+   ],
+   "forbid": [
+    "螢光色捲尺機身",
+    "雕龍細節（32 像素會糊）",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/W2_大溪武德殿內展示的墨斗.jpg",
+    "E:/Downloads/_walk_refs/_cand/W3_木製魯班曲尺.jpg"
+   ],
+   "notes": "工坊創作：W1/W2 為 CC BY-SA 只看形狀、未進 Redux；W3 曲尺 CC0；時代錯置顧慮（捲尺）故不畫捲尺"
+  },
+  {
+   "id": "prop_compass_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_compass_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形橘黃漆盤",
+    "中心小圓指南針與紅針",
+    "同心環色塊（不是可讀字）",
+    "紅漆邊"
+   ],
+   "forbid": [
+    "可讀的八卦或天干地支字",
+    "熊貓或漆盒",
+    "展館標籤",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R06_羅盤.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_compass.png"
+   ],
+   "notes": "錨點 R06（CC BY 3.0 署名）；這是實物羅盤，手機羅盤另案程式自畫、本單不含"
+  },
+  {
+   "id": "prop_roadsign_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_roadsign_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "綠底長方牌",
+    "白色細外框",
+    "四角小螺絲",
+    "牌面只有白色色塊、沒有可讀字"
+   ],
+   "forbid": [
+    "可讀路名（成功路22巷等）",
+    "日治町名琺瑯牌（查無依據）",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R01_路牌.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_roadsign.png"
+   ],
+   "notes": "錨點 R01（CC BY 4.0 署名，牌面字已抹成平綠）；只證明這一塊巷牌樣式；與台詞「綠色路牌」相合"
+  },
+  {
+   "id": "prop_watch_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_watch_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "金色圓殼",
+    "頂端錶冠與環",
+    "一條垂下的長鍊",
+    "翻開的蓋",
+    "錶面米色、只有點與指針"
+   ],
+   "forbid": [
+    "羅馬數字或品牌字",
+    "日治臺灣實物的宣稱",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R07_懷錶.jpg"
+   ],
+   "notes": "工坊創作：R07/R08 為 CC BY-SA、只看形狀；日治臺灣懷錶樣式未查"
+  },
+  {
+   "id": "prop_document_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_document_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "淡黃紙面",
+    "紅色直線罫",
+    "紅色方印",
+    "線裝書冊（側面縫線）",
+    "紙面是色塊與線、沒有可讀字"
+   ],
+   "forbid": [
+    "真實人名或地名",
+    "桃園廳臺帳（R09 含真實姓名，禁用）",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R10_古文書.jpg",
+    "E:/Downloads/_walk_refs/prop/ledger_nmth.jpg"
+   ],
+   "notes": "錨點 R10（PD）；非臺南件、簽呈本身無實物，遊戲內標「公文樣式」；strength 0.45 以免複製日文原文"
+  },
+  {
+   "id": "prop_gong_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_gong_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形黃銅鑼，中心略突起",
+    "深紅漆雕花木鑼架",
+    "紅頭鑼槌",
+    "無人物"
+   ],
+   "forbid": [
+    "宮名文字",
+    "在世人物臉孔",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R24_遶境鑼.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_gong.png"
+   ],
+   "notes": "錨點 R24（CC0）；裁圖仍有一小段人物髮頂與紅色小偶，生成後需人眼確認沒有人形"
+  },
+  {
+   "id": "prop_liftbtn_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_liftbtn_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "深褐木製雙門邊",
+    "黃銅門框",
+    "旁邊直立小金屬板",
+    "兩顆圓形銀色箭頭鈕（上下）",
+    "門上方金色扇形樓層指示"
+   ],
+   "forbid": [
+    "舊式（黑色圓鈕、乳黃剝漆）按鈕——無林百貨開幕時依據",
+    "螢幕上的字",
+    "旁邊告示牌上的字",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/scene/hayashi_lift.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_liftbtn.png"
+   ],
+   "notes": "錨點 hayashi_lift（CC BY 4.0 署名）；台詞「現在都改成按鈕了」對應現代圓鈕；裁圖右下有告示牌，需人眼"
+  },
+  {
+   "id": "prop_facebrick_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_facebrick_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "小塊規則薄磚、錯縫排列",
+    "細淺灰灰縫",
+    "酒紅與褐黃兩種磚並存",
+    "磚塊比荷治時代紅磚小而薄"
+   ],
+   "forbid": [
+    "單一褐黃或單一紅磚",
+    "整面橫線（不是磚縫）",
+    "荷蘭磚的大厚磚",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/scene/police_wall.jpg",
+    "E:/Downloads/_walk_refs/_cand2/prop/R15_面磚.jpg"
+   ],
+   "notes": "工坊創作：參考照皆 CC BY-SA 只看形狀；顏色依 ART_DECISIONS 第 2 條（酒紅與褐黃並存），11/14 踏查現場確認"
+  },
+  {
+   "id": "prop_broom_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_broom_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "上寬下收的扇形草色掃毛",
+    "綁紮帶",
+    "長柄",
+    "旁邊小畚箕"
+   ],
+   "forbid": [
+    "竹枝掃把的宣稱（無臺灣證據）",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R17_掃把.jpg"
+   ],
+   "notes": "錨點 R17（CC BY 2.0 署名；原照為中國運城草紮掃把，非臺灣，只取形狀）"
+  },
+  {
+   "id": "prop_oldkey_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_oldkey_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "黃銅色舊鑰匙",
+    "圓形鑰匙頭",
+    "簡單齒峰鑰匙身",
+    "掛在一個小鐵環上"
+   ],
+   "forbid": [
+    "骷髏大鑰匙",
+    "商標編號",
+    "日治臺灣鑰匙的宣稱",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R25_舊鑰匙.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_oldkey.png"
+   ],
+   "notes": "工坊創作：R25 為 CC BY 2.0 署名、非臺灣；台詞對鑰匙沒有依據（頭像提示詞才有），不宣稱史實"
+  },
+  {
+   "id": "prop_lantern_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_lantern_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "奶白橢圓燈身",
+    "黑色細骨架橫線",
+    "綠鱗彩繪龍＋橘焰＋藍浪",
+    "洋紅蓋",
+    "紅流蘇"
+   ],
+   "forbid": [
+    "燈面可讀字",
+    "「度小月」等店名",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/L2_2010-02-13_Dragon_Lantern_at_the_Taipei_Mazu_Temple.jpg",
+    "E:/Downloads/_walk_refs/_cand/L4_2015-05-01_lanterns_with_names_of_deities_for_blessing_in_Tainan.jpg"
+   ],
+   "notes": "錨點 L2（CC BY 2.0 署名，臺北媽祖廟）；L4 臺南廟燈為 CC BY-SA 只當色彩參考；燈籠畫師來源僅 1 篇媒體"
+  },
+  {
+   "id": "prop_scanner_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_scanner_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "綠白方箱掃描頭",
+    "圓形鏡窗",
+    "三腳架（倒 V）",
+    "旁立白色圓球標靶（立桿）",
+    "輪廓不像槍"
+   ],
+   "forbid": [
+    "Leica 或 FARO 商標與條碼",
+    "草地天空背景",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R21_掃描儀.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_scanner.png"
+   ],
+   "notes": "錨點 R21（PD，機身有小商標，需人眼）；白球標靶無任何照片，標工坊創作"
+  },
+  {
+   "id": "prop_trowel_r3",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_trowel_r3_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "矩形鋼片抹刀",
+    "淺色木柄",
+    "牆面左半褐色底層",
+    "牆面右半白灰"
+   ],
+   "forbid": [
+    "紅磚牆",
+    "水泥灰牆",
+    "刀柄上的廠牌標記",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/prop/R22_抹刀.jpg",
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_prop_trowel.png"
+   ],
+   "notes": "錨點 R22（PD；柄上有小廠牌標記，需人眼）；半抹好白灰牆無照片，標工坊創作；前一輪抹刀已 ACCEPT"
+  }
+ ]
+}

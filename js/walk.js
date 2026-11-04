@@ -726,10 +726,13 @@
   }
   function fragCount() { var n = 0; S.forEach(function (s) { if (s.frag !== undefined && prog[s.id] && prog[s.id].frag) n++; }); return n; }
   function writeScore() {
-    if (!team) return; var sc = scoreOf(), key = sc + '|' + achCount() + '|' + fragCount() + '|' + team.n + '|' + modeOf() + '|' + (hqState().pk || '');
+    if (!team) return; var sc = scoreOf(), key = sc + '|' + achCount() + '|' + fragCount() + '|' + team.n + '|' + modeOf() + '|' + (hqState().pk || '') + '|' + (team.dept || '') + (team.cls || '') + courseOf(envNo);
     if (key === lastScoreWritten) return; lastScoreWritten = key;
-    ROOT.child((REH ? 'boardr/' : 'board/') + teamId).update({ name: teamLabel(), score: sc, frags: fragCount(), ach: achCount(), n: Object.keys(team.members || {}).length, t: nowMs(), pk: (modeOf() === 'pk' && hqState().pk) || null, mode: modeOf() });
+    ROOT.child((REH ? 'boardr/' : 'board/') + teamId).update({ name: teamLabel(), score: sc, frags: fragCount(), ach: achCount(), n: Object.keys(team.members || {}).length, t: nowMs(), pk: (modeOf() === 'pk' && hqState().pk) || null, mode: modeOf(), dept: team.dept || '', cls: team.cls || '', course: courseOf(envNo) });
   }
+  /* 排行榜標班級：課程由信封編號判斷（1–52 文化遊戲松、101–130 遊戲設計學、97 訪客），系與班是組隊時自己選的 */
+  function courseOf(e) { return e >= 1 && e <= 52 ? '文化遊戲松' : e >= 101 && e <= 130 ? '遊戲設計學' : e === 97 ? '訪客' : ''; }
+  function clsTag(b) { var t = [b.course || '', (b.dept || '') + (b.cls || '')].filter(function (x) { return x; }).join('・'); return t ? '<span class="clstag">' + esc(t) + '</span>' : ''; }
   /* 隊名：不用系名，依隊伍代號固定產生和故事有關的名字（每個人看到的一樣） */
   var NM_A = ['夜班', '月光', '提燈', '蓋章', '守夜', '迷路', '飄飄', '八億', '審查', '鐘樓', '牌樓', '涼亭'], NM_B = ['小隊', '偵探團', '巡守隊', '探險隊', '審查組', '幽靈團', '蓋章組', '守衛隊'];
   /* 隊名不重複：名字由隊伍 id 算出「首選」，撞名時依建立先後（push id 依時間排序）讓先建的保留、後建的往下一格挪。
@@ -1373,7 +1376,7 @@
     var W = WALK_AGENTS, pa = pairActive(), h = '<div class="card"><h2>🧭 時安局編制與搭檔</h2><div class="sub">十六位探員分七個處。搭檔的兩個職務由不同的人擔任時，每取得一格碎片，全隊 +5 分（現在成立 ' + pa.length + ' 組' + (pa.length ? '：' + pa.map(function (p) { return p[0] + '＋' + p[1]; }).join('、') : '') + '）。</div>';
     Object.keys(W.depts).forEach(function (d) {
       var rs = W.order.filter(function (r) { return W.get(r).dept === d; }); if (!rs.length) return;
-      h += '<div class="rolerow"><div class="rr1"><b>' + esc(d) + '處</b> <span class="sub">' + esc(W.depts[d].line) + '（上司：' + esc(W.depts[d].boss) + '）</span></div><div class="orgrow">' + rs.map(function (r) { var g = W.get(r), hd = roleHolder(r); return '<span class="orgm' + (hd ? ' on' : '') + '">' + (agImg(r, 40) || ROLE_ICON[r]) + '<br>' + esc(g.name) + '<br><span class="sub">' + r + (hd ? '・' + esc(hd.nick || '') : '') + '</span></span>'; }).join('') + '</div></div>';
+      h += '<div class="rolerow"><div class="rr1"><b>' + esc(d) + '處</b><div class="sub">' + esc(W.depts[d].line) + '（上司：' + esc(W.depts[d].boss) + '）</div></div><div class="orgrow">' + rs.map(function (r) { var g = W.get(r), hd = roleHolder(r); return '<span class="orgm' + (hd ? ' on' : '') + '">' + (agImg(r, 40) || ROLE_ICON[r]) + '<br>' + esc(g.name) + '<br><span class="sub">' + r + (hd ? '・' + esc(hd.nick || '') : '') + '</span></span>'; }).join('') + '</div></div>';
     });
     return h + '</div>';
   }
@@ -1452,7 +1455,7 @@
   function renderTeam() {
     var m = team.members, h = '<h2>隊員 ' + Object.keys(m).length + ' / 4</h2><div class="sub">' + (team.closed ? '已關門，不能再加入' : '還可以加入') + '</div>';   /* 隊名與人數頂列已經有了，這裡不再重複 */
     if (team.code) h += '<div class="card big">房碼 <b>' + esc(team.code) + '</b><div class="sub">朋友輸入這 4 碼，或開 ' + esc(location.origin + location.pathname + '?join=' + team.code) + '</div></div>';
-    h += '<div class="card">' + (Object.keys(m).length >= 2 ? '<div class="bub ' + (allContributed() ? 'done' : 'hint') + '">' + (allContributed() ? '🤝 人人有貢獻，全隊 +30 分已到手！' : '🤝 每位隊員都完成至少 1 題，全隊 +30 分。下面看得到每個人完成幾題；角色不同，能做的題目也不同，一起分工。') + '</div>' : '') + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><br><span class="sub">' + ROLE_ICON[x.role] + x.role + ' ・ ' + (p && fresh(p) ? '在線上' : '離線／沒開定位') + ' ・ ✔ ' + (contribOf()[k] || 0) + ' 題</span></span>' + (k !== uid && p ? '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(p) + '">🧭 導航' + (myPos ? '（' + dTxt(dist(myPos, p)) + '）' : '') + '</a>' : '') + (myRole() === '隊長' && k !== uid ? '<button class="btn2" data-kick="' + k + '">請出隊伍</button>' : '') + '</div>'; }).join('') + '</div>';
+    h += '<div class="card">' + (Object.keys(m).length >= 2 ? '<div class="bub ' + (allContributed() ? 'done' : 'hint') + '">' + (allContributed() ? '🤝 人人有貢獻，全隊 +30 分已到手！' : '🤝 每位隊員都完成至少 1 題，全隊 +30 分。下面看得到每個人完成幾題；角色不同，能做的題目也不同，一起分工。') + '</div>' : '') + Object.keys(m).map(function (k) { var x = m[k], p = teamPos[k]; return '<div class="mem"><span class="mava">' + skinAva(k, x.ava, 3, false) + '</span><span class="minfo"><b>' + esc(x.nick) + (k === uid ? '（你）' : '') + '</b><span class="sub">' + ROLE_ICON[x.role] + x.role + '</span><span class="sub"><span class="nw">' + (p && fresh(p) ? '🟢 在線上' : '⚪ 離線／沒開定位') + '</span> <span class="nw">✔ ' + (contribOf()[k] || 0) + ' 題</span></span></span>' + (k !== uid && p ? '<a class="btn2 gm" target="_blank" rel="noopener" href="' + navUrl(p) + '">🧭 導航' + (myPos ? ' ' + dTxt(dist(myPos, p)) : '') + '</a>' : '') + (myRole() === '隊長' && k !== uid ? '<button class="btn2" data-kick="' + k + '">請出隊伍</button>' : '') + '</div>'; }).join('') + '</div>';
     h += '<div class="card"><b>🐾 療育小角落</b><div class="sub">和小精靈玩一下。點、搓、滑、按住，牠會有不同的萌反應。不計分、不用做任務，累了就來放鬆。</div><div class="opts"><button class="btn2" id="pet-open">進去玩</button></div></div>';
     h += stickerBook();
     h += achCard();
@@ -1602,10 +1605,10 @@
   function renderRank() {
     var arr = Object.keys(board).map(function (k) { return { id: k, b: board[k] }; }).sort(function (a, b) { return b.b.score - a.b.score; });
     var h = '<h2>排行榜</h2><div class="sub">隊與隊競爭積分；落單的人也有完整的單人路徑。</div>';
-    h += arr.map(function (x, i) { return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(/^房 /.test(x.b.name || '') ? x.b.name : storyName(x.id)) + '・' + x.b.n + ' 人' + ({ relax: ' 🌿悠閒', timed: ' ⏱計時', pk: ' ⚔PK' }[x.b.mode] || '') + '</span><span class="sc">' + x.b.score + ' 分・🧩' + x.b.frags + '</span></div>'; }).join('') || '<div class="card">還沒有分數。</div>';
+    h += arr.map(function (x, i) { return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(/^房 /.test(x.b.name || '') ? x.b.name : storyName(x.id)) + '・' + x.b.n + ' 人' + ({ relax: ' 🌿悠閒', timed: ' ⏱計時', pk: ' ⚔PK' }[x.b.mode] || '') + clsTag(x.b) + '</span><span class="sc">' + x.b.score + ' 分・🧩' + x.b.frags + '</span></div>'; }).join('') || '<div class="card">還沒有分數。</div>';
     var ar = arr.slice().sort(function (a, b) { return ((b.b.ach || 0) - (a.b.ach || 0)) || (b.b.score - a.b.score); });
     h += '<h2>🏅 成就排行</h2><div class="sub">隊伍成就（' + ACHS.map(function (a) { return a.icon + a.name; }).join('、') + '）達成幾個。</div>';
-    h += ar.map(function (x, i) { var n = x.b.ach || 0; return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 && n > 0 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(/^房 /.test(x.b.name || '') ? x.b.name : storyName(x.id)) + '</span><span class="sc">' + ACHS.map(function (a, j) { return j < n ? a.icon : '・'; }).join('') + ' ' + n + '／' + ACHS.length + '</span></div>'; }).join('') || '';
+    h += ar.map(function (x, i) { var n = x.b.ach || 0; return '<div class="rk' + (x.id === teamId ? ' me' : '') + '"><span class="n">' + (i < 3 && n > 0 ? ['🥇', '🥈', '🥉'][i] : (i + 1)) + '</span><span class="nm">' + esc(/^房 /.test(x.b.name || '') ? x.b.name : storyName(x.id)) + clsTag(x.b) + '</span><span class="sc">' + ACHS.map(function (a, j) { return j < n ? a.icon : '・'; }).join('') + ' ' + n + '／' + ACHS.length + '</span></div>'; }).join('') || '';
     $('pane-rank').innerHTML = h;
   }
 

@@ -170,6 +170,10 @@ button.chip{min-width:44px}
 .leaflet-control.mapbtns{position:relative!important;right:auto!important;top:auto!important;display:flex;flex-direction:column;gap:6px}
 .leaflet-control.mapbtns button,#mapwrap>.mapbtns button{width:44px!important;height:44px!important;min-width:44px;padding:0!important;border-radius:50%!important;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center}
 #mapwrap>.mapbtns{top:112px;right:16px}
+/* 隊員列：頭像｜資訊（可縮、不被按鈕擠）｜按鈕（一行、不換行）。資訊分三行：名字、角色、狀態；狀態的每一段不會被拆開（手機回報 11/4） */
+/* 排行榜隊名旁的班級標籤：另起一行、小字，不跟隊名擠在同一行 */
+.rk .nm{min-width:0}.clstag{display:block;font-size:12px;font-weight:600;color:var(--mute);line-height:1.35;margin-top:1px}
+.mem{gap:10px}.mem .mava{flex:0 0 auto}.minfo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.35}.minfo b{overflow-wrap:anywhere}.minfo .nw{white-space:nowrap}.mem .btn2,.mem .gm{flex:0 0 auto;white-space:nowrap;min-height:40px;padding:4px 12px;font-size:13px}
 /* 地圖上的名牌：標記容器只有 48px 寬，名字會被擠成 2、3 行。改成單行、依名字長度撐寬、置中在頭像下方，太長才用 … 截斷（手機回報 11/4） */
 .mate b{display:block!important;width:max-content;max-width:150px;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;position:relative;left:50%;transform:translateX(-50%);margin-top:3px!important;padding:1px 10px!important;line-height:1.4;font-size:12px!important;font-weight:700;letter-spacing:.2px}
 /* 站點圓圈：有定位時第二行會顯示距離；圓圈固定高度會讓小字溢出、壓到下面的標題（桌面版回報 11/4）。改成隨內容長高的膠囊 */

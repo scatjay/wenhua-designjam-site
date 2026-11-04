@@ -1,0 +1,177 @@
+{
+ "items": [
+  {
+   "id": "scene_hayashi_A_r4",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r4_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "轉角弧形立面，頂緣中央最高、女兒牆逐級降下",
+    "土黃褐色溝面磚外牆",
+    "轉角柱上每層一個圓孔窗",
+    "每層外凸白色欄杆陽台"
+   ],
+   "forbid": [
+    "HAYASHI 標誌、路牌、車牌",
+    "開幕布幕",
+    "紅綠燈與機車騎士",
+    "現代不鏽鋼電梯"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_hayashi_A.png"
+   ],
+   "notes": "林百貨轉角外觀；Redux 參考＝HAY1（CC BY 2.0 Emily Jiang）裁切，已避開標誌與路牌"
+  },
+  {
+   "id": "scene_hayashi_B_r4",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_hayashi_B_r4_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "頂層欄杆有圓孔的白色陽台",
+    "圓孔窗成縱列",
+    "階狀女兒牆頂緣",
+    "土黃褐色溝面磚"
+   ],
+   "forbid": [
+    "標誌與文字",
+    "監視器與招牌",
+    "人物"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_hayashi_B.png"
+   ],
+   "notes": "林百貨上層近景；Redux 參考＝HAY1 裁切（310 像素小，細節有限）"
+  },
+  {
+   "id": "scene_matsu_A_r4",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_matsu_A_r4_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "三川殿紅柱與灰白石雕龍柱",
+    "金色雕花門板（沒有彩繪門神）",
+    "重簷燕尾脊、屋脊剪黏龍，橘粉色瓦配藍邊",
+    "門前一對石獅（紅綢）"
+   ],
+   "forbid": [
+    "路人與機車車牌",
+    "匾額與楹聯文字",
+    "殿內人影與神像",
+    "過水廊西洋柱頭（已拆）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_matsu_A.png"
+   ],
+   "notes": "大天后宮正面；Redux 參考＝grand_matsu（CC BY 2.0 tomscoffin），公告牌與路人已裁掉，門楣橫幅文字不畫"
+  },
+  {
+   "id": "scene_matsu_B_r4",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_matsu_B_r4_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "灰白石雕龍柱一對",
+    "金色雕花門板配藍邊",
+    "紅色橫幅與紅燈籠（文字不畫）",
+    "橘粉色瓦燕尾簷在上方"
+   ],
+   "forbid": [
+    "匾額、楹聯、橫幅上的文字",
+    "神像",
+    "公告牌"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_matsu_B.png"
+   ],
+   "notes": "大天后宮近景；裁圖右下仍可能帶一小角公告牌，若出現黃色牌子就退件"
+  },
+  {
+   "id": "scene_hall_B_aerial_r4",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_hall_B_aerial_r4_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "後方大灰瓦屋頂有多個三角老虎窗",
+    "前棟綠色折面屋頂配紅磚",
+    "旁邊小型灰瓦木造老屋",
+    "大樹與紅粉色磚鋪步道"
+   ],
+   "forbid": [
+    "日期戳、紅色數字",
+    "周邊招牌文字",
+    "屋頂水塔與冷氣機的雜物"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_hall_B.png"
+   ],
+   "notes": "公會堂鳥瞰配置；Redux 參考＝HAL1（CC BY 3.0 338km），周邊雜亂，取景分預期偏低，列為備案"
+  },
+  {
+   "id": "scene_patriotic_A_r4",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_patriotic_A_r4_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "一樓深灰色面磚（不是紅磚）",
+    "二樓深棕色橫向木板",
+    "灰黑色日式瓦屋頂",
+    "一樓右側細長八角窗",
+    "入口雨庇由一根石柱支撐、木格柵窗"
+   ],
+   "forbid": [
+    "紅磚",
+    "背景 13 層高樓與藍色立牌",
+    "前庭現代鋪面的招牌與人物",
+    "戰時動員戲仿"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_patriotic_A.png"
+   ],
+   "notes": "愛國婦人館前棟；Redux 參考＝patriotic_hall_01（CC BY 4.0 Chainwit.），高樓以天色蓋掉（有色塊痕跡）；不標年份"
+  },
+  {
+   "id": "scene_lingyou_A_r4",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_lingyou_A_r4_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "三開間低矮三川門，前方兩根鏤空灰白石雕柱",
+    "屋脊剪黏：兩條龍與中央三尊小像",
+    "紅橫楣、綠瓦帶、一排黃色圓燈籠（字不畫）",
+    "青綠色木柵門，兩側紅牆"
+   ],
+   "forbid": [
+    "把外觀塗成黑色主調",
+    "黑令旗當必現物件",
+    "燈籠文字、神像面容",
+    "戲仿"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand2/scene/LIN1.jpg"
+   ],
+   "notes": "開基靈祐宮外觀；純文字生成，LIN1（CC BY-SA 4.0）只供對照；現役信仰，小像只畫成模糊小立像"
+  }
+ ]
+}

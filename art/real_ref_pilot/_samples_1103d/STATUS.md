@@ -2,7 +2,7 @@
 
 # 走讀美術接力 STATUS
 
-更新：2026-11-05 01:25
+更新：2026-11-05 01:58
 
 ## 起始狀態
 - 監督員 cwd：worktree sleepy-poitras-5fdf1d，分支 claude/sleepy-poitras-5fdf1d
@@ -20,6 +20,8 @@
 | r2_props（00:02–00:59，QA_r2_props.md） | 17 | 1（jianjian） | 14 | 2（clipboard、noodle） | 00:36 取樣 60°C／143 W 峰值 | jobs_r3_props 14 張已排入（去掉 Redux 參考照、前置單一物件平底、補必現項） |
 
 | r2_stickers（01:18 完成，QA_r2_stickers.md） | 10 | 3（learn、pass、case_done） | 5（split、gather、like、first_room、dex） | 2（roles、wow：章偏小） | 待補 | jobs_r3_stickers 7 張已排入 |
+
+| r2_scene（01:48 完成，QA_r2_scene.md） | 15 | 4（twl_A、twl_B_tower、chikan_A、hall_A） | 7（hayashi_A/B、matsu_A/B、lingyou_A、hall_B_aerial、patriotic_A） | 4（twh_A、twh_B_bridge、tang_A、patriotic_B） | 66°C／147 W（01:20 取樣） | jobs_r3_scene 7 張已排入（strength 降到 0.35–0.4、補空白牆面負向） |
 
 ## 道具 32×32 縮圖驗收（S6，thumb32_r2_props.png）
 - 平底的 6 張（墨斗、夾板、懷錶、紅磚、鑰匙、剪黏龍）縮到 32 像素輪廓仍認得；懷錶與鑰匙偏糊。

@@ -1,0 +1,102 @@
+[
+ {
+  "name": "char_observer_r3_s3311",
+  "framing": "半身・女・旗＋風速計各一手",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, plain jacket with no badge, no name tag, no patches, young Taiwanese woman weather station observer, black hair tied back in a ponytail, Taiwanese features, plain gray-blue work jacket and plain white cap with blank front, she holds up in her right hand a tall wooden pole with a large triangular green storm signal flag clearly visible, and in her left hand a handheld cup anemometer, a short stick topped with three small round cups on crossed arms, both objects held up in front of the chest and clearly visible, bust portrait cropped at the waist, the anemometer is a short stick with exactly three small round cups on three crossed arms like a tiny pinwheel, no cross shape, no light bulb, the flag is a triangular pennant, not swallowtail, clean empty corners, no signature, no scribbles",
+  "seed": 3311,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_observer_r3_s3312",
+  "framing": "半身・男・旗＋風速計各一手",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, plain jacket with no badge, no name tag, no patches, young Taiwanese man weather station observer, short black hair, Taiwanese features, plain gray-blue work jacket and plain white cap with blank front, holds up in his right hand a tall wooden pole with a large triangular green storm signal flag clearly visible, and in his left hand a handheld cup anemometer, a short stick topped with three small round cups on crossed arms, both objects held up in front of the chest and clearly visible, bust portrait cropped at the waist, the anemometer is a short stick with exactly three small round cups on three crossed arms like a tiny pinwheel, no cross shape, no light bulb, the flag is a triangular pennant, not swallowtail, clean empty corners, no signature, no scribbles",
+  "seed": 3312,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_observer_r3_s3313",
+  "framing": "半身・女・旗＋風速計各一手",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, plain jacket with no badge, no name tag, no patches, young Taiwanese woman weather station observer, black hair tied back in a ponytail, Taiwanese features, plain gray-blue work jacket and plain white cap with blank front, she holds up in her right hand a tall wooden pole with a large triangular green storm signal flag clearly visible, and in her left hand a handheld cup anemometer, a short stick topped with three small round cups on crossed arms, both objects held up in front of the chest and clearly visible, bust portrait cropped at the waist, the anemometer is a short stick with exactly three small round cups on three crossed arms like a tiny pinwheel, no cross shape, no light bulb, the flag is a triangular pennant, not swallowtail, clean empty corners, no signature, no scribbles",
+  "seed": 3313,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_jianjian_r3_s4311",
+  "framing": "半身・女・龍浮雕板＋碎瓷",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, plain jacket with no badge, no name tag, no patches, middle-aged Taiwanese woman temple roof ornament artisan, black hair with a little gray, Taiwanese features, simple blue cloth work shirt with a white towel hanging around the neck, holding up in front of the chest a large rectangular plaster relief slab showing a coiled Chinese dragon covered in tiny green and orange ceramic shards, the dragon relief clearly visible and big, and in the other hand a few colorful broken porcelain bowl pieces, bust portrait cropped at the waist, a white towel clearly hanging around the neck over the shoulders, no suspenders, no straps",
+  "seed": 4311,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "char_jianjian_r3_s4312",
+  "framing": "半身・女・龍浮雕板＋碎瓷",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear outlines, soft shading with minimal dithering, half-body bust, plain flat beige background, single character, no text, no letters, no logos, no numbers, no symbols, plain jacket with no badge, no name tag, no patches, middle-aged Taiwanese woman temple roof ornament artisan, black hair with a little gray, Taiwanese features, simple blue cloth work shirt with a white towel hanging around the neck, holding up in front of the chest a large rectangular plaster relief slab showing a coiled Chinese dragon covered in tiny green and orange ceramic shards, the dragon relief clearly visible and big, and in the other hand a few colorful broken porcelain bowl pieces, bust portrait cropped at the waist, a white towel clearly hanging around the neck over the shoulders, no suspenders, no straps",
+  "seed": 4312,
+  "w": 768,
+  "h": 768
+ },
+ {
+  "name": "scene_police_A_r3_s2311",
+  "framing": "警察署 取景A 拉遠整棟（含兩翼）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, full wide shot of an entire Japanese colonial era two-storey brick building in Tainan Taiwan, pulled back so the whole building with both side wings is visible, the building occupies the middle of the frame with open sky above and a paved forecourt below, pale sandy golden-yellow ochre brick walls with fine mortar lines, soft muted yellow-beige tone, no red, no orange, center semicircular curved bay with a rounded white parapet topped by a small ornament, stepped white cornice, rectangular white band panel on the bay with a row of small identical rosettes, both side wings with a row of arched windows, ground-floor porch with round white columns under a curved balcony, pale blue sky, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, extreme wide establishing shot, camera far back, building takes only the middle third of the height, both left and right side wings fully visible with their own arched windows, nothing cropped at the sides, blank plain rectangular band panel without any writing",
+  "seed": 2311,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_pol_A.png",
+  "strength": 0.4
+ },
+ {
+  "name": "scene_police_A_r3_s2312",
+  "framing": "警察署 取景A 拉遠整棟（含兩翼）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, full wide shot of an entire Japanese colonial era two-storey brick building in Tainan Taiwan, pulled back so the whole building with both side wings is visible, the building occupies the middle of the frame with open sky above and a paved forecourt below, pale sandy golden-yellow ochre brick walls with fine mortar lines, soft muted yellow-beige tone, no red, no orange, center semicircular curved bay with a rounded white parapet topped by a small ornament, stepped white cornice, rectangular white band panel on the bay with a row of small identical rosettes, both side wings with a row of arched windows, ground-floor porch with round white columns under a curved balcony, pale blue sky, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, extreme wide establishing shot, camera far back, building takes only the middle third of the height, both left and right side wings fully visible with their own arched windows, nothing cropped at the sides, blank plain rectangular band panel without any writing",
+  "seed": 2312,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_pol_A.png",
+  "strength": 0.4
+ },
+ {
+  "name": "scene_butokuden_porch_r3_s1311",
+  "framing": "武德殿 門廊特寫 綠銅色屋頂完整",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, close view of the front entrance porch of a Japanese colonial era martial arts hall in Tainan Taiwan, the curved porch roof is verdigris teal-green copper color, entire roof visible with space above it, cream-yellow columns, white balustrade balcony on both sides, gray stone steps, dark gray tiled roof with a white gable behind, pale blue sky, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, the white gable wall behind is completely plain and blank, no plaque, no sign, no dark marks or characters, no statues on the balustrade, the curved porch roof clearly verdigris teal-green",
+  "seed": 1311,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_but_porch.png",
+  "strength": 0.5
+ },
+ {
+  "name": "scene_butokuden_porch_r3_s1312",
+  "framing": "武德殿 門廊特寫 綠銅色屋頂完整",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, close view of the front entrance porch of a Japanese colonial era martial arts hall in Tainan Taiwan, the curved porch roof is verdigris teal-green copper color, entire roof visible with space above it, cream-yellow columns, white balustrade balcony on both sides, gray stone steps, dark gray tiled roof with a white gable behind, pale blue sky, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, the white gable wall behind is completely plain and blank, no plaque, no sign, no dark marks or characters, no statues on the balustrade, the curved porch roof clearly verdigris teal-green",
+  "seed": 1312,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_but_porch.png",
+  "strength": 0.5
+ },
+ {
+  "name": "scene_butokuden_sideB_r3_s1321",
+  "framing": "武德殿 右側3/4 鴟尾",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, Japanese colonial era martial arts hall in Tainan Taiwan seen from the right-side three-quarter angle, wide low horizontal proportions filling the width of the frame, large hip-and-gable roof of dark gray tiles with a big white triangular gable board, a pair of short upright pointed fin-shaped ridge end ornaments clearly visible at both ends of the ridge, two storeys with cream-yellow walls and dark brown wooden window frames, white balustrade balcony along the side, gray stone base with square vent windows, pale blue sky, lawn in the lower third, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, the ridge end ornaments are short straight vertical fins pointing straight up, not curled, not swallowtail, not bird shaped",
+  "seed": 1321,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_but_sideB.png",
+  "strength": 0.5
+ },
+ {
+  "name": "scene_butokuden_sideB_r3_s1322",
+  "framing": "武德殿 右側3/4 鴟尾",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, Japanese colonial era martial arts hall in Tainan Taiwan seen from the right-side three-quarter angle, wide low horizontal proportions filling the width of the frame, large hip-and-gable roof of dark gray tiles with a big white triangular gable board, a pair of short upright pointed fin-shaped ridge end ornaments clearly visible at both ends of the ridge, two storeys with cream-yellow walls and dark brown wooden window frames, white balustrade balcony along the side, gray stone base with square vent windows, pale blue sky, lawn in the lower third, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, the ridge end ornaments are short straight vertical fins pointing straight up, not curled, not swallowtail, not bird shaped",
+  "seed": 1322,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_but_sideB.png",
+  "strength": 0.5
+ }
+]

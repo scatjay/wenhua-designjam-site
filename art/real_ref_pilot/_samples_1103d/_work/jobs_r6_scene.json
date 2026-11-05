@@ -1,0 +1,62 @@
+[
+ {
+  "name": "scene_hayashi_B_r6",
+  "framing": "林百貨 取景B：上層陽台與圓窗近景（HAY1 CC BY 2.0 裁 580,20,880,330 補天色）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, close view of the upper floors of a Japanese colonial era department store in Tainan Taiwan, golden-brown grooved brick wall, round porthole windows in a vertical row, a white balustrade balcony with round holes at the top floor, a stepped parapet roofline, tall white-framed windows, blue sky with a little cloud, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, the parapet and top floor walls are plain brick with no emblem, no round badge, no camera or dark box objects, the balcony railing has exactly five simple plain round holes in a row, no letters, no characters, no patterns, no diamond emblem, no orange sign board",
+  "seed": 8232,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_r6_hayashi_B.png",
+  "strength": 0.55
+ },
+ {
+  "name": "scene_matsu_A_r6",
+  "framing": "大天后宮 取景A：三川殿正面（grand_matsu CC BY 2.0 裁 220,0,1060,740 補底）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, front of a Taiwanese Mazu temple three-bay entrance hall in Tainan, red wooden pillars and two carved gray-white stone dragon pillars in front of gold carved door panels, double-eave roof with swallowtail ridge ends, colorful porcelain-shard dragons along the ridge, orange-pink roof tiles with blue trim, a pair of stone lions with red ribbons at the steps, red lanterns under the eaves, a dark open hall inside, stone steps in the lower third, bright sky, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, two carved gray-white stone dragon pillars clearly visible in front of two gold carved door panels, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam, the lintel above is a plain red beam with no carving of characters, the red pillars are plain red lacquer without any vertical gold inscriptions",
+  "seed": 8241,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_r6_matsu_A.png",
+  "strength": 0.55
+ },
+ {
+  "name": "scene_matsu_B_r6",
+  "framing": "大天后宮 取景B：龍柱與金門板近景（grand_matsu 裁 340,150,940,750）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, close view of a Taiwanese temple front hall in Tainan, a carved gray-white stone dragon pillar on each side, red pillars, gold carved door panels with blue borders, a red banner hung across the top, red hanging lanterns, orange-pink roof tiles with swallowtail eaves above, stone lion heads at the bottom corners, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, the red cloth banner across the top is plain red without any writing, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam, the red pillars are plain red lacquer without any vertical gold inscriptions or characters",
+  "seed": 8242,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_r6_matsu_B.png",
+  "strength": 0.55
+ },
+ {
+  "name": "scene_hall_B_aerial_r6",
+  "framing": "公會堂 取景B：後方大屋頂鳥瞰配置（HAL1 CC BY 3.0 裁 200,230,1000,830，已避開日期戳；周邊招牌多，風險高）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, bird eye view of a Japanese colonial era hall complex in Tainan Taiwan, a big gray-tiled hipped roof with several small triangular dormer windows, a front block with a green folded roof and red brick walls, a small old wooden house with a gray tile roof at the side, big green trees, a red-and-pink brick paved path, plain white rooftops of the neighborhood around, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, a strongly visible green folded roof on the front block, an old small wooden house with gray tiles beside it, clean empty rooftops without equipment, no cars, no vehicles, no people, no text, bare clean roof surfaces with no air conditioners, no white boxes, no rooftop equipment",
+  "seed": 8272,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_r6_hall_B.png",
+  "strength": 0.6
+ },
+ {
+  "name": "scene_patriotic_A_r6",
+  "framing": "愛國婦人館 取景A：前棟外觀（patriotic_hall_01 CC BY 4.0，已蓋掉背景高樓與藍立牌）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, two-storey Japanese colonial era house in Tainan Taiwan seen from a three-quarter angle, the ground floor of dark gray facing brick, the upper floor of dark brown horizontal wooden boards, a low gray-black Japanese tile roof with a small side gable, wooden lattice windows, a slim octagonal window on the ground floor right, an entrance porch roof held up by one round stone column, orange-brown paved forecourt in the lower third, blue sky, a green tree on the right, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, the whole slim octagonal window on the ground floor right is fully visible and not cropped, clean uniform blue sky without blotches, the paved forecourt takes only the lower quarter, the slim window on the ground floor right is an elongated octagon with eight straight sides, clearly not a circle, clean smooth blue sky with no patches",
+  "seed": 8281,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_r6_patriotic_A.png",
+  "strength": 0.6
+ },
+ {
+  "name": "scene_lingyou_A_r6",
+  "framing": "靈祐宮：低矮三川門外觀（LIN1 CC BY-SA 只看形狀，純文字）",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, small low three-bay Taiwanese temple front hall in Tainan, a red lintel beam and red walls, a green tile band along the eave edge, two carved openwork gray-white stone pillars in front, the roof ridge covered with colorful porcelain-shard dragons and three small figures in the center, a row of round yellow lanterns hanging under the eave, a blue-green wooden picket gate between red side walls, gray paved plaza in front, deep blue sky, high color saturation, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, the roof ridge clearly shows two colorful porcelain dragons facing the center with three small figurines between them, a row of round yellow lanterns under the eave, the red lintel is plain red wood, the blue-green wooden picket gate in the middle, only about 15 percent of the frame is sky, wide facade showing the full width of all three bays, camera far back, bright vermilion red lintel beam clearly red not orange, exactly three small figurines between the two dragons, no yellow sign board on the wall, facade made of three bays: red-brown wall left, a center gate with two gray stone pillars and blue-green double doors, red-brown wall right, vivid vermilion red lintel beam, a row of yellow lanterns, two golden dragons with exactly three small golden figurines between them on the teal tile ridge",
+  "seed": 8261,
+  "w": 576,
+  "h": 1024,
+  "ref": "s1103d_r6_lingyou_A.png",
+  "strength": 0.6
+ }
+]

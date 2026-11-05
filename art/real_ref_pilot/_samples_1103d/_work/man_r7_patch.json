@@ -1,0 +1,103 @@
+{
+ "items": [
+  {
+   "id": "scene_hayashi_B_r5_fix",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_hayashi_B_r5_fix_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "頂層欄杆有圓孔的白色陽台",
+    "圓孔窗成縱列",
+    "階狀女兒牆頂緣",
+    "土黃褐色溝面磚"
+   ],
+   "forbid": [
+    "標誌與文字",
+    "監視器與招牌",
+    "人物"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_hayashi_B.png"
+   ],
+   "notes": "林百貨上層近景；Redux 參考＝HAY1 裁切（310 像素小，細節有限）；r7 為生成圖上的程式局部修補（patch_scene_r7.py）"
+  },
+  {
+   "id": "scene_matsu_A_r6_fix",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_matsu_A_r6_fix_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "三川殿紅柱與灰白石雕龍柱",
+    "金色雕花門板（沒有彩繪門神）",
+    "重簷燕尾脊、屋脊剪黏龍，橘粉色瓦配藍邊",
+    "門前一對石獅（紅綢）"
+   ],
+   "forbid": [
+    "路人與機車車牌",
+    "匾額與楹聯文字",
+    "殿內人影與神像",
+    "過水廊西洋柱頭（已拆）"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_matsu_A.png"
+   ],
+   "notes": "大天后宮正面；Redux 參考＝grand_matsu（CC BY 2.0 tomscoffin），公告牌與路人已裁掉，門楣橫幅文字不畫；r7 為生成圖上的程式局部修補（patch_scene_r7.py）"
+  },
+  {
+   "id": "scene_matsu_B_r5_fix",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_matsu_B_r5_fix_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "灰白石雕龍柱一對",
+    "金色雕花門板配藍邊",
+    "紅色橫幅與紅燈籠（文字不畫）",
+    "橘粉色瓦燕尾簷在上方"
+   ],
+   "forbid": [
+    "匾額、楹聯、橫幅上的文字",
+    "神像",
+    "公告牌"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_matsu_B.png"
+   ],
+   "notes": "大天后宮近景；裁圖右下仍可能帶一小角公告牌，若出現黃色牌子就退件；r7 為生成圖上的程式局部修補（patch_scene_r7.py）"
+  },
+  {
+   "id": "scene_patriotic_A_r5_fix",
+   "kind": "scene",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/scene_patriotic_A_r5_fix_180x320.png",
+   "size": [
+    180,
+    320
+   ],
+   "must": [
+    "一樓深灰色面磚（不是紅磚）",
+    "二樓深棕色橫向木板",
+    "灰黑色日式瓦屋頂",
+    "一樓右側細長八角窗",
+    "入口雨庇由一根石柱支撐、木格柵窗"
+   ],
+   "forbid": [
+    "紅磚",
+    "背景 13 層高樓與藍色立牌",
+    "前庭現代鋪面的招牌與人物",
+    "戰時動員戲仿"
+   ],
+   "refs": [
+    "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work/s1103d_r2_patriotic_A.png"
+   ],
+   "notes": "愛國婦人館前棟；Redux 參考＝patriotic_hall_01（CC BY 4.0 Chainwit.），高樓以天色蓋掉（有色塊痕跡）；不標年份；r7 為生成圖上的程式局部修補（patch_scene_r7.py）"
+  }
+ ]
+}

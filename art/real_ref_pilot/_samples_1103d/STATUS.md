@@ -2,7 +2,7 @@
 
 # 走讀美術接力 STATUS
 
-更新：2026-11-05 08:45（r4 道具貼紙已畫；r5 場景進行中）
+更新：2026-11-05 09:00（r4／r5 全部完成，見 FINAL_REPORT.md 補充段）
 
 ## 起始狀態
 - 監督員 cwd：worktree sleepy-poitras-5fdf1d，分支 claude/sleepy-poitras-5fdf1d
@@ -38,6 +38,8 @@
 | r4_scene（06:23 完成，QA_r4_scene.md；參考照預處理後 1 輪） | 7 | 1（hayashi_A） | 6 | 0（hayashi_B 欄杆鏤空像字母，〔暫定〕退回） | r4 期間最高 71°C／183 W | r4 每類只跑 1 輪 |
 
 | r4_props_stickers（PIL 程式畫，QA_r4_props_stickers.md；品檢後 split 與 facebrick 已重畫，未再送檢，〔暫定〕過） | 6 | 3（gather、first_room、dex）＋重畫後〔暫定〕2（split、facebrick） | 0 | 1（inkline 線輪） | 不需 GPU | 墨斗 L 形曲尺、紅磚雙色、足跡三方向、棋子 5 顆、圓角方形底均已落實；32px 驗收見 thumb32_r4_props_stickers.png（6 張前景占比 18.5～84.3%） |
+
+| r5_scene（08:50 完成，QA_r5_scene.md；預處理再修後 1 輪） | 7 | 1（hayashi_A） | 6 | 0 | 見 FINAL_REPORT | 預處理的純色塊會被畫出來（matsu_A 門洞灰方塊、hall_B 白方塊），不再追加輪次 |
 
 ## 道具 32×32 縮圖驗收（S6，thumb32_r2_props.png）
 - 平底的 6 張（墨斗、夾板、懷錶、紅磚、鑰匙、剪黏龍）縮到 32 像素輪廓仍認得；懷錶與鑰匙偏糊。

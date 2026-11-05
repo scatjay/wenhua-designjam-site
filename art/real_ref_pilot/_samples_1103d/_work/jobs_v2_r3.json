@@ -1,0 +1,28 @@
+[
+ {
+  "name": "scene_lingyou_A_v2b1",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, front view of a Tainan Taiwan temple, a small low symmetrical three-bay temple gate hall with an open porch: in the central bay a low blue-green wooden picket gate made of vertical slats between two vermilion posts; the left and right bays are open porch bays with smooth vermilion red walls, framed by two plain gray concrete end piers; two slender pale-gray carved openwork stone pillars stand inside the porch in front of the central bay; one wide bright vermilion beam runs across the whole front above a band of green glazed eave tiles with small red dots; a row of round yellow paper lanterns with smooth plain surfaces hangs under the eave; reddish terracotta floor tiles in the porch and gray stone paving in the plaza, a gently arched three-section Taiwanese temple roof ridge whose two far ends sweep upward into slender swallow-tail tips, covered in tiny colorful porcelain-mosaic flowers and small birds; two green-and-gold Chinese dragons with long scaled serpentine bodies and spiky golden fins lie along the ridge, one on each side of the center, heads raised and turned toward each other; at the exact center a small pale octagonal stone pedestal carries three tiny standing robed elder figurines side by side, long robes in gold and cream, the middle one slightly taller, all three calm and symmetrical, deep blue sky taking only the top fifth of the frame, high color saturation, clean dark outlines, soft shading, vertical game background",
+  "seed": 8401,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r6_lingyou_A.png",
+  "redux": 0,
+  "cn": 0.4,
+  "cn_end": 0.5,
+  "style": "faithful",
+  "notext_words": ""
+ },
+ {
+  "name": "scene_lingyou_A_v2b2",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, front view of a Tainan Taiwan temple, a small low symmetrical three-bay temple gate hall with an open porch: in the central bay a low blue-green wooden picket gate made of vertical slats between two vermilion posts; the left and right bays are open porch bays with smooth vermilion red walls, framed by two plain gray concrete end piers; two slender pale-gray carved openwork stone pillars stand inside the porch in front of the central bay; one wide bright vermilion beam runs across the whole front above a band of green glazed eave tiles with small red dots; a row of round yellow paper lanterns with smooth plain surfaces hangs under the eave; reddish terracotta floor tiles in the porch and gray stone paving in the plaza, a gently arched three-section Taiwanese temple roof ridge whose two far ends sweep upward into slender swallow-tail tips, covered in tiny colorful porcelain-mosaic flowers and small birds; two green-and-gold Chinese dragons with long scaled serpentine bodies and spiky golden fins lie along the ridge, one on each side of the center, heads raised and turned toward each other; at the exact center a small pale octagonal stone pedestal carries three tiny standing robed elder figurines side by side, long robes in gold and cream, the middle one slightly taller, all three calm and symmetrical, deep blue sky taking only the top fifth of the frame, high color saturation, clean dark outlines, soft shading, vertical game background",
+  "seed": 8402,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r6_lingyou_A.png",
+  "redux": 0,
+  "cn": 0.3,
+  "cn_end": 0.4,
+  "style": "faithful",
+  "notext_words": ""
+ }
+]

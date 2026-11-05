@@ -1,0 +1,26 @@
+[
+ {
+  "name": "scene_matsu_B_v2b_faithful",
+  "style": "faithful",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, faithful daytime depiction of the real building, close view of a Taiwanese temple front hall in Tainan, a carved gray-white stone dragon pillar on each side, smooth plain red lacquer pillars, two golden carved door panels with blue borders and a thin center seam, a smooth plain red lintel beam above the doors, red hanging lanterns, orange-pink roof tiles with swallowtail eaves above, a pair of gray stone lions at the bottom corners, the dark empty hall interior, an empty stone courtyard floor, clean dark outlines, soft shading, vertical game background",
+  "seed": 8112,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_B.png",
+  "redux": 0.25,
+  "cn": 0.65,
+  "cn_end": 0.7
+ },
+ {
+  "name": "scene_patriotic_A_v2b_tainanpunk",
+  "style": "tainanpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, Tainan-punk retro-future night scene, two-storey Japanese colonial era house in Tainan Taiwan seen from a three-quarter angle, the ground floor of dark gray facing brick, the upper floor of dark brown horizontal wooden boards, a low gray-black Japanese tile roof with a small side gable, wooden lattice windows glowing warm amber, a slim octagonal window on the ground floor right, an entrance porch roof held up by one round stone column, warm humid summer night with a deep indigo and magenta sky, thin cyan LED light strips tracing the roof edges and eaves, red paper lanterns with glowing circuit-line patterns hanging along the porch, smooth plain glowing neon panels in betel-nut-stand pink and green, teal and orange scooter light trails streaking across the paved forecourt, a green tree on the right lit by neon, wet reflective ground, clean dark outlines, vertical game background",
+  "seed": 8113,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_patriotic_A.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7
+ }
+]

@@ -17,7 +17,7 @@
 |---|---|---|---|---|---|---|
 | b1（QA_b1.md） | 11 | 0 | 7 | 4 | — | 進入 jobs_r2_retry |
 | r2_retry（00:02 完成，QA_r2_retry.md） | 14 | 0 | 7 | 7 | 約 61°C／約 50 W（23:52 取樣；全程最高待補） | jobs_r3_retry 11 張已排入佇列（觀測員3、剪黏1+1、警察署2、門廊2、側面B 2） |
-| r2_props（00:02–00:59，QA_r2_props.md） | 17 | 1（jianjian） | 14 | 2（clipboard、noodle） | 00:36 取樣 60°C／143 W 峰值 | jobs_r3_props 14 張已排入（去掉 Redux 參考照、前置單一物件平底、補必現項） |
+| r2_props（00:02–00:59，QA_r2_props.md） | 17 | 1（jianjian） | 14 | 2（clipboard、noodle） | 00:36 取樣 60°C／143 W 最高 | jobs_r3_props 14 張已排入（去掉 Redux 參考照、前置單一物件平底、補必現項） |
 
 | r2_stickers（01:18 完成，QA_r2_stickers.md） | 10 | 3（learn、pass、case_done） | 5（split、gather、like、first_room、dex） | 2（roles、wow：章偏小） | 待補 | jobs_r3_stickers 7 張已排入 |
 
@@ -64,3 +64,10 @@
 ## r4 場景結論與下一步（〔暫定〕）
 - 預處理對徽章、人影、公告牌有效；殘留：紅柱與橫楣字形（matsu）、門洞被塗成純黑（matsu_A/B，應改素色金門板）、hayashi_B 欄杆鏤空像字母、hall_B 屋頂設備、patriotic 八角窗畫成圓窗與天空色塊、lingyou 單開間且橫楣偏橘。
 - 建議第二步：預處理再塗紅柱與橫楣字區、門洞改素色金門板；lingyou 與 patriotic 做局部修補；r4 道具與貼紙的程式底板（jobs_r4_props／stickers）尚未做，依楊老師 06:07 的優先序排在場景之後。
+
+## 2026-11-05 12:50 v2 製程實測（Opus 優化輪）
+- 新程式：`_work/pipe_v2.py`（去字＋深度 ControlNet＋常駐伺服器）、`_work/detext_v2.py`（生圖後去字閘門：片語定位＋翻轉＋保護清單＋FLUX Fill）、`_work/pixelize_v2.py`（unfake；忠實 median、風格 dominant）、`_work/styles_v2.json`。
+- 實測：生圖每張 85～100 秒（舊版 107～120）；閘門每輪約 2～3 分鐘。修掉租約 60 分鐘超限 bug（伺服器連開 19 次被拒）。
+- 品檢 `QA_v2_smoke.md`：府城龐克 v2b 過；愛國婦人會館忠實版需人眼（木板變磚紋已改 median 修正，見 contact_v2_median.png）；大天后宮退回（屋脊匾殘留偽字、石獅旁補字痕跡）。
+- 教訓：提示詞否定句會招字；純 OCR 抓不到偽字；固定 84 色調色盤拉偏色，忠實版改 auto 48；風格版不用 Redux。
+- 技法研究：`PIXEL_STYLE_TECHNIQUES.md`（36 個來源，數值皆未實測）。

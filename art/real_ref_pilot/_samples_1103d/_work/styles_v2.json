@@ -1,0 +1,39 @@
+{
+ "faithful": {
+  "label": "忠實版",
+  "palette": "auto",
+  "prompt_prefix": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, faithful daytime depiction of the real building, ",
+  "prompt_suffix": "",
+  "max_colors": 48,
+  "redux": 0.25,
+  "pix_method": "median"
+ },
+ "cyberpunk": {
+  "label": "Cyberpunk",
+  "palette": "auto",
+  "max_colors": 40,
+  "prompt_prefix": "chunky 16-bit pixel art with large visible square pixels, cyberpunk night scene, ",
+  "prompt_suffix": ", rainy night, wet ground reflections, glowing magenta and cyan neon tubes bent into abstract geometric shapes, smooth plain glowing neon panels, holographic haze, dark blue sky",
+  "redux": 0,
+  "pix_method": "dominant"
+ },
+ "daopunk": {
+  "label": "Daopunk 道龐克",
+  "palette": "auto",
+  "max_colors": 40,
+  "prompt_prefix": "chunky 16-bit pixel art with large visible square pixels, Daoist punk fantasy, ",
+  "prompt_suffix": ", glowing jade and cinnabar light, floating smooth plain pale-yellow paper strips, bagua octagon geometry glowing in the sky, incense smoke turning into luminous circuit lines, misty teal dusk",
+  "redux": 0,
+  "pix_method": "dominant"
+ },
+ "tainanpunk": {
+  "label": "TainanPunk 府城龐克",
+  "palette": "auto",
+  "max_colors": 40,
+  "prompt_prefix": "chunky 16-bit pixel art with large visible square pixels, Tainan-punk retro-future night scene, ",
+  "prompt_suffix": ", warm humid summer night with a deep indigo and magenta sky, thin cyan LED light strips tracing the roof edges and eaves, smooth plain red paper lanterns glowing with circuit-line patterns, smooth plain glowing neon panels in betel-nut-stand pink and green, teal and orange scooter light trails, wet reflective ground",
+  "redux": 0,
+  "pix_method": "dominant"
+ },
+ "_note": "2026-11-05：一律正面描述，不寫 no／without（FLUX 不懂否定，反而招字）；風格版 redux 0；忠實版 auto 48 色（固定調色盤會拉偏色）；像素化：忠實版 median（保木板等細紋），風格版 dominant（median＋量化會吃掉霓虹重點色）"
+}

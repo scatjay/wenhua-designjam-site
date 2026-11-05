@@ -1,0 +1,38 @@
+[
+ {
+  "name": "scene_patriotic_A_v2_faithful",
+  "style": "faithful",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, faithful daytime depiction of the real building, two-storey Japanese colonial era house in Tainan Taiwan seen from a three-quarter angle, the ground floor of dark gray facing brick, the upper floor of dark brown horizontal wooden boards, a low gray-black Japanese tile roof with a small side gable, wooden lattice windows, a slim octagonal window on the ground floor right, an entrance porch roof held up by one round stone column, orange-brown paved forecourt in the lower third, blue sky, a green tree on the right, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, the whole slim octagonal window on the ground floor right is fully visible and not cropped, clean uniform blue sky without blotches, the paved forecourt takes only the lower quarter, the slim window on the ground floor right is an elongated octagon with eight straight sides, clearly not a circle, clean smooth blue sky with no patches",
+  "seed": 8101,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_patriotic_A.png",
+  "redux": 0.25,
+  "cn": 0.65,
+  "cn_end": 0.7
+ },
+ {
+  "name": "scene_matsu_B_v2_faithful",
+  "style": "faithful",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, faithful daytime depiction of the real building, close view of a Taiwanese temple front hall in Tainan, a carved gray-white stone dragon pillar on each side, red pillars, gold carved door panels with blue borders, a red banner hung across the top, red hanging lanterns, orange-pink roof tiles with swallowtail eaves above, stone lion heads at the bottom corners, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, the red cloth banner across the top is plain red without any writing, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam, the red pillars are plain red lacquer without any vertical gold inscriptions or characters",
+  "seed": 8102,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_B.png",
+  "redux": 0.25,
+  "cn": 0.65,
+  "cn_end": 0.7
+ },
+ {
+  "name": "scene_patriotic_A_v2_tainanpunk",
+  "style": "tainanpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, Tainan-punk retro-future, two-storey Japanese colonial era house in Tainan Taiwan seen from a three-quarter angle, the ground floor of dark gray facing brick, the upper floor of dark brown horizontal wooden boards, a low gray-black Japanese tile roof with a small side gable, wooden lattice windows, a slim octagonal window on the ground floor right, an entrance porch roof held up by one round stone column, orange-brown paved forecourt in the lower third, blue sky, a green tree on the right, clean dark outlines, soft shading, vertical game background, no people, no text, no letters, no signs, no logo, every wall panel, plaque, lintel and gable is completely blank and smooth, no plaque, no emblem, no badge, no sign board, no characters, no inscription, no couplets, no banner with writing, doorway and courtyard completely empty with nobody inside or outside, no silhouette of a person, no yellow notice board, the whole slim octagonal window on the ground floor right is fully visible and not cropped, clean uniform blue sky without blotches, the paved forecourt takes only the lower quarter, the slim window on the ground floor right is an elongated octagon with eight straight sides, clearly not a circle, clean smooth blue sky with no patches, warm humid summer dusk, temple-fair lights, red paper lanterns with glowing circuit patterns, LED light strips tracing the roof lines, glowing betel-nut-stand style neon colors without any writing, scooter light trails on the street, orange and teal palette, all signs and plaques are blank",
+  "seed": 8103,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_patriotic_A.png",
+  "redux": 0.15,
+  "cn": 0.65,
+  "cn_end": 0.7
+ }
+]

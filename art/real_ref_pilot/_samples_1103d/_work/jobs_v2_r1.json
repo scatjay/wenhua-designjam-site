@@ -1,0 +1,63 @@
+[
+ {
+  "name": "scene_hayashi_B_v2",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, close view of the upper floors of a Japanese colonial era department store in Tainan Taiwan, golden-brown grooved brick wall, round porthole windows in a vertical row, a white balustrade balcony with round holes at the top floor, a stepped parapet roofline, tall white-framed windows, blue sky with a little cloud, clean dark outlines, soft shading, vertical game background, every wall panel, lintel and gable is completely blank and smooth, the balcony railing has exactly five simple plain round holes in a row",
+  "seed": 8201,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_hayashi_B.png",
+  "redux": 0.25,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "faithful"
+ },
+ {
+  "name": "scene_matsu_A_v2",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, front of a Taiwanese Mazu temple three-bay entrance hall in Tainan, red wooden pillars and two carved gray-white stone dragon pillars in front of gold carved door panels, double-eave roof with swallowtail ridge ends, colorful porcelain-shard dragons along the ridge, orange-pink roof tiles with blue trim, a pair of stone lions with red ribbons at the steps, red lanterns under the eaves, a dark open hall inside, stone steps in the lower third, bright sky, clean dark outlines, soft shading, vertical game background, every wall panel, lintel and gable is completely blank and smooth, two carved gray-white stone dragon pillars clearly visible in front of two gold carved door panels, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam",
+  "seed": 8202,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_A.png",
+  "redux": 0.25,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "faithful"
+ },
+ {
+  "name": "scene_matsu_B_v2",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, close view of a Taiwanese temple front hall in Tainan, a carved gray-white stone dragon pillar on each side, red pillars, gold carved door panels with blue borders, red hanging lanterns, orange-pink roof tiles with swallowtail eaves above, stone lion heads at the bottom corners, clean dark outlines, soft shading, vertical game background, every wall panel, lintel and gable is completely blank and smooth, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam",
+  "seed": 8203,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_B.png",
+  "redux": 0.25,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "faithful"
+ },
+ {
+  "name": "scene_hall_B_aerial_v2",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, bird eye view of a Japanese colonial era hall complex in Tainan Taiwan, a big gray-tiled hipped roof with several small triangular dormer windows, a front block with a green folded roof and red brick walls, a small old wooden house with a gray tile roof at the side, big green trees, a red-and-pink brick paved path, plain white rooftops of the neighborhood around, clean dark outlines, soft shading, vertical game background, a strongly visible green folded roof on the front block, an old small wooden house with gray tiles beside it",
+  "seed": 8204,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_hall_B.png",
+  "redux": 0.25,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "faithful"
+ },
+ {
+  "name": "scene_lingyou_A_v2",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, small low three-bay Taiwanese temple front hall in Tainan, a red lintel beam and red walls, a green tile band along the eave edge, two carved openwork gray-white stone pillars in front, the roof ridge covered with colorful porcelain-shard dragons and three small figures in the center, a row of round yellow lanterns hanging under the eave, a blue-green wooden picket gate between red side walls, gray paved plaza in front, deep blue sky, high color saturation, clean dark outlines, soft shading, vertical game background, every wall panel, lintel and gable is completely blank and smooth, the roof ridge clearly shows two colorful porcelain dragons facing the center with three small figurines between them, a row of round yellow lanterns under the eave, the red lintel is plain red wood, the blue-green wooden picket gate in the middle, only about 15 percent of the frame is sky, wide facade showing the full width of all three bays, camera far back, exactly three small figurines between the two dragons, facade made of three bays: red-brown wall left, a center gate with two gray stone pillars and blue-green double doors, red-brown wall right, vivid vermilion red lintel beam, a row of yellow lanterns, two golden dragons with exactly three small golden figurines between them on the teal tile ridge",
+  "seed": 8205,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r6_lingyou_A.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "faithful",
+  "notext_words": ""
+ }
+]

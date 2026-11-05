@@ -1,0 +1,148 @@
+{
+ "items": [
+  {
+   "id": "prop_inkline_r4",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_inkline_r4_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "船形或長形木體",
+    "前端線輪或後端線輪",
+    "小墨罐",
+    "從斗口拉出的一條細黑線",
+    "旁有淺色 L 形曲尺"
+   ],
+   "forbid": [
+    "螢光色捲尺機身",
+    "雕龍細節（32 像素會糊）",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/_cand/W2_大溪武德殿內展示的墨斗.jpg",
+    "E:/Downloads/_walk_refs/_cand/W3_木製魯班曲尺.jpg"
+   ],
+   "notes": "工坊創作：W1/W2 為 CC BY-SA 只看形狀、未進 Redux；W3 曲尺 CC0；時代錯置顧慮（捲尺）故不畫捲尺；r4 為 PIL 程式畫（make_r4_props_stickers.py），非生成式"
+  },
+  {
+   "id": "prop_facebrick_r4",
+   "kind": "prop",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/prop_facebrick_r4_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "小塊規則薄磚、錯縫排列",
+    "細淺灰灰縫",
+    "酒紅與褐黃兩種磚並存",
+    "磚塊比荷治時代紅磚小而薄"
+   ],
+   "forbid": [
+    "單一褐黃或單一紅磚",
+    "整面橫線（不是磚縫）",
+    "荷蘭磚的大厚磚",
+    "文字、數字、商標、可讀字樣",
+    "人物、手、臉",
+    "背景有場景（需為平底單色）"
+   ],
+   "refs": [
+    "E:/Downloads/_walk_refs/scene/police_wall.jpg",
+    "E:/Downloads/_walk_refs/_cand2/prop/R15_面磚.jpg"
+   ],
+   "notes": "工坊創作：參考照皆 CC BY-SA 只看形狀；顏色依 ART_DECISIONS 第 2 條（酒紅與褐黃並存），11/14 踏查現場確認；r4 為 PIL 程式畫（make_r4_props_stickers.py），非生成式"
+  },
+  {
+   "id": "stk_seal_split_r4",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_seal_split_r4_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形金邊琺瑯章",
+    "中央羅盤玫瑰",
+    "三條向不同方向分岔的小足跡"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "圓章：分頭探索；r4 為 PIL 程式畫（make_r4_props_stickers.py），非生成式"
+  },
+  {
+   "id": "stk_seal_gather_r4",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_seal_gather_r4_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓形金邊琺瑯章",
+    "五個相同的彩色圓棋子",
+    "聚在一面小紅旗旁"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "圓章：全員集合；r4 為 PIL 程式畫（make_r4_props_stickers.py），非生成式"
+  },
+  {
+   "id": "stk_first_room_r4",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_first_room_r4_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓角方形貼紙",
+    "圓門小屋",
+    "屋前一把黃銅小鑰匙"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "方貼：第一次進房（工坊創作）；r4 為 PIL 程式畫（make_r4_props_stickers.py），非生成式"
+  },
+  {
+   "id": "stk_dex_collect_r4",
+   "kind": "sticker",
+   "image": "E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/stk_dex_collect_r4_128.png",
+   "size": [
+    128,
+    128
+   ],
+   "must": [
+    "圓角方形貼紙",
+    "翻開的圖鑑書",
+    "書頁上有一顆斑點蛋"
+   ],
+   "forbid": [
+    "文字、數字、商標、可讀字樣",
+    "人物、臉",
+    "背景有場景（需為平底單色）",
+    "外圍白色貼紙描邊缺失"
+   ],
+   "refs": [],
+   "notes": "方貼：圖鑑收集（工坊創作）；r4 為 PIL 程式畫（make_r4_props_stickers.py），非生成式"
+  }
+ ]
+}

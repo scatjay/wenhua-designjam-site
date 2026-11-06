@@ -1,0 +1,332 @@
+[
+ {
+  "name": "char_a01_captain_r4_s7101",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, confident middle-aged Taiwanese man field commander, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, short neat black hair with a little gray at the temples, deep navy jacket with a bright orange scarf, one hand holding a white hard hat, a rolled blueprint tube under his other arm, calm sturdy stance",
+  "seed": 7101,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a01_captain_r4_s7102",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, confident middle-aged Taiwanese man field commander, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, short neat black hair with a little gray at the temples, deep navy jacket with a bright orange scarf, one hand holding a white hard hat, a rolled blueprint tube under his other arm, calm sturdy stance",
+  "seed": 7102,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a02_navigator_r4_s7111",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, young Taiwanese woman navigator, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair in a high ponytail, teal windbreaker jacket, a brass compass hanging from her neck, one hand holding a folded paper map, a woven bamboo hat hanging on her back, focused bright eyes",
+  "seed": 7111,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a02_navigator_r4_s7112",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, young Taiwanese woman navigator, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair in a high ponytail, teal windbreaker jacket, a brass compass hanging from her neck, one hand holding a folded paper map, a woven bamboo hat hanging on her back, focused bright eyes",
+  "seed": 7112,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a03_strategist_r4_s7121",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, thoughtful Taiwanese man strategist in his thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, round glasses, plum purple long scarf over a cream shirt, one hand holding a small teacup, the other hand holding a white sphere on a thin pole, gentle smile",
+  "seed": 7121,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a03_strategist_r4_s7122",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, thoughtful Taiwanese man strategist in his thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, round glasses, plum purple long scarf over a cream shirt, one hand holding a small teacup, the other hand holding a white sphere on a thin pole, gentle smile",
+  "seed": 7122,
+  "w": 768,
+  "h": 768,
+  "redux": 0.3,
+  "cn": 0,
+  "style": "agent",
+  "photo": "s1103d_r2_ref_cehui.png",
+  "notext_words": "text. letters. sign. label"
+ },
+ {
+  "name": "char_a04_scout_r4_s7131",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, energetic young Taiwanese woman scout, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, red headband, bright green light vest, wide-brim straw hat pushed back, a small pair of binoculars raised in one hand, big grin",
+  "seed": 7131,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a04_scout_r4_s7132",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, energetic young Taiwanese woman scout, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, red headband, bright green light vest, wide-brim straw hat pushed back, a small pair of binoculars raised in one hand, big grin",
+  "seed": 7132,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a05_archivist_r4_s7141",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, gentle Taiwanese woman archivist in her thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, thin glasses, hair in a low bun, maroon knit vest over a white blouse, black sleeve covers on her forearms, a flat stack of manila folders in her arms, one finger with a little ink",
+  "seed": 7141,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a05_archivist_r4_s7142",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, gentle Taiwanese woman archivist in her thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, thin glasses, hair in a low bun, maroon knit vest over a white blouse, black sleeve covers on her forearms, a flat stack of manila folders in her arms, one finger with a little ink",
+  "seed": 7142,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a06_interviewer_r4_s7151",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, warm Taiwanese woman interviewer, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, shoulder-length hair, mustard yellow cardigan, one hand holding a small handheld microphone toward the viewer, the other hand holding a notebook, kind attentive expression",
+  "seed": 7151,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a06_interviewer_r4_s7152",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, warm Taiwanese woman interviewer, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, shoulder-length hair, mustard yellow cardigan, one hand holding a small handheld microphone toward the viewer, the other hand holding a notebook, kind attentive expression",
+  "seed": 7152,
+  "w": 768,
+  "h": 768,
+  "redux": 0.3,
+  "cn": 0,
+  "style": "agent",
+  "photo": "s1103d_r2_ref_yangzhi.png",
+  "notext_words": "text. letters. sign. label"
+ },
+ {
+  "name": "char_a07_photographer_r4_s7161",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, cheerful young Taiwanese man photographer, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, bright orange jacket, a cloth bucket hat, a camera hanging around his neck, one hand holding a small colorful ceramic dragon piece, playful wink",
+  "seed": 7161,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a07_photographer_r4_s7162",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, cheerful young Taiwanese man photographer, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, bright orange jacket, a cloth bucket hat, a camera hanging around his neck, one hand holding a small colorful ceramic dragon piece, playful wink",
+  "seed": 7162,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a08_recorder_r4_s7171",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, quiet dreamy young Taiwanese man recorder, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, slightly messy black hair, oversized lavender sweater, one hand holding a fountain pen, the other holding a closed leather journal, a thin paintbrush tucked behind his ear, soft smile",
+  "seed": 7171,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a08_recorder_r4_s7172",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, quiet dreamy young Taiwanese man recorder, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, slightly messy black hair, oversized lavender sweater, one hand holding a fountain pen, the other holding a closed leather journal, a thin paintbrush tucked behind his ear, soft smile",
+  "seed": 7172,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a09_designer_r4_s7181",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, colorful creative young Taiwanese woman game designer, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, short bob hair with a small red bead earring, patchwork jacket of red blue and yellow squares, one hand holding a sketchbook, the other hand raising a pair of dice, excited expression",
+  "seed": 7181,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a09_designer_r4_s7182",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, colorful creative young Taiwanese woman game designer, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, short bob hair with a small red bead earring, patchwork jacket of red blue and yellow squares, one hand holding a sketchbook, the other hand raising a pair of dice, excited expression",
+  "seed": 7182,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a10_radio_r4_s7191",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, lively Taiwanese man radio operator in his thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, big black headset on his head, bright yellow scarf, one hand holding a handheld microphone, mischievous smile, a short antenna on his shoulder strap",
+  "seed": 7191,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a10_radio_r4_s7192",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, lively Taiwanese man radio operator in his thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, big black headset on his head, bright yellow scarf, one hand holding a handheld microphone, mischievous smile, a short antenna on his shoulder strap",
+  "seed": 7192,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a11_safety_r4_s7201",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, caring Taiwanese woman safety officer in her thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair tied back, fluorescent yellow reflective vest over a navy shirt, a silver whistle on a cord, a small white first aid pouch on her belt, warm protective eyes",
+  "seed": 7201,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a11_safety_r4_s7202",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, caring Taiwanese woman safety officer in her thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair tied back, fluorescent yellow reflective vest over a navy shirt, a silver whistle on a cord, a small white first aid pouch on her belt, warm protective eyes",
+  "seed": 7202,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a12_supply_r4_s7211",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, friendly round-cheeked Taiwanese man supply officer in his forties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, dark green vest, a huge backpack with many small pouches behind him, one hand holding a wooden abacus, cheerful smile",
+  "seed": 7211,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a12_supply_r4_s7212",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, friendly round-cheeked Taiwanese man supply officer in his forties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, dark green vest, a huge backpack with many small pouches behind him, one hand holding a wooden abacus, cheerful smile",
+  "seed": 7212,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a13_forensic_r4_s7221",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, sharp middle-aged Taiwanese man forensic examiner, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, dark blue work apron with curly wood shavings on the shoulder, one hand holding a large magnifying glass up to his eye, the other hand holding a pair of tweezers, cool analytical gaze",
+  "seed": 7221,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a13_forensic_r4_s7222",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, sharp middle-aged Taiwanese man forensic examiner, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, dark blue work apron with curly wood shavings on the shoulder, one hand holding a large magnifying glass up to his eye, the other hand holding a pair of tweezers, cool analytical gaze",
+  "seed": 7222,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a14_tech_r4_s7231",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, laid-back young Taiwanese man tech specialist, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, goggles pushed up on his forehead, a leather tool belt, a coil of cable over his shoulder, one hand holding a big round white paper lantern painted with a green coiling dragon, sleepy half smile",
+  "seed": 7231,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a14_tech_r4_s7232",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, laid-back young Taiwanese man tech specialist, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, goggles pushed up on his forehead, a leather tool belt, a coil of cable over his shoulder, one hand holding a big round white paper lantern painted with a green coiling dragon, sleepy half smile",
+  "seed": 7232,
+  "w": 768,
+  "h": 768,
+  "redux": 0.3,
+  "cn": 0,
+  "style": "agent",
+  "photo": "s1103d_r2_ref_dengji.png",
+  "notext_words": "text. letters. sign. label"
+ },
+ {
+  "name": "char_a15_local_guide_r4_s7241",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, friendly talkative Taiwanese woman local guide in her fifties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, straw hat, cloth shoulder bag, a red apron over a floral blouse, comfortable slippers, one hand holding a small light-blue porcelain bowl of noodles, warm smile",
+  "seed": 7241,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a15_local_guide_r4_s7242",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, friendly talkative Taiwanese woman local guide in her fifties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, straw hat, cloth shoulder bag, a red apron over a floral blouse, comfortable slippers, one hand holding a small light-blue porcelain bowl of noodles, warm smile",
+  "seed": 7242,
+  "w": 768,
+  "h": 768,
+  "redux": 0.3,
+  "cn": 0,
+  "style": "agent",
+  "photo": "s1103d_r2_ref_danzai.png",
+  "notext_words": "text. letters. sign. label"
+ },
+ {
+  "name": "char_a16_actor_r4_s7251",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, theatrical young Taiwanese woman actor, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, a plain white half mask pushed up on the side of her head, a costume vest of deep red and gold, one raised hand inside a glove puppet with a white porcelain painted head and a small headdress, dramatic pose, playful eyes",
+  "seed": 7251,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a16_actor_r4_s7252",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, theatrical young Taiwanese woman actor, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, a plain white half mask pushed up on the side of her head, a costume vest of deep red and gold, one raised hand inside a glove puppet with a white porcelain painted head and a small headdress, dramatic pose, playful eyes",
+  "seed": 7252,
+  "w": 768,
+  "h": 768,
+  "redux": 0.3,
+  "cn": 0,
+  "style": "agent",
+  "photo": "s1103d_r2_ref_budaixi.png",
+  "notext_words": "text. letters. sign. label"
+ }
+]

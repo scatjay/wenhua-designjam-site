@@ -257,3 +257,63 @@
 
 ### 生成模型
 場景與頭像由本機 FLUX.1-dev（GGUF Q8）加 ControlNet 生成，輸出依 FLUX.1 [dev] Non-Commercial License 第 2(d) 條使用；該授權第 4(a) 條對模型本身的商業使用另有限制，與第 2(d) 的關係有歧義，屬製程層級的法務判斷，非本檔結論；教學與展示用途不受影響〔暫定，楊老師事後可糾正〕。備案 FLUX.1 schnell（Apache-2.0）與現有 ControlNet、Redux 的相容性未測。
+
+## 作者補查結果（2026-11-07，回 Commons API 讀 extmetadata；只讀中繼資料、未下載）
+
+來源：`APPROVED_CAND_1029.json` 各筆的 `source_name` 查 Commons 檔案頁。作者欄為 Commons 頁上 Artist 欄的純文字轉錄，**未再逐一核對 Flickr 或原作者現行帳號**；「作者不詳」就是不詳，不補名。BY-SA 項目只當形狀參考、不進成品，仍補作者以備查。
+
+| 編號 | Commons 檔名 | 作者（Commons Artist 欄） | 授權（Commons） | 檔案頁 |
+|---|---|---|---|---|
+| A1 | 台灣府城隍廟大算盤.jpg | Mrmarkertw | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E7%81%A3%E5%BA%9C%E5%9F%8E%E9%9A%8D%E5%BB%9F%E5%A4%A7%E7%AE%97%E7%9B%A4.jpg |
+| J1 | 台南佳里區金唐殿屋角剪粘.jpg | 王綉敏 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E5%8D%97%E4%BD%B3%E9%87%8C%E5%8D%80%E9%87%91%E5%94%90%E6%AE%BF%E5%B1%8B%E8%A7%92%E5%89%AA%E7%B2%98.jpg |
+| J2 | 小南天屋頂剪黏 (2015).jpg | Pbdragonwang | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%B0%8F%E5%8D%97%E5%A4%A9%E5%B1%8B%E9%A0%82%E5%89%AA%E9%BB%8F_(2015).jpg |
+| L1 | CC-Candyji-祀典武廟木刻1 3.0.jpg | Candyji | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:CC-Candyji-%E7%A5%80%E5%85%B8%E6%AD%A6%E5%BB%9F%E6%9C%A8%E5%88%BB1_3.0.jpg |
+| L4 | 2015-05-01 lanterns with names of deities for blessing in Tainan.jpg | Sun Taro | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:2015-05-01_lanterns_with_names_of_deities_for_blessing_in_Tainan.jpg |
+| N3 | Danzi noodle, Tainan, Taiwan.jpg | User: (WT-shared) Shoestring at  wts wikivoyage | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Danzi_noodle,_Tainan,_Taiwan.jpg |
+| P04 | 夕陽下的蚵棚.jpg | Li Yong-Chi | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%A4%95%E9%99%BD%E4%B8%8B%E7%9A%84%E8%9A%B5%E6%A3%9A.jpg |
+| P05 | 蚵棚五線譜.jpg | Kisslouis14 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E8%9A%B5%E6%A3%9A%E4%BA%94%E7%B7%9A%E8%AD%9C.jpg |
+| P1 | 2008-02-19 Glove puppetry in Tainan.jpg | Pascal Terjan | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:2008-02-19_Glove_puppetry_in_Tainan.jpg」，以 Commons 為準待複核） |
+| P11 | 七股頂山鹽警槍樓.jpg | Pbdragonwang | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:%E4%B8%83%E8%82%A1%E9%A0%82%E5%B1%B1%E9%B9%BD%E8%AD%A6%E6%A7%8D%E6%A8%93.jpg |
+| P12 | 茄萣竹滬鹽灘鹽警槍樓.JPG | Pbdragonwang | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:%E8%8C%84%E8%90%A3%E7%AB%B9%E6%BB%AC%E9%B9%BD%E7%81%98%E9%B9%BD%E8%AD%A6%E6%A7%8D%E6%A8%93.JPG |
+| P13 | Salt Mountain.jpg | tommy.lan | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Salt_Mountain.jpg |
+| P15 | 臺南市安順鹽田.JPG | Pbdragonwang | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8D%97%E5%B8%82%E5%AE%89%E9%A0%86%E9%B9%BD%E7%94%B0.JPG |
+| P16 | 井仔腳瓦盤鹽田.JPG | Pbdragonwang | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:%E4%BA%95%E4%BB%94%E8%85%B3%E7%93%A6%E7%9B%A4%E9%B9%BD%E7%94%B0.JPG |
+| P18 | 扇形鹽田.jpg | WU PEI HSUAN | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E6%89%87%E5%BD%A2%E9%B9%BD%E7%94%B0.jpg |
+| P2 | 彩樓布袋戲戲台.jpg | Sean Chiu | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%BD%A9%E6%A8%93%E5%B8%83%E8%A2%8B%E6%88%B2%E6%88%B2%E5%8F%B0.jpg |
+| P25 | 七股區大潮溝與海埔魚塭.jpg | Guanting Chen | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E4%B8%83%E8%82%A1%E5%8D%80%E5%A4%A7%E6%BD%AE%E6%BA%9D%E8%88%87%E6%B5%B7%E5%9F%94%E9%AD%9A%E5%A1%AD.jpg |
+| P28 | 原臺南測候所外觀.jpg | 甘單共 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%8E%9F%E8%87%BA%E5%8D%97%E6%B8%AC%E5%80%99%E6%89%80%E5%A4%96%E8%A7%80.jpg |
+| P3 | 台灣酬神布袋戲1.jpg | 安可 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E7%81%A3%E9%85%AC%E7%A5%9E%E5%B8%83%E8%A2%8B%E6%88%B21.jpg |
+| P31 | 整修中的臺南西市場.jpg | Pbdragonwang | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E6%95%B4%E4%BF%AE%E4%B8%AD%E7%9A%84%E8%87%BA%E5%8D%97%E8%A5%BF%E5%B8%82%E5%A0%B4.jpg |
+| P34 | 201512原台南地方法院修復工程01.jpg | Tze Chiang Hao | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:201512%E5%8E%9F%E5%8F%B0%E5%8D%97%E5%9C%B0%E6%96%B9%E6%B3%95%E9%99%A2%E4%BF%AE%E5%BE%A9%E5%B7%A5%E7%A8%8B01.jpg |
+| P36 | Amphithéâtre scanner.jpg | Joël Thibault | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Amphith%C3%A9%C3%A2tre_scanner.jpg |
+| P37 | 3D-Laserscanner on tripod.jpg | Dr. Schorsch | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:3D-Laserscanner_on_tripod.jpg |
+| P41 | 臺南三山國王廟天后聖母祠門神.JPG | Pbdragonwang | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8D%97%E4%B8%89%E5%B1%B1%E5%9C%8B%E7%8E%8B%E5%BB%9F%E5%A4%A9%E5%90%8E%E8%81%96%E6%AF%8D%E7%A5%A0%E9%96%80%E7%A5%9E.JPG |
+| P48 | 小南天屋頂剪黏 (2015).jpg | Pbdragonwang | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%B0%8F%E5%8D%97%E5%A4%A9%E5%B1%8B%E9%A0%82%E5%89%AA%E9%BB%8F_(2015).jpg |
+| S1 | Truck Stage.jpg | Laxthree | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Truck_Stage.jpg |
+| S2 | 夜間的電子舞台車.jpg | Sean Chiu | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%A4%9C%E9%96%93%E7%9A%84%E9%9B%BB%E5%AD%90%E8%88%9E%E5%8F%B0%E8%BB%8A.jpg |
+| S3 | Electric Flower Car, Beigang Chao-Tian Temple (Taiwan).jpg | Mk2010 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Electric_Flower_Car,_Beigang_Chao-Tian_Temple_(Taiwan).jpg |
+| T2 | 台南興濟宮．保生大帝籤詩.jpg | 舟集 Boattoad | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E5%8D%97%E8%88%88%E6%BF%9F%E5%AE%AE%EF%BC%8E%E4%BF%9D%E7%94%9F%E5%A4%A7%E5%B8%9D%E7%B1%A4%E8%A9%A9.jpg |
+| T3 | The beginning and the end of burning incense sticks.jpg | Mearchan | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:The_beginning_and_the_end_of_burning_incense_sticks.jpg |
+| W1 | 桃園市立大溪木藝生態博物館所藏墨斗.jpg | 寺人孟子 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E6%A1%83%E5%9C%92%E5%B8%82%E7%AB%8B%E5%A4%A7%E6%BA%AA%E6%9C%A8%E8%97%9D%E7%94%9F%E6%85%8B%E5%8D%9A%E7%89%A9%E9%A4%A8%E6%89%80%E8%97%8F%E5%A2%A8%E6%96%97.jpg |
+| W2 | 大溪武德殿內展示的墨斗.jpg | 寺人孟子 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E6%BA%AA%E6%AD%A6%E5%BE%B7%E6%AE%BF%E5%85%A7%E5%B1%95%E7%A4%BA%E7%9A%84%E5%A2%A8%E6%96%97.jpg |
+| J3 | Close-up of roof decoration at Xuejia Ciji Temple at night 20100416.jpg | Hsiung/d6478coke | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Close-up_of_roof_decoration_at_Xuejia_Ciji_Temple_at_night_20100416.jpg |
+| L2 | 2010-02-13 Dragon Lantern at the Taipei Mazu Temple.jpg | eazytraveler | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:2010-02-13_Dragon_Lantern_at_the_Taipei_Mazu_Temple.jpg |
+| L3 | 2010-02-19 Red & Yellow Lanterns.jpg | eazytraveler | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:2010-02-19_Red_%26_Yellow_Lanterns.jpg |
+| P01 | 膠筏 Plastic Raft - panoramio.jpg | lienyuan lee | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:%E8%86%A0%E7%AD%8F_Plastic_Raft_-_panoramio.jpg |
+| P20 | Poisson lait (Chanos chanos) (Ifremer 00763-87541).jpg | Hugues Evano (IFREMER, Délégation océan Indien (DOI), Département Ressources Biologiques et Environnement (RBE), F-97420 Le Port, France) | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Poisson_lait_(Chanos_chanos)_(Ifremer_00763-87541).jpg |
+| P29 | Former Tainan Weather Observatory 20230514 132903.jpg | Anas1712 | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Former_Tainan_Weather_Observatory_20230514_132903.jpg |
+| P4 | Hand puppets of Taiwanese Glove puppetry 2023-04-11.jpg | Wang Yu Ching / Office of the President (中華民國總統府) | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Hand_puppets_of_Taiwanese_Glove_puppetry_2023-04-11.jpg |
+| S4 | 桃園姊妹綜藝團 RL-041 20080530a.jpg | Tianmu peter | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:%E6%A1%83%E5%9C%92%E5%A7%8A%E5%A6%B9%E7%B6%9C%E8%97%9D%E5%9C%98_RL-041_20080530a.jpg |
+| N1 | Food stands Taihoku.jpg | 李火增 | Public domain | https://commons.wikimedia.org/wiki/File:Food_stands_Taihoku.jpg」，以 Commons 為準待複核） |
+| N2 | Street food at Kensei-chō roundabout 1938-1942 01.jpg | 李火增 | Public domain | https://commons.wikimedia.org/wiki/File:Street_food_at_Kensei-ch%C5%8D_roundabout_1938-1942_01.jpg |
+| N4 | Shoulder pole detail 01.jpg | Anna Frodesiak | CC0 | https://commons.wikimedia.org/wiki/File:Shoulder_pole_detail_01.jpg |
+| P03 | Bamboo Raft of Taiwan.jpg | 作者不詳（Commons 標 Unknown author） | Public domain | https://commons.wikimedia.org/wiki/File:Bamboo_Raft_of_Taiwan.jpg |
+| P17 | Salt evaporation pond in Taiwan.jpg | 作者不詳（Commons 標 Unknown author） | Public domain | https://commons.wikimedia.org/wiki/File:Salt_evaporation_pond_in_Taiwan.jpg |
+| P22 | MilkFish001.jpg | Kwb | Public domain | https://commons.wikimedia.org/wiki/File:MilkFish001.jpg |
+| P27 | 臺灣總督府水產試驗場台南支場.jpg | 臺灣總督府水產試驗場 | Public domain | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E7%81%A3%E7%B8%BD%E7%9D%A3%E5%BA%9C%E6%B0%B4%E7%94%A2%E8%A9%A6%E9%A9%97%E5%A0%B4%E5%8F%B0%E5%8D%97%E6%94%AF%E5%A0%B4.jpg |
+| P40 | Drawing the maps of surveying in Japanese Formosa.jpg | 作者不詳（Commons 標 Unknown author） | Public domain | https://commons.wikimedia.org/wiki/File:Drawing_the_maps_of_surveying_in_Japanese_Formosa.jpg |
+| T1 | Incense Sticks in Wanhua District Temple.jpg | Battlesnake1 | CC0 | https://commons.wikimedia.org/wiki/File:Incense_Sticks_in_Wanhua_District_Temple.jpg |
+| W3 | 木製魯班曲尺.jpg | 氏子 | CC0 | https://commons.wikimedia.org/wiki/File:%E6%9C%A8%E8%A3%BD%E9%AD%AF%E7%8F%AD%E6%9B%B2%E5%B0%BA.jpg |
+
+處理結果：缺口清單中 CAND_1029 的 50 列作者已補（上表；授權欄與核准檔一致，P1／N1／N2 只是核准檔多了備註文字）。成品署名只要處理實際用於成品的 CC BY 項：J3（Hsiung/d6478coke，CC BY 2.0）、L2／L3（eazytraveler，CC BY 2.0）、P01（lienyuan lee，CC BY 3.0）、P20、P29、P4、S4，用到哪張再署名哪張。
+仍待處理（不編造）：`APPROVED.json` 的 police_gable／police_wall／tang_park_2021 三筆 BY-SA（只當形狀參考）、`APPROVED_1103_chargap.json` 的 E01（公有領域）與武德殿門廊裁切的作者，下一輪回 Commons 查。

@@ -1,0 +1,310 @@
+/* 由 build_manifest.py 產生；接線時 <script src="art/walk_assets.js?v=時間戳"> 載入，程式用 window.WALK_ASSETS */
+window.WALK_ASSETS = {
+ "version": "2026-11-06",
+ "note": "路徑相對站台根目錄。status：pass＝品檢過；human＝需楊老師肉眼；provisional＝補圖後未複檢；unqa＝沒有品檢紀錄；missing＝沒有可用成品。",
+ "sizes": {
+  "scene": [
+   180,
+   320
+  ],
+  "npc": [
+   128,
+   128
+  ],
+  "agent": [
+   128,
+   128
+  ],
+  "sticker": [
+   128,
+   128
+  ]
+ },
+ "scenes": {
+  "s0": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "status": "pass",
+   "note": "集合點，共用台文館"
+  },
+  "s1": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "status": "pass",
+   "note": "替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼"
+  },
+  "s2": {
+   "file": null,
+   "status": "missing",
+   "note": "警察署 5 版全退回；備援 scene_police_B_r1（需人眼）；11-07 雙 ControlNet 重做"
+  },
+  "s3": {
+   "file": "art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png",
+   "status": "pass",
+   "note": "11-03 ACCEPT，楊老師稱讚過的取景"
+  },
+  "s4": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png",
+   "status": "pass",
+   "note": "替代：scene_hayashi_B_v2d（過，上層特寫）"
+  },
+  "s5": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png",
+   "status": "pass",
+   "note": "替代：scene_matsu_B_v2c（需人眼）"
+  },
+  "s6": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_chikan_A_r2_180x320.png",
+   "status": "pass",
+   "note": "靈祐宮另有 scene_lingyou_A_v2c（文字過、文史待定，暫用）"
+  },
+  "s7": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "status": "pass",
+   "note": "終點，共用台文館"
+  },
+  "t1": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t2": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_tang_A_r2_180x320.png",
+   "status": "human",
+   "note": "雕塑畫成鳥形，待重生"
+  },
+  "t3": {
+   "file": null,
+   "status": "missing",
+   "note": "同 s2"
+  },
+  "t4": {
+   "file": "art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t5": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t6": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t7": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_chikan_A_r2_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t8": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_hall_A_r2_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t9": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_patriotic_A_v2_faithful_dt_median_180x320.png",
+   "status": "human",
+   "note": "median 修正後未複檢"
+  },
+  "tx": {
+   "file": null,
+   "status": "missing",
+   "note": "車站無照片，不做"
+  },
+  "tf": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "status": "pass",
+   "note": ""
+  }
+ },
+ "scenes_night_tainanpunk": {
+  "s4": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_hayashi_B_tainanpunk_c_180x320.png",
+   "status": "provisional",
+   "note": ""
+  },
+  "s5": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_matsu_A_tainanpunk_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t5": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_hayashi_B_tainanpunk_c_180x320.png",
+   "status": "provisional",
+   "note": ""
+  },
+  "t6": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_matsu_A_tainanpunk_180x320.png",
+   "status": "pass",
+   "note": ""
+  },
+  "t8": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_hall_B_aerial_tainanpunk_c_180x320.png",
+   "status": "provisional",
+   "note": ""
+  },
+  "t9": {
+   "file": "art/real_ref_pilot/_samples_1103d/scene_patriotic_A_v2b_tainanpunk_dt_180x320.png",
+   "status": "pass",
+   "note": ""
+  }
+ },
+ "npcs_by_stop": {
+  "s1": {
+   "name": "州知事的祕書",
+   "file": "art/npc_pixel16/NN_12_governor_secretary_128.png",
+   "status": "unqa"
+  },
+  "s2": {
+   "name": "檔案室管理員",
+   "file": "art/npc_pixel16/NN_14_archivist_128.png",
+   "status": "unqa"
+  },
+  "s5": {
+   "name": "三郊的老帳房",
+   "file": "art/npc_pixel16/NN_17_old_accountant_128.png",
+   "status": "unqa"
+  },
+  "s6": {
+   "name": "搬廟那年的木匠學徒",
+   "file": "art/npc_pixel16/NN_18_carpenter_apprentice_128.png",
+   "status": "unqa"
+  },
+  "c1": {
+   "name": "校史館的志工學姊",
+   "file": "art/npc_pixel16/NN_01_volunteer_128.png",
+   "status": "unqa"
+  },
+  "c2": {
+   "name": "西淮館的夜班管理員",
+   "file": "art/npc_pixel16/NN_02_night_guard_128.png",
+   "status": "unqa"
+  },
+  "c3": {
+   "name": "銅像旁的老園丁",
+   "file": "art/npc_pixel16/NN_03_gardener_128.png",
+   "status": "unqa"
+  },
+  "x3": {
+   "name": "還書櫃旁的夜讀生",
+   "file": "art/npc_pixel16/NN_06_night_reader_128.png",
+   "status": "unqa"
+  },
+  "x4": {
+   "name": "夜跑的學長",
+   "file": "art/npc_pixel16/NN_07_night_runner_128.png",
+   "status": "unqa"
+  },
+  "x5": {
+   "name": "水邊的看守者（虛構角色）",
+   "file": "art/npc_pixel16/NN_08_water_watcher_128.png",
+   "status": "unqa"
+  },
+  "x6": {
+   "name": "榕樹下的老先生",
+   "file": "art/npc_pixel16/NN_09_banyan_elder_128.png",
+   "status": "unqa"
+  },
+  "c4": {
+   "name": "畢不了學姊",
+   "file": "art/npc_pixel16/NN_05_senior_student_128.png",
+   "status": "unqa"
+  },
+  "ws": {
+   "name": "銅像旁的老園丁（夜班）",
+   "file": "art/npc_pixel16/NN_03_gardener_128.png",
+   "status": "unqa"
+  },
+  "w1": {
+   "name": "守夜的警衛伯伯",
+   "file": "art/npc_pixel16/NN_10_guard_uncle_128.png",
+   "status": "unqa"
+  },
+  "w2": {
+   "name": "涼亭裡的等車阿姨",
+   "file": "art/npc_pixel16/NN_11_aunt_waiting_128.png",
+   "status": "unqa"
+  },
+  "w3": {
+   "name": "畢不了學姊（廟前）",
+   "file": "art/npc_pixel16/NN_05_senior_student_128.png",
+   "status": "unqa"
+  },
+  "w4": {
+   "name": "畢不了學姊",
+   "file": "art/npc_pixel16/NN_05_senior_student_128.png",
+   "status": "unqa"
+  },
+  "t2": {
+   "name": "圓環旁的路牌檢查員",
+   "file": "art/npc_pixel16/NN_13_signpost_inspector_128.png",
+   "status": "unqa"
+  },
+  "t4": {
+   "name": "看守校舍的老工友",
+   "file": "art/npc_pixel16/NN_15_school_janitor_128.png",
+   "status": "unqa"
+  },
+  "t5": {
+   "name": "電梯學徒（時安局編外）",
+   "file": "art/npc_pixel16/NN_16_elevator_apprentice_128.png",
+   "status": "unqa"
+  },
+  "t8": {
+   "name": "夜間守門人",
+   "file": "art/npc_pixel16/NN_19_night_gatekeeper_128.png",
+   "status": "unqa"
+  },
+  "t9": {
+   "name": "老圖書館員",
+   "file": "art/npc_pixel16/NN_20_old_librarian_128.png",
+   "status": "unqa"
+  },
+  "tx": {
+   "name": "大廳裡的琴友",
+   "file": null,
+   "status": "missing"
+  },
+  "tf": {
+   "name": "時安局局長（廣播）",
+   "file": "art/npc_pixel16/NN_04_chief_128.png",
+   "status": "unqa"
+  },
+  "c0": {
+   "name": "公布欄上的便條（畢不了學姊）",
+   "file": "art/npc_pixel16/NN_05_senior_student_128.png",
+   "status": "unqa"
+  }
+ },
+ "agents": {
+  "note": "程式 js/walk_agents.js 已組路徑 art/agents16/NN_<en>_128.png；只要把 js/walk.js:1350 的 AG_IMG_ON 改 true。舊版 16 張未品檢（臺灣人長相未驗）"
+ },
+ "stickers": {
+  "ach": {
+   "split": "art/real_ref_pilot/_samples_1103d/stk_seal_split_r4_128.png",
+   "gather": "art/real_ref_pilot/_samples_1103d/stk_seal_gather_r4_128.png",
+   "roles": "art/real_ref_pilot/_samples_1103d/stk_seal_roles_r3_128.png"
+  },
+  "ach_status": {
+   "split": "provisional",
+   "gather": "pass",
+   "roles": "pass"
+  },
+  "case_default": "art/real_ref_pilot/_samples_1103d/stk_case_done_r2_128.png",
+  "footprint": {
+   "like": "art/real_ref_pilot/_samples_1103d/stk_fp_like_r3_128.png",
+   "wow": "art/real_ref_pilot/_samples_1103d/stk_fp_wow_r3_128.png",
+   "learn": "art/real_ref_pilot/_samples_1103d/stk_fp_learn_r2_128.png",
+   "pass": "art/real_ref_pilot/_samples_1103d/stk_fp_pass_r2_128.png"
+  },
+  "footprint_status": {
+   "like": "pass",
+   "wow": "human",
+   "learn": "pass",
+   "pass": "pass"
+  },
+  "first_room": "art/real_ref_pilot/_samples_1103d/stk_first_room_r4_128.png",
+  "dex_collect": "art/real_ref_pilot/_samples_1103d/stk_dex_collect_r4_128.png"
+ },
+ "credits": "CC BY 參考照的署名見 art/CREDITS.md「v2 製程成品對應」；上線頁面要有一行署名（結算頁或 walk_intro）。"
+};

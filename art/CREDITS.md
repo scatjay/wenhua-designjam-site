@@ -222,3 +222,25 @@
 ## 已知需補的兩項（品檢報告指出）
 - J3 剪黏參考（`j3_ref_sq.png`）：只有授權欄，作者與網址都空白，需回核准檔或來源頁查證。
 - 武德殿門廊裁切（`but_ref_porch_closeup.png`，取自 `butokuden.jpg`）：來源作者欄為「—」，署名要補。
+
+## v2 製程成品對應（2026-11-05）
+
+追法：成品名 → `real_ref_pilot/_samples_1103d/_work/jobs_v2_*.json` 的 `photo` 欄（ComfyUI input 檔名）→ `prep_r2_scene.py`／`prep_refs_r4.py`／`prep_refs_r5.py`／`prep_refs_r6.py` 的裁切來源 → 核准檔。v2 製程（`pipe_v2.py`）：照片先去字，產生 ZoeDepth 深度圖餵深度 ControlNet（`cn`），`redux` 大於 0 時另把去字後照片當 Redux 圖生圖輸入；因此只要工單 `cn` 或 `redux` 大於 0，就算「把照片當圖生圖／深度輸入」。
+
+核准檔位置：`APPROVED.json` 在 `E:/Downloads/_walk_refs/`；`APPROVED_1103_scene.json` 在 `knowledge/tainan_walk/`（本表的 HAY1、HAL1、LIN1 以此檔的 license、author 欄為準，與上方既有列一致）。授權與作者以既有列與核准檔為準，未重新查 Commons 頁。
+
+| 成品檔名（`scene_<名>_180x320.png`） | 生圖輸入照片（ComfyUI 檔名） | 原始照片編號與核准檔 | 授權與作者 | 是否把照片當圖生圖／深度輸入 | 署名需求 | 備註 |
+|---|---|---|---|---|---|---|
+| scene_matsu_A_v2（媽祖廟 A） | `s1103d_r2_matsu_A.png`（工單 `jobs_v2_r1.json`，種子與提示見該檔） | `grand_matsu`（`_walk_refs/scene/grand_matsu.jpg`，裁切 220,0,1060,740 後補成方形），`APPROVED.json`，第 6 案 | CC BY 2.0；作者 tomscoffin（核准檔 license 欄括號內；既有 CREDITS 列作者欄為「—」，未獨立核對 Commons 頁） | 是：Redux 0.25＋深度 cn 0.65（cn_end 0.7，faithful） | 需署名 | 來源頁 https://commons.wikimedia.org/wiki/File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg；STATUS 記品檢「過」；經過去字與修改，署名時應註明「改作」 |
+| scene_matsu_B_v2c（媽祖廟 B） | `s1103d_r2_matsu_B.png`（工單 `jobs_v2_r2.json` 的 `scene_matsu_B_v2b`；v2c 是該圖再做 `fill_box.py` 手動補橫匾） | `grand_matsu`（同上，裁切 340,150,940,750），`APPROVED.json`，第 6 案 | CC BY 2.0；作者 tomscoffin（同上） | 是：Redux 0.25＋深度 cn 0.65（faithful） | 需署名 | 與 A 同一張來源照；v2c 補橫匾後尚未重新品檢（STATUS 14:10 記載），兩側燈籠紋待人眼；v2c 沒有獨立工單檔，由 v2b 工單加手動補框而來 |
+| scene_hayashi_B_v2d（林百貨 B） | `s1103d_r2_hayashi_B.png`（工單 `jobs_v2_r2.json` 的 `scene_hayashi_B_v2b`；v2d 為再經 `fill_box.py` 補窗格） | `HAY1`（`_walk_refs/_cand2/scene/HAY1.jpg`，裁切 580,20,880,330 後以天空色補成方形），`APPROVED_1103_scene.json` | CC BY 2.0；作者 Emily Jiang | 是：Redux 0.25＋深度 cn 0.65（faithful） | 需署名 | 來源頁 https://commons.wikimedia.org/wiki/File%3AHayasi_Department_Store_at_the_intersection_of_Jhongjheng_Road_and_Jhongyi_Road.jpg；品檢「過」，建議再看一眼底部凸窗山牆；v2d 沒有獨立工單檔 |
+| scene_hall_B_aerial_v2（會館 B 鳥瞰） | `s1103d_r2_hall_B.png`（工單 `jobs_v2_r1.json`）；`s1103d_r4_hall_B.png` 為較早輪次（r4）從同一檔裁出，v2 工單沒有用它 | `HAL1`（`_walk_refs/_cand2/scene/HAL1.jpg`，裁切 200,230,1000,830 後補方形，見 `prep_r2_scene.py` 第 71 行與 `prep_refs_r4.py` 第 34 行），`APPROVED_1103_scene.json` | CC BY 3.0；作者 338km | 是：Redux 0.25＋深度 cn 0.65（faithful） | 需署名 | 來源頁 https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%85%AC%E6%9C%83%E5%A0%82_-_panoramio.jpg；STATUS.md 曾寫「來源與授權查不到」，本次由裁切腳本追到 HAL1 並對上核准檔，來源可追；追法只靠腳本檔名，沒有逐像素比對成品與 HAL1；品檢仍是「待人眼」 |
+| scene_lingyou_A_v2c（靈祐宮 A） | `s1103d_r6_lingyou_A.png`（工單 `jobs_v2_r3.json` 的 `scene_lingyou_A_v2b2`：cn 0.3、redux 0；v2c 為再兩次 `fill_box.py` 補匾額與人形） | 沒有照片輸入：該檔是 `prep_refs_r6.py` 第 58–78 行用 ImageDraw 程式畫出的三開間立面樣板。形狀依據是 `LIN1`（`CULTURE_lingyou_A.md` 記為人眼看圖的形狀參考），`APPROVED_1103_scene.json` | LIN1：CC BY-SA 4.0；作者 Mrmarkertw | 輸入是程式畫的樣板，不是 LIN1 照片：深度 cn 0.3 用於樣板，redux 0；LIN1 像素未進入生圖 | 否（無 LIN1 像素或其深度進入成品，沒有法定署名需求）；自願可致謝 | 未違反 BY-SA 規則；有疑慮之處是工單 `photo` 欄的檔名看起來像照片，且 LIN1 只存在於人眼參考，若日後有人改用 LIN1 當輸入即違規。全程已查：`_work` 內所有 `.py`／`.sh` 對 `lingyou_A.png` 只有 `prep_refs_r6.py` 一處寫入。v2c 尚未品檢，另有天空過多、脊上無八角台座與三小尊、中門非柵欄門等已知落差（STATUS 14:50） |
+| scene_patriotic_A_v2_faithful_dt_median（愛國婦人會館忠實版） | `s1103d_r2_patriotic_A.png`（工單 `jobs_v2_smoke.json` 的 `scene_patriotic_A_v2_faithful`；後續 `_dt`＝去字閘門，`median`＝像素化方式） | `patriotic_hall_01`（`_walk_refs/scene/patriotic_hall_01.jpg`，裁切 100,60,1000,960 並經 `prep_r2_scene.py` 第 74–79 行處理），`APPROVED.json`，第 9 案 | CC BY 4.0；作者 Chainwit.（核准檔 license 欄括號內；既有 CREDITS 列作者欄為「—」，未獨立核對 Commons 頁） | 是：Redux 0.25＋深度 cn 0.65（faithful） | 需署名 | 來源頁 https://commons.wikimedia.org/wiki/File:Japanese_Patriotic_Women%27s_Association_Hall_-_Tainan_-_%E5%8F%B0%E5%8D%97%E6%84%9B%E5%9C%8B%E5%A9%A6%E4%BA%BA%E6%9C%83%E9%A4%A8_%282026%29_-_img_01.jpg；STATUS 記品檢「需人眼」 |
+| scene_patriotic_A_v2b_tainanpunk_dt（愛國婦人會館府城龐克版） | `s1103d_r2_patriotic_A.png`（工單 `jobs_v2_smoke2.json` 的 `scene_patriotic_A_v2b_tainanpunk`） | `patriotic_hall_01`（同上），`APPROVED.json`，第 9 案 | CC BY 4.0；作者 Chainwit.（同上） | 只有深度：redux 0、深度 cn 0.65（tainanpunk）；照片的輪廓結構仍進入成品 | 需署名（照片結構經深度圖進入成品，保守視為改作） | 府城龐克版風格改動大，是否構成「改作」須署名由楊老師決定；STATUS 記品檢「過」 |
+
+小結：7 張中署名需求 6 張（媽祖廟 A、媽祖廟 B、林百貨 B、會館 B 鳥瞰、愛國婦人會館兩版）；靈祐宮 A 無法定署名需求。沒有任何一張把 CC BY-SA 照片當 Redux 或深度輸入，故沒有「違反 BY-SA 規則」的項目；靈祐宮 A 因工單 `photo` 欄與 BY-SA 形狀來源並存，列為「有疑慮、查證後不違規」1 張。
+
+署名內容（成品處）：作者名、授權名稱與版本、來源頁連結、並註明「已修改」。CC BY 的作者名與連結以上表與核准檔為準；作者欄在既有列為「—」者（tomscoffin、Chainwit.），只確認核准檔 license 括號內的名稱，尚未回 Commons 頁核對。
+
+缺口清單（v2 對應）：①`grand_matsu`、`patriotic_hall_01` 在既有 CREDITS 列作者欄為「—」，署名前需回 Commons 頁補正式作者名稱；②v2c（媽祖廟 B）、v2d（林百貨 B）、靈祐宮 v2c 沒有獨立工單檔，補框用的 `fill_box.py` 指令與座標未存成工單，重現靠 STATUS 敘述；③會館 B 鳥瞰：來源已追到 HAL1，但 STATUS 原寫「查不到」尚未更正，且成品與 HAL1 的對應未逐像素比對；④靈祐宮 A 的 LIN1（BY-SA）只作人眼參考，若要在成品處致謝需楊老師決定；⑤愛國婦人會館府城龐克版是否須署名，需楊老師決定；⑥以上 7 張成品品檢狀態不一（多張仍「待人眼」或「尚未品檢」），與授權無關但出版前需補。

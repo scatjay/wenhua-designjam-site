@@ -244,3 +244,16 @@
 署名內容（成品處）：作者名、授權名稱與版本、來源頁連結、並註明「已修改」。CC BY 的作者名與連結以上表與核准檔為準；作者欄在既有列為「—」者（tomscoffin、Chainwit.），只確認核准檔 license 括號內的名稱，尚未回 Commons 頁核對。
 
 缺口清單（v2 對應）：①`grand_matsu`、`patriotic_hall_01` 在既有 CREDITS 列作者欄為「—」，署名前需回 Commons 頁補正式作者名稱；②v2c（媽祖廟 B）、v2d（林百貨 B）、靈祐宮 v2c 沒有獨立工單檔，補框用的 `fill_box.py` 指令與座標未存成工單，重現靠 STATUS 敘述；③會館 B 鳥瞰：來源已追到 HAL1，但 STATUS 原寫「查不到」尚未更正，且成品與 HAL1 的對應未逐像素比對；④靈祐宮 A 的 LIN1（BY-SA）只作人眼參考，若要在成品處致謝需楊老師決定；⑤愛國婦人會館府城龐克版是否須署名，需楊老師決定；⑥以上 7 張成品品檢狀態不一（多張仍「待人眼」或「尚未品檢」），與授權無關但出版前需補。
+
+## 署名核對與生成模型說明（2026-11-06）
+
+### CC BY 作者核對（回 Commons API，欄位經 WebFetch 轉述；Flickr 原頁未核對現行帳號）
+| 編號 | 作者 | 授權 | 建議署名（需註明已修改） | 備註 |
+|---|---|---|---|---|
+| grand_matsu | tomscoffin（Flickr 帳號，上傳者 SSJF01 是搬運者） | CC BY 2.0 | 「Tainan Grand Matsu Temple」，tomscoffin，CC BY 2.0，來源 Wikimedia Commons File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg（原始出處 Flickr 36756068255）。已修改（裁切、縮放、像素化）。 | Attribution 欄空白；與核准檔一致 |
+| patriotic_hall_01 | Chainwit.（作者即上傳者，Own work，拍攝 2026-01-18） | CC BY 4.0 | 「Japanese Patriotic Women's Association Hall, Tainan」，Chainwit.，CC BY 4.0，來源 Wikimedia Commons（見上表來源頁）。已修改。 | Attribution 欄空白；與核准檔一致 |
+
+上表取代前文兩列作者欄的「—」；其餘 70 筆作者缺口不變。
+
+### 生成模型
+場景與頭像由本機 FLUX.1-dev（GGUF Q8）加 ControlNet 生成，輸出依 FLUX.1 [dev] Non-Commercial License 第 2(d) 條使用；該授權第 4(a) 條對模型本身的商業使用另有限制，與第 2(d) 的關係有歧義，屬製程層級的法務判斷，非本檔結論；教學與展示用途不受影響〔暫定，楊老師事後可糾正〕。備案 FLUX.1 schnell（Apache-2.0）與現有 ControlNet、Redux 的相容性未測。

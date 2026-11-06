@@ -138,3 +138,10 @@
 - **修正**：排程腳本一律用 `D:/Git/bin/bash.exe` 完整路徑；先用同一種呼叫方式做不碰 GPU 的乾跑驗證再排程。
 - **補救**：新預約 07061940（11-07 03:40 起 45 分、30 GB）重跑警察署；02:10 的 3cafe34b（探員 16×2＋NPC 5）腳本已換同樣修正並重啟。腳本：`_work/night_chars.py`、`_work/night_police2.py`。
 - 教訓（可寫進技能）：排程腳本不要依賴 PATH 裡的 `bash`；排程用預約的 `start` 前先做乾跑，`done` 只在批次確實執行過之後才標。
+
+
+## 2026-11-07 06:30 母線派工：等條件自動開工（接力）
+- 背景常駐 `_work/wait_and_run.py`（日誌 scratchpad 的 wait_and_run.log，狀態檔 wait_and_run.state.json，單例 pid 鎖）：每 10 分鐘讀 `nested_session_census --brief`，全機認可 <= 63.5 GB 且埠 8288 無人聽、無他人 ComfyUI 才登記預約、start、依序跑 探員16（32 張）→ NPC5 → 警察署雙 CN；每階段逾時殺整棵行程樹，完了 kill 伺服器、done 預約、確認埠釋放。0 張的階段不標完成、回到等待。06:09 啟動時認可 73.1 GB，等待中。
+- 愛國婦人館複檢是品檢工作（不吃 GPU），等生圖空檔做。
+- 不吃 GPU 已做：CREDITS 補 CAND_1029 的 50 筆作者（Commons 中繼資料）；build_manifest 套用 NPC 品檢（過 11、退回 4、需人眼 5）並產生 `SHIP_LIST.md`（可上線 34、不可上線 17）；WIRING_GUIDE 改為只接 pass。
+- 11-12 20:00 前要給母線「可上線／不可上線」彙整與 AG_IMG_ON 建議（目前建議 false）。

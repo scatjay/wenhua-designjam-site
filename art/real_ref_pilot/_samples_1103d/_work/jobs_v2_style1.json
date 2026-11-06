@@ -1,0 +1,50 @@
+[
+ {
+  "name": "scene_matsu_A_cyberpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, cyberpunk night scene, front of a Taiwanese Mazu temple three-bay entrance hall in Tainan, red wooden pillars and two carved gray-white stone dragon pillars in front of gold carved door panels, double-eave roof with swallowtail ridge ends, colorful porcelain-shard dragons along the ridge, orange-pink roof tiles with blue trim, a pair of stone lions with red ribbons at the steps, red lanterns under the eaves, a dark open hall inside, stone steps in the lower third, every wall panel, lintel and gable is completely blank and smooth, two carved gray-white stone dragon pillars clearly visible in front of two gold carved door panels, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam, rainy night, wet ground reflections, glowing magenta and cyan neon tubes bent into abstract geometric shapes, smooth plain glowing neon panels, holographic haze, dark blue sky, clean dark outlines, vertical game background",
+  "seed": 8501,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_A.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "cyberpunk"
+ },
+ {
+  "name": "scene_matsu_A_daopunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, Daoist punk fantasy, front of a Taiwanese Mazu temple three-bay entrance hall in Tainan, red wooden pillars and two carved gray-white stone dragon pillars in front of gold carved door panels, double-eave roof with swallowtail ridge ends, colorful porcelain-shard dragons along the ridge, orange-pink roof tiles with blue trim, a pair of stone lions with red ribbons at the steps, red lanterns under the eaves, a dark open hall inside, stone steps in the lower third, every wall panel, lintel and gable is completely blank and smooth, two carved gray-white stone dragon pillars clearly visible in front of two gold carved door panels, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam, glowing jade and cinnabar light, floating smooth plain pale-yellow paper strips, bagua octagon geometry glowing in the sky, incense smoke turning into luminous circuit lines, misty teal dusk, clean dark outlines, vertical game background",
+  "seed": 8502,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_A.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "daopunk"
+ },
+ {
+  "name": "scene_matsu_A_tainanpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, Tainan-punk retro-future night scene, front of a Taiwanese Mazu temple three-bay entrance hall in Tainan, red wooden pillars and two carved gray-white stone dragon pillars in front of gold carved door panels, double-eave roof with swallowtail ridge ends, colorful porcelain-shard dragons along the ridge, orange-pink roof tiles with blue trim, a pair of stone lions with red ribbons at the steps, red lanterns under the eaves, a dark open hall inside, stone steps in the lower third, every wall panel, lintel and gable is completely blank and smooth, two carved gray-white stone dragon pillars clearly visible in front of two gold carved door panels, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam, warm humid summer night with a deep indigo and magenta sky, thin cyan LED light strips tracing the roof edges and eaves, smooth plain red paper lanterns glowing with circuit-line patterns, smooth plain glowing neon panels in betel-nut-stand pink and green, teal and orange scooter light trails, wet reflective ground, clean dark outlines, vertical game background",
+  "seed": 8503,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_A.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "tainanpunk"
+ },
+ {
+  "name": "scene_hayashi_B_cyberpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, cyberpunk night scene, close view of the upper floors of a Japanese colonial era department store in Tainan Taiwan, golden-brown grooved brick wall, round porthole windows in a vertical row, a white balustrade balcony with round holes at the top floor, a stepped parapet roofline, tall white-framed windows, every wall panel, lintel and gable is completely blank and smooth, the balcony railing has exactly five simple plain round holes in a row, the large curved bay on the second floor is divided by a row of narrow tall vertical windows with white frames, white stone balustrade balcony with many small round balusters, rainy night, wet ground reflections, glowing magenta and cyan neon tubes bent into abstract geometric shapes, smooth plain glowing neon panels, holographic haze, dark blue sky, clean dark outlines, vertical game background",
+  "seed": 8504,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_hayashi_B.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "cyberpunk"
+ }
+]

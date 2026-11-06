@@ -11,6 +11,6 @@ PROTECT="${PROTECT_LIST:-stone lion. lion statue. dragon pillar}" python -X utf8
 P2=""; for n in $NAMES; do [ -f "$R/${n}_dt.png" ] && P2="$P2 $R/${n}_dt.png"; done
 PROTECT="${PROTECT_LIST:-stone lion. lion statue. dragon pillar}" python -X utf8 detext_v2.py $P2 2>&1 | grep -v "^INFO"; cp "$R/detext_v2_log.json" "${L}_dt2.json"
 for n in $NAMES; do
-  [ -f "$R/${n}_dt_dt.png" ] && python -X utf8 pixelize_v2.py scene "$n" "$R/${n}_dt_dt.png" auto 48 2>/dev/null | tail -1
+  [ -f "$R/${n}_dt_dt.png" ] && python -X utf8 pixelize_v2.py scene "$n" "$R/${n}_dt_dt.png" auto ${PIX_COLORS:-48} 2>/dev/null | tail -1
 done
 echo BATCH_DONE

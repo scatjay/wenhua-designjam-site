@@ -153,112 +153,134 @@ window.WALK_ASSETS = {
   "s1": {
    "name": "州知事的祕書",
    "file": "art/npc_pixel16/NN_12_governor_secretary_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "12"
   },
   "s2": {
    "name": "檔案室管理員",
    "file": "art/npc_pixel16/NN_14_archivist_128.png",
-   "status": "unqa"
+   "status": "reject",
+   "nn": "14"
   },
   "s5": {
    "name": "三郊的老帳房",
    "file": "art/npc_pixel16/NN_17_old_accountant_128.png",
-   "status": "unqa"
+   "status": "human",
+   "nn": "17"
   },
   "s6": {
    "name": "搬廟那年的木匠學徒",
    "file": "art/npc_pixel16/NN_18_carpenter_apprentice_128.png",
-   "status": "unqa"
+   "status": "reject",
+   "nn": "18"
   },
   "c1": {
    "name": "校史館的志工學姊",
    "file": "art/npc_pixel16/NN_01_volunteer_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "01"
   },
   "c2": {
    "name": "西淮館的夜班管理員",
    "file": "art/npc_pixel16/NN_02_night_guard_128.png",
-   "status": "unqa"
+   "status": "human",
+   "nn": "02"
   },
   "c3": {
    "name": "銅像旁的老園丁",
    "file": "art/npc_pixel16/NN_03_gardener_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "03"
   },
   "x3": {
    "name": "還書櫃旁的夜讀生",
    "file": "art/npc_pixel16/NN_06_night_reader_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "06"
   },
   "x4": {
    "name": "夜跑的學長",
    "file": "art/npc_pixel16/NN_07_night_runner_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "07"
   },
   "x5": {
    "name": "水邊的看守者（虛構角色）",
    "file": "art/npc_pixel16/NN_08_water_watcher_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "08"
   },
   "x6": {
    "name": "榕樹下的老先生",
    "file": "art/npc_pixel16/NN_09_banyan_elder_128.png",
-   "status": "unqa"
+   "status": "human",
+   "nn": "09"
   },
   "c4": {
    "name": "畢不了學姊",
    "file": "art/npc_pixel16/NN_05_senior_student_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "05"
   },
   "ws": {
    "name": "銅像旁的老園丁（夜班）",
    "file": "art/npc_pixel16/NN_03_gardener_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "03"
   },
   "w1": {
    "name": "守夜的警衛伯伯",
    "file": "art/npc_pixel16/NN_10_guard_uncle_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "10"
   },
   "w2": {
    "name": "涼亭裡的等車阿姨",
    "file": "art/npc_pixel16/NN_11_aunt_waiting_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "11"
   },
   "w3": {
    "name": "畢不了學姊（廟前）",
    "file": "art/npc_pixel16/NN_05_senior_student_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "05"
   },
   "w4": {
    "name": "畢不了學姊",
    "file": "art/npc_pixel16/NN_05_senior_student_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "05"
   },
   "t2": {
    "name": "圓環旁的路牌檢查員",
    "file": "art/npc_pixel16/NN_13_signpost_inspector_128.png",
-   "status": "unqa"
+   "status": "reject",
+   "nn": "13"
   },
   "t4": {
    "name": "看守校舍的老工友",
    "file": "art/npc_pixel16/NN_15_school_janitor_128.png",
-   "status": "unqa"
+   "status": "reject",
+   "nn": "15"
   },
   "t5": {
    "name": "電梯學徒（時安局編外）",
    "file": "art/npc_pixel16/NN_16_elevator_apprentice_128.png",
-   "status": "unqa"
+   "status": "human",
+   "nn": "16"
   },
   "t8": {
    "name": "夜間守門人",
    "file": "art/npc_pixel16/NN_19_night_gatekeeper_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "19"
   },
   "t9": {
    "name": "老圖書館員",
    "file": "art/npc_pixel16/NN_20_old_librarian_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "20"
   },
   "tx": {
    "name": "大廳裡的琴友",
@@ -268,16 +290,19 @@ window.WALK_ASSETS = {
   "tf": {
    "name": "時安局局長（廣播）",
    "file": "art/npc_pixel16/NN_04_chief_128.png",
-   "status": "unqa"
+   "status": "human",
+   "nn": "04"
   },
   "c0": {
    "name": "公布欄上的便條（畢不了學姊）",
    "file": "art/npc_pixel16/NN_05_senior_student_128.png",
-   "status": "unqa"
+   "status": "pass",
+   "nn": "05"
   }
  },
  "agents": {
-  "note": "程式 js/walk_agents.js 已組路徑 art/agents16/NN_<en>_128.png；只要把 js/walk.js:1350 的 AG_IMG_ON 改 true。舊版 16 張未品檢（臺灣人長相未驗）"
+  "note": "[品檢 QA_agents16_old：1 過 8 退回 7 需人眼；母線裁示 AG_IMG_ON 維持 false，只開品檢過的替補] 程式 js/walk_agents.js 已組路徑 art/agents16/NN_<en>_128.png；只要把 js/walk.js:1350 的 AG_IMG_ON 改 true。舊版 16 張未品檢（臺灣人長相未驗）",
+  "ship_recommend": false
  },
  "stickers": {
   "ach": {

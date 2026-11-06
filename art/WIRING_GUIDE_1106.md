@@ -5,7 +5,7 @@
 - `art/walk_assets.js`：同一份內容包成 `window.WALK_ASSETS`，直接 `<script>` 載入即可，不用自己 fetch JSON。
 - 重新產生：`python -X utf8 art/real_ref_pilot/_samples_1103d/_work/build_manifest.py`（成品換版本時跑一次）。
 
-status 怎麼讀：`pass` 品檢過；`human` 需您肉眼；`provisional` 補圖後未複檢；`unqa` 沒品檢紀錄（NPC 20 張、探員 16 張都是）；`missing` 沒有可用成品（s2 警察署、tx 車站）。上線版建議只接 `pass`，`human` 的您看一眼再決定；程式端用「有檔就顯示、沒檔退回 emoji」最穩。
+status 怎麼讀：`pass` 品檢過（**只有這個可以上線**）；`human` 需您肉眼；`provisional` 補圖後未複檢；`reject` 品檢退回、待重生；`unqa` 沒品檢紀錄；`missing` 沒有可用成品（s2 警察署、tx 車站）。每份成品的完整「可上線／不可上線」清單由 `build_manifest.py` 產生到 `art/real_ref_pilot/_samples_1103d/SHIP_LIST.md`。程式端請用「`status === 'pass'` 且有檔就顯示、否則退回 emoji」，這樣之後重生的圖品檢過、manifest 換版本，您的程式不用動。
 
 ## 要改的四處（行號以 2026-11-06 的 master 為準）
 

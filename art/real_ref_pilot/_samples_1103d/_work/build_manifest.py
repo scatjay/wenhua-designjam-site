@@ -72,7 +72,17 @@ for js in ['js/walk_route_tw.js']:
 NPCS.pop('final', None)
 if 'c0' not in NPCS:
     NPCS['c0'] = {'name': '公布欄上的便條（畢不了學姊）', 'file': find_npc('畢不了學姊'), 'status': 'unqa'}
-AGENTS_NOTE = '程式 js/walk_agents.js 已組路徑 art/agents16/NN_<en>_128.png；只要把 js/walk.js:1350 的 AG_IMG_ON 改 true。舊版 16 張未品檢（臺灣人長相未驗）'
+# NPC 品檢結論（QA_npc20.md，2026-11-06）；重生品檢過後在此改狀態
+QA_NPC = {'12':'pass','03':'pass','01':'pass','05':'pass','06':'pass','07':'pass','10':'pass','11':'pass','20':'pass','19':'pass','08':'pass',
+          '14':'reject','18':'reject','13':'reject','15':'reject','17':'human','02':'human','04':'human','16':'human','09':'human'}
+for v in NPCS.values():
+    if v['file']:
+        mm = re.search(r'NN_(\d\d)_', v['file'])
+        if mm and mm.group(1) in QA_NPC:
+            v['status'] = QA_NPC[mm.group(1)]
+            v['nn'] = mm.group(1)
+
+AGENTS_NOTE = '[品檢 QA_agents16_old：1 過 8 退回 7 需人眼；母線裁示 AG_IMG_ON 維持 false，只開品檢過的替補] 程式 js/walk_agents.js 已組路徑 art/agents16/NN_<en>_128.png；只要把 js/walk.js:1350 的 AG_IMG_ON 改 true。舊版 16 張未品檢（臺灣人長相未驗）'
 STICKERS = {
     'ach': {'split': D + 'stk_seal_split_r4_128.png', 'gather': D + 'stk_seal_gather_r4_128.png', 'roles': D + 'stk_seal_roles_r3_128.png'},
     'ach_status': {'split': 'provisional', 'gather': 'pass', 'roles': 'pass'},
@@ -90,7 +100,7 @@ man = {
     'note': '路徑相對站台根目錄。status：pass＝品檢過；human＝需楊老師肉眼；provisional＝補圖後未複檢；unqa＝沒有品檢紀錄；missing＝沒有可用成品。',
     'sizes': {'scene': [180, 320], 'npc': [128, 128], 'agent': [128, 128], 'sticker': [128, 128]},
     'scenes': SCENES, 'scenes_night_tainanpunk': STYLE_NIGHT,
-    'npcs_by_stop': NPCS, 'agents': {'note': AGENTS_NOTE},
+    'npcs_by_stop': NPCS, 'agents': {'note': AGENTS_NOTE, 'ship_recommend': False},
     'stickers': STICKERS,
     'credits': 'CC BY 參考照的署名見 art/CREDITS.md「v2 製程成品對應」；上線頁面要有一行署名（結算頁或 walk_intro）。',
 }
@@ -100,3 +110,17 @@ js = '/* 由 build_manifest.py 產生；接線時 <script src="art/walk_assets.j
 open(ROOT / 'art/walk_assets.js', 'w', encoding='utf-8', newline='').write(js)
 print('scenes', sum(1 for v in SCENES.values() if v['file']), '/', len(SCENES))
 print('npcs', {k: (v['name'], os.path.basename(v['file']) if v['file'] else None) for k, v in NPCS.items()})
+
+# 可上線／不可上線清單（只有 status==pass 算可上線）
+def line(k, v): return '- %s：%s（%s）%s' % (k, v.get('name') or v.get('file') or '無', v['status'], v.get('note', ''))
+ok, ng = [], []
+for k, v in SCENES.items(): (ok if v['status'] == 'pass' else ng).append('場景 ' + line(k, v))
+for k, v in NPCS.items(): (ok if v['status'] == 'pass' else ng).append('NPC ' + line(k, v))
+for k, v in STICKERS['ach_status'].items(): (ok if v == 'pass' else ng).append('成就章 %s（%s）' % (k, v))
+for k, v in STICKERS['footprint_status'].items(): (ok if v == 'pass' else ng).append('足跡 %s（%s）' % (k, v))
+NL = chr(10)
+md = ('# 走讀美術 可上線／不可上線清單（自動由 build_manifest.py 產生）' + NL + NL
+      + '只有品檢「過」才列可上線；human＝需楊老師肉眼，reject＝退回待重生，unqa＝沒品檢，missing＝沒成品。AG_IMG_ON 建議：false（探員替補品檢過幾位再說）。' + NL + NL
+      + '## 可上線（%d）' % len(ok) + NL + NL.join(ok) + NL + NL + '## 不可上線（%d）' % len(ng) + NL + NL.join(ng) + NL)
+open(ROOT / D / 'SHIP_LIST.md', 'w', encoding='utf-8', newline='').write(md)
+print('ship ok', len(ok), 'not', len(ng))

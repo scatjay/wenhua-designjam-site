@@ -1,0 +1,38 @@
+[
+ {
+  "name": "scene_hayashi_B_tainanpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, Tainan-punk retro-future night scene, close view of the upper floors of a Japanese colonial era department store in Tainan Taiwan, golden-brown grooved brick wall, round porthole windows in a vertical row, a white balustrade balcony with round holes at the top floor, a stepped parapet roofline, tall white-framed windows, clean dark outlines, soft shading, vertical game background, every wall panel, lintel and gable is completely blank and smooth, the balcony railing has exactly five simple plain round holes in a row, the large curved bay on the second floor is divided by a row of narrow tall vertical windows with white frames, white stone balustrade balcony with many small round balusters, warm humid summer night with a deep indigo and magenta sky, thin cyan LED light strips tracing the roof edges and eaves, smooth plain red paper lanterns glowing with circuit-line patterns, smooth plain glowing neon panels in betel-nut-stand pink and green, teal and orange scooter light trails, wet reflective ground, clean dark outlines, vertical game background",
+  "seed": 8601,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_hayashi_B.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "tainanpunk"
+ },
+ {
+  "name": "scene_matsu_B_tainanpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, Tainan-punk retro-future night scene, close view of a Taiwanese temple front hall in Tainan, a carved gray-white stone dragon pillar on each side, red pillars, gold carved door panels with blue borders, red hanging lanterns, orange-pink roof tiles with swallowtail eaves above, stone lion heads at the bottom corners, clean dark outlines, soft shading, vertical game background, every wall panel, lintel and gable is completely blank and smooth, the hall interior only dark and empty, the entrance doors are two plain golden door panels with a thin center seam, warm humid summer night with a deep indigo and magenta sky, thin cyan LED light strips tracing the roof edges and eaves, smooth plain red paper lanterns glowing with circuit-line patterns, smooth plain glowing neon panels in betel-nut-stand pink and green, teal and orange scooter light trails, wet reflective ground, clean dark outlines, vertical game background",
+  "seed": 8602,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_matsu_B.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "tainanpunk"
+ },
+ {
+  "name": "scene_hall_B_aerial_tainanpunk",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, Tainan-punk retro-future night scene, bird eye view of a Japanese colonial era hall complex in Tainan Taiwan, a big gray-tiled hipped roof with several small triangular dormer windows, a front block with a green folded roof and red brick walls, a small old wooden house with a gray tile roof at the side, big green trees, a red-and-pink brick paved path, plain white rooftops of the neighborhood around, clean dark outlines, soft shading, vertical game background, a strongly visible green folded roof on the front block, an old small wooden house with gray tiles beside it, warm humid summer night with a deep indigo and magenta sky, thin cyan LED light strips tracing the roof edges and eaves, smooth plain red paper lanterns glowing with circuit-line patterns, smooth plain glowing neon panels in betel-nut-stand pink and green, teal and orange scooter light trails, wet reflective ground, clean dark outlines, vertical game background",
+  "seed": 8603,
+  "w": 576,
+  "h": 1024,
+  "photo": "s1103d_r2_hall_B.png",
+  "redux": 0,
+  "cn": 0.65,
+  "cn_end": 0.7,
+  "style": "tainanpunk"
+ }
+]

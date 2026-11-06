@@ -15,7 +15,50 @@
 import sys, json, time, shutil, os, subprocess, threading
 sys.path.insert(0, 'E:/Downloads/comfy-gen'); sys.path.insert(0, 'E:/Downloads/mcp-governance/tools')
 import comfy_core as cc, mem_watchdog as W
+# 11-06 楊老師：「這線的 CPU 不要用太多，要留資源給各線」⇒ 執行緒、優先權、核心數三道節流（環境變數可調）
+os.environ.setdefault('OMP_NUM_THREADS', os.environ.get('WALK_THREADS', '4'))
+os.environ.setdefault('MKL_NUM_THREADS', os.environ.get('WALK_THREADS', '4'))
+os.environ.setdefault('OPENBLAS_NUM_THREADS', os.environ.get('WALK_THREADS', '4'))
 import numpy as np, cv2
+cv2.setNumThreads(int(os.environ.get('WALK_THREADS', '4')))
+import psutil
+WALK_CORES = int(os.environ.get('WALK_CORES', '4'))      # 只准用最後 N 個邏輯核心（16 核機器上＝25%）
+
+
+SERVER_PIDS = []
+
+
+def _fast_server_procs():
+    """取代 comfy_core.server_procs：原版對全機 1100+ 行程各讀命令列與記憶體，一次約 17 秒 CPU（11-06 實測）；
+    只掃 python.exe 名稱也要約 5 秒。這版改用「誰在監聽 ComfyUI 的埠」查 PID（約 0.02 秒），再只驗證那一個行程的命令列。"""
+    out = []
+    try:
+        pids = {x.pid for x in psutil.net_connections(kind='tcp') if x.status == 'LISTEN' and x.laddr.port == cc.INSTALL['port'] and x.pid}
+    except Exception:
+        pids = set()
+    for pid in pids:
+        try:
+            p = psutil.Process(pid)
+            if any(x.replace(chr(92), '/').endswith(cc.INSTALL['main_suffix']) for x in (p.cmdline() or [])):
+                out.append(p)
+        except Exception:
+            pass
+    return out
+
+
+cc.server_procs = _fast_server_procs      # comfy_core 內的 stop_server、lease 等也會用到這個名稱
+
+
+def throttle(procs=None):
+    """本程序與 ComfyUI 伺服器：降到低於正常優先權、限制核心數。"""
+    allc = list(range(psutil.cpu_count()))
+    use = allc[-WALK_CORES:] if WALK_CORES < len(allc) else allc
+    for p in ([psutil.Process()] + list(procs or [])):
+        try:
+            p.nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+            p.cpu_affinity(use)
+        except Exception:
+            pass
 from PIL import Image
 from pathlib import Path
 
@@ -74,6 +117,16 @@ def wf_gen(j, photo_clean, prefix):
                                                                              'strength': j['cn'], 'start_percent': 0.0, 'end_percent': j.get('cn_end', 0.7)}},
                   '35': {'class_type': 'SaveImage', 'inputs': {'images': ['32', 0], 'filename_prefix': 'v2depth/' + prefix}}})
         pos, neg = ['34', 0], ['34', 1]
+    # 第二條 ControlNet：canny 邊線（11-06 加；工單 cn2＞0 才啟用，cn2_end 預設 0.6；深度保體塊、canny 保細節線條）
+    if photo_clean and j.get('cn2', 0) > 0:
+        w.update({'40': {'class_type': 'LoadImage', 'inputs': {'image': photo_clean}},
+                  '41': {'class_type': 'CannyEdgePreprocessor', 'inputs': {'image': ['40', 0], 'low_threshold': j.get('canny_lo', 80), 'high_threshold': j.get('canny_hi', 180), 'resolution': 1024}},
+                  '42': {'class_type': 'ImageScale', 'inputs': {'image': ['41', 0], 'upscale_method': 'bilinear', 'width': j['w'], 'height': j['h'], 'crop': 'center'}},
+                  '43': {'class_type': 'ControlNetLoader', 'inputs': {'control_net_name': 'flux-canny-controlnet-v3.safetensors'}},
+                  '44': {'class_type': 'ControlNetApplyAdvanced', 'inputs': {'positive': pos, 'negative': neg, 'control_net': ['43', 0], 'image': ['42', 0],
+                                                                             'strength': j['cn2'], 'start_percent': 0.0, 'end_percent': j.get('cn2_end', 0.6)}},
+                  '45': {'class_type': 'SaveImage', 'inputs': {'images': ['42', 0], 'filename_prefix': 'v2depth/canny_' + prefix}}})
+        pos, neg = ['44', 0], ['44', 1]
     w['7']['inputs']['positive'] = pos
     w['7']['inputs']['negative'] = neg
     return w
@@ -142,6 +195,9 @@ def boot(srv):
         assert cc.start_server(srv)
         lr = lease('v2batch', os.environ.get('EST_GB', '30'))
         if lr and '✋' not in lr:
+            sp = cc.server_procs()                 # 全機掃描很吃 CPU，只在開機時做一次，其餘靠快取的 PID
+            SERVER_PIDS[:] = [q.pid for q in sp]
+            throttle(sp)
             return round(time.time() - tw)
         print('LEASE_REFUSED', (lr or 'no server proc').strip()[:160], flush=True)
         cc.stop_server()
@@ -159,15 +215,16 @@ if __name__ == '__main__':
         while not stop.is_set():
             c, l = W.perf()
             peak['commit_gb'] = max(peak['commit_gb'], c / 2**30)
-            if c / l >= ABORT and cc.server_procs():
+            if c / l >= ABORT and SERVER_PIDS:
                 peak['self_abort'] = round(c / l, 3)
                 cc.stop_server()
-            for p in cc.server_procs():
+                SERVER_PIDS[:] = []
+            for pid in list(SERVER_PIDS):
                 try:
-                    peak['proc_gb'] = max(peak['proc_gb'], p.memory_info().rss / 2**30)
+                    peak['proc_gb'] = max(peak['proc_gb'], psutil.Process(pid).memory_info().rss / 2**30)
                 except Exception:
-                    pass
-            time.sleep(1)
+                    SERVER_PIDS.remove(pid)
+            time.sleep(10)
 
     threading.Thread(target=samp, daemon=True).start()
     srv = str(RAW / 'server_v2.log')

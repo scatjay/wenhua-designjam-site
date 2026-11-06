@@ -112,3 +112,9 @@
 - 三路盤點（程式引用／成品與品檢／repo 與素材）綜合成 `ART_PLAN_1106.md`；研究報告 `REPO_ASSET_RESEARCH_1106.md`。
 - 關鍵事實：遊戲目前載入外部美術 0 張（`AG_IMG_ON=false`，場景與 NPC 頭像皆未接線）；正式 7 站 5 站有過版、警察署缺、靈祐宮待定；道具無 32 正式檔；小精靈與家具走程式繪製。
 - 楊老師裁示清單見計畫 §7（第一件：接線由誰做）。
+
+## 2026-11-06 21:30 資源節流（楊老師：「這線的 CPU 不要用太多，要留資源給各線」）
+- 查出 `comfy_core.server_procs()` 一次掃全機約 1167 個行程要 17 秒 CPU；我的取樣迴圈幾乎一直在掃，單獨吃一整顆核心。pipe_v2 改以「監聽埠」查伺服器 PID（0.016 秒），取樣迴圈不再掃。
+- 加節流：OMP／MKL 執行緒 4、優先權 BELOW_NORMAL、限制最後 4 個邏輯核心（env: WALK_THREADS、WALK_CORES）。出圖期間的實際占用待量。
+- 開機等待線 WAIT_GB 預設改建議 58（全機提交量 77 GB 時不啟動伺服器）；批次最多等 40 分鐘。
+- 新：`pipe_v2.py` 第二條 canny ControlNet（工單 cn2／cn2_end）、`prep_police_v2.py`（POL2 原照→9:16 畫布，只取結構）、`jobs_v2_police.json`。

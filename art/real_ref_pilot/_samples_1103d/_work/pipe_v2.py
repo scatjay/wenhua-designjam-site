@@ -148,6 +148,28 @@ def run(wf, name, timeout=1500):
 _CLEAN = {}
 
 
+def scan_text(raw_path, name):
+    """出圖後的文字偵測（只記錄、不修圖）：Florence-2-base 片語定位 text／number／badge／patch／label，與純 OCR 聯集。
+    回傳 {'n': 框數, 'pct': 遮罩占畫面百分比, 'boxes': [(x,y,w,h,pct)…]}；>15% 的框視為誤判整張，丟掉。
+    11-06 母線要求：14 號探員口袋有像「25」的字形，角落與衣物文字要每批都查。"""
+    fn = 'v2scan_' + name + '.png'
+    shutil.copy(raw_path, IN / fn)
+    boxes = []
+    union = None
+    for words in ['text. number. letters. badge. patch. label', '']:
+        h, _ = run(wf_mask(fn, words), name + '_scan', 300)
+        for im in outputs(h):
+            a = np.array(Image.open(D / 'output' / im.get('subfolder', '') / im['filename']).convert('L'))
+            m = (a > 127).astype(np.uint8)
+            k, lab, st, _ = cv2.connectedComponentsWithStats(m)
+            for i in range(1, k):
+                pct = st[i][4] / m.size * 100
+                if pct <= 15:
+                    boxes.append((int(st[i][0]), int(st[i][1]), int(st[i][2]), int(st[i][3]), round(float(pct), 2)))
+                    union = m if union is None else (union | m)
+    return {'n': len(boxes), 'pct': round(float(union.mean()) * 100, 2) if union is not None else 0.0, 'boxes': boxes[:20]}
+
+
 def clean_photo(j):
     """去字：Florence 遮罩（OCR 與片語定位聯集）膨脹後 cv2.inpaint；同一張照片只做一次。回傳（去字後檔名, 秒, 遮罩占比%）。"""
     key = (j['photo'], j.get('notext_words', DEFAULT_WORDS))
@@ -252,6 +274,11 @@ if __name__ == '__main__':
                     if 'v2depth' in d.get('subfolder', ''):
                         shutil.copy(D / 'output' / d['subfolder'] / d['filename'], DBG / (j['name'] + '_depth.png'))
                 r['raw'] = str(RAW / (j['name'] + '.png'))
+                if os.environ.get('TEXTSCAN'):
+                    try:
+                        r['text_scan'] = scan_text(r['raw'], j['name'])
+                    except Exception as e2:
+                        r['text_scan'] = {'error': str(e2)[:200]}
             except Exception as e:
                 r['error'] = str(e)[:900]
                 if not cc.server_up():

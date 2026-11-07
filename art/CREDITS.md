@@ -5,142 +5,142 @@
 
 規則（ART_DECISIONS 第 4 條）：CC BY-SA 只當看形狀的參考，不做圖生圖、不拼進成品；CC0／公有領域可直接當錨點；CC BY 當錨點時成品需署名。
 
-| 分類 | 核准檔 | 編號／名稱 | 項目 | 授權 | 作者 | 來源頁 |
-|---|---|---|---|---|---|---|
-| BY-SA（只當形狀參考，不進成品） | APPROVED.json | police_gable | scene | CC BY-SA 4.0（SHCat）；只當形狀參考 | — | https://commons.wikimedia.org/wiki/File:Former_Tainan_Police_Department_Gable.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED.json | police_wall | scene | CC BY-SA 4.0（Koika）；只當形狀參考 | — | https://commons.wikimedia.org/wiki/File:Former_Tainan_Police_Department_Wall.JPG |
-| BY-SA（只當形狀參考，不進成品） | APPROVED.json | tang_park_2021 | scene | CC BY-SA 4.0；只當樹與圓環幾何 | — | https://commons.wikimedia.org/wiki/File:2021%E5%B9%B4%E7%9A%84%E6%B9%AF%E5%BE%B7%E7%AB%A0%E7%B4%80%E5%BF%B5%E5%85%AC%E5%9C%92.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | A02 |  | CC BY-SA 3.0 | Herman Gunawan, Bangka, Indonesia. | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | B01 |  | CC BY-SA 3.0 | Koika | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | B02 |  | CC BY-SA 3.0 | Foxy Who \(^∀^)/ | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | B03 |  | CC BY-SA 4.0 | Mr Setson | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | C02 |  | CC BY-SA 4.0 | Art Graphique &amp; Patrimoine | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | C03 |  | CC BY-SA 3.0 | John Cummings | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | D01 |  | CC BY-SA 4.0 | Just plain Bill | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | D02 |  | CC BY-SA 4.0 | DPLapic | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | E02 |  | CC BY-SA 4.0 | User: (WT-shared) Shoestring at  wts wikivoyage | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | F01 |  | CC BY-SA 3.0 | Carptrash (talk) | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | G01 |  | CC BY-SA 4.0 | Dquai | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | G02 |  | CC BY-SA 4.0 | 李家宇 | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | H01 |  | CC BY-SA 3.0 | Pbdragonwang | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | L01 |  | CC BY-SA 4.0 | Ivan soon 22 | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R07 | 懷錶 | CC BY-SA 3.0 | Isabelle Grosjean ZA | https://commons.wikimedia.org/wiki/File:MontreGousset001.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R08 | 懷錶 | CC BY-SA 4.0 | Ken Heaton | https://commons.wikimedia.org/wiki/File:1919_Elgin_National_Watch_Company_USA.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R13 | 電梯按鈕 | CC BY-SA 3.0 | Pil56 | https://commons.wikimedia.org/wiki/File:Mit-old-elevator-panel.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R15 | 面磚 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File:%E4%BF%AE%E5%BE%A9%E5%BE%8C%E7%9A%84%E5%8E%9F%E8%87%BA%E5%8D%97%E8%AD%A6%E5%AF%9F%E7%BD%B2.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R16 | 面磚 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File:2021%E5%B9%B410%E6%9C%88%E5%8F%B0%E5%8D%97%E5%B7%9E%E6%9C%83.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R20 | 掃描儀 | CC BY-SA 4.0 | FedericaGaspari | https://commons.wikimedia.org/wiki/File:Terrestrial_Laser_Scanning_of_a_bridge.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | HAL2 | 公會堂 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%85%AC%E6%9C%83%E5%A0%82%E7%AB%8B%E9%9D%A2%E7%89%B9%E5%AF%AB.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | LIN1 | 靈祐宮 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E9%96%8B%E5%9F%BA%E9%9D%88%E7%A5%90%E5%AE%AE%E4%B8%89%E5%B7%9D%E9%96%80.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | LIN2 | 靈祐宮 | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File%3A%E9%96%8B%E5%9F%BA%E9%9D%88%E7%A5%90%E5%AE%AE%E8%BD%89%E5%90%91%E7%97%95%E8%B7%A1.JPG |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | POL1 | 警察署 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E4%BF%AE%E5%BE%A9%E5%BE%8C%E7%9A%84%E5%8E%9F%E8%87%BA%E5%8D%97%E8%AD%A6%E5%AF%9F%E7%BD%B2.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | TWL1 | 台文館州廳 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%B7%9E%E5%BB%B3%E5%A1%94%E6%A8%93%E5%8F%8A%E9%83%A8%E5%88%86%E7%AB%8B%E9%9D%A2.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | TWL4 | 台文館州會 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A2021%E5%B9%B410%E6%9C%88%E5%8F%B0%E5%8D%97%E5%B7%9E%E6%9C%83.jpg |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | TWL5 | 台文館州會天橋 | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File%3A%E5%8E%9F%E8%87%BA%E5%8D%97%E5%B7%9E%E6%9C%83%E8%88%87%E5%B7%9E%E5%BB%B3%E9%96%93%E7%9A%84%E5%A4%A9%E6%A9%8B.JPG |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | A1 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | J1 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | J2 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | L1 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | L4 |  | CC BY-SA 2.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | N3 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P04 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P05 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P1 |  | CC BY-SA 2.0（檔案頁讀到 Flickr 審查者已確認授權） | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P11 |  | CC BY-SA 3.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P12 |  | CC BY-SA 3.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P13 |  | CC BY-SA 2.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P15 |  | CC BY-SA 3.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P16 |  | CC BY-SA 3.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P18 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P2 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P25 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P28 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P3 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P31 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P34 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P36 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P37 |  | CC BY-SA 3.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P41 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P48 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | S1 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | S2 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | S3 |  | CC BY-SA 3.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | T2 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | T3 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | W1 |  | CC BY-SA 4.0 | — | — |
-| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | W2 |  | CC BY-SA 4.0 | — | — |
-| BY（成品要署名） | APPROVED.json | butokuden | scene | CC BY 2.0（xiquinhosilva） | — | https://commons.wikimedia.org/wiki/File:Tainan_Butokuden_2017-12-31.jpg |
-| BY（成品要署名） | APPROVED.json | fortune_stick_tube | prop | CC BY 3.0 tw | — | https://commons.wikimedia.org/wiki/File:%E8%98%87%E6%BE%B3%E5%B2%B3%E6%98%8E%E6%96%B0%E6%9D%91%E6%8B%9B%E5%AF%B6%E5%AE%AE%E5%8F%A4%E7%B1%A4%E7%AD%92.jpg |
-| BY（成品要署名） | APPROVED.json | grand_matsu | scene | CC BY 2.0（tomscoffin） | — | https://commons.wikimedia.org/wiki/File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg |
-| BY（成品要署名） | APPROVED.json | hayashi_lift | scene | CC BY 4.0（Wpcpey） | — | https://commons.wikimedia.org/wiki/File:Hayashi_Department_Store_Lift_2015.JPG |
-| BY（成品要署名） | APPROVED.json | patriotic_hall_01 | scene | CC BY 4.0（Chainwit.） | — | https://commons.wikimedia.org/wiki/File:Japanese_Patriotic_Women%27s_Association_Hall_-_Tainan_-_%E5%8F%B0%E5%8D%97%E6%84%9B%E5%9C%8B%E5%A9%A6%E4%BA%BA%E6%9C%83%E9%A4%A8_%282026%29_-_img_01.jpg |
-| BY（成品要署名） | APPROVED.json | patriotic_hall_02 | scene | CC BY 4.0（Chainwit.） | — | https://commons.wikimedia.org/wiki/File:Japanese_Patriotic_Women%27s_Association_Hall_-_Tainan_-_%E5%8F%B0%E5%8D%97%E6%84%9B%E5%9C%8B%E5%A9%A6%E4%BA%BA%E6%9C%83%E9%A4%A8_%282026%29_-_img_02.jpg |
-| BY（成品要署名） | APPROVED.json | patriotic_hall_03 | scene | CC BY 4.0（Chainwit.） | — | https://commons.wikimedia.org/wiki/File:Japanese_Patriotic_Women%27s_Association_Hall_-_Tainan_-_%E5%8F%B0%E5%8D%97%E6%84%9B%E5%9C%8B%E5%A9%A6%E4%BA%BA%E6%9C%83%E9%A4%A8_%282026%29_-_img_03.jpg |
-| BY（成品要署名） | APPROVED_1103_chargap.json | C01 |  | CC BY 2.0 | Creative Tools from Halmstad, Sweden | — |
-| BY（成品要署名） | APPROVED_1103_chargap.json | E03 |  | CC BY 2.0 | iesing from Tan Tsi noodles restaurant Du Siao Yue Danzai Mi | — |
-| BY（成品要署名） | APPROVED_1103_prop.json | R01 | 路牌 | CC BY 4.0 | Anas1712 | https://commons.wikimedia.org/wiki/File:Tainan_Center_Street_sign_20230514_170645_(cropped).jpg |
-| BY（成品要署名） | APPROVED_1103_prop.json | R02 | 路牌 | CC BY 2.0 | salagadoola | https://commons.wikimedia.org/wiki/File:Road_name_sign_of_Jinhua_Street_changing_20151017.jpg |
-| BY（成品要署名） | APPROVED_1103_prop.json | R06 | 羅盤 | CC BY 3.0 | Reptonix free Creative Commons licensed photos | https://commons.wikimedia.org/wiki/File:Chinese_compass_-_Lo_Pan,_World_Museum_Liverpool.jpg |
-| BY（成品要署名） | APPROVED_1103_prop.json | R11 | 鑼 | CC BY 3.0 | Dameon Hudson | https://commons.wikimedia.org/wiki/File:Ring_a_big_gong,_Lugang_Mazu_Temple_2009.jpg |
-| BY（成品要署名） | APPROVED_1103_prop.json | R12 | 鑼 | CC BY 3.0 tw | 創作者：王俊隆、何忠堂、徐仲淼、林烈旗。貢獻者：王俊隆、何忠堂、徐仲淼、林烈旗 | https://commons.wikimedia.org/wiki/File:%E5%87%9D%E7%B5%90%E7%9A%84%E9%91%BC%E9%9F%B3-%E9%8A%85%E5%BF%83%E5%90%8C%E5%BF%83-108-cra-cw-650-re-201912272107175e060082a61d80.jpg |
-| BY（成品要署名） | APPROVED_1103_prop.json | R14 | 電梯按鈕 | CC BY 2.0 | Yoshimasa Niwa from Tokyo, Japan | https://commons.wikimedia.org/wiki/File:Elevator_panel_with_no_13_(cropped).jpg |
-| BY（成品要署名） | APPROVED_1103_prop.json | R17 | 掃把 | CC BY 2.0 | J. Samuel Burner | https://commons.wikimedia.org/wiki/File:Chinese_broom_and_sweeping_tool.jpg |
-| BY（成品要署名） | APPROVED_1103_prop.json | R19 | 鑰匙 | CC BY 3.0 | Hjnitschke | https://commons.wikimedia.org/wiki/File:Key_(72103325).jpeg |
-| BY（成品要署名） | APPROVED_1103_scene.json | BUT2 | 武德殿 | CC BY 3.0 | lienyuan lee | https://commons.wikimedia.org/wiki/File%3A%E5%8F%B0%E5%8D%97%E6%AD%A6%E5%BE%B7%E6%AE%BF_Tainan_Wude_Hall_-_panoramio.jpg |
-| BY（成品要署名） | APPROVED_1103_scene.json | CHI1 | 赤崁樓 | CC BY 2.0 | eazytraveler | https://commons.wikimedia.org/wiki/File%3A2010-02-19_Chihkan_Tower.jpg |
-| BY（成品要署名） | APPROVED_1103_scene.json | CHI2 | 赤崁樓 | CC BY 2.0 | Rutger van der Maar | https://commons.wikimedia.org/wiki/File%3AChihkan_Tower_%28Fort_Provintia%29.jpg |
-| BY（成品要署名） | APPROVED_1103_scene.json | HAL1 | 公會堂 | CC BY 3.0 | 338km | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%85%AC%E6%9C%83%E5%A0%82_-_panoramio.jpg |
-| BY（成品要署名） | APPROVED_1103_scene.json | HAY1 | 林百貨 | CC BY 2.0 | Emily Jiang | https://commons.wikimedia.org/wiki/File%3AHayasi_Department_Store_at_the_intersection_of_Jhongjheng_Road_and_Jhongyi_Road.jpg |
-| BY（成品要署名） | APPROVED_1103_scene.json | POL2 | 警察署 | CC BY 2.0 | Jun | https://commons.wikimedia.org/wiki/File%3ATainan_Police_station.jpg |
-| BY（成品要署名） | APPROVED_1104_prop.json | R25 | 舊鑰匙 | CC BY 2.0 | Cindy Shebley | https://commons.wikimedia.org/wiki/File:Four_Skeleton_Keys_on_a_blue_background_(51865175725).jpg |
-| BY（成品要署名） | APPROVED_CAND_1029.json | J3 |  | CC BY 2.0 | — | — |
-| BY（成品要署名） | APPROVED_CAND_1029.json | L2 |  | CC BY 2.0 | — | — |
-| BY（成品要署名） | APPROVED_CAND_1029.json | L3 |  | CC BY 2.0 | — | — |
-| BY（成品要署名） | APPROVED_CAND_1029.json | P01 |  | CC BY 3.0 | — | — |
-| BY（成品要署名） | APPROVED_CAND_1029.json | P20 |  | CC BY 4.0 | — | — |
-| BY（成品要署名） | APPROVED_CAND_1029.json | P29 |  | CC BY 4.0 | — | — |
-| BY（成品要署名） | APPROVED_CAND_1029.json | P4 |  | CC BY 2.0 | — | — |
-| BY（成品要署名） | APPROVED_CAND_1029.json | S4 |  | CC BY 3.0 | — | — |
-| 免署名 | APPROVED.json | abacus_landbank | prop | CC0（丘崈） | — | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E7%81%A3%E5%9C%9F%E5%9C%B0%E9%8A%80%E8%A1%8C%E7%AE%97%E7%9B%A4.jpg |
-| 免署名 | APPROVED.json | bamboo_basket_nmth | prop | 臺史博 CC0（2003.019.0039.0002） | — | https://collections.culture.tw/files/11/JPG/200301900390002_P001.JPG |
-| 免署名 | APPROVED.json | barclay_1915 | portrait | Commons 標公有領域；1915 年書中（高） | — | https://commons.wikimedia.org/wiki/File:Thomasbarclaypre1923.jpg |
-| 免署名 | APPROVED.json | carpenter_box_nmth | prop | 臺史博 CC0（2001.001.0391.0001） | — | https://collections.culture.tw/files/11/JPG/200100103910001_P001.jpg |
-| 免署名 | APPROVED.json | eiraku_cho_1931 | street | Commons 標公有領域；1931 年寫真集（高） | — | https://commons.wikimedia.org/wiki/File:Eiraku-ch%C5%8D_of_Tainan.jpg |
-| 免署名 | APPROVED.json | fish_trap | prop | CC0（氏子） | — | https://commons.wikimedia.org/wiki/File:%E9%AD%9A%E7%B0%8D.jpg |
-| 免署名 | APPROVED.json | ledger_nmth | prop | 臺史博 CC0（2001.007.0002） | — | https://collections.culture.tw/files/11/JPG640/20010070002_I001.jpg |
-| 免署名 | APPROVED.json | liu_yongfu_1896 | portrait | Commons 標公有領域；1896 年紀念帖（高） | — | https://commons.wikimedia.org/wiki/File:%E5%8A%89%E6%B0%B8%E7%A6%8F.jpg |
-| 免署名 | APPROVED.json | rotary_phone | prop | CC0（氏子） | — | https://commons.wikimedia.org/wiki/File:%E8%BD%89%E7%9B%A4%E5%BC%8F%E9%9B%BB%E8%A9%B1.jpg |
-| 免署名 | APPROVED.json | tainan_station_front_1939 | street | Commons 標公有領域；1939 年會報（高） | — | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8D%97%E8%BB%8A%E7%AB%99%E5%89%8D.jpg |
-| 免署名 | APPROVED_1103_chargap.json | A01 |  | CC0 | Anna Frodesiak | — |
-| 免署名 | APPROVED_1103_chargap.json | D03 |  | CC0 | Chabie10 | — |
-| 免署名 | APPROVED_1103_chargap.json | E01 |  | Public domain | — | — |
-| 免署名 | APPROVED_1103_prop.json | R03 | 夾板 | Public domain | Evan-amos | https://commons.wikimedia.org/wiki/File:Wood-clipboard.jpg |
-| 免署名 | APPROVED_1103_prop.json | R04 | 捲尺 | Public domain | Evan-Amos | https://commons.wikimedia.org/wiki/File:Measuring-tape.jpg |
-| 免署名 | APPROVED_1103_prop.json | R05 | 羅盤 | CC0 | Hiart | https://commons.wikimedia.org/wiki/File:Feng_shui_compass_box_from_China,_lacquer_on_wood_and_brass,_20th_century.JPG |
-| 免署名 | APPROVED_1103_prop.json | R09 | 古文書 | Public domain | 桃園廳 | https://commons.wikimedia.org/wiki/File:%E5%8A%89%E6%B8%85%E6%B8%AF%E5%9C%9F%E5%9C%B0%E8%87%BA%E5%B8%B3%E8%AC%84%E6%9C%AC.jpg |
-| 免署名 | APPROVED_1103_prop.json | R10 | 古文書 | Public domain | Japanese Government | https://commons.wikimedia.org/wiki/File:1895_%E8%87%BA%E7%81%A3%E7%B8%BD%E7%9D%A3%E5%BA%9C%E9%97%9C%E6%96%BC%E6%94%AF%E9%82%A3%E4%BA%BA%E4%B8%8A%E9%99%B8%E6%A2%9D%E4%BE%8B%E5%85%AC%E6%96%87_Government_of_Taiwan%27s_Regulation_concerning_the_entry_of_Shina_persons.jpg |
-| 免署名 | APPROVED_1103_prop.json | R18 | 鑰匙 | CC0 | Brainy J | https://commons.wikimedia.org/wiki/File:Key_in_lockbox.jpg |
-| 免署名 | APPROVED_1103_prop.json | R21 | 掃描儀 | Public domain | courtesy photo | https://commons.wikimedia.org/wiki/File:Laser_scanning_advances_Team_Pete%27s_capabilities_140616-F-O3755-046.jpg |
-| 免署名 | APPROVED_1103_prop.json | R22 | 抹刀 | Public domain | Tiesse at Italian Wikipedia | https://commons.wikimedia.org/wiki/File:Frattazzo_spugnoso_e_Cazzuola.jpg |
-| 免署名 | APPROVED_1103_prop.json | R23 | 灰牆 | CC0 | Chabie10 | https://commons.wikimedia.org/wiki/File:A_construction_worker_plastering_a_house_01.jpg |
-| 免署名 | APPROVED_1103_scene.json | BUT1 | 武德殿 | Public domain | The original uploader was Encolpius at Chinese Wikipedia. | https://commons.wikimedia.org/wiki/File%3A%E5%8F%B0%E5%8D%97%E6%AD%A6%E5%BE%B7%E6%AE%BF.JPG |
-| 免署名 | APPROVED_1103_scene.json | BUT3 | 武德殿 | Public domain | 不詳 | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E6%AD%A6%E5%BE%B7%E6%AE%BF%E8%88%8A%E8%B2%8C.jpg |
-| 免署名 | APPROVED_1103_scene.json | HAY2 | 林百貨 | CC0 | 陳錦昆 | https://commons.wikimedia.org/wiki/File%3A%E6%9E%97%E7%99%BE%E8%B2%A8%E9%A0%82%E6%A8%93%E7%A5%9E%E7%A4%BE%E8%88%87%E9%9B%BB%E6%A2%AF%E4%BA%95.jpg |
-| 免署名 | APPROVED_1103_scene.json | HAY3 | 林百貨 | Public domain | 台南市 | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%B8%82%E6%9C%AB%E5%BB%A3%E7%94%BA%E9%80%9A.jpg |
-| 免署名 | APPROVED_1103_scene.json | TWL2 | 台文館州廳 | CC0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%B7%9E%E5%BB%B3%E8%A5%BF%E5%81%B4%E5%85%A5%E5%8F%A32.jpg |
-| 免署名 | APPROVED_1103_scene.json | TWL3 | 台文館州廳 | Public domain | 不詳 | https://commons.wikimedia.org/wiki/File%3AThe_government_building_of_Tainan_Prefecture.jpg |
-| 免署名 | APPROVED_1104_prop.json | R24 | 遶境鑼 | CC0 | 玄史生 | https://commons.wikimedia.org/wiki/File:Ciyou_Temple_Mazu_Cruise_Parade_20131117-003.JPG |
-| 免署名 | APPROVED_CAND_1029.json | N1 |  | 公有領域（API 的授權欄標示；我沒開檔案頁，理由與歿年未驗證，比照 N2 但不確定） | — | — |
-| 免署名 | APPROVED_CAND_1029.json | N2 |  | 公有領域。檔案頁讀到的理由：中華民國著作權法攝影著作公開後 50 年期滿，另標美國公有領域；**頁面沒寫作者歿年**，所以我只確認「Commons 這樣標」，沒有獨立驗證。 | — | — |
-| 免署名 | APPROVED_CAND_1029.json | N4 |  | CC0 | — | — |
-| 免署名 | APPROVED_CAND_1029.json | P03 |  | Public domain | — | — |
-| 免署名 | APPROVED_CAND_1029.json | P17 |  | Public domain | — | — |
-| 免署名 | APPROVED_CAND_1029.json | P22 |  | Public domain | — | — |
-| 免署名 | APPROVED_CAND_1029.json | P27 |  | Public domain | — | — |
-| 免署名 | APPROVED_CAND_1029.json | P40 |  | Public domain | — | — |
-| 免署名 | APPROVED_CAND_1029.json | T1 |  | CC0 | — | — |
-| 免署名 | APPROVED_CAND_1029.json | W3 |  | CC0 | — | — |
-| 未標或其他（要查） | APPROVED.json | abacus_nmth | prop | 臺史博 公眾領域標章（2014.030.0010.0002） | — | https://collections.culture.tw/files/11/JPG640/201403000100002_I001.JPG |
+| 分類 | 核准檔 | 編號／名稱 | 項目 | 授權 | 作者 | 來源頁 | 授權代碼 | 取得日期 | 核准者 | 法務 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| BY-SA（只當形狀參考，不進成品） | APPROVED.json | police_gable | scene | CC BY-SA 4.0（SHCat）；只當形狀參考 | SHCat | https://commons.wikimedia.org/wiki/File:Former_Tainan_Police_Department_Gable.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED.json | police_wall | scene | CC BY-SA 4.0（Koika）；只當形狀參考 | Koika | https://commons.wikimedia.org/wiki/File:Former_Tainan_Police_Department_Wall.JPG | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED.json | tang_park_2021 | scene | CC BY-SA 4.0；只當樹與圓環幾何 | Mrmarkertw | https://commons.wikimedia.org/wiki/File:2021%E5%B9%B4%E7%9A%84%E6%B9%AF%E5%BE%B7%E7%AB%A0%E7%B4%80%E5%BF%B5%E5%85%AC%E5%9C%92.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | A02 |  | CC BY-SA 3.0 | Herman Gunawan, Bangka, Indonesia. | https://commons.wikimedia.org/wiki/File%3APaddlewheel_aerator_2hp.jpg | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | B01 |  | CC BY-SA 3.0 | Koika | https://commons.wikimedia.org/wiki/File%3AFormer_Tainan_Meteorological_Station.JPG | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | B02 |  | CC BY-SA 3.0 | Foxy Who \(^∀^)/ | https://commons.wikimedia.org/wiki/File%3A%E5%8F%B0%E5%8D%97%E6%B8%AC%E5%80%99%E6%89%80_-_panoramio.jpg | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | B03 |  | CC BY-SA 4.0 | Mr Setson | https://commons.wikimedia.org/wiki/File%3ACUP_ANEMOMETER.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | C02 |  | CC BY-SA 4.0 | Art Graphique &amp; Patrimoine | https://commons.wikimedia.org/wiki/File%3AImage_Beit_Ghazaleh_Orthophoto_Survey_2017.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | C03 |  | CC BY-SA 3.0 | John Cummings | https://commons.wikimedia.org/wiki/File%3AMonmouth_castle_point_cloud%2C_created_with_Photosynth_01.jpg | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | D01 |  | CC BY-SA 4.0 | Just plain Bill | https://commons.wikimedia.org/wiki/File%3AMud_knives.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | D02 |  | CC BY-SA 4.0 | DPLapic | https://commons.wikimedia.org/wiki/File%3AClay%2C_straw_lime_on_wall_lath_closeup.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | E02 |  | CC BY-SA 4.0 | User: (WT-shared) Shoestring at  wts wikivoyage | https://commons.wikimedia.org/wiki/File%3ADu_Xiao_Yue%2C_Tainan%2C_Taiwan.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | F01 |  | CC BY-SA 3.0 | Carptrash (talk) | https://commons.wikimedia.org/wiki/File%3AMallet_%26_pitch.jpg | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | G01 |  | CC BY-SA 4.0 | Dquai | https://commons.wikimedia.org/wiki/File%3AEntrance_of_the_Sanshan_Guowang_Temple_of_Tainan.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | G02 |  | CC BY-SA 4.0 | 李家宇 | https://commons.wikimedia.org/wiki/File%3AArt_of_Taiwan_historical_building_detail.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | H01 |  | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E7%B8%BD%E8%B6%95%E5%AE%AE.JPG | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_chargap.json | L01 |  | CC BY-SA 4.0 | Ivan soon 22 | https://commons.wikimedia.org/wiki/File%3ATraditional_lantern_maker.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R07 | 懷錶 | CC BY-SA 3.0 | Isabelle Grosjean ZA | https://commons.wikimedia.org/wiki/File:MontreGousset001.jpg | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R08 | 懷錶 | CC BY-SA 4.0 | Ken Heaton | https://commons.wikimedia.org/wiki/File:1919_Elgin_National_Watch_Company_USA.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R13 | 電梯按鈕 | CC BY-SA 3.0 | Pil56 | https://commons.wikimedia.org/wiki/File:Mit-old-elevator-panel.jpg | CC-BY-SA-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R15 | 面磚 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File:%E4%BF%AE%E5%BE%A9%E5%BE%8C%E7%9A%84%E5%8E%9F%E8%87%BA%E5%8D%97%E8%AD%A6%E5%AF%9F%E7%BD%B2.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R16 | 面磚 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File:2021%E5%B9%B410%E6%9C%88%E5%8F%B0%E5%8D%97%E5%B7%9E%E6%9C%83.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_prop.json | R20 | 掃描儀 | CC BY-SA 4.0 | FedericaGaspari | https://commons.wikimedia.org/wiki/File:Terrestrial_Laser_Scanning_of_a_bridge.jpg | CC-BY-SA-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | HAL2 | 公會堂 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%85%AC%E6%9C%83%E5%A0%82%E7%AB%8B%E9%9D%A2%E7%89%B9%E5%AF%AB.jpg | CC-BY-SA-4.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | LIN1 | 靈祐宮 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E9%96%8B%E5%9F%BA%E9%9D%88%E7%A5%90%E5%AE%AE%E4%B8%89%E5%B7%9D%E9%96%80.jpg | CC-BY-SA-4.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | LIN2 | 靈祐宮 | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File%3A%E9%96%8B%E5%9F%BA%E9%9D%88%E7%A5%90%E5%AE%AE%E8%BD%89%E5%90%91%E7%97%95%E8%B7%A1.JPG | CC-BY-SA-3.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | POL1 | 警察署 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E4%BF%AE%E5%BE%A9%E5%BE%8C%E7%9A%84%E5%8E%9F%E8%87%BA%E5%8D%97%E8%AD%A6%E5%AF%9F%E7%BD%B2.jpg | CC-BY-SA-4.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | TWL1 | 台文館州廳 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%B7%9E%E5%BB%B3%E5%A1%94%E6%A8%93%E5%8F%8A%E9%83%A8%E5%88%86%E7%AB%8B%E9%9D%A2.jpg | CC-BY-SA-4.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | TWL4 | 台文館州會 | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A2021%E5%B9%B410%E6%9C%88%E5%8F%B0%E5%8D%97%E5%B7%9E%E6%9C%83.jpg | CC-BY-SA-4.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_1103_scene.json | TWL5 | 台文館州會天橋 | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File%3A%E5%8E%9F%E8%87%BA%E5%8D%97%E5%B7%9E%E6%9C%83%E8%88%87%E5%B7%9E%E5%BB%B3%E9%96%93%E7%9A%84%E5%A4%A9%E6%A9%8B.JPG | CC-BY-SA-3.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | A1 |  | CC BY-SA 4.0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E7%81%A3%E5%BA%9C%E5%9F%8E%E9%9A%8D%E5%BB%9F%E5%A4%A7%E7%AE%97%E7%9B%A4.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | J1 |  | CC BY-SA 4.0 | 王綉敏 | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E5%8D%97%E4%BD%B3%E9%87%8C%E5%8D%80%E9%87%91%E5%94%90%E6%AE%BF%E5%B1%8B%E8%A7%92%E5%89%AA%E7%B2%98.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | J2 |  | CC BY-SA 4.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E5%B0%8F%E5%8D%97%E5%A4%A9%E5%B1%8B%E9%A0%82%E5%89%AA%E9%BB%8F_(2015).jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | L1 |  | CC BY-SA 4.0 | Candyji | https://commons.wikimedia.org/wiki/File:CC-Candyji-%E7%A5%80%E5%85%B8%E6%AD%A6%E5%BB%9F%E6%9C%A8%E5%88%BB1_3.0.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | L4 |  | CC BY-SA 2.0 | Sun Taro | https://commons.wikimedia.org/wiki/File:2015-05-01_lanterns_with_names_of_deities_for_blessing_in_Tainan.jpg | CC-BY-SA-2.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | N3 |  | CC BY-SA 4.0 | User: (WT-shared) Shoestring at  wts wikivoyage | https://commons.wikimedia.org/wiki/File:Danzi_noodle,_Tainan,_Taiwan.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P04 |  | CC BY-SA 4.0 | Li Yong-Chi | https://commons.wikimedia.org/wiki/File:%E5%A4%95%E9%99%BD%E4%B8%8B%E7%9A%84%E8%9A%B5%E6%A3%9A.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P05 |  | CC BY-SA 4.0 | Kisslouis14 | https://commons.wikimedia.org/wiki/File:%E8%9A%B5%E6%A3%9A%E4%BA%94%E7%B7%9A%E8%AD%9C.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P1 |  | CC BY-SA 2.0（檔案頁讀到 Flickr 審查者已確認授權） | Pascal Terjan | https://commons.wikimedia.org/wiki/File:2008-02-19_Glove_puppetry_in_Tainan.jpg | CC-BY-SA-2.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P11 |  | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E4%B8%83%E8%82%A1%E9%A0%82%E5%B1%B1%E9%B9%BD%E8%AD%A6%E6%A7%8D%E6%A8%93.jpg | CC-BY-SA-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P12 |  | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E8%8C%84%E8%90%A3%E7%AB%B9%E6%BB%AC%E9%B9%BD%E7%81%98%E9%B9%BD%E8%AD%A6%E6%A7%8D%E6%A8%93.JPG | CC-BY-SA-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P13 |  | CC BY-SA 2.0 | tommy.lan | https://commons.wikimedia.org/wiki/File:Salt_Mountain.jpg | CC-BY-SA-2.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P15 |  | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8D%97%E5%B8%82%E5%AE%89%E9%A0%86%E9%B9%BD%E7%94%B0.JPG | CC-BY-SA-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P16 |  | CC BY-SA 3.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E4%BA%95%E4%BB%94%E8%85%B3%E7%93%A6%E7%9B%A4%E9%B9%BD%E7%94%B0.JPG | CC-BY-SA-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P18 |  | CC BY-SA 4.0 | WU PEI HSUAN | https://commons.wikimedia.org/wiki/File:%E6%89%87%E5%BD%A2%E9%B9%BD%E7%94%B0.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P2 |  | CC BY-SA 4.0 | Sean Chiu | https://commons.wikimedia.org/wiki/File:%E5%BD%A9%E6%A8%93%E5%B8%83%E8%A2%8B%E6%88%B2%E6%88%B2%E5%8F%B0.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P25 |  | CC BY-SA 4.0 | Guanting Chen | https://commons.wikimedia.org/wiki/File:%E4%B8%83%E8%82%A1%E5%8D%80%E5%A4%A7%E6%BD%AE%E6%BA%9D%E8%88%87%E6%B5%B7%E5%9F%94%E9%AD%9A%E5%A1%AD.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P28 |  | CC BY-SA 4.0 | 甘單共 | https://commons.wikimedia.org/wiki/File:%E5%8E%9F%E8%87%BA%E5%8D%97%E6%B8%AC%E5%80%99%E6%89%80%E5%A4%96%E8%A7%80.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P3 |  | CC BY-SA 4.0 | 安可 | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E7%81%A3%E9%85%AC%E7%A5%9E%E5%B8%83%E8%A2%8B%E6%88%B21.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P31 |  | CC BY-SA 4.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E6%95%B4%E4%BF%AE%E4%B8%AD%E7%9A%84%E8%87%BA%E5%8D%97%E8%A5%BF%E5%B8%82%E5%A0%B4.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P34 |  | CC BY-SA 4.0 | Tze Chiang Hao | https://commons.wikimedia.org/wiki/File:201512%E5%8E%9F%E5%8F%B0%E5%8D%97%E5%9C%B0%E6%96%B9%E6%B3%95%E9%99%A2%E4%BF%AE%E5%BE%A9%E5%B7%A5%E7%A8%8B01.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P36 |  | CC BY-SA 4.0 | Joël Thibault | https://commons.wikimedia.org/wiki/File:Amphith%C3%A9%C3%A2tre_scanner.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P37 |  | CC BY-SA 3.0 | Dr. Schorsch | https://commons.wikimedia.org/wiki/File:3D-Laserscanner_on_tripod.jpg | CC-BY-SA-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P41 |  | CC BY-SA 4.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8D%97%E4%B8%89%E5%B1%B1%E5%9C%8B%E7%8E%8B%E5%BB%9F%E5%A4%A9%E5%90%8E%E8%81%96%E6%AF%8D%E7%A5%A0%E9%96%80%E7%A5%9E.JPG | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | P48 |  | CC BY-SA 4.0 | Pbdragonwang | https://commons.wikimedia.org/wiki/File:%E5%B0%8F%E5%8D%97%E5%A4%A9%E5%B1%8B%E9%A0%82%E5%89%AA%E9%BB%8F_(2015).jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | S1 |  | CC BY-SA 4.0 | Laxthree | https://commons.wikimedia.org/wiki/File:Truck_Stage.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | S2 |  | CC BY-SA 4.0 | Sean Chiu | https://commons.wikimedia.org/wiki/File:%E5%A4%9C%E9%96%93%E7%9A%84%E9%9B%BB%E5%AD%90%E8%88%9E%E5%8F%B0%E8%BB%8A.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | S3 |  | CC BY-SA 3.0 | Mk2010 | https://commons.wikimedia.org/wiki/File:Electric_Flower_Car,_Beigang_Chao-Tian_Temple_(Taiwan).jpg | CC-BY-SA-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | T2 |  | CC BY-SA 4.0 | 舟集 Boattoad | https://commons.wikimedia.org/wiki/File:%E5%8F%B0%E5%8D%97%E8%88%88%E6%BF%9F%E5%AE%AE%EF%BC%8E%E4%BF%9D%E7%94%9F%E5%A4%A7%E5%B8%9D%E7%B1%A4%E8%A9%A9.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | T3 |  | CC BY-SA 4.0 | Mearchan | https://commons.wikimedia.org/wiki/File:The_beginning_and_the_end_of_burning_incense_sticks.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | W1 |  | CC BY-SA 4.0 | 寺人孟子 | https://commons.wikimedia.org/wiki/File:%E6%A1%83%E5%9C%92%E5%B8%82%E7%AB%8B%E5%A4%A7%E6%BA%AA%E6%9C%A8%E8%97%9D%E7%94%9F%E6%85%8B%E5%8D%9A%E7%89%A9%E9%A4%A8%E6%89%80%E8%97%8F%E5%A2%A8%E6%96%97.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY-SA（只當形狀參考，不進成品） | APPROVED_CAND_1029.json | W2 |  | CC BY-SA 4.0 | 寺人孟子 | https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E6%BA%AA%E6%AD%A6%E5%BE%B7%E6%AE%BF%E5%85%A7%E5%B1%95%E7%A4%BA%E7%9A%84%E5%A2%A8%E6%96%97.jpg | CC-BY-SA-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY（成品要署名） | APPROVED.json | butokuden | scene | CC BY 2.0（xiquinhosilva） | xiquinhosilva | https://commons.wikimedia.org/wiki/File:Tainan_Butokuden_2017-12-31.jpg | CC-BY-2.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY（成品要署名） | APPROVED.json | fortune_stick_tube | prop | CC BY 3.0 tw | 作者不詳（Commons 標創作者不詳） | https://commons.wikimedia.org/wiki/File:%E8%98%87%E6%BE%B3%E5%B2%B3%E6%98%8E%E6%96%B0%E6%9D%91%E6%8B%9B%E5%AF%B6%E5%AE%AE%E5%8F%A4%E7%B1%A4%E7%AD%92.jpg | CC-BY-3.0-TW | 2026-10-29 | 楊老師（對話「都好」） |  |
+| BY（成品要署名） | APPROVED.json | grand_matsu | scene | CC BY 2.0（tomscoffin） | tomscoffin | https://commons.wikimedia.org/wiki/File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg | CC-BY-2.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY（成品要署名） | APPROVED.json | hayashi_lift | scene | CC BY 4.0（Wpcpey） | Wpcpey | https://commons.wikimedia.org/wiki/File:Hayashi_Department_Store_Lift_2015.JPG | CC-BY-4.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY（成品要署名） | APPROVED.json | patriotic_hall_01 | scene | CC BY 4.0（Chainwit.） | Chainwit. | https://commons.wikimedia.org/wiki/File:Japanese_Patriotic_Women%27s_Association_Hall_-_Tainan_-_%E5%8F%B0%E5%8D%97%E6%84%9B%E5%9C%8B%E5%A9%A6%E4%BA%BA%E6%9C%83%E9%A4%A8_%282026%29_-_img_01.jpg | CC-BY-4.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY（成品要署名） | APPROVED.json | patriotic_hall_02 | scene | CC BY 4.0（Chainwit.） | Chainwit. | https://commons.wikimedia.org/wiki/File:Japanese_Patriotic_Women%27s_Association_Hall_-_Tainan_-_%E5%8F%B0%E5%8D%97%E6%84%9B%E5%9C%8B%E5%A9%A6%E4%BA%BA%E6%9C%83%E9%A4%A8_%282026%29_-_img_02.jpg | CC-BY-4.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY（成品要署名） | APPROVED.json | patriotic_hall_03 | scene | CC BY 4.0（Chainwit.） | Chainwit. | https://commons.wikimedia.org/wiki/File:Japanese_Patriotic_Women%27s_Association_Hall_-_Tainan_-_%E5%8F%B0%E5%8D%97%E6%84%9B%E5%9C%8B%E5%A9%A6%E4%BA%BA%E6%9C%83%E9%A4%A8_%282026%29_-_img_03.jpg | CC-BY-4.0 | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_chargap.json | C01 |  | CC BY 2.0 | Creative Tools from Halmstad, Sweden | https://commons.wikimedia.org/wiki/File%3ACreativeTools.se_-_PackshotCreator_-_ZPrinter_-_3D_scanner_measuring_spheres_%285061635801%29.jpg | CC-BY-2.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY（成品要署名） | APPROVED_1103_chargap.json | E03 |  | CC BY 2.0 | iesing from Tan Tsi noodles restaurant Du Siao Yue Danzai Mi | https://commons.wikimedia.org/wiki/File%3ATaiwanese_d%C3%A0nz%C7%8Eimi%C3%A0n.jpg | CC-BY-2.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| BY（成品要署名） | APPROVED_1103_prop.json | R01 | 路牌 | CC BY 4.0 | Anas1712 | https://commons.wikimedia.org/wiki/File:Tainan_Center_Street_sign_20230514_170645_(cropped).jpg | CC-BY-4.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY（成品要署名） | APPROVED_1103_prop.json | R02 | 路牌 | CC BY 2.0 | salagadoola | https://commons.wikimedia.org/wiki/File:Road_name_sign_of_Jinhua_Street_changing_20151017.jpg | CC-BY-2.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY（成品要署名） | APPROVED_1103_prop.json | R06 | 羅盤 | CC BY 3.0 | Reptonix free Creative Commons licensed photos | https://commons.wikimedia.org/wiki/File:Chinese_compass_-_Lo_Pan,_World_Museum_Liverpool.jpg | CC-BY-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_prop.json | R11 | 鑼 | CC BY 3.0 | Dameon Hudson | https://commons.wikimedia.org/wiki/File:Ring_a_big_gong,_Lugang_Mazu_Temple_2009.jpg | CC-BY-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_prop.json | R12 | 鑼 | CC BY 3.0 tw | 創作者：王俊隆、何忠堂、徐仲淼、林烈旗。貢獻者：王俊隆、何忠堂、徐仲淼、林烈旗 | https://commons.wikimedia.org/wiki/File:%E5%87%9D%E7%B5%90%E7%9A%84%E9%91%BC%E9%9F%B3-%E9%8A%85%E5%BF%83%E5%90%8C%E5%BF%83-108-cra-cw-650-re-201912272107175e060082a61d80.jpg | CC-BY-3.0-TW | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY（成品要署名） | APPROVED_1103_prop.json | R14 | 電梯按鈕 | CC BY 2.0 | Yoshimasa Niwa from Tokyo, Japan | https://commons.wikimedia.org/wiki/File:Elevator_panel_with_no_13_(cropped).jpg | CC-BY-2.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY（成品要署名） | APPROVED_1103_prop.json | R17 | 掃把 | CC BY 2.0 | J. Samuel Burner | https://commons.wikimedia.org/wiki/File:Chinese_broom_and_sweeping_tool.jpg | CC-BY-2.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY（成品要署名） | APPROVED_1103_prop.json | R19 | 鑰匙 | CC BY 3.0 | Hjnitschke | https://commons.wikimedia.org/wiki/File:Key_(72103325).jpeg | CC-BY-3.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| BY（成品要署名） | APPROVED_1103_scene.json | BUT2 | 武德殿 | CC BY 3.0 | lienyuan lee | https://commons.wikimedia.org/wiki/File%3A%E5%8F%B0%E5%8D%97%E6%AD%A6%E5%BE%B7%E6%AE%BF_Tainan_Wude_Hall_-_panoramio.jpg | CC-BY-3.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_scene.json | CHI1 | 赤崁樓 | CC BY 2.0 | eazytraveler | https://commons.wikimedia.org/wiki/File%3A2010-02-19_Chihkan_Tower.jpg | CC-BY-2.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_scene.json | CHI2 | 赤崁樓 | CC BY 2.0 | Rutger van der Maar | https://commons.wikimedia.org/wiki/File%3AChihkan_Tower_%28Fort_Provintia%29.jpg | CC-BY-2.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_scene.json | HAL1 | 公會堂 | CC BY 3.0 | 338km | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%85%AC%E6%9C%83%E5%A0%82_-_panoramio.jpg | CC-BY-3.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_scene.json | HAY1 | 林百貨 | CC BY 2.0 | Emily Jiang | https://commons.wikimedia.org/wiki/File%3AHayasi_Department_Store_at_the_intersection_of_Jhongjheng_Road_and_Jhongyi_Road.jpg | CC-BY-2.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY（成品要署名） | APPROVED_1103_scene.json | POL2 | 警察署 | CC BY 2.0 | Jun | https://commons.wikimedia.org/wiki/File%3ATainan_Police_station.jpg | CC-BY-2.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| BY（成品要署名） | APPROVED_1104_prop.json | R25 | 舊鑰匙 | CC BY 2.0 | Cindy Shebley | https://commons.wikimedia.org/wiki/File:Four_Skeleton_Keys_on_a_blue_background_(51865175725).jpg | CC-BY-2.0 | 2026-11-04 | 楊老師（2026-11-04 對話：「可以載之後不用問」）；沿用 11-03 授權範圍（Commons 低風險授權、每張≤3MB） |  |
+| BY（成品要署名） | APPROVED_CAND_1029.json | J3 |  | CC BY 2.0 | Hsiung/d6478coke | https://commons.wikimedia.org/wiki/File:Close-up_of_roof_decoration_at_Xuejia_Ciji_Temple_at_night_20100416.jpg | CC-BY-2.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY（成品要署名） | APPROVED_CAND_1029.json | L2 |  | CC BY 2.0 | eazytraveler | https://commons.wikimedia.org/wiki/File:2010-02-13_Dragon_Lantern_at_the_Taipei_Mazu_Temple.jpg | CC-BY-2.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| BY（成品要署名） | APPROVED_CAND_1029.json | L3 |  | CC BY 2.0 | eazytraveler | https://commons.wikimedia.org/wiki/File:2010-02-19_Red_%26_Yellow_Lanterns.jpg | CC-BY-2.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY（成品要署名） | APPROVED_CAND_1029.json | P01 |  | CC BY 3.0 | lienyuan lee | https://commons.wikimedia.org/wiki/File:%E8%86%A0%E7%AD%8F_Plastic_Raft_-_panoramio.jpg | CC-BY-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY（成品要署名） | APPROVED_CAND_1029.json | P20 |  | CC BY 4.0 | Hugues Evano (IFREMER, Délégation océan Indien (DOI), Département Ressources Biologiques et Environnement (RBE), F-97420 Le Port, France) | https://commons.wikimedia.org/wiki/File:Poisson_lait_(Chanos_chanos)_(Ifremer_00763-87541).jpg | CC-BY-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY（成品要署名） | APPROVED_CAND_1029.json | P29 |  | CC BY 4.0 | Anas1712 | https://commons.wikimedia.org/wiki/File:Former_Tainan_Weather_Observatory_20230514_132903.jpg | CC-BY-4.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY（成品要署名） | APPROVED_CAND_1029.json | P4 |  | CC BY 2.0 | Wang Yu Ching / Office of the President (中華民國總統府) | https://commons.wikimedia.org/wiki/File:Hand_puppets_of_Taiwanese_Glove_puppetry_2023-04-11.jpg | CC-BY-2.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| BY（成品要署名） | APPROVED_CAND_1029.json | S4 |  | CC BY 3.0 | Tianmu peter | https://commons.wikimedia.org/wiki/File:%E6%A1%83%E5%9C%92%E5%A7%8A%E5%A6%B9%E7%B6%9C%E8%97%9D%E5%9C%98_RL-041_20080530a.jpg | CC-BY-3.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED.json | abacus_landbank | prop | CC0（丘崈） | 丘崈 | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E7%81%A3%E5%9C%9F%E5%9C%B0%E9%8A%80%E8%A1%8C%E7%AE%97%E7%9B%A4.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | bamboo_basket_nmth | prop | 臺史博 CC0（2003.019.0039.0002） | 臺灣歷史博物館典藏（機構，非個人作者） | https://collections.culture.tw/files/11/JPG/200301900390002_P001.JPG | CC0-1.0 | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | barclay_1915 | portrait | Commons 標公有領域；1915 年書中（高） | 作者不詳（Commons 標 Unknown author） | https://commons.wikimedia.org/wiki/File:Thomasbarclaypre1923.jpg | PDM | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | carpenter_box_nmth | prop | 臺史博 CC0（2001.001.0391.0001） | 臺灣歷史博物館典藏（機構，非個人作者） | https://collections.culture.tw/files/11/JPG/200100103910001_P001.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | eiraku_cho_1931 | street | Commons 標公有領域；1931 年寫真集（高） | 勝山吉作 | https://commons.wikimedia.org/wiki/File:Eiraku-ch%C5%8D_of_Tainan.jpg | PDM | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| 免署名 | APPROVED.json | fish_trap | prop | CC0（氏子） | 氏子 | https://commons.wikimedia.org/wiki/File:%E9%AD%9A%E7%B0%8D.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | ledger_nmth | prop | 臺史博 CC0（2001.007.0002） | 臺灣歷史博物館典藏（機構，非個人作者） | https://collections.culture.tw/files/11/JPG640/20010070002_I001.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | liu_yongfu_1896 | portrait | Commons 標公有領域；1896 年紀念帖（高） | 遠藤誠編 | https://commons.wikimedia.org/wiki/File:%E5%8A%89%E6%B0%B8%E7%A6%8F.jpg | PDM | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | rotary_phone | prop | CC0（氏子） | 氏子 | https://commons.wikimedia.org/wiki/File:%E8%BD%89%E7%9B%A4%E5%BC%8F%E9%9B%BB%E8%A9%B1.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話「都好」） |  |
+| 免署名 | APPROVED.json | tainan_station_front_1939 | street | Commons 標公有領域；1939 年會報（高） | 臺南州自動車協會 | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8D%97%E8%BB%8A%E7%AB%99%E5%89%8D.jpg | PDM | 2026-10-29 | 楊老師（對話「都好」） | 待法務確認 |
+| 免署名 | APPROVED_1103_chargap.json | A01 |  | CC0 | Anna Frodesiak | https://commons.wikimedia.org/wiki/File%3AFish_farm_water_aeration_system_in_operation_-_01.JPG | CC0-1.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| 免署名 | APPROVED_1103_chargap.json | D03 |  | CC0 | Chabie10 | https://commons.wikimedia.org/wiki/File%3AA_construction_worker_plastering_a_house_01.jpg | CC0-1.0 | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| 免署名 | APPROVED_1103_chargap.json | E01 |  | Public domain | 作者不詳（Commons 檔案頁未填作者欄） | https://commons.wikimedia.org/wiki/File%3ATanTsiNoodle002.jpg | PDM | 2026-11-03 | 楊老師授權（2026-11-03 對話） |  |
+| 免署名 | APPROVED_1103_prop.json | R03 | 夾板 | Public domain | Evan-amos | https://commons.wikimedia.org/wiki/File:Wood-clipboard.jpg | PDM | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_prop.json | R04 | 捲尺 | Public domain | Evan-Amos | https://commons.wikimedia.org/wiki/File:Measuring-tape.jpg | PDM | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_prop.json | R05 | 羅盤 | CC0 | Hiart | https://commons.wikimedia.org/wiki/File:Feng_shui_compass_box_from_China,_lacquer_on_wood_and_brass,_20th_century.JPG | CC0-1.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_prop.json | R09 | 古文書 | Public domain | 桃園廳 | https://commons.wikimedia.org/wiki/File:%E5%8A%89%E6%B8%85%E6%B8%AF%E5%9C%9F%E5%9C%B0%E8%87%BA%E5%B8%B3%E8%AC%84%E6%9C%AC.jpg | PDM | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_prop.json | R10 | 古文書 | Public domain | Japanese Government | https://commons.wikimedia.org/wiki/File:1895_%E8%87%BA%E7%81%A3%E7%B8%BD%E7%9D%A3%E5%BA%9C%E9%97%9C%E6%96%BC%E6%94%AF%E9%82%A3%E4%BA%BA%E4%B8%8A%E9%99%B8%E6%A2%9D%E4%BE%8B%E5%85%AC%E6%96%87_Government_of_Taiwan%27s_Regulation_concerning_the_entry_of_Shina_persons.jpg | PDM | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） | 待法務確認 |
+| 免署名 | APPROVED_1103_prop.json | R18 | 鑰匙 | CC0 | Brainy J | https://commons.wikimedia.org/wiki/File:Key_in_lockbox.jpg | CC0-1.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_prop.json | R21 | 掃描儀 | Public domain | courtesy photo | https://commons.wikimedia.org/wiki/File:Laser_scanning_advances_Team_Pete%27s_capabilities_140616-F-O3755-046.jpg | PDM | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_prop.json | R22 | 抹刀 | Public domain | Tiesse at Italian Wikipedia | https://commons.wikimedia.org/wiki/File:Frattazzo_spugnoso_e_Cazzuola.jpg | PDM | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_prop.json | R23 | 灰牆 | CC0 | Chabie10 | https://commons.wikimedia.org/wiki/File:A_construction_worker_plastering_a_house_01.jpg | CC0-1.0 | 2026-11-03 | 楊老師授權（2026-11-03 任務：Wikimedia Commons 低風險授權、每張≤3MB、總量≤25MB；本檔記實際下載） |  |
+| 免署名 | APPROVED_1103_scene.json | BUT1 | 武德殿 | Public domain | The original uploader was Encolpius at Chinese Wikipedia. | https://commons.wikimedia.org/wiki/File%3A%E5%8F%B0%E5%8D%97%E6%AD%A6%E5%BE%B7%E6%AE%BF.JPG | PDM | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| 免署名 | APPROVED_1103_scene.json | BUT3 | 武德殿 | Public domain | 不詳 | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E6%AD%A6%E5%BE%B7%E6%AE%BF%E8%88%8A%E8%B2%8C.jpg | PDM | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| 免署名 | APPROVED_1103_scene.json | HAY2 | 林百貨 | CC0 | 陳錦昆 | https://commons.wikimedia.org/wiki/File%3A%E6%9E%97%E7%99%BE%E8%B2%A8%E9%A0%82%E6%A8%93%E7%A5%9E%E7%A4%BE%E8%88%87%E9%9B%BB%E6%A2%AF%E4%BA%95.jpg | CC0-1.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| 免署名 | APPROVED_1103_scene.json | HAY3 | 林百貨 | Public domain | 台南市 | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%B8%82%E6%9C%AB%E5%BB%A3%E7%94%BA%E9%80%9A.jpg | PDM | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| 免署名 | APPROVED_1103_scene.json | TWL2 | 台文館州廳 | CC0 | Mrmarkertw | https://commons.wikimedia.org/wiki/File%3A%E8%87%BA%E5%8D%97%E5%B7%9E%E5%BB%B3%E8%A5%BF%E5%81%B4%E5%85%A5%E5%8F%A32.jpg | CC0-1.0 | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| 免署名 | APPROVED_1103_scene.json | TWL3 | 台文館州廳 | Public domain | 不詳 | https://commons.wikimedia.org/wiki/File%3AThe_government_building_of_Tainan_Prefecture.jpg | PDM | 2026-11-03 | 文史顧問（把關者）；授權範圍：楊老師 2026-11-03 授權，限 Wikimedia upload.wikimedia.org、低風險授權、單檔≤3MB、總量≤25MB、每檔間隔≥2 秒 | 待法務確認 |
+| 免署名 | APPROVED_1104_prop.json | R24 | 遶境鑼 | CC0 | 玄史生 | https://commons.wikimedia.org/wiki/File:Ciyou_Temple_Mazu_Cruise_Parade_20131117-003.JPG | CC0-1.0 | 2026-11-04 | 楊老師（2026-11-04 對話：「可以載之後不用問」）；沿用 11-03 授權範圍（Commons 低風險授權、每張≤3MB） |  |
+| 免署名 | APPROVED_CAND_1029.json | N1 |  | 公有領域（API 的授權欄標示；我沒開檔案頁，理由與歿年未驗證，比照 N2 但不確定） | 李火增 | https://commons.wikimedia.org/wiki/File:Food_stands_Taihoku.jpg | PDM | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | N2 |  | 公有領域。檔案頁讀到的理由：中華民國著作權法攝影著作公開後 50 年期滿，另標美國公有領域；**頁面沒寫作者歿年**，所以我只確認「Commons 這樣標」，沒有獨立驗證。 | 李火增 | https://commons.wikimedia.org/wiki/File:Street_food_at_Kensei-ch%C5%8D_roundabout_1938-1942_01.jpg | PDM | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | N4 |  | CC0 | Anna Frodesiak | https://commons.wikimedia.org/wiki/File:Shoulder_pole_detail_01.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | P03 |  | Public domain | 作者不詳（Commons 標 Unknown author） | https://commons.wikimedia.org/wiki/File:Bamboo_Raft_of_Taiwan.jpg | PDM | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | P17 |  | Public domain | 作者不詳（Commons 標 Unknown author） | https://commons.wikimedia.org/wiki/File:Salt_evaporation_pond_in_Taiwan.jpg | PDM | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | P22 |  | Public domain | Kwb | https://commons.wikimedia.org/wiki/File:MilkFish001.jpg | PDM | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | P27 |  | Public domain | 臺灣總督府水產試驗場 | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E7%81%A3%E7%B8%BD%E7%9D%A3%E5%BA%9C%E6%B0%B4%E7%94%A2%E8%A9%A6%E9%A9%97%E5%A0%B4%E5%8F%B0%E5%8D%97%E6%94%AF%E5%A0%B4.jpg | PDM | 2026-10-29 | 楊老師（對話框核准：建議子集） | 待法務確認 |
+| 免署名 | APPROVED_CAND_1029.json | P40 |  | Public domain | 作者不詳（Commons 標 Unknown author） | https://commons.wikimedia.org/wiki/File:Drawing_the_maps_of_surveying_in_Japanese_Formosa.jpg | PDM | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | T1 |  | CC0 | Battlesnake1 | https://commons.wikimedia.org/wiki/File:Incense_Sticks_in_Wanhua_District_Temple.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 免署名 | APPROVED_CAND_1029.json | W3 |  | CC0 | 氏子 | https://commons.wikimedia.org/wiki/File:%E6%9C%A8%E8%A3%BD%E9%AD%AF%E7%8F%AD%E6%9B%B2%E5%B0%BA.jpg | CC0-1.0 | 2026-10-29 | 楊老師（對話框核准：建議子集） |  |
+| 未標或其他（要查） | APPROVED.json | abacus_nmth | prop | 臺史博 公眾領域標章（2014.030.0010.0002） | 臺灣歷史博物館典藏（機構，非個人作者） | https://collections.culture.tw/files/11/JPG640/201403000100002_I001.JPG | PDM | 2026-10-29 | 楊老師（對話「都好」） |  |
 
 ## 缺口清單（作者欄缺漏，共 72 筆）
 
@@ -206,7 +206,7 @@
 | 免署名 | APPROVED.json | liu_yongfu_1896 | portrait | Commons 標公有領域；1896 年紀念帖（高） | https://commons.wikimedia.org/wiki/File:%E5%8A%89%E6%B0%B8%E7%A6%8F.jpg |
 | 免署名 | APPROVED.json | rotary_phone | prop | CC0（氏子） | https://commons.wikimedia.org/wiki/File:%E8%BD%89%E7%9B%A4%E5%BC%8F%E9%9B%BB%E8%A9%B1.jpg |
 | 免署名 | APPROVED.json | tainan_station_front_1939 | street | Commons 標公有領域；1939 年會報（高） | https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8D%97%E8%BB%8A%E7%AB%99%E5%89%8D.jpg |
-| 免署名 | APPROVED_1103_chargap.json | E01 |  | Public domain | — |
+| 免署名 | APPROVED_1103_chargap.json | E01 |  | Public domain | 作者不詳（Commons 檔案頁未填作者欄） |
 | 免署名 | APPROVED_CAND_1029.json | N1 |  | 公有領域（API 的授權欄標示；我沒開檔案頁，理由與歿年未驗證，比照 N2 但不確定） | — |
 | 免署名 | APPROVED_CAND_1029.json | N2 |  | 公有領域。檔案頁讀到的理由：中華民國著作權法攝影著作公開後 50 年期滿，另標美國公有領域；**頁面沒寫作者歿年**，所以我只確認「Commons 這樣標」，沒有獨立驗證。 | — |
 | 免署名 | APPROVED_CAND_1029.json | N4 |  | CC0 | — |
@@ -317,3 +317,31 @@
 
 處理結果：缺口清單中 CAND_1029 的 50 列作者已補（上表；授權欄與核准檔一致，P1／N1／N2 只是核准檔多了備註文字）。成品署名只要處理實際用於成品的 CC BY 項：J3（Hsiung/d6478coke，CC BY 2.0）、L2／L3（eazytraveler，CC BY 2.0）、P01（lienyuan lee，CC BY 3.0）、P20、P29、P4、S4，用到哪張再署名哪張。
 仍待處理（不編造）：`APPROVED.json` 的 police_gable／police_wall／tang_park_2021 三筆 BY-SA（只當形狀參考）、`APPROVED_1103_chargap.json` 的 E01（公有領域）與武德殿門廊裁切的作者，下一輪回 Commons 查。
+
+## 成品來源鏈（2026-11-07，授權規格第 2.2 節；由工單、prompts.md、核准檔逐項追得）
+
+欄位：成品 stem｜製程與工單｜輸入（ref_id：用法）｜是否改作｜是否需署名｜署名文字｜署名顯示處。AI 生成但無任何參考照片者輸入寫「無」。參考照片的作者與授權見上方主表（同 ref_id），**不在此重複編造**。法務欄：臺灣建築照片的著作權例外是否適用，已請 F③ 查證，未定前一律標「待法務確認」，我沒有自行判斷。
+
+| 成品 stem | 製程與工單 | 輸入 | 改作 | 需署名 | 署名文字 | 署名顯示處 | 法務 |
+|---|---|---|---|---|---|---|---|
+| scene_twl_A_r2 | jobs_r2_scene.json（seed 5101）；v2 前製程 r2：參考照片裁切後當 FLUX Redux 與提示詞參考，FLUX.1-dev Q8 生成 → 像素化 180×320 | TWL2：crop+img2img | 是 | 否 | — | — | 待法務確認（臺灣建築照片） |
+| scene_butokuden_front_scenepal | _samples_1103/prompts.md（scene_butokuden_front，BUT1 裁切／0.6）；11-03 試作：BUT1 裁切當 Redux 參考（強度 0.6）→ 像素化、場景色盤 | BUT1：crop+img2img | 是 | 否 | — | — | 待法務確認（臺灣建築照片） |
+| scene_hayashi_A_r5 | jobs_r5_scene.json（seed 7231，photo s1103d_r4_hayashi_A.png）；r5：HAY1 裁切（540,0,940,640 補天色）當參考 → FLUX.1-dev → 像素化 | HAY1：crop+img2img | 是 | 是 | 「林百貨（中正路與中義路口）」，Emily Jiang，CC BY 2.0，來源 Wikimedia Commons File:Hayasi_Department_Store_at_the_intersection_of_Jhongjheng_Road_and_Jhongyi_Road.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
+| scene_chikan_A_r2 | jobs_r2_scene.json（seed 5151，photo s1103d_r2_chikan_A.png）；r2：CHI1 蓋掉殿內紅像與遊客後裁切當參考 → FLUX.1-dev → 像素化 | CHI1：crop+img2img | 是 | 是 | 「赤崁樓 2010-02-19」，eazytraveler，CC BY 2.0，來源 Wikimedia Commons File:2010-02-19_Chihkan_Tower.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
+| scene_hall_A_r2 | jobs_r2_scene.json（seed 5171，純文字）；r2：純文字提示詞，HAL2（CC BY-SA）只在撰寫提示詞時看形狀，未作任何圖像輸入 | HAL2：shape-reference | 否（無圖像輸入） | 否 | — | — | 待法務確認（臺灣建築照片） |
+| scene_matsu_A_v2 | jobs_v2_r1.json（seed 8202，Redux 0.25、深度 ControlNet 0.65）；v2 製程：grand_matsu 裁切合成圖 → 深度 ControlNet＋低強度 Redux → 去字閘門 → 像素化 | grand_matsu：crop+depth+img2img | 是 | 是 | 「Tainan Grand Matsu Temple」，tomscoffin，CC BY 2.0，來源 Wikimedia Commons File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
+| scene_matsu_A_tainanpunk | jobs_v2_style1.json（seed 8503，Redux 0、深度 ControlNet 0.65）；v2 風格版（府城龐克）：grand_matsu 裁切合成圖當深度結構 → 風格提示詞生成 → 去字 → 像素化（風格版預設不上線，楊老師決定） | grand_matsu：depth | 是 | 是 | 「Tainan Grand Matsu Temple」，tomscoffin，CC BY 2.0，來源 Wikimedia Commons File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
+| scene_patriotic_A_v2b_tainanpunk_dt | jobs_v2_smoke2.json（府城龐克）；v2 風格版：patriotic_hall_01 蓋掉背景高樓後的裁切當深度結構 → 風格提示詞 → 去字 → 像素化 | patriotic_hall_01：depth | 是 | 是 | 「日本愛國婦人會館（台南）」，Chainwit.，CC BY 4.0，來源 Wikimedia Commons File:Japanese_Patriotic_Women's_Association_Hall_-_Tainan_-_台南愛國婦人會館_(2026)_-_img_01.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
+| NN_01_volunteer | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_03_gardener | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_05_senior_student | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_06_night_reader | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_07_night_runner | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_08_water_watcher | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_10_guard_uncle | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_11_aunt_waiting | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_12_governor_secretary | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_19_night_gatekeeper | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| NN_20_old_librarian | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+
+追不到來源的 pass 成品：本輪逐項追完後為 0。需署名的 CC BY 成品（hayashi_A_r5、chikan_A_r2、matsu_A_v2、matsu_A_tainanpunk、patriotic_A_v2b_tainanpunk_dt）在署名顯示處接線前，只能算「素材合格、署名待接」；FLUX.1-dev 輸出授權說明仍沿用上方〔暫定〕。

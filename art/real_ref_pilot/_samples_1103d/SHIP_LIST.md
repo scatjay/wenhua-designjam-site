@@ -1,6 +1,6 @@
 # 走讀美術 可上線／不可上線清單（自動由 build_manifest.py 產生）
 
-只有品檢「過」才列可上線；human＝需楊老師肉眼，reject＝退回待重生，unqa＝沒品檢，missing＝沒成品。AG_IMG_ON 建議：false（探員替補品檢過幾位再說）。
+只有品檢「過」才列可上線；human＝需楊老師肉眼，reject＝退回待重生，unqa＝沒品檢，missing＝沒成品。AG_IMG_ON 建議：false（探員替補品檢過幾位再說）。授權：pass 成品來源鏈已補齊（CREDITS 末段），walk_license_check exit=0；但需署名的 CC BY 成品（林百貨、赤崁樓、大天后宮、愛國婦人館風格版）在結算頁或 walk_intro 接線署名前，只算素材合格；臺灣建築照片著作權例外待法務確認。
 
 ## 可上線（34）
 場景 - s0：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）集合點，共用台文館

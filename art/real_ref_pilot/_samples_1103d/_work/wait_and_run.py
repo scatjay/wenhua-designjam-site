@@ -97,13 +97,13 @@ def pick_reservation():
     now = datetime.datetime.now()
     for l in r.stdout.split('\n'):
         m = re.match(r'^([0-9a-f]{8})\s+pending\s+(\d\d)-(\d\d) (\d\d):(\d\d)\s+(\d+) 分', l)
-        if m and 'course-walk-art-v2' in l and '夜間時窗' in l:
+        if m and 'course-walk-art-v2' in l and 'comfyui' in l:   # 依 line＋resource＋時窗比對，不寫死 id
             t0 = datetime.datetime(now.year, int(m.group(2)), int(m.group(3)), int(m.group(4)), int(m.group(5)))
             t1 = t0 + datetime.timedelta(minutes=int(m.group(6)))
             if t0 <= now < t1:
                 log('使用預約簿時窗預約 %s（到 %s）' % (m.group(1), t1.strftime('%m-%d %H:%M')))
                 return m.group(1), False, t1
-    r = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '30', '--gpu',
+    r = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '24', '--gpu',
                         '--start', 'now', '--minutes', '110', '--note', '走讀美術 v2 臨時（等條件到）；0 張會 cancel'], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
     m = re.search(r'預約 ([0-9a-f]{8})', r.stdout)
     log('臨時登記 rc=%s id=%s %s' % (r.returncode, m.group(1) if m else None, r.stdout.strip()[:120]))
@@ -132,7 +132,7 @@ def prep_jobs():
 
 
 def run_stage(name, jobs, script, prefix, minutes, extra):
-    env = dict(os.environ, WAIT_GB=str(LIMIT_GB - 0.5), **extra)
+    env = dict(os.environ, WAIT_GB=str(LIMIT_GB - 0.5), EST_GB=('24' if extra.get('UNET') else '30'), **extra)   # Q4 向租約申請 24 GB，Q8 仍 30 GB
     outp = open(S + '/%s.out' % prefix, 'w', encoding='utf-8')
     p = subprocess.Popen([BASH, W + '/' + script, jobs, S + '/' + prefix], cwd=W, env=env, stdout=outp, stderr=subprocess.STDOUT)
     log('stage %s started pid=%d' % (name, p.pid))

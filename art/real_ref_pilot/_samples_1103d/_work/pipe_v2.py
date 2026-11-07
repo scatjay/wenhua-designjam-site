@@ -87,6 +87,12 @@ RAW = Path('E:/Downloads/_walk_refs/_raw/_samples_1103d')
 D = Path(cc.INSTALL['dir']) / 'ComfyUI'
 IN = D / 'input'
 P = cc.PRESETS['flux-dev-q8']
+# 環境變數 UNET 選擇 UNet：Q8（預設）、Q4（= flux1-dev-Q4_K_S.gguf），或直接給 unet 目錄下的檔名。工單檔不用改。
+_U = os.environ.get('UNET', 'Q8')
+if _U not in ('', 'Q8'):
+    P = dict(P)
+    P['unet_gguf'] = 'flux1-dev-Q4_K_S.gguf' if _U in ('Q4', 'Q4_K_S') else _U
+print('UNET =', P['unet_gguf'], flush=True)
 RESTART_EVERY = int(os.environ.get('RESTART_EVERY', '8'))
 ABORT = float(os.environ.get('ABORT_RATIO', '0.875'))
 DBG = RAW / 'v2_debug'
@@ -264,7 +270,9 @@ if __name__ == '__main__':
                 SERVER_PIDS[:] = []
             for pid in list(SERVER_PIDS):
                 try:
-                    peak['proc_gb'] = max(peak['proc_gb'], psutil.Process(pid).memory_info().rss / 2**30)
+                    mi = psutil.Process(pid).memory_info()
+                    peak['proc_gb'] = max(peak['proc_gb'], mi.rss / 2**30)
+                    peak['proc_commit_gb'] = max(peak.get('proc_commit_gb', 0), getattr(mi, 'pagefile', 0) / 2**30)   # Windows 的 pagefile 欄＝行程提交量
                 except Exception:
                     SERVER_PIDS.remove(pid)
             time.sleep(10)
@@ -314,6 +322,6 @@ if __name__ == '__main__':
         stop.set()
         cc.stop_server()
         release()
-        json.dump({'total_sec': round(time.time() - t00), 'boot_wait_sec': boots, 'peak': {k: round(v, 2) for k, v in peak.items()}, 'jobs': recs},
+        json.dump({'total_sec': round(time.time() - t00), 'boot_wait_sec': boots, 'unet': P['unet_gguf'], 'peak': {k: round(v, 2) for k, v in peak.items()}, 'jobs': recs},
                   open(LOG, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
         print('DONE', flush=True)

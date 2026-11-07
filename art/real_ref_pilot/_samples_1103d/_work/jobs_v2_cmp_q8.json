@@ -1,0 +1,32 @@
+[
+ {
+  "name": "char_a03_strategist_r4_s7121_cmp_q8",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, thoughtful Taiwanese man strategist in his thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, round glasses, plum purple long scarf over a cream shirt, one hand holding a small teacup, the other hand holding a white sphere on a thin pole, gentle smile",
+  "seed": 7121,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a11_safety_r4_s7201_cmp_q8",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, caring Taiwanese woman safety officer in her thirties, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair tied back, fluorescent yellow reflective vest over a navy shirt, a silver whistle on a cord, a small white first aid pouch on her belt, warm protective eyes",
+  "seed": 7201,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a16_actor_r4_s7251_cmp_q8",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, theatrical young Taiwanese woman actor, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, a plain white half mask pushed up on the side of her head, a costume vest of deep red and gold, one raised hand inside a glove puppet with a white porcelain painted head and a small headdress, dramatic pose, playful eyes",
+  "seed": 7251,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ }
+]

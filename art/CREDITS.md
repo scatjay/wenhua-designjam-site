@@ -322,26 +322,28 @@
 
 欄位：成品 stem｜製程與工單｜輸入（ref_id：用法）｜是否改作｜是否需署名｜署名文字｜署名顯示處。AI 生成但無任何參考照片者輸入寫「無」。參考照片的作者與授權見上方主表（同 ref_id），**不在此重複編造**。法務欄：臺灣建築照片的著作權例外是否適用，已請 F③ 查證，未定前一律標「待法務確認」，我沒有自行判斷。
 
-| 成品 stem | 製程與工單 | 輸入 | 改作 | 需署名 | 署名文字 | 署名顯示處 | 法務 |
-|---|---|---|---|---|---|---|---|
-| scene_twl_A_r2 | jobs_r2_scene.json（seed 5101）；v2 前製程 r2：參考照片裁切後當 FLUX Redux 與提示詞參考，FLUX.1-dev Q8 生成 → 像素化 180×320 | TWL2：crop+img2img | 是 | 否 | — | — | 待法務確認（臺灣建築照片） |
-| scene_butokuden_front_scenepal | _samples_1103/prompts.md（scene_butokuden_front，BUT1 裁切／0.6）；11-03 試作：BUT1 裁切當 Redux 參考（強度 0.6）→ 像素化、場景色盤 | BUT1：crop+img2img | 是 | 否 | — | — | 待法務確認（臺灣建築照片） |
-| scene_hayashi_A_r5 | jobs_r5_scene.json（seed 7231，photo s1103d_r4_hayashi_A.png）；r5：HAY1 裁切（540,0,940,640 補天色）當參考 → FLUX.1-dev → 像素化 | HAY1：crop+img2img | 是 | 是 | 「林百貨（中正路與中義路口）」，Emily Jiang，CC BY 2.0，來源 Wikimedia Commons File:Hayasi_Department_Store_at_the_intersection_of_Jhongjheng_Road_and_Jhongyi_Road.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
-| scene_chikan_A_r2 | jobs_r2_scene.json（seed 5151，photo s1103d_r2_chikan_A.png）；r2：CHI1 蓋掉殿內紅像與遊客後裁切當參考 → FLUX.1-dev → 像素化 | CHI1：crop+img2img | 是 | 是 | 「赤崁樓 2010-02-19」，eazytraveler，CC BY 2.0，來源 Wikimedia Commons File:2010-02-19_Chihkan_Tower.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
-| scene_hall_A_r2 | jobs_r2_scene.json（seed 5171，純文字）；r2：純文字提示詞，HAL2（CC BY-SA）只在撰寫提示詞時看形狀，未作任何圖像輸入 | HAL2：shape-reference | 否（無圖像輸入） | 否 | — | — | 待法務確認（臺灣建築照片） |
-| scene_matsu_A_v2 | jobs_v2_r1.json（seed 8202，Redux 0.25、深度 ControlNet 0.65）；v2 製程：grand_matsu 裁切合成圖 → 深度 ControlNet＋低強度 Redux → 去字閘門 → 像素化 | grand_matsu：crop+depth+img2img | 是 | 是 | 「Tainan Grand Matsu Temple」，tomscoffin，CC BY 2.0，來源 Wikimedia Commons File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
-| scene_matsu_A_tainanpunk | jobs_v2_style1.json（seed 8503，Redux 0、深度 ControlNet 0.65）；v2 風格版（府城龐克）：grand_matsu 裁切合成圖當深度結構 → 風格提示詞生成 → 去字 → 像素化（風格版預設不上線，楊老師決定） | grand_matsu：depth | 是 | 是 | 「Tainan Grand Matsu Temple」，tomscoffin，CC BY 2.0，來源 Wikimedia Commons File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
-| scene_patriotic_A_v2b_tainanpunk_dt | jobs_v2_smoke2.json（府城龐克）；v2 風格版：patriotic_hall_01 蓋掉背景高樓後的裁切當深度結構 → 風格提示詞 → 去字 → 像素化 | patriotic_hall_01：depth | 是 | 是 | 「日本愛國婦人會館（台南）」，Chainwit.，CC BY 4.0，來源 Wikimedia Commons File:Japanese_Patriotic_Women's_Association_Hall_-_Tainan_-_台南愛國婦人會館_(2026)_-_img_01.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） |
-| NN_01_volunteer | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_03_gardener | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_05_senior_student | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_06_night_reader | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_07_night_runner | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_08_water_watcher | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_10_guard_uncle | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_11_aunt_waiting | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_12_governor_secretary | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_19_night_gatekeeper | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
-| NN_20_old_librarian | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 |
+| 成品 stem | 製程與工單 | 輸入 | 改作 | 需署名 | 署名文字 | 署名顯示處 | 法務 | 建築照片風險列號 |
+|---|---|---|---|---|---|---|---|---|
+| scene_twl_A_r2 | jobs_r2_scene.json（seed 5101）；v2 前製程 r2：參考照片裁切後當 FLUX Redux 與提示詞參考，FLUX.1-dev Q8 生成 → 像素化 180×320 | TWL2：crop+img2img | 是 | 否 | — | — | 待法務確認（臺灣建築照片） | 3、4、7?、9? |
+| scene_butokuden_front_scenepal | _samples_1103/prompts.md（scene_butokuden_front，BUT1 裁切／0.6）；11-03 試作：BUT1 裁切當 Redux 參考（強度 0.6）→ 像素化、場景色盤 | BUT1：crop+img2img | 是 | 否 | — | — | 待法務確認（臺灣建築照片） | 3、4、7?、9? |
+| scene_hayashi_A_r5 | jobs_r5_scene.json（seed 7231，photo s1103d_r4_hayashi_A.png）；r5：HAY1 裁切（540,0,940,640 補天色）當參考 → FLUX.1-dev → 像素化 | HAY1：crop+img2img | 是 | 是 | 「林百貨（中正路與中義路口）」，Emily Jiang，CC BY 2.0，來源 Wikimedia Commons File:Hayasi_Department_Store_at_the_intersection_of_Jhongjheng_Road_and_Jhongyi_Road.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） | 4、7?、9? |
+| scene_chikan_A_r2 | jobs_r2_scene.json（seed 5151，photo s1103d_r2_chikan_A.png）；r2：CHI1 蓋掉殿內紅像與遊客後裁切當參考 → FLUX.1-dev → 像素化 | CHI1：crop+img2img | 是 | 是 | 「赤崁樓 2010-02-19」，eazytraveler，CC BY 2.0，來源 Wikimedia Commons File:2010-02-19_Chihkan_Tower.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） | 4、9 |
+| scene_hall_A_r2 | jobs_r2_scene.json（seed 5171，純文字）；r2：純文字提示詞，HAL2（CC BY-SA）只在撰寫提示詞時看形狀，未作任何圖像輸入 | HAL2：shape-reference | 否（無圖像輸入） | 否 | — | — | 待法務確認（臺灣建築照片） | 1、7?、9? |
+| scene_matsu_A_v2 | jobs_v2_r1.json（seed 8202，Redux 0.25、深度 ControlNet 0.65）；v2 製程：grand_matsu 裁切合成圖 → 深度 ControlNet＋低強度 Redux → 去字閘門 → 像素化 | grand_matsu：crop+depth+img2img | 是 | 是 | 「Tainan Grand Matsu Temple」，tomscoffin，CC BY 2.0，來源 Wikimedia Commons File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） | 4、6、9?、13? |
+| scene_matsu_A_tainanpunk | jobs_v2_style1.json（seed 8503，Redux 0、深度 ControlNet 0.65）；v2 風格版（府城龐克）：grand_matsu 裁切合成圖當深度結構 → 風格提示詞生成 → 去字 → 像素化（風格版預設不上線，楊老師決定） | grand_matsu：depth | 是 | 是 | 「Tainan Grand Matsu Temple」，tomscoffin，CC BY 2.0，來源 Wikimedia Commons File:2010-07-06_Tainan_Grand_Matsu_Temple.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） | 4、6、9?、13? |
+| scene_patriotic_A_v2b_tainanpunk_dt | jobs_v2_smoke2.json（府城龐克）；v2 風格版：patriotic_hall_01 蓋掉背景高樓後的裁切當深度結構 → 風格提示詞 → 去字 → 像素化 | patriotic_hall_01：depth | 是 | 是 | 「日本愛國婦人會館（台南）」，Chainwit.，CC BY 4.0，來源 Wikimedia Commons File:Japanese_Patriotic_Women's_Association_Hall_-_Tainan_-_台南愛國婦人會館_(2026)_-_img_01.jpg，已修改（裁切、重繪為 16 位元像素風）。 | 未接線（結算頁或 walk_intro，由楊老師接線後才算顯示） | 待法務確認（臺灣建築照片） | 4、7?、9 |
+| NN_01_volunteer | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_03_gardener | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_05_senior_student | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_06_night_reader | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_07_night_runner | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_08_water_watcher | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_10_guard_uncle | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_11_aunt_waiting | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_12_governor_secretary | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_19_night_gatekeeper | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+| NN_20_old_librarian | art/npc_pixel16/prompts.md（FLUX.1-dev Q8 GGUF，768×768，原圖在 _raw/，proper-pixel-art 或 PIL 縮 128、共用 96 色盤） | 無（原創角色，純文字提示詞，無參考照片） | 不適用 | 否 | — | — | 不適用 | 不適用 |
+
+建築照片風險列號＝`knowledge/tainan_walk/ARCH_PHOTO_LICENSE_TABLE_1107.md`（F③，非法律意見）第 2 節判斷表的列號；帶「?」者表示該列是否適用取決於我沒查證的事實（日治設計者卒年、是否古蹟、廟宇所有權），未下結論。各列：1 參考圖、3 CC0／公有領域錨點、4 戶外建築重畫成遊戲場景、5 對外商業推廣、6 含雕塑壁畫神像剪黏、7 日治建築、9 古蹟或歷史建築、13 私人寺廟。楊老師決定前不因此下架任何可上線項目。
 
 追不到來源的 pass 成品：本輪逐項追完後為 0。需署名的 CC BY 成品（hayashi_A_r5、chikan_A_r2、matsu_A_v2、matsu_A_tainanpunk、patriotic_A_v2b_tainanpunk_dt）在署名顯示處接線前，只能算「素材合格、署名待接」；FLUX.1-dev 輸出授權說明仍沿用上方〔暫定〕。

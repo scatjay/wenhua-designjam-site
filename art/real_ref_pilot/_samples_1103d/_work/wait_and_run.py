@@ -5,7 +5,7 @@
 依序跑 階段（探員16 → NPC5 → 警察署雙CN），每階段 Popen 啟動，逾時殺整棵行程樹；全部做完或中斷都 kill 伺服器、done 預約、確認埠釋放。
 已完成的階段記在 STATE（重啟不重做）。單例：pid 檔鎖。日誌：LOG。
 用法：python wait_and_run.py   （背景執行）；停止：TaskStop 該工作，再用 psutil 確認沒有殘留。"""
-import subprocess, sys, time, os, re, json, psutil
+import subprocess, sys, time, os, re, json, psutil, datetime
 
 W = 'E:/Downloads/課程管理與備課/文化遊戲松_designjam/_site_master_wt/art/real_ref_pilot/_samples_1103d/_work'
 S = 'C:/Users/user/AppData/Local/Temp/claude/95791ac1e5ee61d4/c1191369-0d37-48e7-8d65-ccaaeec5530a/scratchpad'
@@ -22,7 +22,7 @@ DRY = os.environ.get('DRY') == '1'
 
 # 階段：(名稱, 工單, 腳本, 日誌前綴, 逾時分鐘, 額外環境, 預期輸出檔名清單來源)
 STAGES = [
-    ('agents16', 'jobs_v2_agents16.json', 'run_v2_chars.sh', 'v2agents', 100, {}),
+    ('agents16', 'jobs_v2_agents16.json', 'run_v2_chars.sh', 'v2agents', 100, {'COMFY_EXTRA': '--disable-smart-memory'}),
     ('npc5', 'jobs_v2_npc5.json', 'run_v2_chars.sh', 'v2npc', 30, {}),
     ('police', 'jobs_v2_police.json', 'run_v2_batch.sh', 'v2pol', 40,
      {'PIX_METHOD': 'median', 'PIX_COLORS': '48', 'PROTECT_LIST': 'stone lion. lion statue. balustrade. window'}),
@@ -88,6 +88,26 @@ def kill_server():
             log('killed server %d' % x.pid)
 
 
+def pick_reservation():
+    """優先用預約簿裡「走讀美術 v2 夜間時窗」且現在落在時窗內的 pending 預約；否則臨時登記一筆 110 分的預約（0 張就 cancel）。
+    回傳 (id, 是否臨時, 時窗結束時間)。"""
+    r = subprocess.run([sys.executable, RS, 'list'], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
+    now = datetime.datetime.now()
+    for l in r.stdout.split('\n'):
+        m = re.match(r'^([0-9a-f]{8})\s+pending\s+(\d\d)-(\d\d) (\d\d):(\d\d)\s+(\d+) 分', l)
+        if m and 'course-walk-art-v2' in l and '夜間時窗' in l:
+            t0 = datetime.datetime(now.year, int(m.group(2)), int(m.group(3)), int(m.group(4)), int(m.group(5)))
+            t1 = t0 + datetime.timedelta(minutes=int(m.group(6)))
+            if t0 <= now < t1:
+                log('使用預約簿時窗預約 %s（到 %s）' % (m.group(1), t1.strftime('%m-%d %H:%M')))
+                return m.group(1), False, t1
+    r = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '30', '--gpu',
+                        '--start', 'now', '--minutes', '110', '--note', '走讀美術 v2 臨時（等條件到）；0 張會 cancel'], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
+    m = re.search(r'預約 ([0-9a-f]{8})', r.stdout)
+    log('臨時登記 rc=%s id=%s %s' % (r.returncode, m.group(1) if m else None, r.stdout.strip()[:120]))
+    return (m.group(1) if m else None), True, now + datetime.timedelta(minutes=110)
+
+
 def prep_jobs():
     a = json.load(open(W + '/jobs_v2_agents.json', encoding='utf-8'))
     json.dump([j for j in a if j['style'] == 'agent'], open(W + '/jobs_v2_agents16.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
@@ -112,6 +132,11 @@ def run_stage(name, jobs, script, prefix, minutes, extra):
     names = [j['name'] for j in json.load(open(W + '/' + jobs, encoding='utf-8'))]
     got = sum(1 for n in names if os.path.exists('%s/%s.png' % (RAW, n)))
     log('stage %s 產出原圖 %d/%d' % (name, got, len(names)))
+    try:
+        pk = json.load(open(S + '/%s_gen.json' % prefix, encoding='utf-8')).get('peak')
+        log('stage %s 峰值（旋鈕=%s）：%s' % (name, extra.get('COMFY_EXTRA', '無'), pk))
+    except Exception as e:
+        log('stage %s 讀不到峰值：%s' % (name, e))
     return got
 
 
@@ -140,28 +165,36 @@ def main():
             log('DRY：條件=%s，下一階段=%s' % (ok, todo[0][0])); break
         if not ok:
             time.sleep(POLL); continue
-        r = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '30', '--gpu',
-                            '--start', 'now', '--minutes', '150', '--note', '走讀美術 v2 自動開工（等條件）'], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
-        m = re.search(r'\b([0-9a-f]{8})\b', r.stdout)
-        rid = m.group(1) if m else None
-        log('add rc=%s id=%s %s' % (r.returncode, rid, r.stdout.strip()[:160]))
+        rid, adhoc, win_end = pick_reservation()
         if not rid:
             time.sleep(POLL); continue
         r = subprocess.run([sys.executable, RS, 'start', rid], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
         log('start rc=%s %s' % (r.returncode, r.stdout.strip()[:160]))
+        total = 0
         try:
             if r.returncode != 0 or '✋' in r.stdout or '拒' in r.stdout:
-                log('預約被拒，回到等待'); continue
-            for s in todo:
-                got = run_stage(*s)
-                if got > 0:
-                    st['done'].append(s[0]); save_state(st)
-                else:
-                    log('階段 %s 0 張（可能租約被拒），釋放後回到等待，不連續重試' % s[0]); break
+                log('預約被拒，回到等待（%s）' % ('臨時預約，稍後取消' if adhoc else '保留 pending'))
+            else:
+                for s in todo:
+                    remain = int((win_end - datetime.datetime.now()).total_seconds() / 60) - 2
+                    if remain < 8:
+                        log('時窗剩 %d 分，不再開新階段' % remain); break
+                    name, jobs, script, prefix, minutes, extra = s
+                    got = run_stage(name, jobs, script, prefix, min(minutes, remain), extra)
+                    total += got
+                    if got > 0:
+                        st['done'].append(name); save_state(st)
+                    else:
+                        log('階段 %s 0 張（可能租約被拒），不連續重試' % name); break
         finally:
             kill_server(); time.sleep(2)
-            d = subprocess.run([sys.executable, RS, 'done', rid], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
-            log('done rc=%s %s；埠 8288 仍聽=%s' % (d.returncode, d.stdout.strip()[:120], port_busy()))
+            # 規則：只有真的出圖才 done；0 張一律 cancel，不可標 done
+            cmd = 'done' if total > 0 else ('cancel' if (adhoc or r.returncode == 0) else None)
+            if cmd:
+                d = subprocess.run([sys.executable, RS, cmd, rid], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
+                log('%s rc=%s %s；本輪共出 %d 張；埠 8288 仍聽=%s' % (cmd, d.returncode, d.stdout.strip()[:100], total, port_busy()))
+            else:
+                log('預約 %s 保留 pending；埠 8288 仍聽=%s' % (rid, port_busy()))
         time.sleep(POLL)
     try: os.remove(PIDF)
     except Exception: pass

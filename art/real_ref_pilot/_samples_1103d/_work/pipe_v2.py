@@ -49,6 +49,27 @@ def _fast_server_procs():
 cc.server_procs = _fast_server_procs      # comfy_core 內的 stop_server、lease 等也會用到這個名稱
 
 
+def _start_server_extra(log_path):
+    """同 comfy_core.start_server，但可用環境變數 COMFY_EXTRA 追加啟動旗標（例如 --disable-smart-memory），不改 comfy_core。"""
+    if cc.server_up():
+        return True
+    B = cc.INSTALL['dir']
+    extra = os.environ.get('COMFY_EXTRA', '').split()
+    log = open(log_path, 'a', encoding='utf-8', errors='replace')
+    subprocess.Popen([B + '/python_embeded/python.exe', '-s', B + '/ComfyUI/main.py', '--windows-standalone-build',
+                      '--port', str(cc.INSTALL['port']), '--listen', '127.0.0.1', '--disable-auto-launch'] + extra,
+                     cwd=B, stdout=log, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, creationflags=cc.NO_WINDOW)
+    for _ in range(120):
+        time.sleep(2)
+        if cc.server_up():
+            return True
+    return False
+
+
+if os.environ.get('COMFY_EXTRA'):
+    cc.start_server = _start_server_extra
+
+
 def throttle(procs=None):
     """本程序與 ComfyUI 伺服器：降到低於正常優先權、限制核心數。"""
     allc = list(range(psutil.cpu_count()))

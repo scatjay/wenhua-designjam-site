@@ -16,7 +16,7 @@ BASH = 'D:/Git/bin/bash.exe'
 LOG = S + '/wait_and_run.log'
 STATE = S + '/wait_and_run.state.json'
 PIDF = S + '/wait_and_run.pid'
-LIMIT_GB = float(os.environ.get('LIMIT_GB', '69.5'))   # Q4 申請 24 GB：認可 <= 93.5-24；Q8（30 GB）階段另檢查 <= Q8_LIMIT_GB
+LIMIT_GB = float(os.environ.get('LIMIT_GB', '75.5'))   # Q4 申請 18 GB：認可 <= 93.5-18；Q8（30 GB）階段另檢查 <= Q8_LIMIT_GB
 Q8_LIMIT_GB = 63.5
 FALLBACK_BY = datetime.datetime(2026, 11, 12, 20, 0)
 POLL = int(os.environ.get('POLL', '600'))
@@ -105,7 +105,7 @@ def pick_reservation():
             if t0 <= now < t1:
                 log('使用預約簿時窗預約 %s（到 %s）' % (m.group(1), t1.strftime('%m-%d %H:%M')))
                 return m.group(1), False, t1
-    r = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '24', '--gpu',
+    r = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '18', '--gpu',
                         '--start', 'now', '--minutes', '110', '--note', '走讀美術 v2 臨時（等條件到）；0 張會 cancel'], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
     m = re.search(r'預約 ([0-9a-f]{8})', r.stdout)
     log('臨時登記 rc=%s id=%s %s' % (r.returncode, m.group(1) if m else None, r.stdout.strip()[:120]))
@@ -149,8 +149,8 @@ def rollover():
         open(S + '/fallback.flag', 'w').write(now.isoformat())
         log('已到 %s 仍沒跑成，不再順延，寫 fallback.flag（改用已驗證的 34 個可上線＋emoji 探員）' % FALLBACK_BY.strftime('%m-%d %H:%M'))
         return
-    note = '走讀美術 course-walk-art-v2：Q4_K_S 量化預估24GB（推估未實測）；%s 夜因認可未達 69.5 GB 順延' % (nxt - datetime.timedelta(days=1)).strftime('%m-%d')
-    a = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '24', '--gpu',
+    note = '走讀美術 course-walk-art-v2：Q4_K_S 量化預估18GB（行程提交量實測峰值 17.5 GB）；%s 夜因認可未達 75.5 GB 順延' % (nxt - datetime.timedelta(days=1)).strftime('%m-%d')
+    a = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '18', '--gpu',
                         '--start', nxt.strftime('%Y-%m-%d %H:%M'), '--minutes', '110', '--note', note], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
     log('順延登記 %s rc=%s %s' % (nxt.strftime('%m-%d %H:%M'), a.returncode, a.stdout.strip()[:80]))
 
@@ -162,7 +162,7 @@ def prep_jobs():
 
 
 def run_stage(name, jobs, script, prefix, minutes, extra):
-    env = dict(os.environ, WAIT_GB=str((LIMIT_GB if extra.get('UNET') else Q8_LIMIT_GB) - 0.5), EST_GB=('24' if extra.get('UNET') else '30'), **extra)   # Q4 向租約申請 24 GB，Q8 仍 30 GB
+    env = dict(os.environ, WAIT_GB=str((LIMIT_GB if extra.get('UNET') else Q8_LIMIT_GB) - 0.5), EST_GB=('18' if extra.get('UNET') else '30'), **extra)   # Q4 向租約申請 24 GB，Q8 仍 30 GB
     outp = open(S + '/%s.out' % prefix, 'w', encoding='utf-8')
     p = subprocess.Popen([BASH, W + '/' + script, jobs, S + '/' + prefix], cwd=W, env=env, stdout=outp, stderr=subprocess.STDOUT)
     log('stage %s started pid=%d' % (name, p.pid))

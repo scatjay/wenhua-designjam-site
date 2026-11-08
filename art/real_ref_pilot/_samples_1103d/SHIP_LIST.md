@@ -3,22 +3,22 @@
 只有品檢「過」才列可上線；human＝需楊老師肉眼，reject＝退回待重生，unqa＝沒品檢，missing＝沒成品。AG_IMG_ON 建議：false（探員替補品檢過幾位再說）。授權：pass 成品來源鏈已補齊（CREDITS 末段），walk_license_check exit=0；但需署名的 CC BY 成品（林百貨、赤崁樓、大天后宮、愛國婦人館風格版）在結算頁或 walk_intro 接線署名前，只算素材合格；臺灣建築照片著作權例外待法務確認。
 
 ## 可上線（57）
-場景 - s0：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）集合點，共用台文館
-場景 - s1：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼
-場景 - s2：art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png（pass）有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠
-場景 - s3：art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png（pass）11-03 ACCEPT，楊老師稱讚過的取景
-場景 - s4：art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png（pass）替代：scene_hayashi_B_v2d（過，上層特寫）
-場景 - s5：art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png（pass）替代：scene_matsu_B_v2c（需人眼）
-場景 - s6：art/real_ref_pilot/_samples_1103d/scene_chikan_A_r2_180x320.png（pass）靈祐宮另有 scene_lingyou_A_v2c（文字過、文史待定，暫用）
-場景 - s7：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）終點，共用台文館
-場景 - t1：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）
-場景 - t3：art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png（pass）同 s2 有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠
-場景 - t4：art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png（pass）
-場景 - t5：art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png（pass）
-場景 - t6：art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png（pass）
-場景 - t7：art/real_ref_pilot/_samples_1103d/scene_chikan_A_r2_180x320.png（pass）
-場景 - t8：art/real_ref_pilot/_samples_1103d/scene_hall_A_r2_180x320.png（pass）
-場景 - tf：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）
+場景 - s0：art/ship/scene_twl_A_r2_180x320.png（pass）集合點，共用台文館
+場景 - s1：art/ship/scene_twl_A_r2_180x320.png（pass）替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼
+場景 - s2：art/ship/scene_police_A_v3b_fix_180x320.png（pass）有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠
+場景 - s3：art/ship/scene_butokuden_front_scenepal_180x320.png（pass）11-03 ACCEPT，楊老師稱讚過的取景
+場景 - s4：art/ship/scene_hayashi_A_r5_180x320.png（pass）替代：scene_hayashi_B_v2d（過，上層特寫）
+場景 - s5：art/ship/scene_matsu_A_v2_180x320.png（pass）替代：scene_matsu_B_v2c（需人眼）
+場景 - s6：art/ship/scene_chikan_A_r2_180x320.png（pass）靈祐宮另有 scene_lingyou_A_v2c（文字過、文史待定，暫用）
+場景 - s7：art/ship/scene_twl_A_r2_180x320.png（pass）終點，共用台文館
+場景 - t1：art/ship/scene_twl_A_r2_180x320.png（pass）
+場景 - t3：art/ship/scene_police_A_v3b_fix_180x320.png（pass）同 s2 有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠
+場景 - t4：art/ship/scene_butokuden_front_scenepal_180x320.png（pass）
+場景 - t5：art/ship/scene_hayashi_A_r5_180x320.png（pass）
+場景 - t6：art/ship/scene_matsu_A_v2_180x320.png（pass）
+場景 - t7：art/ship/scene_chikan_A_r2_180x320.png（pass）
+場景 - t8：art/ship/scene_hall_A_r2_180x320.png（pass）
+場景 - tf：art/ship/scene_twl_A_r2_180x320.png（pass）
 NPC - s1：州知事的祕書（pass）
 NPC - s2：檔案室管理員（pass）
 NPC - s6：搬廟那年的木匠學徒（pass）

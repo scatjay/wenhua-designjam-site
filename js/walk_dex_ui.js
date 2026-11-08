@@ -73,6 +73,7 @@
     '.wd-note{font-size:12px;color:var(--wd-mute);margin:2px 0}.wd-msg{min-height:20px;font-size:13px;margin:6px 0;font-weight:700}' +
     '.wd-tile{display:block;width:100%;text-align:left;border:1px solid var(--wd-line);border-radius:10px;background:var(--wd-bg);color:var(--wd-fg);padding:8px;min-height:64px;font-size:13px}' +
     'button.wd-tile{min-height:64px;cursor:pointer}' +
+    '.wd-pic{width:48px;height:48px;image-rendering:pixelated;border-radius:8px;object-fit:cover;display:block;margin:0 auto}' +
     '.wd-tile .wd-ico{display:block;font-size:26px;line-height:1.2}.wd-sil .wd-ico{filter:brightness(0);opacity:.55}' +
     '.wd-sil{background:var(--wd-chip)}.wd-px{image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin-bottom:4px}' +
     '.wd-rar{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--wd-chip);margin:2px 0}' +
@@ -370,6 +371,9 @@
       render();
     }
 
+    /* 11-08 美術接線：人物有品檢過的像素頭像（art/ship）就用圖，沒有就維持 emoji */
+    function npcPic(item) { var o = (root.WALK_ASSETS || {}).npcs_by_stop || {}, n = item && o[item.stop]; return (n && n.file && n.status === 'pass') ? n.file : ''; }
+
     /* ---- 清單 */
     function tile(catId, item, interactive, onClick) {
       var has = got(catId, item.id), t, ico, sp, cv, name, hintTxt;
@@ -390,7 +394,8 @@
         name = has ? ((item.type ? item.type + '：' : '') + (item.text || '')) : '？？？';
       } else {
         ico = catId === 'people' ? item.ava : (catId === 'looks' ? item.emoji : null);
-        add(t, el('span', { cls: 'wd-ico', text: ico || (catById(catId) && catById(catId).icon) || CAT_ICON_FALLBACK[catId] || '📘', attrs: { 'aria-hidden': 'true' } }));
+        if (catId === 'people' && npcPic(item)) add(t, el('img', { cls: 'wd-ico wd-pic', attrs: { src: npcPic(item), alt: '', loading: 'lazy', decoding: 'async' } }));
+        else add(t, el('span', { cls: 'wd-ico', text: ico || (catById(catId) && catById(catId).icon) || CAT_ICON_FALLBACK[catId] || '📘', attrs: { 'aria-hidden': 'true' } }));
         name = (has || catId === 'titles') ? (item.name || item.role || '') : '？？？';   /* 稱號是目標清單，名字一直看得到 */
       }
       add(t, el('b', { cls: 'wd-name', text: name }));
@@ -436,8 +441,9 @@
       ty = has && typeof root.WALK_NPC_TYPE === 'function' ? root.WALK_NPC_TYPE(it.name) : null;
       panel = el('div', { cls: 'wd-panel wd-card', attrs: { 'data-id': it.id, 'data-got': has ? '1' : '0' } });
       add(panel, btn('← 回人物清單', '', function () { go('list', 'people'); }));
-      ico = el('span', { cls: 'wd-ico' + (has ? '' : ' wd-sil'), text: it.ava || '🧑', attrs: { 'aria-hidden': 'true' } });
+      ico = npcPic(it) ? el('img', { cls: 'wd-ico wd-pic' + (has ? '' : ' wd-sil'), attrs: { src: npcPic(it), alt: '', decoding: 'async' } }) : el('span', { cls: 'wd-ico' + (has ? '' : ' wd-sil'), text: it.ava || '🧑', attrs: { 'aria-hidden': 'true' } });
       ico.style.fontSize = '40px';
+      if (npcPic(it)) { ico.style.width = '72px'; ico.style.height = '72px'; }
       add(panel, ico);
       add(panel, el('h2', { text: name }));
       add(panel, rarChip(it.rarity || '普通'));

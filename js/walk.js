@@ -836,7 +836,7 @@
       now: function () { return Date.now(); }
     });
   }
-  var HOME_JS = ['walk_sprites2.js', 'walk_data_spirit.js', 'walk_data_traits.js', 'walk_data_shop.js', 'walk_data_dex.js', 'walk_data_intel_a.js', 'walk_data_intel_b.js', 'walk_data_intel.js', 'walk_store.js', 'walk_room.js', 'walk_spirit_ui.js', 'walk_dex_ui.js', 'walk_shop_ui.js'], HOME_V = '202611041210', homeLoading = false;
+  var HOME_JS = ['walk_sprites2.js', 'walk_data_spirit.js', 'walk_data_traits.js', 'walk_data_shop.js', 'walk_data_dex.js', 'walk_data_intel_a.js', 'walk_data_intel_b.js', 'walk_data_intel.js', 'walk_store.js', 'walk_room.js', 'walk_spirit_ui.js', 'walk_dex_ui.js', 'walk_shop_ui.js'], HOME_V = '202611082200', homeLoading = false;
   /* 只有功能開啟才載入（約 300 KB），依序載入以保證順序；關閉時網頁與原本完全一樣 */
   function homeLoad(cb) {
     if (window.WalkStore) { cb(); return; }

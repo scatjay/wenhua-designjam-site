@@ -147,3 +147,10 @@
 - 11-12 20:00 前要給母線「可上線／不可上線」彙整與 AG_IMG_ON 建議（目前建議 false）。
 
 - 11-07 18:5x 等待程式巡檢（PID 48000）：認可量 72～75 GB，仍 > 63.5，未開工；治理線暫定獨占時窗 11-08 01:00–02:50。之後每 2 小時看一次，條件到了自動跑。
+
+
+## 2026-11-08 11:1x 讀 mono-pix／fast-pixelizer 原始碼，對照我們的 unfake 用法
+- 讀了 fast-pixelizer（MIT）`src/snap.ts`、`snap-profile.ts` 全文與 unfake `pixel.py` 的偵測段；原始碼文字存在 scratchpad `fast_pixelizer_src/`（不進 repo、沒執行、沒安裝）。`snap-cells.ts`、`snap-uniform.ts`、`snap-transitions.ts`、`snap-quantize.ts` 沒讀。
+- 兩者偵測格子的做法：fast-pixelizer＝先 K-means 量化顏色 → 灰階邊緣強度投影（行／列）→ 自相關求週期（lag 2～256）＋峰距直方圖備援 → 估相位 → 沿投影峰值逐格找切線（可局部對齊）；另有「完全均勻放大」「色塊轉換位置」兩條精確路線，優先於估計。unfake＝Sobel 梯度投影 → 峰值間距取中位數或眾數（還有連續同色長度的最大公因數法）→ 取 3×3 分塊投票，找裁切偏移。
+- **關鍵事實：我們的 pixelize_v2 用的是 manual_scale=4、snap_grid=False，等於完全沒用任何格子偵測**，是把原圖等比裁成目標長寬比、放大到 4 倍，再每 4×4 取 median／dominant。FLUX 原圖的「假像素」格寬約 6～10 px（NPC 製程記錄），和我們強加的格子不對齊，邊緣可能被切在格子中間。
+- 可借用的點（只是建議，沒實測）：先偵測 FLUX 原圖自己的格寬與相位，對齊切線再縮到 180×320 或 128；可用 unfake 現成的 snap_grid=True 做 A/B，不必引進 TS 程式。已在 ART_PLAN 的「像素化後處理 A/B」項下，待 GPU 空檔前可先用既有原圖離線做（零 GPU）。

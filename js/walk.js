@@ -708,7 +708,7 @@
     cases.forEach(function (s) {
       var f = prog[s.id] && prog[s.id].frag, nm = s.name.replace(/^第 \d (案|章)｜/, '');
       if (f) { got++; now.push(s.id); var who = (team.members && team.members[f.by] && team.members[f.by].nick) || '';
-        h += '<div class="stk' + (seen.indexOf(s.id) < 0 ? ' new' : '') + '" title="' + esc(nm) + '"><div class="stk-i">' + ((s.npc && s.npc.ava) || '📍') + '</div><div class="stk-n">' + esc(nm) + '</div><div class="stk-d">' + fmtD(f.t) + (who ? '・' + esc(who) : '') + '</div></div>';
+        h += '<div class="stk' + (seen.indexOf(s.id) < 0 ? ' new' : '') + '" title="' + esc(nm) + '"><div class="stk-i">' + npcAvaHtml(s.id, ((s.npc && s.npc.ava) || '📍'), 'stk-img') + '</div><div class="stk-n">' + esc(nm) + '</div><div class="stk-d">' + fmtD(f.t) + (who ? '・' + esc(who) : '') + '</div></div>';
       } else h += '<div class="stk empty" title="尚未取得"><div class="stk-i">？</div><div class="stk-n">' + esc(nm) + '</div></div>';
     });
     ACHS.forEach(function (a) {
@@ -1114,6 +1114,7 @@
     h += '<div class="chips">' + S.map(function (x, i) { var st = (prog[x.id] && prog[x.id].frag) ? 'ok' : (prog[x.id] && prog[x.id].arrived ? 'half' : ''); return '<button class="chip ' + st + (x.id === s.id ? ' cur' : '') + '" data-s="' + x.id + '">' + i + '<br><span class="cd" data-cd="' + x.id + '">' + (myPos ? dTxt(dist(myPos, x)) : '') + '</span></button>'; }).join('') + '</div>';
     h += '<h2>' + esc(s.name) + '</h2><div class="sub">' + (REH ? '' : esc(s.time) + ' 起・') + '約 ' + s.min + ' 分' + (s.frag !== undefined ? '・碎片「' + esc(R.fragmentNames[s.frag]) + '」' + (p.frag ? ' ✔' : '') : '') + '</div>';
     h += '<div class="sub" id="cur-dist">' + distLine(s) + '</div>';
+    if (sceneImg(s.id)) h += '<img class="scene" src="' + sceneImg(s.id) + '" alt="' + esc(s.name) + '" loading="lazy" decoding="async">';
     if (s.tip) { h += '<div class="card">' + esc(s.tip || '') + '</div>'; if (s.id === 's0' || s.id === 'c0') h += '<div class="card">你的角色：<b>' + ROLE_ICON[myRole()] + myRole() + '</b><br><span class="sub">' + esc(ROLE_DESC[myRole()]) + '</span></div>'; }
     if (s.final) h += finalHtml();
     if (s.npc) h += npcHtml(s, p);
@@ -1284,8 +1285,13 @@
     var b = window.WALK_NPC_BLURB && window.WALK_NPC_BLURB(n.name); if (!b) return '';
     return '<div class="nblurb"><div>📖 ' + esc(b.story) + '</div><div class="sub">特色：' + esc(b.trait) + '　給你：' + esc(b.gives) + '</div><div>' + (b.tag || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join(' ') + '</div></div>';
   }
+  /* 美術接線（11-08）：只用品檢 pass 的成品；沒有圖或離線就退回 emoji，不留空白 */
+  function _wa() { return window.WALK_ASSETS || {}; }
+  function npcImg(sid) { var np = (_wa().npcs_by_stop || {})[sid]; return (np && np.file && np.status === 'pass') ? np.file : ''; }
+  function sceneImg(sid) { var sc = (_wa().scenes || {})[sid]; return (sc && sc.file && sc.status === 'pass') ? sc.file : ''; }
+  function npcAvaHtml(sid, ava, cls) { var f = npcImg(sid); return f ? '<img class="' + cls + '" src="' + f + '" alt="" loading="lazy" decoding="async">' : ava; }
   function npcHtml(s, p) {
-    var n = s.npc, used = p.hints || 0, h = '<div class="npc"><div class="nhd"><span class="nava">' + n.ava + '</span><b>' + esc(n.name) + '</b></div>' + npcBlurbHtml(n) + npcTypeHtml(n);
+    var n = s.npc, used = p.hints || 0, h = '<div class="npc"><div class="nhd"><span class="nava">' + npcAvaHtml(s.id, n.ava, 'nava-img') + '</span><b>' + esc(n.name) + '</b></div>' + npcBlurbHtml(n) + npcTypeHtml(n);
     if (!(p.arrived || TEST)) { h += '<div class="bub dim">（還沒走到這裡，' + esc(n.name) + '還在趕路…）</div><button class="btn2" data-arr="' + s.id + '">我不在現場，先聊聊</button></div>'; return h; }
     n.open.forEach(function (l) { h += '<div class="bub">' + esc(l) + '</div>'; });
     h += '<div class="bub clue">' + esc(n.clue) + '</div>';
@@ -1347,7 +1353,7 @@
   var TASK_ROLE = { choice: ['軍師'], order: ['軍師'], text: ['記錄官', '偵查員'], ack: ['蒐證員', '隊長'], cu: ['文化設計員', '記錄官', '偵查員'] };
   /* ---------- 時安局探員：16 個職務各有一位探員（名字、個性、屬性、技能、搭檔）。頭像第一次進簡報室才載入；省電模式用職務圖示 ---------- */
   function agOf(r) { return window.WALK_AGENTS ? WALK_AGENTS.get(r) : null; }
-  var AG_IMG_ON = false;   /* 頭像要等重新設計（臺灣人長相、真實參考照片）後才開 */
+  var AG_IMG_ON = true;   /* 11-08：16 位探員改用 v2 製程品檢過的新頭像（臺灣人長相、無參考照片純生成），楊老師指示上線；關回 false 即退回職務圖示 */
   function agImg(r, px) {
     var g = agOf(r); if (!g || !AG_IMG_ON || ecoOn || (navigator.connection && navigator.connection.saveData)) return '';
     return '<img class="agimg" src="' + g.img + '" width="' + px + '" height="' + px + '" loading="lazy" decoding="async" alt="">';

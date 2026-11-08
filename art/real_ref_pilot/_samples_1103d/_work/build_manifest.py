@@ -83,20 +83,23 @@ for v in NPCS.values():
             v['nn'] = mm.group(1)
 
 # r4 重生（11-08，Q4_K_S）品檢結果（QA_v2_agents_r4.md）：職務 → (採用 seed 或 None, status)；探員 16 位
-AG_R4 = {'a01_captain': (7101, 'pass'), 'a02_navigator': (7112, 'pass'), 'a03_strategist': (7121, 'human'), 'a04_scout': (7131, 'pass'),
-         'a05_archivist': (7142, 'pass'), 'a06_interviewer': (7151, 'pass'), 'a07_photographer': (7162, 'pass'), 'a08_recorder': (7171, 'pass'),
-         'a09_designer': (7181, 'pass'), 'a10_radio': (7192, 'pass'), 'a11_safety': (None, 'reject'), 'a12_supply': (None, 'reject'),
-         'a13_forensic': (7221, 'pass'), 'a14_tech': (7231, 'pass'), 'a15_local_guide': (None, 'reject'), 'a16_actor': (7251, 'human')}
+AG_R4 = {'a01_captain': (7101, 'pass', 4), 'a02_navigator': (7112, 'pass', 4), 'a03_strategist': (7431, 'pass', 5), 'a04_scout': (7131, 'pass', 4),
+         'a05_archivist': (7142, 'pass', 4), 'a06_interviewer': (7151, 'pass', 4), 'a07_photographer': (7162, 'pass', 4), 'a08_recorder': (7171, 'pass', 4),
+         'a09_designer': (7181, 'pass', 4), 'a10_radio': (7192, 'pass', 4), 'a11_safety': (7442, 'pass', 5), 'a12_supply': (7401, 'pass', 5),
+         'a13_forensic': (7221, 'pass', 4), 'a14_tech': (7231, 'pass', 4), 'a15_local_guide': (7411, 'human', 5), 'a16_actor': (7251, 'human', 4)}
 # 母線 11-08 代決（可逆）：a02 s7112 有條件採用（缺地圖）；a11 兩張都不採用（紅十字為受保護標誌、s7201 名牌疑似字）；a07 採 s7162
-AG_COND = {'a02_navigator': '有條件採用：缺摺疊地圖，肩與前臂有米色小方塊貼片（無字）；r5 若重生出更好的以新的為準'}
+AG_COND = {'a02_navigator': '有條件採用（r4 s7112）：缺摺疊地圖，肩與前臂有米色小方塊貼片（無字）；r5 重生仍缺地圖（s7421 退回），維持此張',
+           'a15_local_guide': '需人眼：道具全中、半身，但臉是少女非五十多歲（熟齡是否硬性要求待定）',
+           'a16_actor': '需人眼：r4 s7251 有手偶與立領背心，但面具戴在雙眼上、髮髻頂邊被裁；r5 s7451 面具拿在臉側且無手偶'}
 AGENTS_R4 = {}
-for k, (sd, stt) in AG_R4.items():
-    f = D + 'char_%s_r4_s%d_128.png' % (k, sd) if sd else None
+for k, (sd, stt, rnd) in AG_R4.items():
+    f = D + 'char_%s_r%d_s%d_128.png' % (k, rnd, sd) if sd else None
     if f: assert (ROOT / f).exists(), f
     AGENTS_R4[k] = {'file': f, 'seed': sd, 'status': stt}
     if k in AG_COND: AGENTS_R4[k]['condition'] = AG_COND[k]
 # NPC r4 重生：n14 過；n13、n18 需人眼；n02、n15 退回（舊 NN 檔對應的 stop 用新檔取代 n14／n13／n18）
-NPC_R4 = {'s2': ('n14_archivist_r4_s7301', 'pass'), 't2': ('n13_signpost_r4_s7321', 'human'), 's6': ('n18_carpenter_r4_s7311', 'human')}
+NPC_R4 = {'s2': ('n14_archivist_r4_s7301', 'pass'), 't2': ('n13_signpost_r5_s7481', 'pass'), 's6': ('n18_carpenter_r5_s7491', 'pass'),
+          'c2': ('n02_nightguard_r5_s7461', 'pass'), 't4': ('n15_janitor_r5_s7472', 'pass')}
 for sid, (stem, stt) in NPC_R4.items():
     f = D + 'char_%s_128.png' % stem
     assert (ROOT / f).exists(), f

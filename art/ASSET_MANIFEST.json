@@ -170,8 +170,8 @@
   },
   "s6": {
    "name": "搬廟那年的木匠學徒",
-   "file": "art/real_ref_pilot/_samples_1103d/char_n18_carpenter_r4_s7311_128.png",
-   "status": "human",
+   "file": "art/real_ref_pilot/_samples_1103d/char_n18_carpenter_r5_s7491_128.png",
+   "status": "pass",
    "nn": "18",
    "r4": true
   },
@@ -183,9 +183,10 @@
   },
   "c2": {
    "name": "西淮館的夜班管理員",
-   "file": "art/npc_pixel16/NN_02_night_guard_128.png",
-   "status": "human",
-   "nn": "02"
+   "file": "art/real_ref_pilot/_samples_1103d/char_n02_nightguard_r5_s7461_128.png",
+   "status": "pass",
+   "nn": "02",
+   "r4": true
   },
   "c3": {
    "name": "銅像旁的老園丁",
@@ -255,16 +256,17 @@
   },
   "t2": {
    "name": "圓環旁的路牌檢查員",
-   "file": "art/real_ref_pilot/_samples_1103d/char_n13_signpost_r4_s7321_128.png",
-   "status": "human",
+   "file": "art/real_ref_pilot/_samples_1103d/char_n13_signpost_r5_s7481_128.png",
+   "status": "pass",
    "nn": "13",
    "r4": true
   },
   "t4": {
    "name": "看守校舍的老工友",
-   "file": "art/npc_pixel16/NN_15_school_janitor_128.png",
-   "status": "reject",
-   "nn": "15"
+   "file": "art/real_ref_pilot/_samples_1103d/char_n15_janitor_r5_s7472_128.png",
+   "status": "pass",
+   "nn": "15",
+   "r4": true
   },
   "t5": {
    "name": "電梯學徒（時安局編外）",
@@ -315,12 +317,12 @@
     "file": "art/real_ref_pilot/_samples_1103d/char_a02_navigator_r4_s7112_128.png",
     "seed": 7112,
     "status": "pass",
-    "condition": "有條件採用：缺摺疊地圖，肩與前臂有米色小方塊貼片（無字）；r5 若重生出更好的以新的為準"
+    "condition": "有條件採用（r4 s7112）：缺摺疊地圖，肩與前臂有米色小方塊貼片（無字）；r5 重生仍缺地圖（s7421 退回），維持此張"
    },
    "a03_strategist": {
-    "file": "art/real_ref_pilot/_samples_1103d/char_a03_strategist_r4_s7121_128.png",
-    "seed": 7121,
-    "status": "human"
+    "file": "art/real_ref_pilot/_samples_1103d/char_a03_strategist_r5_s7431_128.png",
+    "seed": 7431,
+    "status": "pass"
    },
    "a04_scout": {
     "file": "art/real_ref_pilot/_samples_1103d/char_a04_scout_r4_s7131_128.png",
@@ -358,14 +360,14 @@
     "status": "pass"
    },
    "a11_safety": {
-    "file": null,
-    "seed": null,
-    "status": "reject"
+    "file": "art/real_ref_pilot/_samples_1103d/char_a11_safety_r5_s7442_128.png",
+    "seed": 7442,
+    "status": "pass"
    },
    "a12_supply": {
-    "file": null,
-    "seed": null,
-    "status": "reject"
+    "file": "art/real_ref_pilot/_samples_1103d/char_a12_supply_r5_s7401_128.png",
+    "seed": 7401,
+    "status": "pass"
    },
    "a13_forensic": {
     "file": "art/real_ref_pilot/_samples_1103d/char_a13_forensic_r4_s7221_128.png",
@@ -378,14 +380,16 @@
     "status": "pass"
    },
    "a15_local_guide": {
-    "file": null,
-    "seed": null,
-    "status": "reject"
+    "file": "art/real_ref_pilot/_samples_1103d/char_a15_local_guide_r5_s7411_128.png",
+    "seed": 7411,
+    "status": "human",
+    "condition": "需人眼：道具全中、半身，但臉是少女非五十多歲（熟齡是否硬性要求待定）"
    },
    "a16_actor": {
     "file": "art/real_ref_pilot/_samples_1103d/char_a16_actor_r4_s7251_128.png",
     "seed": 7251,
-    "status": "human"
+    "status": "human",
+    "condition": "需人眼：r4 s7251 有手偶與立領背心，但面具戴在雙眼上、髮髻頂邊被裁；r5 s7451 面具拿在臉側且無手偶"
    }
   }
  },

@@ -82,6 +82,24 @@ for v in NPCS.values():
             v['status'] = QA_NPC[mm.group(1)]
             v['nn'] = mm.group(1)
 
+# r4 重生（11-08，Q4_K_S）品檢結果（QA_v2_agents_r4.md）：職務 → (採用 seed 或 None, status)；探員 16 位
+AG_R4 = {'a01_captain': (7101, 'pass'), 'a02_navigator': (7112, 'human'), 'a03_strategist': (7121, 'human'), 'a04_scout': (7131, 'pass'),
+         'a05_archivist': (7142, 'pass'), 'a06_interviewer': (7151, 'pass'), 'a07_photographer': (7162, 'pass'), 'a08_recorder': (7171, 'pass'),
+         'a09_designer': (7181, 'pass'), 'a10_radio': (7192, 'pass'), 'a11_safety': (7202, 'human'), 'a12_supply': (None, 'reject'),
+         'a13_forensic': (7221, 'pass'), 'a14_tech': (7231, 'pass'), 'a15_local_guide': (None, 'reject'), 'a16_actor': (7251, 'human')}
+AGENTS_R4 = {}
+for k, (sd, stt) in AG_R4.items():
+    f = D + 'char_%s_r4_s%d_128.png' % (k, sd) if sd else None
+    if f: assert (ROOT / f).exists(), f
+    AGENTS_R4[k] = {'file': f, 'seed': sd, 'status': stt}
+# NPC r4 重生：n14 過；n13、n18 需人眼；n02、n15 退回（舊 NN 檔對應的 stop 用新檔取代 n14／n13／n18）
+NPC_R4 = {'s2': ('n14_archivist_r4_s7301', 'pass'), 't2': ('n13_signpost_r4_s7321', 'human'), 's6': ('n18_carpenter_r4_s7311', 'human')}
+for sid, (stem, stt) in NPC_R4.items():
+    f = D + 'char_%s_128.png' % stem
+    assert (ROOT / f).exists(), f
+    if sid in NPCS:
+        NPCS[sid].update({'file': f, 'status': stt, 'r4': True})
+
 AGENTS_NOTE = '[品檢 QA_agents16_old：1 過 8 退回 7 需人眼；母線裁示 AG_IMG_ON 維持 false，只開品檢過的替補] 程式 js/walk_agents.js 已組路徑 art/agents16/NN_<en>_128.png；只要把 js/walk.js:1350 的 AG_IMG_ON 改 true。舊版 16 張未品檢（臺灣人長相未驗）'
 STICKERS = {
     'ach': {'split': D + 'stk_seal_split_r4_128.png', 'gather': D + 'stk_seal_gather_r4_128.png', 'roles': D + 'stk_seal_roles_r3_128.png'},
@@ -100,7 +118,7 @@ man = {
     'note': '路徑相對站台根目錄。status：pass＝品檢過；human＝需楊老師肉眼；provisional＝補圖後未複檢；unqa＝沒有品檢紀錄；missing＝沒有可用成品。',
     'sizes': {'scene': [180, 320], 'npc': [128, 128], 'agent': [128, 128], 'sticker': [128, 128]},
     'scenes': SCENES, 'scenes_night_tainanpunk': STYLE_NIGHT,
-    'npcs_by_stop': NPCS, 'agents': {'note': AGENTS_NOTE, 'ship_recommend': False},
+    'npcs_by_stop': NPCS, 'agents': {'note': AGENTS_NOTE, 'ship_recommend': False, 'r4_Q4': AGENTS_R4},
     'stickers': STICKERS,
     'credits': 'CC BY 參考照的署名見 art/CREDITS.md「v2 製程成品對應」；上線頁面要有一行署名（結算頁或 walk_intro）。',
 }
@@ -119,6 +137,7 @@ for k, v in NPCS.items(): (ok if v['status'] == 'pass' else ng).append('NPC ' + 
 for k, v in STICKERS['ach_status'].items(): (ok if v == 'pass' else ng).append('成就章 %s（%s）' % (k, v))
 for k, v in STICKERS['footprint_status'].items(): (ok if v == 'pass' else ng).append('足跡 %s（%s）' % (k, v))
 NL = chr(10)
+for k, v in AGENTS_R4.items(): (ok if v['status'] == 'pass' else ng).append('探員 %s：%s（%s）' % (k, v['file'] or '無可用 seed', v['status']))
 md = ('# 走讀美術 可上線／不可上線清單（自動由 build_manifest.py 產生）' + NL + NL
       + '只有品檢「過」才列可上線；human＝需楊老師肉眼，reject＝退回待重生，unqa＝沒品檢，missing＝沒成品。AG_IMG_ON 建議：false（探員替補品檢過幾位再說）。授權：pass 成品來源鏈已補齊（CREDITS 末段），walk_license_check exit=0；但需署名的 CC BY 成品（林百貨、赤崁樓、大天后宮、愛國婦人館風格版）在結算頁或 walk_intro 接線署名前，只算素材合格；臺灣建築照片著作權例外待法務確認。' + NL + NL
       + '## 可上線（%d）' % len(ok) + NL + NL.join(ok) + NL + NL + '## 不可上線（%d）' % len(ng) + NL + NL.join(ng) + NL)

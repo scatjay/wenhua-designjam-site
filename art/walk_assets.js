@@ -158,9 +158,10 @@ window.WALK_ASSETS = {
   },
   "s2": {
    "name": "檔案室管理員",
-   "file": "art/npc_pixel16/NN_14_archivist_128.png",
-   "status": "reject",
-   "nn": "14"
+   "file": "art/real_ref_pilot/_samples_1103d/char_n14_archivist_r4_s7301_128.png",
+   "status": "pass",
+   "nn": "14",
+   "r4": true
   },
   "s5": {
    "name": "三郊的老帳房",
@@ -170,9 +171,10 @@ window.WALK_ASSETS = {
   },
   "s6": {
    "name": "搬廟那年的木匠學徒",
-   "file": "art/npc_pixel16/NN_18_carpenter_apprentice_128.png",
-   "status": "reject",
-   "nn": "18"
+   "file": "art/real_ref_pilot/_samples_1103d/char_n18_carpenter_r4_s7311_128.png",
+   "status": "human",
+   "nn": "18",
+   "r4": true
   },
   "c1": {
    "name": "校史館的志工學姊",
@@ -254,9 +256,10 @@ window.WALK_ASSETS = {
   },
   "t2": {
    "name": "圓環旁的路牌檢查員",
-   "file": "art/npc_pixel16/NN_13_signpost_inspector_128.png",
-   "status": "reject",
-   "nn": "13"
+   "file": "art/real_ref_pilot/_samples_1103d/char_n13_signpost_r4_s7321_128.png",
+   "status": "human",
+   "nn": "13",
+   "r4": true
   },
   "t4": {
    "name": "看守校舍的老工友",
@@ -302,7 +305,89 @@ window.WALK_ASSETS = {
  },
  "agents": {
   "note": "[品檢 QA_agents16_old：1 過 8 退回 7 需人眼；母線裁示 AG_IMG_ON 維持 false，只開品檢過的替補] 程式 js/walk_agents.js 已組路徑 art/agents16/NN_<en>_128.png；只要把 js/walk.js:1350 的 AG_IMG_ON 改 true。舊版 16 張未品檢（臺灣人長相未驗）",
-  "ship_recommend": false
+  "ship_recommend": false,
+  "r4_Q4": {
+   "a01_captain": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a01_captain_r4_s7101_128.png",
+    "seed": 7101,
+    "status": "pass"
+   },
+   "a02_navigator": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a02_navigator_r4_s7112_128.png",
+    "seed": 7112,
+    "status": "human"
+   },
+   "a03_strategist": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a03_strategist_r4_s7121_128.png",
+    "seed": 7121,
+    "status": "human"
+   },
+   "a04_scout": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a04_scout_r4_s7131_128.png",
+    "seed": 7131,
+    "status": "pass"
+   },
+   "a05_archivist": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a05_archivist_r4_s7142_128.png",
+    "seed": 7142,
+    "status": "pass"
+   },
+   "a06_interviewer": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a06_interviewer_r4_s7151_128.png",
+    "seed": 7151,
+    "status": "pass"
+   },
+   "a07_photographer": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a07_photographer_r4_s7162_128.png",
+    "seed": 7162,
+    "status": "pass"
+   },
+   "a08_recorder": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a08_recorder_r4_s7171_128.png",
+    "seed": 7171,
+    "status": "pass"
+   },
+   "a09_designer": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a09_designer_r4_s7181_128.png",
+    "seed": 7181,
+    "status": "pass"
+   },
+   "a10_radio": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a10_radio_r4_s7192_128.png",
+    "seed": 7192,
+    "status": "pass"
+   },
+   "a11_safety": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a11_safety_r4_s7202_128.png",
+    "seed": 7202,
+    "status": "human"
+   },
+   "a12_supply": {
+    "file": null,
+    "seed": null,
+    "status": "reject"
+   },
+   "a13_forensic": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a13_forensic_r4_s7221_128.png",
+    "seed": 7221,
+    "status": "pass"
+   },
+   "a14_tech": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a14_tech_r4_s7231_128.png",
+    "seed": 7231,
+    "status": "pass"
+   },
+   "a15_local_guide": {
+    "file": null,
+    "seed": null,
+    "status": "reject"
+   },
+   "a16_actor": {
+    "file": "art/real_ref_pilot/_samples_1103d/char_a16_actor_r4_s7251_128.png",
+    "seed": 7251,
+    "status": "human"
+   }
+  }
  },
  "stickers": {
   "ach": {

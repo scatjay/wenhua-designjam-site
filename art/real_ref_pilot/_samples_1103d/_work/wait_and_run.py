@@ -29,6 +29,7 @@ STAGES = [
     ('npc5', 'jobs_v2_npc5.json', 'run_v2_chars.sh', 'v2npc', 30, {}),
     ('police', 'jobs_v2_police.json', 'run_v2_batch.sh', 'v2pol', 40,
      {'PIX_METHOD': 'median', 'PIX_COLORS': '48', 'PROTECT_LIST': 'stone lion. lion statue. balustrade. window'}),
+    ('regen_r5', 'jobs_v2_agents_r5.json', 'run_v2_chars.sh', 'v2r5', 40, {'UNET': 'Q4'}),
     ('cmp_q8', 'jobs_v2_cmp_q8.json', 'run_v2_chars.sh', 'v2cmpq8', 15, {'COMFY_EXTRA': '--disable-smart-memory'}),
 ]
 
@@ -234,7 +235,7 @@ def main():
                         st['done'].append(name); save_state(st)
                         log('Q8 對照未做（認可量未達 %.1f），不阻擋 Q4 整批' % Q8_LIMIT_GB)
                         continue
-                    if name in ('agents16', 'npc5') and decision == 'Q4':
+                    if name in ('agents16', 'npc5', 'regen_r5') and decision == 'Q4':
                         extra = dict(extra, UNET='Q4')
                     got = run_stage(name, jobs, script, prefix, min(minutes, remain), extra)
                     total += got

@@ -25,11 +25,11 @@ DRY = os.environ.get('DRY') == '1'
 # 階段：(名稱, 工單, 腳本, 日誌前綴, 逾時分鐘, 額外環境, 預期輸出檔名清單來源)
 STAGES = [
     ('cmp_q4', 'jobs_v2_cmp_q4.json', 'run_v2_chars.sh', 'v2cmpq4', 15, {'COMFY_EXTRA': '--disable-smart-memory', 'UNET': 'Q4'}),
-    ('cmp_q8', 'jobs_v2_cmp_q8.json', 'run_v2_chars.sh', 'v2cmpq8', 15, {'COMFY_EXTRA': '--disable-smart-memory'}),
     ('agents16', 'jobs_v2_agents16.json', 'run_v2_chars.sh', 'v2agents', 100, {'COMFY_EXTRA': '--disable-smart-memory'}),
     ('npc5', 'jobs_v2_npc5.json', 'run_v2_chars.sh', 'v2npc', 30, {}),
     ('police', 'jobs_v2_police.json', 'run_v2_batch.sh', 'v2pol', 40,
      {'PIX_METHOD': 'median', 'PIX_COLORS': '48', 'PROTECT_LIST': 'stone lion. lion statue. balustrade. window'}),
+    ('cmp_q8', 'jobs_v2_cmp_q8.json', 'run_v2_chars.sh', 'v2cmpq8', 15, {'COMFY_EXTRA': '--disable-smart-memory'}),
 ]
 
 
@@ -219,7 +219,7 @@ def main():
         r = subprocess.run([sys.executable, RS, 'start', rid], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
         log('start rc=%s %s' % (r.returncode, r.stdout.strip()[:160]))
         total = 0
-        decision = 'Q8'
+        decision = ('Q4' if open(DECISION, encoding='utf-8').read().strip().upper().startswith('Q4') else 'Q8') if os.path.exists(DECISION) else 'Q8'
         try:
             if r.returncode != 0 or '✋' in r.stdout or '拒' in r.stdout:
                 log('預約被拒，回到等待（%s）' % ('臨時預約，稍後取消' if adhoc else '保留 pending'))
@@ -232,13 +232,13 @@ def main():
                     if name == 'cmp_q8' and (commit_gb() or 999) > Q8_LIMIT_GB:
                         log('認可量 > %.1f，略過 Q8 對照（僅看 Q4 單獨結果）' % Q8_LIMIT_GB)
                         st['done'].append(name); save_state(st)
-                        decision = read_decision()
+                        log('Q8 對照未做（認可量未達 %.1f），不阻擋 Q4 整批' % Q8_LIMIT_GB)
                         continue
                     if name in ('agents16', 'npc5') and decision == 'Q4':
                         extra = dict(extra, UNET='Q4')
                     got = run_stage(name, jobs, script, prefix, min(minutes, remain), extra)
                     total += got
-                    if name == 'cmp_q8':
+                    if name == 'cmp_q4':
                         decision = read_decision()
                     if got > 0:
                         st['done'].append(name); save_state(st)

@@ -16,7 +16,7 @@ def S(name, status, note='', folder=D):
 SCENES = {
     's0': S('twl_A_r2', 'pass', '集合點，共用台文館'),
     's1': S('twl_A_r2', 'pass', '替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼'),
-    's2': {'file': None, 'status': 'missing', 'note': '警察署 5 版全退回；備援 scene_police_B_r1（需人眼）；11-07 雙 ControlNet 重做'},
+    's2': S('police_A_v3b_fix', 'pass', '有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠'),
     's3': S('butokuden_front_scenepal', 'pass', '11-03 ACCEPT，楊老師稱讚過的取景', D3),
     's4': S('hayashi_A_r5', 'pass', '替代：scene_hayashi_B_v2d（過，上層特寫）'),
     's5': S('matsu_A_v2', 'pass', '替代：scene_matsu_B_v2c（需人眼）'),
@@ -24,7 +24,7 @@ SCENES = {
     's7': S('twl_A_r2', 'pass', '終點，共用台文館'),
     't1': S('twl_A_r2', 'pass'),
     't2': S('tang_A_r2', 'human', '雕塑畫成鳥形，待重生'),
-    't3': {'file': None, 'status': 'missing', 'note': '同 s2'},
+    't3': S('police_A_v3b_fix', 'pass', '同 s2 有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠'),
     't4': S('butokuden_front_scenepal', 'pass', '', D3),
     't5': S('hayashi_A_r5', 'pass'),
     't6': S('matsu_A_v2', 'pass'),

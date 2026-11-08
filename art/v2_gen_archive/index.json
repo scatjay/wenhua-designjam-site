@@ -1,6 +1,6 @@
 {
  "generated_on": "2026-11-08",
- "count": 60,
+ "count": 64,
  "items": [
   {
    "folder": "agents_npc_r4",
@@ -900,6 +900,66 @@
    "note": "圓塔招牌偽英文、建築畫成別的（QA_v2_police2.md）",
    "raw_768": "E:/Downloads/_walk_refs/_raw/_samples_1103d/scene_police_A_v2b2.png",
    "raw_sha1_12": "16274e454d4f",
+   "generated": "2026-11-08"
+  },
+  {
+   "folder": "scenes_police",
+   "file": "art/v2_gen_archive/scenes_police/scene_police_A_v3a_180x320.png",
+   "name": "scene_police_A_v3a",
+   "kind": "scene",
+   "seed": null,
+   "model": "FLUX.1-dev Q8_0 GGUF＋flux depth／canny ControlNet",
+   "workfile": "_work/jobs_v2_police3.json；prep_police_v3.py",
+   "status": "reject",
+   "adopted": false,
+   "note": "深紅招牌板與飾帶、門楣偽字、像戲院（QA_v2_police3.md）",
+   "raw_768": "E:/Downloads/_walk_refs/_raw/_samples_1103d/scene_police_A_v3a.png",
+   "raw_sha1_12": "760f7acd0cef",
+   "generated": "2026-11-08"
+  },
+  {
+   "folder": "scenes_police",
+   "file": "art/v2_gen_archive/scenes_police/scene_police_A_v3b_180x320.png",
+   "name": "scene_police_A_v3b",
+   "kind": "scene",
+   "seed": null,
+   "model": "FLUX.1-dev Q8_0 GGUF＋flux depth／canny ControlNet",
+   "workfile": "_work/jobs_v2_police3.json；prep_police_v3.py",
+   "status": "human",
+   "adopted": false,
+   "note": "門楣小字、屋頂細桿、檔案 46 KB；由 v3b_fix 取代",
+   "raw_768": "E:/Downloads/_walk_refs/_raw/_samples_1103d/scene_police_A_v3b.png",
+   "raw_sha1_12": "a3f9e2a81754",
+   "generated": "2026-11-08"
+  },
+  {
+   "folder": "scenes_police",
+   "file": "art/v2_gen_archive/scenes_police/scene_police_A_v3c_180x320.png",
+   "name": "scene_police_A_v3c",
+   "kind": "scene",
+   "seed": null,
+   "model": "FLUX.1-dev Q8_0 GGUF＋flux depth／canny ControlNet",
+   "workfile": "_work/jobs_v2_police3.json；prep_police_v3.py",
+   "status": "reject",
+   "adopted": false,
+   "note": "路面鮮紅像紅地毯、像歐式宮殿（QA_v2_police3.md）",
+   "raw_768": "E:/Downloads/_walk_refs/_raw/_samples_1103d/scene_police_A_v3c.png",
+   "raw_sha1_12": "a996d4cfdd1d",
+   "generated": "2026-11-08"
+  },
+  {
+   "folder": "scenes_police",
+   "file": "art/v2_gen_archive/scenes_police/scene_police_A_v3b_fix_180x320.png",
+   "name": "scene_police_A_v3b_fix",
+   "kind": "scene",
+   "seed": null,
+   "model": "FLUX.1-dev Q8_0 GGUF＋flux depth／canny ControlNet",
+   "workfile": "_work/jobs_v2_police3.json；prep_police_v3.py",
+   "status": "pass",
+   "adopted": true,
+   "note": "有條件採用（可逆）：v3b 後處理衍生圖；QA 需人眼＝右側白飾與小頂亭偏弱，主線判為建築裝飾",
+   "raw_768": null,
+   "raw_sha1_12": null,
    "generated": "2026-11-08"
   }
  ]

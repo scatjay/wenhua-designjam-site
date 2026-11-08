@@ -32,9 +32,9 @@ window.WALK_ASSETS = {
    "note": "替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼"
   },
   "s2": {
-   "file": null,
-   "status": "missing",
-   "note": "警察署 5 版全退回；備援 scene_police_B_r1（需人眼）；11-07 雙 ControlNet 重做"
+   "file": "art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png",
+   "status": "pass",
+   "note": "有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠"
   },
   "s3": {
    "file": "art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png",
@@ -72,9 +72,9 @@ window.WALK_ASSETS = {
    "note": "雕塑畫成鳥形，待重生"
   },
   "t3": {
-   "file": null,
-   "status": "missing",
-   "note": "同 s2"
+   "file": "art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png",
+   "status": "pass",
+   "note": "同 s2 有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠"
   },
   "t4": {
    "file": "art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png",

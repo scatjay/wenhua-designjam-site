@@ -4,7 +4,7 @@
 
 768 原圖太大不進 git，存在 `E:/Downloads/_walk_refs/_raw/_samples_1103d/`，索引列路徑與 sha1 前 12 碼。工單、提示詞、seed 見各列「工單檔」（皆在 `art/real_ref_pilot/_samples_1103d/`）。品檢報告：`QA_v2_agents_r4.md`、`QA_v2_agents_r5.md`、`QA_v2_police2.md`。逐檔生成記錄與授權見 `art/CREDITS.md`。
 
-統計：共 60 張；pass 24、reject 17、human 13、比對用 6。
+統計：共 64 張；pass 25、reject 19、human 14、比對用 6。
 
 | 資料夾 | 檔名 | 狀態 | 採用中 | seed | 模型 | 備註 |
 |---|---|---|---|---|---|---|
@@ -68,3 +68,7 @@
 | cmp_q8_vs_q4 | char_a16_actor_r4_s7251_cmp_q8_128.png | 比對用 |  | 7251 | FLUX.1-dev Q8_0 GGUF | Q8／Q4 同 seed 對照，非成品 |
 | scenes_police | scene_police_A_v2b1_180x320.png | reject |  |  | FLUX.1-dev Q8_0 GGUF | 偽字、路面髒、紅旗、建築佔比約 28%（QA_v2_police2.md） |
 | scenes_police | scene_police_A_v2b2_180x320.png | reject |  |  | FLUX.1-dev Q8_0 GGUF | 圓塔招牌偽英文、建築畫成別的（QA_v2_police2.md） |
+| scenes_police | scene_police_A_v3a_180x320.png | reject |  |  | FLUX.1-dev Q8_0 GGUF | 深紅招牌板與飾帶、門楣偽字、像戲院（QA_v2_police3.md） |
+| scenes_police | scene_police_A_v3b_180x320.png | human |  |  | FLUX.1-dev Q8_0 GGUF | 門楣小字、屋頂細桿、檔案 46 KB；由 v3b_fix 取代 |
+| scenes_police | scene_police_A_v3c_180x320.png | reject |  |  | FLUX.1-dev Q8_0 GGUF | 路面鮮紅像紅地毯、像歐式宮殿（QA_v2_police3.md） |
+| scenes_police | scene_police_A_v3b_fix_180x320.png | pass | 是 |  | FLUX.1-dev Q8_0 GGUF | 有條件採用（可逆）：v3b 後處理衍生圖；QA 需人眼＝右側白飾與小頂亭偏弱，主線判為建築裝飾 |

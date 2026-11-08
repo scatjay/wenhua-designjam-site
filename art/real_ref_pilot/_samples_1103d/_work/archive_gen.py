@@ -89,7 +89,7 @@ for tag, model in (('q4', Q4), ('q8', Q8)):
 # 警察署場景
 for n, wf, st, nt in (('scene_police_A_v2b1', 'jobs_v2_police.json', R, '偽字、路面髒、紅旗、建築佔比約 28%（QA_v2_police2.md）'), ('scene_police_A_v2b2', 'jobs_v2_police.json', R, '圓塔招牌偽英文、建築畫成別的（QA_v2_police2.md）')):
     add('scenes_police', n, D + n + '_180x320.png', st, nt, Q8 + '＋flux depth／canny ControlNet', '_work/' + wf, 'scene', seed_of(n) or None)
-for n in ('scene_police_A_v3a', 'scene_police_A_v3b', 'scene_police_A_v3c'):
+for n in ('scene_police_A_v3a', 'scene_police_A_v3b', 'scene_police_A_v3c', 'scene_police_A_v3b_fix'):
     st, nt = EXTRA.get('police3', {}).get(n, ('未品檢', ''))
     add('scenes_police', n, D + n + '_180x320.png', st, nt, Q8 + '＋flux depth／canny ControlNet', '_work/jobs_v2_police3.json；prep_police_v3.py', 'scene')
 

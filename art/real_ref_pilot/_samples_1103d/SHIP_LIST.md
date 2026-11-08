@@ -2,15 +2,17 @@
 
 只有品檢「過」才列可上線；human＝需楊老師肉眼，reject＝退回待重生，unqa＝沒品檢，missing＝沒成品。AG_IMG_ON 建議：false（探員替補品檢過幾位再說）。授權：pass 成品來源鏈已補齊（CREDITS 末段），walk_license_check exit=0；但需署名的 CC BY 成品（林百貨、赤崁樓、大天后宮、愛國婦人館風格版）在結算頁或 walk_intro 接線署名前，只算素材合格；臺灣建築照片著作權例外待法務確認。
 
-## 可上線（54）
+## 可上線（56）
 場景 - s0：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）集合點，共用台文館
 場景 - s1：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼
+場景 - s2：art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png（pass）有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠
 場景 - s3：art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png（pass）11-03 ACCEPT，楊老師稱讚過的取景
 場景 - s4：art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png（pass）替代：scene_hayashi_B_v2d（過，上層特寫）
 場景 - s5：art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png（pass）替代：scene_matsu_B_v2c（需人眼）
 場景 - s6：art/real_ref_pilot/_samples_1103d/scene_chikan_A_r2_180x320.png（pass）靈祐宮另有 scene_lingyou_A_v2c（文字過、文史待定，暫用）
 場景 - s7：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）終點，共用台文館
 場景 - t1：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）
+場景 - t3：art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png（pass）同 s2 有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠
 場景 - t4：art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png（pass）
 場景 - t5：art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png（pass）
 場景 - t6：art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png（pass）
@@ -58,10 +60,8 @@ NPC - c0：公布欄上的便條（畢不了學姊）（pass）
 探員 a14_tech：art/real_ref_pilot/_samples_1103d/char_a14_tech_r4_s7231_128.png（pass）
 探員 a15_local_guide：art/real_ref_pilot/_samples_1103d/char_a15_local_guide_r5_s7411_128.png（pass）有條件採用（母線 11-08 代決）：臉偏年輕，與設定的熟齡不符；r6 若補出熟齡種子且品檢過，以新的為準
 
-## 不可上線（13）
-場景 - s2：無（missing）警察署 5 版全退回；備援 scene_police_B_r1（需人眼）；11-07 雙 ControlNet 重做
+## 不可上線（11）
 場景 - t2：art/real_ref_pilot/_samples_1103d/scene_tang_A_r2_180x320.png（human）雕塑畫成鳥形，待重生
-場景 - t3：無（missing）同 s2
 場景 - t9：art/real_ref_pilot/_samples_1103d/scene_patriotic_A_v2_faithful_dt_median_180x320.png（human）median 修正後未複檢
 場景 - tx：無（missing）車站無照片，不做
 NPC - s5：三郊的老帳房（human）

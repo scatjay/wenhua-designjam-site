@@ -315,7 +315,8 @@ window.WALK_ASSETS = {
    "a02_navigator": {
     "file": "art/real_ref_pilot/_samples_1103d/char_a02_navigator_r4_s7112_128.png",
     "seed": 7112,
-    "status": "human"
+    "status": "pass",
+    "condition": "有條件採用：缺摺疊地圖，肩與前臂有米色小方塊貼片（無字）；r5 若重生出更好的以新的為準"
    },
    "a03_strategist": {
     "file": "art/real_ref_pilot/_samples_1103d/char_a03_strategist_r4_s7121_128.png",
@@ -358,9 +359,9 @@ window.WALK_ASSETS = {
     "status": "pass"
    },
    "a11_safety": {
-    "file": "art/real_ref_pilot/_samples_1103d/char_a11_safety_r4_s7202_128.png",
-    "seed": 7202,
-    "status": "human"
+    "file": null,
+    "seed": null,
+    "status": "reject"
    },
    "a12_supply": {
     "file": null,

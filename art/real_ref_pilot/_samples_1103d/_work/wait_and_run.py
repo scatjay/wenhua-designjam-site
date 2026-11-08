@@ -16,14 +16,16 @@ BASH = 'D:/Git/bin/bash.exe'
 LOG = S + '/wait_and_run.log'
 STATE = S + '/wait_and_run.state.json'
 PIDF = S + '/wait_and_run.pid'
-LIMIT_GB = float(os.environ.get('LIMIT_GB', '63.5'))
+LIMIT_GB = float(os.environ.get('LIMIT_GB', '69.5'))   # Q4 申請 24 GB：認可 <= 93.5-24；Q8（30 GB）階段另檢查 <= Q8_LIMIT_GB
+Q8_LIMIT_GB = 63.5
+FALLBACK_BY = datetime.datetime(2026, 11, 12, 20, 0)
 POLL = int(os.environ.get('POLL', '600'))
 DRY = os.environ.get('DRY') == '1'
 
 # 階段：(名稱, 工單, 腳本, 日誌前綴, 逾時分鐘, 額外環境, 預期輸出檔名清單來源)
 STAGES = [
-    ('cmp_q8', 'jobs_v2_cmp_q8.json', 'run_v2_chars.sh', 'v2cmpq8', 15, {'COMFY_EXTRA': '--disable-smart-memory'}),
     ('cmp_q4', 'jobs_v2_cmp_q4.json', 'run_v2_chars.sh', 'v2cmpq4', 15, {'COMFY_EXTRA': '--disable-smart-memory', 'UNET': 'Q4'}),
+    ('cmp_q8', 'jobs_v2_cmp_q8.json', 'run_v2_chars.sh', 'v2cmpq8', 15, {'COMFY_EXTRA': '--disable-smart-memory'}),
     ('agents16', 'jobs_v2_agents16.json', 'run_v2_chars.sh', 'v2agents', 100, {'COMFY_EXTRA': '--disable-smart-memory'}),
     ('npc5', 'jobs_v2_npc5.json', 'run_v2_chars.sh', 'v2npc', 30, {}),
     ('police', 'jobs_v2_police.json', 'run_v2_batch.sh', 'v2pol', 40,
@@ -125,6 +127,34 @@ def read_decision(wait_min=12):
     return 'Q8'
 
 
+def rollover():
+    """時窗過了仍是 pending 的預約（list --all 顯示 expired）→ cancel，登記下一個 01:00 起 110 分、24 GB；超過 11-12 20:00 就不再登記，寫 fallback.flag。"""
+    r = subprocess.run([sys.executable, RS, 'list', '--all'], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
+    rows = [l for l in r.stdout.split(chr(10)) if re.match(r'^[0-9a-f]{8}\s+expired\s', l) and 'course-walk-art-v2' in l and 'comfyui' in l]
+    if not rows:
+        return
+    pend = [l for l in subprocess.run([sys.executable, RS, 'list'], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace').stdout.split(chr(10))
+            if re.match(r'^[0-9a-f]{8}\s+pending\s', l) and 'course-walk-art-v2' in l and 'comfyui' in l]
+    for l in rows:
+        rid = l.split()[0]
+        d = subprocess.run([sys.executable, RS, 'cancel', rid], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
+        log('時窗已過仍未開工，cancel %s：%s' % (rid, d.stdout.strip()[:60]))
+    if pend:
+        return
+    now = datetime.datetime.now()
+    nxt = now.replace(hour=1, minute=0, second=0, microsecond=0)
+    if nxt <= now:
+        nxt += datetime.timedelta(days=1)
+    if nxt >= FALLBACK_BY:
+        open(S + '/fallback.flag', 'w').write(now.isoformat())
+        log('已到 %s 仍沒跑成，不再順延，寫 fallback.flag（改用已驗證的 34 個可上線＋emoji 探員）' % FALLBACK_BY.strftime('%m-%d %H:%M'))
+        return
+    note = '走讀美術 course-walk-art-v2：Q4_K_S 量化預估24GB（推估未實測）；%s 夜因認可未達 69.5 GB 順延' % (nxt - datetime.timedelta(days=1)).strftime('%m-%d')
+    a = subprocess.run([sys.executable, RS, 'add', '--line', 'course-walk-art-v2', '--resource', 'comfyui', '--gb', '24', '--gpu',
+                        '--start', nxt.strftime('%Y-%m-%d %H:%M'), '--minutes', '110', '--note', note], capture_output=True, text=True, timeout=60, encoding='utf-8', errors='replace')
+    log('順延登記 %s rc=%s %s' % (nxt.strftime('%m-%d %H:%M'), a.returncode, a.stdout.strip()[:80]))
+
+
 def prep_jobs():
     a = json.load(open(W + '/jobs_v2_agents.json', encoding='utf-8'))
     json.dump([j for j in a if j['style'] == 'agent'], open(W + '/jobs_v2_agents16.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
@@ -132,7 +162,7 @@ def prep_jobs():
 
 
 def run_stage(name, jobs, script, prefix, minutes, extra):
-    env = dict(os.environ, WAIT_GB=str(LIMIT_GB - 0.5), EST_GB=('24' if extra.get('UNET') else '30'), **extra)   # Q4 向租約申請 24 GB，Q8 仍 30 GB
+    env = dict(os.environ, WAIT_GB=str((LIMIT_GB if extra.get('UNET') else Q8_LIMIT_GB) - 0.5), EST_GB=('24' if extra.get('UNET') else '30'), **extra)   # Q4 向租約申請 24 GB，Q8 仍 30 GB
     outp = open(S + '/%s.out' % prefix, 'w', encoding='utf-8')
     p = subprocess.Popen([BASH, W + '/' + script, jobs, S + '/' + prefix], cwd=W, env=env, stdout=outp, stderr=subprocess.STDOUT)
     log('stage %s started pid=%d' % (name, p.pid))
@@ -171,6 +201,7 @@ def main():
     log('start; LIMIT=%.1f POLL=%d done=%s DRY=%s' % (LIMIT_GB, POLL, st['done'], DRY))
     last_gb = None
     while True:
+        rollover()
         todo = [s for s in STAGES if s[0] not in st['done']]
         if not todo:
             log('全部階段完成，結束'); break
@@ -198,11 +229,16 @@ def main():
                     if remain < 8:
                         log('時窗剩 %d 分，不再開新階段' % remain); break
                     name, jobs, script, prefix, minutes, extra = s
+                    if name == 'cmp_q8' and (commit_gb() or 999) > Q8_LIMIT_GB:
+                        log('認可量 > %.1f，略過 Q8 對照（僅看 Q4 單獨結果）' % Q8_LIMIT_GB)
+                        st['done'].append(name); save_state(st)
+                        decision = read_decision()
+                        continue
                     if name in ('agents16', 'npc5') and decision == 'Q4':
                         extra = dict(extra, UNET='Q4')
                     got = run_stage(name, jobs, script, prefix, min(minutes, remain), extra)
                     total += got
-                    if name == 'cmp_q4':
+                    if name == 'cmp_q8':
                         decision = read_decision()
                     if got > 0:
                         st['done'].append(name); save_state(st)

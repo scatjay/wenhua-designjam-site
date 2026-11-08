@@ -384,13 +384,13 @@ window.WALK_ASSETS = {
     "file": "art/real_ref_pilot/_samples_1103d/char_a15_local_guide_r5_s7411_128.png",
     "seed": 7411,
     "status": "pass",
-    "condition": "有條件採用（母線 11-08 代決）：臉偏年輕，與設定的熟齡不符；r6 若補出熟齡種子且品檢過，以新的為準"
+    "condition": "有條件採用（母線 11-08 代決）：臉偏年輕，與設定的熟齡不符；r6 兩張（s7511、s7512）仍年輕、品檢退回，維持 r5 s7411；若要熟齡需另起提示詞"
    },
    "a16_actor": {
-    "file": "art/real_ref_pilot/_samples_1103d/char_a16_actor_r4_s7251_128.png",
-    "seed": 7251,
-    "status": "human",
-    "condition": "需人眼：r4 s7251 有手偶與立領背心，但面具戴在雙眼上、髮髻頂邊被裁；r5 s7451 面具拿在臉側且無手偶"
+    "file": "art/real_ref_pilot/_samples_1103d/char_a16_actor_r6p_s7503_128.png",
+    "seed": 7503,
+    "status": "pass",
+    "condition": "有條件採用（可逆，主線看圖判定）：r6p s7503 只畫手偶（右手舉白瓷臉藍頭飾小偶約 12×16 px）、不戴面具；QA 需人眼＝128 px 下偶偏小；面具頭頂版 s7501、s7502 因無手偶退回；舊 r4 s7251、r5 s7451 不放行"
    }
   }
  },

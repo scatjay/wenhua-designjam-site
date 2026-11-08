@@ -2,7 +2,7 @@
 
 只有品檢「過」才列可上線；human＝需楊老師肉眼，reject＝退回待重生，unqa＝沒品檢，missing＝沒成品。AG_IMG_ON 建議：false（探員替補品檢過幾位再說）。授權：pass 成品來源鏈已補齊（CREDITS 末段），walk_license_check exit=0；但需署名的 CC BY 成品（林百貨、赤崁樓、大天后宮、愛國婦人館風格版）在結算頁或 walk_intro 接線署名前，只算素材合格；臺灣建築照片著作權例外待法務確認。
 
-## 可上線（56）
+## 可上線（57）
 場景 - s0：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）集合點，共用台文館
 場景 - s1：art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png（pass）替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼
 場景 - s2：art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png（pass）有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠
@@ -58,9 +58,10 @@ NPC - c0：公布欄上的便條（畢不了學姊）（pass）
 探員 a12_supply：art/real_ref_pilot/_samples_1103d/char_a12_supply_r5_s7401_128.png（pass）
 探員 a13_forensic：art/real_ref_pilot/_samples_1103d/char_a13_forensic_r4_s7221_128.png（pass）
 探員 a14_tech：art/real_ref_pilot/_samples_1103d/char_a14_tech_r4_s7231_128.png（pass）
-探員 a15_local_guide：art/real_ref_pilot/_samples_1103d/char_a15_local_guide_r5_s7411_128.png（pass）有條件採用（母線 11-08 代決）：臉偏年輕，與設定的熟齡不符；r6 若補出熟齡種子且品檢過，以新的為準
+探員 a15_local_guide：art/real_ref_pilot/_samples_1103d/char_a15_local_guide_r5_s7411_128.png（pass）有條件採用（母線 11-08 代決）：臉偏年輕，與設定的熟齡不符；r6 兩張（s7511、s7512）仍年輕、品檢退回，維持 r5 s7411；若要熟齡需另起提示詞
+探員 a16_actor：art/real_ref_pilot/_samples_1103d/char_a16_actor_r6p_s7503_128.png（pass）有條件採用（可逆，主線看圖判定）：r6p s7503 只畫手偶（右手舉白瓷臉藍頭飾小偶約 12×16 px）、不戴面具；QA 需人眼＝128 px 下偶偏小；面具頭頂版 s7501、s7502 因無手偶退回；舊 r4 s7251、r5 s7451 不放行
 
-## 不可上線（11）
+## 不可上線（10）
 場景 - t2：art/real_ref_pilot/_samples_1103d/scene_tang_A_r2_180x320.png（human）雕塑畫成鳥形，待重生
 場景 - t9：art/real_ref_pilot/_samples_1103d/scene_patriotic_A_v2_faithful_dt_median_180x320.png（human）median 修正後未複檢
 場景 - tx：無（missing）車站無照片，不做
@@ -71,4 +72,3 @@ NPC - tx：大廳裡的琴友（missing）
 NPC - tf：時安局局長（廣播）（human）
 成就章 split（provisional）
 足跡 wow（human）
-探員 a16_actor：art/real_ref_pilot/_samples_1103d/char_a16_actor_r4_s7251_128.png（human）需人眼：r4 s7251 有手偶與立領背心，但面具戴在雙眼上、髮髻頂邊被裁；r5 s7451 面具拿在臉側且無手偶

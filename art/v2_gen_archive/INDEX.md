@@ -4,7 +4,7 @@
 
 768 原圖太大不進 git，存在 `E:/Downloads/_walk_refs/_raw/_samples_1103d/`，索引列路徑與 sha1 前 12 碼。工單、提示詞、seed 見各列「工單檔」（皆在 `art/real_ref_pilot/_samples_1103d/`）。品檢報告：`QA_v2_agents_r4.md`、`QA_v2_agents_r5.md`、`QA_v2_police2.md`。逐檔生成記錄與授權見 `art/CREDITS.md`。
 
-統計：共 64 張；pass 25、reject 19、human 14、比對用 6。
+統計：共 69 張；pass 26、reject 23、human 14、比對用 6。
 
 | 資料夾 | 檔名 | 狀態 | 採用中 | seed | 模型 | 備註 |
 |---|---|---|---|---|---|---|
@@ -38,7 +38,7 @@
 | agents_npc_r4 | char_a14_tech_r4_s7232_128.png | reject |  | 7232 | FLUX.1-dev Q4_K_S GGUF | 帶 Redux，全黑 |
 | agents_npc_r4 | char_a15_local_guide_r4_s7241_128.png | reject |  | 7241 | FLUX.1-dev Q4_K_S GGUF | 全身 Q 版、年齡不符 |
 | agents_npc_r4 | char_a15_local_guide_r4_s7242_128.png | reject |  | 7242 | FLUX.1-dev Q4_K_S GGUF | 帶 Redux，原樣吐回麵碗照片 |
-| agents_npc_r4 | char_a16_actor_r4_s7251_128.png | human | 是 | 7251 | FLUX.1-dev Q4_K_S GGUF |  |
+| agents_npc_r4 | char_a16_actor_r4_s7251_128.png | human |  | 7251 | FLUX.1-dev Q4_K_S GGUF |  |
 | agents_npc_r4 | char_a16_actor_r4_s7252_128.png | reject |  | 7252 | FLUX.1-dev Q4_K_S GGUF | 帶 Redux，白底小人 |
 | agents_npc_r4 | char_n14_archivist_r4_s7301_128.png | pass | 是 | 7301 | FLUX.1-dev Q4_K_S GGUF |  |
 | agents_npc_r4 | char_n18_carpenter_r4_s7311_128.png | human |  | 7311 | FLUX.1-dev Q4_K_S GGUF |  |
@@ -60,6 +60,11 @@
 | agents_npc_r5 | char_n15_janitor_r5_s7472_128.png | pass | 是 | 7472 | FLUX.1-dev Q4_K_S GGUF |  |
 | agents_npc_r5 | char_n13_signpost_r5_s7481_128.png | pass | 是 | 7481 | FLUX.1-dev Q4_K_S GGUF |  |
 | agents_npc_r5 | char_n18_carpenter_r5_s7491_128.png | pass | 是 | 7491 | FLUX.1-dev Q4_K_S GGUF |  |
+| agents_r6 | char_a16_actor_r6_s7501_128.png | reject |  | 7501 | FLUX.1-dev Q4_K_S GGUF | 面具在頭頂但很小、無手偶 |
+| agents_r6 | char_a16_actor_r6_s7502_128.png | reject |  | 7502 | FLUX.1-dev Q4_K_S GGUF | 面具在頭頂最清楚、無手偶 |
+| agents_r6 | char_a16_actor_r6p_s7503_128.png | pass | 是 | 7503 | FLUX.1-dev Q4_K_S GGUF | 有條件採用（可逆）：只畫手偶、不戴面具；QA 需人眼，主線看圖判定偶清楚但偏小 |
+| agents_r6 | char_a15_local_guide_r6_s7511_128.png | reject |  | 7511 | FLUX.1-dev Q4_K_S GGUF | 臉年輕無皺紋灰絲、碗偏青綠 |
+| agents_r6 | char_a15_local_guide_r6_s7512_128.png | reject |  | 7512 | FLUX.1-dev Q4_K_S GGUF | 臉年輕無皺紋灰絲 |
 | cmp_q8_vs_q4 | char_a03_strategist_r4_s7121_cmp_q4_128.png | 比對用 |  | 7121 | FLUX.1-dev Q4_K_S GGUF | Q8／Q4 同 seed 對照，非成品 |
 | cmp_q8_vs_q4 | char_a11_safety_r4_s7201_cmp_q4_128.png | 比對用 |  | 7201 | FLUX.1-dev Q4_K_S GGUF | Q8／Q4 同 seed 對照，非成品 |
 | cmp_q8_vs_q4 | char_a16_actor_r4_s7251_cmp_q4_128.png | 比對用 |  | 7251 | FLUX.1-dev Q4_K_S GGUF | Q8／Q4 同 seed 對照，非成品 |

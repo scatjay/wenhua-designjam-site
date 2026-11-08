@@ -383,8 +383,8 @@ window.WALK_ASSETS = {
    "a15_local_guide": {
     "file": "art/real_ref_pilot/_samples_1103d/char_a15_local_guide_r5_s7411_128.png",
     "seed": 7411,
-    "status": "human",
-    "condition": "需人眼：道具全中、半身，但臉是少女非五十多歲（熟齡是否硬性要求待定）"
+    "status": "pass",
+    "condition": "有條件採用（母線 11-08 代決）：臉偏年輕，與設定的熟齡不符；r6 若補出熟齡種子且品檢過，以新的為準"
    },
    "a16_actor": {
     "file": "art/real_ref_pilot/_samples_1103d/char_a16_actor_r4_s7251_128.png",

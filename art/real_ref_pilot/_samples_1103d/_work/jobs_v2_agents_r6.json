@@ -1,0 +1,52 @@
+[
+ {
+  "name": "char_a16_actor_r6_s7501",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, theatrical young Taiwanese woman actor, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair in a low bun, a plain white half mask resting on top of her head above the forehead, both hands relaxed at her sides out of frame, costume vest of deep red and gold with a stand-up collar, playful eyes, bust portrait cropped at the waist, face and shoulders large in the frame, plenty of space above the hair",
+  "seed": 7501,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a16_actor_r6_s7502",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, theatrical young Taiwanese woman actor, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair in a low bun, a plain white half mask resting on top of her head above the forehead, both hands relaxed at her sides out of frame, costume vest of deep red and gold with a stand-up collar, playful eyes, bust portrait cropped at the waist, face and shoulders large in the frame, plenty of space above the hair",
+  "seed": 7502,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a16_actor_r6p_s7503",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, theatrical young Taiwanese woman actor, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, hair in a low bun, costume vest of deep red and gold with a stand-up collar, one hand held at chest height inside a brown glove puppet with a white porcelain painted head and a small headdress, playful eyes, bust portrait cropped at the waist, face and shoulders large in the frame, plenty of space above the hair",
+  "seed": 7503,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a15_local_guide_r6_s7511",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, friendly talkative Taiwanese grandmother-aged woman local guide in her fifties, smile lines around the eyes, gray hair tied in a bun, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, wide straw hat tilted back, red apron over a floral blouse, one hand holding a small light-blue porcelain bowl of noodles near her chest, warm smile, bust portrait cropped at the waist, face and shoulders large in the frame, ",
+  "seed": 7511,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ },
+ {
+  "name": "char_a15_local_guide_r6_s7512",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, pixel art sprite portrait, 16-bit SNES JRPG character portrait, clean pixel art, clear dark outlines, soft shading with minimal dithering, half-body bust, three-quarter view, plain flat beige background, single character, plain clean solid-color clothing, friendly talkative Taiwanese grandmother-aged woman local guide in her fifties, smile lines around the eyes, gray hair tied in a bun, Taiwanese features, warm light-brown skin tone, black or dark brown hair, dark brown eyes, wide straw hat tilted back, red apron over a floral blouse, one hand holding a small light-blue porcelain bowl of noodles near her chest, warm smile, bust portrait cropped at the waist, face and shoulders large in the frame, ",
+  "seed": 7512,
+  "w": 768,
+  "h": 768,
+  "redux": 0,
+  "cn": 0,
+  "style": "agent"
+ }
+]

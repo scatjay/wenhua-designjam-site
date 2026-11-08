@@ -86,10 +86,10 @@ for v in NPCS.values():
 AG_R4 = {'a01_captain': (7101, 'pass', 4), 'a02_navigator': (7112, 'pass', 4), 'a03_strategist': (7431, 'pass', 5), 'a04_scout': (7131, 'pass', 4),
          'a05_archivist': (7142, 'pass', 4), 'a06_interviewer': (7151, 'pass', 4), 'a07_photographer': (7162, 'pass', 4), 'a08_recorder': (7171, 'pass', 4),
          'a09_designer': (7181, 'pass', 4), 'a10_radio': (7192, 'pass', 4), 'a11_safety': (7442, 'pass', 5), 'a12_supply': (7401, 'pass', 5),
-         'a13_forensic': (7221, 'pass', 4), 'a14_tech': (7231, 'pass', 4), 'a15_local_guide': (7411, 'human', 5), 'a16_actor': (7251, 'human', 4)}
+         'a13_forensic': (7221, 'pass', 4), 'a14_tech': (7231, 'pass', 4), 'a15_local_guide': (7411, 'pass', 5), 'a16_actor': (7251, 'human', 4)}
 # 母線 11-08 代決（可逆）：a02 s7112 有條件採用（缺地圖）；a11 兩張都不採用（紅十字為受保護標誌、s7201 名牌疑似字）；a07 採 s7162
 AG_COND = {'a02_navigator': '有條件採用（r4 s7112）：缺摺疊地圖，肩與前臂有米色小方塊貼片（無字）；r5 重生仍缺地圖（s7421 退回），維持此張',
-           'a15_local_guide': '需人眼：道具全中、半身，但臉是少女非五十多歲（熟齡是否硬性要求待定）',
+           'a15_local_guide': '有條件採用（母線 11-08 代決）：臉偏年輕，與設定的熟齡不符；r6 若補出熟齡種子且品檢過，以新的為準',
            'a16_actor': '需人眼：r4 s7251 有手偶與立領背心，但面具戴在雙眼上、髮髻頂邊被裁；r5 s7451 面具拿在臉側且無手偶'}
 AGENTS_R4 = {}
 for k, (sd, stt, rnd) in AG_R4.items():

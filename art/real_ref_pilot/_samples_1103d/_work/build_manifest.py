@@ -119,6 +119,18 @@ for sec in [STICKERS['ach'], STICKERS['footprint']]:
     for v in sec.values(): assert (ROOT / v).exists(), v
 for v in [STICKERS['case_default'], STICKERS['first_room'], STICKERS['dex_collect']]: assert (ROOT / v).exists(), v
 
+# 上線用路徑：GitHub Pages（Jekyll）不提供底線開頭的資料夾（_samples_*），遊戲讀的圖一律複製到 art/ship/ 並把 manifest 路徑指過去
+import shutil
+(ROOT / 'art/ship').mkdir(parents=True, exist_ok=True)
+def _ship(v):
+    f = v.get('file') if isinstance(v, dict) else None
+    if f and '/_' in f and v.get('status') == 'pass':
+        dst = 'art/ship/' + os.path.basename(f)
+        shutil.copy2(ROOT / f, ROOT / dst)
+        v['file'] = dst
+for _sec in (SCENES, NPCS):
+    for _v in _sec.values(): _ship(_v)
+
 man = {
     'version': '2026-11-06',
     'note': '路徑相對站台根目錄。status：pass＝品檢過；human＝需楊老師肉眼；provisional＝補圖後未複檢；unqa＝沒有品檢紀錄；missing＝沒有可用成品。',

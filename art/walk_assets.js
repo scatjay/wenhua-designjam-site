@@ -22,47 +22,47 @@ window.WALK_ASSETS = {
  },
  "scenes": {
   "s0": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "file": "art/ship/scene_twl_A_r2_180x320.png",
    "status": "pass",
    "note": "集合點，共用台文館"
   },
   "s1": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "file": "art/ship/scene_twl_A_r2_180x320.png",
    "status": "pass",
    "note": "替代：scene_twl_B_tower_r2（過）；州會 scene_twh_A_r2、天橋 scene_twh_B_bridge_r2 需人眼"
   },
   "s2": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png",
+   "file": "art/ship/scene_police_A_v3b_fix_180x320.png",
    "status": "pass",
    "note": "有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠"
   },
   "s3": {
-   "file": "art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png",
+   "file": "art/ship/scene_butokuden_front_scenepal_180x320.png",
    "status": "pass",
    "note": "11-03 ACCEPT，楊老師稱讚過的取景"
   },
   "s4": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png",
+   "file": "art/ship/scene_hayashi_A_r5_180x320.png",
    "status": "pass",
    "note": "替代：scene_hayashi_B_v2d（過，上層特寫）"
   },
   "s5": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png",
+   "file": "art/ship/scene_matsu_A_v2_180x320.png",
    "status": "pass",
    "note": "替代：scene_matsu_B_v2c（需人眼）"
   },
   "s6": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_chikan_A_r2_180x320.png",
+   "file": "art/ship/scene_chikan_A_r2_180x320.png",
    "status": "pass",
    "note": "靈祐宮另有 scene_lingyou_A_v2c（文字過、文史待定，暫用）"
   },
   "s7": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "file": "art/ship/scene_twl_A_r2_180x320.png",
    "status": "pass",
    "note": "終點，共用台文館"
   },
   "t1": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "file": "art/ship/scene_twl_A_r2_180x320.png",
    "status": "pass",
    "note": ""
   },
@@ -72,32 +72,32 @@ window.WALK_ASSETS = {
    "note": "雕塑畫成鳥形，待重生"
   },
   "t3": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_police_A_v3b_fix_180x320.png",
+   "file": "art/ship/scene_police_A_v3b_fix_180x320.png",
    "status": "pass",
    "note": "同 s2 有條件採用（可逆）：v3b 後處理衍生圖（補平門楣偽字、去細桿）；QA 需人眼＝右側白飾與小頂亭偏弱，主線看圖判為建築裝飾；色調偏冷灰綠"
   },
   "t4": {
-   "file": "art/real_ref_pilot/_samples_1103/scene_butokuden_front_scenepal_180x320.png",
+   "file": "art/ship/scene_butokuden_front_scenepal_180x320.png",
    "status": "pass",
    "note": ""
   },
   "t5": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_hayashi_A_r5_180x320.png",
+   "file": "art/ship/scene_hayashi_A_r5_180x320.png",
    "status": "pass",
    "note": ""
   },
   "t6": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_matsu_A_v2_180x320.png",
+   "file": "art/ship/scene_matsu_A_v2_180x320.png",
    "status": "pass",
    "note": ""
   },
   "t7": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_chikan_A_r2_180x320.png",
+   "file": "art/ship/scene_chikan_A_r2_180x320.png",
    "status": "pass",
    "note": ""
   },
   "t8": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_hall_A_r2_180x320.png",
+   "file": "art/ship/scene_hall_A_r2_180x320.png",
    "status": "pass",
    "note": ""
   },
@@ -112,7 +112,7 @@ window.WALK_ASSETS = {
    "note": "車站無照片，不做"
   },
   "tf": {
-   "file": "art/real_ref_pilot/_samples_1103d/scene_twl_A_r2_180x320.png",
+   "file": "art/ship/scene_twl_A_r2_180x320.png",
    "status": "pass",
    "note": ""
   }
@@ -158,7 +158,7 @@ window.WALK_ASSETS = {
   },
   "s2": {
    "name": "檔案室管理員",
-   "file": "art/real_ref_pilot/_samples_1103d/char_n14_archivist_r4_s7301_128.png",
+   "file": "art/ship/char_n14_archivist_r4_s7301_128.png",
    "status": "pass",
    "nn": "14",
    "r4": true
@@ -171,7 +171,7 @@ window.WALK_ASSETS = {
   },
   "s6": {
    "name": "搬廟那年的木匠學徒",
-   "file": "art/real_ref_pilot/_samples_1103d/char_n18_carpenter_r5_s7491_128.png",
+   "file": "art/ship/char_n18_carpenter_r5_s7491_128.png",
    "status": "pass",
    "nn": "18",
    "r4": true
@@ -184,7 +184,7 @@ window.WALK_ASSETS = {
   },
   "c2": {
    "name": "西淮館的夜班管理員",
-   "file": "art/real_ref_pilot/_samples_1103d/char_n02_nightguard_r5_s7461_128.png",
+   "file": "art/ship/char_n02_nightguard_r5_s7461_128.png",
    "status": "pass",
    "nn": "02",
    "r4": true
@@ -257,14 +257,14 @@ window.WALK_ASSETS = {
   },
   "t2": {
    "name": "圓環旁的路牌檢查員",
-   "file": "art/real_ref_pilot/_samples_1103d/char_n13_signpost_r5_s7481_128.png",
+   "file": "art/ship/char_n13_signpost_r5_s7481_128.png",
    "status": "pass",
    "nn": "13",
    "r4": true
   },
   "t4": {
    "name": "看守校舍的老工友",
-   "file": "art/real_ref_pilot/_samples_1103d/char_n15_janitor_r5_s7472_128.png",
+   "file": "art/ship/char_n15_janitor_r5_s7472_128.png",
    "status": "pass",
    "nn": "15",
    "r4": true

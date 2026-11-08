@@ -1,0 +1,47 @@
+[
+ {
+  "name": "scene_police_A_v3a",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, front view of a wide two-storey Japanese colonial era police headquarters building in Tainan Taiwan, pale sandy golden-yellow ochre brick walls with fine mortar lines, soft muted yellow-beige tone, a central semicircular curved bay with a rounded white parapet crowned by a small white shell-and-palm ornament, white stepped stone cornice on both shoulders of the curved bay, a smooth plain cream rectangular panel above the first-floor balcony and another above the entrance, round-arched windows on both sides, a white curved balcony railing with a row of slender columns on the second floor, a ground-floor entrance porch with white pillars and two neatly trimmed green conical shrubs in front, one flat single-tone pale gray paved plaza in the lower sixth, soft pale sky filling only the top quarter, high color saturation, clean dark outlines, soft shading, vertical game background",
+  "seed": 8711,
+  "w": 576,
+  "h": 1024,
+  "photo": "v2pol3_canvas.png",
+  "redux": 0,
+  "cn": 0.55,
+  "cn_end": 0.7,
+  "cn2": 0.5,
+  "cn2_end": 0.6,
+  "style": "faithful",
+  "notext_words": "plaque. signboard. banner. poster. text. flag. antenna"
+ },
+ {
+  "name": "scene_police_A_v3b",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, front view of a wide two-storey Japanese colonial era police headquarters building in Tainan Taiwan, pale sandy golden-yellow ochre brick walls with fine mortar lines, soft muted yellow-beige tone, a central semicircular curved bay with a rounded white parapet crowned by a small white shell-and-palm ornament, white stepped stone cornice on both shoulders of the curved bay, a smooth plain cream rectangular panel above the first-floor balcony and another above the entrance, round-arched windows on both sides, a white curved balcony railing with a row of slender columns on the second floor, a ground-floor entrance porch with white pillars and two neatly trimmed green conical shrubs in front, one flat single-tone pale gray paved plaza in the lower sixth, soft pale sky filling only the top quarter, high color saturation, clean dark outlines, soft shading, vertical game background",
+  "seed": 8712,
+  "w": 576,
+  "h": 1024,
+  "photo": "v2pol3_canvas.png",
+  "redux": 0,
+  "cn": 0.5,
+  "cn_end": 0.7,
+  "cn2": 0.7,
+  "cn2_end": 0.6,
+  "style": "faithful",
+  "notext_words": "plaque. signboard. banner. poster. text. flag. antenna"
+ },
+ {
+  "name": "scene_police_A_v3c",
+  "prompt": "chunky 16-bit pixel art with large visible square pixels, SNES JRPG style, front view of a wide two-storey Japanese colonial era police headquarters building in Tainan Taiwan, pale sandy golden-yellow ochre brick walls with fine mortar lines, soft muted yellow-beige tone, a central semicircular curved bay with a rounded white parapet crowned by a small white shell-and-palm ornament, white stepped stone cornice on both shoulders of the curved bay, a smooth plain cream rectangular panel above the first-floor balcony and another above the entrance, round-arched windows on both sides, a white curved balcony railing with a row of slender columns on the second floor, a ground-floor entrance porch with white pillars and two neatly trimmed green conical shrubs in front, one flat single-tone pale gray paved plaza in the lower sixth, soft pale sky filling only the top quarter, high color saturation, clean dark outlines, soft shading, vertical game background",
+  "seed": 8713,
+  "w": 576,
+  "h": 1024,
+  "photo": "v2pol3_canvas.png",
+  "redux": 0,
+  "cn": 0.6,
+  "cn_end": 0.7,
+  "cn2": 0.5,
+  "cn2_end": 0.6,
+  "style": "faithful",
+  "notext_words": "plaque. signboard. banner. poster. text. flag. antenna"
+ }
+]

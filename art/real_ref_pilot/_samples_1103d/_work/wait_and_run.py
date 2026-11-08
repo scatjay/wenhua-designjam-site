@@ -30,6 +30,8 @@ STAGES = [
     ('police', 'jobs_v2_police.json', 'run_v2_batch.sh', 'v2pol', 40,
      {'PIX_METHOD': 'median', 'PIX_COLORS': '48', 'PROTECT_LIST': 'stone lion. lion statue. balustrade. window'}),
     ('regen_r5', 'jobs_v2_agents_r5.json', 'run_v2_chars.sh', 'v2r5', 40, {'UNET': 'Q4'}),
+    ('police3', 'jobs_v2_police3.json', 'run_v2_batch.sh', 'v2pol3', 40,
+     {'PIX_METHOD': 'median', 'PIX_COLORS': '48', 'PROTECT_LIST': 'balustrade. window. column', 'TEXTSCAN': '1'}),
     ('cmp_q8', 'jobs_v2_cmp_q8.json', 'run_v2_chars.sh', 'v2cmpq8', 15, {'COMFY_EXTRA': '--disable-smart-memory'}),
 ]
 

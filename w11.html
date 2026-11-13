@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>第11–16週 · 文化遊戲松</title>
+</head>
+<body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* 版面：單欄，步驟卡可收合；色彩：灰藍底、深藍灰字、青藍主色、金色只用在《小封神》標籤 */
+:root{--bg:#f1f5f6;--surface:#ffffff;--surface2:#e5edf0;--ink:#1c2a31;--muted:#566872;--hair:#cfdbe0;--accent:#1b6578;--accent-soft:#d3e7ed;--gold:#8a6414;--gold-soft:#f1e5c6;--warn:#a5481f;--shadow:0 1px 2px rgba(20,40,50,.07),0 6px 16px rgba(20,40,50,.06);--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;--mono:ui-monospace,"Cascadia Mono",Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111b20;--surface:#1a272d;--surface2:#22343c;--ink:#e6eef1;--muted:#a2b4bc;--hair:#33474f;--accent:#7cc3d6;--accent-soft:#1d3a44;--gold:#e5bb62;--gold-soft:#3a2f16;--warn:#ee9a6e;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111b20;--surface:#1a272d;--surface2:#22343c;--ink:#e6eef1;--muted:#a2b4bc;--hair:#33474f;--accent:#7cc3d6;--accent-soft:#1d3a44;--gold:#e5bb62;--gold-soft:#3a2f16;--warn:#ee9a6e;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 64px}
+.wrap{max-width:780px;margin:0 auto}
+.eyebrow{font:600 12.5px var(--mono);letter-spacing:.08em;color:var(--accent);margin:0}
+h1{font-size:clamp(24px,5vw,34px);line-height:1.25;margin:6px 0 8px;text-wrap:balance}
+h2{font-size:20px;margin:36px 0 10px;display:flex;gap:10px;align-items:baseline;text-wrap:balance}
+h2 .num{font:600 12px var(--mono);background:var(--accent);color:var(--bg);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.upd{font:12.5px var(--mono);color:var(--muted);margin:0 0 8px}
+.lede{margin:8px 0}
+.sub,.note{color:var(--muted);font-size:14.5px;margin:6px 0}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
+nav.tabs a{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14.5px}
+nav.tabs a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.jt-wrap{overflow-x:auto;margin:10px 0}
+table.jt{border-collapse:collapse;width:100%;min-width:440px;background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.jt td{border-bottom:1px solid var(--hair);padding:9px 12px;vertical-align:top;font-size:15px}
+.jt td:first-child{width:7.5em;font-weight:700;color:var(--accent);white-space:nowrap}
+.six{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.six>div{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;min-width:0}
+.six b{display:block;font-size:15.5px}
+.six .draw{font-size:13.5px;color:var(--muted);margin-top:4px}
+.six .demo{display:inline-block;margin-top:6px;font-size:12.5px;background:var(--gold-soft);color:var(--gold);border-radius:6px;padding:1px 8px}
+details.stage{background:var(--surface);border:1px solid var(--hair);border-radius:12px;margin:0 0 12px;box-shadow:var(--shadow)}
+details.stage>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 14px;font-weight:700}
+details.stage>summary::-webkit-details-marker{display:none}
+details.stage>summary::after{content:"▸";margin-left:auto;color:var(--accent)}
+details.stage[open]>summary::after{content:"▾"}
+.sn{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font:600 14px var(--mono);flex:0 0 auto}
+.st2{min-width:0;overflow-wrap:anywhere}
+.sm{font-weight:400;font-size:13px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.sb{padding:2px 16px 14px}.sb p{margin:8px 0}
+figure.shot{margin:10px 0}
+figure.shot img{display:block;max-width:100%;height:auto;border-radius:10px;border:1px solid var(--hair)}
+figcaption{font-size:13px;color:var(--muted);margin-top:4px}
+.wait{background:repeating-linear-gradient(45deg,var(--surface2),var(--surface2) 10px,var(--bg) 10px,var(--bg) 20px);border:1px dashed var(--accent);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--muted);margin:10px 0}
+.remix{background:var(--gold-soft);border-radius:10px;padding:12px 14px;margin:12px 0}
+.remix b{color:var(--gold)}
+.remix ul{margin:6px 0 0;padding-left:1.2em}
+.checks{list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}
+.checks li{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;display:flex;gap:12px;min-width:0}
+.checks b.n{font:600 14px var(--mono);color:var(--accent);flex:0 0 auto}
+dl.stuck dt{font-weight:700;margin-top:10px}dl.stuck dd{margin:2px 0 0;color:var(--muted)}
+ul.plain{padding-left:1.3em}
+details.adv{border:1px dashed var(--accent);border-radius:12px;background:var(--surface)}
+details.adv>summary{cursor:pointer;min-height:48px;padding:10px 14px;font-weight:700;display:flex;align-items:center;color:var(--accent)}
+details.adv .advb{padding:0 16px 14px}
+@media (max-width:520px){.sm{display:none}h2{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<div class="wrap">
+<p class="eyebrow">文化遊戲松實作 · W11 · Figma 1/3</p>
+<h1>用 Figma 為你的小遊戲畫一個畫面</h1>
+<p class="upd">最後更新：<b>2026-11-13 01:00</b></p>
+<p class="lede">後半學期，你會從十二種小遊戲樣板裡挑一個，一路改成你自己的作品。第一步先畫出它的樣子：用 <b>Figma</b> 畫一個畫面，輸出成圖片。下週會把這張圖交給 AI Studio，做成會動的東西。</p>
+<p class="lede"><b>今天課堂做完，期限不是讓你拖。</b>做到哪一階都可以交。</p>
+<nav class="tabs" aria-label="頁面"><a href="#intro">十二個樣板</a><a href="#play2">玩兩版</a><a href="#steps">六步做完</a><a id="nav-survey" href="#survey" hidden>問卷</a><a href="#three">誰的決定</a><a href="#check">檢核</a><a href="#stuck">卡住了</a><a href="#phone">手機注意</a></nav>
+
+<section id="intro"><h2><span class="num">認識</span>十二種樣板，挑一個</h2>
+<p class="sub">每一種玩法不同，要畫的畫面也不同。示範人物與法器都來自《小封神》；你畫自己的內容時，請標清楚哪些是原著、哪些是你改的、哪些是你加的。</p>
+<div class="six">
+<div><b>故事（《通天冠》）</b><span class="draw">讀劇情，在關鍵處做選擇。要畫：一個場景（背景、人物、對話框、兩個選項）。</span><span class="demo">示範：小上帝、魁星</span></div>
+<div><b>走讀</b><span class="draw">走到真實地點，完成任務。要畫：一張任務卡（地點、題目、拍照按鈕）。</span><span class="demo">示範：舊城裡的天后宮</span></div>
+<div><b>解謎</b><span class="draw">蒐集線索，推出答案。要畫：一張線索卡與道具欄。</span><span class="demo">示範：通天冠、同裕當店</span></div>
+<div><b>經營</b><span class="draw">資源有限，排出先後，撐過一天。要畫：經營畫面（資源列、來客、行動按鈕）。</span><span class="demo">示範：小上帝廟</span></div>
+<div><b>卡牌</b><span class="draw">收集卡牌，靠相剋關係對戰。要畫：一張卡面。</span><span class="demo">示範：雷震子、哪吒、龜靈聖母</span></div>
+<div><b>節奏</b><span class="draw">跟著節拍抓準時機。要畫：節奏譜面（落點、判定線、分數）。</span><span class="demo">示範：鑼、鼓、筊杯</span></div>
+<div><b>潛行（夜巡不踩線）</b><span class="draw">俯視地圖，避開看不見的線。要畫：一張地圖（路線、禁忌的線、你的位置）。練的是：禁忌・規矩。</span><span class="demo">示範：廟門的門檻</span></div>
+<div><b>談判（人情與面子）</b><span class="draw">跟幾個人談結盟，人情和面子是本錢。要畫：談判畫面（對象、人情與面子的數字、選項）。練的是：人際關係。</span><span class="demo">示範：小上帝廟的人情</span></div>
+<div><b>塔防（普渡七日）</b><span class="draw">一波一波來的訪客，用供品和法器安頓。要畫：防守畫面（日期、供品欄、訪客）。練的是：時間節奏。</span><span class="demo">示範：普渡的七個夜晚</span></div>
+<div><b>爬塔（擲筊問路）</b><span class="draw">每一層用擲筊決定走哪條路。要畫：選路畫面（擲筊結果、路線、獎勵）。練的是：行為・儀式。</span><span class="demo">示範：擲筊、收驚</span></div>
+<div><b>拼接（五條港接水道）</b><span class="draw">一次放一塊地圖板塊，相鄰決定得分。要畫：板塊地圖（水道、廟埕、攤位）。練的是：物件・地點。</span><span class="demo">示範：五條港</span></div>
+<div><b>跑酷（遶境不能停）</b><span class="draw">抬著神轎沿路線前進，接駕、補給不能亂。要畫：路線畫面（神轎、接駕點、補給）。練的是：行為・儀式。</span><span class="demo">示範：遶境的路線</span></div>
+</div>
+<p class="note">這週的畫面包有前面六種（故事、走讀、解謎、經營、卡牌、節奏）。如果你挑的是後面六種（潛行、談判、塔防、爬塔、拼接、跑酷），先選畫面包裡最像的一個畫面來畫，下週會補上你那個樣板的畫面包。</p></section>
+
+<section id="play2"><h2><span class="num">課堂先做</span>玩兩版，再回答一個問題</h2>
+<p class="sub">約 18 分鐘。每個樣板都有兩個版本：一版「文化只是皮」，一版「文化長在規則裡」。看看差在哪裡。</p>
+<ol class="plain">
+<li><b>先猜：</b>玩之前，你覺得這兩版各會落在哪個答案（下面四個選一個）？</li>
+<li><b>再玩：</b>老師分一半的人玩一個樣板、另一半玩另一個。兩版都玩一輪。</li>
+<li><b>判斷：</b>把文化抽掉，這個遊戲還玩得下去嗎？選一個：<b>照樣玩</b>／<b>故事垮了，玩法還在</b>／<b>玩法本身就垮了</b>／<b>說不準</b>。再寫一句為什麼。</li>
+<li><b>換人講：</b>跟旁邊玩另一個樣板的人，各講三句：你玩的像什麼、抽掉文化會怎樣、你的答案跟猜的一樣嗎。</li></ol>
+<p class="note">玩樣板時，右下角如果出現「🧭 助教」，它只會問你問題，不會替你做。</p></section>
+
+<section><h2><span class="num">概覽</span>這份作業一頁看完</h2>
+<div class="jt-wrap"><table class="jt"><tbody>
+<tr><td>要交什麼</td><td>Figma 連結（確認別人打得開）和一張匯出的 PNG。繳交留言寫：一句話「你想讓玩的人有什麼感覺」，加上「誰的決定」三項。</td></tr>
+<tr><td>大約多久</td><td>課堂 100～120 分鐘，今天做完</td></tr>
+<tr><td>開放與期限</td><td>11/18（三）09:10 開放，11/25（三）09:10 截止</td></tr>
+<tr><td>做完接哪一份</td><td>下週 AI Studio 1/3：把你的圖和樣板交給 AI Studio，做成會動的畫面。再下一週（W13）才開始用 Claude 免費版幫忙。</td></tr>
+<tr><td>評分</td><td>以 flipclass 這份作業的說明為準</td></tr>
+</tbody></table></div></section>
+
+<section id="steps"><h2><span class="num">步驟</span>六步做完這一份</h2>
+<p class="note">每一步是一張卡片，點標題可以收合或展開。英文按鈕的中文意思放在括號裡。</p>
+
+<details class="stage" open><summary><span class="sn">1</span><span class="st2">玩兩版，再把十二個樣板都看一眼</span><span class="sm">約 30 分鐘</span></summary><div class="sb">
+<p>先照上面「玩兩版」做約 18 分鐘。接著用約 12 分鐘把其他樣板的首頁看一眼（老師會給連結），每個 1 分鐘：它練哪一類文化、要畫什麼畫面。邊看邊想：我最想畫哪一個的畫面？<br><b>做完的樣子：</b>你心裡有一個最想畫的樣板，也寫了「玩兩版」的答案和一句為什麼。<br><b>卡住了：</b>某個樣板打不開，就先玩其他的，問老師。</p>
+<div class="wait">樣板連結：老師上課時提供。</div>
+</div></details>
+
+<details class="stage"><summary><span class="sn">2</span><span class="st2">挑一個樣板，登入 Figma</span><span class="sm">約 10 分鐘</span></summary><div class="sb">
+<p>挑定一個樣板，後半學期都用它。打開 figma.com，按「Continue with Google（使用 Google 帳號繼續）」，選學校信箱登入；沒有帳號就用學校信箱註冊，免費版就夠用。<br><b>做完的樣子：</b>看到你的檔案首頁。</p>
+<figure class="shot"><img src="img/w11/gd_g_d_login.webp" alt="Figma 登入畫面，框出 Continue with Google 與 Use single sign-on" loading="lazy"><figcaption>紅框 1：Continue with Google。紅框 2：Use single sign-on（使用單一登入）。</figcaption></figure>
+<figure class="shot"><img src="img/w11/gd_g_d_home.webp" alt="登入後的 Figma 檔案首頁" loading="lazy"><figcaption>登入後的檔案首頁（Recents＝最近）。</figcaption></figure>
+</div></details>
+
+<details class="stage"><summary><span class="sn">3</span><span class="st2">打開小封神樣板畫面包，複製成自己的一份</span><span class="sm">約 10 分鐘</span></summary><div class="sb">
+<p>老師會給「小封神樣板畫面包」的連結，裡面有六個手機畫面，對應前面六種樣板。這個檔案只能看，所以一定要先複製：按檔名旁邊的小箭頭 ▾，選「Duplicate to your drafts（複製到我的草稿）」。跳出「Where do you want your duplicate?（你要把副本放哪裡？）」時，點<b>你自己的草稿或團隊那一列</b>。約 2 秒後副本會在新分頁打開，檔名後面多了「(Copy)」，底部出現編輯工具。之後都在這個新分頁改。<br><b>做完的樣子：</b>檔名有「(Copy)」，檔名下的灰字是 Drafts（草稿）。<br><b>卡住了：</b>同一個選單裡有「Move to trash（移到垃圾桶）」，不要點。</p>
+<figure class="shot"><img src="img/w11/gd_dup_menu_r.webp" alt="檔名旁的 ▾ 選單，紅框 2 是 Duplicate to your drafts" loading="lazy"><figcaption>示意：圖中是另一份檔案，操作一樣。紅框 1：檔名旁的 ▾。紅框 2：Duplicate to your drafts。</figcaption></figure>
+<figure class="shot"><img src="img/w11/gd_dup_where_r.webp" alt="Where do you want your duplicate 對話框，紅框 1 是要點的那一列" loading="lazy"><figcaption>紅框 1：點你自己的草稿或團隊那一列，才會真的複製。</figcaption></figure>
+<p>接著點一下上方的檔名，按 Ctrl＋A 全選，改成「班級＋你挑的樣板」（例如「通識 解謎畫面」，不用寫自己的名字），按 Enter。其他五個畫面不用刪，不要動。</p>
+<figure class="shot"><img src="img/w11/gd_b1.webp" alt="點一下檔名後，檔名被選取" loading="lazy"><figcaption>點一下檔名，整串文字會被選取，直接輸入新名字。</figcaption></figure>
+<div class="wait">樣板畫面包連結與「看操作」影片：待老師提供，影片拍好後放這裡。</div>
+</div></details>
+
+<details class="stage"><summary><span class="sn">4</span><span class="st2">在你挑的那個畫面上，改三處</span><span class="sm">約 40 分鐘</span></summary><div class="sb">
+<p>在左邊 Layers（圖層）欄點你挑的那個畫面，畫布會框出它。每個畫面旁邊有一張黃色便條，寫了「這個畫面可以改」的地方。改<b>三處</b>：</p>
+<ol><li><b>一處改文字</b>：把標題、人物名字、台詞或按鈕上的字，換成你自己的主題。要讓玩家一看就知道「現在該做什麼」。</li>
+<li><b>一處改顏色</b>：點一個方框，右邊面板往下捲到「Fill（填色）」，點色塊或輸入色碼。</li>
+<li><b>一處自選</b>：加一個按鈕或一張小圖，或把版面的位置換一換。</li></ol>
+<p><b>標內容出處：</b>畫面裡用到的每個內容，旁邊用小字標一個出處：<b>原著</b>／<b>民間說法</b>／<b>工坊創作</b>／<b>遊戲設計</b>／<b>田野所得</b>。不確定就標「待查」，不要硬選。
+<p><b>改文字：</b>雙擊兩下才會進入編輯（第一下會選到裡面的圖層）；出現閃爍的游標後，按 Ctrl＋A 全選，輸入新的字，按 Esc 離開。改錯了按 Ctrl＋Z 還原。<br><b>加按鈕：</b>按 R 拉一個方框（H 設 56、W 設 340），再按 T 在方框上打字，字色改白色。先畫在畫面外面，練習好再放進去。</p>
+<figure class="shot"><img src="img/w11/gd_d1.webp" alt="選到按鈕，右邊面板 Fill 色碼是 2EC4B6" loading="lazy"><figcaption>示意：紅框 1：Fill（填色）的色碼。紅框 2：被選到、已換色的按鈕。</figcaption></figure>
+<figure class="shot"><img src="img/w11/gd_d2.webp" alt="畫面外新拉出一個方框加一行字，當成按鈕" loading="lazy"><figcaption>示意：紅框 1：新增的文字層。紅框 2：方框加一行字就是按鈕。</figcaption></figure>
+<div class="remix"><b>怎麼改做（做到哪一階都可以交）</b><ul>
+<li><b>第 1 階 換內容：</b>把示範的小封神角色，換成你家附近廟口或市場的一個人物或東西。</li>
+<li><b>第 2 階 換規則：</b>畫面上的資訊與按鈕，要反映一條你想改的規則。例如經營畫面多一個「香火」數字，或卡面多一個相剋標記。</li>
+<li><b>第 3 階 換形式：</b>把這個畫面改成另一種樣板的畫面，例如把卡面改成解謎的線索卡。</li></ul>
+<p class="note" style="margin-bottom:0">AI 做不到、要靠你的部分：畫面上至少放一個你親眼看到、親耳聽到、或親手記下的細節（例如廟門口的對聯、某個攤位的招牌）。11/14 走讀的照片和筆記都可以用。</p></div>
+<div class="wait">樣板畫面包的實際截圖：待樣板畫面包做好後補。</div>
+</div></details>
+
+<details class="stage"><summary><span class="sn">5</span><span class="st2">匯出成 PNG 圖片</span><span class="sm">約 5 分鐘</span></summary><div class="sb">
+<p>不要自己截螢幕。①左邊 Layers 點畫面的名字，畫布出現藍框和尺寸；②右邊面板捲到最底，按 Export 旁的「＋」，格式選 PNG（1x 或 2x 都可以）；③按「Export ＜你的畫面名稱＞」，瀏覽器會下載「畫面名稱.png」。<br><b>做完的樣子：</b>檔案出現在瀏覽器的下載清單（右上角的下載圖示）。這張圖下週要用，請存好。</p>
+<figure class="shot"><img src="img/w11/gd_g_h_export.webp" alt="右邊面板最下面的 Export 區，紅框 1 是 ＋，紅框 2 是 Export 按鈕" loading="lazy"><figcaption>示意：圖中的畫面名稱是別的檔案，你的會是你挑的畫面名稱。紅框 1：Export 旁的「＋」。紅框 2：Export 按鈕。</figcaption></figure>
+</div></details>
+
+<details class="stage"><summary><span class="sn">6</span><span class="st2">確認別人打得開，交件</span><span class="sm">約 5 分鐘</span></summary><div class="sb">
+<p>按右上角藍色的 Share（分享），看「Who has access（誰有存取權）」：「Anyone」那一列右邊要是「can view（可以檢視）」，不是 can edit。確認後按「Copy link（複製連結）」，用無痕視窗貼上連結，打得開才算。到 flipclass 這份作業貼上連結並上傳那張 PNG。連結打不開，視同未繳交。</p>
+<figure class="shot"><img src="img/w11/gd_g_d_share.webp" alt="Share 視窗，框出 Anyone can view 與 Copy link" loading="lazy"><figcaption>紅框 1：Anyone／can view。紅框 2：Copy link（複製連結）。</figcaption></figure>
+</div></details>
+</section>
+
+<section id="survey" hidden><h2><span class="num">問卷</span>課程自我檢核（約 1 分鐘）</h2>
+<p class="sub">這份問卷不計分、跟成績無關，也沒有標準答案。請照你實際的情況填——「主要為了學分」「照指示做完就交」都是很常見、很正常的答案，填了不會有任何影響。問卷由徐芳真老師收，只寫你的編號、不寫名字；學期成績送出之前，楊老師不會看到任何人的答案。</p>
+<div class="fld"><label for="sv-env"><b>你的編號</b>（信封上的編號）</label> <input type="text" id="sv-env" inputmode="numeric" maxlength="3" autocomplete="off" style="font:inherit;min-height:48px;padding:8px 12px;border:1.5px solid var(--hair);border-radius:10px;width:8em"> <button type="button" id="sv-go" style="font:inherit;font-weight:700;min-height:48px;padding:8px 18px;border-radius:10px;border:0;background:var(--accent);color:var(--bg);cursor:pointer">開始</button></div>
+<p class="note" id="sv-msg" role="status"></p>
+<iframe id="sv-frame" title="課程自我檢核" hidden style="width:100%;height:720px;border:1px solid var(--hair);border-radius:12px;background:var(--surface)"></iframe>
+<p class="note"><a id="sv-open" href="#" target="_blank" rel="noopener" hidden>在新分頁開啟</a>　嵌在這頁打不開時，用這個連結。</p>
+<p class="note">填完，或選「這次不填」，會看到完成畫面，上面有一組完成碼。把完成碼交到 flipclass 的「W11 問卷」作業，就算完成。</p></section>
+
+<script>
+/* 問卷設定由 apply_survey.py 寫入兩個標記之間；formUrl 是空的就不顯示這個分頁。這一頁不收任何答案，答案只留在表單那邊。 */
+var SURVEY_CFG = /*SV*/{"formUrl": "", "entryEnv": ""}/*END*/;
+(function () {
+  if (!SURVEY_CFG.formUrl) return;
+  var $ = function (id) { return document.getElementById(id); };
+  $('survey').hidden = false; $('nav-survey').hidden = false;
+  function validEnv(v) { return v !== null && !isNaN(v) && (v === 0 || (v >= 1 && v <= 60) || v === 99 || (v >= 101 && v <= 130)); }
+  $('sv-go').onclick = function () {
+    var t = $('sv-env').value.trim(), n = t === '' ? null : parseInt(t, 10);
+    if (!validEnv(n)) { $('sv-msg').textContent = '請輸入信封上的編號。'; return; }
+    $('sv-msg').textContent = '';
+    var u = SURVEY_CFG.formUrl + (SURVEY_CFG.formUrl.indexOf('?') < 0 ? '?' : '&') + 'usp=pp_url' + (SURVEY_CFG.entryEnv ? '&entry.' + SURVEY_CFG.entryEnv + '=' + n : '');
+    $('sv-open').href = u; $('sv-open').hidden = false;
+    $('sv-frame').src = u + '&embedded=true'; $('sv-frame').hidden = false;
+  };
+})();
+</script>
+
+<section id="three"><h2><span class="num">誰的決定</span>交件時寫三項</h2>
+<p class="sub">每週至少寫一次；換規則或換形式的版本一定要寫。很短就好，目的是讓你自己看清楚哪些是你決定的。以後在樣板頁面存版本時也會問這三項，存好會給你一段可以複製的字。</p>
+<ol class="plain"><li><b>這一版裡，哪些部分交給了 AI？</b>從下面挑（可以多個）；沒有用 AI 就寫「沒有用 AI」。</li>
+<li><b>這一版裡，哪一兩處是你自己決定的？</b></li>
+<li><b>其中一處，你為什麼這樣決定？</b>一句話就好。</li></ol>
+<div class="jt-wrap"><table class="jt"><tbody><tr><td>案例庫導航員</td><td>找案例、整理手法</td></tr><tr><td>穿越時空抓包機</td><td>故意做錯讓你找碴</td></tr><tr><td>採集標記師</td><td>把田野看到的整理成關鍵字</td></tr><tr><td>文本對話員</td><td>讀文本、補背景知識</td></tr><tr><td>觀點模擬器</td><td>寫人物的內心獨白</td></tr><tr><td>風格鍊金術師</td><td>改成另一種風格</td></tr><tr><td>技術助教</td><td>給你指令範例、幫你寫素材</td></tr><tr><td>腳本優化師</td><td>檢查對話邏輯、除錯</td></tr><tr><td>企劃視覺化助手</td><td>把文字整理成分鏡草圖</td></tr><tr><td>進度管家</td><td>排進度、提醒檢核</td></tr></tbody></table></div>
+<p class="note">範例：「交給 AI：技術助教，幫我寫指令範例。我自己決定：按鈕改成紅色、標題換成廟口的名字。為什麼：我家附近的廟門就是紅色，玩的人一看就知道。」</p></section>
+
+<section id="check"><h2><span class="num">檢核</span>交之前，自己對照五點</h2>
+<ul class="checks">
+<li><b class="n">1</b><span><b>有自己的一份。</b>檔名已改成「班級＋你挑的樣板」。</span></li>
+<li><b class="n">2</b><span><b>改了三處。</b>一處文字、一處顏色、一處自選。</span></li>
+<li><b class="n">3</b><span><b>有一張 PNG，</b>是用 Export 匯出的，不是截圖。</span></li>
+<li><b class="n">4</b><span><b>別人打得開。</b>Anyone 那一列是 can view，無痕視窗貼上連結打得開。</span></li>
+<li><b class="n">5</b><span><b>標了內容出處、寫了留言。</b>畫面上的內容有小字出處；繳交留言寫了「你想讓玩的人有什麼感覺」和「誰的決定」三項。</span></li></ul></section>
+
+<section id="stuck"><h2><span class="num">卡住了</span>常見的卡住與解法</h2>
+<dl class="stuck">
+<dt>畫面包上找不到複製的選項</dt><dd>先登入 Figma；沒登入只能看，沒有複製的選項。字樣不一樣時，找意思是「複製」的那個，找不到就截圖問老師。</dd>
+<dt>不小心點到 Move to trash</dt><dd>到 Figma 檔案首頁左邊找「Trash（垃圾桶）」，把檔案還原；找不到就再複製一份。</dd>
+<dt>文字改不了</dt><dd>點一下之後再快速雙擊，連按兩三次，直到出現閃爍的游標。</dd>
+<dt>Share 裡看不到「Anyone」</dt><dd>代表現在不是公開的。把存取改成「Anyone」，右邊選「can view」。</dd>
+<dt>找不到下載的 PNG</dt><dd>到瀏覽器右上角的下載圖示找；檔名就是你的畫面名稱。</dd>
+<dt>不知道挑哪一個樣板</dt><dd>挑你最想「畫出來」的那一個。想不出來就挑卡牌或解謎，畫面最單純。</dd></dl></section>
+
+<section id="phone"><h2><span class="num">手機</span>手機注意事項</h2>
+<ul class="plain"><li>手機版的 Figma 網頁只能看，不能複製、改字、改顏色，也沒有 Export。這些步驟請用教室電腦或同組同學的電腦。</li>
+<li>玩六個樣板、登入、決定要畫哪一個，在手機上可以先做。</li>
+<li>以上是別堂課用手機尺寸的網頁模擬測過的，真手機可能不同。</li></ul></section>
+
+<section><h2><span class="num">下一份</span>做完之後接哪一份</h2>
+<p>下週是 AI Studio 1/3：把你今天的 PNG 和樣板交給 AI Studio，做成會動的畫面。再下一週（W13）才開始用 Claude 免費版幫忙。它每五個小時只能問很少幾次，所以問題要少量、一次問一件事。Figma 檔一直用同一個，不用重新開始。</p></section>
+
+<section id="addon-a" data-addon="A" hidden><h2><span class="num">最後一題</span>這個單元你花了多少腦力？</h2>
+<p>做完這個單元，你覺得自己花了多少腦力？　1（非常少）……9（非常多）</p></section>
+
+<section id="adv"><details class="adv"><summary>帶筆電的進階任務（自願，加分，不扣分）</summary>
+<div class="advb">
+<p class="note">沒帶筆電、或只用手機和教室電腦的同學，<b>可以直接略過這一塊</b>，上面的主線一樣能完成。每週的進階任務只有一件，做不做都不影響你的主線作業。</p>
+<p><b>這週的任務：把樣板放到自己的電腦上，改一個字，看它馬上變。</b></p>
+<p><b>為什麼值得多做：</b>在自己的電腦上改，存檔、重新整理，一兩秒就看到結果，不用等任何線上工具。後面幾週你會一直需要這樣「改一點、馬上看」。教室電腦重開機會清空，所以這件事要用自己的電腦。</p>
+<ol>
+<li><b>下載樣板資料夾。</b>老師會給你所選樣板的下載連結，下載後解壓縮到桌面。</li>
+<li><b>雙擊 HTML 檔。</b>它會用瀏覽器打開，不用上網也能玩。先玩一下。</li>
+<li><b>用記事本打開同一個資料夾裡的 JSON 檔。</b>找到一個人物或地點的名字，改成你想要的字。注意不要刪掉前後的引號與逗號。</li>
+<li><b>存檔，回到瀏覽器按重新整理。</b>看到你改的字就成功了。</li></ol>
+<div class="wait">每一步的截圖：待老師實測後補。</div>
+<p><b>卡住了：</b>頁面出現紅字或打不開，通常是改到了引號或逗號。按 Ctrl＋Z 還原，再改一次；還是不行，把樣板資料夾重新解壓縮一份，從頭來。</p>
+<p class="note">下週的進階任務：把 AI Studio 做好的版本存回你的電腦。</p>
+</div></details></section>
+</div>
+
+<script>window.DJ_BIND_UNIT='w11';</script>
+<script src="js/gate_i18n.js?v=202609291032"></script>
+<script src="js/bind_gate.js?v=202610212100"></script>
+</body>
+</html>

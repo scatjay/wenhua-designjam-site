@@ -161,7 +161,7 @@
   /* ---- 信封編號登記：編號要和「已綁定的編號＋Google 帳號」對得上才能進（不收姓名學號） ---- */
   var TEACHERS = ['scatjay@gmail.com', 'yib@stust.edu.tw'];
   /* 訪客（外部來賓，例如招生單位主任）：不是老師、不能看認領與研究資料；第一次登入自動認領 97 號，之後和學生一樣玩（97 在學生範圍 1–52 之外，分析時自然排除） */
-  var GUESTS = ['ymhuang@stust.edu.tw', 'ym.huang.tw@gmail.com'], GUEST_ENV = '97';
+  var GUESTS = ['ymhuang@stust.edu.tw', 'ym.huang.tw@gmail.com', 'persona1writin9@gmail.com'], GUEST_ENV = '97';
   var BIND = 'whgm/analysis/w3game';   /* 其他學習單頁共用的綁定資料（envIndex／identity） */
   var envNo = null, isTeacher = false;
   function validEnv(v) { return v === parseInt(v, 10) && ((v >= 1 && v <= 60) || (v >= 101 && v <= 130) || v === 99 || v === 0); }

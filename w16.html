@@ -67,7 +67,7 @@ details.adv .advb{padding:0 16px 14px}
 <div class="wrap">
 <p class="eyebrow">文化遊戲松實作 · W16 · AI Studio 3/3</p>
 <h1>最終版：把你的內容放進去，玩給大家看</h1>
-<p class="upd">最後更新：<b>2026-11-15 17:13</b></p>
+<p class="upd">最後更新：<b>2026-11-15 17:28</b></p>
 <p class="lede">六週前你只有一個想法。現在你有一張圖、一個能玩的專案、一份你改過的規則、一份標過來源的內容。這一週把它們放在一起：<b>把 W15 的內容放進專案當預設資料</b>、確認規則沒被 AI 改掉、請三位同學玩、修一個最影響玩的地方，最後畫一張「我是怎麼做出來的」流程圖。</p>
 <p class="lede"><b>今天課堂做完，期限不是讓你拖。</b>做到哪一階都可以交。</p>
 <nav class="tabs" aria-label="頁面"><a href="#overview">概覽</a><a href="#steps">六步做完</a><a href="#three">出處標示欄</a><a href="#check">檢核</a><a href="#stuck">卡住了</a></nav>
@@ -76,7 +76,7 @@ details.adv .advb{padding:0 16px 14px}
 <details class="stage" open><summary><span class="sn">1</span><span class="st2">把內容放進專案當預設資料</span><span class="sm">約 25 分鐘（生成要再等）</span></summary><div class="sb"><p>打開你 W14 的那個專案，在輸入框貼下面這段指令，再把你 W15 的內容 JSON（v2）整份貼在後面，送出。等它做完（約 4 分鐘；轉圈就是還在做，不要重整、不要重送）。<br><b>做完的樣子：</b>預覽一打開，裡面就是你 v2 的內容（人物、台詞、現場細節）。</p><div class="pbox"><b>給 AI Studio 的指令（放進預設資料）</b><pre id="p16">請把我下面貼的這份 JSON，放進這個專案當「預設資料」。只替換資料，不要動任何規則程式、載入檢查（validate）、畫面或功能，也不要刪任何東西。改完後，請列出你動過的所有程式邏輯，不要說「完整保留」。
 
 以下是我的 JSON：
-（把你 W15 的內容 JSON v2 整份貼在這一行下面）</pre><button type="button" data-copy="p16">複製</button></div><p class="note"><b>AI 常常順手把規則改掉。</b>它回覆說沒動，你還是要自己玩、自己對照（下一步）。</p><p class="note">找不到專案、或打開是壞的：回到 W14 學習單的步驟重做，再回來。<a href="w14.html#steps">W14 學習單</a></p></div></details>
+（把你 W15 的內容 JSON v2 整份貼在這一行下面）</pre><button type="button" data-copy="p16">複製</button></div><p class="note"><b>老師實測一次：</b>這段指令讓 AI 只改了存資料的那一個檔（<code>puzzleData.ts</code>），規則程式一個字都沒動，約 1.5 分鐘做完。但那只是一次，你的專案不一定一樣；AI 說沒動，你還是要自己玩、自己對照（下一步）。</p><p class="note">找不到專案、或打開是壞的：回到 W14 學習單的步驟重做，再回來。<a href="w14.html#steps">W14 學習單</a></p></div></details>
 <details class="stage"><summary><span class="sn">2</span><span class="st2">驗證：規則有沒有被偷改</span><span class="sm">約 30 分鐘</span></summary><div class="sb"><p>三步，結果記在筆記裡：</p><ol class="plain"><li><b>玩一輪。</b>能從開始走到結果，也能再玩一輪嗎？</li><li><b>載入你的 JSON v2 對照。</b>如果專案有「我要改做」，把 W15 的 JSON v2 載入進去，玩一輪，和預設資料是不是同一個樣子？</li><li><b>有差異就回上一版。</b>按那次回覆下方的「Restore」回到上一版，把指令改成「只替換資料欄位，不要動任何函式」再做一次。</li></ol><p><b>做完的樣子：</b>你說得出「規則和 W15 一樣」或「哪裡不一樣」。<b>有差異不是失敗</b>，寫下來就算過關。</p><p class="note">試了還是被改：保留原本的做法，在專案裡用「載入你的 JSON」玩，交作業時註明「我是用載入的方式」。</p></div></details>
 <details class="stage"><summary><span class="sn">3</span><span class="st2">請三位同學玩，也玩三位同學的</span><span class="sm">約 40 分鐘</span></summary><div class="sb"><p>分組輪轉：你玩三位同學的作品，也請他們玩你的。玩的時候<b>只看、不教、不說話</b>。每玩完一個，各寫一句（寫暱稱或代號，不寫真實姓名）：「<b>我也想到＿＿</b>」或「<b>我沒想到＿＿</b>」。<br><b>做完的樣子：</b>你有三句試玩紀錄；也知道你的作品最多人卡在哪一處。</p></div></details>
 <details class="stage"><summary><span class="sn">4</span><span class="st2">只修一個最影響玩的地方</span><span class="sm">約 15 分鐘</span></summary><div class="sb"><p>從同學卡住的地方，挑<b>最多人卡住的一處</b>修（只修一處）。修之前先存一個版本（下一次出問題才回得去）。時間不夠，可以留到期末展示。<br><b>做完的樣子：</b>你有一個修過的最終版，並寫一句「改了什麼、為什麼」。</p></div></details>
@@ -95,11 +95,11 @@ function fb(){var a=document.createElement('textarea');a.value=t;document.body.a
 if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();}});
 })();
 </script>
-<script src="templates/tutor/folk_index.js?v=202611151713"></script><script src="templates/tutor/tutor_templates.js?v=202611151713"></script><script src="templates/tutor/tutor_core.js?v=202611151713"></script><script src="templates/tutor/tutor_config.js?v=202611151713"></script><script src="templates/tutor/tutor_hook.js?v=202611151713"></script>
+<script src="templates/tutor/folk_index.js?v=202611151728"></script><script src="templates/tutor/tutor_templates.js?v=202611151728"></script><script src="templates/tutor/tutor_core.js?v=202611151728"></script><script src="templates/tutor/tutor_config.js?v=202611151728"></script><script src="templates/tutor/tutor_hook.js?v=202611151728"></script>
 <script>document.getElementById("provMount")&&window.CT_HOOK&&(function(){var el=document.getElementById("provMount"),done=false;function go(){if(done)return;var env=parseInt(localStorage.getItem("designjam_env"),10);if(!isFinite(env))return;done=true;try{var cfg=(window.CT_CONFIG&&CT_CONFIG.base)||{};CT_HOOK.mountProv(el,{env:env,unit:CT_CORE.unitOfDate(Date.now(),cfg.term),cfg:{hook:cfg.hook}});var h=document.getElementById("provHint");if(h)h.style.display="none";}catch(e){}}go();if(!done){var t=setInterval(function(){go();if(done)clearInterval(t);},1500);}})();</script>
 
 <script>window.DJ_BIND_UNIT='w11';</script>
-<script src="js/gate_i18n.js?v=202611151713"></script>
-<script src="js/bind_gate.js?v=202611151713"></script>
+<script src="js/gate_i18n.js?v=202611151728"></script>
+<script src="js/bind_gate.js?v=202611151728"></script>
 </body>
 </html>

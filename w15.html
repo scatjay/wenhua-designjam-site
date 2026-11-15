@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W15 Figma 3/3 · 文化遊戲松</title>
+</head>
+<body>
+<style>
+/* 版面：單欄，步驟卡可收合；色彩：灰藍底、深藍灰字、青藍主色、金色只用在《小封神》標籤 */
+:root{--bg:#f1f5f6;--surface:#ffffff;--surface2:#e5edf0;--ink:#1c2a31;--muted:#566872;--hair:#cfdbe0;--accent:#1b6578;--accent-soft:#d3e7ed;--gold:#8a6414;--gold-soft:#f1e5c6;--warn:#a5481f;--shadow:0 1px 2px rgba(20,40,50,.07),0 6px 16px rgba(20,40,50,.06);--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;--mono:ui-monospace,"Cascadia Mono",Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111b20;--surface:#1a272d;--surface2:#22343c;--ink:#e6eef1;--muted:#a2b4bc;--hair:#33474f;--accent:#7cc3d6;--accent-soft:#1d3a44;--gold:#e5bb62;--gold-soft:#3a2f16;--warn:#ee9a6e;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111b20;--surface:#1a272d;--surface2:#22343c;--ink:#e6eef1;--muted:#a2b4bc;--hair:#33474f;--accent:#7cc3d6;--accent-soft:#1d3a44;--gold:#e5bb62;--gold-soft:#3a2f16;--warn:#ee9a6e;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 64px}
+.wrap{max-width:780px;margin:0 auto}
+.eyebrow{font:600 12.5px var(--mono);letter-spacing:.08em;color:var(--accent);margin:0}
+h1{font-size:clamp(24px,5vw,34px);line-height:1.25;margin:6px 0 8px;text-wrap:balance}
+h2{font-size:20px;margin:36px 0 10px;display:flex;gap:10px;align-items:baseline;text-wrap:balance}
+h2 .num{font:600 12px var(--mono);background:var(--accent);color:var(--bg);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.upd{font:12.5px var(--mono);color:var(--muted);margin:0 0 8px}
+.lede{margin:8px 0}
+.sub,.note{color:var(--muted);font-size:14.5px;margin:6px 0}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
+nav.tabs a{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14.5px}
+nav.tabs a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.jt-wrap{overflow-x:auto;margin:10px 0}
+table.jt{border-collapse:collapse;width:100%;min-width:440px;background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.jt td{border-bottom:1px solid var(--hair);padding:9px 12px;vertical-align:top;font-size:15px}
+.jt td:first-child{width:7.5em;font-weight:700;color:var(--accent);white-space:nowrap}
+.six{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.six>div{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;min-width:0}
+.six b{display:block;font-size:15.5px}
+.six .draw{font-size:13.5px;color:var(--muted);margin-top:4px}
+.six .demo{display:inline-block;margin-top:6px;font-size:12.5px;background:var(--gold-soft);color:var(--gold);border-radius:6px;padding:1px 8px}
+details.stage{background:var(--surface);border:1px solid var(--hair);border-radius:12px;margin:0 0 12px;box-shadow:var(--shadow)}
+details.stage>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 14px;font-weight:700}
+details.stage>summary::-webkit-details-marker{display:none}
+details.stage>summary::after{content:"▸";margin-left:auto;color:var(--accent)}
+details.stage[open]>summary::after{content:"▾"}
+.sn{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font:600 14px var(--mono);flex:0 0 auto}
+.st2{min-width:0;overflow-wrap:anywhere}
+.sm{font-weight:400;font-size:13px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.sb{padding:2px 16px 14px}.sb p{margin:8px 0}
+figure.shot{margin:10px 0}
+figure.shot img{display:block;max-width:100%;height:auto;border-radius:10px;border:1px solid var(--hair)}
+figcaption{font-size:13px;color:var(--muted);margin-top:4px}
+.wait{background:repeating-linear-gradient(45deg,var(--surface2),var(--surface2) 10px,var(--bg) 10px,var(--bg) 20px);border:1px dashed var(--accent);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--muted);margin:10px 0}
+.remix{background:var(--gold-soft);border-radius:10px;padding:12px 14px;margin:12px 0}
+.remix b{color:var(--gold)}
+.remix ul{margin:6px 0 0;padding-left:1.2em}
+.checks{list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}
+.checks li{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;display:flex;gap:12px;min-width:0}
+.checks b.n{font:600 14px var(--mono);color:var(--accent);flex:0 0 auto}
+dl.stuck dt{font-weight:700;margin-top:10px}dl.stuck dd{margin:2px 0 0;color:var(--muted)}
+ul.plain{padding-left:1.3em}
+details.adv{border:1px dashed var(--accent);border-radius:12px;background:var(--surface)}
+details.adv>summary{cursor:pointer;min-height:48px;padding:10px 14px;font-weight:700;display:flex;align-items:center;color:var(--accent)}
+details.adv .advb{padding:0 16px 14px}
+@media (max-width:520px){.sm{display:none}h2{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<style>
+.pbox{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;margin:10px 0}.pbox pre{white-space:pre-wrap;word-break:break-word;font:14.5px/1.6 var(--sans);margin:6px 0 8px}.pbox button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;cursor:pointer}code{font:13.5px var(--mono);background:var(--surface2);padding:1px 6px;border-radius:5px}
+</style>
+<div class="wrap">
+<p class="eyebrow">文化遊戲松實作 · W15 · Figma 3/3</p>
+<h1>收尾你的畫面，把「哪些是原本的、哪些是你加的」標清楚</h1>
+<p class="upd">最後更新：<b>2026-11-15 17:10</b></p>
+<p class="lede">這一週回到 Figma 做三件事：<b>把畫面收尾得像同一個作品</b>；<b>放進一個你親眼看到、親耳聽到或問到的現場細節</b>；<b>標清楚每樣東西的來源</b>。然後第二次請 <b>Claude</b> 幫忙，這次只讓它檢查你的台詞有沒有跟你寫的人物小卡矛盾。標清楚來源是最輕的誠實，也是你的功勞。</p>
+<p class="lede"><b>今天課堂做完，期限不是讓你拖。</b>做到哪一階都可以交。</p>
+<nav class="tabs" aria-label="頁面"><a href="#overview">概覽</a><a href="#know">先知道</a><a href="#steps">六步做完</a><a href="#three">出處標示欄</a><a href="#check">檢核</a><a href="#stuck">卡住了</a></nav>
+<section id="overview"><h2><span class="num">概覽</span>W15 Figma 3/3</h2><div class="jt-wrap"><table class="jt"><tbody><tr><td>要交什麼</td><td>Figma 連結、一張展示 PNG、你的內容 JSON（v2，台詞改過）、一句現場細節的來源與意義、Claude 檢查的截圖，再加一張「繳交檢核」截圖</td></tr><tr><td>大約多久</td><td>課堂上約 2 小時。Figma 收尾約 40 分鐘；Claude 回覆約半分鐘</td></tr><tr><td>開放與截止</td><td>12/16（三）09:10 開放，12/23（三）09:10 截止</td></tr><tr><td>要用的工具</td><td>Figma（延續）、Claude 免費版（claude.ai），這週最多送 2 則訊息（一則檢查，一則修紅字備用）</td></tr><tr><td>做完接哪一份</td><td>W16：把這週改好的 JSON 放進 AI Studio 專案，做出最終版。</td></tr><tr><td>先講清楚</td><td>Claude 免費版放進去的內容，可能被拿去改進產品。不要放真實姓名、學號。現場照片不要拍到別人的臉；廟裡不要拍神像。</td></tr></tbody></table></div></section>
+<section id="know"><h2><span class="num">先知道</span>五類來源怎麼標</h2><p class="note">作品裡每一樣東西（人物、台詞、地點、規則、畫面），都可以標它從哪裡來。標示是邀請，空白不扣分；老師看的是你有沒有「知道哪些是自己加的」。</p><div class="jt-wrap"><table class="jt"><tbody><tr><td>原著</td><td>書裡有，而且你知道在哪裡（例如《小封神》哪一段）</td></tr><tr><td>民間說法</td><td>廟裡、長輩、傳說裡這樣講，但不一定寫在書裡</td></tr><tr><td>工坊創作</td><td>書裡沒有，是你或我們加的</td></tr><tr><td>遊戲設計</td><td>為了好玩而做的規則、數字、機制</td></tr><tr><td>田野所得</td><td>你親眼看到、親耳聽到、親手記下，或問當地人問到的</td></tr></tbody></table></div><p class="note"><b>一個提醒：</b>玄天上帝、媽祖等現在還有人在祭拜。可愛可以，不嘲笑；想諷刺，就指向制度，不指向信仰本身。</p></section>
+<section id="steps"><h2><span class="num">步驟</span>六步做完這一份</h2><p class="note">每一步是一張卡片，點標題可以收合或展開。Figma 的按鈕怎麼按，W11 的學習單都寫了，這裡不重複。</p>
+<details class="stage" open><summary><span class="sn">1</span><span class="st2">回頭看同學怎麼玩你的版本，挑一件要修的事</span><span class="sm">約 5 分鐘</span></summary><div class="sb"><p>看看 W14 的同學試玩紀錄（他卡在哪、笑了沒、說了什麼），挑<b>一件</b>你這週要修的事，寫成一句話。<br><b>做完的樣子：</b>你有一句「我這週要修的是＿＿」。</p></div></details>
+<details class="stage"><summary><span class="sn">2</span><span class="st2">在 Figma 收尾美術</span><span class="sm">約 40 分鐘</span></summary><div class="sb"><p>開你的 Figma 檔，只做兩件事：<b>選一組三色</b>（主色不超過三個）、<b>字體固定兩種以內</b>，字級夠大（手機看得清楚）。每一張畫面都套同一組，看起來像同一個遊戲。<br><b>做完的樣子：</b>你的畫面放在一起，看起來像同一個作品。</p><p class="note">Figma 的改色、改字、Export、Share 步驟：看 <a href="w11.html#steps">W11 學習單</a>。</p></div></details>
+<details class="stage"><summary><span class="sn">3</span><span class="st2">放一個現場細節，並標來源</span><span class="sm">約 15 分鐘</span></summary><div class="sb"><p>挑<b>一個</b>你自己看到、聽到、問到或親手記下的東西，放進作品：可以是一張照片，也可以是一句話。在畫面的角落用小字標它的來源（五類裡的一類，通常是「田野所得」）。照片不要拍到別人的臉，廟裡不要拍神像；那種情況改用文字或手繪。沒有走讀的同學：用一個你在校園或住家附近親眼看過的東西。<br><b>做完的樣子：</b>你有一個現場細節，畫面角落標了來源，並寫好一句「它是在哪裡看到、聽到或問到的、對當地人代表什麼」。</p></div></details>
+<details class="stage"><summary><span class="sn">4</span><span class="st2">自己寫一張人物小卡，請 Claude 只檢查矛盾</span><span class="sm">約 35 分鐘</span></summary><div class="sb"><p><b>先寫小卡：</b>挑你作品裡<b>一個人物</b>，寫 3 行：①他是誰；②你<b>確定</b>的事（從書、課堂、或問到的來）；③不確定的，寫「待查」。再挑他的<b>一句台詞</b>。<br><b>再請 Claude 檢查：</b>到 claude.ai 開一個新對話，貼下面的指令，把小卡和那句台詞貼在對應的位置，送出（1 則訊息）。手機的 claude.ai 要點右下的送出鈕，按 Enter 只會換行。<br><b>做完的樣子：</b>Claude 約半分鐘內回覆；你把這一輪截成一張圖。</p><div class="pbox"><b>給 Claude 的指令（只檢查矛盾）</b><pre id="pc15">下面是我作品裡一個人物的小卡（只有我確定的資料），和我寫的一句台詞。請你「只指出」這句台詞有沒有跟小卡矛盾；小卡沒寫到的事，不要補充、不要猜，也不要改寫台詞。最多列 3 點，每點寫「哪裡矛盾」。如果沒有矛盾，就回答「沒有矛盾」。
+
+人物小卡：
+（把你寫的小卡貼在這一行下面）
+
+台詞：
+（把那一句台詞貼在這一行下面）</pre><button type="button" data-copy="pc15">複製</button></div><p class="note"><b>它說的不一定對。</b>它可能編出書裡沒有的回目、或把人物的特徵說錯。它說的事，只要<b>不在你的小卡上</b>，就標「待查」，不要直接放進作品。小卡就是你的依據。</p><p class="note">只貼一個人物、一句台詞，不要整份 JSON，用量比較省。</p></div></details>
+<details class="stage"><summary><span class="sn">5</span><span class="st2">改台詞，載入 JSON v2 玩一輪</span><span class="sm">約 20 分鐘</span></summary><div class="sb"><p>依你的判斷，只改<b>那一句台詞</b>（或標示）。把改好的整份 JSON 貼回樣板頁（解謎是「載入我的版本」，其他樣板的按鈕名稱略有不同），玩一輪。這份就是 JSON v2。<br><b>做完的樣子：</b>載入後沒有紅字，能走完一個流程。</p><p class="note"><b>出現紅字？</b>樣板會用白話寫出哪裡有問題。把紅字原樣貼回給 Claude 說「請修這個」（這是你的第二則）；還是不行，回到 W13 的 v1，重新只改一處。</p></div></details>
+<details class="stage"><summary><span class="sn">6</span><span class="st2">匯出展示圖，交件</span><span class="sm">約 15 分鐘</span></summary><div class="sb"><p>把收尾好的畫面排在一起（一個 Frame 裡放三到四張），用 Export 匯出成<b>一張展示 PNG</b>。Share 設成 Anyone 是 can view。<br><b>做完的樣子：</b>你有一個 Figma 連結、一張展示 PNG、JSON v2、現場細節那一句，以及 Claude 的截圖。</p></div></details>
+</section>
+<section id="three"><h2><span class="num">出處標示欄</span>存版本時填三格</h2><p class="sub">每週至少寫一次；這一週你放進了現場細節，一定要寫。很短就好，目的是讓你自己看清楚哪些是你決定的。在這一頁下方的填寫區（或樣板頁的「📒 我的紀錄」）填。</p><ol class="plain"><li><b>這一版裡，哪些部分交給了 AI？</b>從填寫區挑（可以多個）；沒有用 AI 就勾「沒有用 AI」。</li><li><b>這一版裡，哪一兩處是你自己決定的？</b>一句話就好；想不到就寫「沒有」。</li><li><b>本週那一句。</b>填寫區會顯示題目：你放進作品的現場細節，是在哪裡看到、聽到或問到的？對當地人來說，它代表什麼？</li></ol><p class="note">「為什麼這樣決定」那一格可以不填。你寫的內容只留在自己的瀏覽器。</p><div id="provMount"></div><p id="provHint" class="note">先綁定你的編號，這裡才會出現填寫區。</p></section>
+<section id="check"><h2><span class="num">檢核</span>交之前，自己對照五點</h2><ul class="checks"><li><b class="n">1</b><span><b>展示 PNG 風格統一：</b>主色不超過三個、字體兩種以內、字級夠大。</span></li><li><b class="n">2</b><span><b>作品裡有一個現場細節，</b>畫面角落標了來源，並寫了「在哪裡看到、對當地人代表什麼」。</span></li><li><b class="n">3</b><span><b>台詞經過一次 Claude 檢查，</b>它說的、小卡上沒有的事，你標了「待查」，沒有直接放進作品。</span></li><li><b class="n">4</b><span><b>JSON v2 載入後能玩一輪，</b>沒有紅字。</span></li><li><b class="n">5</b><span><b>填了出處標示欄、附了 Claude 截圖與檢核截圖。</b></span></li></ul><p>怎麼交：到 flipclass 這份作業，貼上 Figma 連結、貼上你的內容 JSON（文字貼在留言，或存成 .txt 上傳），上傳展示 PNG、Claude 截圖和檢核截圖，再寫上現場細節那一句。連結打不開，視同未繳交。</p></section>
+<section id="stuck"><h2><span class="num">卡住了</span>常見的卡住與解法</h2><dl class="stuck"><dt>不知道哪些是原著、哪些是自己加的</dt><dd>回到你的小卡：寫在上面而且你確定的，才算原著或民間說法；其他都是「工坊創作」或「遊戲設計」。</dd><dt>Claude 說了小卡上沒有的事，或編了回目</dt><dd>標「待查」，不要放進作品。</dd><dt>貼整份 JSON 給 Claude，用量吃緊</dt><dd>只貼一個人物小卡和一句台詞。</dd><dt>Claude 回的是整份新 JSON</dt><dd>只複製你要改的那一句，其他不動。</dd><dt>JSON v2 載入出現紅字</dt><dd>紅字原樣貼回給 Claude 說「請修這個」；還不行，回到 W13 的 v1。</dd><dt>沒有現場細節（沒去走讀、住家附近沒有）</dt><dd>用一個校園或住家附近你親眼看過的東西。</dd><dt>照片拍到別人的臉或神像</dt><dd>改用文字描述或手繪。</dd><dt>不知道 Figma 風格統一從何下手</dt><dd>只做兩件事：選一組三色、字體固定兩種。</dd><dt>沒有 Claude 帳號，或註冊遇到限制</dt><dd>看同組同學操作，作業上註明；不要借用別人的帳號。</dd><dt>Claude 說額度用完</dt><dd>免費版有每 5 小時的用量上限，視窗上會寫重設時間；等到那個時間，或改天做。</dd></dl></section>
+</div>
+<script>
+(function(){var $=function(i){return document.getElementById(i)};
+document.querySelectorAll('[data-copy]').forEach(function(b){b.onclick=function(){var t=$(b.getAttribute('data-copy')).textContent;
+function ok(){var o=b.textContent;b.textContent='✓';setTimeout(function(){b.textContent=o},1200)}
+function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}document.body.removeChild(a)}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();}});
+})();
+</script>
+<script src="templates/tutor/folk_index.js?v=202611151710"></script><script src="templates/tutor/tutor_templates.js?v=202611151710"></script><script src="templates/tutor/tutor_core.js?v=202611151710"></script><script src="templates/tutor/tutor_config.js?v=202611151710"></script><script src="templates/tutor/tutor_hook.js?v=202611151710"></script>
+<script>document.getElementById("provMount")&&window.CT_HOOK&&(function(){var el=document.getElementById("provMount"),done=false;function go(){if(done)return;var env=parseInt(localStorage.getItem("designjam_env"),10);if(!isFinite(env))return;done=true;try{var cfg=(window.CT_CONFIG&&CT_CONFIG.base)||{};CT_HOOK.mountProv(el,{env:env,unit:CT_CORE.unitOfDate(Date.now(),cfg.term),cfg:{hook:cfg.hook}});var h=document.getElementById("provHint");if(h)h.style.display="none";}catch(e){}}go();if(!done){var t=setInterval(function(){go();if(done)clearInterval(t);},1500);}})();</script>
+
+<script>window.DJ_BIND_UNIT='w11';</script>
+<script src="js/gate_i18n.js?v=202611151710"></script>
+<script src="js/bind_gate.js?v=202611151710"></script>
+</body>
+</html>

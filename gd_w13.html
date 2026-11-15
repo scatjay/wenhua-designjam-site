@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W13 Figma 2/3 · 遊戲設計學</title>
+</head>
+<body>
+<style>
+/* 版面：單欄，步驟卡可收合；色彩：灰藍底、深藍灰字、青藍主色、金色只用在《小封神》標籤 */
+:root{--bg:#f1f5f6;--surface:#ffffff;--surface2:#e5edf0;--ink:#1c2a31;--muted:#566872;--hair:#cfdbe0;--accent:#1b6578;--accent-soft:#d3e7ed;--gold:#8a6414;--gold-soft:#f1e5c6;--warn:#a5481f;--shadow:0 1px 2px rgba(20,40,50,.07),0 6px 16px rgba(20,40,50,.06);--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;--mono:ui-monospace,"Cascadia Mono",Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111b20;--surface:#1a272d;--surface2:#22343c;--ink:#e6eef1;--muted:#a2b4bc;--hair:#33474f;--accent:#7cc3d6;--accent-soft:#1d3a44;--gold:#e5bb62;--gold-soft:#3a2f16;--warn:#ee9a6e;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111b20;--surface:#1a272d;--surface2:#22343c;--ink:#e6eef1;--muted:#a2b4bc;--hair:#33474f;--accent:#7cc3d6;--accent-soft:#1d3a44;--gold:#e5bb62;--gold-soft:#3a2f16;--warn:#ee9a6e;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 64px}
+.wrap{max-width:780px;margin:0 auto}
+.eyebrow{font:600 12.5px var(--mono);letter-spacing:.08em;color:var(--accent);margin:0}
+h1{font-size:clamp(24px,5vw,34px);line-height:1.25;margin:6px 0 8px;text-wrap:balance}
+h2{font-size:20px;margin:36px 0 10px;display:flex;gap:10px;align-items:baseline;text-wrap:balance}
+h2 .num{font:600 12px var(--mono);background:var(--accent);color:var(--bg);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.upd{font:12.5px var(--mono);color:var(--muted);margin:0 0 8px}
+.lede{margin:8px 0}
+.sub,.note{color:var(--muted);font-size:14.5px;margin:6px 0}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
+nav.tabs a{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14.5px}
+nav.tabs a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.jt-wrap{overflow-x:auto;margin:10px 0}
+table.jt{border-collapse:collapse;width:100%;min-width:440px;background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.jt td{border-bottom:1px solid var(--hair);padding:9px 12px;vertical-align:top;font-size:15px}
+.jt td:first-child{width:7.5em;font-weight:700;color:var(--accent);white-space:nowrap}
+.six{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.six>div{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;min-width:0}
+.six b{display:block;font-size:15.5px}
+.six .draw{font-size:13.5px;color:var(--muted);margin-top:4px}
+.six .demo{display:inline-block;margin-top:6px;font-size:12.5px;background:var(--gold-soft);color:var(--gold);border-radius:6px;padding:1px 8px}
+details.stage{background:var(--surface);border:1px solid var(--hair);border-radius:12px;margin:0 0 12px;box-shadow:var(--shadow)}
+details.stage>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 14px;font-weight:700}
+details.stage>summary::-webkit-details-marker{display:none}
+details.stage>summary::after{content:"▸";margin-left:auto;color:var(--accent)}
+details.stage[open]>summary::after{content:"▾"}
+.sn{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font:600 14px var(--mono);flex:0 0 auto}
+.st2{min-width:0;overflow-wrap:anywhere}
+.sm{font-weight:400;font-size:13px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.sb{padding:2px 16px 14px}.sb p{margin:8px 0}
+figure.shot{margin:10px 0}
+figure.shot img{display:block;max-width:100%;height:auto;border-radius:10px;border:1px solid var(--hair)}
+figcaption{font-size:13px;color:var(--muted);margin-top:4px}
+.wait{background:repeating-linear-gradient(45deg,var(--surface2),var(--surface2) 10px,var(--bg) 10px,var(--bg) 20px);border:1px dashed var(--accent);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--muted);margin:10px 0}
+.remix{background:var(--gold-soft);border-radius:10px;padding:12px 14px;margin:12px 0}
+.remix b{color:var(--gold)}
+.remix ul{margin:6px 0 0;padding-left:1.2em}
+.checks{list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}
+.checks li{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;display:flex;gap:12px;min-width:0}
+.checks b.n{font:600 14px var(--mono);color:var(--accent);flex:0 0 auto}
+dl.stuck dt{font-weight:700;margin-top:10px}dl.stuck dd{margin:2px 0 0;color:var(--muted)}
+ul.plain{padding-left:1.3em}
+details.adv{border:1px dashed var(--accent);border-radius:12px;background:var(--surface)}
+details.adv>summary{cursor:pointer;min-height:48px;padding:10px 14px;font-weight:700;display:flex;align-items:center;color:var(--accent)}
+details.adv .advb{padding:0 16px 14px}
+@media (max-width:520px){.sm{display:none}h2{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<style>
+.idn{display:none}body.show-id .idn{display:block;color:var(--muted);font-size:.93em;margin-top:2px}.langbar{display:flex;gap:8px;margin:10px 0 4px}.langbar button{min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;font-size:14px;cursor:pointer}.langbar button[aria-pressed=true]{background:var(--accent);color:var(--bg)}.pbox{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;margin:10px 0}.pbox pre{white-space:pre-wrap;word-break:break-word;font:14.5px/1.6 var(--sans);margin:6px 0 8px}.pbox button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;cursor:pointer}
+</style>
+<div class="wrap">
+<p class="eyebrow"><span class="zh">遊戲設計學 · W13 · Figma 2/3</span><span class="idn" lang="id">Desain Game · W13 · Figma 2/3</span></p>
+<h1><span class="zh">在 Figma 補畫流程裡的其他畫面</span><span class="idn" lang="id">Menggambar layar lain dalam alur proses di Figma</span></h1>
+<p class="upd"><span class="zh">最後更新：</span><span class="idn" lang="id">Terakhir diperbarui:</span> <b>2026-11-15 15:03</b></p>
+<p class="lede"><span class="zh">一個小遊戲至少有三種畫面：<b>開始</b>（玩家一打開看到什麼）、<b>玩</b>（做事的時候長什麼樣）、<b>結果</b>（做完看到什麼）。你的走讀遊戲畫面已經有一張了。這一週用 Figma 再補畫至少一張，讓你的遊戲有「前後」，下週會把它們接起來。</span><span class="idn" lang="id">Sebuah game kecil setidaknya memiliki tiga jenis layar: <b>開始</b> (Mulai) (apa yang dilihat pemain saat pertama kali membuka), <b>玩</b> (Bermain) (seperti apa tampilannya saat beraktivitas), <b>結果</b> (Hasil) (apa yang dilihat setelah selesai). Layar game tur jalan kaki Anda sudah ada satu. Minggu ini gunakan Figma untuk menggambar tambahan setidaknya satu layar lagi agar game Anda memiliki 「alur awal dan akhir」, minggu depan kita akan menghubungkannya.</span></p>
+<p class="lede"><b><span class="zh">盡量在課堂上做完；期限有兩週，回家可以補。做到哪一階都可以交。</span><span class="idn" lang="id">Usahakan selesai di kelas; batas waktu ada dua minggu, bisa disusulkan di rumah. Selesai sampai tahap mana pun boleh dikumpulkan.</span></b></p>
+<div class="langbar"><button type="button" id="langbtn" aria-pressed="false">Bahasa Indonesia</button></div>
+<nav class="tabs" aria-label="頁面"><a href="#overview"><span class="zh">概覽</span><span class="idn" lang="id">概覽 (Ikhtisar)</span></a><a href="#steps"><span class="zh">四步做完</span><span class="idn" lang="id">四步做完 (Selesai dalam Empat Langkah)</span></a><a href="#three"><span class="zh">出處標示欄</span><span class="idn" lang="id">出處標示欄 (Kolom Atribusi Sumber)</span></a><a href="#check"><span class="zh">檢核</span><span class="idn" lang="id">檢核 (Pemeriksaan)</span></a><a href="#stuck"><span class="zh">卡住了</span><span class="idn" lang="id">卡住了 (Mengalami Kendala)</span></a></nav>
+<section id="overview"><h2><span class="num"><span class="zh">概覽</span><span class="idn" lang="id">概覽 (Ikhtisar)</span></span><span class="zh">W13 Figma 2/3</span><span class="idn" lang="id">W13 Figma 2/3</span></h2><div class="jt-wrap"><table class="jt"><tbody>
+<tr><td><span class="zh">要交什麼</span><span class="idn" lang="id">Apa yang harus dikumpulkan</span></td><td><span class="zh">Figma 連結（確認別人打得開）、你新畫的畫面的 PNG（至少一張），再加一張「繳交檢核」截圖</span><span class="idn" lang="id">Tautan Figma (pastikan orang lain bisa membukanya), PNG layar yang baru Anda gambar (setidaknya 1 lembar), ditambah satu tangkapan layar 「繳交檢核 (Pemeriksaan Pengumpulan)」</span></td></tr>
+<tr><td><span class="zh">大約多久</span><span class="idn" lang="id">Kira-kira berapa lama</span></td><td><span class="zh">40～50 分鐘</span><span class="idn" lang="id">40～50 menit</span></td></tr>
+<tr><td><span class="zh">開放與截止</span><span class="idn" lang="id">Pembukaan dan batas waktu</span></td><td><span class="zh">12/02（三）19:05 開放，12/16（三）19:05 截止。期限一到就不能再交</span><span class="idn" lang="id">Dibuka 02/12 (Rabu) 19:05, ditutup 16/12 (Rabu) 19:05. Setelah tenggat waktu lewat tidak bisa mengumpulkan lagi</span></td></tr>
+<tr><td><span class="zh">做完接哪一份</span><span class="idn" lang="id">Setelah selesai lanjut ke mana</span></td><td><span class="zh">W14：AI Studio 3/3，把你的畫面接成一輪、找人試用、改版。</span><span class="idn" lang="id">W14: AI Studio 3/3, menghubungkan layar Anda menjadi satu putaran, mencari orang untuk mencoba, melakukan revisi.</span></td></tr>
+<tr><td><span class="zh">先講清楚</span><span class="idn" lang="id">Jelaskan terlebih dahulu</span></td><td><span class="zh">不要在畫面裡放真實姓名、學號、電話，或其他同學的個人資料。</span><span class="idn" lang="id">Jangan memasukkan nama asli, nomor mahasiswa, nomor telepon, atau data pribadi teman sekelas lainnya di dalam layar.</span></td></tr>
+</tbody></table></div></section>
+<section id="steps"><h2><span class="num"><span class="zh">步驟</span><span class="idn" lang="id">步驟 (Langkah-langkah)</span></span><span class="zh">四步做完這一份</span><span class="idn" lang="id">Selesaikan bagian ini dalam empat langkah</span></h2><p class="note"><span class="zh">每一步是一張卡片，點標題可以收合或展開。Figma 的複製、改字、改色，W10 的學習單都寫了，這裡不重複；手機版 Figma 只能看，畫畫面請用電腦或同組同學的電腦。</span><span class="idn" lang="id">Setiap langkah adalah sebuah kartu, klik judul untuk menutup atau membuka. Menyalin, mengubah teks, dan mengubah warna di Figma sudah ditulis di lembar kerja W10, tidak diulang di sini; Figma versi ponsel hanya untuk melihat, untuk menggambar layar silakan gunakan komputer atau komputer teman satu kelompok.</span></p>
+<details class="stage" open><summary><span class="sn">1</span><span class="st2"><span class="zh">想好要補哪一張</span><span class="idn" lang="id">Pikirkan layar mana yang ingin ditambahkan</span></span><span class="sm"><span class="zh">約 5 分鐘</span><span class="idn" lang="id">Sekitar 5 menit</span></span></summary><div class="sb"><p><span class="zh">回答三個問題：玩家一打開看到什麼（開始）？做事的時候畫面長什麼樣（玩）？做完看到什麼（結果）？你已經有一張了，挑還缺的那一種，至少補一張。這一步只要想，手機也可以做。</span><span class="idn" lang="id">Jawab tiga pertanyaan: Apa yang dilihat pemain saat membuka (mulai)? Seperti apa tampilan layar saat beraktivitas (bermain)? Apa yang dilihat setelah selesai (hasil)? Anda sudah punya satu lembar, pilih jenis yang masih kurang, tambahkan setidaknya satu lembar. Langkah ini hanya perlu berpikir, ponsel juga bisa melakukannya.</span><br><b><span class="zh">做完的樣子：</span><span class="idn" lang="id">Tampilan setelah selesai:</span></b><span class="zh">你知道要補哪一種畫面。</span><span class="idn" lang="id">Anda tahu jenis layar mana yang perlu ditambahkan.</span></p></div></details>
+<details class="stage"><summary><span class="sn">2</span><span class="st2"><span class="zh">在同一個 Figma 檔裡畫新畫面</span><span class="idn" lang="id">Menggambar layar baru di file Figma yang sama</span></span><span class="sm"><span class="zh">約 25 分鐘</span><span class="idn" lang="id">Sekitar 25 menit</span></span></summary><div class="sb"><p><span class="zh">打開你 W10 的 Figma 檔，在旁邊再複製一個畫面（或用 F 拉一個 390 × 844 的新畫面框），改成你要補的那一種：標題、文字、一個按鈕、顏色，和你第一張看起來是同一個遊戲。畫面上只放練習用的資料。</span><span class="idn" lang="id">Buka file Figma W10 Anda, salin layar lain di sampingnya (atau gunakan F untuk menarik Frame layar baru berukuran 390 × 844), ubah menjadi jenis yang ingin Anda tambahkan: judul, teks, satu tombol, warna, agar terlihat seperti game yang sama dengan lembar pertama Anda. Di layar hanya letakkan data untuk latihan.</span><br><b><span class="zh">做完的樣子：</span><span class="idn" lang="id">Tampilan setelah selesai:</span></b><span class="zh">Figma 檔裡多了至少一張新畫面，和第一張風格一致。</span><span class="idn" lang="id">Di dalam file Figma bertambah setidaknya satu layar baru, dengan gaya yang konsisten dengan lembar pertama.</span></p><p class="note"><span class="zh">風格一致的小技巧：用和第一張一樣的字級（內文 14 以上）和同一組顏色；每張畫面的標題放在差不多的位置。</span><span class="idn" lang="id">Tips agar gaya konsisten: gunakan ukuran font yang sama dengan lembar pertama (teks isi 14 ke atas) dan palet warna yang sama; letakkan judul setiap layar di posisi yang kurang lebih sama.</span></p></div></details>
+<details class="stage"><summary><span class="sn">3</span><span class="st2"><span class="zh">匯出成 PNG</span><span class="idn" lang="id">Export menjadi PNG</span></span><span class="sm"><span class="zh">約 5 分鐘</span><span class="idn" lang="id">Sekitar 5 menit</span></span></summary><div class="sb"><p><span class="zh">每一張新畫面都用 Export 匯出：左邊 Layers 點畫面的名字，右邊面板最底下按 Export 旁的「＋」（圖中 1），再按「Export ＜畫面名稱＞」（圖中 2）。不要自己截螢幕。畫面名稱寫清楚，例如「開始」「結果」，下週要用。</span><span class="idn" lang="id">Setiap layar baru diekspor menggunakan Export: klik nama layar di Layers sebelah kiri, tekan tanda「＋」di samping Export pada bagian paling bawah panel kanan (gambar 1), lalu tekan「Export <Nama Layar>」(gambar 2). Jangan melakukan tangkapan layar sendiri. Tulis nama layar dengan jelas, misalnya 「Mulai」「Hasil」, akan digunakan minggu depan.</span><br><b><span class="zh">做完的樣子：</span><span class="idn" lang="id">Tampilan setelah selesai:</span></b><span class="zh">你有一組 PNG，檔名是畫面名稱。</span><span class="idn" lang="id">Anda memiliki satu set PNG dengan nama file berupa nama layar.</span></p><figure class="shot"><img src="img/w11/gd_g_h_export.webp" alt="右邊面板最下面的 Export 區，紅框 1 是 Export 旁的 ＋，紅框 2 是 Export 按鈕" loading="lazy" decoding="async"><figcaption><span class="zh">紅框 1：Export（匯出）旁的「＋」。紅框 2：Export 按鈕。（圖中的畫面名稱是別的檔案，你的是你的畫面名稱。）</span><span class="idn" lang="id">Kotak merah 1: Tanda「＋」di samping Export. Kotak merah 2: Tombol Export. (Nama layar pada gambar adalah file lain, milik Anda adalah nama layar Anda sendiri.)</span></figcaption></figure></div></details>
+<details class="stage"><summary><span class="sn">4</span><span class="st2"><span class="zh">確認別人打得開，複製連結</span><span class="idn" lang="id">Pastikan orang lain bisa membuka, salin tautan</span></span><span class="sm"><span class="zh">約 5 分鐘</span><span class="idn" lang="id">Sekitar 5 menit</span></span></summary><div class="sb"><p><span class="zh">按右上角藍色的 Share（分享），「Anyone」那一列右邊要是「can view（可以檢視）」，不是 can edit。確認後按「Copy link（複製連結）」，用無痕視窗貼上連結，打得開才算。</span><span class="idn" lang="id">Klik tombol biru Share di sudut kanan atas, baris 「Anyone」 di sebelah kanan harus 「can view」, bukan can edit. Setelah dipastikan, tekan 「Copy link」, tempel tautan di jendela penyamaran (incognito), baru dianggap valid jika bisa dibuka.</span><br><b><span class="zh">做完的樣子：</span><span class="idn" lang="id">Tampilan setelah selesai:</span></b><span class="zh">你有一條打得開的 Figma 連結。</span><span class="idn" lang="id">Anda memiliki satu tautan Figma yang bisa dibuka.</span></p><figure class="shot"><img src="img/w11/gd_g_d_share.webp" alt="Share 視窗，框出 Anyone can view 與 Copy link" loading="lazy" decoding="async"><figcaption><span class="zh">紅框 1：Anyone／can view。紅框 2：Copy link（複製連結）。</span><span class="idn" lang="id">Kotak merah 1: Anyone／can view. Kotak merah 2: Copy link.</span></figcaption></figure></div></details>
+</section>
+<section id="three"><h2><span class="num"><span class="zh">出處標示欄</span><span class="idn" lang="id">出處標示欄 (Kolom Atribusi Sumber)</span></span><span class="zh">存版本時填三格</span><span class="idn" lang="id">Isi tiga kolom saat menyimpan versi</span></h2>
+<p class="sub"><span class="zh">每週至少寫一次。很短就好，目的是讓你自己看清楚哪些是你決定的。在這一頁下方的填寫區填。</span><span class="idn" lang="id">Tulis setidaknya seminggu sekali. Cukup singkat saja, tujuannya agar Anda sendiri melihat dengan jelas mana yang Anda putuskan. Isi di area pengisian di bagian bawah halaman ini.</span></p>
+<ol class="plain"><li><b><span class="zh">這一版裡，哪些部分交給了 AI？</span><span class="idn" lang="id">Dalam versi ini, bagian mana saja yang diserahkan ke AI?</span></b><span class="zh">從填寫區挑（可以多個）；沒有用 AI 就勾「沒有用 AI」。</span><span class="idn" lang="id">Pilih dari area pengisian (bisa lebih dari satu); jika tidak menggunakan AI, centang 「沒有用 AI (Tidak menggunakan AI)」.</span></li><li><b><span class="zh">這一版裡，哪一兩處是你自己決定的？</span><span class="idn" lang="id">Dalam versi ini, satu atau dua bagian mana yang Anda putuskan sendiri?</span></b><span class="zh">一句話就好；想不到就寫「沒有」。</span><span class="idn" lang="id">Cukup satu kalimat; jika tidak terpikirkan tulis 「沒有 (Tidak ada)」.</span></li><li><b><span class="zh">本週那一句。</span><span class="idn" lang="id">Kalimat minggu ini.</span></b><span class="zh">填寫區會顯示題目，照題目用一句話回答。</span><span class="idn" lang="id">Area pengisian akan menampilkan pertanyaan, jawab dengan satu kalimat sesuai pertanyaan.</span></li></ol>
+<p class="note"><span class="zh">「為什麼這樣決定」那一格可以不填。你寫的內容只留在自己的瀏覽器。</span><span class="idn" lang="id">Kolom 「為什麼這樣決定 (Mengapa memutuskan demikian)」 boleh tidak diisi. Konten yang Anda tulis hanya tersimpan di peramban Anda sendiri.</span></p>
+<div id="provMount"></div><p id="provHint" class="note"><span class="zh">先綁定你的編號，這裡才會出現填寫區。</span><span class="idn" lang="id">Tautkan nomor Anda terlebih dahulu, baru area pengisian akan muncul di sini.</span></p></section>
+<section id="check"><h2><span class="num"><span class="zh">檢核</span><span class="idn" lang="id">檢核 (Pemeriksaan)</span></span><span class="zh">交之前，自己對照四點</span><span class="idn" lang="id">Sebelum mengumpulkan, periksa sendiri empat poin ini</span></h2><ul class="checks">
+<li><b class="n">1</b><span><b><span class="zh">多了至少一張新畫面。</span><span class="idn" lang="id">Bertambah setidaknya satu layar baru.</span></b><span class="zh">和第一張看起來是同一個遊戲。</span><span class="idn" lang="id">Terlihat seperti game yang sama dengan lembar pertama.</span></span></li>
+<li><b class="n">2</b><span><b><span class="zh">有 PNG。</span><span class="idn" lang="id">Ada PNG.</span></b><span class="zh">用 Export 匯出的，不是截圖。</span><span class="idn" lang="id">Diekspor menggunakan Export, bukan tangkapan layar.</span></span></li>
+<li><b class="n">3</b><span><b><span class="zh">別人打得開。</span><span class="idn" lang="id">Orang lain bisa membukanya.</span></b><span class="zh">Share 裡 Anyone 那一列是 can view，用無痕視窗貼上連結打得開。</span><span class="idn" lang="id">Baris Anyone di dalam Share adalah can view, tempel tautan di jendela penyamaran dan bisa dibuka.</span></span></li>
+<li><b class="n">4</b><span><b><span class="zh">填了出處標示欄、附了檢核截圖。</span><span class="idn" lang="id">Sudah mengisi kolom atribusi sumber, sudah melampirkan tangkapan layar pemeriksaan.</span></b><span class="zh">填寫區寫了三格，把「繳交檢核」畫面截圖，連同 Figma 連結和 PNG 一起交到 flipclass。</span><span class="idn" lang="id">Isi tiga kolom di area pengisian, ambil tangkapan layar layar 「繳交檢核 (Pemeriksaan Pengumpulan)」, kumpulkan bersama dengan tautan Figma dan PNG ke flipclass.</span></span></li>
+</ul><p><span class="zh">怎麼交：到 flipclass 這份作業，貼上 Figma 連結並上傳 PNG 和檢核截圖。連結打不開，視同未繳交。期限一到就不能再交，來不及請先跟老師說。</span><span class="idn" lang="id">Cara mengumpulkan: Buka tugas ini di flipclass, tempel tautan Figma serta unggah PNG dan tangkapan layar pemeriksaan. Jika tautan tidak bisa dibuka, dianggap belum mengumpulkan. Setelah tenggat waktu lewat tidak bisa mengumpulkan lagi, jika tidak sempat silakan beritahu guru terlebih dahulu.</span></p></section>
+<section id="stuck"><h2><span class="num"><span class="zh">卡住了</span><span class="idn" lang="id">卡住了 (Mengalami Kendala)</span></span><span class="zh">常見的卡住與解法</span><span class="idn" lang="id">Kendala Umum dan Solusinya</span></h2><dl class="stuck">
+<dt><span class="zh">不知道補畫什麼</span><span class="idn" lang="id">Tidak tahu harus menggambar tambahan apa</span></dt><dd><span class="zh">回答三個問題：玩家一打開看到什麼（開始）？做事時畫面長什麼樣（玩）？做完看到什麼（結果）？</span><span class="idn" lang="id">Jawab tiga pertanyaan: Apa yang dilihat pemain saat membuka (mulai)? Seperti apa tampilan layar saat beraktivitas (bermain)? Apa yang dilihat setelah selesai (hasil)?</span></dd>
+<dt><span class="zh">文字改不了</span><span class="idn" lang="id">Teks tidak bisa diubah</span></dt><dd><span class="zh">點一下之後再快速雙擊，連按兩三次，直到出現閃爍的游標。</span><span class="idn" lang="id">Klik sekali lalu klik ganda dengan cepat, tekan 2–3 kali berturut-turut hingga muncul kursor yang berkedip.</span></dd>
+<dt><span class="zh">Figma 檔打不開、連結失效</span><span class="idn" lang="id">File Figma tidak bisa dibuka, tautan tidak valid</span></dt><dd><span class="zh">檢查 Share 裡 Anyone 是 can view；再試一次無痕視窗。</span><span class="idn" lang="id">Periksa apakah Anyone di dalam Share adalah can view; coba lagi di jendela penyamaran.</span></dd>
+<dt><span class="zh">Share 裡看不到「Anyone」</span><span class="idn" lang="id">Tidak melihat 「Anyone」 di dalam Share</span></dt><dd><span class="zh">代表現在不是公開的。把存取改成「Anyone」，右邊選「can view」。</span><span class="idn" lang="id">Menandakan bahwa saat ini tidak bersifat publik. Ubah akses menjadi 「Anyone」, di sebelah kanan pilih 「can view」.</span></dd>
+<dt><span class="zh">找不到下載的 PNG</span><span class="idn" lang="id">Tidak menemukan PNG yang diunduh</span></dt><dd><span class="zh">到瀏覽器右上角的下載圖示找；檔名就是你的畫面名稱。</span><span class="idn" lang="id">Cari di ikon unduhan di sudut kanan atas peramban; nama file adalah nama layar Anda.</span></dd>
+</dl></section></div>
+<script>
+(function(){var $=function(i){return document.getElementById(i)};
+function setId(on){document.body.classList.toggle('show-id',on);$('langbtn').setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem('gd_w11_id',on?'1':'0')}catch(e){}}
+var env=NaN;try{env=parseInt(localStorage.getItem('designjam_env'),10)}catch(e){}
+var q=/[?&]lang=(id|zh)/.exec(location.search),saved=null;try{saved=localStorage.getItem('gd_w11_id')}catch(e){}
+setId(q?q[1]==='id':(saved!==null?saved==='1':(env>=101&&env<=130)));
+$('langbtn').onclick=function(){setId(!document.body.classList.contains('show-id'))};
+document.querySelectorAll('[data-copy]').forEach(function(b){b.onclick=function(){var t=$(b.getAttribute('data-copy')).textContent;
+function ok(){var o=b.textContent;b.textContent='✓';setTimeout(function(){b.textContent=o},1200)}
+function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}document.body.removeChild(a)}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();}});
+})();
+</script>
+<script src="templates/tutor/folk_index.js?v=202611151503"></script><script src="templates/tutor/tutor_templates.js?v=202611151503"></script><script src="templates/tutor/tutor_core.js?v=202611151503"></script><script src="templates/tutor/tutor_config.js?v=202611151503"></script><script src="templates/tutor/tutor_hook.js?v=202611151503"></script>
+<script>document.getElementById("provMount")&&window.CT_HOOK&&(function(){var el=document.getElementById("provMount"),done=false;function go(){if(done)return;var env=parseInt(localStorage.getItem("designjam_env"),10);if(!isFinite(env))return;done=true;try{var cfg=(window.CT_CONFIG&&CT_CONFIG.base)||{};CT_HOOK.mountProv(el,{env:env,unit:CT_CORE.unitOfDate(Date.now(),cfg.term),cfg:{hook:cfg.hook}});var h=document.getElementById("provHint");if(h)h.style.display="none";}catch(e){}}go();if(!done){var t=setInterval(function(){go();if(done)clearInterval(t);},1500);}})();</script>
+
+<script>window.DJ_BIND_UNIT='w11';</script>
+<script src="js/gate_i18n.js?v=202609291032"></script>
+<script src="js/bind_gate.js?v=202610212100"></script>
+</body>
+</html>

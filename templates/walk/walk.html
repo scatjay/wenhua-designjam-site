@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>走讀樣板</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--bg:#f6f1e6;--fg:#241f19;--mute:#6a604f;--card:#fffdf7;--line:#d9ceb8;--acc:#b23a26;--acc2:#1d6a63;--chip:#ece3cf;--ok:#1f7a4a;--bad:#a8321f}
+@media (prefers-color-scheme:dark){:root{--bg:#12161a;--fg:#ece7dc;--mute:#a1a9b0;--card:#1b2127;--line:#33404a;--acc:#e5755f;--acc2:#58d0bf;--chip:#27323b;--ok:#5ccf8f;--bad:#ff8d78}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;overflow-wrap:anywhere;-webkit-text-size-adjust:100%}
+.wrap{max-width:520px;margin:0 auto;padding:14px 14px 48px}
+h1{font-size:22px;margin:4px 0 2px;line-height:1.3}
+h2{font-size:18px;margin:18px 0 6px}
+.sub{color:var(--mute);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.btn{display:block;width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);font:inherit;font-weight:600;text-align:left;margin:8px 0;cursor:pointer}
+.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc);text-align:center}
+.btn.ghost{text-align:center;font-weight:500}
+.btn.on{border-color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc)}
+.btn[disabled]{opacity:.5}
+.row{display:flex;gap:8px}
+.row .btn{margin:6px 0;text-align:center}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:3px 10px;margin:2px 4px 2px 0;font-size:13px}
+.tag{display:inline-block;border-radius:6px;padding:0 7px;font-size:12px;font-weight:700;margin-right:6px;color:#fff;background:var(--acc2)}
+.tag.art{background:#7a5a1c}.tag.sch{background:#4c5fa8}
+.stop{display:block;width:100%;min-height:56px;text-align:left}
+.st{float:right;font-size:13px;color:var(--mute)}
+.npc{border-left:4px solid var(--acc2);padding:4px 10px;margin:8px 0;background:var(--chip);border-radius:0 8px 8px 0}
+.npc b{display:block;font-size:14px}
+.field{font-size:13px;color:var(--acc);font-weight:700}
+input[type=text],textarea{width:100%;font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;min-height:44px}
+textarea{min-height:96px}
+.rw{color:var(--ok);margin-top:6px}
+.err{color:var(--bad)}
+.fb{color:var(--bad);margin:4px 0}
+details{margin:12px 0}
+summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--mute)}
+input[type=file]{width:100%;min-height:44px;padding:8px 0}
+label.chk{display:flex;align-items:center;gap:10px;min-height:44px}
+label.chk input{width:22px;height:22px}
+img.pv{max-width:100%;border-radius:8px;margin-top:6px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.small{font-size:13px;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="sub">載入中……</p></div>
+<!--INLINE-BEGIN-->
+<script id="inline-walk.json" type="application/json">{
+ "format": "walk-template-0.1",
+ "meta": {
+  "id": "xfs-walk-rules",
+  "title": "通天冠去哪了",
+  "subtitle": "跟著《小封神》走一趟台南舊城（規則版）",
+  "author": "工坊示範（可以改成你的名字）",
+  "updated": "2026-11-11",
+  "intro": "廟裡沒米了。小上帝把頭上那頂通天冠（神明戴的冠）摘下來，叫康元帥、趙元帥拿去典當換米錢，而你是跟在旁邊跑腿的小幫手。順序不能亂：沒有接到差事，當店不會理你；沒有拿到錢，到了媽祖宮口也沒東西可以輸。故事的人物和地點大多來自許丙丁的《小封神》，每一站會告訴你哪些是原著、哪些是工坊加的。"
+ },
+ "rules": {
+  "mode": "gated",
+  "geofence": true,
+  "score": false,
+  "hints": true
+ },
+ "flags": {
+  "接了差事": "小上帝交代：先弄到糴米錢",
+  "領到五千錢": "通天冠當出了五千錢",
+  "走進賭攤": "你把錢拿去拋璉寶，想把冠贏回來",
+  "收好了錢": "你沒進賭攤，錢還在身上",
+  "謊報被搶": "回去說「錢被大漢搶了」",
+  "實話實說": "回去說「錢是輸掉的」",
+  "去過媽祖宮口": "到過媽祖宮口",
+  "見過大上帝": "見過學者認為的大上帝廟（北極殿）",
+  "買了米": "你拿一半的錢買了米，另一半拋出去"
+ },
+ "stops": [
+  {
+   "id": "lingyou",
+   "name": "靈祐宮（小上帝廟）",
+   "kind": "廟",
+   "lat": 22.9977,
+   "lon": 120.2033,
+   "r": 70,
+   "coord_status": "待確認",
+   "coord_source": "沿用走讀九案路線的概略座標（地圖資料，還沒到現場核對）",
+   "requires": [],
+   "locked_msg": "",
+   "culture": {
+    "entry": "place.lingyou_temple",
+    "origin": "原著",
+    "note": "原書裡「小上帝」先是一個地名，神才跟著這樣叫；他專管龜精蛇怪、腳踏龜蛇，龜蛇是被他管的，不是他的坐騎。"
+   },
+   "npc": {
+    "name": "廟祝（工坊創作）",
+    "ava": "🏮",
+    "lines": [
+     "唉，颱風才剛把廟吹壞，香火又稀，今天連米都不夠煮。（這是小說裡的廟；你今天看到的廟，可能熱鬧得多。）",
+     "小上帝大人說：頭上那頂通天冠，銅鍍金的，拿去當鋪換點米錢吧。康元帥、趙元帥已經在等了。",
+     "打銀街上有間當店，你跟著去。到了才知道這頂冠值多少。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "在《小封神》裡，「小上帝」這個名字最先指的是什麼？",
+     "options": [
+      "一個小鎮的地名",
+      "一個年紀很小的神",
+      "一間很小的廟"
+     ],
+     "answer": "一個小鎮的地名",
+     "hint": "名字像什麼，不等於它是什麼。想想「赤崁樓東邊」。",
+     "reward": "對。小鎮先叫小上帝，廟和神才跟著這樣叫。他不是小孩。"
+    },
+    {
+     "id": "k2",
+     "type": "choice",
+     "title": "原書說小上帝時時刻刻腳踏什麼？",
+     "options": [
+      "龜和蛇",
+      "老虎和豹",
+      "魚和鰲"
+     ],
+     "answer": "龜和蛇",
+     "hint": "他專管的是「龜精蛇怪」。",
+     "reward": "對。龜蛇是被他管著、踩在腳下的，不是他騎的。"
+    },
+    {
+     "id": "o1",
+     "type": "observe",
+     "fieldwork": true,
+     "min": 10,
+     "photo": true,
+     "title": "到廟裡找找看：神像腳下或壁畫裡，有沒有龜或蛇？寫下你親眼看到的樣子（在哪裡、什麼顏色、什麼姿勢）。找不到，就寫你看到的別的細節。",
+     "reward": "記下來了。這一題只有站在廟裡才寫得出來。"
+    }
+   ],
+   "on_complete": {
+    "grant": [
+     "接了差事"
+    ],
+    "msg": "廟祝把你叫過去：「好，現在你知道這位是誰了。去打銀街吧。」"
+   }
+  },
+  {
+   "id": "pawn",
+   "name": "打銀街的當店",
+   "kind": "店",
+   "lat": null,
+   "lon": null,
+   "r": 60,
+   "coord_status": "待確認",
+   "coord_source": "還沒有座標；到了以後自己按「我到了」",
+   "requires": [
+    "接了差事"
+   ],
+   "locked_msg": "當店的門還沒開給你。你好像還沒搞清楚，小上帝到底要你做什麼。先回廟裡聽聽。",
+   "culture": {
+    "entry": "place.tongyu_pawn",
+    "origin": "原著",
+    "note": "原書對這間當店只寫了一句「打銀街同裕當店」；店裡的人和對話都是工坊編的。"
+   },
+   "npc": {
+    "name": "櫃檯後的人（工坊創作）",
+    "ava": "🪙",
+    "lines": [
+     "通天冠？銅鍍金的，嗯……現在天庭行情不好，只能出行政整理價（意思是整頓裁減後的價）。",
+     "五千錢，不二價。要當，就簽字。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "原書裡，小上帝的通天冠是什麼材質？",
+     "options": [
+      "純金",
+      "銅鍍金",
+      "白玉"
+     ],
+     "answer": "銅鍍金",
+     "hint": "櫃檯剛剛才說過。",
+     "reward": "對。原書只說銅鍍金、當出五千錢；值不值，由你判斷。"
+    },
+    {
+     "id": "k2",
+     "type": "text",
+     "title": "這頂冠在當店當出了多少錢？（填數字）",
+     "accept": [
+      "5000",
+      "五千",
+      "五千錢",
+      "5000錢",
+      "5,000"
+     ],
+     "hint": "櫃檯報的價錢。",
+     "reward": "五千錢。拿到錢了。"
+    },
+    {
+     "id": "o1",
+     "type": "observe",
+     "fieldwork": true,
+     "min": 8,
+     "photo": true,
+     "title": "走到忠義路二段 167 號附近，記下現在那棟樓掛著什麼招牌（不用拍到人）。找不到，就寫你在這條街上看到的一樣東西。",
+     "reward": "記下來了。從舊街名到今天的招牌，中間隔了很多年。"
+    }
+   ],
+   "on_complete": {
+    "grant": [
+     "領到五千錢"
+    ],
+    "msg": "你把五千錢收進袋子。康元帥、趙元帥說：「去媽祖宮口，那邊有人在擺攤。」"
+   }
+  },
+  {
+   "id": "tianhou",
+   "name": "大天后宮（媽祖宮口）",
+   "kind": "廟",
+   "lat": 22.9965,
+   "lon": 120.2017,
+   "r": 70,
+   "coord_status": "待確認",
+   "coord_source": "沿用走讀九案路線的概略座標（地圖資料，還沒到現場核對）",
+   "requires": [
+    "領到五千錢"
+   ],
+   "locked_msg": "你身上沒有錢，到媽祖宮口也沒東西可以換。先去把冠當掉。",
+   "culture": {
+    "entry": "place.tianhou_gong",
+    "origin": "原著",
+    "note": "在原書裡，擺賭攤的是媽祖手下的千里眼、順風耳，媽祖本人沒有賭博。"
+   },
+   "npc": {
+    "name": "千里眼、順風耳（台詞是工坊寫的）",
+    "ava": "👀",
+    "lines": [
+     "來來來，拋璉寶（一種賭博遊戲）！眼觀四方，耳聽八達，今天手氣旺！",
+     "（小聲）要是等一下有人來找麻煩，我們就把廟門關起來。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "擺攤的千里眼、順風耳，是誰的手下？",
+     "options": [
+      "天上聖母（媽祖）",
+      "關聖帝君",
+      "玄天上帝"
+     ],
+     "answer": "天上聖母（媽祖）",
+     "hint": "這裡是什麼宮？",
+     "reward": "對。賭攤是手下擺的，不是神明本人。"
+    },
+    {
+     "id": "d1",
+     "type": "decision",
+     "title": "攤子上有人招手：「來拋一把，說不定把冠贏回來。」你身上有五千錢，你要怎麼做？",
+     "options": [
+      {
+       "text": "進去賭一把，想把冠贏回來",
+       "grant": [
+        "走進賭攤"
+       ],
+       "reply": "你照原書裡康元帥、趙元帥的做法，把錢全押了。拋璉寶輸光，口袋空了。"
+      },
+      {
+       "text": "把錢收好，繞過去",
+       "grant": [
+        "收好了錢"
+       ],
+       "reply": "你把袋子抱緊，繞過了攤子。錢還在，但是這一路也少了一點事。（這個選擇是工坊加的，原書裡他們進去了。）"
+      },
+      {
+       "text": "拿一半去買米，另一半押一把",
+       "grant": [
+        "買了米"
+       ],
+       "reply": "你拿一半的錢去糧鋪買了米，剩下的一半押在攤子上，拋出去就沒了。米有了，冠還是沒贖回來。（這個選擇是工坊加的，原書裡他們是全押。）"
+      }
+     ]
+    },
+    {
+     "id": "d2",
+     "type": "decision",
+     "show_if": [
+      "走進賭攤"
+     ],
+     "title": "錢輸光了。回去見小上帝，你要怎麼說？",
+     "options": [
+      {
+       "text": "照原書的說法：「被一個獠牙大漢搶走了」",
+       "grant": [
+        "謊報被搶"
+       ],
+       "reply": "你跟著原書裡的康元帥、趙元帥編了個故事。小上帝聽完，臉色變了。"
+      },
+      {
+       "text": "說實話：「錢是輸掉的」",
+       "grant": [
+        "實話實說"
+       ],
+       "reply": "你把輸光的事一五一十說了。小上帝氣得跳腳，但至少沒有人被冤枉。（這個選擇是工坊加的。）"
+      }
+     ]
+    },
+    {
+     "id": "o1",
+     "type": "observe",
+     "fieldwork": true,
+     "min": 10,
+     "photo": true,
+     "title": "廟裡有一對守護神像，記下其中一位的臉色和樣子。看不到，就寫你看到的別的細節。",
+     "reward": "記下來了。拿去跟別人寫的比一比。"
+    }
+   ],
+   "on_complete": {
+    "grant": [
+     "去過媽祖宮口"
+    ],
+    "msg": "天色暗下來，遠處傳來吵鬧聲。有人說：封神廟那邊開庭了。"
+   }
+  },
+  {
+   "id": "beiji",
+   "name": "北極殿（大上帝廟）",
+   "kind": "廟",
+   "lat": null,
+   "lon": null,
+   "r": 60,
+   "optional": true,
+   "coord_status": "待確認",
+   "coord_source": "還沒有座標；到了以後自己按「我到了」",
+   "requires": [],
+   "locked_msg": "",
+   "culture": {
+    "entry": "place.beiji_dian",
+    "origin": "學者說法",
+    "note": "原書只說大上帝駐在草花街；把它對到北極殿，是研究者的說法，不是原書寫明。"
+   },
+   "npc": {
+    "name": "北極殿的老香客（工坊創作）",
+    "ava": "🕯️",
+    "lines": [
+     "你找大上帝？他在這一帶比小上帝早到，資歷長一級。",
+     "小上帝剛到的時候，這邊的人都說：舊神食新神。（意思是資深的壓過新來的。）"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "原書裡，大上帝和小上帝比起來，誰的資歷比較長？",
+     "options": [
+      "大上帝，長一級",
+      "小上帝，長一級",
+      "一樣長"
+     ],
+     "answer": "大上帝，長一級",
+     "hint": "老香客剛剛說過。",
+     "reward": "對。所以小上帝一到任，就被冷落了。"
+    },
+    {
+     "id": "o1",
+     "type": "observe",
+     "fieldwork": true,
+     "min": 8,
+     "photo": true,
+     "title": "看看廟門或柱子上的顏色，哪一種最多？寫下你看到的（不確定就寫「不確定」加上你看到的別的細節）。",
+     "reward": "記下來了。"
+    }
+   ],
+   "on_complete": {
+    "grant": [
+     "見過大上帝"
+    ],
+    "msg": "老香客點點頭：「這段是舊事了，慢慢聽。」"
+   }
+  },
+  {
+   "id": "fengshen",
+   "name": "封神廟（海安宮一帶）",
+   "kind": "廟",
+   "lat": null,
+   "lon": null,
+   "r": 60,
+   "coord_status": "待確認",
+   "coord_source": "還沒有座標；到了以後自己按「我到了」",
+   "requires": [
+    "去過媽祖宮口"
+   ],
+   "locked_msg": "這裡還沒開庭。你得先去過媽祖宮口，才知道自己要在庭上說什麼。",
+   "culture": {
+    "entry": "place.fengshen_temple",
+    "origin": "原著",
+    "note": "原書結尾說封神廟後來改作風神廟，就是今天的海安宮；另有研究把風神廟放在別處，兩種說法不同，這裡只放大概位置。"
+   },
+   "npc": {
+    "name": "黃巾力士（天庭的執行官，工坊創作台詞）",
+    "ava": "⚖️",
+    "lines": [
+     "開庭了。魁星是考運神，路過被誤認的倒楣鬼，他的事也要排進來。來的人，把事情從頭到尾排一遍。",
+     "排錯順序，就重排。庭上不收亂七八糟的話。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "ord1",
+     "type": "order",
+     "title": "把原書裡發生的事，照先後順序排好（先點最早的）。",
+     "items": [
+      "魁星被吊起來示眾",
+      "康元帥、趙元帥把通天冠送去典當",
+      "在媽祖宮口，五千錢輸光了",
+      "封神廟開庭審問"
+     ],
+     "answer": [
+      "康元帥、趙元帥把通天冠送去典當",
+      "在媽祖宮口，五千錢輸光了",
+      "魁星被吊起來示眾",
+      "封神廟開庭審問"
+     ],
+     "hint": "沒有錢，才會有輸光；沒有輸光，才會有後面的謊。",
+     "reward": "順序對了。庭上點頭。"
+    },
+    {
+     "id": "o1",
+     "type": "observe",
+     "fieldwork": true,
+     "min": 10,
+     "photo": false,
+     "title": "站在廟前，安靜三十秒。寫下你聽到的三種聲音。",
+     "reward": "記下來了。聲音沒有辦法從網路上查到。"
+    }
+   ],
+   "on_complete": {
+    "grant": [],
+    "msg": "開庭結束。你可以回到首頁，看看這一趟的結局。"
+   }
+  }
+ ],
+ "endings": [
+  {
+   "requires": [
+    "買了米"
+   ],
+   "title": "飽一頓，輸一半（工坊加的結局）",
+   "origin": "工坊創作",
+   "text": "你把一半的錢換成米，神明們總算吃了一頓。另一半輸掉了，通天冠也還在當店。沒人被冤枉，也沒有謊話；但冠沒贖回，下次米又不夠的時候，還是得再想辦法。你記下的廟裡龜蛇：「{{lingyou.o1}}」。這個結局原書沒有，是工坊加的。"
+  },
+  {
+   "requires": [
+    "謊報被搶"
+   ],
+   "title": "照原書走：一句謊話",
+   "origin": "原著",
+   "text": "你回去照「被搶了」的說法交代。原書裡，小上帝因此認定是千里眼動的手，結果抓錯了魁星；魁星和千里眼長得一樣，所以魁星被當成千里眼吊起來示眾。後來封神廟開庭，小上帝挨的批評是用神不明（用人不當）、輕信讒言。錢是輸掉的，不是被搶的：一句謊話，後面一串人都倒楣。 你在大天后宮記下的守護神像：「{{tianhou.o1}}」。原書裡，千里眼、順風耳最後被罰身帶捆仙索，永遠站在媽祖駕前。"
+  },
+  {
+   "requires": [
+    "實話實說"
+   ],
+   "title": "實話實說（工坊加的結局）",
+   "origin": "工坊創作",
+   "text": "你把輸光的事講清楚。小上帝氣歸氣，卻沒有跑去抓人，媽祖宮口也沒有人被吊起來。這個結局原書沒有，是工坊加的：書裡就是少了這一句實話。 你在大天后宮記下的守護神像：「{{tianhou.o1}}」。"
+  },
+  {
+   "requires": [
+    "收好了錢"
+   ],
+   "title": "繞過賭攤（工坊加的結局）",
+   "origin": "工坊創作",
+   "text": "你把五千錢完整帶回來，三位神明終於吃了一頓飽飯。沒有輸光，沒有謊話，也沒有魁星被冤枉的那一段。你省了一場麻煩，也少了一個故事。這個結局原書沒有，是工坊加的。 你在靈祐宮記下的龜蛇：「{{lingyou.o1}}」。"
+  },
+  {
+   "requires": [],
+   "title": "路走完了",
+   "origin": "工坊創作",
+   "text": "你走完了這條路。"
+  }
+ ],
+ "reflect": {
+  "question": "抽掉《小封神》和台南的廟，換成別的主題，這個走讀遊戲還玩得下去嗎？",
+  "choices": [
+   "照樣玩得下去",
+   "故事沒了，但玩法還在",
+   "玩法也玩不下去了",
+   "說不準"
+  ],
+  "story_prompt": "用一句話寫這趟的故事：誰想要什麼？卡到什麼？最後怎樣？"
+ }
+}</script>
+<script id="inline-walk_skin.json" type="application/json">{
+ "format": "walk-template-0.1",
+ "meta": {
+  "id": "xfs-walk-skin",
+  "title": "通天冠去哪了",
+  "subtitle": "跟著《小封神》走一趟台南舊城（外觀版）",
+  "author": "工坊示範（可以改成你的名字）",
+  "updated": "2026-11-11",
+  "intro": "這是同一條路的另一個版本：每一站只有打卡和問答，順序隨你走，答對就得分。廟的名字和小封神的故事都在，但沒有任何一個步驟靠它們才成立。玩完以後，和規則版比一比。"
+ },
+ "rules": {
+  "mode": "free",
+  "geofence": true,
+  "score": true,
+  "hints": true
+ },
+ "flags": {},
+ "stops": [
+  {
+   "id": "lingyou",
+   "name": "靈祐宮（小上帝廟）",
+   "kind": "廟",
+   "lat": 22.9977,
+   "lon": 120.2033,
+   "r": 70,
+   "coord_status": "待確認",
+   "coord_source": "沿用走讀九案路線的概略座標（地圖資料，還沒到現場核對）",
+   "requires": [],
+   "locked_msg": "",
+   "culture": {
+    "entry": "place.lingyou_temple",
+    "origin": "原著",
+    "note": "原書裡「小上帝」先是一個地名，神才跟著這樣叫；他不是小孩。"
+   },
+   "npc": {
+    "name": "打卡小幫手",
+    "ava": "📍",
+    "lines": [
+     "到了！回答下面的問題，答對得 1 分。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "靈祐宮俗稱什麼廟？",
+     "options": [
+      "小上帝廟",
+      "大上帝廟",
+      "媽祖廟"
+     ],
+     "answer": "小上帝廟",
+     "hint": "名字裡有「小」。",
+     "reward": "答對了。"
+    },
+    {
+     "id": "k2",
+     "type": "choice",
+     "title": "靈祐宮主祀哪一位神明？",
+     "options": [
+      "玄天上帝",
+      "關聖帝君",
+      "保生大帝"
+     ],
+     "answer": "玄天上帝",
+     "hint": "上帝爺。",
+     "reward": "答對了。"
+    }
+   ],
+   "on_complete": {
+    "grant": [],
+    "msg": ""
+   }
+  },
+  {
+   "id": "pawn",
+   "name": "打銀街的當店",
+   "kind": "店",
+   "lat": null,
+   "lon": null,
+   "r": 60,
+   "coord_status": "待確認",
+   "coord_source": "還沒有座標；到了以後自己按「我到了」",
+   "requires": [],
+   "locked_msg": "",
+   "culture": {
+    "entry": "place.tongyu_pawn",
+    "origin": "原著",
+    "note": "原書對這間當店只寫了一句「打銀街同裕當店」；店的位置是學者考證，其他是工坊創作。"
+   },
+   "npc": {
+    "name": "打卡小幫手",
+    "ava": "📍",
+    "lines": [
+     "到了！回答下面的問題，答對得 1 分。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "打銀街在日治時代叫什麼町？",
+     "options": [
+      "白金町",
+      "末廣町",
+      "幸町"
+     ],
+     "answer": "白金町",
+     "hint": "和金屬有關。",
+     "reward": "答對了。"
+    },
+    {
+     "id": "k2",
+     "type": "text",
+     "title": "原書裡，小上帝的通天冠是什麼材質？（填三個字）",
+     "accept": [
+      "銅鍍金"
+     ],
+     "hint": "不是純金。",
+     "reward": "答對了。"
+    }
+   ],
+   "on_complete": {
+    "grant": [],
+    "msg": ""
+   }
+  },
+  {
+   "id": "tianhou",
+   "name": "大天后宮（媽祖宮口）",
+   "kind": "廟",
+   "lat": 22.9965,
+   "lon": 120.2017,
+   "r": 70,
+   "coord_status": "待確認",
+   "coord_source": "沿用走讀九案路線的概略座標（地圖資料，還沒到現場核對）",
+   "requires": [],
+   "locked_msg": "",
+   "culture": {
+    "entry": "place.tianhou_gong",
+    "origin": "原著",
+    "note": "在原書裡，擺賭攤的是媽祖手下的千里眼、順風耳，媽祖本人沒有賭博。"
+   },
+   "npc": {
+    "name": "打卡小幫手",
+    "ava": "📍",
+    "lines": [
+     "到了！回答下面的問題，答對得 1 分。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "擺攤的千里眼、順風耳，是誰的手下？",
+     "options": [
+      "天上聖母（媽祖）",
+      "關聖帝君",
+      "玄天上帝"
+     ],
+     "answer": "天上聖母（媽祖）",
+     "hint": "這裡是什麼宮？",
+     "reward": "答對了。"
+    },
+    {
+     "id": "k2",
+     "type": "text",
+     "title": "他們在媽祖宮口擺的是什麼攤？（填三個字）",
+     "accept": [
+      "拋璉寶",
+      "拋連寶"
+     ],
+     "hint": "拋＋璉＋寶。",
+     "reward": "答對了。"
+    }
+   ],
+   "on_complete": {
+    "grant": [],
+    "msg": ""
+   }
+  },
+  {
+   "id": "beiji",
+   "name": "北極殿（大上帝廟）",
+   "kind": "廟",
+   "lat": null,
+   "lon": null,
+   "r": 60,
+   "optional": true,
+   "coord_status": "待確認",
+   "coord_source": "還沒有座標；到了以後自己按「我到了」",
+   "requires": [],
+   "locked_msg": "",
+   "culture": {
+    "entry": "place.beiji_dian",
+    "origin": "學者說法",
+    "note": "原書只說大上帝駐在草花街；把它對到北極殿，是研究者的說法，不是原書寫明。"
+   },
+   "npc": {
+    "name": "打卡小幫手",
+    "ava": "📍",
+    "lines": [
+     "多走一站（可以不走）。答對得 1 分。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "原書裡，大上帝和小上帝比起來，誰的資歷比較長？",
+     "options": [
+      "大上帝，長一級",
+      "小上帝，長一級",
+      "一樣長"
+     ],
+     "answer": "大上帝，長一級",
+     "hint": "名字裡的「大」。",
+     "reward": "答對了。"
+    }
+   ],
+   "on_complete": {
+    "grant": [],
+    "msg": ""
+   }
+  },
+  {
+   "id": "fengshen",
+   "name": "封神廟（海安宮一帶）",
+   "kind": "廟",
+   "lat": null,
+   "lon": null,
+   "r": 60,
+   "coord_status": "待確認",
+   "coord_source": "還沒有座標；到了以後自己按「我到了」",
+   "requires": [],
+   "locked_msg": "",
+   "culture": {
+    "entry": "place.fengshen_temple",
+    "origin": "原著",
+    "note": "原書結尾說封神廟後來改作風神廟，就是今天的海安宮；另有研究把風神廟放在別處，這裡只放大概位置。"
+   },
+   "npc": {
+    "name": "打卡小幫手",
+    "ava": "📍",
+    "lines": [
+     "最後一站。答對得 1 分。"
+    ]
+   },
+   "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "原書結尾說，封神廟後來改成了什麼廟？",
+     "options": [
+      "風神廟",
+      "文昌閣",
+      "關帝廳"
+     ],
+     "answer": "風神廟",
+     "hint": "名字裡有「風」。",
+     "reward": "答對了。"
+    }
+   ],
+   "on_complete": {
+    "grant": [],
+    "msg": ""
+   }
+  }
+ ],
+ "endings": [
+  {
+   "requires": [],
+   "title": "打卡完成",
+   "origin": "工坊創作",
+   "text": "你走完了所有的站，也答完了所有的題。看一下你的分數。接著回答下面的問題，再去玩規則版比一比。"
+  }
+ ],
+ "reflect": {
+  "question": "抽掉《小封神》和台南的廟，換成別的主題，這個走讀遊戲還玩得下去嗎？",
+  "choices": [
+   "照樣玩得下去",
+   "故事沒了，但玩法還在",
+   "玩法也玩不下去了",
+   "說不準"
+  ],
+  "story_prompt": "用一句話寫這趟的故事：誰想要什麼？卡到什麼？最後怎樣？"
+ }
+}</script>
+<!--INLINE-END-->
+<script>
+(function () {
+  'use strict';
+  var APP = document.getElementById('app');
+  var D = null, NAME = 'walk.json', ST = null, PHOTO = {}, TICK = 0;
+  var BUILTIN = ['walk.json', 'walk_skin.json'];
+  var LABEL = { 'walk.json': '規則版', 'walk_skin.json': '外觀版' };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
+
+  /* ---------- 資料檢查（學生改壞 JSON 時，在這裡看得到哪裡錯） ---------- */
+  function validate(d) {
+    var e = [], w = [], ids = {};
+    function bad(m) { e.push(m); }
+    if (!d || typeof d !== 'object') return { e: ['整份資料不是物件'], w: w };
+    if (!d.meta || !d.meta.title) bad('meta.title 不能空白');
+    if (!d.rules || ['gated', 'free'].indexOf(d.rules.mode) < 0) bad('rules.mode 只能是 "gated"（照順序）或 "free"（隨便走）');
+    var flags = d.flags || {};
+    if (!Array.isArray(d.stops) || !d.stops.length) { bad('stops 至少要有一站'); return { e: e, w: w }; }
+    function chkFlags(list, where) { (list || []).forEach(function (f) { if (!has(flags, f)) bad(where + ' 用了沒有登記的旗標「' + f + '」（要先寫進 flags）'); }); }
+    d.stops.forEach(function (s, i) {
+      var p = '第 ' + (i + 1) + ' 站（' + (s.name || s.id || '沒有名字') + '）';
+      if (!s.id || !/^[A-Za-z0-9_-]+$/.test(s.id)) bad(p + '：id 要用英文、數字或底線');
+      else if (ids[s.id]) bad(p + '：id「' + s.id + '」重複了'); else ids[s.id] = 1;
+      if (!s.name) bad(p + '：沒有 name');
+      var hasLat = typeof s.lat === 'number', hasLon = typeof s.lon === 'number';
+      if (hasLat !== hasLon) bad(p + '：lat 和 lon 要一起有、或一起是 null');
+      if (!hasLat && d.rules && d.rules.geofence) w.push(p + '：沒有座標，到了要自己按「我到了」');
+      chkFlags(s.requires, p + ' 的 requires');
+      if (s.on_complete) chkFlags(s.on_complete.grant, p + ' 的 on_complete.grant');
+      if (!Array.isArray(s.tasks) || !s.tasks.length) { bad(p + '：tasks 至少要有一題'); return; }
+      var tid = {};
+      s.tasks.forEach(function (t, j) {
+        var q = p + ' 的第 ' + (j + 1) + ' 題（' + (t.id || '沒有 id') + '）';
+        if (!t.id || tid[t.id]) bad(q + '：id 沒填或重複'); else tid[t.id] = 1;
+        if (!t.title) bad(q + '：沒有 title');
+        chkFlags(t.show_if, q + ' 的 show_if');
+        var ty = t.type;
+        if (['choice', 'text', 'order', 'observe', 'decision'].indexOf(ty) < 0) { bad(q + '：type「' + ty + '」不認得（choice／text／order／observe／decision）'); return; }
+        if (ty === 'choice') {
+          if (!Array.isArray(t.options) || t.options.length < 2) bad(q + '：options 至少兩個');
+          else if (t.options.indexOf(t.answer) < 0) bad(q + '：answer 要和其中一個選項一字不差');
+        }
+        if (ty === 'text' && (!Array.isArray(t.accept) || !t.accept.length)) bad(q + '：accept 要列出可以接受的答案');
+        if (ty === 'order') {
+          if (!Array.isArray(t.items) || !Array.isArray(t.answer) || t.items.length !== t.answer.length) bad(q + '：items 和 answer 數量要一樣');
+          else t.answer.forEach(function (a) { if (t.items.indexOf(a) < 0) bad(q + '：answer 裡的「' + a + '」不在 items 裡'); });
+        }
+        if (ty === 'decision') {
+          if (!Array.isArray(t.options) || t.options.length < 2) bad(q + '：options 至少兩個');
+          else t.options.forEach(function (o) { if (!o.text) bad(q + '：每個選項要有 text'); chkFlags(o.grant, q + ' 的 grant'); });
+        }
+      });
+    });
+    if (!Array.isArray(d.endings) || !d.endings.length) bad('endings 至少要有一個');
+    else {
+      d.endings.forEach(function (en) {
+        chkFlags(en.requires, '結局「' + (en.title || '') + '」的 requires');
+        String(en.text || '').replace(/\{\{(\w+)\.(\w+)\}\}/g, function (m, sid, tid) {
+          var st = d.stops.filter(function (x) { return x.id === sid; })[0], tk = st && (st.tasks || []).filter(function (x) { return x.id === tid; })[0];
+          if (!tk || tk.type !== 'observe') bad('結局「' + (en.title || '') + '」的 ' + m + ' 要指到某一站的 observe 現場題（站id.題id）');
+        });
+      });
+      if ((d.endings[d.endings.length - 1].requires || []).length) bad('最後一個結局的 requires 要是空的 []（當作沒有其他結局時的保底）');
+    }
+    if (!d.reflect || !d.reflect.question || !Array.isArray(d.reflect.choices)) bad('reflect 要有 question 和 choices');
+    return { e: e, w: w };
+  }
+
+  /* ---------- 存檔（只存在這支手機的瀏覽器；讀不到也能玩） ---------- */
+  function skey() { return 'walktpl:' + D.meta.id; }
+  function fresh() { return { view: 'home', cur: null, at: {}, done: {}, flags: {}, ans: {}, wrong: {}, fb: {}, order: {}, completed: {}, msg: '', score: 0, sim: false, note: '', reflect: { c: -1, story: '' } }; }
+  function load() { try { var r = localStorage.getItem(skey()); if (r) { var o = JSON.parse(r); return Object.assign(fresh(), o); } } catch (x) { } return fresh(); }
+  function save() { try { localStorage.setItem(skey(), JSON.stringify(ST)); } catch (x) { } }
+
+  /* ---------- 狀態 ---------- */
+  function sget(id) { return D.stops.filter(function (s) { return s.id === id; })[0]; }
+  function locked(s) { return D.rules.mode === 'gated' && (s.requires || []).some(function (f) { return !ST.flags[f]; }); }
+  function key(s, t) { return s.id + '.' + t.id; }
+  function tasksOf(s) { return s.tasks.filter(function (t) { return !(t.show_if || []).some(function (f) { return !ST.flags[f]; }); }); }
+  function stopDone(s) { return !!ST.at[s.id] && tasksOf(s).filter(function (t) { return !t.optional; }).every(function (t) { return ST.done[key(s, t)]; }); }
+  function allDone() { return D.stops.filter(function (s) { return !s.optional; }).every(stopDone); }
+  function grant(list) { (list || []).forEach(function (f) { ST.flags[f] = true; }); }
+  function afterTask(s) {
+    if (stopDone(s) && !ST.completed[s.id]) {
+      ST.completed[s.id] = true;
+      var oc = s.on_complete || {};
+      grant(oc.grant); ST.msg = oc.msg || '';
+    }
+    save();
+  }
+  function dist(a, b, c, d) {
+    var R = 6371000, r = Math.PI / 180, dl = (c - a) * r, dn = (d - b) * r;
+    var x = Math.sin(dl / 2) * Math.sin(dl / 2) + Math.cos(a * r) * Math.cos(c * r) * Math.sin(dn / 2) * Math.sin(dn / 2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+  function norm(s) { return String(s).trim().toLowerCase().replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 65248); }).replace(/\s+/g, ''); }
+
+  /* ---------- 畫面 ---------- */
+  function tagOf(o) { return '<span class="tag ' + (o === '學者說法' ? 'sch' : (o === '工坊創作' ? 'art' : '')) + '">' + esc(o) + '</span>'; }
+  function switcher() {
+    return '<div class="row">' + BUILTIN.map(function (n) { return '<button class="btn ghost' + (n === NAME ? ' on' : '') + '" data-act="variant" data-n="' + n + '">' + LABEL[n] + '</button>'; }).join('') + '</div>';
+  }
+  function home() {
+    var h = '<div class="top"><h1>' + esc(D.meta.title) + '</h1></div><div class="sub">' + esc(D.meta.subtitle || '') + '</div>';
+    h += switcher();
+    h += '<div class="card">' + esc(D.meta.intro || '') + '</div>';
+    var got = Object.keys(D.flags || {}).filter(function (f) { return ST.flags[f]; });
+    if (got.length) h += '<div>' + got.map(function (f) { return '<span class="chip">✓ ' + esc(D.flags[f]) + '</span>'; }).join('') + '</div>';
+    if (D.rules.score) h += '<div class="small">目前得分：' + ST.score + '</div>';
+    h += '<h2>路線</h2>';
+    D.stops.forEach(function (s, i) {
+      var st = locked(s) ? '🔒 還沒開' : (stopDone(s) ? '✅ 完成' : (ST.at[s.id] ? '📍 進行中' : '⬜ 還沒到'));
+      h += '<button class="btn stop" data-act="open" data-s="' + esc(s.id) + '"><span class="st">' + st + '</span>' + (i + 1) + '. ' + esc(s.name) + (s.optional ? '（選擇性）' : '') + '</button>';
+    });
+    if (allDone()) h += '<button class="btn pri" data-act="end">路走完了，看結局</button>';
+    var errs = D.__warn && D.__warn.length ? '<div class="small">提醒：' + esc(D.__warn.join('；')) + '</div>' : '';
+    h += errs;
+    h += '<details><summary>測試與資料</summary>' +
+      '<label class="small chk"><input type="checkbox" id="sim"' + (ST.sim ? ' checked' : '') + '> 桌面測試：不用真的走到，按一下就當作到了</label>' +
+      '<p class="small">想用自己改過的資料玩：選一個 JSON 檔。</p><input type="file" id="pick" accept=".json,application/json">' +
+      '<button class="btn ghost" data-act="reset">' + (ST.confirmReset ? '再按一次就清掉這一版的進度' : '重新開始這一版') + '</button></details>';
+    APP.innerHTML = h;
+  }
+  function stopView(s) {
+    var h = '<button class="btn ghost" data-act="home">← 回路線</button><h1>' + esc(s.name) + '</h1>';
+    if (locked(s)) { h += '<div class="card">🔒 ' + esc(s.locked_msg || '還沒輪到這一站。') + '</div>'; APP.innerHTML = h; return; }
+    if (s.culture) h += '<div class="small">' + tagOf(s.culture.origin) + esc(s.culture.note) + '</div>';
+    if (s.npc) {
+      h += '<div class="npc"><b>' + esc(s.npc.ava || '') + ' ' + esc(s.npc.name) + '</b>' + (s.npc.lines || []).map(function (l) { return '<div>' + esc(l) + '</div>'; }).join('') + '</div>';
+    }
+    if (!ST.at[s.id]) {
+      var hasXY = typeof s.lat === 'number' && D.rules.geofence;
+      h += '<div class="card"><b>先到這一站</b>' + (hasXY ? '<div class="small">要走到離這裡 ' + (s.r || 60) + ' 公尺內。' + (s.coord_status === '待確認' ? '這個位置是概略值，如果你已經在廟前，就按下面的「自己確認」。' : '') + '</div>' : '<div class="small">這一站還沒有座標，到了以後自己按「我到了」。</div>');
+      if (hasXY) h += '<button class="btn pri" data-act="gps" data-s="' + esc(s.id) + '">用定位檢查我到了沒</button>';
+      if (!hasXY) h += '<button class="btn pri" data-act="arrive" data-s="' + esc(s.id) + '">我到了</button>';
+      if (hasXY && (ST.fail || s.coord_status === '待確認')) h += '<button class="btn ghost" data-act="arrive" data-s="' + esc(s.id) + '">定位不準，我已經到了（自己確認）</button>';
+      if (ST.sim) h += '<button class="btn ghost" data-act="arrive" data-s="' + esc(s.id) + '">（測試）直接傳送到這裡</button>';
+      if (ST.note) h += '<div class="fb">' + esc(ST.note) + '</div>';
+      h += '</div>'; APP.innerHTML = h; return;
+    }
+    h += '<h2>任務</h2>';
+    tasksOf(s).forEach(function (t) { h += taskView(s, t); });
+    if (ST.msg && stopDone(s)) h += '<div class="card"><b>' + esc(ST.msg) + '</b></div>';
+    if (stopDone(s)) h += '<button class="btn pri" data-act="home">這一站完成，回路線</button>';
+    APP.innerHTML = h;
+  }
+  function taskView(s, t) {
+    var k = key(s, t), b = ' data-s="' + esc(s.id) + '" data-t="' + esc(t.id) + '"';
+    var h = '<div class="card">' + (t.fieldwork ? '<div class="field">📍 這一題要到現場才寫得出來</div>' : '') + '<b>' + esc(t.title) + '</b>';
+    if (ST.done[k]) {
+      var a = ST.ans[k];
+      h += '<div class="rw">✓ ' + esc(t.type === 'decision' ? (a || '') : (t.reward || '完成')) + '</div>';
+      if (t.type === 'observe' && a) h += '<div class="small">你寫的：' + esc(a) + '</div>';
+      return h + '</div>';
+    }
+    if (ST.fb[k]) h += '<div class="fb">' + esc(ST.fb[k]) + '</div>';
+    if (t.type === 'choice') t.options.forEach(function (o, i) { h += '<button class="btn" data-act="choice"' + b + ' data-i="' + i + '">' + esc(o) + '</button>'; });
+    if (t.type === 'decision') t.options.forEach(function (o, i) { h += '<button class="btn" data-act="decide"' + b + ' data-i="' + i + '">' + esc(o.text) + '</button>'; });
+    if (t.type === 'text') h += '<input type="text" id="in-' + esc(k) + '" autocomplete="off"><button class="btn pri" data-act="text"' + b + '>送出</button>';
+    if (t.type === 'order') {
+      var picked = ST.order[k] || [];
+      if (picked.length) h += '<ol>' + picked.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ol>';
+      t.items.forEach(function (it) { if (picked.indexOf(it) < 0) h += '<button class="btn" data-act="pick"' + b + ' data-v="' + esc(it) + '">' + esc(it) + '</button>'; });
+      if (picked.length) h += '<button class="btn ghost" data-act="unpick"' + b + '>重排</button>';
+    }
+    if (t.type === 'observe') {
+      h += '<textarea id="in-' + esc(k) + '" placeholder="至少 ' + (t.min || 8) + ' 個字">' + esc((ST.draft || {})[k] || '') + '</textarea>';
+      if (t.photo) h += '<div class="small">可以拍一張照片（只留在你的手機裡，不會上傳；請不要拍到別人清楚的臉）。</div><input type="file" accept="image/*" capture="environment" data-photo="' + esc(k) + '">' + (PHOTO[k] ? '<img class="pv" src="' + PHOTO[k] + '" alt="">' : '');
+      h += '<button class="btn pri" data-act="observe"' + b + '>記下來</button>';
+    }
+    return h + '</div>';
+  }
+  function fillText(t) {   // 結局文字裡的 {{站id.題id}}，換成玩家在現場寫下的那一句
+    return String(t || '').replace(/\{\{(\w+)\.(\w+)\}\}/g, function (m, sid, tid) { var v = ST.ans[sid + '.' + tid]; return v ? v : '（你沒有寫）'; });
+  }
+  function endView() {
+    var en = D.endings.filter(function (e) { return (e.requires || []).every(function (f) { return ST.flags[f]; }); })[0] || D.endings[D.endings.length - 1];
+    var h = '<button class="btn ghost" data-act="home">← 回路線</button><h1>' + esc(en.title) + '</h1><div class="small">' + tagOf(en.origin || '工坊創作') + '</div><div class="card">' + esc(fillText(en.text)) + '</div>';
+    if (D.rules.score) {
+      var total = 0; D.stops.forEach(function (s) { s.tasks.forEach(function (t) { if (t.type === 'choice' || t.type === 'text') total++; }); });
+      h += '<div class="card"><b>得分：' + ST.score + ' / ' + total + '</b></div>';
+    }
+    var got = Object.keys(D.flags || {}).filter(function (f) { return ST.flags[f]; });
+    if (got.length) h += '<h2>你這一路的選擇與紀錄</h2><div>' + got.map(function (f) { return '<span class="chip">✓ ' + esc(D.flags[f]) + '</span>'; }).join('') + '</div>';
+    var notes = [];
+    D.stops.forEach(function (s) { s.tasks.forEach(function (t) { var k = key(s, t); if (t.type === 'observe' && ST.ans[k]) notes.push('<li><b>' + esc(s.name) + '</b>：' + esc(ST.ans[k]) + '</li>'); }); });
+    if (notes.length) h += '<h2>你在現場寫下的</h2><ul>' + notes.join('') + '</ul>';
+    h += '<h2>想一想</h2><div class="card"><b>' + esc(D.reflect.question) + '</b>' +
+      D.reflect.choices.map(function (c, i) { return '<button class="btn' + (ST.reflect.c === i ? ' on' : '') + '" data-act="refl" data-i="' + i + '">' + esc(c) + '</button>'; }).join('') +
+      '<p><b>' + esc(D.reflect.story_prompt || '') + '</b></p><textarea id="story">' + esc(ST.reflect.story) + '</textarea>' +
+      '<button class="btn pri" data-act="share">整理成一段文字，貼給老師或貼給 AI</button><textarea id="out" readonly hidden></textarea></div>';
+    APP.innerHTML = h;
+  }
+  function shareText() {
+    var out = ['【' + D.meta.title + '／' + (D.meta.subtitle || '') + '】'];
+    Object.keys(D.flags || {}).forEach(function (f) { if (ST.flags[f]) out.push('✓ ' + D.flags[f]); });
+    D.stops.forEach(function (s) { s.tasks.forEach(function (t) { var k = key(s, t); if (t.type === 'observe' && ST.ans[k]) out.push('現場（' + s.name + '）：' + ST.ans[k]); }); });
+    if (D.rules.score) out.push('得分：' + ST.score);
+    out.push('抽掉文化還玩得下去嗎：' + (ST.reflect.c >= 0 ? D.reflect.choices[ST.reflect.c] : '還沒選'));
+    out.push('一句話故事：' + (ST.reflect.story || '還沒寫'));
+    return out.join('\n');
+  }
+  function render() {
+    if (!D) return;
+    if (ST.view === 'stop' && ST.cur && sget(ST.cur)) return stopView(sget(ST.cur));
+    if (ST.view === 'end') return endView();
+    ST.view = 'home'; home();
+  }
+  function fatal(list) {
+    APP.innerHTML = '<h1>這份資料有地方錯了</h1><div class="card err"><ul>' + list.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul></div><p class="small">改好 JSON 以後重新整理，或在下面重新選一個檔。</p><input type="file" id="pick" accept=".json,application/json">' + '<div class="row">' + BUILTIN.map(function (n) { return '<button class="btn ghost" data-act="variant" data-n="' + n + '">' + LABEL[n] + '</button>'; }).join('') + '</div>';
+  }
+
+  /* ---------- 載入資料 ---------- */
+  function start(d, name) {
+    var v = validate(d);
+    if (v.e.length) { D = null; return fatal(v.e); }
+    d.__warn = v.w; D = d; NAME = name; ST = load(); render(); window.__walkReady = true;
+  }
+  function parseThen(text, name) { var d; try { d = JSON.parse(text); } catch (x) { return fatal(['JSON 格式不對（多一個逗號、少一個引號？）：' + x.message]); } start(d, name); }
+  function loadByName(name) {
+    var inl = document.getElementById('inline-' + name);
+    function useInline() { if (inl) parseThen(inl.textContent, name); else fatal(['找不到 ' + name]); }
+    if (location.protocol === 'file:') return useInline();
+    fetch(name, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) { parseThen(t, name); }).catch(useInline);
+  }
+
+  /* ---------- 事件 ---------- */
+  APP.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-act]'); if (!b) return;
+    var act = b.getAttribute('data-act'), s = b.getAttribute('data-s') ? sget(b.getAttribute('data-s')) : null;
+    var t = s && b.getAttribute('data-t') ? s.tasks.filter(function (x) { return x.id === b.getAttribute('data-t'); })[0] : null;
+    var k = s && t ? key(s, t) : '';
+    if (act === 'variant') { return loadByName(b.getAttribute('data-n')); }
+    if (!D) return;
+    if (act === 'home') { ST.view = 'home'; ST.note = ''; ST.fail = false; }
+    else if (act === 'open') { ST.view = 'stop'; ST.cur = s.id; ST.note = ''; ST.fail = false; }
+    else if (act === 'end') { ST.view = 'end'; }
+    else if (act === 'reset') { if (!ST.confirmReset) { ST.confirmReset = true; render(); setTimeout(function () { if (ST && ST.confirmReset) { ST.confirmReset = false; render(); } }, 6000); return; } var sim = ST.sim; ST = fresh(); ST.sim = sim; }
+    else if (act === 'arrive') { ST.at[s.id] = 1; ST.note = ''; ST.fail = false; }
+    else if (act === 'gps') {
+      if (!navigator.geolocation) { ST.note = '這個瀏覽器不能定位，請用「自己確認」。'; ST.fail = true; render(); return; }
+      ST.note = '定位中……'; render();
+      navigator.geolocation.getCurrentPosition(function (p) {
+        var d = Math.round(dist(p.coords.latitude, p.coords.longitude, s.lat, s.lon));
+        if (d <= (s.r || 60)) { ST.at[s.id] = 1; ST.note = ''; } else { ST.note = '你離這裡還有約 ' + d + ' 公尺，再走近一點。'; ST.fail = true; }
+        save(); render();
+      }, function () { ST.note = '拿不到定位（可能沒開權限或在室內）。你可以用「自己確認」。'; ST.fail = true; render(); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+      return;
+    }
+    else if (act === 'choice') {
+      var o = t.options[+b.getAttribute('data-i')];
+      if (o === t.answer) { ST.done[k] = true; ST.fb[k] = ''; if (!ST.wrong[k] && D.rules.score) ST.score++; afterTask(s); }
+      else { ST.wrong[k] = true; ST.fb[k] = '不是這個。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
+    }
+    else if (act === 'decide') {
+      var op = t.options[+b.getAttribute('data-i')]; grant(op.grant); ST.done[k] = true; ST.ans[k] = op.reply || op.text; afterTask(s);
+    }
+    else if (act === 'text') {
+      var v = norm(document.getElementById('in-' + k).value || '');
+      if (t.accept.some(function (a) { return norm(a) === v; })) { ST.done[k] = true; ST.fb[k] = ''; if (!ST.wrong[k] && D.rules.score) ST.score++; afterTask(s); }
+      else { ST.wrong[k] = true; ST.fb[k] = '不對，再試一次。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
+    }
+    else if (act === 'pick') {
+      var pk = ST.order[k] = ST.order[k] || []; pk.push(b.getAttribute('data-v'));
+      if (pk.length === t.items.length) {
+        if (pk.join('|') === t.answer.join('|')) { ST.done[k] = true; ST.fb[k] = ''; afterTask(s); }
+        else { ST.order[k] = []; ST.fb[k] = '順序不對，重排。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
+      }
+    }
+    else if (act === 'unpick') { ST.order[k] = []; }
+    else if (act === 'observe') {
+      var tx = (document.getElementById('in-' + k).value || '').trim();
+      if (tx.length < (t.min || 8)) { ST.fb[k] = '再多寫一點（至少 ' + (t.min || 8) + ' 個字）。'; }
+      else { ST.done[k] = true; ST.ans[k] = tx; ST.fb[k] = ''; afterTask(s); }
+    }
+    else if (act === 'refl') { ST.reflect.c = +b.getAttribute('data-i'); }
+    else if (act === 'share') {
+      var sv = document.getElementById('story'); if (sv) ST.reflect.story = sv.value;
+      save(); render();
+      var out = document.getElementById('out'); out.value = shareText(); out.hidden = false; out.focus(); out.select();
+      try { if (navigator.clipboard) navigator.clipboard.writeText(out.value).catch(function () { }); } catch (x) { }
+      return;
+    }
+    save(); render(); window.scrollTo(0, 0);
+  });
+  APP.addEventListener('change', function (ev) {
+    var t = ev.target;
+    if (t.id === 'sim') { ST.sim = t.checked; save(); return; }
+    if (t.id === 'pick' && t.files[0]) { var r = new FileReader(); r.onload = function () { parseThen(r.result, 'custom'); }; r.readAsText(t.files[0]); return; }
+    if (t.getAttribute && t.getAttribute('data-photo') && t.files[0]) { ST.draft = ST.draft || {}; Array.prototype.forEach.call(APP.querySelectorAll('textarea[id^="in-"]'), function (x) { ST.draft[x.id.slice(3)] = x.value; }); PHOTO[t.getAttribute('data-photo')] = URL.createObjectURL(t.files[0]); var top = window.scrollY; render(); window.scrollTo(0, top); }
+  });
+
+  var q = new URLSearchParams(location.search).get('data');
+  loadByName(q && /^[\w.\-]+\.json$/.test(q) ? q : 'walk.json');
+})();
+</script>
+<!-- CT-HOOK-BEGIN -->
+<script src="../tutor/folk_index.js?v=202611151156"></script>
+<script src="../tutor/tutor_templates.js?v=202611151156"></script>
+<script src="../tutor/tutor_core.js?v=202611151156"></script>
+<script src="../tutor/tutor_ui.js?v=202611151156"></script>
+<script src="../tutor/tutor_hook.js?v=202611151156"></script>
+<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script>if (window.CT_BOOT) CT_BOOT('walk');</script>
+<!-- CT-HOOK-END -->
+</body>
+</html>

@@ -1,0 +1,179 @@
+{
+  "_說明": "小封神版（文化長在規則裡）。這份檔案就是整個遊戲的內容與規則：改這裡，遊戲就跟著變。每一段的作用寫在 README.md 的『欄位對照』。tag 欄標示來源：原著＝書裡有寫；改編＝依書裡的事改成遊戲規則；工坊創作＝書裡沒有、我們自己加的。",
+  "meta": {
+    "id": "temple_sim",
+    "version": "culture",
+    "label": "小封神版",
+    "title": "小上帝廟的半年",
+    "subtitle": "你是廟祝，替小上帝、康元帥、趙元帥撐過半年，等七月三日夜的颱風。",
+    "months": 6,
+    "slots_per_month": 5,
+    "noise": 1
+  },
+  "intro": [
+    "小上帝奉命駐在赤崁樓東邊的小鎮，鎮上的廟「三分不像寺、四分不像宮」，香煙稀微，燒金的人很少。",
+    "原書裡，半年後的七月三日夜，颱風把廟吹倒；之後三位神明挨餓，只靠廟祝的一壺清茶撐著。",
+    "這一次由你當廟祝。你每個月有 5 個時辰，要決定：先接待誰、米夠不夠、廟要不要修、那頂銅鍍金的通天冠留不留。"
+  ],
+  "resources": {
+    "money":   { "label": "香油錢", "icon": "🪙", "start": 24, "max": 999, "note": "信眾投的錢。糴米、修廟都要它。" },
+    "rice":    { "label": "米",     "icon": "🍚", "start": 6,  "max": 30,  "note": "三位神明每個月要吃 3 份。" },
+    "incense": { "label": "香火",   "icon": "🕯️", "start": 18, "max": 100, "decay_pct": 25, "note": "信眾上門才有。放著不管，每個月會散掉四分之一，而且不能拿來花。" },
+    "face":    { "label": "體面",   "icon": "🎩", "start": 60, "max": 100, "note": "神明的臉面。掉到 0，你們就被調走了。" },
+    "repair":  { "label": "廟況",   "icon": "🧱", "start": 30, "max": 100, "note": "屋瓦、梁柱的狀況。每個月會自己舊掉一點。颱風夜要撐得住。" }
+  },
+  "flags": { "crown": "worn", "kangzhao": "here" },
+  "counters": { "grudge": 0, "favor": 0, "gambles": 0, "verified": 0 },
+  "reset_counters_monthly": ["verified"],
+  "customers": {
+    "shuibian": { "label": "水邊人家", "icon": "🌊", "want": "夜裡水邊有怪聲，怕龜精蛇怪作怪", "fit": "管得到", "tag": "改編", "src": "小上帝奉命『專管龜精蛇怪，並察人間善惡』（第一回）" },
+    "yuan":     { "label": "含冤的人", "icon": "⚖️", "want": "被人誣賴，想請神明看個公道", "fit": "管得到", "tag": "改編", "src": "『察人間善惡』（第一回）；小上帝誤認魁星、被斥『用神不明』（第二、二十三回）" },
+    "scholar":  { "label": "趕考的書生", "icon": "📜", "want": "想求功名順利", "fit": "管不到", "tag": "改編", "src": "功名是魁星的事；魁星出自赤崁樓文昌閣（第二回照片說明）" },
+    "trader":   { "label": "做生意的人", "icon": "🧺", "want": "想求生意興隆", "fit": "管不到", "tag": "工坊創作", "src": "遊戲簡化：原書裡他專管龜蛇，功名、生意不是他的專長" },
+    "passerby": { "label": "路過歇腳的人", "icon": "🚶", "want": "走累了，想坐一下", "fit": "不求事", "tag": "改編", "src": "三神挨餓時，廟裡只有廟祝的清茶（第二回）" }
+  },
+  "calendar": {
+    "shuibian": [2, 2, 1, 2, 2, 1],
+    "yuan":     [0, 1, 0, 1, 0, 1],
+    "scholar":  [2, 2, 2, 1, 2, 1],
+    "trader":   [1, 1, 2, 1, 1, 1],
+    "passerby": [3, 3, 2, 3, 3, 2]
+  },
+  "actions": [
+    { "id": "comfort", "label": "安撫水邊人家", "desc": "慢慢來，一次顧 2 戶。", "slots": 1, "target": "shuibian", "cap": 2,
+      "log": "你去水邊燒香、說明，慢慢安撫。",
+      "effects": [ { "each_group": [ { "add": { "incense": 6, "money": 3 } } ] } ] },
+    { "id": "drive", "label": "鎮住龜蛇", "desc": "快，一次最多 4 戶。但龜蛇會記仇。", "slots": 1, "target": "shuibian", "cap": 4,
+      "log": "你照著小上帝的本分，把水邊的龜蛇通通鎮住。",
+      "effects": [ { "each_group": [ { "add": { "incense": 4, "money": 2 } } ] }, { "counter": ["grudge", 1] } ] },
+
+    { "id": "verify", "label": "查證誰才是對的", "desc": "先把兩邊的說法對一對，一次查 2 件。", "slots": 1, "target": "yuan", "cap": 2,
+      "log": "你一個一個去問、去對。",
+      "effects": [ { "each_group": [ { "counter": ["verified", 1] } ] } ] },
+    { "id": "judge", "label": "替含冤的人斷理", "desc": "一次斷 2 件。沒查證就斷，可能冤枉到人。", "slots": 1, "target": "yuan", "cap": 2,
+      "log": "你請神明作主，替含冤的人說句公道話。",
+      "effects": [ { "each_group": [
+        { "if": ["counter", "verified", ">", 0],
+          "then": [ { "counter": ["verified", -1] }, { "add": { "incense": 8, "face": 4, "money": 2 } }, { "log": "查清楚了，斷得準，信眾都服氣。", "kind": "good" } ],
+          "else": [ { "roll": { "p": 0.5,
+            "yes": [ { "add": { "incense": 8, "face": 4, "money": 2 } }, { "log": "沒查證就斷，這次運氣好，斷對了。", "kind": "good" } ],
+            "no":  [ { "add": { "incense": -4, "face": -15 } }, { "log": "沒查證就斷，冤枉了好人，傳得全鎮都知道。", "kind": "bad" } ] } } ] }
+      ] } ] },
+
+    { "id": "refer", "label": "請書生去文昌閣", "desc": "功名不是這位神明管的，一次送 3 位。", "slots": 1, "target": "scholar", "cap": 3,
+      "log": "你指路，請書生到赤崁樓的文昌閣去拜魁星。",
+      "effects": [ { "each_group": [ { "add": { "incense": 1 } } ] }, { "counter": ["favor", 1] } ] },
+    { "id": "take_scholar", "label": "硬接書生的香", "desc": "收他們的香油錢，一次 3 位。", "slots": 1, "target": "scholar", "cap": 3,
+      "log": "你收下書生的香油錢，替他們求功名。",
+      "effects": [ { "each_group": [ { "add": { "money": 3, "incense": -3 } } ] }, { "log": "書生考不好，到處說早知道該去文昌閣。", "kind": "bad" } ] },
+
+    { "id": "trader", "label": "接待做生意的人", "desc": "他們捐得多，一次 2 位。靈不靈，要看運氣。", "slots": 1, "target": "trader", "cap": 2,
+      "log": "你收下做生意的人的香油錢，請神明保佑他們。",
+      "effects": [ { "each_group": [ { "add": { "money": 8 } }, { "roll": { "p": 0.4,
+        "yes": [ { "add": { "incense": 6 } } ],
+        "no":  [ { "add": { "incense": -5, "face": -3 } } ] } } ] } ] },
+
+    { "id": "tea", "label": "奉茶給路過的人", "desc": "不求事，坐下喝杯茶就好。一次 4 位。", "slots": 1, "target": "passerby", "cap": 4,
+      "log": "你端出廟祝的清茶。",
+      "effects": [ { "each_group": [ { "add": { "incense": 2 } } ] } ] },
+
+    { "id": "buy_self", "label": "你自己去糴米", "desc": "花 10 錢，換 6 份米。", "slots": 1,
+      "requires": ["res", "money", ">=", 10], "why_not": "香油錢不到 10",
+      "log": "你自己走一趟，把米扛回來。",
+      "effects": [ { "add": { "money": -10, "rice": 6 } } ] },
+    { "id": "buy_kz", "label": "派康、趙元帥去糴米", "desc": "不花你的時辰，每月一次。但錢在他們手上……", "slots": 0, "once_per_month": true,
+      "requires": ["and", ["res", "money", ">=", 10], ["flag", "kangzhao", "==", "here"]], "why_not": "香油錢不到 10，或兩位元帥已經不在",
+      "log": "你把糴米錢交給康元帥和趙元帥。",
+      "effects": [
+        { "add": { "money": -10, "rice": 6 } },
+        { "if": ["flag", "crown", "==", "pawned"],
+          "then": [ { "roll": { "p": 0.55, "yes": [
+            { "add": { "rice": -6, "money": -10 } }, { "counter": ["gambles", 1] },
+            { "log": "兩位元帥路過媽祖宮口，想把通天冠贏回來，賭輸了，還把糴米錢賠進去。回來只說錢被一個獠牙大漢搶走了。", "kind": "bad" } ], "no": [] } } ],
+          "else": [ { "roll": { "p": 0.15, "yes": [
+            { "add": { "rice": -6, "money": -10 } }, { "counter": ["gambles", 1] },
+            { "log": "兩位元帥路過媽祖宮口，被攤子勾住，賭了兩把，糴米錢輸光。回來只說錢被一個獠牙大漢搶走了。", "kind": "bad" } ], "no": [] } } ] }
+      ] },
+
+    { "id": "repair", "label": "修廟", "desc": "花 8 錢，廟況 +12。", "slots": 1,
+      "requires": ["res", "money", ">=", 8], "why_not": "香油錢不到 8",
+      "log": "你請人補瓦、換梁。",
+      "effects": [ { "add": { "money": -8, "repair": 12 } } ] },
+
+    { "id": "pawn", "label": "當掉通天冠", "desc": "銅鍍金的通天冠，換一大筆錢。可是冠沒了……", "slots": 1,
+      "requires": ["flag", "crown", "==", "worn"], "why_not": "冠已經不在身上",
+      "log": "小上帝脫下通天冠，交給你去打銀街的當店。",
+      "effects": [ { "add": { "money": 50, "face": -10 } }, { "flag": ["crown", "pawned"] },
+        { "log": "當出了不少錢，可是小上帝披頭散髮，臉色很難看。", "kind": "bad" } ] },
+    { "id": "redeem", "label": "把通天冠贖回來", "desc": "要 55 錢（連利息）。", "slots": 1,
+      "requires": ["and", ["flag", "crown", "==", "pawned"], ["res", "money", ">=", 55]], "why_not": "冠還戴著，或香油錢不到 55",
+      "log": "你湊足錢，去把通天冠贖回來。",
+      "effects": [ { "add": { "money": -55, "face": 10 } }, { "flag": ["crown", "worn"] },
+        { "log": "小上帝重新戴上冠，腰桿直了。（原書沒寫贖回，這是遊戲加的。）", "kind": "good" } ] }
+  ],
+  "upkeep": [
+    { "add": { "rice": -3, "repair": -5 } }
+  ],
+  "events": [
+    { "id": "e_tea", "phase": "start", "month": [1, 1], "once": true, "tag": "原著", "title": "廟祝的清茶",
+      "text": "廟祝端來一壺清茶。原書裡，廟被颱風吹倒之後，三位神明餓著，只有這樣的清茶。這半年，你要改寫這件事。", "effects": [] },
+    { "id": "e_surge", "phase": "start", "month": [2, 2], "once": true, "tag": "工坊創作", "title": "水邊傳出怪聲",
+      "text": "河邊的人家說夜裡有東西在水裡翻，一下子多來了兩戶。", "effects": [ { "arrive": { "shuibian": 2 } } ] },
+    { "id": "e_audit", "phase": "start", "month": [3, 3], "once": true, "tag": "改編", "title": "天庭來清點",
+      "text": "天庭派人清點各廟的香火。書裡李靖說過，神仙也躲不過『行政整理』。",
+      "effects": [ { "if": ["res", "incense", ">=", 25],
+        "then": [ { "add": { "face": 5 } }, { "log": "香火夠旺，清點通過。", "kind": "good" } ],
+        "else": [ { "add": { "face": -15 } }, { "log": "香火太稀，被記了一筆：『可以整理』。", "kind": "bad" } ] } ] },
+    { "id": "e_yuan", "phase": "start", "month": [4, 4], "once": true, "tag": "改編", "title": "兩個鄰居互告",
+      "text": "兩個鄰居都說對方偷了東西，而且兩人長得很像。（書裡，小上帝就是把魁星和千里眼認錯了。）", "effects": [ { "arrive": { "yuan": 2 } } ] },
+    { "id": "e_report_bad", "phase": "start", "month": [5, 5], "once": true, "when": ["flag", "crown", "==", "pawned"], "tag": "改編", "title": "要上天庭述職了",
+      "text": "通天冠卻還在當鋪裡。書裡康、趙兩位元帥早就嘀咕過：這樣上天庭，成甚麼體統？",
+      "effects": [ { "add": { "face": -25 } } ] },
+    { "id": "e_report_ok", "phase": "start", "month": [5, 5], "once": true, "when": ["flag", "crown", "==", "worn"], "tag": "改編", "title": "要上天庭述職了",
+      "text": "小上帝戴著通天冠上天庭，總算有個樣子。", "effects": [ { "add": { "face": 5 } } ] },
+    { "id": "e_wenchang", "phase": "start", "month": [4, 6], "once": true, "when": ["counter", "favor", ">=", 2], "tag": "工坊創作", "title": "文昌閣來幫忙",
+      "text": "文昌閣那邊記得你送過去的書生，派了幾個人來幫忙補瓦。（廟與廟之間互相幫忙，民間叫「交陪」。）",
+      "effects": [ { "add": { "repair": 15 } } ] },
+    { "id": "e_wind", "phase": "start", "month": [6, 6], "once": true, "tag": "工坊創作", "title": "風聲轉緊",
+      "text": "老人說，這種悶熱的天，颱風快來了。屋瓦鬆了幾片。", "effects": [ { "add": { "repair": -8 } } ] },
+    { "id": "e_turtle", "phase": "end", "when": ["counter", "grudge", ">=", 3], "tag": "改編", "title": "龜靈聖母出面",
+      "text": "龜蛇被趕得太兇，龜靈聖母親自來講話：『你們侮辱龜族。』（書裡她出面，就是這個原因。）",
+      "effects": [ { "add": { "face": -25, "incense": -10 } }, { "counter_set": ["grudge", 0] } ] },
+    { "id": "e_hungry", "phase": "end", "when": ["res", "rice", "<", 3], "tag": "原著", "title": "米不夠三位吃",
+      "text": "康元帥餓到撐不住，趙元帥小聲抱怨：坐著的人，哪知道站著的辛苦。",
+      "effects": [ { "add": { "face": -8 } } ] },
+    { "id": "e_kz_gone", "phase": "end", "once": true, "when": ["counter", "gambles", ">=", 2], "tag": "改編", "title": "兩位元帥被調走",
+      "text": "李老君說他們『好賭誤事』，把康、趙兩位元帥調去採藥。以後糴米只能你自己跑。",
+      "effects": [ { "flag": ["kangzhao", "gone"] }, { "add": { "face": -5 } } ] }
+  ],
+  "fail_conditions": [
+    { "id": "f_face", "cond": ["res", "face", "<=", 0], "title": "被天庭調走了",
+      "text": "體面掃地，天庭把小上帝調去別的地方。這座廟，連七月三日夜的颱風都沒等到。（遊戲加的結局，書裡沒有。）" }
+  ],
+  "finale": {
+    "label": "七月三日夜",
+    "text": "颱風來了。",
+    "checks": [
+      { "id": "temple",  "label": "廟沒被吹倒（廟況 70 以上）", "cond": ["res", "repair", ">=", 70], "canon": "原書：廟被吹倒" },
+      { "id": "fed",     "label": "三位神明都有飯吃（米 3 以上）", "cond": ["res", "rice", ">=", 3], "canon": "原書：三神挨餓，只有清茶" },
+      { "id": "incense", "label": "香火夠旺（40 以上）", "cond": ["res", "incense", ">=", 40], "canon": "原書：香煙稀微，燒金罕到" },
+      { "id": "face",    "label": "神明還有體面（40 以上）", "cond": ["res", "face", ">=", 40] },
+      { "id": "crown",   "label": "通天冠回到小上帝頭上", "cond": ["flag", "crown", "==", "worn"], "canon": "原書：冠典當後全書沒寫贖回" }
+    ],
+    "endings": [
+      { "id": "rekindled", "min_passed": 5, "requires": ["temple", "crown"], "win": true, "title": "香火重燃",
+        "text": "廟撐住了，三位神明吃飽，信眾還排隊來燒香。你改寫了原書的結局。（這是小說裡的廟，現實中的廟風光得多。）" },
+      { "id": "survived", "min_passed": 4, "requires": ["temple", "crown"], "win": true, "title": "撐過颱風",
+        "text": "廟沒倒。有一兩樣還是不夠好，但天亮的時候，三位神明都還在。" },
+      { "id": "barely", "min_passed": 1, "requires": ["temple"], "win": false, "title": "廟還在，但很勉強",
+        "text": "屋頂勉強撐住，可是米、香火、體面都吃緊。下一個月怎麼辦，沒人知道。" },
+      { "id": "fell", "min_passed": 0, "win": false, "title": "跟原書一樣：廟被吹倒了",
+        "text": "七月三日夜，颱風把廟吹倒。（這是小說裡的廟，現實中的廟風光得多。）你回頭看：哪個月做了不一樣的選擇，會改變這一夜？" }
+    ]
+  },
+  "field": {
+    "_說明": "這一段是『AI 做不到、要靠你自己去問去看』的欄位。去一間真的廟待半小時，記下來的人各是哪一類，填在 observed_counts；再問廟祝一句話，填在 interview_line。填了，遊戲的來客比例和每個月開頭的廟祝台詞就換成你的。",
+    "observed_counts": null,
+    "interview_line": null
+  }
+}

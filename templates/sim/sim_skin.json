@@ -1,0 +1,74 @@
+{
+  "_說明": "普通經營版（文化只是皮）。故事、角色、地點都留著，但規則換成最普通的『開店賺錢』：來客都一樣、沒有誰管得到誰管不到、錢和香火不會散、沒有冠、沒有面子。拿它和 sim.json 對照，就看得出文化在哪裡長進規則裡。",
+  "meta": {
+    "id": "temple_sim",
+    "version": "skin",
+    "label": "普通經營版",
+    "title": "小上帝廟的半年",
+    "subtitle": "你是廟祝，替小上帝、康元帥、趙元帥撐過半年，等七月三日夜的颱風。",
+    "months": 6,
+    "slots_per_month": 5,
+    "noise": 1
+  },
+  "intro": [
+    "小上帝廟香煙稀微，你要靠接待客人賺錢，米吃完要買，廟舊了要修。",
+    "半年後的七月三日夜颱風來襲。這一版沒有特別的規矩：客人都一樣，賺到錢就能買任何東西。"
+  ],
+  "resources": {
+    "money":   { "label": "金幣", "icon": "🪙", "start": 30, "max": 999, "note": "賺到的錢。糴米、修廟都要它。" },
+    "rice":    { "label": "米",   "icon": "🍚", "start": 6,  "max": 30,  "note": "三位神明每個月要吃 3 份。" },
+    "incense": { "label": "人氣", "icon": "🕯️", "start": 18, "max": 100, "note": "接待客人就會增加，不會散掉。" },
+    "repair":  { "label": "廟況", "icon": "🧱", "start": 30, "max": 100, "note": "每個月會自己舊掉一點。颱風夜要撐得住。" }
+  },
+  "flags": {},
+  "counters": {},
+  "reset_counters_monthly": [],
+  "customers": {
+    "guest": { "label": "客人", "icon": "🙂", "want": "上門逛逛", "fit": "都一樣", "tag": "工坊創作", "src": "普通經營版：所有客人一樣" }
+  },
+  "calendar": {
+    "guest": [8, 9, 8, 8, 8, 6]
+  },
+  "actions": [
+    { "id": "serve", "label": "接待客人", "desc": "一次最多 4 位，每位賺 4 金幣、加 3 人氣。", "slots": 1, "target": "guest", "cap": 4,
+      "log": "你招呼客人。",
+      "effects": [ { "each_group": [ { "add": { "money": 4, "incense": 3 } } ] } ] },
+    { "id": "buy_self", "label": "去買米", "desc": "花 10 金幣，換 6 份米。", "slots": 1,
+      "requires": ["res", "money", ">=", 10], "why_not": "金幣不到 10",
+      "log": "你去市場買米。",
+      "effects": [ { "add": { "money": -10, "rice": 6 } } ] },
+    { "id": "repair", "label": "修廟", "desc": "花 8 金幣，廟況 +12。", "slots": 1,
+      "requires": ["res", "money", ">=", 8], "why_not": "金幣不到 8",
+      "log": "你請人修屋頂。",
+      "effects": [ { "add": { "money": -8, "repair": 12 } } ] }
+  ],
+  "upkeep": [
+    { "add": { "rice": -3, "repair": -5 } }
+  ],
+  "events": [
+    { "id": "e_wind", "phase": "start", "month": [6, 6], "once": true, "tag": "工坊創作", "title": "風聲轉緊",
+      "text": "天氣變悶，颱風快來了。屋瓦鬆了幾片。", "effects": [ { "add": { "repair": -8 } } ] }
+  ],
+  "fail_conditions": [],
+  "finale": {
+    "label": "七月三日夜",
+    "text": "颱風來了。",
+    "checks": [
+      { "id": "temple",  "label": "廟沒被吹倒（廟況 70 以上）", "cond": ["res", "repair", ">=", 70] },
+      { "id": "fed",     "label": "三位神明都有飯吃（米 3 以上）", "cond": ["res", "rice", ">=", 3] },
+      { "id": "incense", "label": "人氣夠旺（40 以上）", "cond": ["res", "incense", ">=", 40] },
+      { "id": "money",   "label": "金幣夠多（40 以上）", "cond": ["res", "money", ">=", 40] }
+    ],
+    "endings": [
+      { "id": "rekindled", "min_passed": 4, "requires": ["temple"], "win": true, "title": "大賺一筆",
+        "text": "廟撐住了，米夠、人氣旺、口袋滿。" },
+      { "id": "survived", "min_passed": 3, "requires": ["temple"], "win": true, "title": "撐過颱風",
+        "text": "廟沒倒，有一兩項不夠漂亮，但過關了。" },
+      { "id": "barely", "min_passed": 1, "requires": ["temple"], "win": false, "title": "廟還在，但很勉強",
+        "text": "屋頂撐住了，其他項目都吃緊。" },
+      { "id": "fell", "min_passed": 0, "win": false, "title": "廟被吹倒了",
+        "text": "颱風把廟吹倒。" }
+    ]
+  },
+  "field": { "observed_counts": null, "interview_line": null }
+}

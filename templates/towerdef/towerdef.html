@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>普渡七日</title>
+<style>
+:root{--bg:#f7f3ea;--card:#fffdf8;--ink:#2b2622;--muted:#6f655c;--line:#ddd3c4;--accent:#b5562b;--accent2:#2f6f6a;--warm:#f4d38a;--path:#e9dfcf;--dark:#3d3a46;--good:#2e7d4f;--bad:#b23b3b;--chip:#efe6d6}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1d1b20;--card:#27242b;--ink:#eee8df;--muted:#b4aba0;--line:#433e47;--accent:#e08a5c;--accent2:#6cc0b8;--warm:#7a5f2a;--path:#3a3530;--dark:#15131a;--good:#6fcf97;--bad:#ef7b7b;--chip:#35303a}}
+:root[data-theme="dark"]{--bg:#1d1b20;--card:#27242b;--ink:#eee8df;--muted:#b4aba0;--line:#433e47;--accent:#e08a5c;--accent2:#6cc0b8;--warm:#7a5f2a;--path:#3a3530;--dark:#15131a;--good:#6fcf97;--bad:#ef7b7b;--chip:#35303a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:12px 16px 48px}
+h1{font-size:1.5rem;margin:4px 0 0}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 8px}
+button{font:inherit;min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.primary{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.w2{border-left:5px solid var(--accent2)}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:2px 10px;font-size:.85rem;margin:2px 4px 2px 0}
+.tag{display:inline-block;font-size:.72rem;border:1px solid var(--line);border-radius:6px;padding:0 5px;margin-left:6px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin:10px 0}
+.tabs button{flex:1}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.hud div{background:var(--chip);border-radius:10px;padding:4px 2px;font-size:.85rem}
+.hud b{display:block;font-size:1.15rem}
+.nights{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px}
+.nights span{flex:0 0 auto;font-size:.78rem;padding:3px 8px;border-radius:8px;background:var(--chip);white-space:nowrap}
+.nights span.now{background:var(--accent);color:#fff}
+.nights span.past{opacity:.5}
+.nights span.big{outline:2px solid var(--accent)}
+.board{position:relative;width:100%;max-width:420px;margin:8px auto;aspect-ratio:7/9;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(9,1fr);gap:2px;background:var(--dark);border-radius:12px;padding:3px}
+.cell{border-radius:6px;background:#4a4553;display:flex;align-items:center;justify-content:center;font-size:1.25rem;position:relative;border:0;padding:0}
+.cell.path{background:var(--path)}
+.cell.lit{box-shadow:inset 0 0 0 100px rgba(244,190,90,.28)}
+.cell.path.lit{background:#f1dca8}
+.cell.dim::after{content:"暗";position:absolute;right:2px;bottom:0;font-size:.6rem;color:#fff;background:#0008;border-radius:4px;padding:0 2px}
+.cell.flash{outline:3px solid var(--good)}
+.cell.endc::before{content:attr(data-l);position:absolute;font-size:.55rem;bottom:1px;color:#5a4a3a}
+.vis{position:absolute;width:7%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;transition:left .15s linear,top .15s linear}
+.vis.ghost{background:radial-gradient(circle,#fff 0%,#fff 30%,#6f86d6 75%);box-shadow:0 0 8px 2px #6f86d6;opacity:.9}
+.vis.ghost.hungry{background:radial-gradient(circle,#fff 0%,#fff 30%,#c97a2a 75%);box-shadow:0 0 8px 2px #c97a2a}
+.vis.fed{opacity:.35;transform:translate(-50%,-80%) scale(.7);transition:all .4s}
+.vis.mob{background:#c0392b;border:2px solid #fff}
+.vis.mob.hungry{background:#7d1e14}
+.log{max-height:220px;overflow:auto;font-size:.9rem;padding-left:18px;margin:0}
+.log li{margin:2px 0}
+.msg{min-height:1.4em;color:var(--accent);font-size:.9rem}
+.ans button{flex:1 1 45%}
+textarea,input[type=text]{width:100%;font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+textarea.json{height:260px;font-family:ui-monospace,Consolas,monospace;font-size:.78rem}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+td,th{border:1px solid var(--line);padding:4px 6px;text-align:left}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--chip);padding:8px;border-radius:8px;font-size:.82rem}
+.hide{display:none!important}
+.big-end{font-size:1.3rem;margin:0}
+.small{font-size:.82rem;color:var(--muted)}
+details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title">普渡七日</h1>
+  <p class="sub" id="subtitle"></p>
+  <div class="row" role="group" aria-label="版本">
+    <button data-act="__m_culture" id="m_culture">文化規則版</button>
+    <button data-act="__m_skin" id="m_skin">普通塔防版</button>
+    <button data-act="__theme" id="themeBtn" aria-label="切換亮暗">◐</button>
+  </div>
+  <div class="card w2">
+    <b>這一關練的 W2 文化卡：<span id="w2kind"></span></b>
+    <div class="small" id="w2hint"></div>
+    <div id="w2cards"></div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button data-act="__tab_play" id="tab_play" class="on">玩</button>
+    <button data-act="__tab_remix" id="tab_remix">怎麼改做</button>
+    <button data-act="__tab_data" id="tab_data">資料檔</button>
+  </div>
+
+  <section id="pane_play">
+    <p id="intro" class="small"></p>
+    <div class="nights" id="nights"></div>
+    <div class="hud" id="hud"></div>
+    <div class="board" id="board" aria-label="地圖"></div>
+    <p class="small" id="legend"></p>
+    <p class="small" id="waitNote"></p>
+    <div class="msg" id="msg" aria-live="polite"></div>
+
+    <div id="planBox" class="card">
+      <div class="row">
+        <button data-act="__tool_lamp" id="tool_lamp"></button>
+        <button data-act="__tool_table" id="tool_table"></button>
+        <button data-act="__undo" id="undoBtn">復原上一步</button>
+      </div>
+      <p class="small" id="toolDesc"></p>
+      <div class="row">
+        <span id="offerLabel"></span>
+        <button data-act="__offer_minus" aria-label="少一份">−</button>
+        <b id="offerN">0</b>
+        <button data-act="__offer_plus" aria-label="多一份">＋</button>
+        <button data-act="__offer_fit" id="offerFit">剛好今晚人數</button>
+      </div>
+      <p class="small" id="chantDesc"></p>
+      <div class="row" style="margin-top:6px">
+        <button data-act="__chant" id="chantBtn"></button>
+        <button data-act="__end" id="startBtn" class="primary">開始這一夜</button>
+      </div>
+    </div>
+
+    <div id="runBox" class="card hide">
+      <div class="row">
+        <button data-act="__fast" id="fastBtn">快轉</button>
+        <button data-act="__skip" id="skipBtn">直接到天亮</button>
+      </div>
+    </div>
+
+    <div id="askBox" class="card hide">
+      <p id="askText"></p>
+      <div class="row">
+        <button data-act="__ask_yes" id="askYes" class="primary"></button>
+        <button data-act="__ask_no" id="askNo">推說沒有</button>
+      </div>
+    </div>
+
+    <div id="endBox" class="card hide">
+      <p class="big-end" id="endTitle"></p>
+      <p id="endText"></p>
+      <div class="card w2">
+        <b>W2 那一題：把這個版本裡的文化拿掉，這個遊戲還玩得下去嗎？</b>
+        <div class="row ans" id="ansRow"></div>
+        <label class="small" for="ansWhy">寫一句為什麼</label>
+        <textarea id="ansWhy" rows="2"></textarea>
+        <div class="row" style="margin-top:6px">
+          <button data-act="__ans_send" class="primary">送出我的判斷</button>
+          <button data-act="__restart" id="restartBtn">再玩一次</button>
+          <button data-act="__other" id="otherBtn">換另一版玩</button>
+        </div>
+        <div id="ansBack" class="small"></div>
+      </div>
+      <div id="compare" class="card hide"></div>
+    </div>
+
+    <details class="card">
+      <summary>這一夜發生了什麼（紀錄）</summary>
+      <ol class="log" id="log"></ol>
+    </details>
+  </section>
+
+  <section id="pane_remix" class="hide"></section>
+
+  <section id="pane_data" class="hide">
+    <div class="card">
+      <b>試跑 100 局</b>
+      <p class="small">用三種機器玩家各玩 100 局，看你改的規則讓誰比較會贏。</p>
+      <button data-act="__trial" class="primary">試跑 100 局</button>
+      <div id="trialOut"></div>
+    </div>
+    <div class="card">
+      <b>我的資料檔</b>
+      <p class="small">整份資料檔在這裡。改完按「載入」就會照你的版本玩；可以整份複製給 Claude／Gemini 請它幫忙改。</p>
+      <textarea class="json" id="jsonBox" spellcheck="false" aria-label="資料檔"></textarea>
+      <div class="row">
+        <button data-act="__load" class="primary">載入</button>
+        <button data-act="__reset">還原成原本的</button>
+        <button data-act="__save">存成檔案</button>
+      </div>
+      <div class="msg" id="loadMsg"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* 普渡七日 引擎（純邏輯，不碰畫面）。瀏覽器：window.TD；Node：module.exports。
+   資料全部來自 towerdef.json 的一個版本（versions.culture 或 versions.skin）。 */
+(function (root) {
+  'use strict';
+
+  function rng(seed) {
+    var a = (seed >>> 0) || 1;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function validate(v) {
+    var errs = [];
+    if (!v || typeof v !== 'object') return ['資料檔不是物件'];
+    ['meta', 'rules', 'items', 'nights', 'start', 'endings'].forEach(function (k) {
+      if (!v[k]) errs.push('缺少欄位：' + k);
+    });
+    if (errs.length) return errs;
+    if (!Array.isArray(v.meta.path) || v.meta.path.length < 3) errs.push('meta.path 至少要 3 格');
+    (v.meta.path || []).forEach(function (p, i) {
+      if (!Array.isArray(p) || p.length !== 2) errs.push('meta.path 第 ' + (i + 1) + ' 格格式錯誤，要寫成 [欄, 列]');
+      else if (p[0] < 0 || p[1] < 0 || p[0] >= v.meta.cols || p[1] >= v.meta.rows) errs.push('meta.path 第 ' + (i + 1) + ' 格超出地圖');
+    });
+    ['lamp', 'table'].forEach(function (k) {
+      if (!v.items[k]) errs.push('items 缺少 ' + k);
+      else if (typeof v.items[k].cost !== 'number') errs.push('items.' + k + '.cost 要是數字');
+    });
+    if (!Array.isArray(v.nights) || !v.nights.length) errs.push('nights 至少要一夜');
+    (v.nights || []).forEach(function (n, i) {
+      if (typeof n.count !== 'number' || n.count < 0) errs.push('第 ' + (i + 1) + ' 夜的 count 要是 0 以上的數字');
+      if (n.hungry && n.hungry > n.count) errs.push('第 ' + (i + 1) + ' 夜的 hungry 不能比 count 多');
+    });
+    if (!Array.isArray(v.endings) || !v.endings.length) errs.push('endings 至少要一個');
+    else if (v.endings[v.endings.length - 1].when) errs.push('endings 最後一個不能有 when（它是「其他情況」）');
+    return errs;
+  }
+
+  function key(c, r) { return c + ',' + r; }
+
+  function newGame(v, seed) {
+    var path = v.meta.path, onPath = {};
+    path.forEach(function (p) { onPath[key(p[0], p[1])] = true; });
+    var g = {
+      v: v, seed: seed, rand: rng(seed),
+      night: 0, phase: 'plan',               // plan → run → morning → plan … → ended
+      money: v.start.money, peace: v.start.peace, favor: v.start.favor,
+      offer: 0, chant: false,
+      placed: {}, placedThisPlan: [],
+      onPath: onPath, log: [], nightStats: [], result: null,
+      sim: null, pendingAsk: null, waiting: [], helpers: []
+    };
+    var n0 = v.nights[0];
+    if (n0 && n0.intro) g.log.push({ text: n0.intro, tag: n0.tag || '' });
+    return g;
+  }
+
+  function night(g) { return g.v.nights[Math.min(g.night, g.v.nights.length - 1)]; }
+
+  function canPlace(g, kind, c, r) {
+    var v = g.v, it = v.items[kind];
+    if (g.phase !== 'plan') return '現在不能擺';
+    if (!it) return '沒有這種東西';
+    if (c < 0 || r < 0 || c >= v.meta.cols || r >= v.meta.rows) return '超出地圖';
+    if (g.onPath[key(c, r)]) return '這格是路，不能擺';
+    if (g.placed[key(c, r)]) return '這格已經有東西了';
+    if (g.money < it.cost) return '錢不夠';
+    if (kind === 'table' && v.rules.max_tables) { var nt = 0; for (var kk in g.placed) if (g.placed[kk].kind === 'table') nt++; if (nt >= v.rules.max_tables) return '街邊最多只擺得下 ' + v.rules.max_tables + ' 張供桌'; }
+    if (kind === 'lamp' && v.rules.lamp_gate && g.night !== 0) return v.rules.lamp_gate_msg || '燈只能在第一夜前豎';
+    return '';
+  }
+
+  function place(g, kind, c, r) {
+    var why = canPlace(g, kind, c, r);
+    if (why) return why;
+    g.money -= g.v.items[kind].cost;
+    g.placed[key(c, r)] = { kind: kind, c: c, r: r };
+    g.placedThisPlan.push(key(c, r));
+    return '';
+  }
+
+  function undo(g) {
+    if (g.phase !== 'plan' || !g.placedThisPlan.length) return false;
+    var k = g.placedThisPlan.pop(), p = g.placed[k];
+    g.money += g.v.items[p.kind].cost;
+    delete g.placed[k];
+    return true;
+  }
+
+  function offerCost(g) { return g.v.items.offer ? g.v.items.offer.cost : 1; }
+
+  function setOffer(g, n) {
+    if (g.phase !== 'plan') return;
+    n = Math.max(g.offerKept || 0, Math.floor(n));
+    var cost = offerCost(g), delta = n - g.offer;
+    if (delta > 0 && g.money < delta * cost) { n = g.offer + Math.floor(g.money / cost); delta = n - g.offer; }
+    g.money -= delta * cost;
+    g.offer = n;
+  }
+
+  function setChant(g, on) {
+    if (g.phase !== 'plan' || !g.v.items.chant) return '';
+    var cost = g.v.items.chant.cost;
+    if (on && !g.chant) { if (g.money < cost) return '錢不夠'; g.money -= cost; g.chant = true; }
+    else if (!on && g.chant) { g.money += cost; g.chant = false; }
+    return '';
+  }
+
+  function cheb(a, b) { return Math.max(Math.abs(a.c - b.c), Math.abs(a.r - b.r)); }
+
+  function lit(g, t) {
+    var lr = g.v.items.lamp.range;
+    for (var k in g.placed) {
+      var p = g.placed[k];
+      if (p.kind === 'lamp' && cheb(p, t) <= lr) return true;
+    }
+    return false;
+  }
+
+  function tableInfo(g, p) {
+    var v = g.v, range = v.items.table.range;
+    if (v.rules.lamp_boost && lit(g, p)) range += 1;
+    return { range: range, works: v.rules.need_lamp ? lit(g, p) : true };
+  }
+
+  function startNight(g) {
+    if (g.phase !== 'plan') return;
+    var n = night(g), list = [];
+    var noise = g.v.meta.noise || 0, cnt = Math.max(0, n.count + Math.round((g.rand() * 2 - 1) * noise));
+    var wl = g.waiting || [], base = wl.length;
+    wl.forEach(function (w, i) { list.push({ id: i, need: w.need, at: -(i * (n.gap || 2)), done: false, gone: false, waiting: true, hungry: w.need > 1 }); });
+    g.waiting = [];
+    for (var i = 0; i < cnt; i++) list.push({ id: base + i, need: 1, at: -((base + i) * (n.gap || 2)), done: false, gone: false });
+    var idx = list.map(function (x, i) { return i; }).slice(base);
+    for (var j = idx.length - 1; j > 0; j--) { var k = Math.floor(g.rand() * (j + 1)); var t = idx[j]; idx[j] = idx[k]; idx[k] = t; }
+    idx.slice(0, n.hungry || 0).forEach(function (i) { list[i].need = 2; list[i].hungry = true; });
+    if (g.chant && g.v.items.chant && g.v.items.chant.relief) list.forEach(function (x) { if (x.need > 1) x.need = 1; });
+    var tables = [];
+    for (var k2 in g.placed) {
+      var p = g.placed[k2];
+      if (p.kind !== 'table') continue;
+      var info = tableInfo(g, p);
+      tables.push({ c: p.c, r: p.r, range: info.range, works: info.works, cd: 0 });
+    }
+    g.sim = { t: 0, count: cnt + base, back: base, vis: list, tables: tables, served: 0, satisfied: 0, leaked: 0 };
+    g.phase = 'run';
+    g.placedThisPlan = [];
+  }
+
+  function visPos(g, x) {
+    var path = g.v.meta.path;
+    var i = Math.max(0, Math.min(path.length - 1, Math.floor(x.at)));
+    return { c: path[i][0], r: path[i][1] };
+  }
+
+  function tick(g) {
+    if (g.phase !== 'run') return false;
+    var v = g.v, s = g.sim, path = v.meta.path;
+    var slow = (g.chant && v.items.chant) ? v.items.chant.slow : 1;
+    s.t++;
+    s.vis.forEach(function (x) {
+      if (x.done || x.gone) return;
+      x.at += (x.at < 0 ? 1 : slow);
+      if (x.at >= path.length) { x.gone = true; s.leaked++; }
+    });
+    s.tables.forEach(function (tb) {
+      if (!tb.works) return;
+      if (tb.cd > 0) { tb.cd--; return; }
+      if (g.offer <= 0) return;
+      var best = null;
+      s.vis.forEach(function (x) {
+        if (x.done || x.gone || x.at < 0) return;
+        if (cheb(visPos(g, x), tb) > tb.range) return;
+        if (!best || x.at > best.at) best = x;
+      });
+      if (best) {
+        best.need--; g.offer--; s.served++; tb.cd = v.items.table.cooldown || 0; tb.flash = 3;
+        if (best.need <= 0) { best.done = true; best.doneT = s.t; s.satisfied++; if (v.rules.kill_reward) g.money += v.rules.kill_reward; }
+      }
+    });
+    var alive = s.vis.some(function (x) { return !x.done && !x.gone; });
+    if (!alive) { endNight(g); return false; }
+    return true;
+  }
+
+  function runToEnd(g) { var guard = 0; while (g.phase === 'run' && guard++ < 5000) tick(g); }
+
+  function endNight(g) {
+    var v = g.v, n = night(g), s = g.sim, R = v.rules, M = v.meta;
+    var per = (R.leak_penalty == null ? 1 : R.leak_penalty);
+    if ((R.must_feed_all || []).indexOf(g.night) >= 0) per = R.must_feed_all_penalty || 2;
+    if (R.close_night === g.night) per = R.close_penalty || 2;
+    var isBig = (R.must_feed_all || []).indexOf(g.night) >= 0 || R.close_night === g.night;
+    var carry = 0, lost = 0;
+    if (R.waiting) {
+      s.vis.forEach(function (x) {
+        if (!x.gone || x.done) return;
+        if (isBig || x.waiting) lost += per;           // 十五、月底，或已經等過一夜
+        else { g.waiting.push({ need: Math.max(1, Math.ceil(x.need / 2)) }); carry++; }
+      });
+    } else lost = s.leaked * per;
+    g.peace -= lost;
+    g.nightStats.push({ night: g.night, label: n.label, count: s.count, satisfied: s.satisfied, leaked: s.leaked, lost: lost, carry: carry, leftover: g.offer });
+    var line = n.label + '：' + s.satisfied + '/' + s.count + (M.word_done || ' 位吃飽離開');
+    if (s.leaked) {
+      if (R.waiting && carry && !lost) line += '，' + carry + ' 位還在街角等（明晚先來，只要補剩下的一份）';
+      else line += '，' + s.leaked + (M.word_leak || ' 位沒被招待') + (carry ? '，其中 ' + carry + ' 位還在街角等' : '') + '（' + (M.peace_label || '平安') + ' −' + lost + '）';
+    }
+    g.log.push({ text: line, tag: '' });
+    if (s.leaked && lost && n.leak_text) g.log.push({ text: n.leak_text, tag: n.tag || '' });
+    if (!s.leaked && n.ok_text) g.log.push({ text: n.ok_text, tag: n.tag || '' });
+    g.money += (R.income || 0);
+    g.chant = false;
+    g.sim = null;
+    if (n.ask && R.share_events) {
+      g.pendingAsk = { n: n.ask.n, text: n.ask.text, tag: n.ask.tag || '', who: n.ask.who || '', helper: !!n.ask.helper };
+      g.phase = 'morning';
+    } else afterMorning(g);
+  }
+
+  // 早上：親朋上門想吃一頓飯。剩下的供品先拿來分，不夠再用錢
+  function askCost(g) {
+    if (!g.pendingAsk) return { need: 0, fromOffer: 0, fromMoney: 0, people: 0 };
+    var a = g.pendingAsk, cost = g.v.rules.share_cost || 2;
+    var people = Math.min(a.n, Math.floor((g.offer + g.money) / cost));
+    var need = people * cost, fromOffer = Math.min(g.offer, need);
+    return { need: need, fromOffer: fromOffer, fromMoney: need - fromOffer, people: people };
+  }
+
+  function answerAsk(g, give) {
+    if (g.phase !== 'morning' || !g.pendingAsk) return;
+    var a = g.pendingAsk;
+    if (give) {
+      var c = askCost(g), d = c.people - (a.n - c.people);
+      g.offer -= c.fromOffer; g.money -= c.fromMoney; g.favor += d;
+      if (a.helper && c.people >= a.n) { g.helpers.push(a.who); }
+      g.log.push({ text: (a.who ? '早上 ' + a.who + ' 上門，' : '早上親朋上門，') + '請 ' + c.people + '/' + a.n + ' 位吃飯' + (c.fromOffer ? '（拜完的供品分出去 ' + c.fromOffer + ' 份）' : '') + '（人情 ' + (d >= 0 ? '+' : '−') + Math.abs(d) + '）' + (a.helper && c.people >= a.n ? '。' + a.who + '說：十五那晚我來幫忙。' : ''), tag: a.tag });
+    } else {
+      g.favor -= a.n;
+      g.log.push({ text: (a.who ? '早上 ' + a.who + ' 上門想吃一頓飯，' : '早上親朋上門想吃一頓飯，') + '你推說沒有（人情 −' + a.n + '）', tag: a.tag });
+    }
+    g.pendingAsk = null;
+    afterMorning(g);
+  }
+
+  function afterMorning(g) {
+    var v = g.v;
+    if (g.offer > 0) {
+      if (v.rules.spoil) { g.log.push({ text: '剩下的 ' + g.offer + ' 份供品放不住，壞了。', tag: '遊戲設計' }); g.offer = 0; }
+    }
+    g.offerKept = g.offer;
+    g.night++;
+    if (g.night >= v.nights.length) { finish(g); return; }
+    g.phase = 'plan';
+    var n = night(g);
+    if (n.intro) g.log.push({ text: n.intro, tag: n.tag || '' });
+    if (n.helpers_arrive && v.rules.helper_offer) {
+      if (g.helpers.length) {
+        var add = g.helpers.length * v.rules.helper_offer;
+        g.offer += add; g.offerKept = g.offer;
+        g.log.push({ text: g.helpers.join('、') + ' 回來幫忙，各帶了 ' + v.rules.helper_offer + ' 份供品（免費 ' + add + ' 份）', tag: '工坊創作' });
+      } else g.log.push({ text: '今晚沒有親朋來幫忙。', tag: '工坊創作' });
+    }
+  }
+
+  function test(g, w) {
+    var val = w[0] === 'peace' ? g.peace : w[0] === 'favor' ? g.favor : g.money;
+    var op = w[1], x = w[2];
+    return op === '>=' ? val >= x : op === '<' ? val < x : op === '<=' ? val <= x : op === '>' ? val > x : val === x;
+  }
+
+  function finish(g) {
+    var e = null;
+    for (var i = 0; i < g.v.endings.length; i++) {
+      var en = g.v.endings[i];
+      if (!en.when || en.when.every(function (w) { return test(g, w); })) { e = en; break; }
+    }
+    g.result = { id: e.id, title: e.title, text: e.text, win: !!e.win, tag: e.tag || '', peace: g.peace, favor: g.favor };
+    g.phase = 'ended';
+  }
+
+  /* ---------- 機器玩家（給「試跑 100 局」與自動測試用） ---------- */
+  function freeCells(g) {
+    var v = g.v, out = [];
+    for (var r = 0; r < v.meta.rows; r++) for (var c = 0; c < v.meta.cols; c++) {
+      if (g.onPath[key(c, r)] || g.placed[key(c, r)]) continue;
+      var near = 0;
+      v.meta.path.forEach(function (p) { if (Math.max(Math.abs(p[0] - c), Math.abs(p[1] - r)) <= v.items.table.range) near++; });
+      out.push({ c: c, r: r, near: near });
+    }
+    return out.sort(function (a, b) { return b.near - a.near || a.r - b.r || a.c - b.c; });
+  }
+
+  function countKind(g, kind) { var n = 0; for (var k in g.placed) if (g.placed[k].kind === kind) n++; return n; }
+
+  var BOTS = {
+    // 亂點：亂擺、亂買、早上隨便答
+    random: function (g) {
+      var cells = freeCells(g);
+      for (var i = 0; i < 3; i++) {
+        var x = cells[Math.floor(g.rand() * cells.length)];
+        if (x) place(g, g.rand() < 0.3 ? 'lamp' : 'table', x.c, x.r);
+      }
+      setOffer(g, g.offer + Math.floor(g.rand() * 12));
+      if (g.rand() < 0.3) setChant(g, true);
+    },
+    // 通用塔防玩法：在路邊塞供桌、買剛好的供品；燈、日期、親朋都不管
+    generic: function (g) {
+      var n = night(g), want = n.count + (n.hungry || 0) + g.waiting.length * 2, cells = freeCells(g);
+      for (var i = 0; i < cells.length && g.money - g.v.items.table.cost >= want - g.offer; i++) {
+        if (countKind(g, 'table') >= 8) break;
+        place(g, 'table', cells[i].c, cells[i].r);
+      }
+      setOffer(g, want);
+    },
+    // 懂規矩：初一先豎燈、供桌擺在燈下、大夜請師父誦經、供品多買一點拜完分給親朋
+    wise: function (g) {
+      var v = g.v, n = night(g), R = v.rules, H = v.bot_hint || {};
+      if (g.night === 0 && (R.need_lamp || R.lamp_boost)) {
+        (H.lamp_cells || []).forEach(function (p) { place(g, 'lamp', p[0], p[1]); });
+      }
+      var want = (H.tables_by_night || [])[g.night] || 4;
+      var cells = freeCells(g).filter(function (c) { return !R.need_lamp || lit(g, c); });
+      var n2 = n.count + (n.hungry || 0) + g.waiting.length + (n.ask && R.share_events ? n.ask.n * (R.share_cost || 2) : 0);
+      for (var j = 0; j < cells.length && countKind(g, 'table') < want; j++) {
+        if (g.money - v.items.table.cost < n2 - g.offer) break;
+        place(g, 'table', cells[j].c, cells[j].r);
+      }
+      var big = (R.must_feed_all || []).indexOf(g.night) >= 0 || R.close_night === g.night;
+      if (big) setChant(g, true);
+      setOffer(g, n2);
+    }
+  };
+
+  // 懂規矩但不顧親朋：只照顧好兄弟
+  BOTS.wise_noshare = function (g) { BOTS.wise(g); };
+  // 懂規矩但捨不得請師父
+  BOTS.wise_nochant = function (g) { BOTS.wise(g); setChant(g, false); };
+  // 懂規矩但初一忘了豎燈（第二夜才想起來）
+  BOTS.late_lamp = function (g) {
+    if (g.night === 0) { var h = g.v.bot_hint; g.v.bot_hint = Object.assign({}, h, { lamp_cells: [] }); BOTS.wise(g); g.v.bot_hint = h; }
+    else { (g.v.bot_hint.lamp_cells || []).forEach(function (p) { place(g, 'lamp', p[0], p[1]); }); BOTS.wise(g); }
+  };
+
+  function playBot(v, seed, mode) {
+    var g = newGame(v, seed), guard = 0;
+    while (g.phase !== 'ended' && guard++ < 100) {
+      if (g.phase === 'plan') { BOTS[mode](g); startNight(g); runToEnd(g); }
+      if (g.phase === 'morning') answerAsk(g, (mode === 'generic' || mode === 'wise_noshare') ? false : mode === 'random' ? g.rand() < 0.5 : true);
+    }
+    return g;
+  }
+
+  function trial(v, n, mode, seed0) {
+    var wins = 0, ends = {};
+    for (var i = 0; i < n; i++) {
+      var g = playBot(v, (seed0 || 1000) + i, mode);
+      if (g.result.win) wins++;
+      ends[g.result.id] = (ends[g.result.id] || 0) + 1;
+    }
+    return { n: n, wins: wins, rate: wins / n, ends: ends };
+  }
+
+  var TD = { validate: validate, newGame: newGame, canPlace: canPlace, place: place, undo: undo, setOffer: setOffer,
+    setChant: setChant, startNight: startNight, tick: tick, runToEnd: runToEnd, answerAsk: answerAsk, askCost: askCost,
+    lit: lit, tableInfo: tableInfo, visPos: visPos, playBot: playBot, trial: trial, night: night, key: key, freeCells: freeCells };
+  if (typeof module !== 'undefined' && module.exports) module.exports = TD; else root.TD = TD;
+})(this);
+
+</script>
+<script>
+var DEFAULT_DATA = {"_說明": "普渡七日的資料檔。versions.culture＝文化規則版（文化長在規則裡），versions.skin＝普通塔防版（文化只是皮）。改完存檔後執行 python build.py，或把整份貼進頁面的「資料檔」分頁按載入。", "w2_kind": "時間節奏", "w2_kind_hint": "天然的回合結構", "w2_cards": [{"no": 24, "v": "普渡", "note": "一年一次，要餵飽所有看不見的東西", "used": "主角：波次就是七月裡的七個夜晚"}, {"no": 22, "v": "神明生日", "note": "固定的日期，全村都要動起來", "used": "第 2 階改作可以換成它"}, {"no": 21, "v": "農曆節氣", "note": "什麼時候該做什麼，錯過要等一年", "used": "第 2 階改作可以換成它"}], "field": {"local_pudu_date": "", "after_offering": "", "interview_line": "", "photo_note": ""}, "remix": {"intro": "這個遊戲的內容和規則都在資料檔（towerdef.json）裡，網頁只是照著它跑。你不用會寫程式，改文字和數字就能改做。改完到「資料檔」分頁按「載入」，再按「試跑 100 局」看看有沒有改壞。", "steps": [{"title": "第 1 階：換內容", "goal": "不動規則，只換日期、人數、說的話。", "task": "去問家裡長輩或附近的廟：「我們這裡七月哪一天普渡？拜完的供品怎麼處理？」把問到的日期換進 nights 的 label，把七夜的人數（count）改成你覺得合理的樣子，再把開場的話（intro）改成你問到的說法。", "field": "你問到的日期、長輩說的那句話、你拍到的普渡桌怎麼擺：AI 沒問過、沒去過，編出來的不算數。", "prompt": "我貼給你一份小遊戲的資料檔（JSON）。我問了〔誰〕，他說我們那裡七月〔哪幾天〕普渡，拜完的供品會〔怎麼處理〕。請只改 versions.culture.nights 裡每一夜的 label、intro、count，不要動 rules、items、endings。改完把整份資料檔原樣回傳，不要省略。"}, {"title": "第 2 階：換規則——把一張文化卡從「皮」變成「規則」", "goal": "普通塔防版裡，普渡只是標題。挑一張文化卡，讓它變成規則。", "task": "打開 versions.skin（普通塔防版）。現在「普渡」只是標題，十五和別夜沒有差別。試著改一條：把 rules.must_feed_all 從 [] 改成 [3]（第 4 夜要全部擋下，漏一隻扣兩倍），或把 rules.spoil 改成 true（砲彈用不完會壞）。再挑一張別的時間節奏卡試試：「神明生日」是固定的一天全村都要動起來；「農曆節氣」是什麼時候該做什麼、錯過要等一年。改完按「試跑 100 局」，寫一句：這張卡變成規則以後，玩的人要多想什麼？", "field": "「改完好不好玩」要你自己玩一局才知道；AI 只能算勝率。", "prompt": "這是小遊戲的資料檔（JSON）。普通塔防版（versions.skin）裡，文化卡〔例：普渡／神明生日／農曆節氣〕現在只是名字，沒有規則。請幫我想一條規則，讓這張卡變成「拿掉它，遊戲就不一樣」：只能用 rules 裡已有的欄位（lamp_gate、need_lamp、spoil、must_feed_all、close_night、share_events），或改 nights 的人數與名稱。列出你改了哪幾個欄位，再用一句話說明：這條規則讓玩家多了哪個要取捨的決定？"}, {"title": "第 3 階：換形式", "goal": "同樣的時間節奏，換成別的樣板去做。", "task": "兩條路選一條。（甲）同一個資料檔格式，把七月換成「神明生日」：七個夜晚變成生日前的七天準備，每一關的人換成來幫忙的鄰居，重點放在全村怎麼分工、日期錯過就來不及。（乙）把「親朋上門想吃一頓飯」那一段拆出來，用經營模擬樣板去做：錢要分給拜拜，還是分給人？", "field": "普渡、神明生日的真正做法各地不同，要問家人或廟方；AI 寫的常常是想像出來的。", "prompt": "請用和這份資料檔完全相同的格式（meta、rules、items、nights、start、endings），把主題改成〔例：神明生日〕。nights 改成生日前的七天，每一關的人改成〔例：來幫忙的鄰居〕，要保留一條「錯過日期就來不及」的規則。語氣要尊重。回傳完整 JSON，並用三句話說明：把這個文化拿掉後，遊戲還玩得下去嗎？"}], "field_title": "🔎 AI 做不到、要你去問或去看的欄位", "field_note": "這四格預設是空的。填了之後，你的改作就有別人編不出來的東西。問人時先說明是課堂作業、不要拍別人的臉。", "field_items": [{"key": "local_pudu_date", "label": "你家那條街（或附近的廟）七月哪一天普渡？"}, {"key": "after_offering", "label": "拜完的供品怎麼處理？（分給誰、怎麼分）"}, {"key": "interview_line", "label": "長輩或廟方說的一句話（照他的說法寫）"}, {"key": "photo_note", "label": "你看到的普渡桌怎麼擺？桌子在哪、燈掛哪、供品怎麼排"}], "extend_title": "加一個東西：多一夜", "extend_text": "想多一個夜晚，就在 nights 裡加一筆：名字（label）、來幾位（count）、間隔（gap）、有幾位比較餓（hungry）、開場一句話（intro）、這是哪一種內容（tag：原著／改編／作者觀點／工坊創作／遊戲設計，老實填）。早上有親朋上門就加 ask。", "extend_json": "{ \"label\": \"初三・廟裡普\", \"count\": 7, \"gap\": 2, \"hungry\": 1, \"tag\": \"工坊創作\", \"intro\": \"初三，廟口先普。\", \"ask\": { \"n\": 1, \"tag\": \"工坊創作\" } }", "tool_chain": "把「試跑 100 局」的結果和你改的那一行，一起貼給 Claude 或 Gemini，問它：「這樣改，懂規矩的人還會贏嗎？下一步該調哪個數字？」它建議、你改、再試跑——這個來回，就是用工具改遊戲最常用的流程。"}, "versions": {"culture": {"meta": {"cols": 7, "rows": 9, "path": [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [6, 1], [6, 2], [5, 2], [4, 2], [3, 2], [2, 2], [1, 2], [0, 2], [0, 3], [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [6, 5], [6, 6], [5, 6], [4, 6], [3, 6], [2, 6], [1, 6], [0, 6], [0, 7], [0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8]], "noise": 2, "title": "普渡七日", "subtitle": "文化規則版：文化長在規則裡", "start_label": "街頭", "end_label": "街尾人家", "who": "好兄弟", "who_icon": "◌", "peace_label": "平安", "money_label": "錢", "money_icon": "💰", "word_done": " 位好兄弟吃飽離開", "word_leak": " 位沒被招待，在街上流連", "intro": "農曆七月，鬼門開了。七個夜晚，看不見的客人（民間稱「好兄弟」）會沿著這條街走過來。你在路邊豎燈、擺供桌、請師父誦經，讓他們吃飽、安心離開。錢只有這麼多——白天也有活著的親朋上門，想吃一頓飯。"}, "rules": {"lamp_gate": true, "lamp_gate_msg": "燈要在初一開鬼門那晚點起來；鬼門已經開了，這個月來不及了", "need_lamp": true, "lamp_boost": false, "spoil": true, "must_feed_all": [3], "must_feed_all_penalty": 2, "close_night": 6, "close_penalty": 2, "leak_penalty": 1, "share_events": true, "share_cost": 2, "kill_reward": 0, "income": 18, "waiting": true, "helper_offer": 3}, "items": {"lamp": {"label": "燈", "icon": "🏮", "cost": 3, "range": 2, "desc": "照亮周圍兩格。供桌要在燈照得到的地方，好兄弟才看得到（這是遊戲規則）。只能在初一點。", "tag": "作者觀點＋遊戲設計"}, "table": {"label": "供桌", "icon": "🍚", "cost": 3, "range": 1, "cooldown": 1, "desc": "招待旁邊一格經過的好兄弟，每次一份供品；隔一拍才能再招待。", "tag": "改編"}, "offer": {"label": "供品", "icon": "🍊", "cost": 1, "desc": "一份 1 元。當晚沒用完會壞掉；白天可以分給上門的親朋。", "tag": "遊戲設計"}, "chant": {"label": "請師父誦經", "icon": "📿", "cost": 3, "slow": 0.5, "relief": true, "desc": "這一夜好兄弟走得慢一半；餓很久的，聽完經只要一份就安心離開。", "tag": "作者觀點＋遊戲設計"}}, "start": {"money": 32, "peace": 10, "favor": 0}, "nights": [{"label": "初一・開鬼門", "count": 6, "gap": 3, "hungry": 0, "tag": "作者觀點", "intro": "初一，鬼門開了。許丙丁寫過：臺南從七月一日起，各街「懸燈結綵」。今晚是唯一能點燈的時候。", "ok_text": "第一夜平平安安。"}, {"label": "初五・街路輪流普", "count": 8, "gap": 2, "hungry": 1, "tag": "遊戲設計", "intro": "初五，這一帶輪到街上拜。沒招待到的好兄弟不會走，會在街角等你明晚補一份。", "ask": {"n": 1, "who": "阿叔", "helper": true, "tag": "工坊創作"}}, {"label": "初九・街路輪流普", "count": 10, "gap": 2, "hungry": 2, "tag": "遊戲設計", "intro": "初九，人更多了，有幾位餓很久，要兩份才吃得飽。", "ask": {"n": 1, "who": "表姊", "helper": true, "tag": "工坊創作"}}, {"label": "十五・中元普渡", "count": 28, "gap": 2, "hungry": 7, "tag": "改編＋遊戲設計", "intro": "十五，中元。一年一次的大日子；遊戲裡的規則：今晚要全部招待到，漏一位，平安扣兩倍。給過飯的親朋今晚會回來幫忙。", "helpers_arrive": true, "leak_text": "十五還有人沒吃到，整條街都不安心。", "ok_text": "十五全部招待到了。", "ask": {"n": 2, "tag": "作者觀點"}}, {"label": "十九・街路輪流普", "count": 10, "gap": 2, "hungry": 2, "tag": "遊戲設計", "intro": "十九。", "ask": {"n": 1, "tag": "作者觀點"}}, {"label": "廿五・街路輪流普", "count": 12, "gap": 2, "hungry": 3, "tag": "遊戲設計", "intro": "廿五，月底快到了。"}, {"label": "月底・關鬼門", "count": 10, "gap": 2, "hungry": 2, "tag": "改編＋遊戲設計", "intro": "月底，最後一夜，鬼門要關了。遊戲裡的規則：還沒吃飽的會留在街上，漏一位，平安扣兩倍。", "leak_text": "鬼門關了，還有好兄弟留在街上。", "ask": {"n": 2, "tag": "作者觀點"}}], "endings": [{"id": "both", "win": true, "title": "陰陽都顧到", "when": [["peace", ">=", 7], ["favor", ">=", 3]], "text": "好兄弟吃飽了，上門的親朋也吃到一頓飯。這條街安安穩穩過完七月。", "tag": "遊戲設計"}, {"id": "ghost_only", "win": false, "title": "人媚鬼心重", "when": [["peace", ">=", 7]], "text": "好兄弟招待得很周到，可是親朋想吃一頓飯，你卻面有難色。寫《小封神》的許丙丁看過這種場面（這是他在報紙上寫的，不是小說裡的情節），他說這是「人媚鬼心重」。", "tag": "作者觀點"}, {"id": "unsettled", "win": false, "title": "街上不平安", "text": "七月過完，還有好兄弟在街上流連。明年初一要記得點燈、多擺幾張供桌。", "tag": "遊戲設計"}], "bot_hint": {"lamp_cells": [[2, 1], [4, 5], [3, 7]], "tables_by_night": [3, 4, 5, 7, 7, 7, 7]}, "w2": {"answer": "玩法本身就垮了", "why": "拿掉「燈只能初一點」「十五要全部招待」「供品放不住」「親朋上門」，剩下的就是普通塔防：你原本要做的取捨全部消失。"}}, "skin": {"meta": {"cols": 7, "rows": 9, "path": [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [6, 1], [6, 2], [5, 2], [4, 2], [3, 2], [2, 2], [1, 2], [0, 2], [0, 3], [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [6, 5], [6, 6], [5, 6], [4, 6], [3, 6], [2, 6], [1, 6], [0, 6], [0, 7], [0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8]], "noise": 2, "title": "普渡七日", "subtitle": "普通塔防版：文化只是皮", "start_label": "入口", "end_label": "城門", "who": "小怪", "who_icon": "●", "peace_label": "城門血量", "money_label": "金紙", "money_icon": "🪙", "word_done": " 隻小怪被打倒", "word_leak": " 隻衝進城門", "intro": "（普通塔防版）畫面還是普渡七日、燈籠、金紙，可是規則是一般的塔防：蓋砲塔打小怪，打倒一隻拿 1 張金紙，守住城門。"}, "rules": {"lamp_gate": false, "need_lamp": false, "lamp_boost": true, "spoil": false, "must_feed_all": [], "close_night": -1, "leak_penalty": 1, "share_events": false, "share_cost": 2, "kill_reward": 1, "income": 12}, "items": {"lamp": {"label": "探照燈", "icon": "🏮", "cost": 3, "range": 2, "desc": "周圍兩格的砲塔射程 +1。什麼時候都能蓋。", "tag": "遊戲設計"}, "table": {"label": "砲塔", "icon": "🗼", "cost": 3, "range": 1, "cooldown": 1, "desc": "打旁邊一格經過的小怪，每發用一顆砲彈；隔一拍才能再打。", "tag": "遊戲設計"}, "offer": {"label": "砲彈", "icon": "🔸", "cost": 1, "desc": "一顆 1 張金紙，用不完留到下一波。", "tag": "遊戲設計"}, "chant": {"label": "緩速陷阱", "icon": "🕸️", "cost": 3, "slow": 0.5, "desc": "這一波小怪走得慢一半。", "tag": "遊戲設計"}}, "start": {"money": 32, "peace": 10, "favor": 0}, "nights": [{"label": "第 1 波", "count": 6, "gap": 3, "hungry": 0, "tag": "遊戲設計"}, {"label": "第 2 波", "count": 8, "gap": 2, "hungry": 1, "tag": "遊戲設計"}, {"label": "第 3 波", "count": 10, "gap": 2, "hungry": 2, "tag": "遊戲設計"}, {"label": "第 4 波", "count": 28, "gap": 2, "hungry": 7, "tag": "遊戲設計"}, {"label": "第 5 波", "count": 10, "gap": 2, "hungry": 2, "tag": "遊戲設計"}, {"label": "第 6 波", "count": 12, "gap": 2, "hungry": 3, "tag": "遊戲設計"}, {"label": "第 7 波", "count": 10, "gap": 2, "hungry": 2, "tag": "遊戲設計"}], "endings": [{"id": "hold", "win": true, "title": "守住了", "when": [["peace", ">=", 7]], "text": "城門守住了。", "tag": "遊戲設計"}, {"id": "broken", "win": false, "title": "城門被突破", "text": "小怪衝進城門太多次。下次多蓋幾座砲塔。", "tag": "遊戲設計"}], "bot_hint": {"lamp_cells": [[2, 1], [4, 5], [3, 7]], "tables_by_night": [3, 4, 5, 7, 7, 7, 7]}, "w2": {"answer": "照樣玩", "why": "把普渡、燈籠、金紙換成太空、雷達、金幣，玩法一個字都不用改。文化只是它的外表。"}}}};
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var qs = new URLSearchParams(location.search);
+  var S = { data: JSON.parse(JSON.stringify(DEFAULT_DATA)), mode: qs.get('mode') === 'skin' ? 'skin' : 'culture',
+    seed: +(qs.get('seed') || 0) || Math.floor(Math.random() * 1e9), g: null, tool: 'table', timer: null, fast: false,
+    answers: {}, played: {} };
+  window.__TD = S;
+
+  function store(k, v) { try { localStorage.setItem('pudu7_' + k, JSON.stringify(v)); } catch (e) {} }
+  function load(k) { try { var x = localStorage.getItem('pudu7_' + k); return x ? JSON.parse(x) : null; } catch (e) { return null; } }
+  var savedField = load('field'); if (savedField) S.data.field = Object.assign(S.data.field || {}, savedField);
+  var th = load('theme'); if (th) document.documentElement.setAttribute('data-theme', th);
+
+  function V() { return S.data.versions[S.mode]; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function tag(t) { return t ? '<span class="tag">' + esc(t) + '</span>' : ''; }
+  function say(t) { $('msg').textContent = t || ''; }
+
+  function newGame() {
+    stopTimer();
+    S.g = TD.newGame(V(), S.seed);
+    S.tool = 'table';
+    render();
+  }
+
+  function header() {
+    var v = V(), D = S.data;
+    $('title').textContent = v.meta.title;
+    $('subtitle').textContent = v.meta.subtitle;
+    $('m_culture').className = S.mode === 'culture' ? 'on' : '';
+    $('m_skin').className = S.mode === 'skin' ? 'on' : '';
+    $('intro').textContent = v.meta.intro;
+    $('w2kind').textContent = D.w2_kind;
+    $('w2hint').textContent = 'W2 說這一類：' + D.w2_kind_hint + '。下面三張是 W2 卡池裡的示範卡（編號照 W2 頁面）。';
+    $('w2cards').innerHTML = (D.w2_cards || []).map(function (c) {
+      return '<div><span class="chip">#' + c.no + ' ' + esc(c.v) + '</span><span class="small">' + esc(c.note) + '（這裡：' + esc(c.used) + '）</span></div>';
+    }).join('');
+  }
+
+  function render() {
+    var g = S.g, v = V(), M = v.meta, R = v.rules, n = TD.night(g);
+    header();
+    // 七夜預告
+    $('nights').innerHTML = v.nights.map(function (x, i) {
+      var cls = i === g.night && g.phase !== 'ended' ? 'now' : (i < g.night ? 'past' : '');
+      if ((R.must_feed_all || []).indexOf(i) >= 0 || R.close_night === i || (R.lamp_gate && i === 0)) cls += ' big';
+      return '<span class="' + cls + '">' + esc(x.label) + '</span>';
+    }).join('');
+    var hud = [['夜', g.phase === 'ended' ? '完' : (g.night + 1) + '/' + v.nights.length], [M.money_label, M.money_icon + g.money], [M.peace_label, g.peace]];
+    if (R.share_events) hud.push(['人情', g.favor]); else hud.push([v.items.offer.label, g.offer]);
+    $('hud').innerHTML = hud.map(function (h) { return '<div>' + esc(h[0]) + '<b>' + esc(h[1]) + '</b></div>'; }).join('');
+    $('legend').textContent = S.mode === 'culture' ? '藍色光點＝好兄弟；橘色＝餓很久、要兩份才吃得飽。亮起來的格子是燈照得到的地方；標「暗」的供桌，好兄弟看不到。' : '紅點＝小怪；深紅＝要打兩下。';
+    var wn = g.waiting ? g.waiting.length : 0;
+    $('waitNote').textContent = (V().rules.waiting && wn && g.phase === 'plan') ? '街角還有 ' + wn + ' 位好兄弟在等你昨晚沒招待到的一份——他們今晚會先來，只要補剩下的一份。' : '';
+    drawBoard();
+    // 面板
+    var plan = g.phase === 'plan';
+    $('planBox').classList.toggle('hide', !plan);
+    $('runBox').classList.toggle('hide', g.phase !== 'run');
+    $('askBox').classList.toggle('hide', g.phase !== 'morning');
+    $('endBox').classList.toggle('hide', g.phase !== 'ended');
+    if (plan) {
+      var L = v.items.lamp, T = v.items.table, lampWhy = TD.canPlace(g, 'lamp', -1, -1);
+      $('tool_lamp').textContent = L.icon + ' ' + L.label + '（' + L.cost + '）';
+      $('tool_table').textContent = T.icon + ' ' + T.label + '（' + T.cost + '）';
+      $('tool_lamp').className = S.tool === 'lamp' ? 'on' : '';
+      $('tool_table').className = S.tool === 'table' ? 'on' : '';
+      var lampLocked = R.lamp_gate && g.night !== 0;
+      $('tool_lamp').disabled = lampLocked;
+      if (lampLocked && S.tool === 'lamp') S.tool = 'table';
+      var it = v.items[S.tool];
+      $('toolDesc').innerHTML = esc(it.desc) + tag(it.tag) + (lampLocked ? '<br>' + esc(R.lamp_gate_msg) : '');
+      $('undoBtn').disabled = !g.placedThisPlan.length;
+      $('offerLabel').textContent = v.items.offer.icon + ' ' + v.items.offer.label + '（每份 ' + v.items.offer.cost + '）';
+      $('offerN').textContent = g.offer;
+      var C = v.items.chant;
+      $('chantBtn').textContent = C.icon + ' ' + C.label + '（' + C.cost + '）' + (g.chant ? ' ✓' : '');
+      $('chantBtn').className = g.chant ? 'on' : '';
+      $('chantDesc').textContent = C.desc;
+      $('startBtn').textContent = '開始：' + n.label;
+    }
+    if (g.phase === 'morning') {
+      var c = TD.askCost(g), a = g.pendingAsk;
+      $('askText').innerHTML = '天亮了。' + (a.who ? esc(a.who) + ' 上門，' : a.n + ' 位親朋上門，') + '想吃一頓飯。' + tag(a.tag) + (a.helper ? '<br><span class="small">給他吃一頓，十五那晚他會回來幫忙。</span>' : '') + '<br><span class="small">剩下的供品 ' + g.offer + ' 份會先拿來分（拜完的供品）；不夠才用錢。寫《小封神》的許丙丁說過：拜拜捨得花，「親朋欲求一飯，頗呈難色」。</span>';
+      $('askYes').textContent = '請他們吃飯（' + (c.fromOffer ? '供品 ' + c.fromOffer + ' 份' : '') + (c.fromOffer && c.fromMoney ? '＋' : '') + (c.fromMoney ? '錢 ' + c.fromMoney : '') + (c.need ? '' : '不夠') + '）';
+    }
+    if (g.phase === 'ended') renderEnd();
+    $('log').innerHTML = g.log.slice().reverse().map(function (l) { return '<li>' + esc(l.text) + tag(l.tag) + '</li>'; }).join('');
+  }
+
+  function drawBoard() {
+    var g = S.g, v = V(), M = v.meta, R = v.rules, b = $('board');
+    var html = '';
+    for (var r = 0; r < M.rows; r++) for (var c = 0; c < M.cols; c++) {
+      var k = TD.key(c, r), p = g.placed[k], cls = 'cell', inner = '', extra = '';
+      if (g.onPath[k]) cls += ' path';
+      if ((R.need_lamp || R.lamp_boost) && TD.lit(g, { c: c, r: r })) cls += ' lit';
+      if (p) {
+        inner = v.items[p.kind].icon;
+        if (p.kind === 'table' && R.need_lamp && !TD.lit(g, p)) cls += ' dim';
+      }
+      var first = M.path[0], last = M.path[M.path.length - 1];
+      if (c === first[0] && r === first[1]) { cls += ' endc'; extra = ' data-l="' + esc(M.start_label) + '"'; if (R.waiting && g.waiting.length && g.phase === 'plan') inner = '<span style="font-size:.7rem;color:#6f86d6">' + '●'.repeat(Math.min(5, g.waiting.length)) + '</span>'; }
+      if (c === last[0] && r === last[1]) { cls += ' endc'; extra = ' data-l="' + esc(M.end_label) + '"'; inner = inner || '🏠'; }
+      if (g.sim) g.sim.tables.forEach(function (t) { if (t.c === c && t.r === r && t.flash > 0) { cls += ' flash'; } });
+      html += '<button class="' + cls + '" data-cell="' + c + ',' + r + '"' + extra + ' aria-label="第' + (r + 1) + '列第' + (c + 1) + '格">' + inner + '</button>';
+    }
+    if (g.sim) {
+      var ghost = S.mode === 'culture';
+      g.sim.vis.forEach(function (x) {
+        if (x.gone || x.at < 0) return;
+        if (x.done && g.sim.t - x.doneT > 4) return;
+        var p = TD.visPos(g, x);
+        html += '<i class="vis ' + (ghost ? 'ghost' : 'mob') + (x.hungry && x.need > 1 ? ' hungry' : '') + (x.done ? ' fed' : '') + '" style="left:' + ((p.c + .5) / M.cols * 100) + '%;top:' + ((p.r + .5) / M.rows * 100) + '%"></i>';
+      });
+      g.sim.tables.forEach(function (t) { if (t.flash) t.flash--; });
+    }
+    b.innerHTML = html;
+  }
+
+  function stopTimer() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
+  function startTimer() {
+    stopTimer();
+    S.timer = setInterval(function () {
+      var g = S.g;
+      if (g.phase !== 'run') { stopTimer(); render(); return; }
+      TD.tick(g);
+      if (g.phase !== 'run') { stopTimer(); render(); } else drawBoard();
+    }, S.fast ? 45 : 170);
+  }
+
+  function renderEnd() {
+    var g = S.g, r = g.result, v = V();
+    S.played[S.mode] = { title: r.title, win: r.win, peace: r.peace, favor: r.favor, stats: g.nightStats.map(function (s) { return s.satisfied + '/' + s.count; }).join('、') };
+    $('endTitle').innerHTML = (r.win ? '🌕 ' : '🌑 ') + esc(r.title) + tag(r.tag);
+    $('endText').textContent = r.text + '（' + v.meta.peace_label + ' ' + r.peace + (v.rules.share_events ? '、人情 ' + r.favor : '') + '）';
+    var opts = ['照樣玩', '故事垮了玩法還在', '玩法本身就垮了', '說不準'], a = S.answers[S.mode];
+    $('ansRow').innerHTML = opts.map(function (o) { return '<button data-act="__ans" data-v="' + o + '" class="' + (a && a.choice === o ? 'on' : '') + '">' + o + '</button>'; }).join('');
+    if (a && a.sent) $('ansBack').innerHTML = '你的判斷：<b>' + esc(a.choice) + '</b>。我們的看法：<b>' + esc(v.w2.answer) + '</b>——' + esc(v.w2.why) + '<br>不一樣也沒關係，說得出理由就好；想想看是哪一條規則讓你這樣判斷。';
+    else $('ansBack').textContent = '';
+    $('otherBtn').textContent = S.mode === 'culture' ? '換普通塔防版玩' : '換文化規則版玩';
+    var cmp = $('compare'), A = S.played.culture, B = S.played.skin;
+    if (A && B) {
+      cmp.classList.remove('hide');
+      cmp.innerHTML = '<b>比一比兩個版本</b><table><tr><th></th><th>文化規則版</th><th>普通塔防版</th></tr>' +
+        '<tr><td>結局</td><td>' + esc(A.title) + '</td><td>' + esc(B.title) + '</td></tr>' +
+        '<tr><td>每夜招待／打倒</td><td>' + esc(A.stats) + '</td><td>' + esc(B.stats) + '</td></tr>' +
+        '<tr><td>你的判斷</td><td>' + esc((S.answers.culture || {}).choice || '還沒答') + '</td><td>' + esc((S.answers.skin || {}).choice || '還沒答') + '</td></tr></table>' +
+        '<p class="small">兩邊的判斷如果一樣，回頭找找：文化規則版裡哪些事是普通版沒有的？（燈什麼時候能點、十五、供品會壞、親朋上門）</p>';
+    } else cmp.classList.add('hide');
+  }
+
+  /* ---------- 怎麼改做 ---------- */
+  function renderRemix() {
+    var R = S.data.remix, F = S.data.field || {};
+    var h = '<div class="card"><p>' + esc(R.intro) + '</p></div>';
+    R.steps.forEach(function (st) {
+      h += '<div class="card"><b>' + esc(st.title) + '</b><p class="small">' + esc(st.goal) + '</p><p>' + esc(st.task) + '</p>' +
+        (st.field ? '<p>🔎 ' + esc(st.field) + '</p>' : '') +
+        '<p class="small">可以貼給 Claude／Gemini 的指令：</p><pre>' + esc(st.prompt) + '</pre>' +
+        '<button data-act="__copy" data-text="' + esc(st.prompt) + '">複製指令</button></div>';
+    });
+    h += '<div class="card"><b>' + esc(R.field_title) + '</b><p class="small">' + esc(R.field_note) + '</p>';
+    R.field_items.forEach(function (f) {
+      h += '<label class="small" for="f_' + f.key + '">' + esc(f.label) + '</label><input type="text" id="f_' + f.key + '" data-field="' + f.key + '" value="' + esc(F[f.key] || '') + '">';
+    });
+    h += '<p class="small">填的內容會跟著資料檔一起存（「資料檔」分頁按「存成檔案」）。</p></div>';
+    h += '<div class="card"><b>' + esc(R.extend_title) + '</b><p>' + esc(R.extend_text) + '</p><pre>' + esc(R.extend_json) + '</pre></div>';
+    h += '<div class="card"><b>這一單元多學的一個工具串接</b><p>' + esc(R.tool_chain) + '</p></div>';
+    $('pane_remix').innerHTML = h;
+  }
+
+  function showTab(t) {
+    ['play', 'remix', 'data'].forEach(function (x) { $('pane_' + x).classList.toggle('hide', x !== t); $('tab_' + x).className = x === t ? 'on' : ''; });
+    if (t === 'remix') renderRemix();
+    if (t === 'data') $('jsonBox').value = JSON.stringify(S.data, null, 1);
+  }
+
+  function trialOut() {
+    var bots = [['random', '亂點'], ['generic', '通用塔防玩法（不管燈與日期，親朋都不請）'], ['wise', '懂這些規矩']];
+    var h = '<table><tr><th>玩家</th><th>文化規則版</th><th>普通塔防版</th></tr>';
+    bots.forEach(function (b) {
+      var a = TD.trial(S.data.versions.culture, 100, b[0], 1), c = TD.trial(S.data.versions.skin, 100, b[0], 1);
+      h += '<tr><td>' + b[1] + '</td><td>' + a.wins + '%</td><td>' + c.wins + '%</td></tr>';
+    });
+    $('trialOut').innerHTML = h + '</table><p class="small">勝率是機器算的；好不好玩，要你自己玩一局才知道。</p>';
+  }
+
+  document.addEventListener('click', function (ev) {
+    var el = ev.target.closest('button'); if (!el) return;
+    var g = S.g, act = el.dataset.act;
+    if (el.dataset.cell) {
+      if (g.phase !== 'plan') return;
+      var cr = el.dataset.cell.split(',').map(Number);
+      var why = TD.place(g, S.tool, cr[0], cr[1]);
+      say(why); render(); return;
+    }
+    switch (act) {
+      case '__m_culture': S.mode = 'culture'; newGame(); say(''); break;
+      case '__m_skin': S.mode = 'skin'; newGame(); say(''); break;
+      case '__theme':
+        var cur = document.documentElement.getAttribute('data-theme');
+        var dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark'); store('theme', dark ? 'light' : 'dark'); break;
+      case '__tab_play': showTab('play'); break;
+      case '__tab_remix': showTab('remix'); break;
+      case '__tab_data': showTab('data'); break;
+      case '__tool_lamp': S.tool = 'lamp'; render(); break;
+      case '__tool_table': S.tool = 'table'; render(); break;
+      case '__undo': TD.undo(g); render(); break;
+      case '__offer_minus': TD.setOffer(g, g.offer - 1); render(); break;
+      case '__offer_plus': TD.setOffer(g, g.offer + 1); render(); break;
+      case '__offer_fit': var n = TD.night(g); TD.setOffer(g, n.count + (n.hungry || 0)); render(); break;
+      case '__chant': say(TD.setChant(g, !g.chant)); render(); break;
+      case '__end': say(''); TD.startNight(g); S.fast = false; $('fastBtn').textContent = '快轉'; render(); startTimer(); break;
+      case '__fast': S.fast = !S.fast; el.textContent = S.fast ? '正常速度' : '快轉'; startTimer(); break;
+      case '__skip': stopTimer(); TD.runToEnd(g); render(); break;
+      case '__ask_yes': TD.answerAsk(g, true); render(); break;
+      case '__ask_no': TD.answerAsk(g, false); render(); break;
+      case '__ans': S.answers[S.mode] = { choice: el.dataset.v, sent: false }; render(); break;
+      case '__ans_send':
+        if (!S.answers[S.mode]) { $('ansBack').textContent = '先選一個答案。'; break; }
+        S.answers[S.mode].why = $('ansWhy').value; S.answers[S.mode].sent = true; store('answers', S.answers);
+        try { if (window.CT_HOOK) { var hv = S.mode === 'culture' ? 'rule' : 'skin', ix = ['照樣玩', '故事垮了玩法還在', '玩法本身就垮了', '說不準'].indexOf(S.answers[S.mode].choice); CT_HOOK.markPlayed(hv); if (ix >= 0) CT_HOOK.judged(hv, ix + 1, S.answers[S.mode].why); } } catch (e) { /* 助教出錯不能影響樣板 */ }
+        render(); break;
+      case '__restart': S.seed++; newGame(); window.scrollTo(0, 0); break;
+      case '__other': S.mode = S.mode === 'culture' ? 'skin' : 'culture'; $('ansWhy').value = ''; newGame(); window.scrollTo(0, 0); break;
+      case '__trial': trialOut(); break;
+      case '__load':
+        try {
+          var d = JSON.parse($('jsonBox').value), errs = [];
+          ['culture', 'skin'].forEach(function (k) { if (!d.versions || !d.versions[k]) errs.push('缺少 versions.' + k); else TD.validate(d.versions[k]).forEach(function (e) { errs.push(k + '：' + e); }); });
+          if (errs.length) { $('loadMsg').textContent = '沒有載入，請修正：' + errs.join('；'); break; }
+          if (!d.remix) d.remix = DEFAULT_DATA.remix;
+          S.data = d; $('loadMsg').textContent = '載入了。回「玩」分頁就是你的版本。'; newGame();
+        } catch (e) { $('loadMsg').textContent = '資料檔格式錯了（' + e.message + '），常見原因：少了逗號或引號。'; }
+        break;
+      case '__reset': S.data = JSON.parse(JSON.stringify(DEFAULT_DATA)); $('jsonBox').value = JSON.stringify(S.data, null, 1); $('loadMsg').textContent = '還原了。'; newGame(); break;
+      case '__save':
+        var blob = new Blob([JSON.stringify(S.data, null, 1)], { type: 'application/json' });
+        var a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = 'towerdef.json'; a2.click();
+        setTimeout(function () { URL.revokeObjectURL(a2.href); }, 1000); break;
+      case '__copy':
+        var t = el.dataset.text;
+        if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { el.textContent = '已複製'; }, function () { el.textContent = '請手動選取複製'; });
+        break;
+    }
+  });
+  document.addEventListener('input', function (ev) {
+    var k = ev.target.dataset && ev.target.dataset.field;
+    if (k) { S.data.field = S.data.field || {}; S.data.field[k] = ev.target.value; store('field', S.data.field); }
+  });
+
+  newGame();
+})();
+</script>
+<!-- CT-HOOK-BEGIN -->
+<script src="../tutor/folk_index.js?v=202611151156"></script>
+<script src="../tutor/tutor_templates.js?v=202611151156"></script>
+<script src="../tutor/tutor_core.js?v=202611151156"></script>
+<script src="../tutor/tutor_ui.js?v=202611151156"></script>
+<script src="../tutor/tutor_hook.js?v=202611151156"></script>
+<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script>if (window.CT_BOOT) CT_BOOT('towerdef');</script>
+<!-- CT-HOOK-END -->
+</body>
+</html>

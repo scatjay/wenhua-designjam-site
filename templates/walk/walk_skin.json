@@ -1,0 +1,288 @@
+{
+  "format": "walk-template-0.1",
+  "meta": {
+    "id": "xfs-walk-skin",
+    "title": "通天冠去哪了",
+    "subtitle": "跟著《小封神》走一趟台南舊城（外觀版）",
+    "author": "工坊示範（可以改成你的名字）",
+    "updated": "2026-11-11",
+    "intro": "這是同一條路的另一個版本：每一站只有打卡和問答，順序隨你走，答對就得分。廟的名字和小封神的故事都在，但沒有任何一個步驟靠它們才成立。玩完以後，和規則版比一比。"
+  },
+  "rules": {
+    "mode": "free",
+    "geofence": true,
+    "score": true,
+    "hints": true
+  },
+  "flags": {},
+  "stops": [
+    {
+      "id": "lingyou",
+      "name": "靈祐宮（小上帝廟）",
+      "kind": "廟",
+      "lat": 22.9977,
+      "lon": 120.2033,
+      "r": 70,
+      "coord_status": "待確認",
+      "coord_source": "沿用走讀九案路線的概略座標（地圖資料，還沒到現場核對）",
+      "requires": [],
+      "locked_msg": "",
+      "culture": {
+        "entry": "place.lingyou_temple",
+        "origin": "原著",
+        "note": "原書裡「小上帝」先是一個地名，神才跟著這樣叫；他不是小孩。"
+      },
+      "npc": {
+        "name": "打卡小幫手",
+        "ava": "📍",
+        "lines": [
+          "到了！回答下面的問題，答對得 1 分。"
+        ]
+      },
+      "tasks": [
+        {
+          "id": "k1",
+          "type": "choice",
+          "title": "靈祐宮俗稱什麼廟？",
+          "options": [
+            "小上帝廟",
+            "大上帝廟",
+            "媽祖廟"
+          ],
+          "answer": "小上帝廟",
+          "hint": "名字裡有「小」。",
+          "reward": "答對了。"
+        },
+        {
+          "id": "k2",
+          "type": "choice",
+          "title": "靈祐宮主祀哪一位神明？",
+          "options": [
+            "玄天上帝",
+            "關聖帝君",
+            "保生大帝"
+          ],
+          "answer": "玄天上帝",
+          "hint": "上帝爺。",
+          "reward": "答對了。"
+        }
+      ],
+      "on_complete": {
+        "grant": [],
+        "msg": ""
+      }
+    },
+    {
+      "id": "pawn",
+      "name": "打銀街的當店",
+      "kind": "店",
+      "lat": null,
+      "lon": null,
+      "r": 60,
+      "coord_status": "待確認",
+      "coord_source": "還沒有座標；到了以後自己按「我到了」",
+      "requires": [],
+      "locked_msg": "",
+      "culture": {
+        "entry": "place.tongyu_pawn",
+        "origin": "原著",
+        "note": "原書對這間當店只寫了一句「打銀街同裕當店」；店的位置是學者考證，其他是工坊創作。"
+      },
+      "npc": {
+        "name": "打卡小幫手",
+        "ava": "📍",
+        "lines": [
+          "到了！回答下面的問題，答對得 1 分。"
+        ]
+      },
+      "tasks": [
+        {
+          "id": "k1",
+          "type": "choice",
+          "title": "打銀街在日治時代叫什麼町？",
+          "options": [
+            "白金町",
+            "末廣町",
+            "幸町"
+          ],
+          "answer": "白金町",
+          "hint": "和金屬有關。",
+          "reward": "答對了。"
+        },
+        {
+          "id": "k2",
+          "type": "text",
+          "title": "原書裡，小上帝的通天冠是什麼材質？（填三個字）",
+          "accept": [
+            "銅鍍金"
+          ],
+          "hint": "不是純金。",
+          "reward": "答對了。"
+        }
+      ],
+      "on_complete": {
+        "grant": [],
+        "msg": ""
+      }
+    },
+    {
+      "id": "tianhou",
+      "name": "大天后宮（媽祖宮口）",
+      "kind": "廟",
+      "lat": 22.9965,
+      "lon": 120.2017,
+      "r": 70,
+      "coord_status": "待確認",
+      "coord_source": "沿用走讀九案路線的概略座標（地圖資料，還沒到現場核對）",
+      "requires": [],
+      "locked_msg": "",
+      "culture": {
+        "entry": "place.tianhou_gong",
+        "origin": "原著",
+        "note": "在原書裡，擺賭攤的是媽祖手下的千里眼、順風耳，媽祖本人沒有賭博。"
+      },
+      "npc": {
+        "name": "打卡小幫手",
+        "ava": "📍",
+        "lines": [
+          "到了！回答下面的問題，答對得 1 分。"
+        ]
+      },
+      "tasks": [
+        {
+          "id": "k1",
+          "type": "choice",
+          "title": "擺攤的千里眼、順風耳，是誰的手下？",
+          "options": [
+            "天上聖母（媽祖）",
+            "關聖帝君",
+            "玄天上帝"
+          ],
+          "answer": "天上聖母（媽祖）",
+          "hint": "這裡是什麼宮？",
+          "reward": "答對了。"
+        },
+        {
+          "id": "k2",
+          "type": "text",
+          "title": "他們在媽祖宮口擺的是什麼攤？（填三個字）",
+          "accept": [
+            "拋璉寶",
+            "拋連寶"
+          ],
+          "hint": "拋＋璉＋寶。",
+          "reward": "答對了。"
+        }
+      ],
+      "on_complete": {
+        "grant": [],
+        "msg": ""
+      }
+    },
+    {
+      "id": "beiji",
+      "name": "北極殿（大上帝廟）",
+      "kind": "廟",
+      "lat": null,
+      "lon": null,
+      "r": 60,
+      "optional": true,
+      "coord_status": "待確認",
+      "coord_source": "還沒有座標；到了以後自己按「我到了」",
+      "requires": [],
+      "locked_msg": "",
+      "culture": {
+        "entry": "place.beiji_dian",
+        "origin": "學者說法",
+        "note": "原書只說大上帝駐在草花街；把它對到北極殿，是研究者的說法，不是原書寫明。"
+      },
+      "npc": {
+        "name": "打卡小幫手",
+        "ava": "📍",
+        "lines": [
+          "多走一站（可以不走）。答對得 1 分。"
+        ]
+      },
+      "tasks": [
+        {
+          "id": "k1",
+          "type": "choice",
+          "title": "原書裡，大上帝和小上帝比起來，誰的資歷比較長？",
+          "options": [
+            "大上帝，長一級",
+            "小上帝，長一級",
+            "一樣長"
+          ],
+          "answer": "大上帝，長一級",
+          "hint": "名字裡的「大」。",
+          "reward": "答對了。"
+        }
+      ],
+      "on_complete": {
+        "grant": [],
+        "msg": ""
+      }
+    },
+    {
+      "id": "fengshen",
+      "name": "封神廟（海安宮一帶）",
+      "kind": "廟",
+      "lat": null,
+      "lon": null,
+      "r": 60,
+      "coord_status": "待確認",
+      "coord_source": "還沒有座標；到了以後自己按「我到了」",
+      "requires": [],
+      "locked_msg": "",
+      "culture": {
+        "entry": "place.fengshen_temple",
+        "origin": "原著",
+        "note": "原書結尾說封神廟後來改作風神廟，就是今天的海安宮；另有研究把風神廟放在別處，這裡只放大概位置。"
+      },
+      "npc": {
+        "name": "打卡小幫手",
+        "ava": "📍",
+        "lines": [
+          "最後一站。答對得 1 分。"
+        ]
+      },
+      "tasks": [
+        {
+          "id": "k1",
+          "type": "choice",
+          "title": "原書結尾說，封神廟後來改成了什麼廟？",
+          "options": [
+            "風神廟",
+            "文昌閣",
+            "關帝廳"
+          ],
+          "answer": "風神廟",
+          "hint": "名字裡有「風」。",
+          "reward": "答對了。"
+        }
+      ],
+      "on_complete": {
+        "grant": [],
+        "msg": ""
+      }
+    }
+  ],
+  "endings": [
+    {
+      "requires": [],
+      "title": "打卡完成",
+      "origin": "工坊創作",
+      "text": "你走完了所有的站，也答完了所有的題。看一下你的分數。接著回答下面的問題，再去玩規則版比一比。"
+    }
+  ],
+  "reflect": {
+    "question": "抽掉《小封神》和台南的廟，換成別的主題，這個走讀遊戲還玩得下去嗎？",
+    "choices": [
+      "照樣玩得下去",
+      "故事沒了，但玩法還在",
+      "玩法也玩不下去了",
+      "說不準"
+    ],
+    "story_prompt": "用一句話寫這趟的故事：誰想要什麼？卡到什麼？最後怎樣？"
+  }
+}

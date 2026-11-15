@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>封神廟牌局｜樣板</title>
+<link rel="icon" href="data:,">
+<style>
+:root{
+  --bg:#f6f1e7; --card:#fffdf8; --ink:#2b2622; --sub:#6b6258; --line:#ddd2bf;
+  --accent:#a8412f; --accent-ink:#fff; --good:#2f7a4d; --bad:#b03a2a; --warn:#9a6a10; --chip:#efe6d4;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#1d1a17; --card:#2a2622; --ink:#f1ebe0; --sub:#b8ad9c; --line:#4a4339; --accent:#d9694f; --accent-ink:#1d1a17; --good:#6fc592; --bad:#ec8a78; --warn:#e0b255; --chip:#38322b; }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 40px}
+h1{font-size:20px;margin:0}
+h2{font-size:17px;margin:14px 0 6px}
+h3{font-size:15px;margin:10px 0 4px}
+p{margin:6px 0}
+.small{font-size:13px;color:var(--sub)}
+.top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.banner{font-size:12.5px;color:var(--sub);background:var(--chip);border-radius:8px;padding:6px 10px;margin:8px 0}
+button,.btn{font:inherit;min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;touch-action:manipulation}
+button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1 1 auto}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;border-radius:0;background:var(--card)}
+.seg button.on{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{position:relative;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:4px;text-align:center;min-height:44px;display:block;width:100%}
+.tile.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.tile svg{display:block;width:100%;height:auto;border-radius:6px}
+.tile .nm{font-weight:700;font-size:14px;line-height:1.25;margin-top:2px}
+.tile .st{font-size:12px;color:var(--sub)}
+.badge{position:absolute;top:6px;left:6px;font-size:11px;background:rgba(0,0,0,.55);color:#fff;border-radius:6px;padding:0 5px;line-height:18px}
+.chip{display:inline-block;font-size:12.5px;background:var(--chip);border-radius:999px;padding:1px 9px;margin:2px 3px 2px 0}
+.chip.plus{background:#dcefe2;color:#1e5a38}.chip.minus{background:#f6dcd6;color:#8a2a1c}
+@media (prefers-color-scheme: dark){.chip.plus{background:#244a35;color:#b6e8c8}.chip.minus{background:#59302a;color:#f2b9ad}}
+.hrow{display:flex;gap:10px;align-items:center;width:100%;text-align:left;margin:6px 0;padding:6px 8px;border:2px solid var(--line);border-radius:10px;background:var(--card);min-height:56px}
+.hrow.sel{border-color:var(--accent)}
+.hrow svg{width:38px;height:46px;flex:none;border-radius:5px}
+.hrow .t{flex:1;min-width:0}
+.hrow .t b{display:block;font-size:15px}
+.hrow .t span{font-size:12.5px;color:var(--sub)}
+.slot{border:2px dashed var(--line);border-radius:10px;padding:8px;min-height:56px;display:flex;align-items:center;gap:8px}
+.slot svg{width:34px;height:41px;border-radius:5px;flex:none}
+.pts{display:flex;gap:6px;font-size:20px}
+.score{font-size:26px;font-weight:800}
+.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.rl{border-left:4px solid var(--line);padding:2px 0 2px 8px;margin:6px 0;font-size:14px}
+.rl.p{border-color:var(--good)}.rl.n{border-color:var(--bad)}
+.tag{font-size:11.5px;border:1px solid var(--line);border-radius:5px;padding:0 5px;color:var(--sub);margin-left:4px;white-space:nowrap}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+td,th{border-bottom:1px solid var(--line);padding:4px 4px;text-align:left;vertical-align:top}
+details>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:700}
+.err{background:#f6dcd6;color:#8a2a1c;border-radius:8px;padding:8px 10px;font-size:13.5px;margin:8px 0}
+.skinchip{display:inline-block;font-weight:800;border-radius:6px;padding:0 6px;color:#fff}
+.t火{background:#c8483c}.t木{background:#3f8f5a}.t水{background:#3d6fb0}
+input[type=file]{display:none}
+.mute{flex:0 0 44px;padding:0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="application/json" id="cards-data">{"meta":{"title":"封神廟牌局","subtitle":"用《小封神》裡的神明與法寶，一張一張收、一合一合打","version":"draft-20261111","credit":"角色、法寶、情節出自許丙丁《小封神》（1931–1932 連載於《三六九小報》）。牌面是程式畫的示意圖，不是原著插畫。","numbers_note":"力、香火、根的數字是工坊自己訂的，原著沒有數字；職司、相剋、加成的「理由」才是從原著來的。","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。"},"rules":{"lineup_size":5,"incense":6,"rounds":3,"win_points":2,"attendant_god_bonus":1,"filler":{"name":"路過的信眾","power":1,"cost":0,"root":0,"note":"香火燒完、沒有神明可請時，只剩一位信眾幫你站場。"},"pawn":{"incense_gain":2},"reward_choices":3,"min_collection":5,"versions":{"culture":{"label":"版本一：相剋有故事","relations":"story","special":true,"tiebreak":"root","loss_penalty":"lowest_root"},"skin":{"label":"版本二：只換了名字","relations":"triangle","special":false,"tiebreak":"total_power","loss_penalty":"none","triangle":{"types":["火","木","水"],"beats":{"火":"木","木":"水","水":"火"},"bonus":1}}}},"start":["deity.xiao_shangdi","deity.kang","deity.zhao","deity.kuixing","deity.guansheng","deity.leizhenzi","item.kunyao_suo","item.zhubi_doudou","item.tongtianguan"],"cards":[{"id":"deity.xiao_shangdi","kind":"神明","name":"小上帝","entry":"deity.xiao_shangdi","source":"原著","tags":["小上帝陣","鎮管","察善惡"],"duty":"專管龜精蛇怪、察人間善惡","power":4,"cost":3,"root":3,"skin_type":"火","blurb":"腳下踩著龜和蛇。脾氣急、愛面子，被冷落也只會忍氣吞聲。","ref":"第一、二回","loc":"P1 第一回 PDF頁2；第二回 PDF頁4","field":"","art":{"bg":"#f3e3c8","skin":"#f1c9a0","robe":"#8c4a3a","head":"loose","feet":"turtle_snake","prop":"sword"}},{"id":"deity.kang","kind":"神明","name":"康元帥","entry":"deity.kang_yuanshuai","source":"原著","tags":["小上帝陣","輔佐","康趙"],"duty":"輔佐小上帝（紅面）","power":2,"cost":1,"root":2,"skin_type":"水","blurb":"紅臉長鬚的元帥，跟趙元帥一起進出。餓到快從座上掉下來。","ref":"第一、二回","loc":"P1 第二回 PDF頁4","field":"","art":{"bg":"#efd9cf","skin":"#c8483c","robe":"#4b5b78","head":"helmet","beard":true}},{"id":"deity.zhao","kind":"神明","name":"趙元帥","entry":"deity.zhao_yuanshuai","source":"原著","tags":["小上帝陣","輔佐","康趙"],"duty":"輔佐小上帝（青面）","power":2,"cost":1,"root":2,"skin_type":"木","blurb":"青臉長鬚。肚子餓了就抱怨「坐的不知豎的艱苦」。","ref":"第一、二回","loc":"P1 第二回 PDF頁4","field":"","art":{"bg":"#dbe6df","skin":"#5c8f86","robe":"#4b5b78","head":"helmet","beard":true}},{"id":"deity.kuixing","kind":"神明","name":"魁星","entry":"deity.kuixing","source":"原著","tags":["文運","受冤屈"],"duty":"文運；單腳踢斗、獨占鰲頭","power":2,"cost":1,"root":2,"skin_type":"火","blurb":"儒弱的小書生，臉色青藍帶一點獠牙，被誤會還含著淚。","ref":"第二、三回","loc":"P1 第二回 PDF頁5–6；第三回 PDF頁7","field":"","art":{"bg":"#dfe6f2","skin":"#6f8fc4","robe":"#3d4f8a","head":"scholar","fang":true,"feet":"ao","prop":"brush"}},{"id":"deity.guansheng","kind":"神明","name":"關聖帝君","entry":"deity.guansheng","source":"原著","tags":["武聖","護義"],"duty":"義氣如山；出面勸放人","power":4,"cost":3,"root":5,"skin_type":"水","blurb":"騎赤兔馬單身去勸小上帝放人，被拒絕後氣得桃花面變紅。","ref":"第三回","loc":"P1 第三回 PDF頁9–10","field":"","art":{"bg":"#f2dcd0","skin":"#d1523f","robe":"#3f6b4f","head":"topknot","beard":true}},{"id":"deity.leizhenzi","kind":"神明","name":"雷震子","entry":"deity.leizhenzi","source":"原著","tags":["雷部"],"duty":"雷部；專打糟蹋五穀者","power":3,"cost":2,"root":3,"skin_type":"木","blurb":"金色虎皮襖、赤腳散髮，手提黃金棍。打碎過龜靈聖母的龜殼。","ref":"第七至十回","loc":"P1 第八回 PDF頁29；第九回 PDF頁32–34","field":"","art":{"bg":"#f3ead0","skin":"#e6b98c","robe":"#d19a2b","head":"wild","prop":"cudgel"}},{"id":"char.qianliyan","kind":"神明","name":"千里眼","entry":"char.qianliyan_shunfeng","source":"原著","tags":["賭攤","天后宮"],"duty":"媽祖手下；眼觀四方","power":2,"cost":1,"root":1,"skin_type":"水","blurb":"在媽祖宮口擺「拋璉寶」賭攤，把康趙的五千錢贏光。","ref":"第二回","loc":"P1 第二回 PDF頁5–6；P3 頁110（綠臉）","field":"","art":{"bg":"#dcebe3","skin":"#4f9a6e","robe":"#2e6a4a","head":"topknot","fang":true}},{"id":"char.shunfeng","kind":"神明","name":"順風耳","entry":"char.qianliyan_shunfeng","source":"原著","tags":["賭攤","天后宮"],"duty":"媽祖手下；耳聽八達","power":2,"cost":1,"root":1,"skin_type":"火","blurb":"跟千里眼一起顧賭攤。小上帝趕來時，兩人把廟門關起來躲著。","ref":"第二回","loc":"P1 第二回 PDF頁5–6；P3 頁110（紅臉）","field":"","art":{"bg":"#f2dcd6","skin":"#c8483c","robe":"#a33a30","head":"topknot","prop":"ear"}},{"id":"deity.guiling","kind":"神明","name":"龜靈聖母","entry":"deity.guiling_shengmu","source":"原著","tags":["龜族","護龜","芙蓉洞"],"duty":"芙蓉洞主；護龜族","power":4,"cost":3,"root":3,"skin_type":"木","blurb":"綠頭巾、烏色八卦道袍，背後插著混元槌。因為龜族被侮辱才出面。","ref":"第四、八回","loc":"P1 第四回 PDF頁11；第八回 PDF頁29","field":"","art":{"bg":"#dde8dc","skin":"#f1d3b0","robe":"#26302f","head":"scarf","prop":"mace"}},{"id":"animal.cupi","kind":"神明","name":"粗皮龜","entry":"animal.turtle_snake","source":"原著","tags":["龜精","龜族"],"duty":"九龜精之一","power":1,"cost":0,"root":1,"skin_type":"火","blurb":"龜靈聖母手下的龜精，名字是原書列的。不花香火。","ref":"第八回","loc":"P1 第八回 PDF頁29","field":"","art":{"bg":"#e3ead8","skin":"#6b8c4a","robe":"#4a6a35","head":"turtle"}},{"id":"animal.shuanglian","kind":"神明","name":"雙鐮龜","entry":"animal.turtle_snake","source":"原著","tags":["龜精","龜族"],"duty":"九龜精之一","power":1,"cost":0,"root":1,"skin_type":"水","blurb":"九龜精之一。看起來不起眼，但人多勢眾。不花香火。","ref":"第八回","loc":"P1 第八回 PDF頁29","field":"","art":{"bg":"#dde6e3","skin":"#5d8f86","robe":"#3f6f66","head":"turtle"}},{"id":"animal.meigao","kind":"神明","name":"美高龜","entry":"animal.turtle_snake","source":"原著","tags":["龜精","龜族"],"duty":"九龜精之一","power":1,"cost":0,"root":1,"skin_type":"木","blurb":"九龜精之一。龜靈聖母在場時，牠們會更有勁。不花香火。","ref":"第八回","loc":"P1 第八回 PDF頁29","field":"","art":{"bg":"#e6e2d2","skin":"#8c8a4a","robe":"#6a6835","head":"turtle"}},{"id":"deity.nezha","kind":"神明","name":"哪吒","entry":"deity.nezha","source":"原著","tags":["少年","衝動"],"duty":"三太子；火尖槍、乾坤圈、風火輪","power":3,"cost":2,"root":2,"skin_type":"水","blurb":"被康趙用話激下凡，結果看到自行車競賽就嚇回天庭。","ref":"第五、六回","loc":"P1 第五、六回 PDF頁14–19；第二十四回 PDF頁89","field":"","art":{"bg":"#f3e0d8","skin":"#f0c8a8","robe":"#d1523f","head":"bun2","prop":"spear"}},{"id":"deity.lijing","kind":"神明","name":"李靖","entry":"deity.li_jing","source":"原著","tags":["統率"],"duty":"托塔天王；小上帝陣營的實際領袖","power":3,"cost":2,"root":4,"skin_type":"木","blurb":"被混元槌迷昏過，醒來後帶著大家借照妖鏡破黑幕。","ref":"第五、六、十九回","loc":"P1 第五、六、十九回","field":"","art":{"bg":"#efe6cf","skin":"#e8c39a","robe":"#b0832b","head":"helmet","prop":"pagoda"}},{"id":"deity.laojun","kind":"神明","name":"太上老君","entry":"deity.taishang_laojun","source":"原著","tags":["仲裁"],"duty":"主持封神廟審判；天平式仲裁","power":4,"cost":3,"root":5,"skin_type":"火","blurb":"騎青牛來主持審判。他在場，誰跟誰有什麼關係都不算數，大家憑本事。","ref":"第二十三、二十四回","loc":"P1 第二十三、二十四回 PDF頁84–91；P3 頁77","field":"","art":{"bg":"#e4e3ee","skin":"#f1d8bd","robe":"#e8e4d8","head":"bun","beard":true,"prop":"staff"}},{"id":"char.mabian","kind":"神明","name":"馬扁禪師","entry":"char.mabian_chanshi","source":"原著","tags":["欺騙","黑幕"],"duty":"三十六變；名字是「騙」拆開","power":3,"cost":2,"root":4,"skin_type":"火","blurb":"蓬髮頭陀、青灰色臉，擅長騙走別人的法寶。後來被派去掃銅臭殿。","ref":"第二十、二十二、二十四回","loc":"P1 第二十回 PDF頁72–76；第二十四回 PDF頁89","field":"","art":{"bg":"#d9dde0","skin":"#8b9aa0","robe":"#3f4a58","head":"wild","prop":"sword"}},{"id":"char.jinyu","kind":"神明","name":"金魚大仙","entry":"char.sijie_mowang","source":"原著","tags":["欺騙","黑幕"],"duty":"專門騙借臨水夫人的混元金斗","power":2,"cost":1,"root":1,"skin_type":"木","blurb":"赤面無鬚、錦鱗道袍，手拿魚刺百節棍。最會借東西不還。","ref":"第十、十二回","loc":"P1 第十回 PDF頁36；第十二回 PDF頁45","field":"","art":{"bg":"#f3dcd2","skin":"#c8483c","robe":"#e08b3a","head":"topknot","prop":"cudgel"}},{"id":"deity.qitian","kind":"神明","name":"齊天大聖","entry":"deity.qitian_dasheng","source":"原著","tags":["破陣","顧孩童"],"duty":"萬福庵；結局封「自由正神」","power":4,"cost":3,"root":3,"skin_type":"水","blurb":"帶著猴兄弟破過天羅地網陣，卻被黑幕困住，得借照妖鏡才破。","ref":"第十五、二十一回","loc":"P1 第十五、十六回 PDF頁56–61；第二十一回 PDF頁78","field":"","art":{"bg":"#f1e4c9","skin":"#e3b26c","robe":"#b4452f","head":"wild","prop":"cudgel"}},{"id":"deity.linshui","kind":"神明","name":"臨水夫人","entry":"deity.linshui_furen","source":"原著","tags":["生育","守斗"],"duty":"管生育嬰孩；鎮家寶是混元金斗","power":2,"cost":2,"root":3,"skin_type":"火","blurb":"被誤導後跟小上帝陣營對立，金斗還被人騙走。","ref":"第十一、十二、十七回","loc":"P1 第十一、十二回 PDF頁43–45；第十七至十九回","field":"","art":{"bg":"#efdde6","skin":"#f1d3b6","robe":"#a3507a","head":"bun","prop":"dou"}},{"id":"item.kunyao_suo","kind":"法器","name":"捆妖索","entry":"object.kunyao_suo","source":"原著","tags":["法器","捆"],"duty":"小上帝用它吊起魁星","cost":1,"root":0,"skin_type":"水","bonus":0,"opp_bonus":0,"bind_attendant":true,"blurb":"對手的隨侍被綁住，這合不算。","ref":"第二回","loc":"P1 第二回 PDF頁6","field":"","art":{"bg":"#e7e1d4","prop":"rope"}},{"id":"item.hunyuan_chui","kind":"法器","name":"混元槌","entry":"object.hunyuan_chui","source":"原著","tags":["法器"],"duty":"龜靈聖母的法寶；芙蓉丸放香氣，神佛聞到會昏","cost":2,"root":0,"skin_type":"木","bonus":0,"opp_bonus":-2,"blurb":"對手這合的力 −2。","ref":"第四、八回","loc":"P1 第四回 PDF頁11；第八回 PDF頁29","field":"","art":{"bg":"#dfe6dc","prop":"mace"}},{"id":"item.hunyuan_doudou","kind":"法器","name":"混元金斗","entry":"object.hunyuan_jindou","source":"原著","tags":["法器","寶物"],"duty":"臨水夫人的鎮家寶；被借、被騙，轉了好幾手","cost":2,"root":0,"skin_type":"火","bonus":2,"opp_bonus":0,"blurb":"自己這合力 +2。但小心被騙走。","ref":"第十二、十七回","loc":"P1 第十二回 PDF頁45；第十七回 PDF頁63","field":"","art":{"bg":"#f0e3c8","prop":"dou"}},{"id":"item.zhubi_doudou","kind":"法器","name":"朱筆墨斗","entry":"deity.kuixing","source":"原著","tags":["法器"],"duty":"封魁星為「文學界取締大天尊」時賜下，用來肅正詩文竊盜詐欺","cost":1,"root":0,"skin_type":"木","bonus":1,"opp_bonus":0,"blurb":"自己這合力 +1。","ref":"第二十四回","loc":"P1 第二十四回 PDF頁90","field":"","art":{"bg":"#e9dfd0","prop":"brush"}},{"id":"item.zhaoyaojing","kind":"法器","name":"照妖鏡","entry":"deity.li_jing","source":"原著（資料庫尚無這件法寶的條目，待文史顧問）","tags":["法器"],"duty":"李靖與齊天大聖借它破馬扁的黑幕","cost":1,"root":0,"skin_type":"水","bonus":0,"opp_bonus":0,"blurb":"專門對付會騙人的。","ref":"第二十二回","loc":"P1 第二十二回 PDF頁81–83、85（文史顧問校正）","field":"","art":{"bg":"#e0e6ee","prop":"mirror"}},{"id":"item.jingangbang","kind":"法器","name":"金剛棒","entry":"deity.qitian_dasheng","source":"原著","tags":["法器"],"duty":"齊天大聖破天羅地網陣用的兵器","cost":2,"root":0,"skin_type":"火","bonus":2,"opp_bonus":0,"blurb":"自己這合力 +2。","ref":"第十五、十六回","loc":"P1 第十五、十六回 PDF頁56–61","field":"","art":{"bg":"#f1e4c9","prop":"cudgel"}},{"id":"item.tongtianguan","kind":"法器","name":"通天冠","entry":"object.tongtianguan","source":"原著","tags":["法器","可典當"],"duty":"小上帝的銅鍍金冠；拿去打銀街同裕當店當了五千錢","cost":0,"root":0,"skin_type":"木","bonus":0,"opp_bonus":0,"pawn":true,"blurb":"拿去典當，立刻拿到 2 點香火。但這之後小上帝就披頭散髮了。","ref":"第二回","loc":"P1 第二回 PDF頁5","field":"","art":{"bg":"#efe5c9","prop":"crown"}}],"relations":[{"id":"R01","name":"專管龜蛇","who":{"id":"deity.xiao_shangdi","slot":"main"},"vs":{"tag":"龜精","slot":"any"},"power":2,"text":"小上帝的職司就是管龜精蛇怪、時時踩住龜蛇，對龜精特別有辦法。","basis":"原著","ref":"第一、二回","loc":"P1 第一回 PDF頁2；第二回 PDF頁4"},{"id":"R02","name":"護龜族","who":{"id":"deity.guiling","slot":"any"},"vs":{"id":"deity.xiao_shangdi","slot":"any"},"power":2,"text":"龜靈聖母是因為小上帝侮辱龜族才出面的，對上他特別有氣勢。","basis":"原著","ref":"第四回","loc":"P1 第四回 PDF頁11"},{"id":"R03","name":"龜子龜孫","who":{"tag":"龜精","slot":"any"},"with":{"id":"deity.guiling","slot":"any"},"power":1,"text":"九龜精是龜靈聖母的手下，主子在場就有勁。","basis":"原著","ref":"第四、八回","loc":"P1 第四回 PDF頁11；第八回 PDF頁29"},{"id":"R04","name":"雷擊龜殼","who":{"id":"deity.leizhenzi","slot":"any"},"vs":{"tag":"龜族","slot":"any"},"power":2,"text":"雷震子在山仔頂打碎過龜靈聖母的龜殼。","basis":"原著","ref":"第九回","loc":"P1 第九回 PDF頁32–34"},{"id":"R05","name":"誤認冤屈","who":{"id":"deity.xiao_shangdi","slot":"main"},"vs":{"id":"deity.kuixing","slot":"any"},"power":2,"after":{"incense":-1,"to":"self"},"text":"小上帝誤把魁星當成千里眼抓起來。贏是贏了，但老君後來罵他「用神不明」，下一合香火 −1。","basis":"原著","ref":"第二、二十三回","loc":"P1 第二回 PDF頁5–6；第二十三回 PDF頁87"},{"id":"R06","name":"康趙輔佐","who":{"id":"deity.xiao_shangdi","slot":"main"},"with":{"tag":"康趙","slot":"att"},"power":1,"text":"玉皇本來就派康、趙兩位元帥來輔佐小上帝。","basis":"原著","ref":"第一回","loc":"P1 第一回 PDF頁2"},{"id":"R07","name":"拋璉寶","who":{"tag":"賭攤","slot":"any"},"vs":{"tag":"康趙","slot":"any"},"power":2,"text":"千里眼、順風耳在賭攤上把康趙的五千錢贏光。","basis":"原著","ref":"第二回","loc":"P1 第二回 PDF頁5–6"},{"id":"R08","name":"為魁星出頭","who":{"id":"deity.guansheng","slot":"any"},"with":{"id":"deity.kuixing","slot":"any"},"power":2,"text":"孔子替魁星向關公求情，關公義氣如山，單身去勸小上帝放人；關公和魁星同隊，就有了出頭的理由。","basis":"原著","ref":"第三回","loc":"P1 第三回 PDF頁9–10"},{"id":"R09","name":"騙走法寶","who":{"id":"char.mabian","slot":"any"},"vs":{"kind":"法器","slot":"any"},"steal":"all","text":"馬扁禪師的名字就是「騙」拆開，他騙走過混元金斗。對手這合的法器，加成算在他這邊。","basis":"原著","ref":"第二十回","loc":"P1 第二十回 PDF頁76"},{"id":"R10","name":"騙借金斗","who":{"id":"char.jinyu","slot":"any"},"vs":{"id":"item.hunyuan_doudou","slot":"any"},"steal":"item.hunyuan_doudou","text":"金魚大仙騙借走臨水夫人的混元金斗。對手的金斗，加成算在他這邊。","basis":"原著","ref":"第十二回","loc":"P1 第十二回 PDF頁45"},{"id":"R11","name":"黑幕困大聖","who":{"id":"char.mabian","slot":"any"},"vs":{"id":"deity.qitian","slot":"any"},"power":2,"text":"齊天大聖被馬扁禪師的黑幕困住，得借照妖鏡才破得了。","basis":"原著","ref":"第二十一回","loc":"P1 第二十一回 PDF頁78"},{"id":"R12","name":"照妖鏡破黑幕","who":{"id":"item.zhaoyaojing","slot":"att"},"vs":{"tag":"黑幕","slot":"any"},"power":2,"blocks":["R09","R10","R11"],"text":"李靖和大聖借照妖鏡破了馬扁的黑幕：騙人的招式這合都失效，還多 +2。","basis":"原著","ref":"第二十二回","loc":"P1 第二十二回 PDF頁81–83、85（文史顧問校正）"},{"id":"R13","name":"墨斗肅正","who":{"id":"item.zhubi_doudou","slot":"att"},"vs":{"tag":"欺騙","slot":"any"},"power":2,"text":"老君賜朱筆墨斗，是要肅正詩文竊盜詐欺的毛病；用在騙子身上，這是把原著的用意往外推一步（工坊延伸）。","basis":"工坊延伸","ref":"第二十四回","loc":"P1 第二十四回 PDF頁90"},{"id":"R14","name":"老君仲裁","who":{"id":"deity.laojun","slot":"main"},"void_all":true,"text":"老君主持審判，這合所有的相剋與加成都不算，大家只比本來的力。","basis":"原著","ref":"第二十三回","loc":"P1 第二十三、二十四回 PDF頁84–91；P3 頁77"},{"id":"R15","name":"金斗鎮家","who":{"id":"deity.linshui","slot":"any"},"with":{"id":"item.hunyuan_doudou","slot":"any"},"power":1,"text":"混元金斗本來就是臨水夫人的鎮家寶，物歸原主更順手。","basis":"原著","ref":"第十二、十七回","loc":"P1 第十二回 PDF頁45；第十七回 PDF頁63"},{"id":"R16","name":"被激將","who":{"id":"deity.nezha","slot":"main"},"with":{"tag":"康趙","slot":"att"},"power":1,"text":"哪吒是被康、趙用話激下凡的，有他們在旁邊就來勁。","basis":"原著","ref":"第五回","loc":"P1 第五回 PDF頁14"},{"id":"R17","name":"臨敵畏懼","who":{"id":"deity.nezha","slot":"main"},"cond":{"opp_main_power_gte":4},"power":-1,"text":"哪吒最後被判「臨敵畏懼」。碰到力 4 以上的對手，他會手軟。","basis":"原著","ref":"第二十四回","loc":"P1 第二十四回 PDF頁89"},{"id":"R18","name":"披頭散髮","who":{"id":"deity.xiao_shangdi","slot":"main"},"cond":{"self_pawned":true},"power":-1,"text":"冠都拿去當了，小上帝只好披頭散髮出場，氣勢弱一截。","basis":"原著","ref":"第二回","loc":"P1 第二回 PDF頁5"},{"id":"R19","name":"統率","who":{"id":"deity.lijing","slot":"main"},"with":{"tag":"小上帝陣","slot":"att"},"power":1,"text":"李靖是小上帝陣營實際的領頭人，帶自己人更順。","basis":"原著","ref":"第六、十九回","loc":"P1 第六、十九回"}],"rules_text":{"pawn":"典當：通天冠打出來不算力，馬上得 2 點香火。原著是小上帝叫康趙拿冠去當了五千錢買米（第二回）。","tiebreak_root":"平手看「根」：兩邊打出的神明，根加起來比較大的贏。原著李靖說「根深者成仙、淺行者成神、根淺行薄者成人」（第十四回），老君最後決定施行「神仙淘汰」（第二十三回）。","loss_penalty":"輸了就被「行政整理」：這場你打出的神明裡，根最淺的那位被淘汰，退出收藏。（收藏只剩 5 張就不再淘汰。）"},"opponents":[{"id":"S1","incense":6,"incense_skin":7,"name":"媽祖宮口的賭攤","intro":"康趙把當冠換來的五千錢輸在這裡。千里眼、順風耳守著攤子，哪吒和魁星在旁邊看熱鬧。","deck":["char.qianliyan","char.shunfeng","deity.nezha","deity.kuixing","item.jingangbang"]},{"id":"S2","incense":7,"incense_skin":8,"name":"芙蓉洞","intro":"龜靈聖母帶著手下龜精，因為龜族被侮辱，要找小上帝討個說法。","deck":["deity.guiling","animal.cupi","animal.shuanglian","item.hunyuan_chui","deity.linshui"]},{"id":"S3","incense":7,"incense_skin":8,"name":"黑幕","intro":"馬扁禪師和金魚大仙擺下黑幕，齊天大聖也被困在裡面。","deck":["char.mabian","char.jinyu","deity.qitian","item.hunyuan_doudou","item.kunyao_suo"]}],"final":{"name":"封神廟審判","win_card":"deity.laojun","text_win":"三關都過了。太上老君騎著青牛來到封神廟，把你收進收藏——他一到場，誰跟誰有什麼關係就都不算數了。","text_lose":"封神廟的審判還沒輪到你。回頭看看哪些關係是你沒注意到的？"},"judgment":{"title":"抽掉小封神，這個遊戲還玩得下去嗎？","a":"把神明的名字全部換成別的，相剋也改成「火打木、木打水、水打火」，這個遊戲照樣玩得下去。所以它可以只是一層名字。","b":"但在版本一，你得知道「為什麼」才能贏：小上帝為什麼對龜精有辦法、老君為什麼能讓所有關係作廢。這些理由全都來自故事。","questions":["你在版本一贏下哪一合，是因為你記得原著裡的哪件事？","版本二的「火打木」你記得住嗎？跟版本一的「小上帝管龜蛇」比，哪個比較好記？為什麼？","如果你要做自己的卡牌遊戲，你會用哪個地方的廟、哪幾位神明？他們之間有什麼是只有去現場才看得到的分工或關係？"]}}</script>
+<script>
+"use strict";
+/* ============ 小工具 ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const rnd = n => Math.floor(Math.random() * n);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+let DATA = null, FILLER = null, CARDS = {}, VER = "culture", MUTED = true, ACX = null;
+let S = null;            // 一輪遊戲（收藏、關卡）
+let B = null;            // 一場對戰
+let UI = { screen: "title", sel: [], pickMain: null, pickAtt: null, msg: "", problems: [], panel: "" };
+
+/* ============ 資料檢查（學生改 JSON 改壞時，講人話） ============ */
+function validateData(d) {
+  const p = [];
+  if (!d || typeof d !== "object") return ["這不是一份 JSON 物件"];
+  for (const k of ["rules", "cards", "relations", "opponents", "start"]) if (!d[k]) p.push("少了「" + k + "」這一區");
+  if (p.length) return p;
+  const ids = new Set(), tags = new Set();
+  d.cards.forEach((c, i) => {
+    const w = "第 " + (i + 1) + " 張卡「" + (c.name || c.id || "?") + "」";
+    if (!c.id) p.push(w + "沒有 id");
+    else if (ids.has(c.id)) p.push(w + "的 id 跟別張重複：" + c.id);
+    ids.add(c.id);
+    if (c.kind !== "神明" && c.kind !== "法器") p.push(w + "的 kind 要是「神明」或「法器」");
+    if (!c.name) p.push(w + "沒有名字");
+    if (typeof c.cost !== "number" || c.cost < 0 || c.cost > 6) p.push(w + "的 cost（香火）要是 0 到 6 的數字");
+    if (c.kind === "神明") {
+      if (typeof c.power !== "number" || c.power < 0 || c.power > 9) p.push(w + "的 power（力）要是 0 到 9 的數字");
+      if (typeof c.root !== "number") p.push(w + "的 root（根）要是數字");
+    }
+    (c.tags || []).forEach(t => tags.add(t));
+  });
+  const okSel = (sel, where) => {
+    if (!sel) return;
+    if (sel.id && !ids.has(sel.id)) p.push(where + "寫了不存在的卡 id：" + sel.id);
+    else if (sel.tag && !tags.has(sel.tag)) p.push(where + "寫了沒有任何卡有的標籤：" + sel.tag);
+  };
+  d.relations.forEach(r => { okSel(r.who, "關係 " + r.id + " 的 who "); okSel(r.vs, "關係 " + r.id + " 的 vs "); okSel(r.with, "關係 " + r.id + " 的 with "); if (!r.text) p.push("關係 " + r.id + " 沒有寫「為什麼」（text）"); });
+  d.start.forEach(id => { if (!ids.has(id)) p.push("start 裡有不存在的卡：" + id); });
+  d.opponents.forEach(o => (o.deck || []).forEach(id => { if (!ids.has(id)) p.push("對手 " + o.name + " 的牌組有不存在的卡：" + id); }));
+  if (d.start.length < d.rules.lineup_size) p.push("起始收藏要至少 " + d.rules.lineup_size + " 張");
+  return p;
+}
+
+function setData(d) {
+  DATA = d; CARDS = {};
+  d.cards.forEach(c => CARDS[c.id] = c);
+  FILLER = fillerCard();
+}
+
+/* ============ 圖：程式畫的示意圖（可被 card.svg 取代） ============ */
+function cleanSVG(src) {
+  try {
+    const doc = new DOMParser().parseFromString(String(src), "image/svg+xml");
+    const root = doc.documentElement;
+    if (!root || root.nodeName.toLowerCase() !== "svg" || doc.querySelector("parsererror")) return null;
+    root.querySelectorAll("script,foreignObject,iframe,style,image,use").forEach(n => n.remove());
+    [root].concat([...root.querySelectorAll("*")]).forEach(n => {
+      [...n.attributes].forEach(a => { const nm = a.name.toLowerCase(); if (nm.startsWith("on") || nm.indexOf("href") >= 0) n.removeAttribute(a.name); });
+    });
+    root.removeAttribute("width"); root.removeAttribute("height");
+    if (!root.getAttribute("viewBox")) root.setAttribute("viewBox", "0 0 100 120");
+    return new XMLSerializer().serializeToString(root);
+  } catch (e) { return null; }
+}
+function propSVG(p) {
+  switch (p) {
+    case "sword": return '<rect x="-2" y="-34" width="4" height="40" fill="#cfd6dc"/><rect x="-8" y="6" width="16" height="3" fill="#8a6a2a"/><rect x="-2" y="9" width="4" height="9" fill="#5a3a1a"/>';
+    case "mace": return '<rect x="-2.5" y="-30" width="5" height="48" rx="2" fill="#6a4a2a"/><circle cy="-32" r="8" fill="#8a8f98"/><circle cy="-32" r="3" fill="#cfd6dc"/>';
+    case "cudgel": return '<rect x="-3" y="-34" width="6" height="52" rx="2" fill="#d1a02b"/><rect x="-3" y="-30" width="6" height="4" fill="#8c3a2a"/><rect x="-3" y="12" width="6" height="4" fill="#8c3a2a"/>';
+    case "dou": return '<path d="M-15 -8 H15 L10 16 H-10Z" fill="#d1a02b"/><ellipse cy="-8" rx="15" ry="4.5" fill="#f1cf6a"/><path d="M-6 4 H6" stroke="#8c6a1a" stroke-width="2"/>';
+    case "brush": return '<rect x="-2" y="-30" width="4" height="40" fill="#8c3a2a"/><path d="M-4 10 L0 26 L4 10Z" fill="#c8483c"/><rect x="-14" y="14" width="10" height="10" fill="#3a2e28"/>';
+    case "mirror": return '<circle r="15" fill="#dfeaf2" stroke="#b0832b" stroke-width="3"/><path d="M-6 -6 L2 -10" stroke="#fff" stroke-width="3"/><rect x="-2.5" y="15" width="5" height="16" rx="2" fill="#b0832b"/>';
+    case "rope": return '<path d="M-18 -14 Q0 -26 18 -14 Q4 -4 18 8 Q0 20 -18 8 Q-4 -4 -18 -14Z" fill="none" stroke="#a67c3a" stroke-width="4" stroke-linecap="round"/>';
+    case "crown": return '<path d="M-16 8 L-16 -4 L-8 -14 L-4 -4 L0 -16 L4 -4 L8 -14 L16 -4 L16 8Z" fill="#d1a02b"/><rect x="-16" y="8" width="32" height="5" fill="#a07a1a"/>';
+    case "spear": return '<rect x="-1.5" y="-26" width="3" height="46" fill="#6a4a2a"/><path d="M0 -40 L5 -26 L-5 -26Z" fill="#c8483c"/>';
+    case "pagoda": return '<path d="M-10 14 H10 L8 6 H-8Z M-8 6 H8 L6 -2 H-6Z M-6 -2 H6 L4 -10 H-4Z" fill="#d1a02b" stroke="#8c6a1a" stroke-width="1"/><path d="M0 -10 V-18" stroke="#8c6a1a" stroke-width="2"/>';
+    case "staff": return '<rect x="-1.5" y="-24" width="3" height="42" fill="#6a4a2a"/><path d="M-1.5 -24 Q-1.5 -34 8 -32" fill="none" stroke="#6a4a2a" stroke-width="3"/>';
+    default: return "";
+  }
+}
+function artSVG(c) {
+  if (c.svg) { const s = cleanSVG(c.svg); if (s) return s; }
+  const a = c.art || {}, bg = a.bg || "#eee", skin = a.skin || "#f1c9a0", robe = a.robe || "#777", hair = a.hair || "#2a2220";
+  let o = '<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(c.name) + '"><rect width="100" height="120" rx="8" fill="' + bg + '"/>';
+  if (c.kind === "法器") {
+    o += '<circle cx="50" cy="60" r="38" fill="rgba(255,255,255,.55)"/><g transform="translate(50 64) scale(1.55)">' + propSVG(a.prop) + "</g></svg>";
+    return o;
+  }
+  if (a.head === "turtle") {
+    o += '<ellipse cx="50" cy="84" rx="34" ry="24" fill="' + robe + '"/><path d="M26 84 H74 M38 66 L34 100 M50 62 V104 M62 66 L66 100" stroke="rgba(0,0,0,.25)" stroke-width="2" fill="none"/>';
+    o += '<circle cx="50" cy="46" r="14" fill="' + skin + '"/><circle cx="44" cy="43" r="2.4" fill="#222"/><circle cx="56" cy="43" r="2.4" fill="#222"/><path d="M44 52 Q50 56 56 52" stroke="#222" stroke-width="1.6" fill="none"/>';
+    return o + "</svg>";
+  }
+  if (a.feet === "turtle_snake") {
+    o += '<ellipse cx="24" cy="110" rx="17" ry="8" fill="#5b7f3a"/><circle cx="40" cy="106" r="5" fill="#6b8c4a"/><path d="M60 114 Q68 98 76 112 T94 106" stroke="#3a5a2a" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  }
+  if (a.feet === "ao") o += '<path d="M14 120 Q16 102 38 102 Q62 98 86 112 L86 120Z" fill="#3a8f8a"/><path d="M20 104 Q10 98 14 92" stroke="#3a8f8a" stroke-width="3" fill="none"/>';
+  const h = a.head;
+  if (h === "loose") o += '<path d="M29 58 L20 78 L30 74 L26 94 L36 80 M71 58 L80 78 L70 74 L74 94 L64 80 M32 40 L26 24 L38 32 L40 18 L48 30 L56 16 L60 30 L70 22 L68 40" stroke="' + hair + '" stroke-width="6" fill="' + hair + '" stroke-linejoin="round" stroke-linecap="round"/>';
+  if (h === "wild") o += '<path d="M28 58 L22 36 L34 42 L36 22 L46 36 L52 18 L58 36 L68 22 L68 42 L78 36 L72 58Z" fill="' + hair + '"/>';
+  o += '<path d="M26 120 Q26 80 50 76 Q74 80 74 120Z" fill="' + robe + '"/>';
+  if (c.id === "deity.leizhenzi") o += '<path d="M34 100 L42 90 L50 100 L58 90 L66 100" stroke="#8c3a1a" stroke-width="3" fill="none"/>';
+  if (c.id === "deity.guiling") o += '<path d="M30 98 H70" stroke="#7a9fd0" stroke-width="4"/>';
+  o += '<rect x="44" y="64" width="12" height="12" fill="' + skin + '"/><circle cx="50" cy="50" r="17" fill="' + skin + '"/>';
+  if (a.prop === "ear") o += '<path d="M31 46 Q22 50 31 60" stroke="' + skin + '" stroke-width="5" fill="none"/>';
+  o += '<circle cx="44" cy="49" r="2.2" fill="#222"/><circle cx="56" cy="49" r="2.2" fill="#222"/>';
+  if (c.id === "deity.xiao_shangdi") o += '<path d="M39 44 L47 47 M61 44 L53 47" stroke="#222" stroke-width="2.6" stroke-linecap="round"/>';
+  if (c.id === "deity.kuixing") o += '<path d="M42 44 Q44 41 46 44 M54 44 Q56 41 58 44" stroke="#222" stroke-width="1.4" fill="none"/>';
+  o += '<path d="M45 58 Q50 61 55 58" stroke="#3a1a10" stroke-width="1.8" fill="none"/>';
+  if (a.fang) o += '<path d="M45 59 L46.5 64 L48 59 M52 59 L53.5 64 L55 59" fill="#fff" stroke="#999" stroke-width=".6"/>';
+  if (a.beard) o += '<path d="M38 56 Q50 94 62 56 Q50 66 38 56Z" fill="#2a2220" opacity=".9"/>';
+  if (h === "helmet") o += '<path d="M32 48 Q32 26 50 25 Q68 26 68 48 Z" fill="#6b6f78"/><circle cx="50" cy="22" r="4" fill="#c8483c"/><rect x="32" y="45" width="36" height="4" fill="#4a4e56"/>';
+  if (h === "scarf") o += '<path d="M31 50 Q31 26 50 26 Q69 26 69 50 Q60 41 50 41 Q40 41 31 50Z" fill="#2f8f4f"/><path d="M66 46 Q78 52 74 70" stroke="#2f8f4f" stroke-width="5" fill="none"/>';
+  if (h === "scholar") o += '<rect x="35" y="30" width="30" height="6" rx="2" fill="#2c3a6a"/><rect x="41" y="23" width="18" height="9" fill="#2c3a6a"/>';
+  if (h === "bun") o += '<path d="M33 46 Q34 30 50 30 Q66 30 67 46 Q58 38 50 38 Q42 38 33 46Z" fill="' + hair + '"/><circle cx="50" cy="26" r="7" fill="' + hair + '"/>';
+  if (h === "topknot") o += '<path d="M33 46 Q34 31 50 31 Q66 31 67 46 Q58 39 50 39 Q42 39 33 46Z" fill="' + hair + '"/><circle cx="50" cy="27" r="5" fill="' + hair + '"/>';
+  if (h === "bun2") o += '<path d="M33 46 Q34 31 50 31 Q66 31 67 46 Q58 39 50 39 Q42 39 33 46Z" fill="' + hair + '"/><circle cx="37" cy="30" r="6" fill="' + hair + '"/><circle cx="63" cy="30" r="6" fill="' + hair + '"/>';
+  if (h === "loose") o += '<path d="M33 46 Q34 30 50 30 Q66 30 67 46 Q56 38 50 40 Q44 38 33 46Z" fill="' + hair + '"/>';
+  if (h === "wild") o += '<path d="M34 44 Q50 34 66 44 Q58 40 50 40 Q42 40 34 44Z" fill="' + hair + '"/>';
+  if (a.prop && a.prop !== "ear") o += '<g transform="translate(80 84) scale(.78)">' + propSVG(a.prop) + "</g>";
+  return o + "</svg>";
+}
+
+/* ============ 計分引擎（規則全部讀 JSON） ============ */
+const V = () => DATA.rules.versions[VER];
+const isGod = c => c && c.kind === "神明";
+function matchSel(sel, card) {
+  if (!sel || !card) return false;
+  if (sel.id) return card.id === sel.id;
+  if (sel.tag) return (card.tags || []).indexOf(sel.tag) >= 0;
+  if (sel.kind) return card.kind === sel.kind;
+  return false;
+}
+function slotOK(sel, side, card) { const s = sel.slot || "any"; return s === "any" || (s === "main" ? side.main === card : side.attEff === card); }
+function effCards(side) { return [side.main, side.attEff].filter(Boolean); }
+function itemBonusOf(side) { const a = side.attEff; return a && a.kind === "法器" && !a.pawn ? (a.bonus || 0) : 0; }
+
+/* side = {main, att, pawned}；回傳這一側的分數與理由 */
+function activeRelations(me, op, special) {
+  const out = [];
+  for (const r of DATA.relations) {
+    const whos = effCards(me).filter(c => matchSel(r.who, c) && slotOK(r.who, me, c));
+    if (!whos.length) continue;
+    if (r.vs && !effCards(op).some(c => matchSel(r.vs, c) && slotOK(r.vs, op, c))) continue;
+    if (r.with && !effCards(me).some(c => c !== whos[0] && matchSel(r.with, c) && slotOK(r.with, me, c))) continue;
+    if (r.cond) {
+      if (r.cond.opp_main_power_gte != null && !(op.main && op.main.power >= r.cond.opp_main_power_gte)) continue;
+      if (r.cond.self_pawned && !me.pawned) continue;
+    }
+    out.push(r);
+  }
+  return out;
+}
+function evaluate(A, B2) {
+  const v = V(), story = v.relations === "story", special = !!v.special;
+  const sides = [A, B2];
+  sides.forEach((s, i) => {
+    const o = sides[1 - i];
+    s.attEff = (special && o.att && o.att.bind_attendant && s.att) ? null : s.att;
+  });
+  const res = sides.map(() => ({ lines: [], rel: 0, base: 0, item: 0, pen: 0, after: [] }));
+  sides.forEach((s, i) => {
+    const r = res[i];
+    r.base = s.main ? s.main.power : 0;
+    r.lines.push({ k: "base", t: (s.main ? s.main.name : "（空）") + "（主將）", d: r.base });
+    if (s.attEff && isGod(s.attEff)) { const b = DATA.rules.attendant_god_bonus; r.base += b; r.lines.push({ k: "base", t: s.attEff.name + "（隨侍）", d: b }); }
+    r.item = itemBonusOf(s);
+    if (r.item) r.lines.push({ k: "item", t: s.attEff.name + "（法器）", d: r.item });
+    if (s.att && s.att.bind_attendant && special) r.lines.push({ k: "note", t: s.att.name + "：對手的隨侍被綁住，不算", d: 0 });
+    if (s.att && s.att.pawn) r.lines.push({ k: "note", t: s.att.name + "：典當，馬上 +" + DATA.rules.pawn.incense_gain + " 香火", d: 0 });
+  });
+  if (story && special) {
+    let act = sides.map((s, i) => activeRelations(s, sides[1 - i], special));
+    // 破解：照妖鏡這類關係可以讓對手的某些關係失效
+    const blocked = [new Set(), new Set()];
+    act.forEach((list, i) => list.forEach(r => (r.blocks || []).forEach(id => blocked[1 - i].add(id))));
+    act = act.map((list, i) => list.filter(r => !blocked[i].has(r.id)));
+    const voided = act.some(list => list.some(r => r.void_all));
+    sides.forEach((s, i) => {
+      const keep = [];
+      act[i].forEach(r => {
+        if (voided && !r.void_all) { res[i].lines.push({ k: "void", t: r.name + "（老君在場，不算）", d: 0, r }); return; }
+        keep.push(r);
+      });
+      act[i] = keep;
+    });
+    sides.forEach((s, i) => {
+      const o = 1 - i;
+      act[i].forEach(r => {
+        if (r.steal) {
+          const oi = itemBonusOf(sides[o]);
+          const okTarget = r.steal === "all" || (sides[o].attEff && sides[o].attEff.id === r.steal);
+          if (oi && okTarget) { res[i].item += oi; res[o].item -= oi; res[i].lines.push({ k: "rel", t: r.name, d: oi, r }); res[o].lines.push({ k: "lost", t: "法器被騙走（" + r.name + "）", d: -oi, r }); }
+          else res[i].lines.push({ k: "rel", t: r.name, d: 0, r });
+          return;
+        }
+        if (r.void_all) { res[i].lines.push({ k: "rel", t: r.name, d: 0, r }); return; }
+        const d = r.power || 0;
+        res[i].rel += d; res[i].lines.push({ k: "rel", t: r.name, d, r });
+        if (r.after) res[i].after.push(r.after);
+      });
+    });
+  } else if (v.relations === "triangle") {
+    const T = v.triangle;
+    sides.forEach((s, i) => {
+      const o = sides[1 - i];
+      if (s.main && o.main && T.beats[s.main.skin_type] === o.main.skin_type) {
+        res[i].rel += T.bonus; res[i].lines.push({ k: "rel", t: s.main.skin_type + "打" + o.main.skin_type, d: T.bonus, tri: true });
+      }
+    });
+  }
+  sides.forEach((s, i) => {
+    const o = sides[1 - i];
+    const oa = o.attEff;
+    if (oa && oa.kind === "法器" && oa.opp_bonus && !(oa.pawn)) { res[i].pen += oa.opp_bonus; res[i].lines.push({ k: "pen", t: oa.name + "（對手的法器）", d: oa.opp_bonus }); }
+  });
+  const tot = res.map(r => Math.max(0, r.base + r.item + r.rel + r.pen));
+  return { score: tot, res };
+}
+const cost = c => c ? c.cost : 0;
+
+/* ============ 選牌：電腦對手與測試用玩家 ============ */
+function candidates(hand, incense) {
+  const gods = hand.filter(isGod), all = hand.slice(), out = [];
+  const mains = gods.length ? gods : [null];
+  for (const m of mains) {
+    if (m && cost(m) > incense) continue;
+    out.push({ main: m, att: null });
+    for (const a of all) {
+      if (a === m) continue;
+      if (cost(m) + cost(a) > incense) continue;
+      out.push({ main: m, att: a });
+    }
+  }
+  return out.filter(x => x.main || x.att);
+}
+function fillerCard() { const f = DATA.rules.filler; return { id: "_filler", kind: "神明", name: f.name, power: f.power, cost: f.cost, root: f.root, tags: [], skin_type: "水", art: { bg: "#e8e0d0", skin: "#e8c9a0", robe: "#8a7a62", head: "topknot" }, blurb: f.note, ref: "", source: "工坊創作" }; }
+function chooseLineup(side, opp, roundsLeft, policy) {
+  const hand = side.hand.filter(c => !side.used.has(c.id));
+  let cands = candidates(hand, side.incense);
+  if (!cands.length || !cands.some(x => x.main)) return { main: FILLER, att: null };
+  if (policy === "random") return cands[rnd(cands.length)];
+  const budget = Math.ceil(side.incense / Math.max(1, roundsLeft)) + 1;
+  let best = null, bs = -1e9;
+  const dummy = { main: { power: 3, tags: [], skin_type: ["火", "木", "水"][rnd(3)], kind: "神明", id: "_d", name: "?" }, att: null, pawned: false };
+  for (const c of cands) {
+    const k = cost(c.main) + cost(c.att);
+    if (k > budget + (roundsLeft === 1 ? 9 : 0)) continue;
+    const me = { main: c.main, att: c.att, pawned: side.pawned };
+    const o = opp ? { main: opp.main, att: opp.att, pawned: opp.pawned } : dummy;
+    let ev;
+    if (policy === "power") ev = { score: [(c.main ? c.main.power : 0) + (c.att ? (isGod(c.att) ? 1 : (c.att.bonus || 0)) : 0), 0] };
+    else ev = evaluate(me, o);
+    const diff = ev.score[0] - (policy === "power" ? 0 : ev.score[1]);
+    let sc = diff * 2 - k * 0.1 + (c.att && c.att.pawn ? (side.incense < 3 ? 2 : -1) : 0) + Math.random() * 0.4;
+    if (policy === "ai" && Math.random() < 0.25) sc -= 2.2 * Math.random();
+    if (sc > bs) { bs = sc; best = c; }
+  }
+  return best || cands.sort((a, b) => (cost(a.main) + cost(a.att)) - (cost(b.main) + cost(b.att)))[0];
+}
+
+/* ============ 一場對戰 ============ */
+function newSide(ids, incense) {
+  return { hand: ids.map(id => CARDS[id]), used: new Set(), incense: incense || DATA.rules.incense, points: 0, pawned: false, rootSum: 0, total: 0, playedGods: [] };
+}
+function startBattle(stageIdx, myIds) {
+  const opp = DATA.opponents[stageIdx];
+  B = { stage: stageIdx, me: newSide(myIds), ai: newSide(opp.deck, (VER === "skin" && opp.incense_skin) || opp.incense), round: 1, log: [], done: false, outcome: null, aiShown: null, last: null, note: "" };
+  aiReveal();
+}
+function aiReveal() {
+  const left = DATA.rules.rounds - B.round + 1;
+  B.aiShown = chooseLineup(B.ai, null, left, "ai");
+}
+function commitRound(mainCard, attCard) {
+  const rules = DATA.rules, v = V();
+  const mySide = { main: mainCard, att: attCard, pawned: B.me.pawned };
+  const aiSide = { main: B.aiShown.main, att: B.aiShown.att, pawned: B.ai.pawned };
+  B.me.incense -= cost(mainCard) + cost(attCard);
+  B.ai.incense -= cost(aiSide.main) + cost(aiSide.att);
+  if (attCard && attCard.pawn) { B.me.incense += rules.pawn.incense_gain; B.me.pawned = true; mySide.pawned = true; }
+  if (aiSide.att && aiSide.att.pawn) { B.ai.incense += rules.pawn.incense_gain; B.ai.pawned = true; aiSide.pawned = true; }
+  [[B.me, mySide], [B.ai, aiSide]].forEach(([st, sd]) => {
+    [sd.main, sd.att].forEach(c => { if (c && c.id !== "_filler") st.used.add(c.id); });
+    [sd.main, sd.att].forEach(c => { if (isGod(c) && c.id !== "_filler") { st.rootSum += c.root || 0; st.playedGods.push(c); } });
+  });
+  const ev = evaluate(mySide, aiSide);
+  B.me.total += ev.score[0]; B.ai.total += ev.score[1];
+  let win = 0;
+  if (ev.score[0] > ev.score[1]) { B.me.points++; win = 1; } else if (ev.score[1] > ev.score[0]) { B.ai.points++; win = -1; }
+  [[B.me, 0], [B.ai, 1]].forEach(([st, i]) => ev.res[i].after.forEach(a => { if (a.to === "self") st.incense = Math.max(0, st.incense + a.incense); }));
+  const rec = { round: B.round, my: mySide, ai: aiSide, ev, win, afterMe: ev.res[0].after.slice() };
+  B.log.push(rec); B.last = rec;
+  if (B.me.points >= rules.win_points || B.ai.points >= rules.win_points || B.round >= rules.rounds) finishBattle();
+  else { B.round++; aiReveal(); }
+  return rec;
+}
+function finishBattle() {
+  const v = V();
+  B.done = true;
+  let o;
+  if (B.me.points !== B.ai.points) o = B.me.points > B.ai.points ? "win" : "lose";
+  else {
+    const key = v.tiebreak === "root" ? "rootSum" : "total";
+    if (B.me[key] !== B.ai[key]) { o = B.me[key] > B.ai[key] ? "win" : "lose"; B.tie = key; }
+    else if (B.me.total !== B.ai.total) { o = B.me.total > B.ai.total ? "win" : "lose"; B.tie = "total"; }
+    else o = "draw";
+  }
+  B.outcome = o;
+}
+function storyLine(b, myWon) {
+  let best = null;
+  for (const rec of b.log) {
+    rec.ev.res[0].lines.concat(rec.ev.res[1].lines).forEach(l => { if (l.r && (l.k === "rel") && (!best || Math.abs(l.d) > Math.abs(best.l.d) || (Math.abs(l.d) === Math.abs(best.l.d) && l.r.void_all))) best = { rec, l }; });
+  }
+  const names = b.log.map(r => r.my.main && r.my.main.name).filter(Boolean);
+  if (!best) return "這場沒有任何一條相剋出場，兩邊只比硬實力。故事還沒有長出來——下一場試試讓兩張有淵源的牌站在一起。";
+  const r = best.l.r;
+  const who = (best.rec.ev.res[0].lines.indexOf(best.l) >= 0) ? "你" : "對手";
+  return "第 " + best.rec.round + " 合，" + who + "靠「" + r.name + "」" + (r.void_all ? "讓所有關係都作廢" : (r.steal ? "把法器搶了過來" : "多拿了分數")) + "——" + r.text.replace(/。$/, "") + "。" + (myWon ? "你贏了這場。" : "這場你輸了，但你知道下次該帶哪張牌。");
+}
+
+/* ============ 一輪遊戲（收集 → 出陣 → 對戰 → 抽新卡） ============ */
+function newRun() {
+  S = { coll: DATA.start.slice(), stage: 0, wins: 0, final: false, lastLineup: [], history: [], relHits: {} };
+  UI.sel = []; UI.screen = "collect"; UI.msg = "";
+  autoPick();
+}
+function autoPick() {
+  const n = DATA.rules.lineup_size;
+  const sorted = S.coll.map(id => CARDS[id]).sort((a, b) => ((isGod(b) ? b.power : (b.bonus || 0) + 1) - cost(b) * .3) - ((isGod(a) ? a.power : (a.bonus || 0) + 1) - cost(a) * .3));
+  const gods = sorted.filter(isGod).slice(0, 3), rest = sorted.filter(c => gods.indexOf(c) < 0).slice(0, n - gods.length);
+  UI.sel = gods.concat(rest).slice(0, n).map(c => c.id);
+}
+function rewardChoices() {
+  const pool = DATA.cards.filter(c => S.coll.indexOf(c.id) < 0 && c.id !== DATA.final.win_card);
+  return shuffle(pool).slice(0, DATA.rules.reward_choices).map(c => c.id);
+}
+function applyLossPenalty() {
+  const v = V();
+  if (v.loss_penalty !== "lowest_root" || S.coll.length <= DATA.rules.min_collection) return null;
+  const gods = B.me.playedGods.filter(c => S.coll.indexOf(c.id) >= 0);
+  if (!gods.length) return null;
+  gods.sort((a, b) => a.root - b.root);
+  const g = gods[0];
+  S.coll = S.coll.filter(id => id !== g.id);
+  return g;
+}
+
+/* ============ 聲音（預設靜音；取消靜音才建立 AudioContext） ============ */
+function tone(f, d, type, vol, delay) {
+  if (MUTED) return;
+  if (!ACX) { try { ACX = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; } }
+  const t0 = ACX.currentTime + (delay || 0), o = ACX.createOscillator(), g = ACX.createGain();
+  o.type = type || "sine"; o.frequency.value = f;
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(Math.min(vol || .12, .2), t0 + .01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+  o.connect(g).connect(ACX.destination); o.start(t0); o.stop(t0 + d + .02);
+}
+function sfx(kind) {
+  if (MUTED) return;
+  const rich = VER === "culture";
+  if (kind === "tap") return tone(rich ? 520 : 440, .06, rich ? "triangle" : "square", .08);
+  if (kind === "win") return rich ? [392, 523, 659, 784].forEach((f, i) => tone(f, .35, "triangle", .12, i * .09)) : [440, 550].forEach((f, i) => tone(f, .12, "square", .08, i * .1));
+  if (kind === "lose") return rich ? [330, 262, 196].forEach((f, i) => tone(f, .4, "sawtooth", .07, i * .12)) : tone(200, .25, "square", .08);
+  if (kind === "culture") { if (rich) { tone(180, .9, "sine", .16); tone(181.5, .9, "sine", .12); tone(540, .5, "triangle", .06, .02); } else tone(660, .08, "square", .06); }
+}
+
+/* ============ 畫面 ============ */
+function cardTile(c, o) {
+  o = o || {};
+  const st = isGod(c) ? "力" + c.power + "・香火" + c.cost + (VER === "culture" ? "・根" + c.root : "") : "法器・香火" + c.cost;
+  const tri = VER === "skin" ? ' <span class="skinchip t' + esc(c.skin_type) + '">' + esc(c.skin_type) + "</span>" : "";
+  const bd = c.source && c.source.indexOf("原著") === 0 ? "原著" : "工坊創作";
+  return '<button class="tile' + (o.sel ? " sel" : "") + '" data-act="' + (o.act || "tog") + '" data-id="' + esc(c.id) + '" aria-pressed="' + (o.sel ? "true" : "false") + '" aria-label="' + esc(c.name) + '">' +
+    '<span class="badge">' + bd + "</span>" + artSVG(c) + '<div class="nm">' + esc(c.name) + tri + '</div><div class="st">' + esc(st) + "</div></button>";
+}
+function relChips(lines) {
+  return lines.filter(l => l.k === "rel" || l.k === "lost" || l.k === "void" || l.k === "pen" || l.k === "item").map(l => {
+    const cls = l.k === "void" ? "" : (l.d > 0 ? "plus" : (l.d < 0 ? "minus" : ""));
+    return '<span class="chip ' + cls + '">' + esc(l.t) + (l.d ? " " + (l.d > 0 ? "+" : "") + l.d : "") + "</span>";
+  }).join("");
+}
+function header() {
+  return '<div class="top"><h1>' + esc(DATA.meta.title) + '</h1><button class="mute" data-act="mute" aria-label="' + (MUTED ? "開啟音效" : "關閉音效") + '">' + (MUTED ? "🔇" : "🔊") + "</button></div>" +
+    '<div class="banner">樣板・對應「文化怎麼放進遊戲裡」的文化卡：輩分（根）、人際關係（相剋）。' + esc(DATA.meta.disclaimer) + "</div>" +
+    (UI.problems.length ? '<div class="err"><b>你的 JSON 有問題，先用內建的版本：</b><br>' + UI.problems.map(esc).join("<br>") + "</div>" : "");
+}
+function verSwitch() {
+  const v = DATA.rules.versions;
+  return '<div class="seg" role="group" aria-label="版本">' + ["culture", "skin"].map(k => '<button data-act="ver" data-v="' + k + '" class="' + (VER === k ? "on" : "") + '">' + esc(v[k].label) + "</button>").join("") + "</div>";
+}
+function rulesBox() {
+  const R = DATA.rules, v = V(), cul = VER === "culture";
+  return '<div class="box"><b>怎麼玩（一分鐘）</b><ol style="margin:6px 0 0;padding-left:20px">' +
+    "<li>從收藏裡挑 " + R.lineup_size + " 張出陣。整場一共有 <b>" + R.incense + " 點香火</b>，每張牌要花香火。</li>" +
+    "<li>每一合，<b>對手先亮出主將</b>（隨侍蓋著）。你選 1 位神明當「主將」，再選最多 1 張當「隨侍」（神明或法器）。</li>" +
+    "<li>合力＝力＋法器＋" + (cul ? "<b>相剋與加成</b>（每一條都有故事裡的理由）" : "<b>火打木、木打水、水打火 +" + v.triangle.bonus + "</b>") + "。高的得 1 分，先拿 " + R.win_points + " 分就贏。</li>" +
+    (cul ? "<li>三合都沒分出來，比「根」（輩分）；輸了會被行政整理，根最淺的一位退出收藏。</li>" : "<li>三合沒分出來就比總力；輸了不扣牌。</li>") +
+    "<li>贏了，從 " + R.reward_choices + " 張裡挑一張新牌收藏。三關過完，太上老君來審判。</li></ol></div>";
+}
+function relTable() {
+  if (VER !== "culture") {
+    const T = V().triangle;
+    return '<div class="box"><b>相剋表（版本二）</b><p>' + T.types.map(t => '<span class="skinchip t' + t + '">' + t + "</span> 打 " + T.beats[t]).join("　") + '。每張牌身上有個顏色字，跟故事沒有關係。</p></div>';
+  }
+  return '<details class="box"><summary>相剋表：每一條都有出處（點開看）</summary>' + DATA.relations.map(r =>
+    '<div class="rl ' + ((r.power || 0) < 0 ? "n" : "p") + '"><b>' + esc(r.name) + "</b>" + ((r.power || 0) ? " " + (r.power > 0 ? "+" : "") + r.power : "") + '<span class="tag">' + esc(r.basis) + "・" + esc(r.ref) + "</span><br>" + esc(r.text) + "</div>").join("") +
+    '<p class="small">數字（力、香火、根）是工坊訂的；「為什麼」才是從故事來的。標「工坊延伸」的，是把原著的用意往外推一步。</p></details>';
+}
+function screenTitle() {
+  return header() + '<p>' + esc(DATA.meta.subtitle) + "</p>" + verSwitch() + rulesBox() + relTable() +
+    '<div class="row"><button class="primary" data-act="start" style="flex:2">開始收集・出陣</button><button data-act="loadjson" aria-label="載入我改過的 JSON">載入我改的 JSON</button></div>' +
+    '<input type="file" id="fileIn" accept=".json,application/json">' +
+    '<p class="small">' + esc(DATA.meta.credit) + "</p><p class=\"small\">" + esc(DATA.meta.numbers_note) + "</p>";
+}
+function collRows() {
+  return S.coll.map(id => cardTile(CARDS[id], { sel: UI.sel.indexOf(id) >= 0 })).join("");
+}
+function screenCollect() {
+  const op = DATA.opponents[S.stage], n = DATA.rules.lineup_size, gods = UI.sel.filter(id => isGod(CARDS[id])).length;
+  const ok = UI.sel.length === n && gods >= 1;
+  return header() + verSwitch() +
+    '<div class="box"><b>第 ' + (S.stage + 1) + " 關・" + esc(op.name) + "</b><p>" + esc(op.intro) + '</p><p class="small">對手牌組：' + op.deck.map(id => esc(CARDS[id].name)).join("、") + "</p></div>" +
+    '<h2>我的收藏（' + S.coll.length + ' 張）・挑 ' + n + " 張出陣</h2>" +
+    '<div class="grid">' + collRows() + "</div>" +
+    '<p class="small" id="selInfo">已選 ' + UI.sel.length + " / " + n + "，其中神明 " + gods + " 位（至少要 1 位）</p>" +
+    '<div class="row"><button data-act="auto">幫我挑</button><button class="primary" data-act="fight" style="flex:2"' + (ok ? "" : " disabled") + ">出陣</button></div>" +
+    '<details class="box"><summary>圖鑑：每張牌是誰</summary>' + S.coll.map(id => { const c = CARDS[id]; return '<div class="hrow" style="cursor:default">' + artSVG(c) + '<div class="t"><b>' + esc(c.name) + '<span class="tag">' + (c.source.indexOf("原著") === 0 ? "原著" : "工坊創作") + "・" + esc(c.ref) + "</span></b><span>" + esc(c.duty) + "。" + esc(c.blurb) + (c.field ? "　📍田野：" + esc(c.field) : "") + "</span></div></div>"; }).join("") + "</details>" +
+    relTable() + rulesBox();
+}
+function handRow(c, role) {
+  const left = B.me.incense;
+  const sel = role;
+  const sum = cost(UI.pickMain) + cost(UI.pickAtt);
+  const dis = !sel && (cost(c) + sum > left);
+  const stt = isGod(c) ? "力" + c.power + "・香火" + c.cost + (VER === "culture" ? "・根" + c.root : "") : "法器・香火" + c.cost;
+  return '<button class="hrow' + (sel ? " sel" : "") + '" data-act="hand" data-id="' + esc(c.id) + '"' + (dis ? " disabled" : "") + ">" + artSVG(c) + '<div class="t"><b>' + esc(c.name) + (sel ? "（" + (sel === "main" ? "主將" : "隨侍") + "）" : "") + "</b><span>" + esc(stt) + "　" + esc(isGod(c) ? c.duty : c.blurb) + "</span></div></button>";
+}
+function previewHTML() {
+  const m = UI.pickMain, a = UI.pickAtt;
+  if (!m) return '<div class="small">先選一位神明當主將。</div>';
+  const ev = evaluate({ main: m, att: a, pawned: B.me.pawned || (a && a.pawn) }, { main: B.aiShown.main, att: null, pawned: B.ai.pawned });
+  return '<div class="row"><div>預估　你 <span class="score">' + ev.score[0] + '</span> ： 對手 <span class="score">' + ev.score[1] + "</span></div></div><div class=\"small\">（不含對手蓋著的隨侍）</div>" +
+    "<div>" + relChips(ev.res[0].lines) + "</div>" + (ev.res[1].lines.some(l => l.k === "rel" || l.k === "pen" || l.k === "lost") ? '<div class="small">對手方：' + relChips(ev.res[1].lines) + "</div>" : "");
+}
+function aiShownHTML() {
+  const s = B.aiShown;
+  return [s.main].filter(Boolean).map(c => '<div class="hrow" style="cursor:default">' + artSVG(c) + '<div class="t"><b>' + esc(c.name) + "（" + (c === s.main ? "主將" : "隨侍") + "）</b><span>" + esc(isGod(c) ? "力" + c.power + "・" + c.duty : c.blurb) + "</span></div></div>").join("") +
+    '<div class="hrow" style="cursor:default"><svg viewBox="0 0 100 120" aria-hidden="true"><rect width="100" height="120" rx="8" fill="#8a7a62"/><text x="50" y="72" font-size="40" text-anchor="middle" fill="#f1e8d6">?</text></svg><div class="t"><b>隨侍：蓋著</b><span>對手可能放了第二張牌，也可能沒放。</span></div></div>';
+}
+function pointsHTML(st) { let o = ""; for (let i = 0; i < DATA.rules.win_points; i++) o += i < st.points ? "●" : "○"; return o; }
+function screenBattle() {
+  const op = DATA.opponents[B.stage];
+  const hand = B.me.hand.filter(c => !B.me.used.has(c.id));
+  return header() +
+    '<div class="box"><div class="row"><b>第 ' + (B.stage + 1) + " 關・" + esc(op.name) + '</b><span class="small" style="text-align:right">第 ' + B.round + " / " + DATA.rules.rounds + " 合</span></div>" +
+    '<div class="row small"><span>你 <span class="pts">' + pointsHTML(B.me) + "</span> 香火 <b>" + B.me.incense + "</b></span><span>對手 <span class=\"pts\">" + pointsHTML(B.ai) + "</span> 香火 <b>" + B.ai.incense + "</b></span></div></div>" +
+    "<h3>對手亮出：</h3>" + aiShownHTML() +
+    "<h3>你這合出：</h3>" +
+    '<div class="slot">' + (UI.pickMain ? artSVG(UI.pickMain) + "<b>" + esc(UI.pickMain.name) + "</b>（主將）" : '<span class="small">主將（點下面的神明）</span>') + "</div>" +
+    '<div class="slot" style="margin-top:6px">' + (UI.pickAtt ? artSVG(UI.pickAtt) + "<b>" + esc(UI.pickAtt.name) + "</b>（隨侍）" : '<span class="small">隨侍（可不放）</span>') + "</div>" +
+    '<div class="box" id="pv">' + previewHTML() + "</div>" +
+    '<div class="row"><button data-act="clear">清除</button><button class="primary" data-act="commit" style="flex:2"' + (UI.pickMain ? "" : " disabled") + ">出牌</button></div>" +
+    (UI.msg ? '<p class="small warn">' + esc(UI.msg) + "</p>" : "") +
+    "<h3>我的手牌（點一下放進去，再點一下拿掉）</h3>" +
+    hand.concat([FILLER]).map(c => handRow(c, UI.pickMain === c ? "main" : (UI.pickAtt === c ? "att" : ""))).join("") +
+    '<p class="small">「' + esc(FILLER.name) + '」不花香火、每一合都能請，力只有 ' + FILLER.power + '。香火不夠時，靠它撐場。</p>' +
+    relTable();
+}
+function linesHTML(res) {
+  return res.lines.filter(l => l.k !== "note" || true).map(l => {
+    if (l.k === "note") return '<div class="rl">' + esc(l.t) + "</div>";
+    const cls = l.d > 0 ? "p" : (l.d < 0 ? "n" : "");
+    const why = l.r ? "<br><span class=\"small\">" + esc(l.r.text) + '<span class="tag">' + esc(l.r.basis) + "・" + esc(l.r.ref) + "</span></span>" : "";
+    return '<div class="rl ' + cls + '"><b>' + esc(l.t) + "</b> " + (l.d ? (l.d > 0 ? "+" : "") + l.d : "") + why + "</div>";
+  }).join("");
+}
+function screenRound() {
+  const rec = B.last;
+  const r = rec.win === 1 ? "你贏了這一合" : (rec.win === -1 ? "對手贏了這一合" : "這一合平手");
+  return header() +
+    '<div class="box"><h2 style="margin-top:0" class="' + (rec.win === 1 ? "good" : (rec.win === -1 ? "bad" : "")) + '">第 ' + rec.round + " 合：" + r + '</h2><div class="row"><div>你 <span class="score">' + rec.ev.score[0] + '</span></div><div>對手 <span class="score">' + rec.ev.score[1] + "</span></div></div></div>" +
+    "<h3>你這邊</h3>" + linesHTML(rec.ev.res[0]) + "<h3>對手那邊</h3>" + linesHTML(rec.ev.res[1]) +
+    (rec.afterMe.length ? '<p class="warn"><b>代價：</b>下一合你的香火 −1（' + esc(rec.ev.res[0].lines.filter(l => l.r && l.r.after).map(l => l.r.name).join("、")) + "）。</p>" : "") +
+    '<div class="row"><button class="primary" data-act="next">' + (B.done ? "看這場結果" : "下一合") + "</button></div>";
+}
+function judgmentHTML() {
+  const j = DATA.judgment;
+  return '<div class="box"><h2 style="margin-top:0">' + esc(j.title) + "</h2><p>" + esc(j.a) + "</p><p>" + esc(j.b) + "</p><ol>" + j.questions.map(q => "<li>" + esc(q) + "</li>").join("") + "</ol>" +
+    '<p class="small">想玩的話，把上面的版本一、版本二各打一場再回答。</p>' + judgePickHTML() + "</div>";
+}
+/* 最小四選一判斷（與其他樣板同一組選項、同一個順序；選項位置 1–4 交給助教掛鉤記錄） */
+const JOPTS = ["照樣玩", "故事垮了，玩法還在", "玩法本身就垮了", "說不準"];
+function judgePickHTML() {
+  UI.jd = UI.jd || {};
+  const cur = UI.jd[VER];
+  return '<p><b>你剛玩的這一版，你的判斷？</b></p><div class="row" role="group" aria-label="四選一判斷">' +
+    JOPTS.map((o, i) => '<button data-act="jpick" data-i="' + i + '" aria-pressed="' + (cur === i) + '" style="min-height:44px' + (cur === i ? ";outline:3px solid var(--accent,#b5462f)" : "") + '">' + esc(o) + "</button>").join("") + "</div>";
+}
+function screenResult() {
+  const o = B.outcome, op = DATA.opponents[B.stage];
+  let h = header();
+  if (o === "win") {
+    h += '<div class="box"><h2 style="margin-top:0" class="good">你贏了第 ' + (B.stage + 1) + " 關</h2>" + (B.tie ? "<p>三合沒分出勝負，" + (B.tie === "rootSum" ? "比根（輩分）：你 " + B.me.rootSum + " 對 " + B.ai.rootSum + "。" : "比總力：你 " + B.me.total + " 對 " + B.ai.total + "。") + "</p>" : "") + "</div>";
+    h += '<div class="box"><b>這場的一句話故事</b><p>' + esc(storyLine(B, true)) + '</p><p class="small">想想看：這句話你會怎麼改成自己的版本？</p></div>';
+    if (!UI.reward) UI.reward = rewardChoices();
+    h += "<h2>挑一張新牌收進收藏</h2>" + '<div class="grid">' + UI.reward.map(id => cardTile(CARDS[id], { act: "reward" })).join("") + "</div>";
+    if (!UI.reward.length) h += '<div class="row"><button class="primary" data-act="afterwin">繼續</button></div>';
+  } else if (o === "lose") {
+    const g = UI.lostCard;
+    h += '<div class="box"><h2 style="margin-top:0" class="bad">這一關輸了</h2>' + (B.tie ? "<p>三合沒分出勝負，" + (B.tie === "rootSum" ? "比根（輩分）：你 " + B.me.rootSum + " 對 " + B.ai.rootSum + "。" : "比總力：你 " + B.me.total + " 對 " + B.ai.total + "。") + "</p>" : "") +
+      (g ? "<p><b>行政整理：</b>" + esc(g.name) + "（根 " + g.root + "）被淘汰，退出收藏。"  + "</p>" : (VER === "culture" ? "<p>收藏只剩最少張數，這次沒有牌被淘汰。</p>" : "<p>版本二輸了不扣牌，再來一次。</p>")) + "</div>";
+    h += '<div class="box"><b>這場的一句話故事</b><p>' + esc(storyLine(B, false)) + "</p></div>";
+    h += '<div class="row"><button class="primary" data-act="retry">再挑戰這一關</button><button data-act="restart">重新開始</button></div>';
+  } else {
+    h += '<div class="box"><h2 style="margin-top:0">平手</h2><p>兩邊完全一樣，再來一次。</p></div><div class="row"><button class="primary" data-act="retry">再打一次</button></div>';
+  }
+  h += '<details class="box"><summary>這一場的過程</summary>' + B.log.map(rec => "<p><b>第 " + rec.round + " 合</b>　你 " + esc(rec.my.main ? rec.my.main.name : "?") + (rec.my.att ? "＋" + esc(rec.my.att.name) : "") + " " + rec.ev.score[0] + " ： " + rec.ev.score[1] + " " + esc(rec.ai.main ? rec.ai.main.name : "?") + (rec.ai.att ? "＋" + esc(rec.ai.att.name) : "") + "</p>").join("") + "</details>";
+  return h;
+}
+function screenFinal() {
+  const f = DATA.final;
+  return header() + '<div class="box"><h2 style="margin-top:0" class="good">' + esc(f.name) + "</h2><p>" + esc(f.text_win) + '</p><div class="grid">' + cardTile(CARDS[f.win_card], { act: "none" }) + "</div></div>" +
+    '<div class="box"><b>你的收藏：</b>' + S.coll.map(id => esc(CARDS[id].name)).join("、") + "</div>" + judgmentHTML() +
+    '<div class="row"><button class="primary" data-act="restart">再玩一輪</button><button data-act="ver" data-v="' + (VER === "culture" ? "skin" : "culture") + '">換到另一個版本玩</button></div>';
+}
+
+function render() {
+  const app = $("#app");
+  let h = "";
+  if (UI.screen === "title") h = screenTitle();
+  else if (UI.screen === "collect") h = screenCollect();
+  else if (UI.screen === "battle") h = screenBattle();
+  else if (UI.screen === "round") h = screenRound();
+  else if (UI.screen === "result") h = screenResult();
+  else if (UI.screen === "final") h = screenFinal();
+  app.innerHTML = h;
+  window.scrollTo(0, 0);
+}
+function softRefreshBattle() {
+  // 手牌選擇時只換內容，不跳回頁首
+  const y = window.scrollY; const app = $("#app");
+  app.innerHTML = screenBattle(); window.scrollTo(0, y);
+}
+
+/* ============ 操作 ============ */
+function placeCard(c) {
+  if (UI.pickMain === c) { UI.pickMain = null; return; }
+  if (UI.pickAtt === c) { UI.pickAtt = null; return; }
+  const left = B.me.incense;
+  if (isGod(c) && !UI.pickMain) { UI.pickMain = c; }
+  else if (!UI.pickAtt) { UI.pickAtt = c; }
+  else if (isGod(c) && !UI.pickMain) UI.pickMain = c;
+  else UI.pickAtt = c;
+  UI.msg = "";
+  if (cost(UI.pickMain) + cost(UI.pickAtt) > left) { UI.msg = "香火不夠：這兩張要 " + (cost(UI.pickMain) + cost(UI.pickAtt)) + " 點，你只剩 " + left + " 點。"; if (UI.pickAtt === c) UI.pickAtt = null; else UI.pickMain = null; }
+}
+function startStage() {
+  S.lastLineup = UI.sel.slice();
+  startBattle(S.stage, UI.sel);
+  UI.pickMain = null; UI.pickAtt = null; UI.msg = ""; UI.reward = null; UI.lostCard = null;
+  UI.screen = "battle";
+}
+function onClick(e) {
+  const t = e.target.closest("[data-act]");
+  if (!t) return;
+  const act = t.dataset.act, id = t.dataset.id;
+  if (act !== "mute") sfx("tap");
+  switch (act) {
+    case "mute": MUTED = !MUTED; if (!MUTED) sfx("tap"); render(); return;
+    case "ver": VER = t.dataset.v; if (UI.screen === "battle" || UI.screen === "round") { /* 對戰中不切 */ } if (UI.screen === "final" || UI.screen === "result") { S = null; UI.screen = "title"; } if (UI.screen === "collect") { newRun(); } render(); return;
+    case "start": newRun(); render(); return;
+    case "loadjson": $("#fileIn").click(); return;
+    case "tog": { const i = UI.sel.indexOf(id); if (i >= 0) UI.sel.splice(i, 1); else if (UI.sel.length < DATA.rules.lineup_size) UI.sel.push(id); const y = window.scrollY; $("#app").innerHTML = screenCollect(); window.scrollTo(0, y); return; }
+    case "auto": autoPick(); render(); return;
+    case "fight": startStage(); render(); return;
+    case "hand": placeCard(id === "_filler" ? FILLER : CARDS[id]); softRefreshBattle(); return;
+    case "clear": UI.pickMain = UI.pickAtt = null; UI.msg = ""; softRefreshBattle(); return;
+    case "commit": {
+      if (!UI.pickMain) return;
+      const rec = commitRound(UI.pickMain, UI.pickAtt);
+      if (rec.ev.res[0].lines.concat(rec.ev.res[1].lines).some(l => l.k === "rel" && l.d)) sfx("culture");
+      UI.pickMain = UI.pickAtt = null; UI.msg = ""; UI.screen = "round"; render(); return;
+    }
+    case "next": {
+      if (!B.done) { UI.screen = "battle"; render(); return; }
+      UI.reward = null; UI.lostCard = null;
+      if (B.outcome === "win") { S.wins++; sfx("win"); }
+      else if (B.outcome === "lose") { sfx("lose"); UI.lostCard = applyLossPenalty(); }
+      UI.screen = "result"; render(); return;
+    }
+    case "reward": {
+      S.coll.push(id); UI.reward = [];
+      S.stage++;
+      if (S.stage >= DATA.opponents.length) { S.coll.push(DATA.final.win_card); UI.screen = "final"; sfx("win"); }
+      else { UI.screen = "collect"; UI.sel = S.lastLineup.filter(x => S.coll.indexOf(x) >= 0); if (UI.sel.length < DATA.rules.lineup_size) autoPick(); }
+      render(); return;
+    }
+    case "retry": UI.sel = S.lastLineup.filter(x => S.coll.indexOf(x) >= 0); if (UI.sel.length < DATA.rules.lineup_size) autoPick(); UI.screen = "collect"; render(); return;
+    case "jpick": { UI.jd = UI.jd || {}; UI.jd[VER] = Number(t.dataset.i); try { if (window.CT_HOOK) { const hv = VER === "culture" ? "rule" : "skin"; CT_HOOK.markPlayed(hv); CT_HOOK.judged(hv, UI.jd[VER] + 1); } } catch (err) { /* 助教出錯不能影響樣板 */ } render(); return; }
+    case "restart": newRun(); render(); return;
+  }
+}
+
+/* ============ 資料載入：http 讀旁邊的 cards.json；雙擊開檔時用內嵌的那份；也可以手動載入 ============ */
+async function boot() {
+  const embedded = JSON.parse($("#cards-data").textContent);
+  let d = embedded;
+  if (/^https?:$/.test(location.protocol)) {
+    try { const r = await fetch("cards.json", { cache: "no-store" }); if (r.ok) d = await r.json(); } catch (e) { /* 用內嵌的 */ }
+  }
+  let probs = validateData(d);
+  if (probs.length) { UI.problems = probs; d = embedded; }
+  setData(d);
+  document.addEventListener("click", onClick);
+  document.addEventListener("change", e => {
+    if (e.target.id !== "fileIn" || !e.target.files[0]) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      try { const nd = JSON.parse(fr.result), p = validateData(nd); if (p.length) { UI.problems = p; } else { UI.problems = []; setData(nd); } } catch (err) { UI.problems = ["這個檔案不是正確的 JSON：" + err.message]; }
+      UI.screen = "title"; render();
+    };
+    fr.readAsText(e.target.files[0]);
+  });
+  render();
+  window.__cg = { get data() { return DATA; }, cards: () => CARDS, setVer: v => { VER = v; }, ver: () => VER, evaluate, chooseLineup, validateData, newSide, simulate, artSVG, cleanSVG, state: () => ({ S, B, UI }), setData };
+}
+/* ============ 自動模擬（驗收用：電腦打電腦，不碰畫面） ============ */
+function simulate(n, opt) {
+  opt = opt || {};
+  const out = { games: 0, win: 0, lose: 0, draw: 0, rounds: 0, relHits: {}, perStage: [0, 0, 0].map(() => ({ g: 0, w: 0 })), errors: 0 };
+  for (let g = 0; g < n; g++) {
+    try {
+      let coll = DATA.start.slice();
+      for (let st = 0; st < DATA.opponents.length; st++) {
+        const pol = opt.policy || "aware";
+        // 出陣：挑力高香火低的 5 張，保證至少 1 神明
+        const ids = shuffle(coll).slice(0, 12);
+        const sorted = ids.map(id => CARDS[id]).sort((a, b) => ((isGod(b) ? b.power : 1) - cost(b) * .3) - ((isGod(a) ? a.power : 1) - cost(a) * .3));
+        let lineup = sorted.slice(0, DATA.rules.lineup_size).map(c => c.id);
+        if (!lineup.some(id => isGod(CARDS[id]))) lineup[0] = sorted.find(isGod).id;
+        startBattle(st, lineup);
+        let guard = 0;
+        while (!B.done && guard++ < 10) {
+          const left = DATA.rules.rounds - B.round + 1;
+          const c = chooseLineup(B.me, { main: B.aiShown.main, att: null, pawned: B.ai.pawned }, left, pol);
+          const rec = commitRound(c.main, c.att);
+          out.rounds++;
+          rec.ev.res.forEach(r => r.lines.forEach(l => { if (l.r) out.relHits[l.r.id] = (out.relHits[l.r.id] || 0) + 1; }));
+        }
+        out.perStage[st].g++;
+        if (B.outcome === "win") { out.perStage[st].w++; const pool = DATA.cards.filter(c => coll.indexOf(c.id) < 0 && c.id !== DATA.final.win_card); if (pool.length) coll.push(pool[rnd(pool.length)].id); }
+        else { if (B.outcome === "lose") out.lose++; else out.draw++; break; }
+        if (st === DATA.opponents.length - 1) out.win++;
+      }
+      out.games++;
+    } catch (e) { out.errors++; out.lastError = String(e && e.stack || e); }
+  }
+  return out;
+}
+boot();
+</script>
+<!-- CT-HOOK-BEGIN -->
+<script src="../tutor/folk_index.js?v=202611151156"></script>
+<script src="../tutor/tutor_templates.js?v=202611151156"></script>
+<script src="../tutor/tutor_core.js?v=202611151156"></script>
+<script src="../tutor/tutor_ui.js?v=202611151156"></script>
+<script src="../tutor/tutor_hook.js?v=202611151156"></script>
+<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script>if (window.CT_BOOT) CT_BOOT('cards');</script>
+<!-- CT-HOOK-END -->
+</body>
+</html>

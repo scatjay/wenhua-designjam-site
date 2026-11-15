@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>擲筊問路</title>
+<style>
+
+:root{--bg:#f7f3ea;--card:#fffdf8;--ink:#2b2622;--muted:#6f655c;--line:#ddd3c4;--accent:#b5562b;--accent2:#2f6f6a;--warm:#f4d38a;--path:#e9dfcf;--dark:#3d3a46;--good:#2e7d4f;--bad:#b23b3b;--chip:#efe6d6}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1d1b20;--card:#27242b;--ink:#eee8df;--muted:#b4aba0;--line:#433e47;--accent:#e08a5c;--accent2:#6cc0b8;--warm:#7a5f2a;--path:#3a3530;--dark:#15131a;--good:#6fcf97;--bad:#ef7b7b;--chip:#35303a}}
+:root[data-theme="dark"]{--bg:#1d1b20;--card:#27242b;--ink:#eee8df;--muted:#b4aba0;--line:#433e47;--accent:#e08a5c;--accent2:#6cc0b8;--warm:#7a5f2a;--path:#3a3530;--dark:#15131a;--good:#6fcf97;--bad:#ef7b7b;--chip:#35303a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:12px 16px 48px}
+h1{font-size:1.5rem;margin:4px 0 0}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 8px}
+button{font:inherit;min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.primary{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.w2{border-left:5px solid var(--accent2)}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:2px 10px;font-size:.85rem;margin:2px 4px 2px 0}
+.tag{display:inline-block;font-size:.72rem;border:1px solid var(--line);border-radius:6px;padding:0 5px;margin-left:6px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin:10px 0}
+.tabs button{flex:1}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.hud div{background:var(--chip);border-radius:10px;padding:4px 2px;font-size:.85rem}
+.hud b{display:block;font-size:1.15rem}
+.nights{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px}
+.nights span{flex:0 0 auto;font-size:.78rem;padding:3px 8px;border-radius:8px;background:var(--chip);white-space:nowrap}
+.nights span.now{background:var(--accent);color:#fff}
+.nights span.past{opacity:.5}
+.nights span.big{outline:2px solid var(--accent)}
+.board{position:relative;width:100%;max-width:420px;margin:8px auto;aspect-ratio:7/9;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(9,1fr);gap:2px;background:var(--dark);border-radius:12px;padding:3px}
+.cell{border-radius:6px;background:#4a4553;display:flex;align-items:center;justify-content:center;font-size:1.25rem;position:relative;border:0;padding:0}
+.cell.path{background:var(--path)}
+.cell.lit{box-shadow:inset 0 0 0 100px rgba(244,190,90,.28)}
+.cell.path.lit{background:#f1dca8}
+.cell.dim::after{content:"暗";position:absolute;right:2px;bottom:0;font-size:.6rem;color:#fff;background:#0008;border-radius:4px;padding:0 2px}
+.cell.flash{outline:3px solid var(--good)}
+.cell.endc::before{content:attr(data-l);position:absolute;font-size:.55rem;bottom:1px;color:#5a4a3a}
+.vis{position:absolute;width:7%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;transition:left .15s linear,top .15s linear}
+.vis.ghost{background:radial-gradient(circle,#fff 0%,#fff 30%,#6f86d6 75%);box-shadow:0 0 8px 2px #6f86d6;opacity:.9}
+.vis.ghost.hungry{background:radial-gradient(circle,#fff 0%,#fff 30%,#c97a2a 75%);box-shadow:0 0 8px 2px #c97a2a}
+.vis.fed{opacity:.35;transform:translate(-50%,-80%) scale(.7);transition:all .4s}
+.vis.mob{background:#c0392b;border:2px solid #fff}
+.vis.mob.hungry{background:#7d1e14}
+.log{max-height:220px;overflow:auto;font-size:.9rem;padding-left:18px;margin:0}
+.log li{margin:2px 0}
+.msg{min-height:1.4em;color:var(--accent);font-size:.9rem}
+.ans button{flex:1 1 45%}
+textarea,input[type=text]{width:100%;font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+textarea.json{height:260px;font-family:ui-monospace,Consolas,monospace;font-size:.78rem}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+td,th{border:1px solid var(--line);padding:4px 6px;text-align:left}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--chip);padding:8px;border-radius:8px;font-size:.82rem}
+.hide{display:none!important}
+.big-end{font-size:1.3rem;margin:0}
+.small{font-size:.82rem;color:var(--muted)}
+details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+
+.map{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.goal{grid-column:1/-1;text-align:center;background:var(--chip);border-radius:10px;padding:6px;font-weight:bold}
+.node{border:1px solid var(--line);border-radius:10px;padding:4px 6px;font-size:.78rem;background:var(--card);min-height:44px;line-height:1.3;overflow:hidden}
+.node .nm{display:block;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.node.can{outline:3px solid var(--accent2)}
+.node.here{background:var(--accent);color:#fff}
+.node.past{opacity:.55}
+.node.fog{color:var(--muted);background:var(--chip)}
+.fl{grid-column:1/-1;font-size:.72rem;color:var(--muted);margin-top:2px}
+.cand{display:grid;gap:8px}
+.cand .card{margin:0}
+.jiao{display:inline-flex;gap:4px;vertical-align:middle;margin-right:6px}
+.jiao svg{width:30px;height:22px}
+.res-sheng{color:var(--good)} .res-yin{color:var(--bad)} .res-xiao{color:var(--accent)}
+.route li{margin:2px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title">擲筊問路</h1>
+  <p class="sub" id="subtitle"></p>
+  <div class="row" role="group" aria-label="版本">
+    <button data-act="__m_culture" id="m_culture">文化規則版</button>
+    <button data-act="__m_skin" id="m_skin">普通爬塔版</button>
+    <button data-act="__theme" aria-label="切換亮暗">◐</button>
+  </div>
+  <div class="card w2">
+    <b>這一關練的 W2 文化卡：<span id="w2kind"></span></b>
+    <div class="small" id="w2hint"></div>
+    <div id="w2cards"></div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button data-act="__tab_play" id="tab_play" class="on">玩</button>
+    <button data-act="__tab_remix" id="tab_remix">怎麼改做</button>
+    <button data-act="__tab_data" id="tab_data">資料檔</button>
+  </div>
+
+  <section id="pane_play">
+    <p id="intro" class="small"></p>
+    <div class="hud" id="hud"></div>
+    <p class="small" id="throwNote"></p>
+    <div id="lastThrow" class="card hide" aria-live="polite"></div>
+
+    <div id="chooseBox">
+      <b>下一個路口，走哪一條？</b>
+      <div class="cand" id="cands"></div>
+    </div>
+
+    <div id="nodeBox" class="card hide">
+      <p id="nodeText"></p>
+      <div class="row">
+        <button data-act="__node_ask" id="nodeAsk"></button>
+        <button data-act="__node_do" id="nodeDo" class="primary"></button>
+        <button data-act="__node_skip" id="nodeSkip">不用了，繼續走</button>
+      </div>
+    </div>
+
+    <div id="endBox" class="card hide">
+      <p class="big-end" id="endTitle"></p>
+      <p id="endText"></p>
+      <p class="small" id="endStyle"></p>
+      <b>這一路</b>
+      <ol class="route small" id="route"></ol>
+      <div class="card w2">
+        <b>W2 那一題：把這個版本裡的文化拿掉，這個遊戲還玩得下去嗎？</b>
+        <div class="row ans" id="ansRow"></div>
+        <label class="small" for="ansWhy">寫一句為什麼</label>
+        <textarea id="ansWhy" rows="2"></textarea>
+        <div class="row" style="margin-top:6px">
+          <button data-act="__ans_send" class="primary">送出我的判斷</button>
+          <button data-act="__restart">再走一次（新的路）</button>
+          <button data-act="__other" id="otherBtn">換另一版玩</button>
+        </div>
+        <div id="ansBack" class="small"></div>
+      </div>
+      <div id="compare" class="card hide"></div>
+    </div>
+
+    <b>地圖（下面是起點，往上走）</b>
+    <div class="map" id="map"></div>
+
+    <details class="card">
+      <summary>一路上發生了什麼（紀錄）</summary>
+      <ol class="log" id="log"></ol>
+    </details>
+  </section>
+
+  <section id="pane_remix" class="hide"></section>
+
+  <section id="pane_data" class="hide">
+    <div class="card">
+      <b>試跑 100 局</b>
+      <p class="small">用三種機器玩家各玩 100 局，看你改的規則讓誰比較會贏。</p>
+      <button data-act="__trial" class="primary">試跑 100 局</button>
+      <div id="trialOut"></div>
+    </div>
+    <div class="card">
+      <b>我的資料檔</b>
+      <p class="small">整份資料檔在這裡。改完按「載入」就會照你的版本玩；可以整份複製給 Claude／Gemini 請它幫忙改。</p>
+      <textarea class="json" id="jsonBox" spellcheck="false" aria-label="資料檔"></textarea>
+      <div class="row">
+        <button data-act="__load" class="primary">載入</button>
+        <button data-act="__reset">還原成原本的</button>
+        <button data-act="__save">存成檔案</button>
+      </div>
+      <div class="msg" id="loadMsg"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* 擲筊問路 引擎（純邏輯，不碰畫面）。瀏覽器：window.RL；Node：module.exports。
+   資料來自 roguelike.json 的一個版本（versions.culture 或 versions.skin）。 */
+(function (root) {
+  'use strict';
+
+  function rng(seed) {
+    var a = (seed >>> 0) || 1;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function validate(v) {
+    var e = [];
+    if (!v || typeof v !== 'object') return ['資料檔不是物件'];
+    ['meta', 'rules', 'start', 'kinds', 'throw', 'endings'].forEach(function (k) { if (!v[k]) e.push('缺少欄位：' + k); });
+    if (e.length) return e;
+    if (!(v.meta.floors >= 2)) e.push('meta.floors 至少 2');
+    if (!(v.meta.lanes >= 2 && v.meta.lanes <= 4)) e.push('meta.lanes 要在 2 到 4 之間');
+    var sum = 0;
+    for (var k in v.kinds) { if (typeof v.kinds[k].weight !== 'number') e.push('kinds.' + k + '.weight 要是數字'); sum += v.kinds[k].weight || 0; }
+    if (sum <= 0) e.push('kinds 的 weight 加起來要大於 0');
+    ['good', 'bad'].forEach(function (q) {
+      var t = v.throw[q];
+      if (!t) e.push('throw 缺少 ' + q);
+      else { var s = (t.sheng || 0) + (t.xiao || 0) + (t.yin || 0); if (Math.abs(s - 1) > 0.001) e.push('throw.' + q + ' 三個機率加起來要等於 1（現在是 ' + s.toFixed(2) + '）'); }
+    });
+    if (!Array.isArray(v.endings) || !v.endings.length) e.push('endings 至少一個');
+    return e;
+  }
+
+  function pickW(rand, items) {
+    var sum = 0; items.forEach(function (x) { sum += x[1]; });
+    var r = rand() * sum;
+    for (var i = 0; i < items.length; i++) { r -= items[i][1]; if (r <= 0) return items[i][0]; }
+    return items[items.length - 1][0];
+  }
+
+  function buildMap(v, rand) {
+    var M = v.meta, floors = [], kinds = [];
+    for (var k in v.kinds) kinds.push([k, v.kinds[k].weight]);
+    for (var f = 0; f < M.floors; f++) {
+      var row = [];
+      for (var l = 0; l < M.lanes; l++) {
+        var kind = f === 0 ? 'alley' : pickW(rand, kinds);
+        var K = v.kinds[kind];
+        var bad = kind === 'alley' ? rand() < (v.rules.danger_p || 0.45) : !!K.bad;
+        var names = K.names || [K.label];
+        var slow = kind === 'alley' && !!v.rules.slow_p && rand() < v.rules.slow_p;
+        row.push({ f: f, l: l, kind: kind, bad: bad, slow: slow, name: names[Math.floor(rand() * names.length)], asked: [], askedQ: [], visited: false });
+      }
+      floors.push(row);
+    }
+    // 保證整張圖至少有 min 個廟與壇（讓玩家一定碰得到）
+    (v.rules.ensure || []).forEach(function (en) {
+      var have = 0; floors.forEach(function (r) { r.forEach(function (n) { if (n.kind === en.kind) have++; }); });
+      var guard = 0;
+      while (have < en.min && guard++ < 50) {
+        var f = 1 + Math.floor(rand() * (M.floors - 1)), l = Math.floor(rand() * M.lanes), n = floors[f][l];
+        if (n.kind === 'alley') { var K = v.kinds[en.kind]; n.kind = en.kind; n.bad = !!K.bad; n.name = (K.names || [K.label])[Math.floor(rand() * (K.names || [1]).length)]; have++; }
+      }
+    });
+    return floors;
+  }
+
+  function newGame(v, seed) {
+    var rand = rng(seed);
+    var g = { v: v, seed: seed, rand: rand, floors: buildMap(v, rand), floor: -1, lane: -1,
+      soul: v.start.soul, incense: v.start.incense, fright: 0, night: 0, yinStreak: 0,
+      phase: 'choose', here: null, log: [], route: [], result: null, lastThrow: null };
+    g.log.push({ text: v.meta.intro, tag: v.meta.intro_tag || '' });
+    return g;
+  }
+
+  function candidates(g) {
+    var M = g.v.meta, f = g.floor + 1;
+    if (f >= M.floors) return [];
+    var out = [];
+    for (var l = 0; l < M.lanes; l++) if (g.floor < 0 || Math.abs(l - g.lane) <= 1) out.push(g.floors[f][l]);
+    return out;
+  }
+
+  function throwFor(g, node, q) {
+    var v = g.v, R = v.rules, flag = q === 'pass' ? node.slow : node.bad;
+    var p = R.informed ? (flag ? v.throw.bad : v.throw.good) : v.throw.good;
+    var x = g.rand();
+    if (!R.three_state) return x < (v.throw.coin || 0.5) ? 'sheng' : 'yin';
+    return x < p.sheng ? 'sheng' : (x < p.sheng + p.xiao ? 'xiao' : 'yin');
+  }
+
+  // 某個問法的最新結果（同一個問法問到聖筊或陰筊就定了；笑筊還可以再問）
+  function lastQ(n, q) {
+    for (var i = n.asked.length - 1; i >= 0; i--) if ((n.askedQ[i] || 'safe') === q) return n.asked[i];
+    return '';
+  }
+  // 這一條路現在可以問哪幾種問法：第一次只問「平安嗎」；擲過之後兩種問法都可以選（已經定了的不能再問）
+  function questions(g, node) {
+    var R = g.v.rules, T = g.v.throw;
+    if (node.asked.length >= (R.max_asks_per_node || 3)) return [];
+    if (!R.three_state) return node.asked.length ? [] : ['safe'];
+    var qs = node.asked.length ? ['safe', 'pass'] : ['safe'];
+    if (!R.slow_p) qs = ['safe'];
+    return qs.filter(function (q) { var l = lastQ(node, q); return l !== 'sheng' && !(l === 'yin' && R.yin_settles); });
+  }
+
+  // 擲筊問一條路。回傳 {ok, res, text}
+  function ask(g, lane, q) {
+    q = q || 'safe';
+    var v = g.v, R = v.rules, T = v.throw;
+    if (g.phase !== 'choose') return { ok: false, text: '現在不能擲' };
+    var node = candidates(g).filter(function (n) { return n.l === lane; })[0];
+    if (!node) return { ok: false, text: '這條走不到' };
+    var max = R.max_asks_per_node || 3;
+    if (node.asked.length >= max) return { ok: false, text: T.too_many || '同一條路已經問很多次了' };
+    if (R.three_state) {
+      var lq = lastQ(node, q);
+      if (lq === 'yin' && R.yin_settles) return { ok: false, text: T.yin_settled || '已經不認可了，再問也是一樣' };
+      if (lq === 'sheng') return { ok: false, text: T.sheng_settled || '已經同意了' };
+    } else if (node.asked.length) return { ok: false, text: T.too_many || '每格只能擲一次' };
+    var res = throwFor(g, node, q);
+    node.asked.push(res); node.askedQ.push(q);
+    g.night += (R.night_per_throw || 0);
+    var text = (T.labels[res] || res);
+    if (res === 'yin') g.yinStreak++; else g.yinStreak = 0;
+    g.lastThrow = { lane: lane, res: res, q: q };
+    var line = '問「' + node.name + '」' + (R.slow_p ? '（' + (q === 'pass' ? '走得過去嗎' : '平安嗎') + '）' : '') + '：' + text;
+    if (R.streak_fright && g.yinStreak >= R.streak_fright) {
+      g.fright += 1; g.soul -= 1; g.yinStreak = 0;
+      line += '。' + (T.streak_text || '連續陰筊，阿弟仔更不安了') + '（驚 +1、魂 −1）';
+    }
+    g.log.push({ text: line, tag: T.tag || '' });
+    checkLose(g);
+    return { ok: true, res: res, text: text };
+  }
+
+  function go(g, lane) {
+    if (g.phase !== 'choose') return '現在不能走';
+    var node = candidates(g).filter(function (n) { return n.l === lane; })[0];
+    if (!node) return '這條走不到';
+    var v = g.v, R = v.rules, K = v.kinds[node.kind];
+    g.floor = node.f; g.lane = node.l; node.visited = true; g.here = node;
+    g.night += (R.night_per_step || 1);
+    var last = node.asked[node.asked.length - 1] || '';
+    var rec = { name: node.name, kind: node.kind, asked: node.asked.slice(), askedQ: node.askedQ.slice(), what: '' };
+    g.route.push(rec);
+    if (node.slow && R.three_state) {
+      g.night += (R.slow_night || 2);
+      if (R.slow_hurt) g.soul -= R.slow_hurt;
+      g.log.push({ text: node.name + '：路不好走，繞了一圈（夜 +' + (R.slow_night || 2) + (R.slow_hurt ? '、魂 −' + R.slow_hurt : '') + '）', tag: '遊戲設計' });
+    }
+    g.yinStreak = 0;
+    if (node.kind === 'alley') {
+      if (R.coin_bonus && last) {
+        // 普通版：成功＝獎勵加倍，失敗＝扣血
+        if (last === 'sheng') { g.incense += 2; rec.what = '成功：獎勵加倍'; g.log.push({ text: node.name + '：成功，撿到 2 支香', tag: '遊戲設計' }); }
+        else { g.soul -= 1; rec.what = '失敗：扣 1 血'; g.log.push({ text: node.name + '：失敗，扣 1 血', tag: '遊戲設計' }); }
+      } else if (node.bad) {
+        var d = v.events.bad[Math.floor(g.rand() * v.events.bad.length)];
+        var hurt = (R.fright_on_bad ? (R.bad_hurt || 0) : 1) + (g.night >= (R.late_night || 99) ? 1 : 0);
+        if (R.fright_on_bad) g.fright += 1;
+        g.soul -= hurt;
+        rec.what = d.short || '出事了';
+        g.log.push({ text: node.name + '：' + d.text + '（' + (R.fright_on_bad ? '驚 +1' : '') + (hurt ? (R.fright_on_bad ? '、' : '') + '魂 −' + hurt : '') + '）' + (g.night >= (R.late_night || 99) ? (v.meta.late_text || '') : ''), tag: d.tag || '' });
+      } else {
+        var s = v.events.good[Math.floor(g.rand() * v.events.good.length)];
+        g.incense += s.incense || 0; g.soul = Math.min(v.start.soul_max, g.soul + (s.soul || 0));
+        rec.what = s.short || '平安';
+        g.log.push({ text: node.name + '：' + s.text, tag: s.tag || '' });
+      }
+      if (node.slow && R.three_state) rec.what += '（路不好走）';
+      afterStep(g);
+    } else {
+      g.phase = 'node';
+      g.log.push({ text: node.name + '：' + K.arrive, tag: K.tag || '' });
+    }
+    return '';
+  }
+
+  // 在廟或壇裡：做那件事（收驚／補血）或離開
+  function nodeAct(g, doIt) {
+    if (g.phase !== 'node') return '';
+    var v = g.v, node = g.here, K = v.kinds[node.kind], rec = g.route[g.route.length - 1];
+    if (doIt) {
+      if (g.incense < K.cost) return v.meta.no_incense || '香不夠';
+      g.incense -= K.cost;
+      if (K.fright_to != null) g.fright = K.fright_to;
+      if (K.fright_add) g.fright += K.fright_add;
+      if (K.soul) g.soul = Math.min(v.start.soul_max, g.soul + K.soul);
+      g.log.push({ text: K.done_text, tag: K.tag || '' });
+      rec.what = K.short_done || K.act;
+    } else {
+      rec.what = K.short_skip || '沒進去';
+    }
+    afterStep(g);
+    return '';
+  }
+
+  // 在廟或壇門口先擲筊問：這裡可以收驚嗎？
+  function nodeAsk(g) {
+    if (g.phase !== 'node' || !g.v.rules.three_state) return { ok: false, text: '' };
+    var v = g.v, n = g.here, K = v.kinds[n.kind], T = v.throw;
+    n.nodeAsked = n.nodeAsked || [];
+    var last = n.nodeAsked[n.nodeAsked.length - 1];
+    if (last === 'sheng' || last === 'yin' || n.nodeAsked.length >= 3) return { ok: false, text: '已經問過了' };
+    var p = K.fake ? T.bad : T.good, x = g.rand();
+    var res = x < p.sheng ? 'sheng' : (x < p.sheng + p.xiao ? 'xiao' : 'yin');
+    n.nodeAsked.push(res);
+    g.night += (v.rules.night_per_throw || 0);
+    g.log.push({ text: '在' + n.name + '門口問「' + K.ask_q + '」：' + T.labels[res], tag: T.tag || '' });
+    return { ok: true, res: res };
+  }
+
+  function afterStep(g) {
+    var v = g.v, R = v.rules;
+    if (R.fright_drain && g.fright >= R.fright_drain) {
+      g.soul -= 1;
+      g.log.push({ text: v.meta.drain_text || '阿弟仔一直哭，你們走得很累（魂 −1）', tag: '遊戲設計' });
+    }
+    if (checkLose(g)) return;
+    g.here = null;
+    if (g.floor >= v.meta.floors - 1) { finish(g, true); return; }
+    g.phase = 'choose';
+  }
+
+  function checkLose(g) {
+    if (g.soul <= 0 && g.phase !== 'ended') { g.soul = 0; finish(g, false); return true; }
+    return false;
+  }
+
+  function test(g, w) {
+    var val = g[w[0]], op = w[1], x = w[2];
+    return op === '>=' ? val >= x : op === '<' ? val < x : op === '<=' ? val <= x : op === '>' ? val > x : val === x;
+  }
+
+  function finish(g, arrived) {
+    var list = g.v.endings.filter(function (e) { return !!e.arrived === arrived; });
+    var e = list.filter(function (en) { return !en.when || en.when.every(function (w) { return test(g, w); }); })[0] || list[list.length - 1];
+    var asks = 0; g.route.forEach(function (x) { asks += x.asked.length; });
+    var ratio = g.route.length ? asks / g.route.length : 0, style = null, ST = g.v.meta.styles || [];
+    if (g.v.rules.three_state) for (var si = 0; si < ST.length; si++) if (ratio >= ST[si].min) { style = { name: ST[si].name, text: ST[si].text, asks: asks, ratio: ratio }; break; }
+    g.result = { id: e.id, title: e.title, text: e.text, win: !!e.win, tag: e.tag || '', soul: g.soul, fright: g.fright, arrived: arrived, style: style };
+    g.phase = 'ended';
+  }
+
+  /* ---------- 機器玩家 ---------- */
+  function lastOf(n) { return n.asked[n.asked.length - 1] || ''; }
+  function qscore(n) {
+    var a = lastQ(n, 'safe'), b = lastQ(n, 'pass');
+    return (a === 'sheng' ? 2 : a === 'yin' ? -3 : 0) + (b === 'sheng' ? 1 : b === 'yin' ? -1 : 0);
+  }
+  function score(g, n, trusting) {
+    var v = g.v, K = v.kinds[n.kind], s = 0;
+    var needHeal = g.soul <= 3 || g.fright >= 2;
+    if (n.kind !== 'alley') {
+      var works = trusting ? true : !(K.fake);
+      s += needHeal && g.incense >= K.cost ? (works ? 3 : -1) : 0;
+    }
+    return s;
+  }
+
+  var BOTS = {
+    random: function (g) {
+      var c = candidates(g);
+      if (g.rand() < 0.5) ask(g, c[Math.floor(g.rand() * c.length)].l);
+      if (g.phase !== 'choose') return;
+      go(g, c[Math.floor(g.rand() * c.length)].l);
+    },
+    // 一般爬塔玩法：不擲筊，低血量就找能補的地方（廟、壇都一樣看待）
+    generic: function (g) {
+      var c = candidates(g);
+      if (g.v.rules.coin_bonus) {
+        // 普通版的一般玩法：血多時賭一把
+        var a = c[Math.floor(g.rand() * c.length)];
+        if (g.soul >= 4 && a.kind === 'alley') { ask(g, a.l); }
+      }
+      if (g.phase !== 'choose') return;
+      c.sort(function (a, b) { return score(g, b, true) - score(g, a, true); });
+      go(g, c[0].l);
+    },
+    // 懂規矩：每條都問；笑筊就換個問法再擲；陰筊的路不走；只在廟收驚
+    wise: function (g) {
+      var c = candidates(g), R = g.v.rules;
+      for (var i = 0; i < c.length && g.phase === 'choose'; i++) {
+        var guard = 0;
+        // 第一次問「平安嗎」；笑筊就換個問法再擲（輪流問「走得過去嗎」與「平安嗎」，直到有答案）
+        while (g.phase === 'choose' && guard++ < 3 && (lastOf(c[i]) === '' || lastOf(c[i]) === 'xiao')) {
+          var qs = questions(g, c[i]); if (!qs.length) break;
+          var qn = lastOf(c[i]) === 'xiao' ? (qs.indexOf('pass') >= 0 ? 'pass' : qs[0]) : 'safe';
+          if (!ask(g, c[i].l, qn).ok) break;
+        }
+        // 平安嗎得到聖筊後，再問一句「走得過去嗎」（只在路不好走時才值得）
+        if (g.phase === 'choose' && R.slow_p && lastQ(c[i], 'safe') === 'sheng' && lastQ(c[i], 'pass') === '' && questions(g, c[i]).indexOf('pass') >= 0) ask(g, c[i].l, 'pass');
+      }
+      if (g.phase !== 'choose') return;
+      c.sort(function (a, b) { return (qscore(b) + score(g, b, false)) - (qscore(a) + score(g, a, false)); });
+      go(g, c[0].l);
+    }
+  };
+  // 懂規矩但相信壇
+  BOTS.wise_trust_altar = function (g) { BOTS.wise(g); };
+  // 會擲筊，但陰筊照走（只看聖筊）
+  BOTS.ignore_yin = function (g) {
+    var c = candidates(g);
+    for (var i = 0; i < c.length && g.phase === 'choose'; i++) ask(g, c[i].l);
+    if (g.phase !== 'choose') return;
+    c.sort(function (a, b) { return (lastOf(b) === 'sheng') - (lastOf(a) === 'sheng') || score(g, b, true) - score(g, a, true); });
+    go(g, c[0].l);
+  };
+
+  function nodeBot(g, mode) {
+    var v = g.v, n = g.here, K = v.kinds[n.kind];
+    var want = g.fright >= 1 || g.soul <= 4;
+    var trust = mode === 'generic' || mode === 'wise_trust_altar' || mode === 'ignore_yin';
+    if (mode === 'random') return nodeAct(g, g.rand() < 0.5);
+    var fake = K.fake && !trust;
+    // 懂規矩的人在壇前會先擲筊問：問到陰筊就不進去
+    if (mode === 'wise' && v.rules.three_state && want && g.incense >= K.cost) {
+      var gd = 0, r = null;
+      while (gd++ < 3) { r = nodeAsk(g); if (!r.ok || r.res !== 'xiao') break; }
+      var la = (n.nodeAsked || [])[(n.nodeAsked || []).length - 1];
+      return nodeAct(g, la !== 'yin');
+    }
+    nodeAct(g, want && g.incense >= K.cost);
+  }
+
+  function playBot(v, seed, mode) {
+    var g = newGame(v, seed), guard = 0;
+    while (g.phase !== 'ended' && guard++ < 200) {
+      if (g.phase === 'choose') BOTS[mode](g);
+      else if (g.phase === 'node') nodeBot(g, mode);
+    }
+    return g;
+  }
+
+  function trial(v, n, mode, seed0) {
+    var wins = 0, ends = {};
+    for (var i = 0; i < n; i++) {
+      var g = playBot(v, (seed0 || 1000) + i, mode);
+      if (g.result && g.result.win) wins++;
+      var id = g.result ? g.result.id : 'stuck';
+      ends[id] = (ends[id] || 0) + 1;
+    }
+    return { n: n, wins: wins, rate: wins / n, ends: ends };
+  }
+
+  var RL = { validate: validate, newGame: newGame, candidates: candidates, questions: questions, lastQ: lastQ, ask: ask, go: go, nodeAct: nodeAct, nodeAsk: nodeAsk,
+    playBot: playBot, trial: trial };
+  if (typeof module !== 'undefined' && module.exports) module.exports = RL; else root.RL = RL;
+})(this);
+
+</script>
+<script>
+var DEFAULT_DATA = {"_說明": "擲筊問路的資料檔。versions.culture＝小封神版（文化長在規則裡），versions.skin＝普通爬塔版（文化只是皮）。改完存檔後執行 python build.py，或把整份貼進頁面的「資料檔」分頁按載入。", "w2_kind": "行為・儀式", "w2_kind_hint": "本身就是一套動作，常常直接可以當機制", "w2_cards": [{"no": 6, "v": "擲筊", "note": "用兩塊木頭問神明是或否——本身就是一個隨機判定機制", "used": "主角：每個路口都可以問"}, {"no": 9, "v": "收驚", "note": "把跑掉的魂叫回來——狀態異常的解除機制", "used": "「驚」要請收驚婆才解得開"}, {"no": 10, "v": "拜拜的順序", "note": "先拜誰後拜誰不能亂，錯了要重來", "used": "第 2 階改作可以加進來"}], "field": {"observed_throws": "", "temple_answer": "", "my_route": "", "shinmachi": ""}, "remix": {"intro": "這個遊戲的內容和規則都在資料檔（roguelike.json）裡，網頁只是照著它跑。改文字和數字就能改做。改完到「資料檔」分頁按「載入」，再按「試跑 100 局」看看有沒有改壞。", "steps": [{"title": "第 1 階：換內容", "goal": "不動規則，只換地方、路上遇到的事。", "task": "選一條你走過的路（上學、回家、去廟的路）。把 kinds.alley.names 換成那條路上真的有的巷名或地標，把 events 的好事、壞事換成你在那條路上真的遇過的事。", "field": "你走過的那條路、路上真的遇過的事：AI 沒走過，編出來的不算數。", "prompt": "我貼給你一份小遊戲的資料檔（JSON）。我常走的路是〔從哪到哪〕，沿路有〔巷名或地標〕，我在那裡遇過〔好事〕和〔讓人嚇一跳的事〕。請只改 versions.culture 裡 kinds.alley.names 和 events 的 text、short，不要動 rules、throw、endings。改完把整份資料檔原樣回傳，不要省略。"}, {"title": "第 2 階：換規則——把一張文化卡從「皮」變成「規則」", "goal": "普通爬塔版裡，筊只是硬幣的圖案。讓它變成規則。", "task": "打開 versions.skin（普通爬塔版）。現在擲筊就是擲硬幣。試著改一條：把 rules.three_state 改成 true，並在 throw 裡補上笑筊的機率（xiao，三個加起來要等於 1），笑筊就會變成「要問清楚再擲」；或把 rules.informed 改成 true，筊就會照路況回答。也可以換一張行為・儀式卡：「收驚」——把 rules.fright_on_bad 改成 true、kinds.temple 的 fright_to 改成 0，「驚」就變成要找人收驚才解得開的狀態；「拜拜的順序」——先拜誰後拜誰不能亂，想想看要怎麼寫成規則。改完按「試跑 100 局」，寫一句：這張卡變成規則以後，玩的人要多想什麼？", "field": "「改完好不好玩」要你自己玩一局才知道；AI 只能算勝率。", "prompt": "這是小遊戲的資料檔（JSON）。普通爬塔版（versions.skin）裡，文化卡〔例：擲筊／收驚／拜拜的順序〕現在只是圖案，沒有規則。請幫我想一條規則，讓拿掉它遊戲就不一樣：優先用 rules 裡已有的欄位（three_state、informed、streak_fright、fright_on_bad、fright_drain）或 kinds 的 fake、cost。列出你改了哪幾個欄位，再用一句話說明：這條規則讓玩家多了哪個要判斷的事？"}, {"title": "第 3 階：換形式", "goal": "同樣的儀式，換成別的樣板去做。", "task": "兩條路選一條。（甲）把「擲筊」放進節奏反應樣板：擲筊是有動作的（雙手合十、默念、擲出），時機可以變成節拍。（乙）把「壇裡請神請不來、香錢照收」那一段拆出來，用解謎樣板去做：怎麼從對方說的話裡看出破綻？", "field": "真正擲筊、收驚的做法要問廟方或長輩，各地不同；AI 寫的常常是想像出來的。", "prompt": "請用和這份資料檔一樣的寫法，把「擲筊」改成〔例：節奏遊戲〕的資料：列出擲筊的動作順序，每個動作給一個時間點（秒）。動作要先問過廟方或長輩，我問到的是〔貼上你問到的做法〕。不要嘲笑信仰。回傳 JSON，並用三句話說明：把擲筊拿掉後，遊戲還玩得下去嗎？"}], "field_title": "🔎 AI 做不到、要你去看或去問的欄位", "field_note": "這幾格預設是空的。去廟裡看別人擲筊時，安靜站遠一點、不拍臉、不打擾。", "field_items": [{"key": "observed_throws", "label": "你看到一個人擲了幾次筊？笑筊之後他有沒有換個說法再問？"}, {"key": "temple_answer", "label": "問廟方或長輩：一直擲到陰筊時，大家通常怎麼做？（照他的說法寫）"}, {"key": "my_route", "label": "你走過的一條路：起點、終點、路上三個地標"}, {"key": "shinmachi", "label": "查一查：《小封神》第十二回路過的「新町」，在日治時期的臺南是什麼地方？寫下你查到的來源（問長輩，或查臺南市文化局、地方文史資料）；查不到就寫「查不到」。"}], "extend_title": "加一個東西：多一種路上會遇到的事", "extend_text": "在 events.good 或 events.bad 裡加一筆：一句話（text）、短名稱（short）、會得到什麼（incense 香、soul 魂）、這是哪一種內容（tag：原著／改編／工坊創作／遊戲設計，老實填）。想多一種地方（例如夜市攤），就在 kinds 裡照 temple 的寫法加一筆，weight 決定它多常出現。", "extend_json": "{ \"text\": \"轉角的雜貨店阿伯給阿弟仔一顆糖。\", \"short\": \"一顆糖\", \"soul\": 1, \"tag\": \"工坊創作\" }", "tool_chain": "把「試跑 100 局」的結果和你改的那一行，一起貼給 Claude 或 Gemini，問它：「懂規矩的玩法還比較會贏嗎？下一步該調哪個機率？」它建議、你改、再試跑——這個來回，就是用工具改遊戲最常用的流程。"}, "versions": {"culture": {"meta": {"title": "擲筊問路", "subtitle": "文化規則版：文化長在規則裡", "floors": 7, "lanes": 3, "goal": "阿嬤家", "intro": "阿弟仔在廟埕玩到天黑，嚇到哭鬧不停，民間說這叫「著驚」。你牽著他穿過府城的巷子，要走回阿嬤家——阿嬤住在萬福庵附近（《小封神》裡齊天大聖寄住的地方）。七個路口，每個路口有兩三條巷子；走之前，可以擲筊問：「這條路平安嗎？」路上遇到收驚婆，可以請她先幫阿弟仔收驚。", "intro_tag": "改編", "soul_label": "魂", "incense_label": "香", "fright_label": "驚", "night_label": "夜", "late_text": "（夜深了，更容易出事）", "styles": [{"min": 1.5, "name": "問個仔細", "text": "幾乎每個路口都多問了幾次"}, {"min": 0.7, "name": "問一下就走", "text": "大部分路口問一次就決定"}, {"min": 0, "name": "憑感覺走", "text": "很少擲筊，多半照自己的感覺走"}], "drain_text": "阿弟仔驚到停不下來，你們走得很累（魂 −1）", "no_incense": "香不夠", "throw_note": "遊戲裡的筊會照巷子的路況偏向某個結果，機率是簡化過的——這是遊戲設計，不是說真的擲筊會怎樣。「連續三次陰筊」也是遊戲加的規則。"}, "rules": {"three_state": true, "informed": true, "streak_fright": 3, "fright_on_bad": true, "fright_drain": 3, "night_per_throw": 1, "night_per_step": 1, "late_night": 20, "bad_hurt": 1, "slow_p": 0.5, "slow_night": 2, "slow_hurt": 1, "danger_p": 0.5, "max_asks_per_node": 3, "yin_settles": true, "coin_bonus": false, "ensure": [{"kind": "temple", "min": 2}, {"kind": "altar", "min": 2}]}, "start": {"soul": 5, "soul_max": 6, "incense": 5}, "throw": {"good": {"sheng": 0.6, "xiao": 0.25, "yin": 0.15}, "bad": {"sheng": 0.15, "xiao": 0.25, "yin": 0.6}, "labels": {"sheng": "聖筊（一平一凸：同意）", "xiao": "笑筊（兩個平面朝上：還沒表態，把問題問清楚再擲）", "yin": "陰筊（兩個凸面朝上：不認可）"}, "tag": "遊戲設計", "streak_text": "連續三次陰筊，阿弟仔更不安了。換一條問，或先找廟收驚", "yin_settled": "已經不認可了。換一條路問，或照樣走（沒有人攔你）", "sheng_settled": "已經同意了，不用再問", "too_many": "這條路已經問三次了"}, "kinds": {"alley": {"label": "巷子", "icon": "🏮", "weight": 0.6, "names": ["打銀街", "媽祖宮口", "三元巷", "代書館街", "赤崁樓邊", "枋橋頭"], "tag": "原著地名"}, "temple": {"label": "收驚婆", "icon": "🧓", "weight": 0.2, "names": ["巷口的收驚婆", "廟埕邊的收驚婆"], "bad": false, "fake": false, "cost": 2, "fright_to": 0, "soul": 1, "act": "請她收驚（香 2）", "ask_q": "這裡可以收驚嗎？", "arrive": "收驚婆還沒睡，門口點著一盞小燈。", "done_text": "收驚婆替阿弟仔收驚，他慢慢不哭了。（驚歸零、魂 +1）", "short_done": "收驚", "short_skip": "打個招呼就走", "tag": "工坊創作"}, "altar": {"label": "縣口尾的壇", "icon": "🔔", "weight": 0.2, "names": ["縣口尾的壇"], "bad": true, "fake": true, "cost": 3, "fright_to": null, "fright_add": 1, "soul": 0, "act": "請壇裡幫忙（香 3）", "ask_q": "這裡幫得上忙嗎？", "arrive": "縣口尾（原著第十三回的地名）：法鼓鼕鼕，壇前的人頭綁紅巾、搖著小鐘。原著寫過這種場面：請神請了半天沒請來，就說神回天庭了。這座壇是工坊創作，不是任何真實的宮壇。", "done_text": "鈴搖了半天，對方說神回天庭了，香錢照收。阿弟仔被吵得更睡不著。（香 −3，驚 +1）", "short_done": "神沒來，香錢照收", "short_skip": "沒進去", "tag": "原著地名（縣口尾）＋工坊創作（壇）"}}, "events": {"good": [{"text": "賣仙草的阿姨塞給你一支香，說：「囡仔驚著，緊去收驚。」", "incense": 1, "short": "拿到一支香", "tag": "工坊創作"}, {"text": "路燈很亮，阿弟仔安靜了一下。", "soul": 1, "short": "安靜了一下", "tag": "工坊創作"}, {"text": "巷子平平安安走過去。", "short": "平安", "tag": "工坊創作"}], "bad": [{"text": "暗巷裡的狗突然叫起來，阿弟仔又哭了。", "short": "狗吠", "tag": "工坊創作"}, {"text": "踩到水溝蓋，哐一聲，阿弟仔嚇一跳。", "short": "嚇一跳", "tag": "工坊創作"}, {"text": "走錯路，繞了一大圈。", "short": "繞路", "tag": "工坊創作"}]}, "endings": [{"id": "calm", "arrived": true, "win": true, "title": "平平安安到阿嬤家", "when": [["fright", "<=", 0], ["soul", ">=", 3]], "text": "你們走到阿嬤家。阿弟仔一路沒再受驚，一進門就趴在阿嬤肩上睡著了。", "tag": "工坊創作"}, {"id": "arrive", "arrived": true, "win": true, "title": "總算到阿嬤家", "when": [["fright", "<=", 1]], "text": "一路上驚了幾次，總算走到阿嬤家。阿嬤抱著他，阿弟仔抽抽噎噎地不哭了。", "tag": "工坊創作"}, {"id": "cry", "arrived": true, "win": false, "title": "到了，可是阿弟仔還在哭", "text": "走到阿嬤家了，可是一路驚了太多次，阿弟仔哭了一整夜。下次路上早點找收驚婆，陰筊的巷子少走。", "tag": "遊戲設計"}, {"id": "home", "arrived": false, "win": false, "title": "先回家，改天再來", "text": "阿弟仔哭到睡著，你也走不動了。今天先回家，改天再來。", "tag": "遊戲設計"}], "w2": {"answer": "玩法本身就垮了", "why": "拿掉筊的三種結果、笑筊要問清楚、陰筊不認可、收驚婆和壇的差別，剩下的就是擲硬幣選路：你原本要判斷的事全部消失。"}}, "skin": {"meta": {"title": "擲筊問路", "subtitle": "普通爬塔版：文化只是皮", "floors": 7, "lanes": 3, "goal": "阿嬤家", "intro": "（普通爬塔版）畫面還是府城巷子、筊杯、廟和壇，可是規則是一般的爬塔：每格可以擲一次（其實就是擲硬幣），成功＝獎勵加倍、失敗＝扣 1 血；廟和壇都是補血站。走到終點就贏。", "intro_tag": "遊戲設計", "soul_label": "血", "incense_label": "金幣", "fright_label": "－", "night_label": "夜", "late_text": "（夜深了，更容易出事）", "styles": [{"min": 1.5, "name": "問個仔細", "text": "幾乎每個路口都多問了幾次"}, {"min": 0.7, "name": "問一下就走", "text": "大部分路口問一次就決定"}, {"min": 0, "name": "憑感覺走", "text": "很少擲筊，多半照自己的感覺走"}], "drain_text": "阿弟仔驚到停不下來，你們走得很累（魂 −1）", "no_incense": "香不夠", "throw_note": "這一版的筊其實就是硬幣：一半成功、一半失敗。"}, "rules": {"three_state": false, "informed": false, "streak_fright": 0, "fright_on_bad": false, "fright_drain": 0, "night_per_throw": 0, "night_per_step": 0, "late_night": 99, "danger_p": 0.5, "max_asks_per_node": 1, "yin_settles": false, "coin_bonus": true, "ensure": [{"kind": "temple", "min": 2}, {"kind": "altar", "min": 2}]}, "start": {"soul": 3, "soul_max": 6, "incense": 5}, "throw": {"good": {"sheng": 0.5, "xiao": 0, "yin": 0.5}, "bad": {"sheng": 0.5, "xiao": 0, "yin": 0.5}, "coin": 0.5, "labels": {"sheng": "成功", "yin": "失敗", "xiao": "－"}, "tag": "遊戲設計", "too_many": "每格只能擲一次"}, "kinds": {"alley": {"label": "巷子", "icon": "🏮", "weight": 0.6, "names": ["打銀街", "媽祖宮口", "三元巷", "代書館街", "赤崁樓邊", "枋橋頭"], "tag": "遊戲設計"}, "temple": {"label": "補血站", "icon": "🛕", "weight": 0.2, "names": ["補血站（收驚婆的樣子）"], "bad": false, "fake": false, "cost": 2, "fright_to": null, "soul": 2, "act": "補血（金幣 2）", "ask_q": "", "arrive": "補血站。", "done_text": "補了 2 血。", "short_done": "補血", "short_skip": "沒補", "tag": "遊戲設計"}, "altar": {"label": "大補血站", "icon": "🔔", "weight": 0.2, "names": ["大補血站（壇的樣子）"], "bad": false, "fake": false, "cost": 3, "fright_to": null, "soul": 3, "act": "大補血（金幣 3）", "ask_q": "", "arrive": "大補血站。", "done_text": "補了 3 血。", "short_done": "大補血", "short_skip": "沒補", "tag": "遊戲設計"}}, "events": {"good": [{"text": "撿到 1 枚金幣。", "incense": 1, "short": "金幣", "tag": "遊戲設計"}, {"text": "沒事。", "short": "沒事", "tag": "遊戲設計"}], "bad": [{"text": "踩到陷阱，扣 1 血。", "short": "陷阱", "tag": "遊戲設計"}]}, "endings": [{"id": "clear", "arrived": true, "win": true, "title": "過關", "text": "走到終點，過關。", "tag": "遊戲設計"}, {"id": "dead", "arrived": false, "win": false, "title": "血量歸零", "text": "血量歸零，重來一次。", "tag": "遊戲設計"}], "w2": {"answer": "照樣玩", "why": "把筊換成骰子、收驚婆和壇換成補血站，玩法一個字都不用改。文化只是它的外表。"}}}};
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var qs = new URLSearchParams(location.search);
+  var S = { data: JSON.parse(JSON.stringify(DEFAULT_DATA)), mode: qs.get('mode') === 'skin' ? 'skin' : 'culture',
+    seed: +(qs.get('seed') || 0) || Math.floor(Math.random() * 1e9), g: null, answers: {}, played: {} };
+  window.__RL = S;
+  function store(k, v) { try { localStorage.setItem('jiao_' + k, JSON.stringify(v)); } catch (e) {} }
+  function load(k) { try { var x = localStorage.getItem('jiao_' + k); return x ? JSON.parse(x) : null; } catch (e) { return null; } }
+  var sf = load('field'); if (sf) S.data.field = Object.assign(S.data.field || {}, sf);
+  var th = load('theme'); if (th) document.documentElement.setAttribute('data-theme', th);
+
+  function V() { return S.data.versions[S.mode]; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function tag(t) { return t ? '<span class="tag">' + esc(t) + '</span>' : ''; }
+
+  // 筊杯：平面朝上畫成上緣平的半圓；凸面朝上畫成上緣圓的半圓
+  var FLAT = '<svg viewBox="0 0 32 22" aria-hidden="true"><path d="M2 6 H30 A14 12 0 0 1 2 6 Z" fill="#c0392b" stroke="#7d1e14"/></svg>';
+  var ROUND = '<svg viewBox="0 0 32 22" aria-hidden="true"><path d="M2 18 A14 12 0 0 1 30 18 Z" fill="#c0392b" stroke="#7d1e14"/></svg>';
+  function jiao(res) {
+    if (S.mode === 'skin') return '<span class="jiao">' + (res === 'sheng' ? '🪙' : '⚫') + '</span>';
+    var p = res === 'sheng' ? FLAT + ROUND : res === 'xiao' ? FLAT + FLAT : ROUND + ROUND;
+    return '<span class="jiao" title="' + res + '">' + p + '</span>';
+  }
+  function resWord(res) { return (V().throw.labels[res] || res).split('（')[0]; }
+
+  function newGame() { S.g = RL.newGame(V(), S.seed); render(); }
+
+  function header() {
+    var v = V(), D = S.data;
+    $('title').textContent = v.meta.title; $('subtitle').textContent = v.meta.subtitle;
+    $('m_culture').className = S.mode === 'culture' ? 'on' : ''; $('m_skin').className = S.mode === 'skin' ? 'on' : '';
+    $('intro').textContent = v.meta.intro; $('throwNote').textContent = v.meta.throw_note || '';
+    $('w2kind').textContent = D.w2_kind;
+    $('w2hint').textContent = 'W2 說這一類：' + D.w2_kind_hint + '。下面三張是 W2 卡池裡的示範卡（編號照 W2 頁面）。';
+    $('w2cards').innerHTML = (D.w2_cards || []).map(function (c) { return '<div><span class="chip">#' + c.no + ' ' + esc(c.v) + '</span><span class="small">' + esc(c.note) + '（這裡：' + esc(c.used) + '）</span></div>'; }).join('');
+  }
+
+  function render() {
+    var g = S.g, v = V(), M = v.meta, R = v.rules;
+    header();
+    var hud = [['路口', Math.max(0, g.floor + 1) + '/' + M.floors], [M.soul_label, '❤️' + g.soul], [M.incense_label, g.incense]];
+    if (R.three_state) hud.push([M.fright_label, g.fright]); else hud.push(['', '']);
+    if (R.three_state) hud.push([M.night_label, g.night]);
+    $('hud').style.gridTemplateColumns = 'repeat(' + hud.length + ',1fr)';
+    $('hud').innerHTML = hud.map(function (h) { return '<div>' + esc(h[0]) + '<b>' + esc(h[1]) + '</b></div>'; }).join('');
+    // 地圖：上面是終點
+    var cands = g.phase === 'choose' ? RL.candidates(g).map(function (n) { return n.l; }) : [];
+    var h = '<div class="goal">' + (S.mode === 'culture' ? '🏠 ' : '🏁 ') + esc(M.goal) + '</div>';
+    for (var f = M.floors - 1; f >= 0; f--) {
+      h += '<div class="fl">第 ' + (f + 1) + ' 個路口</div>';
+      g.floors[f].forEach(function (n) {
+        var K = v.kinds[n.kind], cls = 'node';
+        var near = f <= g.floor + 1;
+        if (!near) cls += ' fog';
+        if (f === g.floor + 1 && cands.indexOf(n.l) >= 0) cls += ' can';
+        if (n.visited) cls += (f === g.floor ? ' here' : ' past');
+        var label = near ? (K.icon + ' ' + n.name) : '？';
+        h += '<div class="' + cls + '"><span class="nm">' + esc(label) + '</span>' + n.asked.map(jiao).join('') + '</div>';
+      });
+    }
+    $('map').innerHTML = h;
+    $('chooseBox').classList.toggle('hide', g.phase !== 'choose');
+    $('nodeBox').classList.toggle('hide', g.phase !== 'node');
+    $('endBox').classList.toggle('hide', g.phase !== 'ended');
+    if (g.lastThrow && g.phase !== 'ended') {
+      $('lastThrow').classList.remove('hide');
+      $('lastThrow').innerHTML = jiao(g.lastThrow.res) + '<b class="res-' + g.lastThrow.res + '">' + esc(v.throw.labels[g.lastThrow.res]) + '</b>';
+    } else $('lastThrow').classList.add('hide');
+    if (g.phase === 'choose') {
+      $('cands').innerHTML = RL.candidates(g).map(function (n) {
+        var K = v.kinds[n.kind], last = n.asked[n.asked.length - 1];
+        var QL = { safe: '平安嗎？', pass: '走得過去嗎？' };
+        var qs = RL.questions(g, n), btns = '';
+        if (!R.three_state) btns = '<button data-act="__ask" data-l="' + n.l + '" data-q="safe"' + (qs.length ? '' : ' disabled') + '>擲一次（成功／失敗）</button>';
+        else if (!qs.length) btns = '<button data-act="__ask" data-l="' + n.l + '" data-q="safe" disabled>不用再問了</button>';
+        else btns = qs.map(function (q) { return '<button data-act="__ask" data-l="' + n.l + '" data-q="' + q + '">擲筊問：' + (q === 'safe' && !n.asked.length ? '這條路' : '') + QL[q] + '</button>'; }).join('');
+        var hist = n.asked.length ? '<div class="small">' + n.asked.map(function (r, i) { return (R.slow_p ? (n.askedQ[i] === 'pass' ? '走得過去嗎：' : '平安嗎：') : '') + jiao(r) + '<span class="res-' + r + '">' + esc(resWord(r)) + '</span>'; }).join('　') + '</div>' : '';
+        var hint = last === 'xiao' ? '<div class="small">笑筊：神明還沒表態。把問題問清楚——想問哪一個？</div>' : (last === 'yin' && R.three_state ? '<div class="small">' + esc(v.throw.yin_settled) + '</div>' : '');
+        return '<div class="card"><b>' + esc(K.icon + ' ' + n.name) + '</b>' + tag(K.tag) + hist + hint +
+          '<div class="row" style="margin-top:6px">' + btns +
+          '<button data-act="__go" data-l="' + n.l + '" class="primary">走這條</button></div></div>';
+      }).join('');
+    }
+    if (g.phase === 'node') {
+      var n = g.here, K = v.kinds[n.kind];
+      $('nodeText').innerHTML = esc(K.icon + ' ' + n.name) + '：' + esc(K.arrive) + tag(K.tag) + (n.nodeAsked && n.nodeAsked.length ? '<br>' + n.nodeAsked.map(function (r) { return jiao(r) + esc(resWord(r)); }).join('　') : '');
+      var la = n.nodeAsked && n.nodeAsked[n.nodeAsked.length - 1];
+      $('nodeAsk').classList.toggle('hide', !R.three_state);
+      $('nodeAsk').textContent = '擲筊問：' + K.ask_q;
+      $('nodeAsk').disabled = la === 'sheng' || la === 'yin' || (n.nodeAsked || []).length >= 3;
+      $('nodeDo').textContent = K.act;
+      $('nodeDo').disabled = g.incense < K.cost;
+    }
+    if (g.phase === 'ended') renderEnd();
+    $('log').innerHTML = g.log.slice().reverse().map(function (l) { return '<li>' + esc(l.text) + tag(l.tag) + '</li>'; }).join('');
+  }
+
+  function renderEnd() {
+    var g = S.g, r = g.result, v = V();
+    S.played[S.mode] = { title: r.title, win: r.win, soul: r.soul, fright: r.fright, steps: g.route.length, style: r.style ? r.style.name : '' };
+    $('endTitle').innerHTML = (r.win ? '🌕 ' : '🌑 ') + esc(r.title) + tag(r.tag);
+    $('endText').textContent = r.text;
+    $('endStyle').textContent = r.style ? '這一路的你：' + r.style.name + '（' + r.style.text + '，共擲了 ' + r.style.asks + ' 次。沒有好壞，只是你這一路的樣子）' : '';
+    $('route').innerHTML = g.route.map(function (x) {
+      return '<li>' + esc(v.kinds[x.kind].icon + ' ' + x.name) + (x.asked.length ? '　' + x.asked.map(function (a, i) { return (v.rules.slow_p && x.askedQ ? (x.askedQ[i] === 'pass' ? '過得去' : '平安') + ':' : '') + resWord(a); }).join('→') : '　（沒問）') + '　→ ' + esc(x.what) + '</li>';
+    }).join('');
+    var opts = ['照樣玩', '故事垮了玩法還在', '玩法本身就垮了', '說不準'], a = S.answers[S.mode];
+    $('ansRow').innerHTML = opts.map(function (o) { return '<button data-act="__ans" data-v="' + o + '" class="' + (a && a.choice === o ? 'on' : '') + '">' + o + '</button>'; }).join('');
+    if (a && a.sent) $('ansBack').innerHTML = '你的判斷：<b>' + esc(a.choice) + '</b>。我們的看法：<b>' + esc(v.w2.answer) + '</b>——' + esc(v.w2.why) + '<br>不一樣也沒關係，說得出理由就好；想想看是哪一條規則讓你這樣判斷。';
+    else $('ansBack').textContent = '';
+    $('otherBtn').textContent = S.mode === 'culture' ? '換普通爬塔版玩' : '換文化規則版玩';
+    var A = S.played.culture, B = S.played.skin, cmp = $('compare');
+    if (A && B) {
+      cmp.classList.remove('hide');
+      cmp.innerHTML = '<b>比一比兩個版本</b><table><tr><th></th><th>文化規則版</th><th>普通爬塔版</th></tr>' +
+        '<tr><td>結局</td><td>' + esc(A.title) + '</td><td>' + esc(B.title) + '</td></tr>' +
+        '<tr><td>這一路的你</td><td>' + esc(A.style || '－') + '</td><td>' + esc(B.style || '－') + '</td></tr>' +
+        '<tr><td>你的判斷</td><td>' + esc((S.answers.culture || {}).choice || '還沒答') + '</td><td>' + esc((S.answers.skin || {}).choice || '還沒答') + '</td></tr></table>' +
+        '<p class="small">兩邊的判斷如果一樣，回頭找找：文化規則版裡哪些事是普通版沒有的？（笑筊要把問題問清楚、換個問法、陰筊照樣能走但比較會出事、收驚婆和壇不一樣、驚會一路跟著你）</p>';
+    } else cmp.classList.add('hide');
+  }
+
+  function renderRemix() {
+    var R = S.data.remix, F = S.data.field || {};
+    var h = '<div class="card"><p>' + esc(R.intro) + '</p></div>';
+    R.steps.forEach(function (st) {
+      h += '<div class="card"><b>' + esc(st.title) + '</b><p class="small">' + esc(st.goal) + '</p><p>' + esc(st.task) + '</p>' +
+        (st.field ? '<p>🔎 ' + esc(st.field) + '</p>' : '') + '<p class="small">可以貼給 Claude／Gemini 的指令：</p><pre>' + esc(st.prompt) + '</pre>' +
+        '<button data-act="__copy" data-text="' + esc(st.prompt) + '">複製指令</button></div>';
+    });
+    h += '<div class="card"><b>' + esc(R.field_title) + '</b><p class="small">' + esc(R.field_note) + '</p>';
+    R.field_items.forEach(function (f) { h += '<label class="small" for="f_' + f.key + '">' + esc(f.label) + '</label><input type="text" id="f_' + f.key + '" data-field="' + f.key + '" value="' + esc(F[f.key] || '') + '">'; });
+    h += '<p class="small">填的內容會跟著資料檔一起存（「資料檔」分頁按「存成檔案」）。</p></div>';
+    h += '<div class="card"><b>' + esc(R.extend_title) + '</b><p>' + esc(R.extend_text) + '</p><pre>' + esc(R.extend_json) + '</pre></div>';
+    h += '<div class="card"><b>這一單元多學的一個工具串接</b><p>' + esc(R.tool_chain) + '</p></div>';
+    $('pane_remix').innerHTML = h;
+  }
+
+  function showTab(t) {
+    ['play', 'remix', 'data'].forEach(function (x) { $('pane_' + x).classList.toggle('hide', x !== t); $('tab_' + x).className = x === t ? 'on' : ''; });
+    if (t === 'remix') renderRemix();
+    if (t === 'data') $('jsonBox').value = JSON.stringify(S.data, null, 1);
+  }
+
+  function trialOut() {
+    var bots = [['random', '亂點'], ['generic', '一般爬塔玩法（不擲筊，看到能補的就進去）'], ['wise', '懂這些規矩']];
+    var h = '<table><tr><th>玩家</th><th>文化規則版</th><th>普通爬塔版</th></tr>';
+    bots.forEach(function (b) {
+      var a = RL.trial(S.data.versions.culture, 100, b[0], 1), c = RL.trial(S.data.versions.skin, 100, b[0], 1);
+      h += '<tr><td>' + b[1] + '</td><td>' + a.wins + '%</td><td>' + c.wins + '%</td></tr>';
+    });
+    $('trialOut').innerHTML = h + '</table><p class="small">勝率是機器算的；好不好玩，要你自己玩一局才知道。</p>';
+  }
+
+  document.addEventListener('click', function (ev) {
+    var el = ev.target.closest('button'); if (!el) return;
+    var g = S.g, act = el.dataset.act;
+    switch (act) {
+      case '__m_culture': S.mode = 'culture'; newGame(); break;
+      case '__m_skin': S.mode = 'skin'; newGame(); break;
+      case '__theme':
+        var cur = document.documentElement.getAttribute('data-theme');
+        var dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark'); store('theme', dark ? 'light' : 'dark'); break;
+      case '__tab_play': showTab('play'); break;
+      case '__tab_remix': showTab('remix'); break;
+      case '__tab_data': showTab('data'); break;
+      case '__ask': RL.ask(g, +el.dataset.l, el.dataset.q || 'safe'); render(); break;
+      case '__go': RL.go(g, +el.dataset.l); render(); window.scrollTo(0, $('hud').offsetTop - 10); break;
+      case '__node_ask': RL.nodeAsk(g); render(); break;
+      case '__node_do': RL.nodeAct(g, true); render(); break;
+      case '__node_skip': RL.nodeAct(g, false); render(); break;
+      case '__ans': S.answers[S.mode] = { choice: el.dataset.v, sent: false }; render(); break;
+      case '__ans_send':
+        if (!S.answers[S.mode]) { $('ansBack').textContent = '先選一個答案。'; break; }
+        S.answers[S.mode].why = $('ansWhy').value; S.answers[S.mode].sent = true; store('answers', S.answers);
+        try { if (window.CT_HOOK) { var hv = S.mode === 'culture' ? 'rule' : 'skin', ix = ['照樣玩', '故事垮了玩法還在', '玩法本身就垮了', '說不準'].indexOf(S.answers[S.mode].choice); CT_HOOK.markPlayed(hv); if (ix >= 0) CT_HOOK.judged(hv, ix + 1, S.answers[S.mode].why); } } catch (e) { /* 助教出錯不能影響樣板 */ }
+        render(); break;
+      case '__restart': S.seed++; newGame(); window.scrollTo(0, 0); break;
+      case '__other': S.mode = S.mode === 'culture' ? 'skin' : 'culture'; $('ansWhy').value = ''; newGame(); window.scrollTo(0, 0); break;
+      case '__trial': trialOut(); break;
+      case '__load':
+        try {
+          var d = JSON.parse($('jsonBox').value), errs = [];
+          ['culture', 'skin'].forEach(function (k) { if (!d.versions || !d.versions[k]) errs.push('缺少 versions.' + k); else RL.validate(d.versions[k]).forEach(function (e) { errs.push(k + '：' + e); }); });
+          if (errs.length) { $('loadMsg').textContent = '沒有載入，請修正：' + errs.join('；'); break; }
+          if (!d.remix) d.remix = DEFAULT_DATA.remix;
+          S.data = d; $('loadMsg').textContent = '載入了。回「玩」分頁就是你的版本。'; newGame();
+        } catch (e) { $('loadMsg').textContent = '資料檔格式錯了（' + e.message + '），常見原因：少了逗號或引號。'; }
+        break;
+      case '__reset': S.data = JSON.parse(JSON.stringify(DEFAULT_DATA)); $('jsonBox').value = JSON.stringify(S.data, null, 1); $('loadMsg').textContent = '還原了。'; newGame(); break;
+      case '__save':
+        var blob = new Blob([JSON.stringify(S.data, null, 1)], { type: 'application/json' });
+        var a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = 'roguelike.json'; a2.click();
+        setTimeout(function () { URL.revokeObjectURL(a2.href); }, 1000); break;
+      case '__copy':
+        if (navigator.clipboard) navigator.clipboard.writeText(el.dataset.text).then(function () { el.textContent = '已複製'; }, function () { el.textContent = '請手動選取複製'; });
+        break;
+    }
+  });
+  document.addEventListener('input', function (ev) {
+    var k = ev.target.dataset && ev.target.dataset.field;
+    if (k) { S.data.field = S.data.field || {}; S.data.field[k] = ev.target.value; store('field', S.data.field); }
+  });
+  newGame();
+})();
+</script>
+<!-- CT-HOOK-BEGIN -->
+<script src="../tutor/folk_index.js?v=202611151156"></script>
+<script src="../tutor/tutor_templates.js?v=202611151156"></script>
+<script src="../tutor/tutor_core.js?v=202611151156"></script>
+<script src="../tutor/tutor_ui.js?v=202611151156"></script>
+<script src="../tutor/tutor_hook.js?v=202611151156"></script>
+<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script>if (window.CT_BOOT) CT_BOOT('roguelike');</script>
+<!-- CT-HOOK-END -->
+</body>
+</html>

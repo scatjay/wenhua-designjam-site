@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人情與面子1112</title>
+<style>
+:root{
+  --bg:#f6f1e7; --card:#fffdf8; --ink:#2b2620; --mute:#6b6257; --line:#ddd2c0;
+  --accent:#9c2f22; --accent-ink:#fff; --wall:#4a4038; --floor:#efe6d6; --thr:#c9a15a; --room:#f3dfc2;
+  --sight:rgba(230,170,20,.55); --ear:rgba(70,120,200,.16); --ok:#2f6b3a; --warn:#a4541a; --chip:#efe5d3;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1b1815; --card:#25211d; --ink:#efe8dc; --mute:#b3a898; --line:#3d362f;
+  --accent:#e0705c; --accent-ink:#1b1815; --wall:#0f0d0b; --floor:#3a332c; --thr:#a98443; --room:#4d3e2c;
+  --sight:rgba(240,190,40,.5); --ear:rgba(110,160,240,.2); --ok:#7fc58a; --warn:#e5a066; --chip:#302a24;
+}}
+:root[data-theme="dark"]{
+  --bg:#1b1815; --card:#25211d; --ink:#efe8dc; --mute:#b3a898; --line:#3d362f;
+  --accent:#e0705c; --accent-ink:#1b1815; --wall:#0f0d0b; --floor:#3a332c; --thr:#a98443; --room:#4d3e2c;
+  --sight:rgba(240,190,40,.5); --ear:rgba(110,160,240,.2); --ok:#7fc58a; --warn:#e5a066; --chip:#302a24;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
+main{max-width:760px;margin:0 auto;padding:12px 16px 48px}
+h1{font-size:1.45rem;margin:.2em 0 0}
+h2{font-size:1.1rem;margin:1.2em 0 .4em}
+.sub{color:var(--mute);font-size:.92rem;margin:0 0 .6em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+button{font:inherit;color:inherit;cursor:pointer}
+.tab{min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--chip)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.cc{border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:8px;padding:8px 10px;background:var(--card);font-size:.92rem}
+.cc b{font-size:1rem}
+.no{display:inline-block;font-size:.78rem;background:var(--chip);border-radius:6px;padding:0 6px;margin-right:4px}
+.tag{display:inline-block;font-size:.75rem;border:1px solid var(--line);border-radius:6px;padding:0 5px;color:var(--mute);margin-left:4px}
+.status{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.pill{background:var(--chip);border-radius:999px;padding:2px 10px;font-size:.9rem}
+.pill.hot{background:var(--warn);color:var(--card)}
+.boardwrap{display:flex;justify-content:center;margin:6px 0}
+.board{display:grid;gap:2px;user-select:none}
+.cell{display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:.92rem;position:relative;background:var(--floor)}
+.cell.w{background:var(--wall)}
+.cell.t{background:var(--thr);font-weight:700}
+.cell.i{background:var(--room)}
+.cell.ear::after{content:"";position:absolute;inset:0;background:var(--ear);border-radius:4px}
+.cell.s::before{content:"";position:absolute;inset:0;background:var(--sight);border-radius:4px}
+.cell .who{position:relative;z-index:2;font-size:1.1rem}
+.cell.me{outline:3px solid var(--accent);outline-offset:-3px}
+.legend{font-size:.82rem;color:var(--mute);text-align:center}
+.pad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,52px);gap:6px;justify-content:center;margin:8px 0}
+.pad .btn{min-height:48px;padding:0;font-size:1.2rem}
+.pad .btn.on{background:var(--accent);color:var(--accent-ink)}
+.extra{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.log{font-size:.9rem;max-height:9.5em;overflow:auto;border-top:1px dashed var(--line);margin-top:8px;padding-top:6px}
+.log p{margin:.15em 0}
+.log p:last-child{font-weight:700}
+.panel{border:2px solid var(--accent);border-radius:12px;padding:12px;margin:10px 0;background:var(--card)}
+.opts{display:grid;gap:6px}
+.opts .btn{text-align:left}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
+.judge .btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.rl{padding-left:1.2em}
+.rl li{margin:.2em 0}
+.rl li.gone{color:var(--mute);text-decoration:line-through}
+.note{font-size:.85rem;color:var(--mute)}
+.err{color:var(--accent);font-size:.9rem;white-space:pre-wrap}
+.hidden{display:none !important}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmp div{background:var(--chip);border-radius:8px;padding:6px 8px}
+code{background:var(--chip);border-radius:4px;padding:0 4px;font-size:.88em;word-break:break-all}
+.small{font-size:.86rem}
+
+.parties{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.pc{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--card);font-size:.9rem}
+.pc.out{opacity:.45}
+.pc .nm{font-weight:700;font-size:1rem}
+.rank{display:inline-block;background:var(--chip);border-radius:6px;padding:0 6px;font-size:.8rem;margin-right:4px}
+.led{font-weight:700}
+.led.pos{color:var(--ok)}
+.led.neg{color:var(--warn)}
+.acts{display:grid;gap:6px}
+.actrow .btn{width:100%;text-align:left}
+.why{font-size:.8rem;color:var(--mute);margin:.1em 0 0 .3em}
+.calc{list-style:none;padding:0;margin:.4em 0}
+.calc li{padding:4px 8px;border-radius:6px;background:var(--chip);margin:4px 0}
+.calc li.sum{font-weight:700;background:transparent;border:1px solid var(--line)}
+.ladder{display:flex;gap:4px;flex-wrap:wrap;font-size:.82rem;color:var(--mute)}
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle"></p>
+  <div class="card">
+    <div class="small"><b>這個樣板練的文化卡類別：<span id="kind"></span></b>——<span id="kindHint"></span></div>
+    <div class="cards" id="cards" style="margin-top:8px"></div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="skin" aria-selected="true">① 先玩：文化只是皮</button>
+    <button class="tab" role="tab" data-tab="rule" aria-selected="false">② 再玩：文化長在規則裡</button>
+    <button class="tab" role="tab" data-tab="remix" aria-selected="false">③ 怎麼改做</button>
+  </div>
+
+  <section id="play">
+    <div class="card">
+      <div id="story" class="small"></div>
+      <p class="small" id="vIntro" style="margin:.4em 0 0"></p>
+    </div>
+    <div class="card" id="gameCard">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <b id="roundName"></b>
+        <button class="btn" id="restart">從頭再玩這一版</button>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="ladder" id="ladder"></div>
+      <div class="parties" id="parties"></div>
+      <div id="controls">
+        <b class="small">這一回合做什麼？（一回合只能做一件事）</b>
+        <div class="acts" id="acts" style="margin-top:6px"></div>
+        <button class="btn primary hidden" id="finalBtn" style="margin-top:8px;width:100%"></button>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </div>
+
+    <div id="endPanel" class="panel hidden">
+      <h2 id="endTitle" style="margin-top:0"></h2>
+      <ul class="calc" id="calc"></ul>
+      <p id="endText"></p>
+      <p class="note" id="endAfter"></p>
+      <div class="judge">
+        <b id="jq"></b>
+        <div class="opts" id="jopts" style="margin-top:6px"></div>
+        <p class="small" style="margin:.6em 0 .2em">寫一句為什麼：</p>
+        <textarea id="jwhy" rows="2" placeholder="例如：換成金幣以後，哪一條規則就沒有理由存在了？"></textarea>
+        <button class="btn primary" id="jsend" style="margin-top:6px">送出我的判斷</button>
+        <p class="err" id="jerr"></p>
+      </div>
+      <div id="reveal" class="hidden">
+        <h2>抽掉文化之後，這一版的規則還剩幾條？</h2>
+        <ul class="rl" id="rlist"></ul>
+        <p id="rtext"></p>
+        <div id="compare" class="hidden"><h2>你兩版的答案</h2><div class="cmp" id="cmp"></div><p class="small" id="cmpNote"></p></div>
+        <button class="btn primary" id="toOther" style="margin-top:6px"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="remix" class="hidden">
+    <div class="card" id="remixSteps"></div>
+    <div class="card" id="fieldCard"></div>
+    <div class="card">
+      <h2 style="margin-top:0">把你的版本玩起來</h2>
+      <ol class="small">
+        <li>按「取出目前的資料」，把框裡的字整份複製。</li>
+        <li>貼給 Claude 或 Gemini，加上上面某一階的指令，請它回你一份 JSON。</li>
+        <li>把回來的 JSON 貼回框裡，按「載入我的版本」，再回去玩。</li>
+        <li>有紅字的話，把紅字貼回給 AI，說「請修這個」。</li>
+      </ol>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" id="exportBtn">取出目前的資料</button><button class="btn primary" id="importBtn">載入我的版本</button><button class="btn" id="resetData">回到原本的資料</button></div>
+      <textarea id="dataBox" rows="8" style="margin-top:8px" aria-label="遊戲資料"></textarea>
+      <p class="err" id="importMsg"></p>
+      <p class="note" id="addOne"></p>
+    </div>
+  </section>
+  <p class="note" id="disclaimer"></p>
+  <p class="note">標示：原著＝許丙丁《小封神》書裡有寫；民間＝民間信仰常見的說法；工坊創作＝這個遊戲自己加的；田野＝你自己去看、去問到的。</p>
+</main>
+<script id="data" type="application/json">{"schema": "social-template/1", "meta": {"id": "social-xfs", "title": "人情與面子", "subtitle": "社交博弈（談判結盟）樣板・文化卡類別：人際關係", "cardKind": "人際關係", "cardKindHint": "人情、面子、輩分可以直接當成資源或狀態值：看不見，但會被消耗、會變重、會鎖住你能做的事。", "story": ["許丙丁《小封神》第二、三回：康、趙兩位元帥把小上帝的通天冠拿去當，錢在媽祖宮口賭輸給千里眼順風耳，回來卻說冠被「獠牙大漢千里眼」搶了。小上帝氣得把長得像千里眼的魁星吊在廟前。關聖帝君親自來勸放人，被小上帝拒絕，氣得桃花面變紅。", "這個遊戲問一個「如果」（這段是工坊編的）：關公上門之前，如果有人先把事情喬好，小上帝會不會答應？你是安海街的土地公——原著裡他是小上帝信得過的老友，後來還替小上帝去勸過臨水夫人。", "規則版你有五個回合（皮版四個）。最後一個回合結束，關公就到了。"], "disclaimer": "遊戲是示意與簡化。誰的輩分高、誰的低，是這個遊戲為了好玩排的資歷，不是神格高低，也不是民間信仰的正式位階。", "tags": {"orig": "原著", "folk": "民間", "made": "工坊創作", "field": "田野"}}, "cards": [{"no": 12, "v": "欠人情", "k": "人際關係", "note": "還不完的資源，會隨時間變重", "here": "你幫過誰，他就欠你；每過一回合，欠的就更重一點。你欠別人的也一樣。", "tag": "folk"}, {"no": 13, "v": "面子", "k": "人際關係", "note": "看不見但會被消耗，用光了什麼都做不了", "here": "每個人答應或拒絕，都在算哪一邊比較不丟臉。你被拒絕一次，自己也丟一點。", "tag": "folk"}, {"no": 14, "v": "輩分", "k": "人際關係", "note": "決定誰可以先講話、誰不能拒絕誰", "here": "你只能直接找比你高一級以內的人開口；更高的人，要靠別人帶話。（遊戲裡誰高誰低是工坊排的）", "tag": "folk"}], "field": {"title": "這一格 AI 幫不了你：問一個真的喬過事情的人", "why": "AI 沒有幫你家裡喬過事情。去問一位長輩、老師或打工的店長，答案會比遊戲裡的規則更有意思——那就是你的改作材料。", "prompts": [{"id": "f_mid", "q": "他喬過什麼事？找誰當中間人？為什麼是那個人？"}, {"id": "f_face", "q": "他說過「給個台階下」嗎？那個台階是什麼？"}, {"id": "f_debt", "q": "欠人情要怎麼還？多久不還會怎樣？（寫一句他的原話）"}]}, "judge": {"question": "把這一版的文化抽掉（人情、面子、輩分全部換成一般的數字），這個遊戲還玩得下去嗎？", "options": ["照樣玩", "故事垮了，玩法還在", "玩法本身就垮了", "說不準"], "minWhy": 6}, "versions": {"rule": {"label": "文化長在規則裡", "short": "規則版", "intro": "這一版沒有金幣換點數。有的是：人情會變重、面子要算、輩分不夠就不能開口。", "me": {"name": "安海街土地（你）", "rank": 0, "icon": "👴"}, "start": {"money": 3, "face": 3}, "rounds": 5, "labels": {"money": "香油錢", "face": "你的面子", "rank": "輩分", "ledgerPos": "欠你", "ledgerNeg": "你欠", "points": ""}, "rules": {"growth": true, "rankGate": true, "reach": 1, "cap": 3, "callIn": 2}, "parties": [{"id": "kz", "name": "康趙二元帥", "icon": "⚔️", "rank": 1, "tag": "orig", "bio": "小上帝的手下，同進同出。餓了好幾天，把冠當了又賭輸，回來說謊。"}, {"id": "ql", "name": "千里眼順風耳", "icon": "👁", "rank": 1, "tag": "orig", "bio": "媽祖的手下，贏了那五千錢。原著說他們眼觀四方、耳聽八達；在這個遊戲裡，什麼消息都會從他們那裡傳出去（遊戲設定）。"}, {"id": "xd", "name": "小上帝", "icon": "🗡", "rank": 2, "tag": "orig", "bio": "窮，剛把魁星吊在廟前。要他放人，就是要他承認抓錯人——這個遊戲把他讀成很愛面子。"}, {"id": "gg", "name": "關聖帝君", "icon": "🐎", "rank": 3, "tag": "orig", "bio": "義氣如山。第五回合結束時，會親自來勸小上帝放人。"}], "actions": [{"id": "feed", "type": "gift", "target": "kz", "cost": 1, "gain": 1, "once": true, "label": "請康趙兩位元帥吃一頓飽（香油錢 −1）", "say": "康趙吃得滿嘴油：「土地公，這份情我們記著。」（康趙欠你 1）", "tag": "made"}, {"id": "guard", "type": "gift", "target": "ql", "cost": 1, "gain": 1, "once": true, "label": "帶點心陪千里眼順風耳顧一晚廟門（香油錢 −1）", "say": "千里眼順風耳鬆了一口氣：「有你在，我們睡得著。」（千里眼順風耳欠你 1）", "tag": "made"}, {"id": "borrow", "type": "borrow", "target": "ql", "money": 2, "owe": 1, "once": true, "label": "跟千里眼順風耳借香油錢（香油錢 +2）", "say": "他們把錢推過來：「不急，慢慢還。」（你欠千里眼順風耳 1）", "tag": "made"}, {"id": "confess", "type": "ask", "target": "kz", "acceptCost": 2, "flag": "confess", "once": true, "label": "請康趙私下去跟小上帝認錯", "yes": "康趙互看一眼：認錯要丟 {acc} 分面子，拒絕你要丟 {ref} 分（欠你的人情）。他們去認錯了。", "no": "康趙搖頭：認錯要丟 {acc} 分面子，拒絕你只丟 {ref} 分。他們不去。（你被拒絕，面子 −1）", "tag": "made"}, {"id": "money", "type": "trade", "target": "ql", "cost": 3, "flag": "money", "once": true, "label": "用香油錢跟千里眼順風耳換回當冠的錢（香油錢 −3）", "say": "冠的錢有了交代。小上帝至少不用再追這筆帳。", "tag": "made"}, {"id": "expose", "type": "expose", "target": "kz", "flag": "exposed", "alsoFlags": ["confess"], "once": true, "label": "在廟埕當眾揭穿康趙的謊", "say": "大家都聽見了：冠是當掉的，錢是賭輸的。康趙臉一陣紅一陣青，當晚就不見人影。", "tag": "made"}, {"id": "askxd", "type": "ask", "target": "xd", "acceptCost": 2, "flag": "release", "once": true, "label": "自己去叫小上帝放人", "yes": "小上帝答應了。", "no": "小上帝不理你。（面子 −1）", "tag": "made"}, {"id": "askgg", "type": "ask", "target": "gg", "acceptCost": 1, "flag": "guanhelp", "once": true, "label": "去請關公晚一點再來", "yes": "關公點頭。", "no": "關公沒空見你。（面子 −1）", "tag": "made"}, {"id": "wait", "type": "wait", "label": "這回合先不動，看看情勢", "say": "你坐在土地廟前，看街上的人來來去去。", "tag": "made"}], "text": {"start": "天還沒亮。魁星還吊在小上帝廟前。關公說他第五回合結束就來。", "tooHigh": "輩分不夠：{who}比你高兩級以上，你不能直接開口，要靠別人帶話", "noMoney": "{unit}不夠", "growth": "一回合過去，人情變重了：", "finalReady": "五個回合都過了。遠遠聽見馬蹄聲——關公來了。"}, "final": {"mode": "face", "title": "關公上門，小上帝怎麼算", "base": 2, "baseText": "小上帝答應放人，要丟 {n} 分面子（等於承認自己抓錯人）", "mods": [{"flag": "confess", "delta": -1, "text": "康趙認了錯：錯在手下說謊，小上帝有台階下"}, {"flag": "money", "delta": -1, "text": "錢的事有交代：不用再追這筆帳"}, {"ledgerBelow": {"who": "ql", "n": 1}, "delta": 1, "text": "千里眼順風耳沒欠你人情，消息傳開了：當著大家的面低頭更難"}, {"flag": "exposed", "delta": 1, "text": "康趙被當眾揭穿：家醜外揚，小上帝更沒面子"}], "refuse": 1, "refuseText": "拒絕關公要丟的面子：關公比小上帝高一級，所以是 1", "callInText": "你欠{who}的人情太重，他們當場來討：你的面子 −1"}, "ruleList": [{"text": "人情會變重：欠你的，每過一回合多 1；你欠別人的也一樣。", "needs": [12]}, {"text": "輩分：只能直接找比你高一級以內的人開口；小上帝、關公要靠別人帶話。", "needs": [14]}, {"text": "面子怎麼算：答應要丟的面子，不比拒絕要丟的多，才會答應；被拒絕，你自己丟 1 分。", "needs": [13, 14]}, {"text": "台階：有人認錯、錢有交代，小上帝答應要丟的面子就變少。", "needs": [13]}, {"text": "公開或私下：千里眼順風耳欠你人情才會閉嘴；事情傳開、或當眾揭穿，答應就更丟臉。", "needs": [13, 12]}, {"text": "香油錢有限（陪守門和換錢不能都做，除非去借）；五個回合後關公上門，結果就定了。", "needs": []}], "endings": {"win": "小上帝看著關公，嘆了一口氣：「既然是誤會……放人。」魁星被放下來了。", "refused": "小上帝把話說死：錢沒賠清，絕不放人（照原著的意思改寫）。關公氣得桃花面變紅，掉頭就走——這就是原著第三回的走向，後面幾回事情越鬧越大。", "faceout": "你的面子用光了。從今天起，再也沒有人聽安海街土地說話。", "after": "原著裡，關公就是第一個出面調停的人（孔子先託他），勸小上帝「坐個不是，互相了事」，還是被拒絕了，事情一路鬧到最後的封神審判。你剛才玩的，是工坊替這段故事開的另一條路：關公上門前，先把台階鋪好。"}}, "skin": {"label": "文化只是皮", "short": "皮版", "intro": "這一版用同樣的人物和故事，但規則是一般的交易遊戲：金幣僱人、等級限制交易對象、湊滿點數就過關。", "me": {"name": "安海街土地（你）", "rank": 1, "icon": "👴"}, "start": {"money": 3, "face": 3}, "rounds": 4, "labels": {"money": "金幣", "face": "", "rank": "等級", "ledgerPos": "", "ledgerNeg": "", "points": "點數"}, "rules": {"growth": false, "rankGate": true, "reach": 1, "cap": 3, "callIn": 99}, "parties": [{"id": "kz", "name": "康趙二元帥", "icon": "⚔️", "rank": 2, "tag": "orig", "bio": "僱用價 2 金幣。"}, {"id": "ql", "name": "千里眼順風耳", "icon": "👁", "rank": 2, "tag": "orig", "bio": "僱用價 2 金幣。"}, {"id": "xd", "name": "小上帝", "icon": "🗡", "rank": 3, "tag": "orig", "bio": "第四回合結束時，看你的點數決定放不放人。"}, {"id": "gg", "name": "關聖帝君", "icon": "🐎", "rank": 4, "tag": "orig", "bio": "第四回合結束時上門。"}], "actions": [{"id": "hirekz", "type": "buy", "target": "kz", "cost": 2, "points": 1, "once": true, "label": "僱用康趙二元帥幫你說話（金幣 −2，點數 +1）", "say": "康趙收了錢，答應幫你說話。（點數 +1）"}, {"id": "hireql", "type": "buy", "target": "ql", "cost": 2, "points": 1, "once": true, "label": "僱用千里眼順風耳幫你說話（金幣 −2，點數 +1）", "say": "千里眼順風耳收了錢，答應幫你說話。（點數 +1）"}, {"id": "hirexd", "type": "buy", "target": "xd", "cost": 3, "points": 2, "once": true, "label": "直接跟小上帝交易（金幣 −3，點數 +2）", "say": "小上帝收下了。（點數 +2）"}, {"id": "work", "type": "work", "money": 1, "label": "去打工（金幣 +1）", "say": "你搬了一晚的貨。（金幣 +1）"}], "text": {"start": "第四回合結束時，點數到 2 就過關。", "tooHigh": "等級不夠：{who}比你高兩級以上，不能交易", "noMoney": "{unit}不夠", "growth": "", "finalReady": "四個回合都過了。關公來了，算點數。"}, "final": {"mode": "points", "title": "算點數", "need": 2, "pointsText": "你的點數 {n}／需要 {need}"}, "ruleList": [{"text": "金幣僱人：僱到一個人，得 1 點。", "needs": []}, {"text": "等級：只能跟比你高一級以內的人交易。", "needs": []}, {"text": "打工一次賺 1 金幣。", "needs": []}, {"text": "四個回合後，點數到 2 就過關。", "needs": []}], "endings": {"win": "點數夠了，過關！魁星被放下來了。", "refused": "點數不夠，沒過關。", "faceout": "", "after": ""}}}, "reveal": {"same": "這一版裡，文化只出現在人物名字上。把康趙換成傭兵、小上帝換成城主、金幣還是金幣——每一條規則都還在。所以大部分人會選「照樣玩」。", "collapse": "這一版有 {need}／{total} 條規則是從人情、面子、輩分長出來的。把它們換成金幣和等級，「欠的會變重」「要給台階」「怕事情傳開」這幾條就沒有理由存在，剩下的只是花錢買東西。所以大部分人會選「玩法本身就垮了」。", "story": "這一版有一部分規則靠文化撐著，一部分是一般的交易規則。抽掉文化，遊戲會變得很不一樣，但還走得動。"}, "remix": {"title": "怎麼改做", "steps": [{"n": 1, "name": "換內容", "task": "把這場糾紛換成你身邊的一件事（例如社團借器材沒還、班上分組吵架），換人物的名字和介紹、每個動作的文字。數字先不動。", "where": "versions.rule.parties 的 name／bio、actions 的 label／say／yes／no、endings", "prompt": "這是一個談判遊戲的資料檔（JSON）。請保留所有欄位名稱、數字和結構，只把 versions.rule 裡的人物（parties 的 name、bio）、動作文字（actions 的 label、say、yes、no）和結局（endings）改成發生在【寫你的事件】。每一個 actions 的 id、type、target、flag 都不要改。只回傳 JSON。"}, {"n": 2, "name": "換規則：把一張文化卡從「皮」變成「規則」", "task": "打開「文化只是皮」那一版（versions.skin）。挑一張人際關係卡（例如 #12 欠人情），讓它變成真的規則：把 skin 的 rules.growth 改成 true，再加一個「送禮」動作（type 是 gift，讓對方欠你），最後在 ruleList 加一條規則、needs 寫上卡的編號。玩一次皮版，再回答一次判斷題：答案有沒有變？", "where": "versions.skin.rules、actions、ruleList、text.growth", "prompt": "請修改這份 JSON 的 versions.skin：rules.growth 改成 true；labels.ledgerPos 改成「欠你」、ledgerNeg 改成「你欠」；text.growth 寫「一回合過去，人情變重了：」；actions 加一個 {\"id\":\"treat\",\"type\":\"gift\",\"target\":\"kz\",\"cost\":0,\"gain\":1,\"once\":true,\"label\":\"請康趙喝茶\",\"say\":\"康趙欠你一份情。\"}；ruleList 加一條「欠人情會隨時間變重」，needs 寫 [12]。其他地方不要動。只回傳 JSON。"}, {"n": 3, "name": "換形式", "task": "把人情和面子搬進另一個樣板。例如「普渡七日」（塔防）：每一波要找對的人幫忙，欠的人情越來越重；或「五條港接水道」（板塊）：同鄉相鄰才有分。", "where": "另一個樣板的 JSON", "prompt": "這是我做的談判遊戲資料，裡面有幾條人際關係規則（ruleList 中 needs 有編號的那幾條）。請依照【另一個樣板名稱】樣板的格式，把這些規則改寫成那個樣板裡的規則，保留卡片編號。回傳新的 JSON。"}], "addOne": "想多加一個人？在 parties 加一筆 {id, name, icon, rank, bio}；想多加一件事可以做？在 actions 加一筆，type 從這幾種選：gift（送人情）、borrow（借錢，你欠人）、ask（拜託人做事，要寫 acceptCost 和 flag）、trade（花錢換一件事）、expose（當眾揭穿）、buy（花錢買點數）、work（賺錢）、wait（不動）。最後一幕怎麼算寫在 final.mods：每一條寫哪一面旗子（flag）讓小上帝的面子 +1 或 −1。存好之後按「載入我的版本」，錯誤會告訴你是哪一筆。"}}</script>
+<script>// 人情與面子：社交博弈（談判結盟）樣板的規則（瀏覽器與 node 共用，不碰畫面）
+// 兩版用同一支程式；差別全在 JSON 的 rules 開關與 actions 清單。
+(function (root) {
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+
+  function compose(data, vkey) {
+    const v = data.versions[vkey];
+    if (!v) throw new Error("找不到版本 " + vkey);
+    return Object.assign({ key: vkey }, clone(v), { parties: v.parties.map((p) => Object.assign({}, p)) });
+  }
+
+  function newGame(cfg) {
+    const s = { round: 1, money: cfg.start.money, face: cfg.start.face, points: 0,
+      ledger: {}, out: {}, flags: {}, used: {}, over: null, log: [], final: null, stats: { refused: 0, actions: 0 } };
+    cfg.parties.forEach((p) => { s.ledger[p.id] = 0; });
+    say(s, cfg.text.start);
+    return s;
+  }
+  function say(s, m) { if (m) { s.log.push(m); if (s.log.length > 60) s.log.shift(); } }
+  const party = (cfg, id) => cfg.parties.find((p) => p.id === id);
+  const fill = (t, o) => String(t || "").replace(/\{(\w+)\}/g, (_, k) => (o[k] != null ? o[k] : "{" + k + "}"));
+
+  // 能不能直接開口：rankGate 開著時，只能找比自己高一級以內的人
+  function canReach(cfg, id) {
+    const p = party(cfg, id);
+    if (!p) return false;
+    if (!cfg.rules.rankGate) return true;
+    return p.rank - cfg.me.rank <= cfg.rules.reach;
+  }
+  function refuseCost(cfg, s, id) {
+    const p = party(cfg, id);
+    return Math.max(0, cfg.me.rank - p.rank) + Math.max(0, s.ledger[id]);
+  }
+
+  // 每個動作現在能不能做；不能做的話，原因是什麼（給畫面顯示）
+  function check(cfg, s, a) {
+    if (s.over) return "遊戲已經結束";
+    if (s.round > cfg.rounds) return "回合用完了";
+    if (a.once && s.used[a.id]) return "這件事已經做過了";
+    if (a.target && s.out[a.target]) return party(cfg, a.target).name + "已經離開了";
+    if (a.target && !canReach(cfg, a.target)) return fill(cfg.text.tooHigh, { who: party(cfg, a.target).name });
+    if ((a.cost || 0) > s.money) return fill(cfg.text.noMoney, { unit: cfg.labels.money });
+    if (a.needFlag && !s.flags[a.needFlag]) return a.needText || "還不能做";
+    if (a.blockFlag && s.flags[a.blockFlag]) return a.blockText || "已經做過了";
+    return "";
+  }
+
+  function act(cfg, s0, id) {
+    const s = clone(s0);
+    const a = cfg.actions.find((x) => x.id === id);
+    if (!a || check(cfg, s, a)) return s;
+    s.stats.actions += 1;
+    s.money -= a.cost || 0;
+    const who = a.target ? party(cfg, a.target).name : "";
+    if (a.type === "gift") { s.ledger[a.target] += a.gain || 1; say(s, a.say); }
+    else if (a.type === "borrow") { s.money += a.money || 0; s.ledger[a.target] -= a.owe || 1; say(s, a.say); }
+    else if (a.type === "ask") {
+      const acc = a.acceptCost || 0, ref = refuseCost(cfg, s, a.target);
+      if (acc <= ref) {
+        s.ledger[a.target] -= acc; s.flags[a.flag] = true;
+        say(s, fill(a.yes, { acc, ref, who }));
+      } else {
+        s.face -= 1; s.stats.refused += 1;
+        say(s, fill(a.no, { acc, ref, who }));
+      }
+    }
+    else if (a.type === "trade") { s.flags[a.flag] = true; say(s, a.say); }
+    else if (a.type === "expose") { s.flags[a.flag] = true; s.out[a.target] = true; (a.alsoFlags || []).forEach((f) => { s.flags[f] = true; }); say(s, a.say); }
+    else if (a.type === "buy") { s.points += a.points || 1; s.flags[a.flag || a.id] = true; say(s, a.say); }
+    else if (a.type === "work" || a.type === "wait") { s.money += a.money || 0; say(s, a.say); }
+    if (a.once) s.used[a.id] = true;
+    endRound(cfg, s);
+    return s;
+  }
+
+  function endRound(cfg, s) {
+    if (cfg.rules.growth) {
+      const ch = [];
+      cfg.parties.forEach((p) => {
+        const v = s.ledger[p.id];
+        if (v === 0 || s.out[p.id]) return;
+        const n = Math.max(-cfg.rules.cap, Math.min(cfg.rules.cap, v + (v > 0 ? 1 : -1)));
+        if (n !== v) { ch.push(p.name + (v > 0 ? "欠你 " : "你欠 ") + Math.abs(v) + "→" + Math.abs(n)); s.ledger[p.id] = n; }
+      });
+      if (ch.length) say(s, cfg.text.growth + ch.join("、"));
+    }
+    if (s.face <= 0) { s.over = { type: "faceout" }; return; }
+    s.round += 1;
+    if (s.round > cfg.rounds) say(s, cfg.text.finalReady);
+  }
+
+  // 最後一幕：關公來找小上帝。把算式一項一項攤開，畫面照著印
+  function resolve(cfg, s0) {
+    const s = clone(s0);
+    if (s.over || s.round <= cfg.rounds) return s;
+    const F = cfg.final, lines = [];
+    if (F.mode === "face") {
+      let acc = F.base;
+      lines.push(fill(F.baseText, { n: F.base }));
+      F.mods.forEach((m) => {
+        let on = false;
+        if (m.flag) on = !!s.flags[m.flag];
+        if (m.ledgerAtLeast) on = s.ledger[m.ledgerAtLeast.who] >= m.ledgerAtLeast.n;
+        if (m.ledgerBelow) on = !(s.ledger[m.ledgerBelow.who] >= m.ledgerBelow.n);
+        if (m.out) on = !!s.out[m.out];
+        if (on) { acc += m.delta; lines.push((m.delta > 0 ? "＋" : "－") + Math.abs(m.delta) + "　" + m.text); }
+      });
+      acc = Math.max(0, acc);
+      const debt = cfg.parties.filter((p) => s.ledger[p.id] <= -cfg.rules.callIn && !s.out[p.id]);
+      debt.forEach((p) => { s.face -= 1; lines.push(fill(F.callInText, { who: p.name })); });
+      const ref = F.refuse;
+      const ok = acc <= ref && s.face > 0;
+      s.final = { lines, acc, ref, ok };
+      s.over = { type: ok ? "win" : (s.face <= 0 ? "faceout" : "refused") };
+    } else {
+      const ok = s.points >= F.need;
+      lines.push(fill(F.pointsText, { n: s.points, need: F.need }));
+      s.final = { lines, ok };
+      s.over = { type: ok ? "win" : "refused" };
+    }
+    return s;
+  }
+
+  function cultureCheck(cfg) {
+    const rules = cfg.ruleList || [];
+    const need = rules.filter((r) => (r.needs || []).length > 0).length;
+    let verdict = "same";
+    if (need > 0) verdict = need * 2 >= rules.length ? "collapse" : "story";
+    return { total: rules.length, needCulture: need, remain: rules.length - need, verdict };
+  }
+
+  function validate(cfg) {
+    const e = [];
+    if (!Array.isArray(cfg.parties) || !cfg.parties.length) e.push("parties 至少要一個人");
+    if (!Array.isArray(cfg.actions) || !cfg.actions.length) e.push("actions 至少要一個動作");
+    if (!cfg.rules) e.push("缺 rules");
+    if (!cfg.final) e.push("缺 final（最後一幕怎麼算）");
+    if (!cfg.me) e.push("缺 me（你自己）");
+    const ids = new Set((cfg.parties || []).map((p) => p.id));
+    (cfg.parties || []).forEach((p, i) => { if (typeof p.rank !== "number") e.push("parties[" + i + "].rank 要是數字"); });
+    const types = ["gift", "borrow", "ask", "trade", "expose", "buy", "work", "wait"];
+    const seen = new Set();
+    (cfg.actions || []).forEach((a, i) => {
+      const n = "actions[" + i + "]";
+      if (!a.id) e.push(n + " 缺 id"); else if (seen.has(a.id)) e.push(n + " 的 id「" + a.id + "」重複了"); else seen.add(a.id);
+      if (!types.includes(a.type)) e.push(n + ".type 要是 " + types.join("／") + " 其中一種");
+      if (a.target && !ids.has(a.target)) e.push(n + ".target「" + a.target + "」在 parties 裡找不到");
+      if (["ask", "trade", "expose"].includes(a.type) && !a.flag) e.push(n + " 要寫 flag（做成之後立起來的旗子）");
+      if (a.type === "ask" && typeof a.acceptCost !== "number") e.push(n + ".acceptCost 要是數字");
+    });
+    if (cfg.final && cfg.final.mode === "face") (cfg.final.mods || []).forEach((m, i) => {
+      if (m.flag && !(cfg.actions || []).some((a) => a.flag === m.flag || (a.alsoFlags || []).includes(m.flag))) e.push("final.mods[" + i + "] 的 flag「" + m.flag + "」沒有任何動作會立起來");
+    });
+    return e;
+  }
+
+  const api = { compose, newGame, act, check, resolve, canReach, refuseCost, cultureCheck, validate };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  root.SocialEngine = api;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>
+(function(){
+"use strict";
+const E = window.SocialEngine;
+const ORIG = JSON.parse(document.getElementById("data").textContent);
+let DATA = JSON.parse(JSON.stringify(ORIG));
+let vkey = "skin", cfg = null, S = null;
+const answers = {};
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t == null ? "" : t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const TAGS = () => DATA.meta.tags || {};
+
+function renderHeader(){
+  $("title").textContent = DATA.meta.title;
+  $("subtitle").textContent = DATA.meta.subtitle;
+  $("kind").textContent = DATA.meta.cardKind;
+  $("kindHint").textContent = DATA.meta.cardKindHint;
+  $("cards").innerHTML = DATA.cards.map((c) => `<div class="cc"><span class="no">#${esc(c.no)}</span><b>${esc(c.v)}</b><span class="tag">${esc(TAGS()[c.tag] || c.tag)}</span><div>${esc(c.note)}</div><div class="note">在這個遊戲裡：${esc(c.here)}</div></div>`).join("");
+  $("story").innerHTML = DATA.meta.story.map((p) => `<p style="margin:.2em 0">${esc(p)}</p>`).join("");
+  $("disclaimer").textContent = DATA.meta.disclaimer;
+}
+
+function startVersion(k){
+  vkey = k; cfg = E.compose(DATA, k); S = E.newGame(cfg);
+  $("vIntro").innerHTML = `<b>${esc(cfg.label)}：</b>${esc(cfg.intro)}`;
+  $("endPanel").classList.add("hidden");
+  $("reveal").classList.add("hidden");
+  $("controls").classList.remove("hidden");
+  $("jerr").textContent = ""; $("jwhy").value = "";
+  render();
+}
+
+function render(){
+  const L = cfg.labels;
+  const done = S.round > cfg.rounds;
+  $("roundName").textContent = done ? `${cfg.rounds} 個回合都過了` : `第 ${S.round} 回合（共 ${cfg.rounds} 回合）`;
+  const st = [`<span class="pill">${esc(L.money)}：${S.money}</span>`];
+  if (L.face) st.push(`<span class="pill ${S.face <= 1 ? "hot" : ""}">${esc(L.face)}：${S.face}</span>`);
+  if (L.points) st.push(`<span class="pill">${esc(L.points)}：${S.points}</span>`);
+  $("status").innerHTML = st.join("");
+  $("ladder").innerHTML = `<span>${esc(L.rank)}：</span>` + [{ name: cfg.me.name, rank: cfg.me.rank }].concat(cfg.parties).slice().sort((a, b) => a.rank - b.rank)
+    .map((p) => `<span class="rank">${esc(p.name)} ${p.rank}</span>`).join("");
+  $("parties").innerHTML = cfg.parties.map((p) => {
+    const v = S.ledger[p.id] || 0;
+    let led = "";
+    if (cfg.rules.growth || v) led = v > 0 ? `<span class="led pos">${esc(L.ledgerPos)} ${v}</span>` : v < 0 ? `<span class="led neg">${esc(L.ledgerNeg)} ${-v}</span>` : `<span class="note">誰也不欠誰</span>`;
+    const reach = E.canReach(cfg, p.id) ? "" : `<div class="why">要靠別人帶話</div>`;
+    return `<div class="pc ${S.out[p.id] ? "out" : ""}" data-party="${esc(p.id)}"><div class="nm">${p.icon || ""} ${esc(p.name)}</div><span class="rank">${esc(L.rank)} ${p.rank}</span>${led}<span class="tag">${esc(TAGS()[p.tag] || "")}</span><div class="note">${esc(p.bio)}</div>${S.out[p.id] ? '<div class="why">已經離開</div>' : reach}</div>`;
+  }).join("");
+  $("acts").innerHTML = cfg.actions.map((a) => {
+    const why = E.check(cfg, S, a);
+    const hide = a.once && S.used[a.id];
+    if (hide) return "";
+    return `<div class="actrow"><button class="btn" data-a="${esc(a.id)}" ${why ? "disabled" : ""}>${esc(a.label)}</button>${why ? `<div class="why">不能做：${esc(why)}</div>` : ""}</div>`;
+  }).join("");
+  $("acts").classList.toggle("hidden", done || !!S.over);
+  $("finalBtn").classList.toggle("hidden", !done || !!S.over);
+  $("finalBtn").textContent = "看最後一幕：" + (cfg.final.title || "");
+  $("log").innerHTML = S.log.slice(-6).map((m) => `<p>${esc(m)}</p>`).join("");
+  $("log").scrollTop = 1e6;
+  if (S.over) showEnd();
+}
+
+function showEnd(){
+  const en = cfg.endings || {}, t = S.over.type;
+  $("endTitle").textContent = `${cfg.label}｜${t === "win" ? "喬成了" : t === "faceout" ? "面子用光了" : "沒喬成"}`;
+  const F = S.final;
+  if (F && cfg.final.mode === "face") {
+    $("calc").innerHTML = F.lines.map((l) => `<li>${esc(l)}</li>`).join("") +
+      `<li class="sum">小上帝答應要丟 ${F.acc} 分；${esc(cfg.final.refuseText)}。${F.acc <= F.ref ? "答應比較不丟臉 → 放人" : "拒絕比較不丟臉 → 不放"}</li>`;
+  } else if (F) {
+    $("calc").innerHTML = F.lines.map((l) => `<li class="sum">${esc(l)}</li>`).join("");
+  } else $("calc").innerHTML = "";
+  $("endText").textContent = en[t] || "";
+  $("endAfter").textContent = en.after || "";
+  const J = DATA.judge, prev = answers[vkey];
+  $("jq").textContent = J.question;
+  $("jopts").innerHTML = J.options.map((o, i) => `<button class="btn" data-judge="${i}" aria-pressed="${prev && prev.i === i ? "true" : "false"}">${esc(o)}</button>`).join("");
+  $("endPanel").classList.remove("hidden");
+  $("controls").classList.add("hidden");
+  if (prev) { $("jwhy").value = prev.why; showReveal(); }
+  setTimeout(() => $("endPanel").scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+}
+
+function sendJudge(){
+  const why = $("jwhy").value.trim();
+  const sel = document.querySelector('[data-judge][aria-pressed="true"]');
+  if (!sel) { $("jerr").textContent = "先選一個答案。"; return; }
+  if (why.length < (DATA.judge.minWhy || 1)) { $("jerr").textContent = `為什麼要寫一句話（至少 ${DATA.judge.minWhy} 個字）。`; return; }
+  $("jerr").textContent = "";
+  const i = Number(sel.dataset.judge);
+  answers[vkey] = { i, text: DATA.judge.options[i], why };
+  try { if (window.CT_HOOK) { CT_HOOK.markPlayed(vkey); CT_HOOK.judged(vkey, i + 1, why); } } catch (e) { /* 助教出錯不能影響樣板 */ }
+  showReveal();
+}
+
+function showReveal(){
+  const cc = E.cultureCheck(cfg);
+  const cardName = (n) => { const c = DATA.cards.find((x) => x.no === n); return c ? `#${n} ${c.v}` : `#${n}`; };
+  $("rlist").innerHTML = cfg.ruleList.map((r) => {
+    const need = (r.needs || []).length > 0;
+    return `<li class="${need ? "gone" : ""}">${esc(r.text)}${need ? `<span class="tag">靠 ${esc(r.needs.map(cardName).join("、"))}</span>` : `<span class="tag">一般規則</span>`}</li>`;
+  }).join("");
+  $("rtext").textContent = (DATA.reveal[cc.verdict] || "").replace("{need}", cc.needCulture).replace("{total}", cc.total) + `（劃掉的是抽掉文化就沒有理由存在的規則：${cc.total} 條劃掉 ${cc.needCulture} 條，剩 ${cc.remain} 條。）`;
+  $("reveal").classList.remove("hidden");
+  const other = vkey === "rule" ? "skin" : "rule";
+  $("toOther").textContent = `去玩另一版：${DATA.versions[other].label}`;
+  $("toOther").dataset.to = other;
+  if (answers.rule && answers.skin) {
+    $("compare").classList.remove("hidden");
+    $("cmp").innerHTML = ["skin", "rule"].map((k) => `<div><b>${esc(DATA.versions[k].label)}</b><br>${esc(answers[k].text)}<br><span class="note">${esc(answers[k].why)}</span></div>`).join("");
+    $("cmpNote").textContent = answers.rule.i === answers.skin.i
+      ? "你兩版選了一樣的答案。回頭看看：哪幾條規則是皮版沒有、規則版才有的？"
+      : "你兩版的答案不一樣。這個差別就是 W2 說的：文化只是皮，還是文化長在規則裡。";
+  }
+}
+
+function setTab(t){
+  document.querySelectorAll(".tab").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  $("play").classList.toggle("hidden", t === "remix");
+  $("remix").classList.toggle("hidden", t !== "remix");
+  if (t !== "remix") startVersion(t); else renderRemix();
+}
+
+function renderRemix(){
+  const R = DATA.remix;
+  $("remixSteps").innerHTML = `<h2 style="margin-top:0">${esc(R.title)}：三階，一次只做一階</h2>` + R.steps.map((s) => `
+    <div style="margin:.6em 0 1em"><b>第 ${s.n} 階・${esc(s.name)}</b><p class="small" style="margin:.2em 0">${esc(s.task)}</p>
+    <p class="note" style="margin:.2em 0">要改的地方：<code>${esc(s.where)}</code></p>
+    <p class="small" style="margin:.2em 0">貼給 Claude／Gemini 的參考指令：</p><textarea rows="4" readonly>${esc(s.prompt)}</textarea></div>`).join("");
+  const F = DATA.field;
+  $("fieldCard").innerHTML = `<h2 style="margin-top:0">${esc(F.title)}</h2><p class="small">${esc(F.why)}</p>` +
+    F.prompts.map((p) => `<p class="small" style="margin:.5em 0 .2em"><b>${esc(p.q)}</b> <span class="tag">田野</span></p><textarea rows="2" data-field="${esc(p.id)}" placeholder="去問了之後再寫"></textarea>`).join("") +
+    `<p class="note">這幾格只存在你這個頁面裡；要留下來，請複製到你的作業。</p>`;
+  $("addOne").textContent = R.addOne;
+}
+
+function exportData(){ $("dataBox").value = JSON.stringify(DATA, null, 2); $("importMsg").textContent = "已取出。整份複製起來。"; }
+function importData(){
+  let d;
+  try { d = JSON.parse($("dataBox").value); } catch (e) { $("importMsg").textContent = "這不是完整的 JSON：" + e.message; return; }
+  const errs = [];
+  if (!d.versions || !d.versions.rule || !d.versions.skin) errs.push("versions 裡要有 rule 和 skin 兩版");
+  else ["rule", "skin"].forEach((k) => { try { E.validate(E.compose(d, k)).forEach((x) => errs.push(`[${d.versions[k].label || k}] ${x}`)); } catch (e) { errs.push(`[${k}] ${e.message}`); } });
+  ["meta", "cards", "judge", "reveal", "remix", "field"].forEach((k) => { if (!d[k]) errs.push("缺少 " + k); });
+  if (errs.length) { $("importMsg").textContent = "載入不了，請修這幾處：\n" + errs.join("\n"); return; }
+  DATA = d; renderHeader(); $("importMsg").textContent = "載入成功！回到上面的分頁去玩你的版本。";
+}
+
+document.addEventListener("click", (ev) => {
+  const t = ev.target.closest("button");
+  if (!t || t.disabled) return;
+  if (t.dataset.tab) return setTab(t.dataset.tab);
+  if (t.dataset.a) { S = E.act(cfg, S, t.dataset.a); return render(); }
+  if (t.dataset.judge != null) { document.querySelectorAll("[data-judge]").forEach((b) => b.setAttribute("aria-pressed", String(b === t))); return; }
+  if (t.id === "finalBtn") { S = E.resolve(cfg, S); return render(); }
+  if (t.id === "restart") return startVersion(vkey);
+  if (t.id === "jsend") return sendJudge();
+  if (t.id === "toOther") { setTab(t.dataset.to); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  if (t.id === "exportBtn") return exportData();
+  if (t.id === "importBtn") return importData();
+  if (t.id === "resetData") { DATA = JSON.parse(JSON.stringify(ORIG)); renderHeader(); exportData(); $("importMsg").textContent = "已回到原本的資料。"; }
+});
+
+renderHeader();
+setTab("skin");
+window.__social = { get state(){ return S; }, get cfg(){ return cfg; }, get answers(){ return answers; } };
+})();
+</script>
+<!-- CT-HOOK-BEGIN -->
+<script src="../tutor/folk_index.js?v=202611151156"></script>
+<script src="../tutor/tutor_templates.js?v=202611151156"></script>
+<script src="../tutor/tutor_core.js?v=202611151156"></script>
+<script src="../tutor/tutor_ui.js?v=202611151156"></script>
+<script src="../tutor/tutor_hook.js?v=202611151156"></script>
+<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script>if (window.CT_BOOT) CT_BOOT('social');</script>
+<!-- CT-HOOK-END -->
+</body>
+</html>

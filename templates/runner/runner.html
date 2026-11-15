@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>遶境不能停</title>
+<style>
+:root{--bg:#f6f1e7;--card:#fffdf8;--ink:#2b2620;--muted:#6b6256;--line:#d9cfbf;--accent:#b5372a;--accent-ink:#fff;--ok:#2e7d4f;--bad:#b3261e;--sky:#fbe9c9;--ground:#c8b38f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1c1915;--card:#27231e;--ink:#efe7da;--muted:#b3a897;--line:#4a4238;--accent:#e57a5f;--accent-ink:#1c1915;--ok:#7fd1a0;--bad:#ff8a80;--sky:#2b2a33;--ground:#5b4c38}}
+:root[data-theme="dark"]{--bg:#1c1915;--card:#27231e;--ink:#efe7da;--muted:#b3a897;--line:#4a4238;--accent:#e57a5f;--accent-ink:#1c1915;--ok:#7fd1a0;--bad:#ff8a80;--sky:#2b2a33;--ground:#5b4c38}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
+#app{max-width:520px;margin:0 auto;padding:12px 16px 40px}
+h1{font-size:1.45rem;margin:.3em 0 .1em}h2{font-size:1.1rem;margin:1.1em 0 .4em}
+.sub{color:var(--muted);font-size:.92rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.kind{display:inline-block;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 12px;font-size:.85rem;font-weight:700}
+.w2c{border-left:4px solid var(--accent);padding:4px 10px;margin:8px 0}.w2c small{display:block;color:var(--muted)}
+button{font:inherit;min-height:44px;min-width:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;cursor:pointer;touch-action:manipulation}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.row>button{flex:1 1 140px}
+.hud{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.92rem}
+.bar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin:4px 0}.bar i{display:block;height:100%;background:var(--ok)}
+canvas{width:100%;height:190px;display:block;border-radius:12px;border:1px solid var(--line);background:var(--sky)}
+.pad{display:flex;gap:10px;margin:10px 0}.pad button{flex:1;min-height:64px;font-size:1.15rem;font-weight:800}
+.msg{min-height:3.2em;padding:8px 10px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:.95rem}
+.msg.bad{border-color:var(--bad);color:var(--bad)}.msg.ok{border-color:var(--ok)}
+.overlay{border:2px solid var(--accent);border-radius:12px;padding:12px;margin:10px 0;background:var(--card)}
+.order button{display:block;width:100%;margin:6px 0;text-align:left}
+.order button.done{opacity:.5}
+.strip-on{outline:3px dashed var(--muted);outline-offset:4px;border-radius:10px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}.opt.sel{outline:3px solid var(--accent)}
+textarea{width:100%;min-height:88px;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.err{color:var(--bad);font-size:.92rem;white-space:pre-wrap}
+details{margin:10px 0}summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:700}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:.8rem;margin-right:4px;color:var(--muted)}
+.foot{color:var(--muted);font-size:.8rem;margin-top:18px}
+.legend div{display:flex;gap:8px;align-items:center;margin:4px 0}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;color:#fff;font-weight:800;flex:0 0 auto}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="application/json" id="data-rule"><!--DATA_RULE-->{"version_id": "rule", "title": "遶境不能停", "version_label": "文化長在規則裡", "tagline": "抬著小上帝的神轎沿路出巡：跳過路障、沿路接駕、到廟前照順序拜。遊戲規定：轎子一停下來，就要回到上一間廟前重新出發。", "route_note": "這是工坊自己編的出巡路線，不是任何一間廟真實的遶境路線。", "w2_kind": {"label": "行為・儀式", "line": "這個樣板練的是 W2 的「行為・儀式」類文化卡：這一類本身就是一套動作，常常直接可以當成玩法。"}, "w2_cards": [{"no": 8, "v": "遶境", "note": "一條固定路線、沿途有人接駕，是路線與補給的問題", "more": "補充：路線多半由主辦單位先排好，各家戶沿路擺香案；也有像白沙屯媽祖進香那樣，路口現場由神明決定往哪走（那是進香，不是遶境）。"}, {"no": 10, "v": "拜拜的順序", "note": "先拜誰後拜誰不能亂，錯了要重來", "more": "補充：常見的是天公先、主神次、陪祀神最後，但各廟不同，以廟方立牌為準；「錯了要重來」是遊戲加的規則。"}, {"no": 6, "v": "擲筊", "note": "用兩塊木頭問神明是或否——本身就是一個隨機判定機制", "more": "這一張這個樣板還沒用到：把它加在路口，讓神明決定往哪走，是改做時的好題目。"}], "world": {"speed": 130, "jump_v": 330, "gravity": 900, "hit_w": 22, "take_w": 46}, "on_hit": "stall", "lives": 0, "stamina": {"start": 100, "drain": 3.2, "temple_wrong": 12, "after_stall": 70, "name": "轎班體力"}, "temple_mode": "order", "kinds": {"obstacle": {"name": "路障", "icon": "▲", "color": "#8a5a3c", "solid": true, "why_hit": "路障擋住了，轎班只好停下腳步——神轎停下來了。"}, "altar": {"name": "香案", "icon": "香", "color": "#c0392b", "take": {"pts": 3, "label": "接到香案"}, "miss": {"pts": 0, "label": "錯過的香案"}, "take_text": "這一家擺了香案接駕，神轎經過，這家人安心了。", "miss_text": "這一家擺了香案，神轎卻直接走過去了。"}, "tea": {"name": "奉茶", "icon": "茶", "color": "#2e7d4f", "take": {"pts": 0, "stamina": 35, "label": "喝了奉茶"}, "take_text": "沿路的人遞茶給轎班，體力回來了。"}, "gamble": {"name": "賭攤", "icon": "賭", "color": "#6b4f8a", "take": {"pts": 2, "stamina": -35, "label": "停下來賭一把"}, "take_text": "轎前的康、趙二元帥被賭攤吸住，跟千里眼、順風耳賭了一把，贏了一點——但轎班站著等，累了。《小封神》第二回裡，他們就是這樣賭到把錢輸光、還回去說謊。", "pass_text": "賭攤沒理它，神轎照樣往前走。"}}, "temples": {"qijia": {"name": "小上帝廟（起駕）", "text": "出發之前，先在廟裡照順序拜，再起駕。", "checkpoint": true}, "tudi": {"name": "安海街土地公", "text": "路過安海街的土地公。這是一間小廟，遊戲裡設定它沒有天公爐：先拜土地公，再拜陪祀的神（進廟拜、這個順序，都是遊戲安排的）。", "checkpoint": true, "order": [{"id": "tudi", "label": "土地公（這間廟的主神）"}, {"id": "peisi", "label": "陪祀的神"}]}, "huigong": {"name": "小上帝廟（回宮）", "text": "回到小上帝廟，照順序拜完，這一趟出巡才算圓滿。", "checkpoint": true, "end": true}}, "order": [{"id": "tiangong", "label": "天公爐（拜天公）"}, {"id": "zhushen", "label": "這間廟的主神"}, {"id": "peisi", "label": "陪祀的神"}], "order_hint": "先拜最大的天公，再拜這間廟的主神，最後拜陪祀的神（各廟不同，真的去拜時看廟方的立牌）。", "order_wrong": "順序亂了，要從頭再拜一次（轎班站著等，體力少一點）。", "segments": [{"from": 0, "name": "小上帝廟前"}, {"from": 1150, "name": "打銀街"}, {"from": 1850, "name": "媽祖宮口"}, {"from": 2400, "name": "安海街"}, {"from": 3250, "name": "回小上帝廟"}], "route": [{"at": 0, "kind": "temple", "id": "qijia"}, {"at": 300, "kind": "altar"}, {"at": 520, "kind": "obstacle"}, {"at": 720, "kind": "altar"}, {"at": 930, "kind": "obstacle"}, {"at": 1100, "kind": "tea"}, {"at": 1300, "kind": "altar"}, {"at": 1460, "kind": "obstacle"}, {"at": 1620, "kind": "obstacle"}, {"at": 1760, "kind": "altar"}, {"at": 1950, "kind": "gamble"}, {"at": 2060, "kind": "altar"}, {"at": 2170, "kind": "gamble"}, {"at": 2280, "kind": "obstacle"}, {"at": 2400, "kind": "temple", "id": "tudi"}, {"at": 2600, "kind": "obstacle"}, {"at": 2720, "kind": "altar"}, {"at": 2860, "kind": "tea"}, {"at": 3000, "kind": "obstacle"}, {"at": 3150, "kind": "obstacle"}, {"at": 3300, "kind": "altar"}, {"at": 3500, "kind": "temple", "id": "huigong"}], "penalties": {"stall": {"pts": -4, "label": "神轎停下來"}, "wrong_order": {"pts": -1, "label": "拜錯順序"}}, "rules_text": [{"text": "遊戲規定：撞到路障、或轎班體力用完，神轎就停下來，要回到上一間廟前重新出發，剛剛走過的路再走一次（真的遶境有排好的休息和駐駕，這條是遊戲加的）。", "culture": false}, {"text": "各家戶在路邊擺香案接駕：經過時按「接駕」，這一家才算接到。", "culture": true}, {"text": "路邊有人奉茶：按「接駕」接下來，轎班體力會回來。", "culture": true}, {"text": "媽祖宮口有賭攤：《小封神》裡康、趙二元帥就是在這裡賭輸了錢。賭一把能多一點分，但轎班會很累，累倒就停轎。", "culture": true}, {"text": "到廟前要照順序拜：有天公爐的先拜天公，再拜這間廟的主神，最後拜陪祀的神；小廟沒有天公爐，就從主神開始。拜錯要重來。", "culture": true}, {"text": "「跳」跳過路障；「接駕」接下路邊的東西。鍵盤：空白鍵跳、Enter 接駕。", "culture": false}], "endings": [{"min": 18, "title": "圓滿回宮", "text": "一路上的香案都接到了，轎子沒有亂停，拜的順序也沒亂。沿路的人家說：今年小上帝有出來看我們。"}, {"min": 8, "title": "回宮了，但有點亂", "text": "神轎是回來了，但有幾家的香案沒接到，或轎子停了好幾次。想一想：哪一段最常出事？"}, {"min": -99, "title": "這一趟走得很辛苦", "text": "停轎、拜錯、被賭攤吸走……再走一次看看：哪一條規矩最常讓你出事？"}], "reflect": {"question": "按「抽掉文化試試看」再走一次：名字、圖示、規則說明都換成代號，廟前的三個按鈕也看不出是什麼。抽掉文化之後，這個遊戲還玩得下去嗎？", "options": ["照樣玩", "故事垮了玩法還在", "玩法本身就垮了", "說不準"], "expected": "開放", "our_view": "我們的看法：這題我們不給標準答案。我們用電腦玩家試過：照規矩走的拿 21 分、圓滿回宮；完全亂按、分不出香案和賭攤的，拜錯五十幾次、分數變負的；但會記住「哪顆按過是錯的」的玩家，仍然走完、拿約 17 分，只是更累、停轎更多、拿不到圓滿。所以抽掉文化後，這個遊戲是「變難」還是「垮了」，要看你怎麼玩。另一邊，皮版抽掉文化前後分數一模一樣，那是「照樣玩」。請你選一個答案，寫下你自己玩到什麼：你猜了幾次才摸出廟前的順序？分不出香案和賭攤時，你還想不想繼續？"}, "field": {"title": "AI 做不到的欄位：去問一個真的出巡規矩", "prompt": "去看一次廟會、遶境或進香，或問一位廟方的人、轎班、長輩：「神轎要休息或停下來的時候，有什麼規矩？」、「這間廟先拜哪一尊？」寫下你問了誰（不用寫名字，寫身分就好）、他怎麼說。", "placeholder": "例：我問了＿＿廟的＿＿，他說神轎＿＿的時候，要＿＿。所以規則可以改成：＿＿。", "min_chars": 15}, "basis": [{"tag": "原著", "text": "康、趙二元帥輔佐小上帝；他們帶著典當通天冠換來的錢，路過媽祖宮口，跟千里眼、順風耳賭「拋璉寶」，輸光了錢（《小封神》第二回）。安海街的土地公也是原著人物（第十八至二十回）。"}, {"tag": "原著（提醒）", "text": "賭攤是原著的諷刺：康、趙賭輸了錢還說謊，最後被罰。遊戲讓賭攤有一點誘惑，但代價更大，不是在鼓勵賭博。"}, {"tag": "民間", "text": "遶境又叫巡境、出巡，路線由廟方與地方人士組成的主辦團體安排，各地方式不同；沿途家戶擺香案。"}, {"tag": "民間（各廟不同）", "text": "拜拜常見的順序是天公先、主神次、陪祀神最後；多尊神像時的左右先後說法不一，以廟方立牌為準。"}, {"tag": "工坊創作", "text": "整條路線、路障、體力、分數都是遊戲編的；小上帝出巡、經過媽祖宮口與安海街，原著沒有這一段。"}, {"tag": "遊戲設定（還要再查證）", "text": "「神轎停下來要回到上一間廟前重新出發」「拜錯要重來」「進土地公廟拜」都是遊戲為了讓規矩變成玩法而定的；真的遶境有排好的休息與駐駕，各廟做法要以現場為準。"}]}<!--/DATA_RULE--></script>
+<script type="application/json" id="data-skin"><!--DATA_SKIN-->{"title": "遶境不能停", "route_note": "這是工坊自己編的出巡路線，不是任何一間廟真實的遶境路線。", "w2_kind": {"label": "行為・儀式", "line": "這個樣板練的是 W2 的「行為・儀式」類文化卡：這一類本身就是一套動作，常常直接可以當成玩法。"}, "w2_cards": [{"no": 8, "v": "遶境", "note": "一條固定路線、沿途有人接駕，是路線與補給的問題", "more": "補充：路線多半由主辦單位先排好，各家戶沿路擺香案；也有像白沙屯媽祖進香那樣，路口現場由神明決定往哪走（那是進香，不是遶境）。"}, {"no": 10, "v": "拜拜的順序", "note": "先拜誰後拜誰不能亂，錯了要重來", "more": "補充：常見的是天公先、主神次、陪祀神最後，但各廟不同，以廟方立牌為準；「錯了要重來」是遊戲加的規則。"}, {"no": 6, "v": "擲筊", "note": "用兩塊木頭問神明是或否——本身就是一個隨機判定機制", "more": "這一張這個樣板還沒用到：把它加在路口，讓神明決定往哪走，是改做時的好題目。"}], "world": {"speed": 130, "jump_v": 330, "gravity": 900, "hit_w": 22, "take_w": 46}, "temples": {"qijia": {"name": "小上帝廟（起駕）", "text": "出發之前，先在廟裡照順序拜，再起駕。", "checkpoint": true}, "tudi": {"name": "安海街土地公", "text": "路過安海街的土地公。這是一間小廟，遊戲裡設定它沒有天公爐：先拜土地公，再拜陪祀的神（進廟拜、這個順序，都是遊戲安排的）。", "checkpoint": true, "order": [{"id": "tudi", "label": "土地公（這間廟的主神）"}, {"id": "peisi", "label": "陪祀的神"}]}, "huigong": {"name": "小上帝廟（回宮）", "text": "回到小上帝廟，照順序拜完，這一趟出巡才算圓滿。", "checkpoint": true, "end": true}}, "order": [{"id": "tiangong", "label": "天公爐（拜天公）"}, {"id": "zhushen", "label": "這間廟的主神"}, {"id": "peisi", "label": "陪祀的神"}], "segments": [{"from": 0, "name": "小上帝廟前"}, {"from": 1150, "name": "打銀街"}, {"from": 1850, "name": "媽祖宮口"}, {"from": 2400, "name": "安海街"}, {"from": 3250, "name": "回小上帝廟"}], "route": [{"at": 0, "kind": "temple", "id": "qijia"}, {"at": 300, "kind": "altar"}, {"at": 520, "kind": "obstacle"}, {"at": 720, "kind": "altar"}, {"at": 930, "kind": "obstacle"}, {"at": 1100, "kind": "tea"}, {"at": 1300, "kind": "altar"}, {"at": 1460, "kind": "obstacle"}, {"at": 1620, "kind": "obstacle"}, {"at": 1760, "kind": "altar"}, {"at": 1950, "kind": "gamble"}, {"at": 2060, "kind": "altar"}, {"at": 2170, "kind": "gamble"}, {"at": 2280, "kind": "obstacle"}, {"at": 2400, "kind": "temple", "id": "tudi"}, {"at": 2600, "kind": "obstacle"}, {"at": 2720, "kind": "altar"}, {"at": 2860, "kind": "tea"}, {"at": 3000, "kind": "obstacle"}, {"at": 3150, "kind": "obstacle"}, {"at": 3300, "kind": "altar"}, {"at": 3500, "kind": "temple", "id": "huigong"}], "field": {"title": "AI 做不到的欄位：去問一個真的出巡規矩", "prompt": "去看一次廟會、遶境或進香，或問一位廟方的人、轎班、長輩：「神轎要休息或停下來的時候，有什麼規矩？」、「這間廟先拜哪一尊？」寫下你問了誰（不用寫名字，寫身分就好）、他怎麼說。", "placeholder": "例：我問了＿＿廟的＿＿，他說神轎＿＿的時候，要＿＿。所以規則可以改成：＿＿。", "min_chars": 15}, "basis": [{"tag": "原著", "text": "康、趙二元帥輔佐小上帝；他們帶著典當通天冠換來的錢，路過媽祖宮口，跟千里眼、順風耳賭「拋璉寶」，輸光了錢（《小封神》第二回）。安海街的土地公也是原著人物（第十八至二十回）。"}, {"tag": "原著（提醒）", "text": "賭攤是原著的諷刺：康、趙賭輸了錢還說謊，最後被罰。遊戲讓賭攤有一點誘惑，但代價更大，不是在鼓勵賭博。"}, {"tag": "民間", "text": "遶境又叫巡境、出巡，路線由廟方與地方人士組成的主辦團體安排，各地方式不同；沿途家戶擺香案。"}, {"tag": "民間（各廟不同）", "text": "拜拜常見的順序是天公先、主神次、陪祀神最後；多尊神像時的左右先後說法不一，以廟方立牌為準。"}, {"tag": "工坊創作", "text": "整條路線、路障、體力、分數都是遊戲編的；小上帝出巡、經過媽祖宮口與安海街，原著沒有這一段。"}, {"tag": "遊戲設定（還要再查證）", "text": "「神轎停下來要回到上一間廟前重新出發」「拜錯要重來」「進土地公廟拜」都是遊戲為了讓規矩變成玩法而定的；真的遶境有排好的休息與駐駕，各廟做法要以現場為準。"}], "version_id": "skin", "version_label": "文化只是皮", "tagline": "抬著神轎往前跑：跳過路障、路邊的東西全部撿起來加分。名字是台南的，規則跟任何跑酷都一樣。", "on_hit": "life", "lives": 3, "stamina": null, "temple_mode": "any", "order_hint": "休息站：按任何一顆都可以繼續。", "order_wrong": "", "kinds": {"obstacle": {"name": "路障", "icon": "▲", "color": "#8a5a3c", "solid": true, "why_hit": "撞到路障，少一條命。"}, "altar": {"name": "香案", "icon": "香", "color": "#c0392b", "take": {"pts": 1, "label": "撿到金幣"}, "take_text": "撿到了，加 1 分。"}, "tea": {"name": "奉茶", "icon": "茶", "color": "#2e7d4f", "take": {"pts": 1, "label": "撿到金幣"}, "take_text": "撿到了，加 1 分。"}, "gamble": {"name": "賭攤", "icon": "賭", "color": "#6b4f8a", "take": {"pts": 1, "label": "撿到金幣"}, "take_text": "撿到了，加 1 分。"}}, "penalties": {"stall": {"pts": 0, "label": "撞到路障"}, "wrong_order": {"pts": 0, "label": ""}, "finish": {"pts": 5, "label": "跑到終點"}}, "rules_text": [{"text": "撞到路障少一條命，三條命用完就結束。", "culture": false}, {"text": "路邊的東西，經過時按「接駕」撿起來，每個加 1 分。", "culture": false}, {"text": "停下來的地方是休息站，按任何一顆鈕就繼續。", "culture": false}, {"text": "「跳」跳過路障；「接駕」撿東西。鍵盤：空白鍵跳、Enter 撿。", "culture": false}], "endings": [{"min": 14, "title": "全部撿到了", "text": "路邊的東西幾乎都撿到了。可是你撿的是香案、奉茶，還是賭攤？在這一版裡，沒有差別。"}, {"min": 6, "title": "撿到一些", "text": "有幾個漏掉了。再跑一次，分數會更高。"}, {"min": -99, "title": "沒跑完", "text": "命用完了。再跑一次看看。"}], "reflect": {"question": "按「抽掉文化試試看」再走一次：名字、圖示、規則說明都換成代號，廟前的三個按鈕也看不出是什麼。抽掉文化之後，這個遊戲還玩得下去嗎？", "options": ["照樣玩", "故事垮了玩法還在", "玩法本身就垮了", "說不準"], "expected": "照樣玩", "our_view": "我們的看法：這一版的名字和圖示都是遶境，但規則只是「跳、撿、別撞」。抽掉文化，換成代號，規則一個字都不用改，照樣玩。香案、奉茶、賭攤在這裡都是金幣——文化只是貼圖。對照「文化長在規則裡」那一版，看看差在哪。"}}<!--/DATA_SKIN--></script>
+<script>
+(function(){
+'use strict';
+// ===================== 引擎（不碰畫面，可單獨模擬） =====================
+function readData(id){ var t=document.getElementById(id).textContent.replace(/<!--\/?DATA_(RULE|SKIN)-->/g,''); return JSON.parse(t); }
+var KIND_OK={obstacle:1,altar:1,tea:1,gamble:1,temple:1};
+var E={
+  newState:function(D){ var st=D.route.map(function(){return null;}); var S={x:0,y:0,vy:0,mode:'temple',ti:0,seq:[],stamina:D.stamina?D.stamina.start:null,lives:D.lives||0,st:st,stalls:0,wrong:0,taken:{},checkpoint:0,cpIdx:0,finished:false,failed:false,time:0,lastText:'',reason:''};
+    for(var i=0;i<D.route.length;i++){ if(D.route[i].kind==='temple'){ S.ti=i; break; } } return S; },
+  templeOf:function(D,S){ var it=D.route[S.ti]; return it?D.temples[it.id]:null; },
+  step:function(D,S,inp,dt){
+    if(S.mode!=='run') return;
+    var W=D.world; S.time+=dt;
+    if(inp.jump && S.y<=0){ S.vy=W.jump_v; }
+    S.y+=S.vy*dt; S.vy-=W.gravity*dt; if(S.y<=0){ S.y=0; S.vy=0; }
+    S.x+=W.speed*dt;
+    if(D.stamina){ S.stamina-=D.stamina.drain*dt; if(S.stamina<=0){ S.stamina=0; E.stall(D,S,'轎班體力用完了，神轎停下來了。'); return; } }
+    var take=inp.take;
+    for(var i=0;i<D.route.length;i++){ if(S.st[i]!==null) continue; var it=D.route[i], d=it.at-S.x, K=D.kinds[it.kind];
+      if(it.kind==='temple'){ if(d<=0){ S.x=it.at; S.st[i]='reached'; S.mode='temple'; S.ti=i; S.seq=[]; return; } continue; }
+      if(it.kind==='obstacle'){ if(Math.abs(d)<W.hit_w/2+8 && S.y<20){ S.st[i]='hit'; E.hit(D,S,K.why_hit); return; } if(d<-W.hit_w) S.st[i]='passed'; continue; }
+      if(take && Math.abs(d)<W.take_w){ take=false; S.st[i]='taken'; var tk=K.take||{}; S.taken[it.kind]=(S.taken[it.kind]||0)+1; if(tk.stamina&&D.stamina) S.stamina=Math.max(0,Math.min(100,S.stamina+tk.stamina)); S.lastText=K.take_text||''; continue; }
+      if(d<-W.take_w){ S.st[i]='missed'; S.lastText=(K.miss_text||K.pass_text||''); }
+    }
+  },
+  hit:function(D,S,why){ if(D.on_hit==='stall'){ E.stall(D,S,why); } else { S.lives--; S.lastText=why; if(S.lives<=0){ S.mode='done'; S.failed=true; } } },
+  stall:function(D,S,why){ S.stalls++; S.mode='stalled'; S.reason=why; },
+  restart:function(D,S){ // 回到上一間廟重新起駕：那之後的路要再走一次（已接到的香案保留）
+    S.x=S.checkpoint; S.y=0; S.vy=0;
+    for(var i=0;i<D.route.length;i++){ var it=D.route[i]; if(it.at>S.checkpoint && S.st[i]!=='taken') S.st[i]=null; /* 接過的（香案、奉茶、賭攤）回頭不會再出現，免得來回刷分 */ }
+    if(D.stamina) S.stamina=Math.max(S.stamina,D.stamina.after_stall); S.mode='run'; S.reason=''; },
+  ordOf:function(D,S){ var it=D.route[S.ti], T=it&&D.temples[it.id]; return (T&&T.order)||D.order; },
+  orderButtons:function(D,S){ var O=E.ordOf(D,S), n=O.length, k=(S.ti*7+3)%n, out=[]; for(var i=0;i<n;i++) out.push(O[(i*(n>2?2:1)+k)%n]); return out; },
+  templeTap:function(D,S,id){
+    if(S.mode!=='temple') return {ignored:true};
+    if(D.temple_mode==='any'){ return E.finishTemple(D,S); }
+    var O=E.ordOf(D,S), want=O[S.seq.length].id;
+    if(id!==want){ S.wrong++; S.seq=[]; if(D.stamina) S.stamina=Math.max(10,S.stamina-D.stamina.temple_wrong); return {wrong:true}; }
+    S.seq.push(id); if(S.seq.length===O.length) return E.finishTemple(D,S); return {ok:true};
+  },
+  finishTemple:function(D,S){ var it=D.route[S.ti], T=D.temples[it.id]; S.st[S.ti]='done'; if(T.checkpoint){ S.checkpoint=it.at; }
+    if(T.end){ S.mode='done'; S.finished=true; } else { S.mode='run'; S.x=it.at+0.01; } S.seq=[]; return {done:true}; },
+  score:function(D,S){ var items=[], total=0; function add(l,p){ if(!l||!p) return; items.push({label:l,pts:p}); total+=p; }
+    Object.keys(S.taken).forEach(function(k){ var tk=D.kinds[k].take||{}; add(tk.label+' ×'+S.taken[k], (tk.pts||0)*S.taken[k]); });
+    var P=D.penalties||{}; if(P.stall) add(P.stall.label+' ×'+S.stalls, P.stall.pts*S.stalls); if(P.wrong_order) add(P.wrong_order.label+' ×'+S.wrong, P.wrong_order.pts*S.wrong);
+    if(P.finish && S.finished) add(P.finish.label, P.finish.pts);
+    var altars=0, got=0; D.route.forEach(function(it,i){ if(it.kind==='altar'){ altars++; if(S.st[i]==='taken') got++; } });
+    return {total:total,items:items,altars:altars,altarsGot:got}; },
+  validate:function(D){ var e=[]; if(!D||typeof D!=='object') return ['整份資料不是一個 { } 物件。'];
+    ['title','world','kinds','temples','order','route','rules_text','endings','reflect'].forEach(function(k){ if(!(k in D)) e.push('少了「'+k+'」這一段。'); }); if(e.length) return e;
+    var last=-1, temples=0, end=0;
+    D.route.forEach(function(it,i){ if(!KIND_OK[it.kind]) e.push('route 第 '+(i+1)+' 個的 kind「'+it.kind+'」看不懂（只能用 obstacle、altar、tea、gamble、temple）。'); else if(it.kind!=='temple'&&!D.kinds[it.kind]) e.push('route 第 '+(i+1)+' 個用了 kinds 裡沒有的「'+it.kind+'」。');
+      if(typeof it.at!=='number') e.push('route 第 '+(i+1)+' 個的 at 要是數字。'); else if(it.at<last) e.push('route 第 '+(i+1)+' 個的 at（'+it.at+'）比前一個小，路線要由近到遠排。'); last=it.at;
+      if(it.kind==='temple'){ temples++; if(!D.temples[it.id]) e.push('route 第 '+(i+1)+' 個是廟，但 temples 裡沒有「'+it.id+'」。'); else if(D.temples[it.id].end) end++; } });
+    if(!D.route.length||D.route[0].kind!=='temple') e.push('route 第 1 個要是起點的廟（kind: temple）。');
+    if(end!==1) e.push('temples 裡要剛好有一間廟寫 "end": true（回宮），現在有 '+end+' 間。'); else if(D.route[D.route.length-1].kind!=='temple'||!D.temples[D.route[D.route.length-1].id].end) e.push('route 最後一個要是回宮的那間廟。');
+    if(!Array.isArray(D.order)||D.order.length<2) e.push('order 至少要有兩個要拜的對象。'); Object.keys(D.temples).forEach(function(k){ var o=D.temples[k].order; if(o&&(!Array.isArray(o)||o.length<2)) e.push('temples 的「'+k+'」如果寫自己的 order，至少要有兩個。'); });
+    Object.keys(D.kinds).forEach(function(k){ var K=D.kinds[k]; if(!K.name||!K.icon) e.push('kinds 的「'+k+'」要有 name 和 icon。'); });
+    if(!Array.isArray(D.endings)||!D.endings.length) e.push('endings 至少要有一個結局。');
+    return e; },
+  simulate:function(D,policy,seed){ var s=seed||1; function rnd(){ s=(s*1103515245+12345)%2147483648; return s/2147483648; }
+    var S=E.newState(D), dt=1/30, guard=0, mem=[], bad={}, memo={};
+    while(S.mode!=='done' && guard++<60000){
+      if(S.mode==='temple'){ var bs=E.orderButtons(D,S); if(policy==='informed'){ E.templeTap(D,S,E.ordOf(D,S)[S.seq.length].id); } else if(policy==='learner'){ var sig=E.ordOf(D,S).map(function(o){return o.id;}).sort().join(','); if(!memo[sig]) memo[sig]={mem:[],bad:{}}; mem=memo[sig].mem; bad=memo[sig].bad; var pos=S.seq.length, pick; if(pos<mem.length){ pick=mem[pos]; } else { var cand=bs.map(function(b){return b.id;}).filter(function(id){ return S.seq.indexOf(id)<0 && (bad[pos]||[]).indexOf(id)<0; }); pick=cand[Math.floor(rnd()*cand.length)]; } var res=E.templeTap(D,S,pick); if(res.wrong){ (bad[pos]=bad[pos]||[]).push(pick); } else if(pos>=mem.length){ mem.push(pick); } } else { E.templeTap(D,S,bs[Math.floor(rnd()*bs.length)].id); } continue; }
+      if(S.mode==='stalled'){ E.restart(D,S); continue; }
+      var inp={jump:false,take:false};
+      for(var i=0;i<D.route.length;i++){ if(S.st[i]!==null) continue; var it=D.route[i], d=it.at-S.x; if(d<-60) continue; if(d>60) break;
+        if(it.kind==='obstacle' && d>10 && d<38) inp.jump=true;
+        if(it.kind!=='obstacle'&&it.kind!=='temple' && Math.abs(d)<D.world.take_w-6){ var tk=D.kinds[it.kind].take||{}, isBad=(tk.pts||0)<0||(tk.stamina||0)<0; if(policy!=='informed'||!isBad) inp.take=true; } }
+      E.step(D,S,inp,dt);
+    }
+    var sc=E.score(D,S); return {score:sc.total,stalls:S.stalls,wrong:S.wrong,finished:S.finished,failed:S.failed,altars:sc.altarsGot+'/'+sc.altars,time:+S.time.toFixed(1)}; }
+};
+
+// ===================== 畫面 =====================
+var DATA={rule:readData('data-rule'), skin:readData('data-skin'), custom:null};
+var LET='ABCDEFGH', GRAY=['#7a7a7a','#5f5f5f','#949494','#6c6c6c','#868686'];
+var ui={screen:'home',ver:'rule',strip:false,S:null,answer:null,why:'',remixErr:'',remixOk:'',msg:'',msgCls:'',jumpReq:false,takeReq:false,raf:0,last:0,acc:0,auto:null};
+function D(){ return DATA[ui.ver]; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];}); }
+function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; } }
+function kv(k){ var d=D(), keys=Object.keys(d.kinds), i=keys.indexOf(k), K=d.kinds[k]; if(ui.strip) return {name:'物件'+LET[i],icon:LET[i],color:GRAY[i%GRAY.length]}; return {name:K.name,icon:K.icon,color:K.color}; }
+function tname(id){ var d=D(); if(!ui.strip) return d.temples[id].name; var keys=Object.keys(d.temples); return '停靠點 '+(keys.indexOf(id)+1); }
+function segName(x){ var d=D(), n=''; (d.segments||[]).forEach(function(s){ if(x>=s.from) n=s.name; }); return ui.strip?'':n; }
+
+function render(){ var a=document.getElementById('app'); a.innerHTML= ui.screen==='home'?home():ui.screen==='play'?play():end(); bind(); if(ui.screen==='play'){ draw(); } }
+function w2block(d){ return '<div class="card"><span class="kind">W2 文化卡：'+esc(d.w2_kind.label)+'</span><p>'+esc(d.w2_kind.line)+'</p>'+d.w2_cards.map(function(c){ return '<div class="w2c"><b>#'+c.no+' '+esc(c.v)+'</b>：'+esc(c.note)+(c.more?'<small>'+esc(c.more)+'</small>':'')+'</div>'; }).join('')+'</div>'; }
+function basis(d){ return '<details><summary>依據：哪些是原著、民間、遊戲自己加的</summary><div class="card">'+d.basis.map(function(b){ return '<p><span class="tag">'+esc(b.tag)+'</span>'+esc(b.text)+'</p>'; }).join('')+'</div></details>'; }
+function home(){ var d=DATA.rule; return '<h1>'+esc(d.title)+'</h1><div class="sub">橫向捲軸跑酷・文化遊戲松樣板</div>'+w2block(d)+
+  '<div class="card"><h2>怎麼玩</h2><p>神轎會自己往前走。按「跳」跳過路障，經過路邊的東西時按「接駕」。走到廟前會停下來，照順序按。</p><p class="sub">'+esc(d.route_note)+'</p>'+
+  '<p>這個樣板有兩版，跑起來一樣，差在<b>規則看不看「它是什麼」</b>。兩版都走完，再回答同一題。</p>'+
+  '<div class="row"><button class="primary" data-act="start" data-ver="rule">玩「文化長在規則裡」</button><button data-act="start" data-ver="skin">玩「文化只是皮」</button></div>'+(DATA.custom?'<div class="row"><button data-act="start" data-ver="custom">玩我改做的版本</button></div>':'')+'</div>'+
+  remix()+basis(d)+'<div class="foot">工坊創作的樣板；《小封神》相關內容只取故事裡的事實，標示在「依據」。</div>'; }
+function remix(){ return '<details id="remix"><summary>我要改做（貼上自己的資料）</summary><div class="card"><p>整個遊戲的內容都在一份 JSON 裡：路線上每一個東西放在哪（at）、是什麼（kind）、廟前拜的順序（order）。取出來、貼給 Claude 或 Gemini 改，再貼回來載入。</p>'+
+  '<div class="row"><button data-act="dump" data-ver="rule">取出規則版資料</button><button data-act="dump" data-ver="skin">取出皮版資料</button></div><textarea id="remix-box" spellcheck="false" placeholder="把 JSON 貼在這裡"></textarea><div class="row"><button class="primary" data-act="load">載入我的版本</button></div>'+
+  (ui.remixErr?'<div class="err">'+esc(ui.remixErr)+'</div>':'')+(ui.remixOk?'<div class="msg ok">'+esc(ui.remixOk)+'</div>':'')+'</div></details>'; }
+
+function play(){ var d=D(), S=ui.S, sc=E.score(d,S);
+  var hud='<div class="hud"><b>'+esc(d.title)+'｜'+esc(ui.ver==='custom'?'我改做的版本':d.version_label)+'</b><span>'+sc.total+' 分'+(d.lives?'・命 '+S.lives:'')+(d.on_hit==='stall'?'・停轎 '+S.stalls+' 次':'')+'</span></div>';
+  var bar=d.stamina?'<div class="sub">'+esc(ui.strip?'能量':d.stamina.name)+'</div><div class="bar"><i id="stam" style="width:'+Math.max(0,S.stamina)+'%"></i></div>':'';
+  var over='';
+  if(S.mode==='temple'){ var it=d.route[S.ti], T=d.temples[it.id], bs=E.orderButtons(d,S);
+    over='<div class="overlay" id="temple"><b>'+esc(tname(it.id))+'</b><p>'+esc(ui.strip?'按下面三顆鈕繼續。':(d.temple_mode==='order'?T.text+' '+d.order_hint:d.order_hint))+'</p><div class="order">'+
+      bs.map(function(o){ var done=S.seq.indexOf(o.id)>=0; return '<button data-act="pray" data-id="'+o.id+'" class="'+(done?'done':'')+'" '+(done?'disabled':'')+'>'+(ui.strip?'◯':esc(o.label))+(done?' ✓':'')+'</button>'; }).join('')+'</div></div>'; }
+  if(S.mode==='stalled'){ over='<div class="overlay" id="stalled"><b>'+(ui.strip?'停下來了':'神轎停下來了')+'</b><p>'+esc(ui.strip?'回到上一個停靠點，再走一次。':S.reason+' 要回到上一間廟前，重新起駕，剛剛那段路再走一次。')+'</p><div class="row"><button class="primary" data-act="restart">'+(ui.strip?'重新出發':'重新起駕')+'</button></div></div>'; }
+  var rules=d.rules_text.filter(function(x){ return !ui.strip||!x.culture; }), hidden=d.rules_text.length-rules.length;
+  return hud+'<div class="'+(ui.strip?'strip-on':'')+'">'+(ui.strip?'<div class="sub">🔍 抽掉文化中：名字、圖示、規則說明都換成代號。</div>':'')+bar+
+   '<canvas id="cv" width="488" height="190" aria-label="遶境的路"></canvas>'+over+
+   '<div class="pad"><button id="b-jump" data-act="jump">跳</button><button id="b-take" data-act="take">'+(ui.strip?'按':'接駕')+'</button></div>'+
+   '<div class="msg '+ui.msgCls+'" id="msg" role="status">'+esc(ui.msg||'神轎準備出發。')+'</div>'+
+   '<div class="row"><button data-act="strip">'+(ui.strip?'把文化放回來（從頭再走）':'抽掉文化試試看（從頭再走）')+'</button></div>'+
+   '<details '+(S.time===0?'open':'')+'><summary>規則</summary><ul>'+rules.map(function(x){return '<li>'+esc(x.text)+'</li>';}).join('')+(hidden?'<li class="sub">（還有 '+hidden+' 條規則是用文化講的，抽掉之後就看不到了。）</li>':'')+'</ul></details>'+
+   '<details><summary>路上會遇到什麼</summary><div class="legend">'+Object.keys(d.kinds).map(function(k){ var v=kv(k); return '<div><span class="chip" style="background:'+v.color+'">'+esc(v.icon)+'</span><b>'+esc(v.name)+'</b></div>'; }).join('')+'</div></details></div>'+
+   '<div class="row"><button data-act="home">回首頁</button></div>'; }
+
+function end(){ var d=D(), S=ui.S, sc=E.score(d,S), en=d.endings.slice().sort(function(a,b){return b.min-a.min;}).filter(function(x){return sc.total>=x.min;})[0]||{title:'',text:''}, R=d.reflect;
+  if(S.failed) en={title:'沒走完',text:'命用完了，神轎沒走到終點。'};
+  var story='這一趟出巡，'+(ui.strip?'（抽掉文化走的）':'')+'接到 '+sc.altarsGot+'／'+sc.altars+' 家的香案，'+(d.on_hit==='stall'?'神轎停了 '+S.stalls+' 次，':'')+(d.temple_mode==='order'?'廟前拜錯 '+S.wrong+' 次，':'')+'最後 '+sc.total+' 分。';
+  return '<h1>'+esc(en.title)+'</h1><div class="sub">'+esc(ui.ver==='custom'?'我改做的版本':d.version_label)+(ui.strip?'・抽掉文化':'')+'・'+sc.total+' 分・'+S.time.toFixed(0)+' 秒</div>'+
+   '<div class="card"><p>'+esc(en.text)+'</p><p><b>一句話故事：</b>'+esc(story)+'</p><ul>'+sc.items.map(function(x){return '<li>'+esc(x.label)+'：'+x.pts+' 分</li>';}).join('')+'</ul></div>'+
+   '<div class="card"><h2>W2 判斷題</h2><p>'+esc(R.question)+'</p>'+R.options.map(function(o,i){ return '<button class="opt'+(ui.answer===i?' sel':'')+'" data-act="ans" data-i="'+i+'">'+esc(o)+'</button>'; }).join('')+
+   '<p>寫一句為什麼：</p><textarea id="why" placeholder="例：抽掉之後我分不出哪個要接，因為……">'+esc(ui.why)+'</textarea>'+(ui.answer!==null?'<div class="msg ok"><p>你選的是「'+esc(R.options[ui.answer])+'」。</p><p>'+esc(R.our_view)+'</p></div>':'')+'</div>'+
+   '<div class="card"><h2>'+esc(d.field.title)+'</h2><p>'+esc(d.field.prompt)+'</p><textarea id="field" placeholder="'+esc(d.field.placeholder)+'">'+esc(store('runner_field')||'')+'</textarea><div class="row"><button data-act="field">記下來（只存在這台裝置）</button></div><div id="field-msg" class="sub"></div></div>'+
+   '<div class="row"><button class="primary" data-act="again">再走一次</button><button data-act="other">換另一版走</button><button data-act="again-strip">'+(ui.strip?'把文化放回來再走':'抽掉文化再走一次')+'</button><button data-act="home">回首頁</button></div>'+basis(d); }
+
+// ---- 畫布 ----
+function draw(){ var cv=document.getElementById('cv'); if(!cv) return; var d=D(), S=ui.S, dpr=window.devicePixelRatio||1, cw=cv.clientWidth||488, ch=cv.clientHeight||190; if(cv.width!==Math.round(cw*dpr)){ cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr); } var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); var W=cw, H=ch, G=H-40, px=80;
+  var cs=getComputedStyle(document.documentElement); ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=cs.getPropertyValue('--ground')||'#c8b38f'; ctx.fillRect(0,G,W,H-G);
+  ctx.fillStyle=cs.getPropertyValue('--muted')||'#666'; ctx.font='13px sans-serif'; ctx.fillText(segName(S.x),10,18);
+  var total=d.route[d.route.length-1].at||1; ctx.fillRect(10,26,(W-20)*Math.min(1,S.x/total),3);
+  d.route.forEach(function(it,i){ var sx=px+(it.at-S.x); if(sx<-40||sx>W+40) return; var st=S.st[i];
+    if(it.kind==='temple'){ ctx.fillStyle=ui.strip?'#6c6c6c':'#b5372a'; ctx.fillRect(sx-18,G-62,36,62); ctx.fillStyle='#fff'; ctx.font='bold 15px sans-serif'; ctx.fillText(ui.strip?'□':'廟',sx-8,G-26); return; }
+    if(st==='taken'||st==='hit') return; var v=kv(it.kind);
+    if(it.kind==='obstacle'){ ctx.fillStyle=v.color; ctx.beginPath(); ctx.moveTo(sx-11,G); ctx.lineTo(sx,G-22); ctx.lineTo(sx+11,G); ctx.fill(); return; }
+    ctx.globalAlpha=st==='missed'?0.35:1; ctx.fillStyle=v.color; ctx.fillRect(sx-14,G-34,28,28); ctx.fillStyle='#fff'; ctx.font='bold 15px sans-serif'; ctx.fillText(v.icon,sx-8,G-14); ctx.globalAlpha=1; });
+  var py=G-S.y; ctx.fillStyle='#5a3a1e'; ctx.fillRect(px-26,py-20,52,4); ctx.fillStyle=ui.strip?'#555':'#d4a017'; ctx.fillRect(px-14,py-40,28,24);
+  ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif'; ctx.fillText(ui.strip?'■':'轎',px-7,py-22); ctx.fillStyle='#333'; ctx.fillRect(px-20,py-16,6,16); ctx.fillRect(px+14,py-16,6,16); }
+
+function loop(ts){ ui.raf=0; if(ui.screen!=='play') return; var d=D(), S=ui.S; if(!ui.last) ui.last=ts; var el=Math.min(0.1,(ts-ui.last)/1000); ui.last=ts; ui.acc+=el; var before=S.mode, txt=S.lastText;
+  while(ui.acc>=1/60){ ui.acc-=1/60; var inp={jump:ui.jumpReq,take:ui.takeReq}; if(ui.auto) ui.auto(inp); ui.jumpReq=false; ui.takeReq=false; E.step(d,S,inp,1/60); if(S.mode!=='run') break; }
+  if(S.mode!==before||S.mode==='done'){ if(S.mode==='done'){ ui.screen='end'; render(); window.scrollTo(0,0); return; } if(S.mode==='stalled'){ ui.msg=ui.strip?'停下來了。':S.reason; ui.msgCls='bad'; } if(S.mode==='temple'){ ui.msg=ui.strip?'到了一個停靠點。':'到了'+d.temples[d.route[S.ti].id].name+'。'; ui.msgCls=''; } render(); return; }
+  if(S.lastText!==txt){ var m=document.getElementById('msg'); if(m){ m.textContent=ui.strip?'過去了。':S.lastText; m.className='msg'; } }
+  var b=document.getElementById('stam'); if(b) b.style.width=Math.max(0,S.stamina)+'%';
+  draw(); ui.raf=requestAnimationFrame(loop); }
+function go(){ if(!ui.raf){ ui.last=0; ui.acc=0; ui.raf=requestAnimationFrame(loop); } }
+
+function start(ver,strip){ ui.ver=ver; ui.strip=!!strip; ui.S=E.newState(D()); ui.answer=null; ui.why=''; ui.msg=''; ui.msgCls=''; ui.screen='play'; render(); window.scrollTo(0,0); }
+function bind(){ document.querySelectorAll('[data-act]').forEach(function(el){ el.addEventListener('click',function(){ act(el.getAttribute('data-act'),el); }); }); }
+function act(a,el){ var d=D(), S=ui.S;
+  if(a==='start'){ start(el.getAttribute('data-ver'),false); return; }
+  if(a==='home'){ ui.screen='home'; ui.strip=false; render(); return; }
+  if(a==='jump'){ ui.jumpReq=true; return; }
+  if(a==='take'){ ui.takeReq=true; return; }
+  if(a==='pray'){ var r=E.templeTap(d,S,el.getAttribute('data-id'));
+    if(r.wrong){ ui.msg=ui.strip?'不對，從頭再按。':d.order_wrong; ui.msgCls='bad'; render(); return; }
+    if(S.mode==='done'){ ui.screen='end'; render(); window.scrollTo(0,0); return; }
+    if(S.mode==='run'){ ui.msg=ui.strip?'出發。':'拜完了，起駕。'; ui.msgCls='ok'; render(); go(); return; }
+    ui.msg=''; render(); return; }
+  if(a==='restart'){ E.restart(d,S); ui.msg=ui.strip?'重新出發。':'回到廟前，重新起駕。'; ui.msgCls=''; render(); go(); return; }
+  if(a==='strip'){ start(ui.ver,!ui.strip); return; }
+  if(a==='ans'){ ui.why=(document.getElementById('why')||{}).value||ui.why; ui.answer=+el.getAttribute('data-i'); render(); return; }
+  if(a==='field'){ var f=document.getElementById('field').value.trim(), m=document.getElementById('field-msg'); if(f.length<(d.field.min_chars||10)){ m.textContent='再多寫一點（至少 '+(d.field.min_chars||10)+' 個字），寫你問了誰、他怎麼說。'; return; } store('runner_field',f); m.textContent='記下來了。之後改做時，把它變成一條規則。'; return; }
+  if(a==='again'){ start(ui.ver,ui.strip); return; }
+  if(a==='again-strip'){ start(ui.ver,!ui.strip); return; }
+  if(a==='other'){ start(ui.ver==='rule'?'skin':'rule',false); return; }
+  if(a==='dump'){ document.getElementById('remix-box').value=JSON.stringify(DATA[el.getAttribute('data-ver')],null,2); return; }
+  if(a==='load'){ var txt=document.getElementById('remix-box').value, obj=null; ui.remixOk=''; ui.remixErr='';
+    try{ obj=JSON.parse(txt); }catch(e){ ui.remixErr='這不是正確的 JSON：'+e.message+'\n把這行紅字貼回給 AI，說「請修這個」。'; render(); document.getElementById('remix').open=true; return; }
+    var errs=E.validate(obj); if(errs.length){ ui.remixErr=errs.join('\n')+'\n把上面的紅字貼回給 AI，說「請修這個」。'; render(); document.getElementById('remix').open=true; return; }
+    DATA.custom=obj; ui.remixOk='載入成功。按「玩我改做的版本」。'; render(); document.getElementById('remix').open=true; return; }
+}
+document.addEventListener('keydown',function(e){ if(ui.screen!=='play') return; if(e.code==='Space'){ ui.jumpReq=true; e.preventDefault(); } else if(e.code==='Enter'&&ui.S&&ui.S.mode==='run'){ ui.takeReq=true; e.preventDefault(); } });
+window.__R={E:E,DATA:DATA,ui:ui,start:start};
+render();
+window.__runnerReady=true;
+})();
+</script>
+<!-- CT-HOOK-BEGIN -->
+<script src="../tutor/folk_index.js?v=202611151156"></script>
+<script src="../tutor/tutor_templates.js?v=202611151156"></script>
+<script src="../tutor/tutor_core.js?v=202611151156"></script>
+<script src="../tutor/tutor_ui.js?v=202611151156"></script>
+<script src="../tutor/tutor_hook.js?v=202611151156"></script>
+<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script>if (window.CT_BOOT) CT_BOOT('runner');</script>
+<!-- CT-HOOK-END -->
+</body>
+</html>

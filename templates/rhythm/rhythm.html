@@ -2,95 +2,91 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>三場鼓：小上帝廟前（節奏樣板）</title>
 <style>
 :root{
-  --bg:#fbf6ec; --ink:#2a2118; --sub:#6b5d4d; --card:#fffdf8; --line:#e4d9c6; --accent:#b5472a; --accent-ink:#fff;
-  --ok:#2f8f5b; --warn:#c9971c; --bad:#c2402e; --cv:#fff7e8; --cvline:#d8c8a8; --chip:#efe4cf;
-  --radius:14px;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#16120e; --ink:#f1e8d8; --sub:#b7a98f; --card:#211b15; --line:#3a3026; --accent:#e0794f; --accent-ink:#1a120c;
-    --ok:#52c488; --warn:#e5b94a; --bad:#ef6a57; --cv:#1c1610; --cvline:#43372a; --chip:#32291f;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#16120e; --ink:#f1e8d8; --sub:#b7a98f; --card:#211b15; --line:#3a3026; --accent:#e0794f; --accent-ink:#1a120c;
-  --ok:#52c488; --warn:#e5b94a; --bad:#ef6a57; --cv:#1c1610; --cvline:#43372a; --chip:#32291f;
+  --tk-surface:#0d0b1a; --tk-panel:#1b1636; --tk-ink:#f4f1ff; --tk-muted:#a79fd8;
+  --tk-accent:#ff3d9a; --tk-accent-ink:#0d0b1a; --tk-line:#3d3280;
+  --tk-font-title:"Huninn","Noto Sans TC","PingFang TC",system-ui,sans-serif;
+  --tk-font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --tk-radius:20px; --tk-shadow:0 0 14px color-mix(in srgb,var(--tk-accent) 45%,transparent);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55;-webkit-text-size-adjust:100%}
-body{padding-bottom:28px;overflow-x:hidden}
+html,body{margin:0;padding:0;background:var(--tk-surface);color:var(--tk-ink);font-family:var(--tk-font-body);line-height:1.55;-webkit-text-size-adjust:100%}
+body{padding-bottom:28px;overflow-x:hidden;background-image:radial-gradient(ellipse at 50% -10%,color-mix(in srgb,var(--tk-accent) 22%,transparent),transparent 60%);background-attachment:fixed}
 .wrap{max-width:520px;margin:0 auto;padding:0 16px}
-header.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+header.top{position:sticky;top:0;z-index:20;background:var(--tk-surface);border-bottom:2px solid var(--tk-accent)}
 .bar{display:flex;align-items:center;gap:8px;max-width:520px;margin:0 auto;padding:8px 16px}
-.bar b{flex:1;font-size:15px;line-height:1.25}
+.bar b{flex:1;font-family:var(--tk-font-title);font-size:15px;line-height:1.25;color:var(--tk-accent)}
 .bar button{min-height:44px;padding:0 12px;font-size:14px}
-.banner{max-width:520px;margin:0 auto;padding:0 16px 6px;font-size:12px;color:var(--sub)}
-button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:48px;padding:0 16px;cursor:pointer;touch-action:manipulation}
-button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
-#mute[aria-pressed="false"]{outline:2px solid var(--accent)}
-.choices button[aria-pressed="true"]{outline:2px solid var(--accent)}
-button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
-h1{font-size:22px;margin:16px 0 4px}
+.banner{max-width:520px;margin:0 auto;padding:0 16px 6px;font-size:12px;color:var(--tk-muted)}
+button{font:inherit;color:var(--tk-ink);background:var(--tk-panel);border:1px solid var(--tk-line);border-radius:var(--tk-radius);min-height:48px;padding:0 18px;cursor:pointer;touch-action:manipulation}
+button.pri{background:var(--tk-accent);color:var(--tk-accent-ink);border-color:var(--tk-accent);font-weight:700;box-shadow:var(--tk-shadow)}
+#mute[aria-pressed="false"]{outline:2px solid var(--tk-accent)}
+.choices button[aria-pressed="true"]{outline:2px solid var(--tk-accent)}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--tk-accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--tk-font-title);letter-spacing:.03em}
+h1{font-size:23px;margin:16px 0 4px;color:var(--tk-accent)}
 h2{font-size:18px;margin:20px 0 6px}
-h3{font-size:15px;margin:12px 0 4px}
+h3{font-size:15px;margin:12px 0 4px;color:var(--tk-accent)}
 p{margin:6px 0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:12px 0}
-.sub{color:var(--sub);font-size:13px}
+.card{background:var(--tk-panel);border:1px solid var(--tk-line);border-radius:var(--tk-radius);padding:12px 16px;margin:12px 0}
+.sub{color:var(--tk-muted);font-size:13px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
 .row>button{flex:1 1 120px}
-.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--chip);margin-right:6px;white-space:nowrap}
-.chip.t-原著{background:#d9efe2;color:#1d6a42}
-.chip.t-民間{background:#f6ead0;color:#8a6410}
-.chip.t-工坊創作{background:#e7e0f6;color:#5a3fa0}
-.chip.t-改編{background:#f7dfd9;color:#a1402b}
-.chip.t-田野{background:#d8eaf6;color:#1d5f8c}
-.chip.t-常識{background:#e3e6ea;color:#3c4652}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip.t-原著{background:#1f3b2c;color:#8fe0b3}:root:not([data-theme="light"]) .chip.t-民間{background:#3d3115;color:#f0cf7c}:root:not([data-theme="light"]) .chip.t-工坊創作{background:#2f2650;color:#c7b6f5}:root:not([data-theme="light"]) .chip.t-改編{background:#4a251c;color:#f5b3a2}:root:not([data-theme="light"]) .chip.t-田野{background:#1b3446;color:#9fd2ee}:root:not([data-theme="light"]) .chip.t-常識{background:#2a2f36;color:#c4ccd6}}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--tk-surface);border:1px solid var(--tk-muted);margin-right:6px;white-space:nowrap}
+.chip.t-原著{border-color:var(--tk-accent);color:var(--tk-accent)}
+.chip.t-民間{border-style:dashed}
+.chip.t-工坊創作{border-style:dotted;border-width:2px}
+.chip.t-改編{border-style:double;border-width:3px}
+.chip.t-田野{background:var(--tk-line)}
+.chip.t-常識{border-color:var(--tk-line);color:var(--tk-muted)}
 ul.basis{list-style:none;margin:6px 0 0;padding:0}
 ul.basis li{margin:6px 0;font-size:14px}
 .stagelist{display:grid;gap:8px;margin:10px 0}
-.stagelist button{text-align:left;display:flex;gap:10px;align-items:center;padding:8px 12px}
+.stagelist button{text-align:left;display:flex;gap:10px;align-items:center;padding:8px 14px}
 .stagelist .ic{flex:0 0 34px;height:34px}
 .hud{display:flex;justify-content:space-between;gap:8px;font-size:14px;margin:8px 0 4px;align-items:baseline}
 .hud b{font-size:15px}
 #meters{display:grid;gap:6px;margin:4px 0 8px}
 .meter{font-size:12px}
 .meter .lab{display:flex;justify-content:space-between}
-.meter .track{height:10px;border-radius:6px;background:var(--chip);overflow:hidden;margin-top:2px}
-.meter .fill{height:100%;width:0;background:var(--ok);transition:width .12s}
-.meter.warn .fill{background:var(--warn)}
-.meter.hot .fill{background:var(--bad)}
+.meter .track{height:10px;border-radius:6px;background:var(--tk-line);overflow:hidden;margin-top:2px}
+.meter .fill{height:100%;width:0;background:var(--tk-ink);transition:width .12s}
+.meter.warn .fill{background:color-mix(in srgb,var(--tk-accent) 60%,var(--tk-ink))}
+.meter.hot .fill{background:var(--tk-accent)}
 .meter.shake{animation:sh .4s infinite}
 @keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 .dots{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
-.dots i{flex:1 1 0;min-width:34px;text-align:center;font-style:normal;font-size:11px;padding:3px 0;border-radius:8px;background:var(--chip);color:var(--sub)}
-.dots i.on{background:var(--warn);color:#2a1d00;font-weight:700}
+.dots i{flex:1 1 0;min-width:34px;text-align:center;font-style:normal;font-size:11px;padding:3px 0;border-radius:8px;background:var(--tk-line);color:var(--tk-muted)}
+.dots i.on{background:var(--tk-accent);color:var(--tk-accent-ink);font-weight:700}
 .dots i.sep{flex:0 0 8px;min-width:8px;background:transparent}
-.cvwrap{position:relative;border:1px solid var(--cvline);border-radius:var(--radius);overflow:hidden;background:var(--cv)}
+.cvwrap{position:relative;border:1px solid var(--tk-line);border-radius:var(--tk-radius);overflow:hidden;background:var(--tk-surface);box-shadow:var(--tk-shadow)}
 canvas#cv{display:block;width:100%;height:340px;touch-action:none}
-#toast{position:absolute;left:8px;right:8px;top:8px;text-align:center;font-weight:700;font-size:14px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,.72);color:#fff;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast{position:absolute;left:8px;right:8px;top:8px;text-align:center;font-weight:700;font-size:14px;padding:6px 10px;border-radius:12px;background:var(--tk-panel);color:var(--tk-ink);border:1px solid var(--tk-accent);opacity:0;transition:opacity .2s;pointer-events:none}
 #toast.show{opacity:1}
 #pads{display:flex;gap:8px;margin:8px 0}
-#pads button.pad{flex:1 1 0;min-height:84px;font-size:16px;font-weight:700;border-width:2px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;user-select:none;-webkit-user-select:none;touch-action:none}
-#pads button.pad small{font-weight:400;font-size:11px;color:var(--sub)}
-#pads button.pad.down{filter:brightness(1.25);transform:scale(.97)}
+#pads button.pad{flex:1 1 0;min-height:84px;font-size:16px;font-weight:700;border-width:2px;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;user-select:none;-webkit-user-select:none;touch-action:none}
+#pads button.pad small{font-weight:400;font-size:11px;color:var(--tk-muted)}
+#pads button.pad.down{filter:brightness(1.4);transform:scale(.97);box-shadow:var(--tk-shadow)}
 .big{font-size:44px;font-weight:800;text-align:center;margin:0}
-textarea{width:100%;min-height:180px;font:13px/1.45 ui-monospace,Consolas,monospace;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px}
-.err{color:var(--bad);font-size:13px;margin:4px 0}
-.okmsg{color:var(--ok);font-size:13px;margin:4px 0}
+textarea{width:100%;min-height:180px;font:13px/1.45 ui-monospace,Consolas,monospace;background:var(--tk-panel);color:var(--tk-ink);border:1px solid var(--tk-line);border-radius:16px;padding:10px}
+.err{color:var(--tk-accent);font-size:13px;margin:4px 0;font-weight:700}
+.okmsg{color:var(--tk-ink);font-size:13px;margin:4px 0}
 .mono{font-family:ui-monospace,Consolas,monospace;font-size:13px;word-break:break-all}
 label.calib{display:block;font-size:13px;margin-top:8px}
-input[type=range]{width:100%;min-height:36px}
+input[type=range]{width:100%;min-height:36px;accent-color:var(--tk-accent)}
 details{margin:10px 0}
 summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:700}
-footer.f{max-width:520px;margin:18px auto 0;padding:0 16px;font-size:12px;color:var(--sub)}
+footer.f{max-width:520px;margin:18px auto 0;padding:0 16px;font-size:12px;color:var(--tk-muted)}
 .choices{display:grid;gap:8px;margin:8px 0}
-.choices button{text-align:left;padding:10px 12px}
+.choices button{text-align:left;padding:10px 14px}
 .lines li{margin:4px 0}
 .hide{display:none!important}
 </style>
@@ -111,7 +107,7 @@ footer.f{max-width:520px;margin:18px auto 0;padding:0 16px;font-size:12px;color:
 (function(){
 'use strict';
 /* ====================== 資料（build.py 會嵌入兩份 JSON） ====================== */
-var DATA = { culture: {"meta":{"id":"rhythm-culture","mode":"culture","title":"三場鼓：小上帝廟前","subtitle":"跟著鼓點把三段小封神敲出來","version":"0.1-draft","banner":"示範樣板・取材許丙丁《小封神》・三場鼓，每場一種文化後果"},"ui":{"intro":"小上帝的廟被颱風吹倒，小上帝和康、趙兩位元帥餓了好幾天，只有廟祝的清茶。今晚你是廟口的鼓手（工坊編的角色），三場鼓敲下來，看廟裡今晚的香火怎麼樣。","how":"音符掉到橫線上的那一刻，按下對應的鼓面（手機用手指點，電腦用鍵盤）。不用全部打對：打偏、漏拍會有後果，每一場的後果都不一樣。","sound_hint":"右上角可以開聲音（預設關著）。沒開聲音也能玩，看畫面抓拍子就好。","calib_label":"覺得總是打太早或太晚？調這裡（單位：毫秒）","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。鼓聲與法器聲都是程式合成的示意，不是真的某種鑼鼓點。圖示為自繪示意，沒有使用任何人物立繪。","w2_question":"抽掉文化之後，這個遊戲還玩得下去嗎？","judge_choices":[{"id":"a","text":"照樣好玩，只是少了故事"},{"id":"b","text":"還能玩，但打錯的時候我不太在意了"},{"id":"c","text":"換了就不一樣，沒有文化就玩不起來"},{"id":"d","text":"說不準，我想再玩一次"}],"our_view":"我們的看法（跟你的對照看看）：抽掉文化，按拍子還是能玩——這正是節奏遊戲最會換外觀的地方。文化沒有讓它能玩，而是讓你「在意打錯」：龜為什麼拖你、穀為什麼不能碰，才是只有這個故事才有的東西。你的改作任務，就是找一個「換了名字就不成立」的後果。","questions":["第一場：龜會拖慢你的鼓點、蛇會鑽進龜的道。如果兩個都換成一樣的「扣血」，少了什麼？","第二場：那個「停一拍」是為了單腳站穩。如果拿掉，每一拍都要按，故事還在嗎？","第三場：金色的穀不能碰。換成普通的「炸彈」，玩起來有差嗎？差在哪裡？","你聽過的廟會、陣頭、市場的鼓聲，節奏是怎麼走的？你能不能用手指把它打出來？"],"story_prompt":"用這個格式寫一句你今晚的故事：【誰】想【什麼】，可是【卡到什麼】，最後【怎樣】。（不用交，寫給自己看。）"},"judge":{"perfect":70,"good":130,"avoid":120,"approach_ms":1700,"jiao":{"sheng":60,"xiao":120}},"score":{"perfect":100,"good":60,"avoid_hit":-50,"combo_unit":2,"combo_cap":20,"jiao_sheng":500,"jiao_xiao":150},"instruments":{"fagu":{"kind":"drum","f":150,"to":48,"dur":0.34,"vol":0.95},"xiaozhong":{"kind":"bell","f":1180,"dur":0.7,"vol":0.5},"muyu":{"kind":"wood","f":1300,"dur":0.1,"vol":0.5},"leigu":{"kind":"drum","f":95,"to":38,"dur":0.45,"vol":1.0},"xingyin":{"kind":"pluck","f":330,"dur":0.5,"vol":0.55},"niujiao":{"kind":"horn","f":196,"dur":1.1,"vol":0.45}},"stages":[{"id":"s1","title":"第一場　踏住龜蛇","who":"小上帝","bpm":76,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"原書裡，小上帝的差事是「專管龜精蛇怪」，還要時時刻刻把龜和蛇踏在腳下。龜子蛇孫怨他怨得很。今晚輪到你替他把鼓敲穩：龜是沉沉的法鼓，蛇是亮亮的小鐘。","how":"左龜右蛇（電腦按 F、J）。打偏、漏拍，牠的怨氣會升；打準會降。怨氣滿了牠就搗蛋——龜把後面幾個鼓點拖慢半拍，蛇鑽進龜的那一道。到七成會先抖一下，給你預告。","basis":[{"tag":"原著","text":"小上帝專管龜精蛇怪，時時刻刻踏住龜蛇；龜子蛇孫對他怨懟。龜和蛇是被他管的，不是他的坐騎。"},{"tag":"原著","text":"龜與蛇並提，所以兩個都要有。第十三回壇前有人頭戴紅巾、口吹牛角、手搖小鐘，壇邊法鼓鼕鼕；忙了半個時辰，書裡說並無神仙下降。"},{"tag":"改編","text":"我們只借法鼓、小鐘、牛角當遊戲的音色。書裡笑的是那場請神的排場，不是這些法器，所以這裡不拿法器開玩笑。"},{"tag":"工坊創作","text":"鼓手這個角色、怨氣條、龜慢半拍和蛇鑽道的搗蛋方式，還有「龜配法鼓、蛇配小鐘」，原書沒有，是我們編的。"}],"lanes":[{"id":"turtle","label":"龜","key":"f","instrument":"fagu","color":"#2f8f5b","token":"龜","icon":"turtle"},{"id":"snake","label":"蛇","key":"j","instrument":"xiaozhong","color":"#7a5cc0","token":"蛇","icon":"snake"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.35},"bars":[{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"........","snake":"..x...x."},{"turtle":"........","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x.x.x."},{"turtle":"x.x.x...","snake":"..x...x."},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x...x."},{"turtle":"x.......","snake":"........"}],"meters":[{"id":"turtle_grudge","type":"gauge","label":"龜的怨氣","lane":"turtle","start":0,"max":100,"high_is_bad":true,"color":"#2f8f5b","on":{"perfect":-4,"good":3,"miss":25,"stray":6},"warn":70,"trigger":{"at":100,"reset":40,"effect":{"type":"delay","lane":"turtle","beats":0.5,"count":4,"message":"龜鬧起來了：後面幾個鼓點被拖慢半拍！"}}},{"id":"snake_grudge","type":"gauge","label":"蛇的怨氣","lane":"snake","start":0,"max":100,"high_is_bad":true,"color":"#7a5cc0","on":{"perfect":-4,"good":3,"miss":25,"stray":6},"warn":70,"trigger":{"at":100,"reset":40,"effect":{"type":"switch_lane","lane":"snake","to":"turtle","count":4,"message":"蛇鑽進龜的道了：後面幾個蛇的鼓點會落在龜那一邊！"}}}],"outcomes":[{"when":{"mischief_max":0},"title":"龜蛇服貼","text":"整場龜和蛇都沒鬧起來。小上帝腳下穩穩的，一句怨言也沒有。","line":"小上帝想把龜蛇踏穩，這一場一句怨言也沒有"},{"when":{"mischief_max":2},"title":"龜蛇鬧了一下","text":"龜和蛇趁你沒穩住，鬧了 {mischief} 次。原書裡他們本來就怨他，這下怨氣被你敲出來了。","line":"小上帝想把龜蛇踏穩，可是龜蛇趁他分心鬧了一場"},{"title":"龜子蛇孫鬧翻了","text":"龜和蛇一共鬧了 {mischief} 次，小上帝的腳下一團亂。再打一次，先把龜穩住，蛇就比較好管。","line":"小上帝想把龜蛇踏穩，可是龜子蛇孫鬧翻了天"}]},{"id":"s2","title":"第二場　魁星踢斗","who":"魁星","bpm":96,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"原書裡，魁星被小上帝誤認成別人、吊在廟前示眾，受了大委屈（這一場不演）。今晚輪到他在廟前自己踢出一個鰲頭。民間的魁星像，常是單腳站著、另一腳高高踢向北斗七星，意思是「踢起文章星斗」，取意「魁星踢斗，獨占鰲頭」。北斗七星排成一個斗：四顆在斗身，三顆在斗柄。今晚的拍子就照這個排：四下、停一拍、三下。","how":"只有一個大鼓面（電腦按空白鍵）。每個音符是一顆星：四下，停一拍，再三下。停的那一拍（灰色圈圈）不要按——單腳站著，多踢一下會站不穩。星踢得準就點亮；亮到八成以上，最後會出現「鰲頭」，向魁星擲一次筊。","basis":[{"tag":"原著","text":"魁星在原書裡被小上帝誤認成千里眼，吊在廟前示眾，是個受委屈的人。"},{"tag":"民間","text":"魁星像：單腳站、另一腳高踢北斗七星，「踢斗」是踢起文章星斗、求功名；取意「魁星踢斗，獨占鰲頭」。"},{"tag":"常識","text":"北斗七星排成斗形：四顆斗身（天樞、天璇、天璣、天權）、三顆斗柄（玉衡、開陽、搖光，也寫瑤光）。"},{"tag":"工坊創作","text":"把「斗身四顆、斗柄三顆」變成拍型；停一拍代表單腳站穩；亮星門檻、鰲頭要擲筊決定，都是我們設計的。"},{"tag":"工坊創作","text":"擲筊在這裡簡化成「手感」：打得準是聖筊、差一點是笑筊（再擲一次）、偏太多是陰筊。真正的擲筊是問神，不是比手感。"}],"lanes":[{"id":"kick","label":"踢","key":" ","key_label":"空白鍵","instrument":"xingyin","color":"#c9971c","token":"星","icon":"star"}],"star_names":["天樞","天璇","天璣","天權","玉衡","開陽","搖光"],"star_tokens":["樞","璇","璣","權","衡","陽","光"],"star_tones":[262,294,330,392,440,392,330],"avoid":{"token":"停","color":"#8a8f98","label":"停一拍"},"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"........"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"........"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"}],"meters":[{"id":"stars","type":"count","label":"亮起的星","lane":null,"color":"#c9971c","on":{"perfect":1,"good":1,"avoid_hit":-2},"per_phrase":7}],"finale":{"id":"aotou","kind":"jiao","lane":"kick","token":"鰲","label":"鰲頭","after_beats":4,"requires":{"meter":"stars","min_ratio":0.8},"ask":"問魁星：這顆鰲頭，今晚給我嗎？看準了，按下去擲筊！","locked":"亮的星不到八成，鰲頭沒有出現。魁星踢的是「文章星斗」，一顆一顆來。"},"avoid_penalty":"單腳站不穩！（停的那一拍多踢了一下）","outcomes":[{"when":{"jiao":"sheng"},"title":"聖筊，鰲頭到手","text":"星點齊了，魁星點頭。魁星踢斗，獨占鰲頭——這一次是你的。","line":"魁星想踢出鰲頭，單腳站穩、星點齊，鰲頭到手"},{"when":{"jiao":"yin"},"title":"陰筊，鰲頭沒給","text":"星夠亮，但這一擲魁星沒點頭。再打一次，看這回他怎麼說。","line":"魁星想踢出鰲頭，星是點亮了，最後那一擲卻沒點頭"},{"title":"星還沒點夠","text":"亮的星不到八成，鰲頭沒有出現。再打一次，抓住「四、停、三」的節奏就會順很多。","line":"魁星想踢出鰲頭，可是星還沒點夠"}]},{"id":"s3","title":"第三場　雷鼓","who":"雷震子","bpm":108,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"原書裡雷震子說過：往後誰糟蹋五穀，就賞他當頭一棒。臺南風神廟裡的雷公像，就做成腳踏雷鼓的樣子。今晚三塊田，紅色的「糟」會落下來——打雷收拾它；金色的「穀」落下來，千萬別碰。","how":"三塊田，三個鼓面（電腦按 D、F、J）。紅色「糟」落到線上時按下去，雷鼓就打下去。金色「穀」不要按：雷公只打糟蹋五穀的，不打五穀。誤打五穀，或漏掉糟蹋的，收成都會減少。","basis":[{"tag":"原著","text":"雷震子說：往後若有糟蹋五穀的人，就賞他當頭一棒；原書還說，後來不惜五穀的人常被雷震子打死，世人才說是雷公打死的。"},{"tag":"民間","text":"臺南風神廟的雷公像：鳥嘴鳥翅、腳踏雷鼓、手拿斧鑿，據說專打糟蹋五穀、為非作歹的人。"},{"tag":"工坊創作","text":"糟蹋者原書沒寫樣子，這裡只用一個「糟」字代表；三塊田、收成條、不能碰的穀，是我們設計的。"}],"lanes":[{"id":"f1","label":"左田","key":"d","instrument":"leigu","color":"#d64545","token":"糟","icon":"drum"},{"id":"f2","label":"中田","key":"f","instrument":"leigu","color":"#d64545","token":"糟","icon":"drum"},{"id":"f3","label":"右田","key":"j","instrument":"leigu","color":"#d64545","token":"糟","icon":"drum"}],"avoid":{"token":"穀","color":"#d9a521","label":"五穀"},"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"f1":"x...x...","f2":"........","f3":"........"},{"f1":"........","f2":"x...x...","f3":"........"},{"f1":"........","f2":"........","f3":"x...x..."},{"f1":"x...x...","f2":"..o.....","f3":"....o..."},{"f1":"x.x.....","f2":"....x.x.","f3":"..o...o."},{"f1":"..o.x...","f2":"x.....x.","f3":"....x.o."},{"f1":"x.x.x.x.","f2":"........","f3":"o.o.o.o."},{"f1":"........","f2":"x.x.x.x.","f3":"x...x..."},{"f1":"x...x...","f2":"..o...o.","f3":"x.x.x.x."},{"f1":"x.x...x.","f2":"o...o...","f3":"..x.x.x."},{"f1":"x.x.x.x.","f2":"x.x.x.x.","f3":"o.o.o.o."},{"f1":"x...x...","f2":"x...x...","f3":"x...x..."}],"meters":[{"id":"harvest","type":"gauge","label":"收成","lane":null,"start":70,"max":100,"high_is_bad":false,"color":"#d9a521","on":{"perfect":2,"good":1,"miss":-8,"avoid_hit":-12}}],"avoid_penalty":"誤打五穀！雷公不打五穀。","outcomes":[{"when":{"harvest_min":85},"title":"穀倉滿滿","text":"雷打得準，穀一粒沒傷。雷震子站在田邊，很得意。","line":"雷震子想護住今年的穀，一粒沒傷"},{"when":{"harvest_min":60},"title":"收成過得去","text":"糟蹋的大多被打掉，有一點損失，但穀倉不空。","line":"雷震子想護住今年的穀，保住了大半"},{"when":{"harvest_min":30},"title":"損失不小","text":"糟蹋的漏掉不少，或是誤打了五穀。雷公不打五穀這件事，要再看清楚一點。","line":"雷震子想護住今年的穀，可是損失不小"},{"title":"田裡一團亂","text":"糟蹋的沒打到，五穀反而被打壞了。再打一次，先看清楚「糟」和「穀」的顏色。","line":"雷震子想護住今年的穀，可是田裡一團亂"}]}],"ending":{"title":"三場打完","tiers":[{"min_ratio":0.8,"text":"今晚廟裡香火旺。廟祝端上來的，不只是清茶。"},{"min_ratio":0.5,"text":"香火還行，小上帝他們今晚總算吃上一頓熱的。"},{"min_ratio":0.25,"text":"小上帝他們各自惦記著自己的事，只有廟祝在算香火，又端出清茶。"},{"min_ratio":0,"text":"今晚沒什麼香火。小上帝他們只好對著清茶發愁。"}],"tongtianguan":"還有一件事：小上帝的通天冠，在書裡被拿去打銀街同裕當店，當了五千錢，錢被康、趙輸光了。之後原書沒再說有沒有贖回來（第二十三回還說要「脫下通天冠」，前後對不上）。你想讓它怎麼回到小上帝頭上？這是你的改作任務。"},"carry":[{"from":"s1","to":"s3","stat":"mischief","per":-5,"meter":"harvest","line":"第一場龜蛇鬧過，田埂被拱出了洞，這一場的收成一開始就少了一些。","cap":20}]}, skin: {"meta":{"id":"rhythm-skin","mode":"skin","title":"三關節奏練習（抽掉文化版）","subtitle":"同樣的拍子數量，沒有故事、沒有文化後果","version":"0.1-draft","banner":"對照版・拍子數量和難度跟文化版差不多，但文化都被拿掉了"},"ui":{"intro":"三關節奏練習。音符掉到橫線上的那一刻，按下對應的鼓面。","how":"音符掉到橫線上時按下去（手機用手指點，電腦用鍵盤）。打偏或漏拍會扣一點生命。","sound_hint":"右上角可以開聲音（預設關著）。沒開聲音也能玩，看畫面抓拍子就好。","calib_label":"覺得總是打太早或太晚？調這裡（單位：毫秒）","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。鼓聲與法器聲都是程式合成的示意，不是真的某種鑼鼓點。圖示為自繪示意，沒有使用任何人物立繪。","w2_question":"抽掉文化之後，這個遊戲還玩得下去嗎？","judge_choices":[{"id":"a","text":"照樣好玩，只是少了故事"},{"id":"b","text":"還能玩，但打錯的時候我不太在意了"},{"id":"c","text":"換了就不一樣，沒有文化就玩不起來"},{"id":"d","text":"說不準，我想再玩一次"}],"our_view":"我們的看法（跟你的對照看看）：抽掉文化，按拍子還是能玩——這正是節奏遊戲最會換外觀的地方。文化沒有讓它能玩，而是讓你「在意打錯」：龜為什麼拖你、穀為什麼不能碰，才是只有這個故事才有的東西。你的改作任務，就是找一個「換了名字就不成立」的後果。","questions":["第一場：龜會拖慢你的鼓點、蛇會鑽進龜的道。如果兩個都換成一樣的「扣血」，少了什麼？","第二場：那個「停一拍」是為了單腳站穩。如果拿掉，每一拍都要按，故事還在嗎？","第三場：金色的穀不能碰。換成普通的「炸彈」，玩起來有差嗎？差在哪裡？","你聽過的廟會、陣頭、市場的鼓聲，節奏是怎麼走的？你能不能用手指把它打出來？"],"story_prompt":""},"judge":{"perfect":70,"good":130,"avoid":120,"approach_ms":1700,"jiao":{"sheng":60,"xiao":120}},"score":{"perfect":100,"good":60,"avoid_hit":-50,"combo_unit":2,"combo_cap":20,"jiao_sheng":500,"jiao_xiao":150},"instruments":{"fagu":{"kind":"beep","f":440,"dur":0.08,"type":"square","vol":0.5},"xiaozhong":{"kind":"beep","f":880,"dur":0.08,"type":"square","vol":0.5},"muyu":{"kind":"beep","f":600,"dur":0.03,"type":"square","vol":0.3},"leigu":{"kind":"beep","f":330,"dur":0.08,"type":"square","vol":0.5},"xingyin":{"kind":"beep","f":660,"dur":0.08,"type":"square","vol":0.5},"niujiao":{"kind":"beep","f":262,"dur":0.3,"type":"sine","vol":0.3}},"stages":[{"id":"s1","title":"第一關","who":"","bpm":76,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"","how":"按下對應的鼓面，把落到線上的音符打掉。","basis":[],"lanes":[{"id":"turtle","label":"鼓A","key":"f","instrument":"fagu","color":"#3b7dd8","token":"●","icon":"dot"},{"id":"snake","label":"鼓B","key":"j","instrument":"xiaozhong","color":"#e08a1e","token":"■","icon":"dot"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.35},"bars":[{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"........","snake":"..x...x."},{"turtle":"........","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x.x.x."},{"turtle":"x.x.x...","snake":"..x...x."},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x...x."},{"turtle":"x.......","snake":"........"}],"meters":[{"id":"life","type":"gauge","label":"生命","lane":null,"start":70,"max":100,"high_is_bad":false,"color":"#3b7dd8","on":{"perfect":2,"good":1,"miss":-8,"avoid_hit":-12,"stray":-2}}],"outcomes":[{"when":{"harvest_min":85},"title":"很穩","text":"生命剩很多。","line":""},{"when":{"harvest_min":60},"title":"還行","text":"生命剩一半以上。","line":""},{"when":{"harvest_min":30},"title":"有點慘","text":"生命不多了。","line":""},{"title":"見底了","text":"生命快沒了。","line":""}]},{"id":"s2","title":"第二關","who":"","bpm":96,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"","how":"按下對應的鼓面，把落到線上的音符打掉。","basis":[],"lanes":[{"id":"kick","label":"鼓","key":" ","key_label":"空白鍵","instrument":"xingyin","color":"#3b7dd8","token":"●","icon":"dot"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"kick":"xxxxxxx."},{"kick":"xxxxxxx."},{"kick":"........"},{"kick":"xxxxxxx."},{"kick":"xxxxxxx."},{"kick":"........"},{"kick":"xxxxxxx."},{"kick":"xxxxxxx."},{"kick":"xxxxxxx."}],"meters":[{"id":"stars","type":"count","label":"命中數","lane":null,"color":"#3b7dd8","on":{"perfect":1,"good":1},"per_phrase":7}],"finale":{"id":"bonus","kind":"bonus","lane":"kick","token":"★","label":"加分","after_beats":4,"requires":{"meter":"stars","min_ratio":0.8},"ask":"最後一個加分音符，看準了按下去！","locked":"命中數不到八成，沒有加分音符。"},"outcomes":[{"when":{"jiao":"sheng"},"title":"加分成功","text":"命中數夠，加分音符也打中了。","line":""},{"when":{"jiao":"yin"},"title":"加分失敗","text":"命中數夠，但最後的加分音符沒打中。","line":""},{"title":"命中數不夠","text":"命中數不到八成，沒有加分音符。","line":""}],"star_names":["1","2","3","4","5","6","7"],"star_tokens":["1","2","3","4","5","6","7"],"star_tones":[440,440,440,440,440,440,440]},{"id":"s3","title":"第三關","who":"","bpm":108,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"","how":"按下對應的鼓面，把落到線上的音符打掉。","basis":[],"lanes":[{"id":"f1","label":"鼓A","key":"d","instrument":"leigu","color":"#3b7dd8","token":"●","icon":"dot"},{"id":"f2","label":"鼓B","key":"f","instrument":"leigu","color":"#e08a1e","token":"■","icon":"dot"},{"id":"f3","label":"鼓C","key":"j","instrument":"leigu","color":"#3a9e6a","token":"▲","icon":"dot"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"f1":"x...x...","f2":"........","f3":"........"},{"f1":"........","f2":"x...x...","f3":"........"},{"f1":"........","f2":"........","f3":"x...x..."},{"f1":"x...x...","f2":"........","f3":"........"},{"f1":"x.x.....","f2":"....x.x.","f3":"........"},{"f1":"....x...","f2":"x.....x.","f3":"....x..."},{"f1":"x.x.x.x.","f2":"........","f3":"........"},{"f1":"........","f2":"x.x.x.x.","f3":"x...x..."},{"f1":"x...x...","f2":"........","f3":"x.x.x.x."},{"f1":"x.x...x.","f2":"........","f3":"..x.x.x."},{"f1":"x.x.x.x.","f2":"x.x.x.x.","f3":"........"},{"f1":"x...x...","f2":"x...x...","f3":"x...x..."}],"meters":[{"id":"life","type":"gauge","label":"生命","lane":null,"start":70,"max":100,"high_is_bad":false,"color":"#3b7dd8","on":{"perfect":2,"good":1,"miss":-8,"avoid_hit":-12,"stray":-2}}],"outcomes":[{"when":{"harvest_min":85},"title":"很穩","text":"生命剩很多。","line":""},{"when":{"harvest_min":60},"title":"還行","text":"生命剩一半以上。","line":""},{"when":{"harvest_min":30},"title":"有點慘","text":"生命不多了。","line":""},{"title":"見底了","text":"生命快沒了。","line":""}]}],"ending":{"title":"三關打完","tiers":[{"min_ratio":0.8,"text":"高分。"},{"min_ratio":0.5,"text":"中等。"},{"min_ratio":0.25,"text":"偏低。"},{"min_ratio":0,"text":"再練練。"}],"tongtianguan":""},"carry":[]} };
+var DATA = { culture: {"meta":{"id":"rhythm-culture","mode":"culture","title":"三場鼓：小上帝廟前","subtitle":"跟著鼓點把三段小封神敲出來","version":"0.1-draft","banner":"示範樣板・取材許丙丁《小封神》・三場鼓，每場一種文化後果"},"ui":{"intro":"小上帝的廟被颱風吹倒，小上帝和康、趙兩位元帥餓了好幾天，只有廟祝的清茶。今晚你是廟口的鼓手（工坊編的角色），三場鼓敲下來，看廟裡今晚的香火怎麼樣。","how":"音符掉到橫線上的那一刻，按下對應的鼓面（手機用手指點，電腦用鍵盤）。不用全部打對：打偏、漏拍會有後果，每一場的後果都不一樣。","sound_hint":"右上角可以開聲音（預設關著）。沒開聲音也能玩，看畫面抓拍子就好。","calib_label":"覺得總是打太早或太晚？調這裡（單位：毫秒）","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。鼓聲與法器聲都是程式合成的示意，不是真的某種鑼鼓點。圖示為自繪示意，沒有使用任何人物立繪。","story_prompt":"用這個格式寫一句你今晚的故事：【誰】想【什麼】，可是【卡到什麼】，最後【怎樣】。（不用交，寫給自己看。）"},"judge":{"perfect":70,"good":130,"avoid":120,"approach_ms":1700,"jiao":{"sheng":60,"xiao":120}},"score":{"perfect":100,"good":60,"avoid_hit":-50,"combo_unit":2,"combo_cap":20,"jiao_sheng":500,"jiao_xiao":150},"instruments":{"fagu":{"kind":"drum","f":150,"to":48,"dur":0.34,"vol":0.95},"xiaozhong":{"kind":"bell","f":1180,"dur":0.7,"vol":0.5},"muyu":{"kind":"wood","f":1300,"dur":0.1,"vol":0.5},"leigu":{"kind":"drum","f":95,"to":38,"dur":0.45,"vol":1.0},"xingyin":{"kind":"pluck","f":330,"dur":0.5,"vol":0.55},"niujiao":{"kind":"horn","f":196,"dur":1.1,"vol":0.45}},"stages":[{"id":"s1","title":"第一場　踏住龜蛇","who":"小上帝","bpm":76,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"原書裡，小上帝的差事是「專管龜精蛇怪」，還要時時刻刻把龜和蛇踏在腳下。龜子蛇孫怨他怨得很。今晚輪到你替他把鼓敲穩：龜是沉沉的法鼓，蛇是亮亮的小鐘。","how":"左龜右蛇（電腦按 F、J）。打偏、漏拍，牠的怨氣會升；打準會降。怨氣滿了牠就搗蛋——龜把後面幾個鼓點拖慢半拍，蛇鑽進龜的那一道。到七成會先抖一下，給你預告。","basis":[{"tag":"原著","text":"小上帝專管龜精蛇怪，時時刻刻踏住龜蛇；龜子蛇孫對他怨懟。龜和蛇是被他管的，不是他的坐騎。"},{"tag":"原著","text":"龜與蛇並提，所以兩個都要有。第十三回壇前有人頭戴紅巾、口吹牛角、手搖小鐘，壇邊法鼓鼕鼕；忙了半個時辰，書裡說並無神仙下降。"},{"tag":"改編","text":"我們只借法鼓、小鐘、牛角當遊戲的音色。書裡笑的是那場請神的排場，不是這些法器，所以這裡不拿法器開玩笑。"},{"tag":"工坊創作","text":"鼓手這個角色、怨氣條、龜慢半拍和蛇鑽道的搗蛋方式，還有「龜配法鼓、蛇配小鐘」，原書沒有，是我們編的。"}],"lanes":[{"id":"turtle","label":"龜","key":"f","instrument":"fagu","color":"var(--tk-accent)","token":"龜","icon":"turtle"},{"id":"snake","label":"蛇","key":"j","instrument":"xiaozhong","color":"var(--tk-ink)","token":"蛇","icon":"snake"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.35},"bars":[{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"........","snake":"..x...x."},{"turtle":"........","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x.x.x...","snake":"..x...x."},{"turtle":"x...x.x.","snake":"..x...x."},{"turtle":"x...x...","snake":"..x.x.x."},{"turtle":"x.......","snake":"....x..."},{"turtle":"x...x...","snake":"........"},{"turtle":"........","snake":"..x...x."},{"turtle":"x.......","snake":"....x..."},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x...x."},{"turtle":"x.......","snake":"........"},{"turtle":"x.x.x.x.","snake":"........"},{"turtle":"........","snake":"x.x.x.x."},{"turtle":"x.x.x.x.","snake":"........"},{"turtle":"........","snake":"x.x.x.x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x.x.x...","snake":"..x...x."},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x.x.x."},{"turtle":"x.xxx.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x.x.x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x.xxx.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":".x.x.x.x"},{"turtle":"x.xxx.x.","snake":"..x.x.x."},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"........"},{"turtle":"x.......","snake":"........"},{"turtle":"x.......","snake":"........"}],"meters":[{"id":"turtle_grudge","type":"gauge","label":"龜的怨氣","lane":"turtle","start":0,"max":100,"high_is_bad":true,"color":"var(--tk-accent)","on":{"perfect":-4,"good":3,"miss":25,"stray":6},"warn":70,"trigger":{"at":100,"reset":40,"effect":{"type":"delay","lane":"turtle","beats":0.5,"count":4,"message":"龜鬧起來了：後面幾個鼓點被拖慢半拍！"}}},{"id":"snake_grudge","type":"gauge","label":"蛇的怨氣","lane":"snake","start":0,"max":100,"high_is_bad":true,"color":"var(--tk-accent)","on":{"perfect":-4,"good":3,"miss":25,"stray":6},"warn":70,"trigger":{"at":100,"reset":40,"effect":{"type":"switch_lane","lane":"snake","to":"turtle","count":4,"message":"蛇鑽進龜的道了：後面幾個蛇的鼓點會落在龜那一邊！"}}}],"outcomes":[{"when":{"mischief_max":0},"title":"龜蛇服貼","text":"整場龜和蛇都沒鬧起來。小上帝腳下穩穩的，一句怨言也沒有。","line":"小上帝想把龜蛇踏穩，這一場一句怨言也沒有"},{"when":{"mischief_max":3},"title":"龜蛇鬧了一下","text":"龜和蛇趁你沒穩住，鬧了 {mischief} 次。原書裡他們本來就怨他，這下怨氣被你敲出來了。","line":"小上帝想把龜蛇踏穩，可是龜蛇趁他分心鬧了一場"},{"title":"龜子蛇孫鬧翻了","text":"龜和蛇一共鬧了 {mischief} 次，小上帝的腳下一團亂。再打一次，先把龜穩住，蛇就比較好管。","line":"小上帝想把龜蛇踏穩，可是龜子蛇孫鬧翻了天"}]},{"id":"s2","title":"第二場　魁星踢斗","who":"魁星","bpm":96,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"原書裡，魁星被小上帝誤認成別人、吊在廟前示眾，受了大委屈（這一場不演）。今晚輪到他在廟前自己踢出一個鰲頭。民間的魁星像，常是單腳站著、另一腳高高踢向北斗七星，意思是「踢起文章星斗」，取意「魁星踢斗，獨占鰲頭」。北斗七星排成一個斗：四顆在斗身，三顆在斗柄。今晚的拍子就照這個排：四下、停一拍、三下。","how":"只有一個大鼓面（電腦按空白鍵）。每個音符是一顆星：四下，停一拍，再三下。停的那一拍（灰色圈圈）不要按——單腳站著，多踢一下會站不穩。星踢得準就點亮；亮到八成以上，最後會出現「鰲頭」，向魁星擲一次筊。","basis":[{"tag":"原著","text":"魁星在原書裡被小上帝誤認成千里眼，吊在廟前示眾，是個受委屈的人。"},{"tag":"民間","text":"魁星像：單腳站、另一腳高踢北斗七星，「踢斗」是踢起文章星斗、求功名；取意「魁星踢斗，獨占鰲頭」。"},{"tag":"常識","text":"北斗七星排成斗形：四顆斗身（天樞、天璇、天璣、天權）、三顆斗柄（玉衡、開陽、搖光，也寫瑤光）。"},{"tag":"工坊創作","text":"把「斗身四顆、斗柄三顆」變成拍型；停一拍代表單腳站穩；亮星門檻、鰲頭要擲筊決定，都是我們設計的。"},{"tag":"工坊創作","text":"擲筊在這裡簡化成「手感」：打得準是聖筊、差一點是笑筊（再擲一次）、偏太多是陰筊。真正的擲筊是問神，不是比手感。"}],"lanes":[{"id":"kick","label":"踢","key":" ","key_label":"空白鍵","instrument":"xingyin","color":"var(--tk-accent)","token":"星","icon":"star"}],"star_names":["天樞","天璇","天璣","天權","玉衡","開陽","搖光"],"star_tokens":["樞","璇","璣","權","衡","陽","光"],"star_tones":[262,294,330,392,440,392,330],"avoid":{"token":"停","color":"var(--tk-muted)","label":"停一拍"},"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"........"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"........"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxoxxxx"},{"kick":"........"},{"kick":"xxxoxxxx"},{"kick":"xxxoxxxx"},{"kick":"xxxoxxxx"},{"kick":"........"},{"kick":"xxxxoxxx"},{"kick":"xxoxxxxx"},{"kick":"xxxxoxxx"},{"kick":"........"},{"kick":"xxoxxxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxoxxxx"},{"kick":"xxoxxxxx"},{"kick":"........"},{"kick":"xxxxxxox"},{"kick":"xxxxxxox"},{"kick":"........"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxoxxxxx"},{"kick":"xxxxxxox"},{"kick":"........"},{"kick":"xxxoxxxx"},{"kick":"xxxxxxox"},{"kick":"........"},{"kick":"xxoxxxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"........"},{"kick":"xxxxxxox"},{"kick":"xxxoxxxx"},{"kick":"xxoxxxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"},{"kick":"xxxxoxxx"}],"meters":[{"id":"stars","type":"count","label":"亮起的星","lane":null,"color":"var(--tk-accent)","on":{"perfect":1,"good":1,"avoid_hit":-2},"per_phrase":7}],"finale":{"id":"aotou","kind":"jiao","lane":"kick","token":"鰲","label":"鰲頭","after_beats":4,"requires":{"meter":"stars","min_ratio":0.8},"ask":"問魁星：這顆鰲頭，今晚給我嗎？看準了，按下去擲筊！","locked":"亮的星不到八成，鰲頭沒有出現。魁星踢的是「文章星斗」，一顆一顆來。"},"avoid_penalty":"單腳站不穩！（停的那一拍多踢了一下）","outcomes":[{"when":{"jiao":"sheng"},"title":"聖筊，鰲頭到手","text":"星點齊了，魁星點頭。魁星踢斗，獨占鰲頭——這一次是你的。","line":"魁星想踢出鰲頭，單腳站穩、星點齊，鰲頭到手"},{"when":{"jiao":"yin"},"title":"陰筊，鰲頭沒給","text":"星夠亮，但這一擲魁星沒點頭。再打一次，看這回他怎麼說。","line":"魁星想踢出鰲頭，星是點亮了，最後那一擲卻沒點頭"},{"title":"星還沒點夠","text":"亮的星不到八成，鰲頭沒有出現。再打一次，抓住「四、停、三」的節奏就會順很多。","line":"魁星想踢出鰲頭，可是星還沒點夠"}]},{"id":"s3","title":"第三場　雷鼓","who":"雷震子","bpm":108,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"原書裡雷震子說過：往後誰糟蹋五穀，就賞他當頭一棒。臺南風神廟裡的雷公像，就做成腳踏雷鼓的樣子。今晚三塊田，紅色的「糟」會落下來——打雷收拾它；金色的「穀」落下來，千萬別碰。","how":"三塊田，三個鼓面（電腦按 D、F、J）。紅色「糟」落到線上時按下去，雷鼓就打下去。金色「穀」不要按：雷公只打糟蹋五穀的，不打五穀。誤打五穀，或漏掉糟蹋的，收成都會減少。","basis":[{"tag":"原著","text":"雷震子說：往後若有糟蹋五穀的人，就賞他當頭一棒；原書還說，後來不惜五穀的人常被雷震子打死，世人才說是雷公打死的。"},{"tag":"民間","text":"臺南風神廟的雷公像：鳥嘴鳥翅、腳踏雷鼓、手拿斧鑿，據說專打糟蹋五穀、為非作歹的人。"},{"tag":"工坊創作","text":"糟蹋者原書沒寫樣子，這裡只用一個「糟」字代表；三塊田、收成條、不能碰的穀，是我們設計的。"}],"lanes":[{"id":"f1","label":"左田","key":"d","instrument":"leigu","color":"var(--tk-accent)","token":"糟","icon":"drum"},{"id":"f2","label":"中田","key":"f","instrument":"leigu","color":"var(--tk-ink)","token":"糟","icon":"drum"},{"id":"f3","label":"右田","key":"j","instrument":"leigu","color":"color-mix(in srgb, var(--tk-accent) 45%, var(--tk-ink))","token":"糟","icon":"drum"}],"avoid":{"token":"穀","color":"var(--tk-muted)","label":"五穀"},"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"f1":"x...x...","f2":"........","f3":"........"},{"f1":"........","f2":"x...x...","f3":"........"},{"f1":"........","f2":"........","f3":"x...x..."},{"f1":"x...x...","f2":"..o.....","f3":"....o..."},{"f1":"x.x.....","f2":"....x.x.","f3":"..o...o."},{"f1":"..o.x...","f2":"x.....x.","f3":"....x.o."},{"f1":"x.x.x.x.","f2":"........","f3":"o.o.o.o."},{"f1":"........","f2":"x.x.x.x.","f3":"x...x..."},{"f1":"x...x...","f2":"..o...o.","f3":"x.x.x.x."},{"f1":"x.x...x.","f2":"o...o...","f3":"..x.x.x."},{"f1":"x.x.x.x.","f2":"x.x.x.x.","f3":"o.o.o.o."},{"f1":"x...x...","f2":"x...x...","f3":"x...x..."},{"f1":"x...x...","f2":"x...x.x.","f3":"...o..x."},{"f1":"........","f2":"..x...x.","f3":"x.x....."},{"f1":"x.x..o..","f2":"........","f3":"x.x....."},{"f1":"....x...","f2":"........","f3":".x...x.."},{"f1":"....x...","f2":"x...x.x.","f3":"x......."},{"f1":"x...x.x.","f2":"..x...x.","f3":"........"},{"f1":"x.x.....","f2":"..x.o.x.","f3":"........"},{"f1":"x.......","f2":"........","f3":"x......."},{"f1":"..x...x.","f2":"x.......","f3":"x...x..."},{"f1":"....x...","f2":"..x...x.","f3":"x.x....."},{"f1":"x...x.x.","f2":"x.x..o..","f3":"..x...x."},{"f1":"........","f2":"x.......","f3":"x......."},{"f1":".x...x..","f2":".x...x..","f3":"x...x.x."},{"f1":".......o","f2":"x...x...","f3":"..x...x."},{"f1":"x...x...","f2":"x...x.x.","f3":".x...x.."},{"f1":"....x...","f2":".x...x..","f3":"........"},{"f1":".x...x..","f2":"x...x...","f3":"x...x.x."},{"f1":"x...x.x.","f2":"x...x.x.","f3":"..x....."},{"f1":"x.x.x...","f2":"....x...","f3":"x......."},{"f1":"....x...","f2":"x...x...","f3":"x......."},{"f1":".x.x.x.x","f2":"x.x.....","f3":"..x...x."},{"f1":"x.x.....","f2":"..x...x.","f3":".x...x.."},{"f1":"x...x.x.","f2":"x...x.x.","f3":"..x....o"},{"f1":"..x...x.","f2":".x...x..","f3":"........"},{"f1":"...o....","f2":".x...x..","f3":"x.x.x..."},{"f1":".x...x..","f2":"x.x.....","f3":"........"},{"f1":"........","f2":"x...x.x.","f3":"x.x.x.x."},{"f1":"x...x...","f2":"x.......","f3":"........"},{"f1":"x.x.x.x.","f2":"x.......","f3":"........"},{"f1":"x.x.x.x.","f2":".x...x..","f3":"x.x.x.x."},{"f1":".x...x..","f2":".x...x..","f3":"...x...x"},{"f1":"....x...","f2":"x...x...","f3":".x...x.."},{"f1":".x...x..","f2":"x.x.x...","f3":"x.xx..x."},{"f1":"x.x.....","f2":".x.x.x.x","f3":".x...x.."},{"f1":"....x...","f2":"x.x.x.x.","f3":".x.x.x.x"},{"f1":"x...x.x.","f2":"x...x...","f3":"........"},{"f1":".x...x..","f2":"x...x.x.","f3":".x...x.."},{"f1":"x.x.x.x.","f2":"........","f3":"x.xx..x."},{"f1":"x.xx..x.","f2":".x...x..","f3":"x.xx..x."},{"f1":"x.x.x.x.","f2":"....x...","f3":"x.xx..x."},{"f1":"x.x.x...","f2":".x...x..","f3":"x.xx..x."},{"f1":"........","f2":"x.xx..x.","f3":"x.x.x.x."}],"meters":[{"id":"harvest","type":"gauge","label":"收成","lane":null,"start":70,"max":100,"high_is_bad":false,"color":"var(--tk-accent)","on":{"perfect":2,"good":1,"miss":-8,"avoid_hit":-12}}],"avoid_penalty":"誤打五穀！雷公不打五穀。","outcomes":[{"when":{"harvest_min":85},"title":"穀倉滿滿","text":"雷打得準，穀一粒沒傷。雷震子站在田邊，很得意。","line":"雷震子想護住今年的穀，一粒沒傷"},{"when":{"harvest_min":60},"title":"收成過得去","text":"糟蹋的大多被打掉，有一點損失，但穀倉不空。","line":"雷震子想護住今年的穀，保住了大半"},{"when":{"harvest_min":30},"title":"損失不小","text":"糟蹋的漏掉不少，或是誤打了五穀。雷公不打五穀這件事，要再看清楚一點。","line":"雷震子想護住今年的穀，可是損失不小"},{"title":"田裡一團亂","text":"糟蹋的沒打到，五穀反而被打壞了。再打一次，先看清楚「糟」和「穀」的顏色。","line":"雷震子想護住今年的穀，可是田裡一團亂"}]}],"ending":{"title":"三場打完","tiers":[{"min_ratio":0.8,"text":"今晚廟裡香火旺。廟祝端上來的，不只是清茶。"},{"min_ratio":0.5,"text":"香火還行，小上帝他們今晚總算吃上一頓熱的。"},{"min_ratio":0.25,"text":"小上帝他們各自惦記著自己的事，只有廟祝在算香火，又端出清茶。"},{"min_ratio":0,"text":"今晚沒什麼香火。小上帝他們只好對著清茶發愁。"}],"tongtianguan":"還有一件事：小上帝的通天冠，在書裡被拿去打銀街同裕當店，當了五千錢，錢被康、趙輸光了。之後原書沒再說有沒有贖回來（第二十三回還說要「脫下通天冠」，前後對不上）。你想讓它怎麼回到小上帝頭上？這是你的改作任務。"},"carry":[{"from":"s1","to":"s3","stat":"mischief","per":-5,"meter":"harvest","line":"第一場龜蛇鬧過，田埂被拱出了洞，這一場的收成一開始就少了一些。","cap":20}],"compose":{"skin":"rhythm","modules":{"核心動作":"按鼓面：落在判定線上的音符打成準或好","資源計分":"準 100、好 60、連擊加成；誤打扣 50","時間回合":"三首曲子遞進：76、96、108 BPM，共約 6 分半","空間":"一到三個鼓道的下落區","角色":"小上帝、魁星、雷震子各一場，鼓面有各自的聲音","事件選擇":"龜蛇怨氣、擲筊鰲頭、上一場留下的田埂","勝負":"每場一種後果，三場合計成今晚的結局","回饋":"判定字、提示字、聲音（預設關）"}}}, skin: {"meta":{"id":"rhythm-skin","mode":"skin","title":"三關節奏練習（對照版）","subtitle":"同樣的拍子數量，沒有故事、沒有文化後果","version":"0.1-draft","banner":"對照版・拍子數量和難度跟故事版差不多，但沒有故事和文化後果"},"ui":{"intro":"三關節奏練習。音符掉到橫線上的那一刻，按下對應的鼓面。","how":"音符掉到橫線上時按下去（手機用手指點，電腦用鍵盤）。打偏或漏拍會扣一點生命。","sound_hint":"右上角可以開聲音（預設關著）。沒開聲音也能玩，看畫面抓拍子就好。","calib_label":"覺得總是打太早或太晚？調這裡（單位：毫秒）","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。鼓聲與法器聲都是程式合成的示意，不是真的某種鑼鼓點。圖示為自繪示意，沒有使用任何人物立繪。","story_prompt":""},"judge":{"perfect":70,"good":130,"avoid":120,"approach_ms":1700,"jiao":{"sheng":60,"xiao":120}},"score":{"perfect":100,"good":60,"avoid_hit":-50,"combo_unit":2,"combo_cap":20,"jiao_sheng":500,"jiao_xiao":150},"instruments":{"fagu":{"kind":"beep","f":440,"dur":0.08,"type":"square","vol":0.5},"xiaozhong":{"kind":"beep","f":880,"dur":0.08,"type":"square","vol":0.5},"muyu":{"kind":"beep","f":600,"dur":0.03,"type":"square","vol":0.3},"leigu":{"kind":"beep","f":330,"dur":0.08,"type":"square","vol":0.5},"xingyin":{"kind":"beep","f":660,"dur":0.08,"type":"square","vol":0.5},"niujiao":{"kind":"beep","f":262,"dur":0.3,"type":"sine","vol":0.3}},"stages":[{"id":"s1","title":"第一關","who":"","bpm":76,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"","how":"按下對應的鼓面，把落到線上的音符打掉。","basis":[],"lanes":[{"id":"turtle","label":"鼓A","key":"f","instrument":"fagu","color":"var(--tk-accent)","token":"●","icon":"dot"},{"id":"snake","label":"鼓B","key":"j","instrument":"xiaozhong","color":"var(--tk-ink)","token":"■","icon":"dot"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.35},"bars":[{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"........"},{"turtle":"........","snake":"..x...x."},{"turtle":"........","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x.x.x...","snake":"..x...x."},{"turtle":"x...x.x.","snake":"..x...x."},{"turtle":"x...x...","snake":"..x.x.x."},{"turtle":"x.......","snake":"....x..."},{"turtle":"x...x...","snake":"........"},{"turtle":"........","snake":"..x...x."},{"turtle":"x.......","snake":"....x..."},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x...x."},{"turtle":"x.......","snake":"........"},{"turtle":"x.x.x.x.","snake":"........"},{"turtle":"........","snake":"x.x.x.x."},{"turtle":"x.x.x.x.","snake":"........"},{"turtle":"........","snake":"x.x.x.x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x.x.x...","snake":"..x...x."},{"turtle":"x...x.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x.x.x."},{"turtle":"x.xxx.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":"..x.x.x."},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x.xxx.x.","snake":".x.x.x.x"},{"turtle":"x.x.x.x.","snake":".x.x.x.x"},{"turtle":"x.xxx.x.","snake":"..x.x.x."},{"turtle":"x...x...","snake":"........"},{"turtle":"x...x...","snake":"..x...x."},{"turtle":"x...x...","snake":"........"},{"turtle":"x.......","snake":"........"},{"turtle":"x.......","snake":"........"}],"meters":[{"id":"life","type":"gauge","label":"生命","lane":null,"start":70,"max":100,"high_is_bad":false,"color":"var(--tk-accent)","on":{"perfect":2,"good":1,"miss":-8,"avoid_hit":-12,"stray":-2}}],"outcomes":[{"when":{"harvest_min":85},"title":"很穩","text":"生命剩很多。","line":""},{"when":{"harvest_min":60},"title":"還行","text":"生命剩一半以上。","line":""},{"when":{"harvest_min":30},"title":"有點慘","text":"生命不多了。","line":""},{"title":"見底了","text":"生命快沒了。","line":""}]},{"id":"s2","title":"第二關","who":"","bpm":96,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"","how":"按下對應的鼓面，把落到線上的音符打掉。","basis":[],"lanes":[{"id":"kick","label":"鼓","key":" ","key_label":"空白鍵","instrument":"xingyin","color":"var(--tk-accent)","token":"●","icon":"dot"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"........"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"........"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"xxx.xxxx"},{"kick":"........"},{"kick":"xxx.xxxx"},{"kick":"xxx.xxxx"},{"kick":"xxx.xxxx"},{"kick":"........"},{"kick":"xxxx.xxx"},{"kick":"xx.xxxxx"},{"kick":"xxxx.xxx"},{"kick":"........"},{"kick":"xx.xxxxx"},{"kick":"xxxx.xxx"},{"kick":"xxx.xxxx"},{"kick":"xx.xxxxx"},{"kick":"........"},{"kick":"xxxxxx.x"},{"kick":"xxxxxx.x"},{"kick":"........"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"xx.xxxxx"},{"kick":"xxxxxx.x"},{"kick":"........"},{"kick":"xxx.xxxx"},{"kick":"xxxxxx.x"},{"kick":"........"},{"kick":"xx.xxxxx"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"........"},{"kick":"xxxxxx.x"},{"kick":"xxx.xxxx"},{"kick":"xx.xxxxx"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"},{"kick":"xxxx.xxx"}],"meters":[{"id":"stars","type":"count","label":"命中數","lane":null,"color":"var(--tk-accent)","on":{"perfect":1,"good":1},"per_phrase":7}],"finale":{"id":"bonus","kind":"bonus","lane":"kick","token":"★","label":"加分","after_beats":4,"requires":{"meter":"stars","min_ratio":0.8},"ask":"最後一個加分音符，看準了按下去！","locked":"命中數不到八成，沒有加分音符。"},"outcomes":[{"when":{"jiao":"sheng"},"title":"加分成功","text":"命中數夠，加分音符也打中了。","line":""},{"when":{"jiao":"yin"},"title":"加分失敗","text":"命中數夠，但最後的加分音符沒打中。","line":""},{"title":"命中數不夠","text":"命中數不到八成，沒有加分音符。","line":""}],"star_names":["1","2","3","4","5","6","7"],"star_tokens":["1","2","3","4","5","6","7"],"star_tones":[440,440,440,440,440,440,440]},{"id":"s3","title":"第三關","who":"","bpm":108,"beats_per_bar":4,"grid":8,"lead_in_beats":4,"story":"","how":"按下對應的鼓面，把落到線上的音符打掉。","basis":[],"lanes":[{"id":"f1","label":"鼓A","key":"d","instrument":"leigu","color":"var(--tk-accent)","token":"●","icon":"dot"},{"id":"f2","label":"鼓B","key":"f","instrument":"leigu","color":"var(--tk-ink)","token":"■","icon":"dot"},{"id":"f3","label":"鼓C","key":"j","instrument":"leigu","color":"color-mix(in srgb, var(--tk-accent) 45%, var(--tk-ink))","token":"▲","icon":"dot"}],"tick":{"instrument":"muyu","every_beats":1,"vol":0.3},"bars":[{"f1":"x...x...","f2":"........","f3":"........"},{"f1":"........","f2":"x...x...","f3":"........"},{"f1":"........","f2":"........","f3":"x...x..."},{"f1":"x...x...","f2":"........","f3":"........"},{"f1":"x.x.....","f2":"....x.x.","f3":"........"},{"f1":"....x...","f2":"x.....x.","f3":"....x..."},{"f1":"x.x.x.x.","f2":"........","f3":"........"},{"f1":"........","f2":"x.x.x.x.","f3":"x...x..."},{"f1":"x...x...","f2":"........","f3":"x.x.x.x."},{"f1":"x.x...x.","f2":"........","f3":"..x.x.x."},{"f1":"x.x.x.x.","f2":"x.x.x.x.","f3":"........"},{"f1":"x...x...","f2":"x...x...","f3":"x...x..."},{"f1":"x...x...","f2":"x...x.x.","f3":"......x."},{"f1":"........","f2":"..x...x.","f3":"x.x....."},{"f1":"x.x.....","f2":"........","f3":"x.x....."},{"f1":"....x...","f2":"........","f3":".x...x.."},{"f1":"....x...","f2":"x...x.x.","f3":"x......."},{"f1":"x...x.x.","f2":"..x...x.","f3":"........"},{"f1":"x.x.....","f2":"..x...x.","f3":"........"},{"f1":"x.......","f2":"........","f3":"x......."},{"f1":"..x...x.","f2":"x.......","f3":"x...x..."},{"f1":"....x...","f2":"..x...x.","f3":"x.x....."},{"f1":"x...x.x.","f2":"x.x.....","f3":"..x...x."},{"f1":"........","f2":"x.......","f3":"x......."},{"f1":".x...x..","f2":".x...x..","f3":"x...x.x."},{"f1":"........","f2":"x...x...","f3":"..x...x."},{"f1":"x...x...","f2":"x...x.x.","f3":".x...x.."},{"f1":"....x...","f2":".x...x..","f3":"........"},{"f1":".x...x..","f2":"x...x...","f3":"x...x.x."},{"f1":"x...x.x.","f2":"x...x.x.","f3":"..x....."},{"f1":"x.x.x...","f2":"....x...","f3":"x......."},{"f1":"....x...","f2":"x...x...","f3":"x......."},{"f1":".x.x.x.x","f2":"x.x.....","f3":"..x...x."},{"f1":"x.x.....","f2":"..x...x.","f3":".x...x.."},{"f1":"x...x.x.","f2":"x...x.x.","f3":"..x....."},{"f1":"..x...x.","f2":".x...x..","f3":"........"},{"f1":"........","f2":".x...x..","f3":"x.x.x..."},{"f1":".x...x..","f2":"x.x.....","f3":"........"},{"f1":"........","f2":"x...x.x.","f3":"x.x.x.x."},{"f1":"x...x...","f2":"x.......","f3":"........"},{"f1":"x.x.x.x.","f2":"x.......","f3":"........"},{"f1":"x.x.x.x.","f2":".x...x..","f3":"x.x.x.x."},{"f1":".x...x..","f2":".x...x..","f3":"...x...x"},{"f1":"....x...","f2":"x...x...","f3":".x...x.."},{"f1":".x...x..","f2":"x.x.x...","f3":"x.xx..x."},{"f1":"x.x.....","f2":".x.x.x.x","f3":".x...x.."},{"f1":"....x...","f2":"x.x.x.x.","f3":".x.x.x.x"},{"f1":"x...x.x.","f2":"x...x...","f3":"........"},{"f1":".x...x..","f2":"x...x.x.","f3":".x...x.."},{"f1":"x.x.x.x.","f2":"........","f3":"x.xx..x."},{"f1":"x.xx..x.","f2":".x...x..","f3":"x.xx..x."},{"f1":"x.x.x.x.","f2":"....x...","f3":"x.xx..x."},{"f1":"x.x.x...","f2":".x...x..","f3":"x.xx..x."},{"f1":"........","f2":"x.xx..x.","f3":"x.x.x.x."}],"meters":[{"id":"life","type":"gauge","label":"生命","lane":null,"start":70,"max":100,"high_is_bad":false,"color":"var(--tk-accent)","on":{"perfect":2,"good":1,"miss":-8,"avoid_hit":-12,"stray":-2}}],"outcomes":[{"when":{"harvest_min":85},"title":"很穩","text":"生命剩很多。","line":""},{"when":{"harvest_min":60},"title":"還行","text":"生命剩一半以上。","line":""},{"when":{"harvest_min":30},"title":"有點慘","text":"生命不多了。","line":""},{"title":"見底了","text":"生命快沒了。","line":""}]}],"ending":{"title":"三關打完","tiers":[{"min_ratio":0.8,"text":"高分。"},{"min_ratio":0.5,"text":"中等。"},{"min_ratio":0.25,"text":"偏低。"},{"min_ratio":0,"text":"再練練。"}],"tongtianguan":""},"carry":[],"compose":{"skin":"rhythm","modules":{"核心動作":"按鼓面：落在判定線上的音符打成準或好","資源計分":"準 100、好 60、連擊加成；誤打扣 50","時間回合":"三首曲子遞進：76、96、108 BPM，共約 6 分半","空間":"一到三個鼓道的下落區","角色":"小上帝、魁星、雷震子各一場，鼓面有各自的聲音","事件選擇":"龜蛇怨氣、擲筊鰲頭、上一場留下的田埂","勝負":"每場一種後果，三場合計成今晚的結局","回饋":"判定字、提示字、聲音（預設關）"}}} };
 var TAGS = ['原著','民間','工坊創作','改編','田野','常識'];
 var $ = function(id){ return document.getElementById(id); };
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
@@ -465,8 +461,10 @@ function setMuted(m){
 }
 
 /* ====================== 圖示（自繪，沒有任何立繪） ====================== */
+var _rcP = null, _rcC = {};
+function rc(expr){ if(!expr) return ''; if(_rcC[expr]) return _rcC[expr]; if(!_rcP){ _rcP = document.createElement('span'); _rcP.style.display = 'none'; document.body.appendChild(_rcP); } _rcP.style.color = ''; _rcP.style.color = expr; var v = getComputedStyle(_rcP).color; _rcC[expr] = v; return v; }
 function icon(name, color){
-  var c = color || 'currentColor';
+  var c = 'currentColor';
   var m = {
     turtle:'<svg viewBox="0 0 40 40" width="34" height="34"><ellipse cx="20" cy="24" rx="13" ry="9" fill="'+c+'"/><circle cx="34" cy="21" r="4" fill="'+c+'"/><rect x="9" y="30" width="5" height="5" rx="2" fill="'+c+'"/><rect x="25" y="30" width="5" height="5" rx="2" fill="'+c+'"/><path d="M12 22h16M20 16v16" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/></svg>',
     snake:'<svg viewBox="0 0 40 40" width="34" height="34"><path d="M6 30c8-14 12 6 20-6 4-6 6-8 8-10" fill="none" stroke="'+c+'" stroke-width="6" stroke-linecap="round"/><circle cx="35" cy="12" r="3.5" fill="'+c+'"/></svg>',
@@ -474,7 +472,7 @@ function icon(name, color){
     drum:'<svg viewBox="0 0 40 40" width="34" height="34"><ellipse cx="20" cy="14" rx="14" ry="5" fill="'+c+'"/><path d="M6 14v14c0 3 6 6 14 6s14-3 14-6V14" fill="none" stroke="'+c+'" stroke-width="3"/></svg>',
     dot:'<svg viewBox="0 0 40 40" width="34" height="34"><circle cx="20" cy="20" r="10" fill="'+c+'"/></svg>'
   };
-  return m[name] || m.dot;
+  return '<span style="color:'+(color||'inherit')+';display:inline-block;line-height:0">' + (m[name] || m.dot) + '</span>';
 }
 
 /* ====================== 狀態 ====================== */
@@ -490,8 +488,8 @@ function setChrome(){
   var D = curData();
   $('ttl').textContent = D.meta.title;
   $('banner').textContent = D.meta.banner || '';
-  $('mode').textContent = S.mode==='skin' ? '現在：抽掉文化版' : '現在：文化版';
-  $('mode').setAttribute('aria-label', S.mode==='skin' ? '切回文化版' : '切換成抽掉文化版');
+  $('mode').textContent = S.mode==='skin' ? '現在：對照版' : '現在：故事版';
+  $('mode').setAttribute('aria-label', S.mode==='skin' ? '切回故事版' : '切換成對照版');
   $('foot').textContent = D.ui.disclaimer;
   document.title = D.meta.title + '（節奏樣板）';
 }
@@ -503,13 +501,11 @@ function tagChips(basis){
 function render(){
   setChrome();
   var v = $('view'), D = curData();
-  if(S.screen==='home') v.innerHTML = viewHome(D);
-  else if(S.screen==='stageintro') v.innerHTML = viewIntro(D);
+  if(S.screen==='home') v.innerHTML = MOD['角色'].render(S);
+  else if(S.screen==='stageintro') v.innerHTML = MOD['事件選擇'].render(S);
   else if(S.screen==='play') v.innerHTML = viewPlay(D);
-  else if(S.screen==='result') v.innerHTML = viewResult(D);
-  else if(S.screen==='ending') v.innerHTML = viewEnding(D);
-  else if(S.screen==='remix') v.innerHTML = viewRemix(D);
-  else if(S.screen==='field') v.innerHTML = viewField(D);
+  else if(S.screen==='result' || S.screen==='ending') v.innerHTML = MOD['勝負'].render(S);
+  else if(S.screen==='remix' || S.screen==='field') v.innerHTML = MOD['回饋'].render(S);
   bind(D);
   if(S.screen==='play') startRun();
 }
@@ -534,15 +530,7 @@ function viewIntro(D){
    + ((st.basis && st.basis.length) ? '<div class="card"><h3>這一場的依據（哪些是原書、哪些是我們編的）</h3>'+tagChips(st.basis)+'</div>' : '')
    + '<div class="row"><button class="pri" id="start" type="button">開始（會先數四拍）</button><button type="button" id="back">回主畫面</button></div>';
 }
-function viewPlay(D){
-  var st = curStage();
-  return '<div class="hud"><b>'+esc(st.title)+'</b><span>香火 <b id="score">0</b>　連擊 <b id="combo">0</b></span></div>'
-   + '<div id="meters"></div>'
-   + '<div class="cvwrap"><canvas id="cv" aria-label="音符下落區"></canvas><div id="toast" role="status" aria-live="polite"></div></div>'
-   + '<div id="pads">'+st.lanes.map(function(l,i){ return '<button type="button" class="pad" data-lane="'+i+'" style="border-color:'+l.color+'"><span style="color:'+l.color+'">'+esc(l.token)+'</span>'+esc(l.label)+'<small>'+esc(l.key_label || String(l.key).toUpperCase())+'</small></button>'; }).join('')+'</div>'
-   + (st.avoid ? '<p class="sub" id="legend">虛線圈圈「'+esc(st.avoid.token)+'」＝'+esc(st.avoid.label)+'，不要按。</p>' : '')
-   + '<div class="row"><button type="button" id="pause">暫停</button><button type="button" id="quit">離開這場</button></div>';
-}
+function viewPlay(D){ return MOD['時間回合'].render(S); }
 function viewResult(D){
   var r = S.last, st = curStage(), O = r.outcome, s = r.stats, max = r.max;
   var last = S.stageIdx >= D.stages.length-1 && !S.fieldStage;
@@ -562,12 +550,7 @@ function viewEnding(D){
    + '<div class="card"><p><b>香火合計 '+tot+'</b>'+(max?'（約 '+Math.round(ratio*100)+'%）':'')+'</p><p>'+esc(tier.text)+'</p></div>'
    + (lines.length ? '<div class="card"><h3>你今晚的三場鼓</h3><ol class="lines">'+lines.map(function(l){return '<li>'+esc(l)+'</li>';}).join('')+'</ol><p class="sub">'+esc(D.ui.story_prompt)+'</p><textarea id="story" style="min-height:70px" aria-label="一句話故事"></textarea></div>' : '')
    + (D.ending.tongtianguan ? '<div class="card"><p>'+esc(D.ending.tongtianguan)+'</p></div>' : '')
-   + '<h2>'+esc(D.ui.w2_question)+'</h2>'
-   + (skin ? '<p class="sub">你剛打的是抽掉文化的版本。回到文化版再打一次，比一比。</p>' : '<p class="sub">先把文化版打完，再切到「抽掉文化版」打一場，再回來選。</p>')
-   + '<div class="choices" id="choices">'+D.ui.judge_choices.map(function(c){ return '<button type="button" data-pick="'+c.id+'"'+(S.pick===c.id?' aria-pressed="true"':'')+'>'+esc(c.text)+'</button>'; }).join('')+'</div>'
-   + (S.pick ? '<div class="card"><p>'+esc(D.ui.our_view)+'</p></div>' : '')
-   + '<h3>三個可以想的問題</h3><ul>'+D.ui.questions.map(function(q){return '<li>'+esc(q)+'</li>';}).join('')+'</ul>'
-   + '<div class="row"><button class="pri" id="swap" type="button">'+(skin?'回到文化版重打':'換成抽掉文化版，打一場')+'</button><button type="button" id="back">回主畫面</button><button type="button" id="toRemix">我要改做</button></div>';
+   + '<div class="row"><button class="pri" id="swap" type="button">'+(skin?'回到故事版重打':'換成對照版（沒有故事），打一場')+'</button><button type="button" id="back">回主畫面</button><button type="button" id="toRemix">我要改做</button></div>';
 }
 function viewRemix(D){
   return '<h1>我要改做</h1><div class="card"><p>整個遊戲的內容都在一份 JSON 裡：節拍譜、鼓面、規則、文字、聲音。你不用寫程式，可以請 Claude 或 Gemini 幫你改，再貼回來。</p>'
@@ -608,7 +591,7 @@ function bind(D){
   var cal = $('calib'); if(cal) cal.addEventListener('input', function(){ S.offset = +cal.value; $('calibv').textContent = S.offset; });
   Array.prototype.forEach.call(v.querySelectorAll('button.pad'), function(b){
     var li = +b.getAttribute('data-lane');
-    b.addEventListener('pointerdown', function(ev){ ev.preventDefault(); b.classList.add('down'); handleTap(li, ev.timeStamp); });
+    b.addEventListener('pointerdown', function(ev){ ev.preventDefault(); b.classList.add('down'); MOD['核心動作'].step(S, {type:'tap', lane:li, ts:ev.timeStamp}); });
     var up = function(){ b.classList.remove('down'); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('pointerleave', up);
     b.addEventListener('contextmenu', function(e){ e.preventDefault(); });
@@ -671,7 +654,7 @@ document.addEventListener('visibilitychange', function(){ if(document.hidden && 
 document.addEventListener('keydown', function(ev){
   if(S.screen!=='play' || ev.repeat) return;
   var st = curStage(), k = ev.key.toLowerCase();
-  for(var i=0;i<st.lanes.length;i++){ if(String(st.lanes[i].key).toLowerCase()===k){ ev.preventDefault(); var b = document.querySelector('button.pad[data-lane="'+i+'"]'); if(b){ b.classList.add('down'); setTimeout(function(bb){return function(){bb.classList.remove('down');};}(b),90); } handleTap(i, ev.timeStamp); return; } }
+  for(var i=0;i<st.lanes.length;i++){ if(String(st.lanes[i].key).toLowerCase()===k){ ev.preventDefault(); var b = document.querySelector('button.pad[data-lane="'+i+'"]'); if(b){ b.classList.add('down'); setTimeout(function(bb){return function(){bb.classList.remove('down');};}(b),90); } MOD['核心動作'].step(S, {type:'tap', lane:i, ts:ev.timeStamp}); return; } }
 });
 
 function buildMeters(){
@@ -683,7 +666,7 @@ function buildMeters(){
       if(m.per_phrase){ for(var i=0;i<m.per_phrase;i++){ if(i===4 && st.avoid) dots += '<i class="sep"></i>'; dots += '<i data-dot="'+i+'">'+esc(names[i]||(i+1))+'</i>'; } }
       return '<div class="meter" data-m="'+m.id+'"><div class="lab"><span>'+esc(m.label)+'</span><span class="val"></span></div>'+(dots?'<div class="dots">'+dots+'</div>':'')+'</div>';
     }
-    return '<div class="meter" data-m="'+m.id+'"><div class="lab"><span>'+esc(m.label)+'</span><span class="val"></span></div><div class="track"><div class="fill" style="background:'+(m.color||'')+'"></div></div></div>';
+    return '<div class="meter" data-m="'+m.id+'"><div class="lab"><span>'+esc(m.label)+'</span><span class="val"></span></div><div class="track"><div class="fill"></div></div></div>';
   }).join('');
 }
 function updateMeters(){
@@ -719,10 +702,10 @@ function consume(){
   var run = S.run, st = curStage(), D = curData();
   var evs = run.events; run.events = [];
   evs.forEach(function(ev){
-    if(ev.type==='hit'){ playLane(ev.lane, ev.star); flash(ev.grade==='perfect'?'準':'好', ev.lane, ev.grade==='perfect'?'#2f8f5b':'#c9971c'); }
-    else if(ev.type==='miss'){ sfx('thud'); flash('漏', ev.lane, '#c2402e'); }
-    else if(ev.type==='stray'){ flash('空', ev.lane, '#8a8f98'); }
-    else if(ev.type==='avoid_hit'){ sfx('avoid'); flash(st.avoid ? st.avoid.token+'!' : '×', ev.lane, '#c2402e'); toast(st.avoid_penalty || '碰到不能碰的了！'); }
+    if(ev.type==='hit'){ MOD['角色'].step(S, {type:'voice', lane:ev.lane, star:ev.star}); MOD['回饋'].step(S, {type:'flash', txt:(ev.grade==='perfect'?'準':'好'), lane:ev.lane, color:(ev.grade==='perfect'?'var(--tk-accent)':'var(--tk-ink)')}); }
+    else if(ev.type==='miss'){ sfx('thud'); flash('漏', ev.lane, 'var(--tk-muted)'); }
+    else if(ev.type==='stray'){ flash('空', ev.lane, 'var(--tk-muted)'); }
+    else if(ev.type==='avoid_hit'){ sfx('avoid'); flash(st.avoid ? st.avoid.token+'!' : '×', ev.lane, 'var(--tk-accent)'); toast(st.avoid_penalty || '碰到不能碰的了！'); }
     else if(ev.type==='mischief'){ sfx('mischief'); }
     else if(ev.type==='effect'){ toast(ev.message); }
     else if(ev.type==='warn'){ toast('怨氣快滿了，要鬧了！'); }
@@ -733,7 +716,7 @@ function consume(){
       var label = ev.bonus ? (ev.result==='sheng'?'加分！':'沒打中') : ({sheng:'聖筊！',xiao:'笑筊：神明還沒決定，再擲一次',yin:'陰筊'}[ev.result]);
       toast(label);
     }
-    else if(ev.type==='done'){ finishRun(); }
+    else if(ev.type==='done'){ MOD['勝負'].step(S, {type:'finish'}); }
   });
 }
 function finishRun(){
@@ -752,7 +735,7 @@ function loop(now){
   if(S.pausedAt!=null) return;
   var e = nowElapsed(now);
   if(S.bot) botStep(e);
-  stepRun(S.run, e);
+  MOD['時間回合'].step(S, {type:'tick', e:e});
   /* 節拍音（只在有聲音時排程） */
   var st = curStage(), tk = st.tick;
   if(tk && !AU.muted && AU.ctx){
@@ -764,8 +747,8 @@ function loop(now){
       S.nextTick++;
     }
   } else { S.nextTick = Math.max(S.nextTick, 0); }
-  consume();
-  draw(e, now);
+  MOD['事件選擇'].step(S, {type:'consume'});
+  MOD['空間'].step(S, {type:'draw', e:e, now:now});
   $('score').textContent = S.run.stats.score;
   $('combo').textContent = S.run.stats.combo;
   updateMeters();
@@ -781,12 +764,12 @@ function draw(e, now){
   g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
   var st = curStage(), model = S.model, run = S.run, J = win(model);
   var cs = getComputedStyle(document.documentElement);
-  var ink = cs.getPropertyValue('--ink').trim() || '#222', line = cs.getPropertyValue('--cvline').trim() || '#ccc', sub = cs.getPropertyValue('--sub').trim() || '#888';
+  var ink = rc('var(--tk-ink)'), line = rc('var(--tk-line)'), sub = rc('var(--tk-muted)');
   var nL = st.lanes.length, lw = W/nL, hitY = H-56, topY = -24;
   function yOf(t){ return hitY - (t-e)/J.approach*(hitY-topY); }
   /* 鼓道 */
   for(var i=0;i<nL;i++){
-    g.fillStyle = st.lanes[i].color; g.globalAlpha = 0.07; g.fillRect(i*lw, 0, lw, H); g.globalAlpha = 1;
+    g.fillStyle = rc(st.lanes[i].color); g.globalAlpha = 0.09; g.fillRect(i*lw, 0, lw, H); g.globalAlpha = 1;
     if(i>0){ g.strokeStyle = line; g.lineWidth = 1; g.beginPath(); g.moveTo(i*lw,0); g.lineTo(i*lw,H); g.stroke(); }
   }
   /* 拍線 */
@@ -798,7 +781,7 @@ function draw(e, now){
   g.globalAlpha = 1;
   /* 判定線 */
   var bp = ((e % model.beatMs)+model.beatMs)%model.beatMs, pulse = Math.max(0, 1 - bp/160);
-  for(var k=0;k<nL;k++){ g.strokeStyle = st.lanes[k].color; g.lineWidth = 3 + pulse*3; g.beginPath(); g.moveTo(k*lw+6, hitY); g.lineTo((k+1)*lw-6, hitY); g.stroke(); }
+  for(var k=0;k<nL;k++){ g.strokeStyle = rc(st.lanes[k].color); g.lineWidth = 3 + pulse*3; g.beginPath(); g.moveTo(k*lw+6, hitY); g.lineTo((k+1)*lw-6, hitY); g.stroke(); }
   /* 預備拍 */
   if(e < model.leadMs){
     var cnt = Math.ceil((model.leadMs - e)/model.beatMs);
@@ -810,33 +793,33 @@ function draw(e, now){
     if(n.state==='perfect' || n.state==='good' || n.state==='safe') return;
     var y = yOf(n.t); if(y < topY-10 || y > H+30) return;
     var x = n.lane*lw + lw/2, ln = st.lanes[n.lane];
-    var col = ln.color, tok = ln.token, a = 1;
+    var col = rc(ln.color), tok = ln.token, a = 1;
     if(n.kind==='x' && st.star_tokens && n.star>=0){ tok = st.star_tokens[n.star]; }
-    if(n.kind==='o'){ col = (st.avoid&&st.avoid.color)||'#888'; tok = (st.avoid&&st.avoid.token)||'×'; }
-    if(n.switched){ col = st.lanes[n.fromLane].color; tok = st.lanes[n.fromLane].token; }
+    if(n.kind==='o'){ col = rc((st.avoid&&st.avoid.color)||'var(--tk-muted)'); tok = (st.avoid&&st.avoid.token)||'×'; }
+    if(n.switched){ col = rc(st.lanes[n.fromLane].color); tok = st.lanes[n.fromLane].token; }
     if(n.state==='miss' || n.state==='bad'){ a = 0.35; }
     g.globalAlpha = a;
     g.beginPath(); g.arc(x,y,r,0,Math.PI*2);
     if(n.kind==='o'){ g.fillStyle = col; g.globalAlpha = a*0.25; g.fill(); g.globalAlpha = a; g.setLineDash([4,3]); g.strokeStyle = col; g.lineWidth = 3; g.stroke(); g.setLineDash([]); }
     else { g.fillStyle = col; g.fill(); }
-    if(n.shifted || n.switched){ g.strokeStyle = '#fff'; g.lineWidth = 2; g.beginPath(); g.arc(x,y,r+3,0,Math.PI*2); g.stroke(); }
-    g.fillStyle = n.kind==='o' ? col : '#fff'; g.font = '700 '+(r-2)+'px "Noto Sans TC","Microsoft JhengHei",sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(tok, x, y+1);
+    if(n.shifted || n.switched){ g.strokeStyle = ink; g.lineWidth = 2; g.beginPath(); g.arc(x,y,r+3,0,Math.PI*2); g.stroke(); }
+    g.fillStyle = n.kind==='o' ? col : rc('var(--tk-surface)'); g.font = '700 '+(r-2)+'px "Noto Sans TC","Microsoft JhengHei",sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(tok, x, y+1);
     g.globalAlpha = 1;
   });
   /* 鰲頭／加分（擲筊）音符 */
   var f = run.finale;
   if(st.finale && (f.status==='open' || f.status==='retry_wait')){
     var fl = st.lanes.map(function(l){return l.id;}).indexOf(st.finale.lane), fx = fl*lw+lw/2, fy = yOf(f.t);
-    g.beginPath(); g.arc(fx,fy,r+10,0,Math.PI*2); g.fillStyle = '#c9971c'; g.globalAlpha = 0.3; g.fill(); g.globalAlpha = 1;
-    g.beginPath(); g.arc(fx,fy,r+4,0,Math.PI*2); g.fillStyle = '#c9971c'; g.fill();
-    g.fillStyle = '#2a1d00'; g.font = '800 '+(r+2)+'px "Noto Sans TC",sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(st.finale.token, fx, fy+1);
+    g.beginPath(); g.arc(fx,fy,r+10,0,Math.PI*2); g.fillStyle = rc('var(--tk-accent)'); g.globalAlpha = 0.3; g.fill(); g.globalAlpha = 1;
+    g.beginPath(); g.arc(fx,fy,r+4,0,Math.PI*2); g.fillStyle = rc('var(--tk-accent)'); g.fill();
+    g.fillStyle = rc('var(--tk-accent-ink)'); g.font = '800 '+(r+2)+'px "Noto Sans TC",sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(st.finale.token, fx, fy+1);
     g.fillStyle = sub; g.font = '12px sans-serif'; g.fillText(st.finale.label, fx, fy+r+18);
   }
   /* 判定回饋字 */
   S.flashes = S.flashes.filter(function(F){ return now - F.t < 420; });
   S.flashes.forEach(function(F){
     var k2 = (now-F.t)/420, x = F.lane*lw+lw/2;
-    g.globalAlpha = 1-k2; g.fillStyle = F.color; g.font = '800 20px "Noto Sans TC",sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(F.txt, x, hitY-30-k2*28); g.globalAlpha = 1;
+    g.globalAlpha = 1-k2; g.fillStyle = rc(F.color); g.font = '800 20px "Noto Sans TC",sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(F.txt, x, hitY-30-k2*28); g.globalAlpha = 1;
   });
 }
 window.addEventListener('resize', function(){ var cv = $('cv'); if(cv) sizeCanvas(cv); });
@@ -910,12 +893,79 @@ function finishField(){
   $('fPlay').addEventListener('click', function(){
     var D = curData(), rows = []; for(var i=0;i<4;i++){ rows.push({field:bars[0]}); rows.push({field:bars[1]}); }
     S.fieldStage = {id:'field', title:'田野打拍：你打的那一段', who:'', bpm:F.bpm, beats_per_bar:4, grid:8, lead_in_beats:4, story:'', how:'照你自己打的節拍，再打一遍。',
-      lanes:[{id:'field',label:'田野',key:' ',key_label:'空白鍵',instrument:Object.keys(D.instruments)[0],color:'#1d5f8c',token:'聲',icon:'drum'}],
-      bars:rows, meters:[{id:'life',type:'gauge',label:'穩定度',lane:null,start:70,max:100,high_is_bad:false,color:'#1d5f8c',on:{perfect:2,good:1,miss:-6}}],
+      lanes:[{id:'field',label:'田野',key:' ',key_label:'空白鍵',instrument:Object.keys(D.instruments)[0],color:'var(--tk-ink)',token:'聲',icon:'drum'}],
+      bars:rows, meters:[{id:'life',type:'gauge',label:'穩定度',lane:null,start:70,max:100,high_is_bad:false,color:'var(--tk-accent)',on:{perfect:2,good:1,miss:-6}}],
       outcomes:[{when:{harvest_min:70},title:'打得很準',text:'你把現場的拍子打回來了。',line:''},{title:'再打一次',text:'節奏有點跑掉，再試一次。',line:''}], tick:{instrument:'muyu',every_beats:1,vol:0.3}};
     show('play');
   });
 }
+
+/* ====================== 八個機制模組（名稱與其他樣板同名；每段 init(cfg, root)／step(state, action)／render(state)） ======================
+   核心動作 讀 stages[].lanes             按鼓面：落在判定線上的音符 → 準／好／漏
+   資源計分 讀 score、judge               香火、連擊
+   時間回合 讀 stages[].bpm／bars         一首曲子的時間軸（預備拍 → 小節 → 結束）
+   空間     讀 stages[].lanes             鼓道與音符下落區（canvas）
+   角色     讀 stages[].who／instruments  這一場的主角與鼓面的聲音
+   事件選擇 讀 meters、carry、finale      怨氣、擲筊、上一場留下的事
+   勝負     讀 outcomes、ending           每場結果與三場合計的結局
+   回饋     讀 meta、ui                   提示字、判定字、聲音、改作頁
+   視覺語言只用 :root 的 --tk-* token（surface／panel／ink／muted／accent／accent-ink／line／font-title／font-body／radius／shadow） */
+var MOD = {
+  '核心動作': {
+    init: function(cfg, root){ },
+    step: function(state, action){ if(action.type==='tap'){ handleTap(action.lane, action.ts); return true; } return null; },
+    render: function(state){
+      var st = curStage();
+      return '<div id="pads">'+st.lanes.map(function(l,i){ return '<button type="button" class="pad" data-lane="'+i+'" style="border-color:'+l.color+'"><span style="color:'+l.color+'">'+esc(l.token)+'</span>'+esc(l.label)+'<small>'+esc(l.key_label || String(l.key).toUpperCase())+'</small></button>'; }).join('')+'</div>';
+    }
+  },
+  '資源計分': {
+    init: function(cfg, root){ },
+    step: function(state, action){ if(action.type==='score'){ addScore(state.run, action.grade); return true; } return null; },
+    render: function(state){ var st = curStage(); return '<div class="hud"><b>'+esc(st.title)+'</b><span>香火 <b id="score">0</b>　連擊 <b id="combo">0</b></span></div>'; }
+  },
+  '時間回合': {
+    init: function(cfg, root){ },
+    step: function(state, action){ if(action.type==='tick'){ stepRun(state.run, action.e); return true; } return null; },
+    render: function(state){
+      var st = curStage();
+      return MOD['資源計分'].render(state) + '<div id="meters"></div>' + MOD['空間'].render(state) + MOD['核心動作'].render(state)
+        + (st.avoid ? '<p class="sub" id="legend">虛線圈圈「'+esc(st.avoid.token)+'」＝'+esc(st.avoid.label)+'，不要按。</p>' : '')
+        + '<div class="row"><button type="button" id="pause">暫停</button><button type="button" id="quit">離開這場</button></div>';
+    }
+  },
+  '空間': {
+    init: function(cfg, root){ },
+    step: function(state, action){ if(action.type==='draw'){ draw(action.e, action.now); return true; } return null; },
+    render: function(state){ return '<div class="cvwrap"><canvas id="cv" aria-label="音符下落區"></canvas><div id="toast" role="status" aria-live="polite"></div></div>'; }
+  },
+  '角色': {
+    init: function(cfg, root){ },
+    step: function(state, action){ if(action.type==='voice'){ playLane(action.lane, action.star); return true; } return null; },
+    render: function(state){ return viewHome(curData()); }
+  },
+  '事件選擇': {
+    init: function(cfg, root){ },
+    step: function(state, action){ if(action.type==='consume'){ consume(); return true; } return null; },
+    render: function(state){ return viewIntro(curData()); }
+  },
+  '勝負': {
+    init: function(cfg, root){ },
+    step: function(state, action){ if(action.type==='finish'){ finishRun(); return true; } return null; },
+    render: function(state){ return state.screen==='ending' ? viewEnding(curData()) : viewResult(curData()); }
+  },
+  '回饋': {
+    init: function(cfg, root){ },
+    step: function(state, action){
+      if(action.type==='toast'){ toast(action.msg); return true; }
+      if(action.type==='flash'){ flash(action.txt, action.lane, action.color); return true; }
+      if(action.type==='sfx'){ sfx(action.name, action.extra); return true; }
+      return null;
+    },
+    render: function(state){ return state.screen==='remix' ? viewRemix(curData()) : viewField(curData()); }
+  }
+};
+Object.keys(MOD).forEach(function(k){ MOD[k].init(DATA, document.getElementById('view')); });
 
 /* ====================== 啟動 ====================== */
 $('mode').addEventListener('click', function(){ S.mode = S.mode==='skin' ? 'culture' : 'skin'; S.results = {}; S.pick = null; S.fieldStage = null; S.stageIdx = 0; show('home'); });
@@ -927,12 +977,12 @@ setChrome(); render();
 })();
 </script>
 <!-- CT-HOOK-BEGIN -->
-<script src="../tutor/folk_index.js?v=202611151156"></script>
-<script src="../tutor/tutor_templates.js?v=202611151156"></script>
-<script src="../tutor/tutor_core.js?v=202611151156"></script>
-<script src="../tutor/tutor_ui.js?v=202611151156"></script>
-<script src="../tutor/tutor_hook.js?v=202611172110"></script>
-<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script src="../tutor/folk_index.js?v=202611172140"></script>
+<script src="../tutor/tutor_templates.js?v=202611172140"></script>
+<script src="../tutor/tutor_core.js?v=202611172140"></script>
+<script src="../tutor/tutor_ui.js?v=202611172140"></script>
+<script src="../tutor/tutor_hook.js?v=202611172140"></script>
+<script src="../tutor/tutor_boot.js?v=202611172140"></script>
 <script>if (window.CT_BOOT) CT_BOOT('rhythm');</script>
 <!-- CT-HOOK-END -->
 </body>

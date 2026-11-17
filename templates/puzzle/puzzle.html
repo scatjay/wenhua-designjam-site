@@ -5,85 +5,184 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>冠不見了｜解謎樣板・小封神示範</title>
 <style>
+/* ===== 共用語意 token（名稱固定，值由本樣板決定）＋本樣板私有變數。寫死的顏色只准出現在這一區 ===== */
 :root{
-  --bg:#efe4cb; --paper:#f8f1de; --paper2:#efe3c6; --ink:#2a211a; --ink2:#6a5a48; --line:#c9b896;
-  --red:#a8322a; --red2:#c94a3f; --jade:#2c6a55; --gold:#a97c1c; --blue:#2c5f7a;
-  --ok:#2c6a55; --bad:#a8322a; --shadow:rgba(60,35,10,.18);
+  --tk-surface:#efe4cb; --tk-panel:#f8f1de; --tk-ink:#2a211a; --tk-muted:#6a5a48; --tk-accent:#a8322a; --tk-accent-ink:#fff7ee; --tk-line:#c9b896;
+  --tk-font-title:"DFKai-SB","BiauKai","Kaiti TC","STKaiti","Noto Serif TC",serif;
+  --tk-font-body:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --tk-radius:3px; --tk-shadow:3px 3px 0 rgba(42,33,26,.85);
+  /* 私有 */
+  --paper2:#efe3c6; --red2:#c94a3f; --jade:#2c6a55; --gold:#a97c1c; --blue:#2c5f7a; --ok:#2c6a55; --bad:#a8322a;
   --t-orig:#2c6a55; --t-folk:#8a5a14; --t-made:#6a4b8a; --t-adapt:#2c5f7a; --t-field:#a8322a;
+  --white:#fff; --cover-bg:#10202a; --cover-ink:#fff3d6; --stage-bg:#222; --chip-on:#ffd9a0; --spot-ring-on:#ffe08a;
+  --shade-45:rgba(0,0,0,.45); --shade-70:rgba(0,0,0,.7); --clear:rgba(0,0,0,0); --rule:rgba(120,90,50,.12);
+  --pulse-a:rgba(201,74,63,.6); --pulse-b:rgba(201,74,63,0);
+  --glow-a:rgba(255,236,170,.75); --glow-b:rgba(255,236,170,0); --halo:rgba(255,236,170,.35); --stamp-bg:rgba(255,247,226,.88);
+  --spot-bg:rgba(168,50,42,.88); --spot-look:rgba(42,33,26,.78); --spot-done:rgba(44,106,85,.72);
 }
 @media (prefers-color-scheme:dark){
   :root{
-    --bg:#15130f; --paper:#201c15; --paper2:#2a251b; --ink:#f1e7cf; --ink2:#b9ab8c; --line:#4a4132;
-    --red:#e0614f; --red2:#f08373; --jade:#5ec3a0; --gold:#e1b24c; --blue:#7fc0dd;
-    --ok:#5ec3a0; --bad:#ef7060; --shadow:rgba(0,0,0,.5);
+    --tk-surface:#15130f; --tk-panel:#201c15; --tk-ink:#f1e7cf; --tk-muted:#b9ab8c; --tk-accent:#e0614f; --tk-accent-ink:#fff7ee; --tk-line:#4a4132;
+    --tk-shadow:3px 3px 0 rgba(0,0,0,.7);
+    --paper2:#2a251b; --red2:#f08373; --jade:#5ec3a0; --gold:#e1b24c; --blue:#7fc0dd; --ok:#5ec3a0; --bad:#ef7060;
     --t-orig:#5ec3a0; --t-folk:#e1b24c; --t-made:#b79ae0; --t-adapt:#7fc0dd; --t-field:#ef7060;
   }
 }
+/* 抽掉文化版：整體換成素色，讓兩版一眼分得出來 */
+body.skin{--tk-surface:#e6e9ec;--tk-panel:#f4f6f8;--tk-ink:#1f2933;--tk-muted:#58636f;--tk-line:#b9c2cc;--tk-accent:#3b5f8a;--paper2:#e4e8ec;--red2:#5a7fae;--gold:#6b7785;--spot-bg:rgba(59,95,138,.9)}
+@media (prefers-color-scheme:dark){body.skin{--tk-surface:#14181c;--tk-panel:#1c2228;--tk-ink:#e6ebf0;--tk-muted:#a2adb8;--tk-line:#3a444e;--tk-accent:#7fa6d6;--paper2:#252d35;--red2:#9dbbe2;--gold:#97a3b0}}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.65 "Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;-webkit-text-size-adjust:100%;overflow-x:hidden}
-#app{max-width:720px;margin:0 auto;padding:0 12px 40px}
-h1,h2,h3{font-family:"Noto Serif TC","Songti TC","Microsoft JhengHei",serif;margin:0;line-height:1.35}
+body{background:var(--tk-surface);color:var(--tk-ink);font:16px/1.65 var(--tk-font-body);-webkit-text-size-adjust:100%;overflow-x:hidden}
+#app{max-width:760px;margin:0 auto;padding:0 12px 40px}
+h1,h2,h3{font-family:var(--tk-font-title);margin:0;line-height:1.35}
 p{margin:.4em 0}
 button,select,textarea,input{font:inherit;color:inherit}
-button{min-height:46px;padding:8px 14px;border:2px solid var(--ink2);background:var(--paper);border-radius:10px;cursor:pointer;touch-action:manipulation}
+button{min-height:46px;padding:8px 14px;border:2px solid var(--tk-muted);background:var(--tk-panel);border-radius:var(--tk-radius);cursor:pointer;touch-action:manipulation}
 button:disabled{opacity:.45;cursor:not-allowed}
-button.primary{background:var(--red);border-color:var(--red);color:#fff7ee;font-weight:700}
-button.ghost{border-color:var(--line);background:transparent}
+button:not(.spot):not(.ghost):not(.chip){box-shadow:2px 2px 0 var(--tk-ink)}
+button.primary{background:var(--tk-accent);border-color:var(--tk-accent);color:var(--tk-accent-ink);font-weight:700}
+button.ghost{border-color:var(--tk-line);background:transparent}
 button.sel{outline:3px solid var(--gold);outline-offset:1px}
 button:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,label.opt:focus-within{outline:3px solid var(--blue);outline-offset:2px}
-select,textarea{width:100%;min-height:46px;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--paper)}
+select,textarea{width:100%;min-height:46px;padding:8px 10px;border:2px solid var(--tk-line);border-radius:var(--tk-radius);background:var(--tk-panel)}
 textarea{min-height:84px;resize:vertical}
 
 /* 抬頭 */
-header.top{padding:12px 0 6px}
+header.top{padding:10px 0 4px}
 .titlerow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.titlerow h1{font-size:26px;letter-spacing:.08em}
-.ver{font-size:13px;padding:2px 10px;border-radius:99px;background:var(--red);color:#fff7ee}
-.sub{color:var(--ink2);font-size:14px;margin-top:2px}
-.banner{margin:8px 0 0;padding:8px 12px;border-left:5px solid var(--gold);background:var(--paper2);border-radius:0 8px 8px 0;font-size:14px;color:var(--ink2)}
-.ctl{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.seg{display:flex;border:2px solid var(--ink2);border-radius:10px;overflow:hidden}
+.titlerow h1{font-size:24px;letter-spacing:.08em}
+.ver{font-size:13px;padding:2px 10px;border-radius:99px;background:var(--tk-accent);color:var(--tk-accent-ink)}
+.sub{color:var(--tk-muted);font-size:14px;margin-top:2px}
+.banner{margin:8px 0 0;padding:8px 12px;border-left:5px solid var(--gold);background:var(--paper2);border-radius:0 8px 8px 0;font-size:14px;color:var(--tk-muted)}
+body.playing .sub,body.playing .banner{display:none}
+body.playing .titlerow h1{font-size:19px}
+body.playing .ctl{gap:6px}
+body.playing .ctl button{min-height:44px;padding:4px 10px}
+body.playing .seg button{min-width:58px;padding:4px 8px}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.seg{display:flex;border:2px solid var(--tk-muted);border-radius:var(--tk-radius);overflow:hidden}
 .seg button{border:0;border-radius:0;background:transparent;min-width:84px}
-.seg button.on{background:var(--ink);color:var(--paper);font-weight:700}
+.seg button.on{background:var(--tk-ink);color:var(--tk-panel);font-weight:700}
 
-nav.tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;margin:12px 0;position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0}
-nav.tabs button{border-radius:10px 10px 4px 4px;border-width:2px;padding:6px 4px;font-weight:600}
-nav.tabs button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.badge{display:inline-block;min-width:22px;padding:0 6px;margin-left:4px;border-radius:99px;background:var(--red);color:#fff7ee;font-size:12px;line-height:20px}
+nav.tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;margin:10px 0;position:sticky;top:0;z-index:5;background:var(--tk-surface);padding:6px 0}
+nav.tabs button{border-radius:var(--tk-radius) 10px 4px 4px;border-width:2px;padding:6px 4px;font-weight:600;position:relative}
+nav.tabs button.on{background:var(--tk-ink);color:var(--tk-panel);border-color:var(--tk-ink)}
+nav.tabs[hidden]{display:none}
+.badge{display:inline-block;min-width:22px;padding:0 6px;margin-left:4px;border-radius:99px;background:var(--tk-accent);color:var(--tk-accent-ink);font-size:12px;line-height:20px}
+.dot{position:absolute;top:2px;right:6px;width:10px;height:10px;border-radius:50%;background:var(--red2);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--pulse-a)}100%{box-shadow:0 0 0 10px var(--pulse-b)}}
 
 /* 卡片 */
-.card{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0;box-shadow:0 2px 0 var(--shadow)}
+.card{background:var(--tk-panel);border:1.5px solid var(--tk-line);border-radius:var(--tk-radius);padding:12px 14px;margin:10px 0;box-shadow:var(--tk-shadow)}
 .card h2{font-size:19px}
 .card h3{font-size:16px}
-.muted{color:var(--ink2);font-size:14px}
+.muted{color:var(--tk-muted);font-size:14px}
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px}
 .tag{font-size:12px;padding:0 8px;border-radius:99px;border:1.5px solid currentColor;line-height:20px}
-.tag.orig{color:var(--t-orig)} .tag.folk{color:var(--t-folk)} .tag.made{color:var(--t-made)} .tag.adapt{color:var(--t-adapt)} .tag.field{color:var(--t-field)} .tag.other{color:var(--ink2)}
-.stamp{display:inline-block;border:2.5px solid var(--red);color:var(--red);padding:0 10px;border-radius:6px;font-weight:700;transform:rotate(-4deg);font-size:14px}
-.find{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
-.find button{flex:1 1 220px;text-align:left}
+.tag.orig{color:var(--t-orig)} .tag.folk{color:var(--t-folk)} .tag.made{color:var(--t-made)} .tag.adapt{color:var(--t-adapt)} .tag.field{color:var(--t-field)} .tag.other{color:var(--tk-muted)}
+.stamp{display:inline-block;border:2.5px solid var(--tk-accent);color:var(--tk-accent);padding:0 10px;border-radius:6px;font-weight:700;transform:rotate(-4deg);font-size:14px}
 .got{color:var(--ok);font-weight:700}
 .lock{opacity:.6}
-.msg{margin:8px 0;padding:8px 12px;border-radius:8px;background:var(--paper2);border:1.5px dashed var(--line)}
+.msg{margin:8px 0;padding:8px 12px;border-radius:8px;background:var(--paper2);border:1.5px dashed var(--tk-line)}
 .msg.ok{border-color:var(--ok);border-style:solid}
 .msg.bad{border-color:var(--bad);border-style:solid}
 
 .items{display:flex;gap:8px;flex-wrap:wrap}
 .items button{flex:1 1 140px;text-align:left}
-.items button small{display:block;color:var(--ink2);font-size:12px;line-height:1.35}
+.items button small{display:block;color:var(--tk-muted);font-size:12px;line-height:1.35}
 .pair{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
-details.cx{border:1.5px solid var(--line);border-radius:10px;margin:8px 0;background:var(--paper)}
+details.cx{border:1.5px solid var(--tk-line);border-radius:var(--tk-radius);margin:8px 0;background:var(--tk-panel)}
 details.cx summary{min-height:46px;display:flex;align-items:center;padding:6px 12px;cursor:pointer;font-weight:700;list-style:none}
 details.cx summary::-webkit-details-marker{display:none}
-details.cx summary::after{content:"＋";margin-left:auto;color:var(--ink2)}
+details.cx summary::after{content:"＋";margin-left:auto;color:var(--tk-muted)}
 details.cx[open] summary::after{content:"－"}
 details.cx .in{padding:0 14px 12px}
 
-label.opt{display:flex;gap:10px;align-items:flex-start;min-height:46px;padding:8px 10px;border:2px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;background:var(--paper)}
+label.opt{display:flex;gap:10px;align-items:flex-start;min-height:46px;padding:8px 10px;border:2px solid var(--tk-line);border-radius:var(--tk-radius);margin:6px 0;cursor:pointer;background:var(--tk-panel)}
 label.opt input{margin-top:5px;width:20px;height:20px;flex:none}
 label.opt.on{border-color:var(--gold);background:var(--paper2)}
+
+/* 封面 */
+.cover{position:relative;border-radius:16px;overflow:hidden;border:2px solid var(--tk-ink);background:var(--cover-bg);margin-top:6px}
+.cover svg.art{display:block;width:100%;height:auto;aspect-ratio:400/300}
+.cover .ct{position:absolute;left:0;right:0;top:10%;text-align:center;color:var(--cover-ink);text-shadow:0 2px 10px var(--shade-70)}
+.cover .ct .k{font-size:13px;letter-spacing:.5em;opacity:.85}
+.cover .ct .t{font:900 clamp(38px,12vw,64px)/1.1 var(--tk-font-title);letter-spacing:.12em;margin:6px 0}
+.cover .ct .s{font-size:14px;opacity:.9}
+.coverbar{padding:14px;background:var(--tk-panel);display:grid;gap:10px}
+.coverbar .big{min-height:56px;font-size:19px;letter-spacing:.2em}
+.facts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--tk-muted)}
+.facts span{border:1.5px solid var(--tk-line);border-radius:99px;padding:0 10px;line-height:24px}
+
+/* 序幕（狀紙） */
+.scroll{position:relative;background:var(--tk-panel);border:2px solid var(--tk-muted);border-radius:6px;padding:22px 18px;margin:12px 0;box-shadow:var(--tk-shadow);background-image:repeating-linear-gradient(0deg,transparent 0 31px,var(--rule) 31px 32px)}
+.scroll::before,.scroll::after{content:"";position:absolute;left:-6px;right:-6px;height:12px;border-radius:6px;background:var(--tk-muted)}
+.scroll::before{top:-8px}.scroll::after{bottom:-8px}
+.scroll .pg{font-size:18px;line-height:2;min-height:150px;animation:rise .5s both}
+.scroll .who{font-size:13px;color:var(--tk-muted);letter-spacing:.2em;margin-bottom:6px}
+.dots{display:flex;gap:6px;justify-content:center;margin:6px 0}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--tk-line)}
+.dots i.on{background:var(--tk-accent)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* 地圖與場景 */
+.map{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:5px;margin:4px 0 8px}
+.map button{min-height:50px;padding:4px 2px;font-size:13px;line-height:1.25;border-radius:var(--tk-radius);position:relative}
+.map button.on{background:var(--tk-ink);color:var(--tk-panel);border-color:var(--tk-ink);font-weight:700}
+.map button.lock{opacity:.55;border-style:dashed}
+.map .n{display:block;font-size:11px;color:var(--tk-accent);font-weight:700}
+.map button.on .n{color:var(--chip-on)}
+.stage{position:relative;border:2px solid var(--tk-ink);border-radius:14px;overflow:hidden;background:var(--stage-bg);aspect-ratio:400/260;box-shadow:var(--tk-shadow)}
+.stage svg.art{position:absolute;inset:0;width:100%;height:100%;display:block}
+.spot{position:absolute;width:48px;height:48px;min-height:48px;margin:-24px 0 0 -24px;padding:0;border-radius:50%;border:2.5px solid var(--tk-accent-ink);background:var(--spot-bg);color:var(--white);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px var(--shade-45);animation:glow 1.8s infinite}
+.spot.look{background:var(--spot-look);animation:none}
+.spot.done{background:var(--spot-done);opacity:.8;animation:none}
+.spot.on{outline:3px solid var(--spot-ring-on)}
+.spot:focus-visible{outline:3px solid var(--white);outline-offset:2px}
+@keyframes glow{0%{box-shadow:0 0 0 0 var(--glow-a),0 2px 8px var(--shade-45)}100%{box-shadow:0 0 0 14px var(--glow-b),0 2px 8px var(--shade-45)}}
+.cap{font-size:13px;color:var(--tk-muted);margin:6px 2px}
+.reveal{display:flex;gap:10px;align-items:flex-start;background:var(--tk-panel);border:2px solid var(--tk-muted);border-radius:var(--tk-radius);padding:10px 12px;margin:8px 0;min-height:76px;animation:pop .35s both}
+.reveal .ic{font-size:30px;line-height:1.1;flex:none;width:38px;text-align:center}
+.reveal .hd{font-size:12px;color:var(--tk-muted);letter-spacing:.08em}
+.reveal .tx{font-size:15.5px}
+.reveal.new{border-color:var(--gold);background:linear-gradient(90deg,var(--paper2),var(--tk-panel))}
+.reveal .nw{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;color:var(--tk-accent-ink);background:var(--tk-accent);border-radius:99px;padding:0 10px;line-height:22px}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.goal{font-size:14px;margin:6px 2px;color:var(--tk-muted)}
+.goal b{color:var(--tk-accent)}
+.bag{background:var(--tk-panel);border:1.5px solid var(--tk-line);border-radius:var(--tk-radius);padding:8px 10px;margin:8px 0}
+.bag .hd{font-size:12px;color:var(--tk-muted);letter-spacing:.1em;margin-bottom:4px}
+.bag .row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:48px;display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--tk-radius);font-size:14px}
+.chip .e{font-size:22px}
+.chip.sel{background:var(--paper2)}
+.bagact{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+
+/* 解開特效（不擋點擊） */
+.cele{position:fixed;inset:0;z-index:40;pointer-events:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,var(--halo),var(--clear) 65%);animation:fadeout 2.6s forwards}
+.cele .st{font:900 clamp(40px,14vw,78px)/1 var(--tk-font-title);color:var(--tk-accent);border:6px solid var(--tk-accent);padding:6px 22px;border-radius:var(--tk-radius);background:var(--stamp-bg);transform:rotate(-8deg);animation:slam .55s cubic-bezier(.2,1.6,.4,1) both;text-align:center}
+.cele .st small{display:block;font:600 15px/1.4 system-ui,sans-serif;letter-spacing:.1em;color:var(--tk-ink)}
+.cele i{position:absolute;left:50%;top:50%;width:10px;height:14px;border-radius:2px;animation:burst 1.6s ease-out both}
+@keyframes slam{from{transform:rotate(-8deg) scale(3);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+@keyframes burst{from{transform:translate(0,0) rotate(0);opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
+@keyframes fadeout{0%,70%{opacity:1}100%{opacity:0}}
+
+/* 結局 */
+.rv{animation:rise .7s both}
+.grade{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.grade .seal{width:92px;height:92px;border-radius:50%;border:5px solid var(--tk-accent);color:var(--tk-accent);display:flex;align-items:center;justify-content:center;font:900 40px/1 var(--tk-font-title);transform:rotate(-8deg);flex:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.stats div{background:var(--paper2);border-radius:var(--tk-radius);padding:6px 10px;font-size:13px;color:var(--tk-muted)}
+.stats b{display:block;font-size:20px;color:var(--tk-ink)}
+.stars{font-size:26px;letter-spacing:.1em;color:var(--gold)}
+
+/* 筆記本 */
+.note{border-left:5px solid var(--gold)}
+.note.new{animation:pop .5s both;border-left-color:var(--tk-accent)}
+.logline{font-size:14px;border-bottom:1px dashed var(--tk-line);padding:4px 0}
+.badge.new{background:var(--gold)}
 
 /* 筊杯 */
 #oracleTop{scroll-margin-top:72px}
@@ -93,31 +192,47 @@ label.opt.on{border-color:var(--gold);background:var(--paper2)}
 .bei.throw{animation:flip .7s ease-out}
 .bei.throw.b2{animation-delay:.08s}
 @keyframes flip{0%{transform:translateY(-40px) rotate(0)}60%{transform:translateY(0) rotate(540deg)}80%{transform:translateY(-8px) rotate(600deg)}100%{transform:translateY(0) rotate(720deg)}}
-@media (prefers-reduced-motion:reduce){.bei.throw{animation:none}}
 .incense{display:flex;gap:6px;align-items:flex-end;height:40px;margin:4px 0}
 .stick{width:7px;background:var(--gold);border-radius:2px 2px 0 0;position:relative}
 .stick::before{content:"";position:absolute;left:1px;top:-6px;width:5px;height:6px;border-radius:50%;background:var(--red2)}
-.stick.used{background:var(--line);height:12px!important}
+.stick.used{background:var(--tk-line);height:12px!important}
 .stick.used::before{display:none}
 .qlist{display:grid;gap:8px;margin-top:8px}
 .qlist button{text-align:left}
 .qlist button.done{opacity:.55}
 .res{font-weight:700}
-.res.yes{color:var(--ok)} .res.no{color:var(--bad)} .res.laugh{color:var(--gold)}
 
+.chain{display:flex;align-items:center;gap:6px;margin:4px 0 8px;font-size:13px;color:var(--tk-muted);flex-wrap:wrap}
+.chain span{border:1.5px solid var(--tk-line);border-radius:99px;padding:0 10px;line-height:24px}
+.chain span.on{border-color:var(--ok);color:var(--ok);font-weight:700}
+.chain span.cur{border-color:var(--tk-accent);color:var(--tk-accent);font-weight:700}
 .hintbox{margin-top:10px}
 .hintbox .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hintbox .lv{font-size:12px;color:var(--gold);font-weight:700;letter-spacing:.08em}
 ol.steps{margin:6px 0 0 20px;padding:0}
-#toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,40px);max-width:min(92vw,520px);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:30;font-size:15px}
+#toast{position:fixed;left:50%;bottom:78px;transform:translate(-50%,40px);max-width:min(92vw,520px);background:var(--tk-ink);color:var(--tk-panel);padding:10px 16px;border-radius:var(--tk-radius);opacity:0;pointer-events:none;transition:.25s;z-index:30;font-size:15px}
 #toast.show{opacity:1;transform:translate(-50%,0)}
-footer.foot{margin-top:24px;padding-top:10px;border-top:1.5px solid var(--line);font-size:13px;color:var(--ink2)}
+footer.foot{margin-top:24px;padding-top:10px;border-top:1.5px solid var(--tk-line);font-size:13px;color:var(--tk-muted)}
 .legend{display:flex;gap:6px 14px;flex-wrap:wrap;margin-top:6px}
-pre.json{white-space:pre-wrap;word-break:break-all;font-size:12px}
 .err{color:var(--bad)}
 .warn{color:var(--gold)}
 @media (max-width:420px){
-  .titlerow h1{font-size:22px}
+  .titlerow h1{font-size:20px}
   .seg button{min-width:70px;padding:8px 6px}
+  .map button{font-size:12px}
+  .scroll .pg{font-size:17px}
+}
+/* 場景小動畫 */
+.fl{animation:flick 2.2s infinite alternate}
+@keyframes flick{from{opacity:1}to{opacity:.65}}
+.sw{animation:swing 3.2s ease-in-out infinite alternate}
+@keyframes swing{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+.sm{animation:smoke 3s ease-in-out infinite alternate}
+@keyframes smoke{from{transform:translateY(0);opacity:.7}to{transform:translateY(-6px);opacity:.3}}
+@media (prefers-reduced-motion:reduce){
+  .fl,.sw,.sm{animation:none!important}
+  .bei.throw,.spot,.dot,.rv,.reveal,.cele,.cele .st,.cele i,.scroll .pg{animation:none!important}
+  .cele{opacity:0}
 }
 </style>
 </head>
@@ -142,9 +257,21 @@ pre.json{white-space:pre-wrap;word-break:break-all;font-size:12px}
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script type="application/json" id="data-culture">{"schema":"puzzle-template/1","meta":{"id":"puzzle-xfs","title":"冠不見了","subtitle":"封神查案・解謎（線索推理）樣板","versionLabel":"文化版","bannerNote":"文化卡：擲筊（問神只能問「是不是」）＋魁星造像（認人看手上的東西，不看臉）","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。","reminder":"小提醒：「小上帝」的「小」，原書先說是一個地名——赤崁樓東邊的小鎮，神和廟後來才跟著叫。","tags":{"orig":"原著","folk":"民間","made":"工坊創作","adapt":"改編","field":"田野"},"tagHelp":{"orig":"許丙丁《小封神》書裡有寫","folk":"民間信仰裡常見的說法","made":"這個遊戲自己加的，原書沒有","adapt":"照原書的意思改寫過","field":"你自己去現場看到、問到的"}},"intro":{"title":"冠不見了","text":["天庭收到一張狀紙：小上帝說，他的通天冠被一個獠牙大漢搶走了（「冠被搶」是這個遊戲的讀法），還把一個人吊在榕樹上示眾。","你是天庭派來的稽查書記（這個角色是工坊編的）。今天要查清楚：冠到底怎麼了？該放的人，也要放。","故事改自許丙丁《小封神》第二回。案子裡的線索，有的來自原書，有的是工坊補的，每一張卡都有標示。"],"rules":["到「現場」各處走走，撿東西、看線索","到「線索」頁，把兩樣東西湊在一起看","不認得的人和東西，翻「圖鑑」","到「謎題」頁解開三個謎，最後結案"]},"scenes":[{"id":"s_temple","name":"小上帝廟前","desc":"一間簡陋的廟，三分不像寺、四分不像宮。康元帥和趙元帥站在門口，肚子叫得很大聲。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_testimony","label":"聽康、趙兩位元帥怎麼說"}]},{"id":"s_banyan","name":"榕樹下","desc":"一棵大榕樹。樹頂吊著一個人，樹根旁散落著幾樣東西。","tag":["orig","made"],"finds":[{"kind":"clue","id":"K2","label":"抬頭看看被吊的人"},{"kind":"item","id":"i_brush","label":"撿起樹根旁的毛筆"},{"kind":"item","id":"i_ink","label":"撿起旁邊的墨斗"},{"kind":"item","id":"i_rope","label":"摸摸吊人的繩索"}]},{"id":"s_pawn","name":"打銀街・同裕當店","desc":"打銀街上的同裕當店。櫃台後面沒有人，只有一本攤開的帳冊壓在算盤下。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_ledger","label":"翻看攤開的帳冊"}]},{"id":"s_gate","name":"媽祖宮口","desc":"天上聖母（媽祖）廟的門口。廟門關得緊緊的，四周靜悄悄。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_cloth","label":"看看門前地上的布"}]},{"id":"s_earth","name":"路邊的土地公廟","desc":"一間小小的土地公廟，香爐還有餘溫。老土地公最會幫人排解糾紛，也許祂知道些什麼。","tag":["made","orig"],"opens":{"clues":["K3","K4"]},"lockedText":"還沒有理由去問神。先把當店和媽祖廟口都看過。","finds":[{"kind":"item","id":"i_bei","label":"拿起香爐旁的筊杯"}]}],"items":[{"id":"i_testimony","name":"口供紙","desc":"記下康、趙兩位元帥說法的紙。","clue":"K1"},{"id":"i_brush","name":"朱筆","desc":"筆尖還是紅的，掉在樹根旁。"},{"id":"i_ink","name":"墨斗","desc":"木頭做的，線還繞在裡面。"},{"id":"i_rope","name":"吊人的繩索","desc":"很粗的一條繩，原書叫它捆妖索。"},{"id":"i_ledger","name":"當店帳冊","desc":"同裕當店今天那一頁的帳。","clue":"K3"},{"id":"i_cloth","name":"賭攤布","desc":"畫著格子的布，旁邊散著幾枚錢。","clue":"K4"},{"id":"i_bei","name":"筊杯","desc":"兩塊半月形的木片，拿來問神。"}],"clues":[{"id":"K1","title":"康趙的口供","tag":["orig","adapt"],"text":"康元帥、趙元帥回廟稟報：「是在媽祖宮口，被一個獠牙大漢千里眼搶去了。」（原書沒寫被搶的是什麼；這個遊戲讀成「冠被搶」。）你看了看廟裡，冷冷清清，三位神明都像沒吃飽。","src":"P1 第二回 PDF頁6（原句）；「冠被搶」為改編：P3 頁41 讀成冠、頁70 讀成錢，兩說並存"},{"id":"K2","title":"吊在榕樹上的人","tag":["orig","made"],"text":"榕樹頂上吊著一個人，瘦得像柴。他嘴邊露出獠牙，和康趙形容的「獠牙大漢」一模一樣；他委屈得直掉眼淚，卻說不出話。（你記得《小封神》寫過：有一位神，面目和千里眼是同一個樣子。）","src":"P1 第二回 PDF頁6（同是一樣面目）；第三回 PDF頁7（儒弱、骨瘦像柴）、頁9（形容枯槁、榕樹頂）；獠牙為推論；掉淚、說不出話為工坊創作"},{"id":"K3","title":"當店帳冊","tag":["orig","made"],"text":"同裕當店的帳冊，這一頁寫著：「收　銅鍍金通天冠一頂；付　五千錢。」經手的是兩位穿盔甲的神明，一位紅臉、一位青臉。","src":"P1 第二回 PDF頁4（紅面康、青面趙）、頁5（店名、銅鍍金、五千錢）；穿盔甲來自民間造像；帳冊格式為工坊創作（待確認）"},{"id":"K4","title":"媽祖廟口的賭攤","tag":["orig","made"],"text":"媽祖廟門前，廟門關得緊緊的。地上鋪著一塊畫了格子的賭攤布，旁邊散著幾枚錢。平常站在媽祖兩旁的兩位護法，今天不在原位。","src":"P1 第二回 PDF頁5–6（廟口賭戲、關廟門）；賭攤布為工坊創作"},{"id":"K5","title":"成套的筆墨","tag":["folk","orig"],"text":"一支朱筆配一個墨斗，成套出現——民間認得，這是某一位神明的標記。（到圖鑑找找看是誰。）","src":"P3 頁74（右手筆、左手墨斗）；P1 第二十四回 PDF頁90（賜朱筆墨斗）"},{"id":"K6","title":"土地公的回答","tag":["made"],"text":"你向土地公問了幾件事，筊杯這樣回答：","src":"工坊創作（問神的情節）","compose":"oracle"}],"combos":[{"a":"i_brush","b":"i_ink","gives":"K5"},{"a":"i_testimony","b":"i_ledger","msg":"口供說冠被搶走了；帳冊卻寫著冠已經當出去、收了五千錢。兩邊不可能同時是真的。"},{"a":"i_ledger","b":"i_cloth","msg":"當店付出去的五千錢，和賭攤布旁邊的錢……會是同一筆嗎？先記在心裡。"},{"a":"i_rope","b":"i_brush","msg":"繩子綁的是人，不是筆。這樣湊不出什麼。"},{"a":"i_bei","b":"i_ledger","msg":"神明不看帳冊。想知道什麼，要用問的。"},{"a":"i_testimony","b":"i_cloth","msg":"口供說千里眼搶了東西。可是廟口這裡，被拿走的好像只有錢。先記在心裡。"}],"comboDefault":"這兩樣湊不出什麼。換兩樣試試。","codex":[{"id":"c_kuixing","name":"魁星","tag":["folk","orig"],"text":"管考運的神。民間造像常見：右手拿筆（原書結尾賜他「朱筆墨斗」）、左手拿墨斗、一腳踩鰲頭、另一腳高高踢起（「魁星踢斗，獨占鰲頭」）。《小封神》裡他是個儒弱的小書生。","src":"P1 第二回、第二十四回；P3 頁74"},{"id":"c_qianli","name":"千里眼・順風耳","tag":["orig","folk"],"text":"天上聖母（媽祖）的兩位手下，民間常見他們分站媽祖兩旁。千里眼眼觀四方，順風耳耳聽八達。有論文記載大天后宮的神像是千里眼綠臉、順風耳紅臉；各廟的顏色不一定一樣——去現場核對看看。","src":"P1 第二回 PDF頁5–6；P3 頁71、頁110（顏色一項待現場核對）","field":"f_qianli"},{"id":"c_kangzhao","name":"康元帥・趙元帥","tag":["orig"],"text":"玉皇大帝派來輔佐小上帝的兩位元帥，總是一起行動。康元帥是紅臉，趙元帥是青臉。","src":"P1 第一回 PDF頁2、第二回 PDF頁4"},{"id":"c_xiaoshangdi","name":"小上帝（玄天上帝）","tag":["orig"],"text":"原書也叫他「上帝爺」。專管龜精蛇怪，腳踩龜和蛇；脫下冠後披頭散髮，發怒時赤腳提劍。他到偏僻的小上帝鎮赴任，廟窮、香火少，脾氣急，受冷落時也忍氣吞聲。","src":"P1 第一、二回；P3 頁62、頁103"},{"id":"c_tongtian","name":"通天冠","tag":["orig"],"text":"小上帝頭上戴的冠，原書寫它是「銅鍍金」的。","src":"P1 第二回 PDF頁5"},{"id":"c_bei","name":"擲筊（簡化）","tag":["folk"],"text":"民間問神的方式：丟兩塊半月形的筊杯，看落地的樣子。常見說法：一面平、一面圓凸＝聖筊（神明同意）；兩塊都凸面朝上＝陰筊（不同意）；兩塊都平面朝上＝笑筊（沒有答案，通常重問）。各地、各廟、各位長輩的說法會有點不同；重要的事常要連擲三個聖筊才算。問神通常一次問一件事、問清楚。遊戲裡的「香有限」是遊戲規則，不是民俗規定。","src":"民間說法（用字待文史顧問確認；說法有地區差異）","field":"f_bei"},{"id":"c_tudi","name":"土地公","tag":["folk","orig"],"text":"管一個地方的神。《小封神》裡有一位老土地（原書是安海街土地），四處奔走幫忙排解糾紛。路邊這間小廟是工坊借來讓你問事的，不是哪一間真實的廟。","src":"P1 第十九回、第二十四回"},{"id":"c_tongyu","name":"打銀街・同裕當店","tag":["orig"],"text":"原書裡的一條街和一間店：打銀街（約是今天臺南忠義路一帶）的同裕當店。當店就是拿東西抵押換錢的地方，之後可以拿錢去贖。","src":"P1 第二回 PDF頁5；P2 頁167 註14；P3 頁115–116"},{"id":"c_mazu","name":"媽祖宮口","tag":["orig"],"text":"天上聖母（媽祖）廟門前一帶，原書的地名；學者對到臺南的大天后宮。","src":"P1 第二回；P3 頁109–111"},{"id":"c_kuixing_field","name":"（留給你）魁星像長什麼樣","tag":["field"],"text":"圖鑑只是紙上的說法。真的魁星像，手上拿什麼、腳怎麼站？","field":"f_kuixing"}],"fieldwork":[{"id":"f_qianli","prompt":"去大天后宮，或你家附近的媽祖廟：千里眼、順風耳各站哪一邊？各是什麼臉色？拍照或畫下來，寫一句你看到的。","placeholder":"例：左邊的是……，臉是……色","note":"這一格 AI 幫不了你，只有去現場的人寫得出來。"},{"id":"f_bei","prompt":"問一位長輩：他擲筊的時候怎麼問？得到笑筊時怎麼辦？","placeholder":"他說：……","note":"長輩的原話，比 AI 寫的更有用。"},{"id":"f_kuixing","prompt":"找一間有魁星像的廟或閣，看看：他手上拿什麼？腳怎麼站？","placeholder":"我看到……","note":"看到的和圖鑑寫的一不一樣？不一樣更好。"}],"puzzles":[{"id":"p1","type":"identify","title":"吊在樹上的人是誰？","prompt":"康趙說搶冠的是「獠牙大漢千里眼」，小上帝就把榕樹上這個人吊起來示眾。他真的是千里眼嗎？先選他是誰，再選你憑什麼這樣認。","needsClues":["K2","K5"],"lockedText":"還缺線索：先去榕樹下看看被吊的人，再把樹根旁撿到的東西湊在一起看。","whoLabel":"他是誰？","who":[{"id":"w_qianli","label":"千里眼","fb":"千里眼是媽祖的護法。康趙說搶冠的是他，但這個被吊的人身上的東西，不是千里眼會拿的。回圖鑑對一對。"},{"id":"w_shunfeng","label":"順風耳","fb":"康趙沒有提到順風耳，現場的東西也和順風耳對不上。再想想。"},{"id":"w_kuixing","label":"魁星"},{"id":"w_zhao","label":"趙元帥","fb":"趙元帥是青臉沒錯，但他是康趙二帥之一，帳冊上還有他的份，他不會被吊在樹上。"}],"answerWho":"w_kuixing","reasonLabel":"你憑什麼這樣認？","reasons":[{"id":"r_face","label":"他有獠牙，跟康趙形容的一模一樣。","fb":"臉不能當證據：書上說有一位神和千里眼「同是一樣面目」。兩個人長得一樣的時候，要看別的。"},{"id":"r_tools","label":"地上的朱筆和墨斗是成套的，那是某一位神明的標記。"},{"id":"r_hung","label":"他被吊在樹上，所以他一定做了壞事。","fb":"被吊只代表小上帝在氣頭上，不代表這個人做過什麼。"},{"id":"r_rope","label":"吊他用的是捆妖索，所以他是妖怪。","fb":"捆妖索是小上帝手上的工具，拿它綁誰，不能證明被綁的是誰。"}],"answerReason":"r_tools","mismatchText":"認的人和理由對不上。再想想：你的理由真的指向你選的那個人嗎？","okText":"對。臉分不出來，但手上的東西不會騙人：朱筆配墨斗，是魁星的標記。被吊的是魁星，不是千里眼——小上帝抓錯人了。","onSolve":{"appendClue":{"id":"K2","text":"【已認出：這位被吊的，是魁星。】"}},"hints":["被吊的人有獠牙，但書上說有一位神和千里眼「同一副面目」。臉分不出來的時候，要看別的東西。","圖鑑裡每一位神明都寫了「拿著什麼」。哪一位的手上是一支朱筆加一個墨斗？","這位神管考運，是個儒弱的小書生，最有名的姿勢是一腳踢斗。選他，再選「成套的筆墨」當理由。"]},{"id":"p2","type":"oracle","title":"問土地公","prompt":"口供和帳冊對不起來，錢又不知去向。用筊杯問土地公吧——但每問一次要燒一炷香，香有限。想清楚再問。","needsClues":["K3","K4"],"needsItems":["i_bei"],"lockedText":"要先有筊杯，而且得先看過當店和媽祖廟口，才知道要問什麼。","oracle":{"mode":"bei","incense":3,"laughLimit":2,"strictYesNo":true,"questions":[{"id":"y1","text":"冠被搶走了嗎？","form":"yesno","answer":false,"means":"冠不是被搶走的。"},{"id":"y2","text":"冠是被人拿去換錢了嗎？","form":"yesno","answer":true,"means":"冠是被人拿去換錢的。"},{"id":"y3","text":"換來的錢，還在拿去換錢的人手上嗎？","form":"yesno","answer":false,"means":"錢已經不在他們手上了。"},{"id":"y4","text":"那筆錢是在媽祖宮口的賭攤輸掉的嗎？","form":"yesno","answer":true,"means":"錢是在媽祖宮口的賭攤輸掉的。"},{"id":"y5","text":"被吊在樹上的那位偷了冠嗎？","form":"yesno","answer":false,"means":"被吊的人沒偷冠。你抬頭看了一眼，他還在晃。"},{"id":"y6","text":"康、趙兩位元帥說的是實話嗎？","form":"yesno","answer":false,"means":"康趙說的不是實話。"},{"id":"y7","text":"是小上帝自己叫人把冠拿去當的嗎？","form":"yesno","answer":true,"means":"是小上帝自己叫人拿去當的。"},{"id":"o1","text":"冠到底去哪裡了？","form":"open"},{"id":"o2","text":"冠是被搶走，還是被拿去當？","form":"open"},{"id":"o3","text":"神明，請直接告訴我是誰幹的。","form":"open"}],"solveWhen":["y4","y7"],"laughText":"笑筊——這樣問，筊杯答不出來。拆開來，一次問一件事。","yesText":"聖筊——神明點頭：是。","noText":"陰筊——神明搖頭：不是。","repeatText":"這件事問過了，神明不改口。","emptyText":"香燒完了，土地公說：「明天再來。」公文還在排隊蓋章。（問到的答案你都記下了。）","tiredText":"筊杯連笑兩次，這幾題先放一放；歇一下再重新備香。"},"okText":"兩件關鍵事都問到了：是小上帝自己叫人拿冠去當；錢是在媽祖廟口的賭攤輸掉的。土地公的回答已記成線索。","onSolve":{"giveClue":"K6"},"hints":["神明不是什麼都肯答。看看「笑筊」出現時神明說了什麼，想想問法哪裡不對。","只有「是不是」的問題，神明才答得出來。「到底是A還是B」「是誰」這種問法，祂只會笑。","你還缺兩件事：誰叫人把冠拿去當？錢後來在哪裡不見的？挑這兩件，用「是不是」問。"]},{"id":"p3","type":"accuse","title":"結案","prompt":"把案子說清楚。你是書記，沒有憑據不下筆：每一題選一個答案，再勾出支持它的線索卡。","needsPuzzles":["p1","p2"],"lockedText":"先解開前兩個謎，才有資格結案。","evidenceLabel":"證據（勾出支持這個答案的線索卡）","rows":[{"id":"a1","q":"通天冠現在在哪裡？","options":[{"id":"a1a","label":"被獠牙大漢搶走了","fb":"「被搶」只是口供，帳冊和土地公都不是這麼說。"},{"id":"a1b","label":"在同裕當店裡（當出去了）"},{"id":"a1c","label":"在媽祖廟的廟門裡","fb":"賭攤上輸掉的是錢，不是冠。"}],"answer":"a1b","must":["K3"]},{"id":"a2","q":"誰說了謊？","options":[{"id":"a2a","label":"魁星","fb":"狀紙還在排隊蓋章。魁星是被冤枉的那個，連話都說不出來。"},{"id":"a2b","label":"康元帥和趙元帥"},{"id":"a2c","label":"當店","fb":"帳冊寫得清清楚楚，說謊的不在當店。"}],"answer":"a2b","must":["K1","K3"]},{"id":"a3","q":"是誰叫人把冠拿去當的？","options":[{"id":"a3a","label":"小上帝自己"},{"id":"a3b","label":"千里眼","fb":"千里眼只是在廟口贏了錢，冠不是他叫人當的。"},{"id":"a3c","label":"土地公","fb":"土地公只是被你問話的那位。"}],"answer":"a3a","must":["K6"]},{"id":"a4","q":"那筆五千錢，最後輸給了誰？","options":[{"id":"a4a","label":"魁星","fb":"魁星那時候是被吊著的，沒碰過那筆錢。"},{"id":"a4b","label":"千里眼和順風耳（媽祖廟口的護法）"},{"id":"a4c","label":"同裕當店","fb":"當店是付錢給他們的那一方，錢不是輸給當店。"}],"answer":"a4b","must":["K4","K6"]}],"okText":"結案！每一題都有證據撐著。","missingEvidenceText":"答案對了，但還缺證據：請勾出能證明它的線索卡。","hints":["每一題要選一個答案，再勾出能證明它的線索卡。找不到證據的答案，先別選。","哪些人說的話，和物證對不起來？口供和帳冊放在一起看。","帳冊上經手的兩位，一紅臉一青臉——圖鑑裡找他們是誰。再看看土地公回答了什麼。"]}],"ending":{"title":"案情說明","lines":[{"text":"冠沒有被搶。小上帝窮得沒飯吃，叫康、趙二帥把銅鍍金的通天冠拿到打銀街的同裕當店，當了五千錢。","tag":["orig"]},{"text":"二帥路過媽祖廟口，見千里眼、順風耳在「拋璉寶」，想賭贏好贖回冠，結果五千錢輸得精光。沒辦法，只好糊裡糊塗回稟：「在媽祖宮口，被獠牙大漢千里眼搶去了。」","tag":["orig","adapt"]},{"text":"小上帝聽了，氣得赤腳提劍衝出去，把路過的魁星當成千里眼，吊在榕樹上。魁星和千里眼「同是一樣面目」，所以認錯人。","tag":["orig"]},{"text":"有趣的是：康趙那句「被千里眼搶了」，其實半真半假——錢，確實是被千里眼贏走的；「冠」不是。（這一句是工坊的讀法。）","tag":["made"]},{"text":"這個遊戲裡的筆墨、帳冊、賭攤布、土地公問神，是工坊為了讓你「查」出來而補的，原書沒有。「冠被搶」的說法也是工坊的讀法（原書沒寫被搶的是什麼）。","tag":["made"]},{"text":"你遞上結案書，魁星被放了下來。他揉揉手腕，什麼也沒說——倒是小上帝，這回換他說不出話了。","tag":["made"]}],"storyPrompt":"挑一個人（小上帝、康趙、魁星），用一句話說他的故事：他想要什麼？被什麼卡住？最後怎樣？","storyPlaceholder":"例：（挑一個人）他想要……，卡在……，最後……","storyMax":80},"judge":{"title":"玩完之後，想一想","question":"把這個遊戲裡的文化抽掉（神明換成普通人、問神換成普通問答），這個遊戲還玩得下去嗎？","options":[{"id":"j1","label":"照樣玩得下去"},{"id":"j2","label":"故事沒味道了，但還玩得下去"},{"id":"j3","label":"抽掉文化，這個遊戲就沒得玩了"},{"id":"j4","label":"說不準"}],"expected":"j2","expectedText":"參考看法：「找線索→湊東西→推理」這個流程，抽掉文化還在，所以遊戲還玩得下去。但「線索是什麼意思」（朱筆墨斗是誰的、神怎麼回答、什麼問法會被笑）要靠文化知識才讀得懂；抽掉之後，謎題只剩「照字面對答案」，變得像數字鎖。你的看法不一樣也行，寫下理由就好。","reasonPlaceholder":"用一句話寫理由","followups":["切到「抽掉文化版」玩一次：哪一個謎變得最簡單？為什麼？","如果把「問土地公」換成「問證人」，你還需要先想怎麼問嗎？"]}}</script>
-<script type="application/json" id="data-skin">{"schema":"puzzle-template/1","meta":{"id":"puzzle-xfs-skin","title":"冠不見了","subtitle":"封神查案・解謎（線索推理）樣板","versionLabel":"抽掉文化版","bannerNote":"這一版把文化抽掉了：名牌代替造像、普通問答代替擲筊。故事和人名留著，但解謎不再需要任何文化知識。","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。","reminder":"小提醒：「小上帝」的「小」，原書先說是一個地名——赤崁樓東邊的小鎮，神和廟後來才跟著叫。","tags":{"orig":"原著","folk":"民間","made":"工坊創作","adapt":"改編","field":"田野"},"tagHelp":{"orig":"許丙丁《小封神》書裡有寫","folk":"民間信仰裡常見的說法","made":"這個遊戲自己加的，原書沒有","adapt":"照原書的意思改寫過","field":"你自己去現場看到、問到的"},"skinOf":"puzzle-xfs"},"intro":{"title":"冠不見了","text":["天庭收到一張狀紙：小上帝說，他的通天冠被一個獠牙大漢搶走了（「冠被搶」是這個遊戲的讀法），還把一個人吊在榕樹上示眾。","你是天庭派來的稽查書記（這個角色是工坊編的）。今天要查清楚：冠到底怎麼了？該放的人，也要放。","故事改自許丙丁《小封神》第二回。案子裡的線索，有的來自原書，有的是工坊補的，每一張卡都有標示。"],"rules":["到「現場」各處走走，撿東西、看線索","到「線索」頁，把兩樣東西湊在一起看","到「謎題」頁解開三個謎，最後結案"]},"scenes":[{"id":"s_temple","name":"小上帝廟前","desc":"一間簡陋的廟，三分不像寺、四分不像宮。康元帥和趙元帥站在門口，肚子叫得很大聲。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_testimony","label":"聽康、趙兩位元帥怎麼說"}]},{"id":"s_banyan","name":"榕樹下","desc":"一棵大榕樹。樹頂吊著一個人，樹根旁散落著幾樣東西。","tag":["orig","made"],"finds":[{"kind":"clue","id":"K2","label":"抬頭看看被吊的人"},{"kind":"item","id":"i_brush","label":"撿起樹根旁的毛筆"},{"kind":"item","id":"i_ink","label":"撿起旁邊的墨斗"},{"kind":"item","id":"i_rope","label":"摸摸吊人的繩索"}]},{"id":"s_pawn","name":"打銀街・同裕當店","desc":"打銀街上的同裕當店。櫃台後面沒有人，只有一本攤開的帳冊壓在算盤下。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_ledger","label":"翻看攤開的帳冊"}]},{"id":"s_gate","name":"媽祖宮口","desc":"天上聖母（媽祖）廟的門口。廟門關得緊緊的，四周靜悄悄。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_cloth","label":"看看門前地上的布"}]},{"id":"s_earth","name":"路邊的小攤","desc":"路邊的一個小攤，老闆天天看著街上來來往往的人，什麼事都知道一點。","tag":["made"],"opens":{"clues":["K3","K4"]},"lockedText":"還沒有理由去問人。先把當店和媽祖廟口都看過。","finds":[{"kind":"item","id":"i_bei","label":"拿起攤上的紙筆"}]}],"items":[{"id":"i_testimony","name":"口供紙","desc":"記下康、趙兩位元帥說法的紙。","clue":"K1"},{"id":"i_brush","name":"朱筆","desc":"筆尖還是紅的，掉在樹根旁。"},{"id":"i_ink","name":"墨斗","desc":"木頭做的，線還繞在裡面。"},{"id":"i_rope","name":"吊人的繩索","desc":"很粗的一條繩，原書叫它捆妖索。"},{"id":"i_ledger","name":"當店帳冊","desc":"同裕當店今天那一頁的帳。","clue":"K3"},{"id":"i_cloth","name":"賭攤布","desc":"畫著格子的布，旁邊散著幾枚錢。","clue":"K4"},{"id":"i_bei","name":"紙筆","desc":"拿來記問話的紙和筆。"}],"clues":[{"id":"K1","title":"康趙的口供","tag":["orig","adapt"],"text":"康元帥、趙元帥回廟稟報：「是在媽祖宮口，被一個獠牙大漢千里眼搶去了。」（原書沒寫被搶的是什麼；這個遊戲讀成「冠被搶」。）你看了看廟裡，冷冷清清，三位神明都像沒吃飽。","src":"P1 第二回 PDF頁6（原句）；「冠被搶」為改編：P3 頁41 讀成冠、頁70 讀成錢，兩說並存"},{"id":"K2","title":"吊在榕樹上的人","tag":["made"],"text":"榕樹頂上吊著一個人，瘦得像柴，委屈得直掉眼淚。他胸前掛著一塊名牌，寫著「魁星」。","src":"抽掉文化版：名牌直接寫出身分"},{"id":"K3","title":"當店帳冊","tag":["orig","made"],"text":"同裕當店的帳冊，這一頁寫著：「收　銅鍍金通天冠一頂；付　五千錢。」經手人欄寫著：康元帥、趙元帥。","src":"P1 第二回 PDF頁4（紅面康、青面趙）、頁5（店名、銅鍍金、五千錢）；穿盔甲來自民間造像；帳冊格式為工坊創作（待確認）"},{"id":"K4","title":"媽祖廟口的賭攤","tag":["orig","made"],"text":"媽祖廟門前，廟門關得緊緊的。地上鋪著一塊畫了格子的賭攤布，旁邊散著幾枚錢。平常站在媽祖兩旁的兩位護法，今天不在原位。","src":"P1 第二回 PDF頁5–6（廟口賭戲、關廟門）；賭攤布為工坊創作"},{"id":"K5","title":"成套的筆墨","tag":["made"],"text":"一支朱筆和一個墨斗，是一套文具。","src":"抽掉文化版：普通文具"},{"id":"K6","title":"攤販的回答","tag":["made"],"text":"你向路邊的攤販問了幾件事，他這樣回答：","src":"工坊創作（問神的情節）","compose":"oracle"}],"combos":[{"a":"i_brush","b":"i_ink","gives":"K5"},{"a":"i_testimony","b":"i_ledger","msg":"口供說冠被搶走了；帳冊卻寫著冠已經當出去、收了五千錢。兩邊不可能同時是真的。"},{"a":"i_ledger","b":"i_cloth","msg":"當店付出去的五千錢，和賭攤布旁邊的錢……會是同一筆嗎？先記在心裡。"},{"a":"i_rope","b":"i_brush","msg":"繩子綁的是人，不是筆。這樣湊不出什麼。"},{"a":"i_bei","b":"i_ledger","msg":"紙筆不是拿來對帳的。想知道什麼，直接問人。"},{"a":"i_testimony","b":"i_cloth","msg":"口供說千里眼搶了東西。可是廟口這裡，被拿走的好像只有錢。先記在心裡。"}],"comboDefault":"這兩樣湊不出什麼。換兩樣試試。","codex":[],"fieldwork":[],"puzzles":[{"id":"p1","type":"identify","title":"吊在樹上的人是誰？","prompt":"康趙說搶冠的是「千里眼」，小上帝就把榕樹上這個人吊起來示眾。他真的是千里眼嗎？先選他是誰，再選你憑什麼這樣認。","needsClues":["K2"],"lockedText":"先去榕樹下看看被吊的人。","whoLabel":"他是誰？","who":[{"id":"w_qianli","label":"千里眼","fb":"他胸前的名牌不是這個名字。再看一次線索卡。"},{"id":"w_shunfeng","label":"順風耳","fb":"他胸前的名牌不是這個名字。再看一次線索卡。"},{"id":"w_kuixing","label":"魁星"},{"id":"w_zhao","label":"趙元帥","fb":"他胸前的名牌不是這個名字。再看一次線索卡。"}],"answerWho":"w_kuixing","reasonLabel":"你憑什麼這樣認？","reasons":[{"id":"r_face","label":"他的樣子，跟康趙形容的一模一樣。","fb":"臉色不能當證據，名牌上寫的才是名字。"},{"id":"r_tools","label":"他胸前的名牌寫著名字。"},{"id":"r_hung","label":"他被吊在樹上，所以他一定做了壞事。","fb":"被吊只代表小上帝在氣頭上，不代表這個人做過什麼。"},{"id":"r_rope","label":"吊他用的是一條粗繩，所以他是壞人。","fb":"用什麼繩子吊他，不能證明他是誰。"}],"answerReason":"r_tools","mismatchText":"認的人和理由對不上。再想想：你的理由真的指向你選的那個人嗎？","okText":"對。名牌寫得清清楚楚：被吊的是魁星，不是千里眼——小上帝抓錯人了。","onSolve":{"appendClue":{"id":"K2","text":"【已認出：這位被吊的，是魁星。】"}},"hints":["看看被吊的人身上有沒有寫著什麼。","名牌上寫的是誰的名字？","選「魁星」，理由選名牌那一個。"]},{"id":"p2","type":"oracle","title":"問路邊的攤販","prompt":"口供和帳冊對不起來，錢又不知去向。去問路邊的攤販吧——他只回答「是」或「不是」，次數有限，問法要問得出是非。","needsClues":["K3","K4"],"needsItems":["i_bei"],"lockedText":"要先有紙筆，而且得先看過當店和媽祖廟口，才知道要問什麼。","oracle":{"mode":"plain","incense":3,"laughLimit":2,"strictYesNo":true,"questions":[{"id":"y1","text":"冠被搶走了嗎？","form":"yesno","answer":false,"means":"冠不是被搶走的。"},{"id":"y2","text":"冠是被人拿去換錢了嗎？","form":"yesno","answer":true,"means":"冠是被人拿去換錢的。"},{"id":"y3","text":"換來的錢，還在拿去換錢的人手上嗎？","form":"yesno","answer":false,"means":"錢已經不在他們手上了。"},{"id":"y4","text":"那筆錢是在媽祖宮口的賭攤輸掉的嗎？","form":"yesno","answer":true,"means":"錢是在媽祖宮口的賭攤輸掉的。"},{"id":"y5","text":"被吊在樹上的那位偷了冠嗎？","form":"yesno","answer":false,"means":"被吊的人沒偷冠。你抬頭看了一眼，他還在晃。"},{"id":"y6","text":"康、趙兩位元帥說的是實話嗎？","form":"yesno","answer":false,"means":"康趙說的不是實話。"},{"id":"y7","text":"是小上帝自己叫人把冠拿去當的嗎？","form":"yesno","answer":true,"means":"是小上帝自己叫人拿去當的。"},{"id":"o1","text":"冠到底去哪裡了？","form":"open"},{"id":"o2","text":"冠是被搶走，還是被拿去當？","form":"open"},{"id":"o3","text":"請直接告訴我是誰幹的。","form":"open"}],"solveWhen":["y4","y7"],"laughText":"這樣問我答不出來，換個問法。","yesText":"是。","noText":"不是。","repeatText":"這個問過了，他的答案不會變。","emptyText":"次數用完了，他說：「明天再來。」（問到的答案你都記下了。）","tiredText":"他不想再回答了。先歇一下再重新來。"},"okText":"兩件關鍵事都問到了：是小上帝自己叫人拿冠去當；錢是在媽祖廟口的賭攤輸掉的。攤販的回答已記成線索。","onSolve":{"giveClue":"K6"},"hints":["還缺什麼消息？想想口供和帳冊哪裡對不起來。","挑跟冠、跟錢有關的問題問。","你還缺兩件事：誰叫人把冠拿去當？錢後來在哪裡不見的？"]},{"id":"p3","type":"accuse","title":"結案","prompt":"把案子說清楚。你是書記，沒有憑據不下筆：每一題選一個答案，再勾出支持它的線索卡。","needsPuzzles":["p1","p2"],"lockedText":"先解開前兩個謎，才有資格結案。","evidenceLabel":"證據（勾出支持這個答案的線索卡）","rows":[{"id":"a1","q":"通天冠現在在哪裡？","options":[{"id":"a1a","label":"被獠牙大漢搶走了","fb":"「被搶」只是口供，帳冊和攤販都不是這麼說。"},{"id":"a1b","label":"在同裕當店裡（當出去了）"},{"id":"a1c","label":"在媽祖廟的廟門裡","fb":"賭攤上輸掉的是錢，不是冠。"}],"answer":"a1b","must":["K3"]},{"id":"a2","q":"誰說了謊？","options":[{"id":"a2a","label":"魁星","fb":"狀紙還在排隊蓋章。魁星是被冤枉的那個，連話都說不出來。"},{"id":"a2b","label":"康元帥和趙元帥"},{"id":"a2c","label":"當店","fb":"帳冊寫得清清楚楚，說謊的不在當店。"}],"answer":"a2b","must":["K1","K3"]},{"id":"a3","q":"是誰叫人把冠拿去當的？","options":[{"id":"a3a","label":"小上帝自己"},{"id":"a3b","label":"千里眼","fb":"千里眼只是在廟口贏了錢，冠不是他叫人當的。"},{"id":"a3c","label":"路邊的攤販","fb":"攤販只是被你問話的那位。"}],"answer":"a3a","must":["K6"]},{"id":"a4","q":"那筆五千錢，最後輸給了誰？","options":[{"id":"a4a","label":"魁星","fb":"魁星那時候是被吊著的，沒碰過那筆錢。"},{"id":"a4b","label":"千里眼和順風耳（媽祖廟口的護法）"},{"id":"a4c","label":"同裕當店","fb":"當店是付錢給他們的那一方，錢不是輸給當店。"}],"answer":"a4b","must":["K4","K6"]}],"okText":"結案！每一題都有證據撐著。","missingEvidenceText":"答案對了，但還缺證據：請勾出能證明它的線索卡。","hints":["每一題要選一個答案，再勾出能證明它的線索卡。找不到證據的答案，先別選。","哪些人說的話，和物證對不起來？口供和帳冊放在一起看。","帳冊的經手人欄寫的是誰？再看看攤販回答了什麼。"]}],"ending":{"title":"案情說明","lines":[{"text":"冠沒有被搶。小上帝窮得沒飯吃，叫康、趙二帥把銅鍍金的通天冠拿到打銀街的同裕當店，當了五千錢。","tag":["orig"]},{"text":"二帥路過媽祖廟口，見千里眼、順風耳在「拋璉寶」，想賭贏好贖回冠，結果五千錢輸得精光。沒辦法，只好糊裡糊塗回稟：「在媽祖宮口，被獠牙大漢千里眼搶去了。」","tag":["orig","adapt"]},{"text":"小上帝聽了，氣得赤腳提劍衝出去，把路過的魁星當成千里眼，吊在榕樹上。","tag":["orig"]},{"text":"有趣的是：康趙那句「被千里眼搶了」，其實半真半假——錢，確實是被千里眼贏走的；「冠」不是。（這一句是工坊的讀法。）","tag":["made"]},{"text":"這個遊戲裡的筆墨、帳冊、賭攤布、攤販問話，是工坊為了讓你「查」出來而補的，原書沒有。「冠被搶」的說法也是工坊的讀法（原書沒寫被搶的是什麼）。","tag":["made"]},{"text":"你遞上結案書，魁星被放了下來。他揉揉手腕，什麼也沒說——倒是小上帝，這回換他說不出話了。","tag":["made"]}],"storyPrompt":"挑一個人（小上帝、康趙、魁星），用一句話說他的故事：他想要什麼？被什麼卡住？最後怎樣？","storyPlaceholder":"例：（挑一個人）他想要……，卡在……，最後……","storyMax":80},"judge":{"title":"玩完之後，想一想","question":"把這個遊戲裡的文化抽掉（神明換成普通人、問神換成普通問答），這個遊戲還玩得下去嗎？","options":[{"id":"j1","label":"照樣玩得下去"},{"id":"j2","label":"故事沒味道了，但還玩得下去"},{"id":"j3","label":"抽掉文化，這個遊戲就沒得玩了"},{"id":"j4","label":"說不準"}],"expected":"j2","expectedText":"參考看法：「找線索→湊東西→推理」這個流程，抽掉文化還在，所以遊戲還玩得下去。但「線索是什麼意思」（朱筆墨斗是誰的、神怎麼回答、什麼問法會被笑）要靠文化知識才讀得懂；抽掉之後，謎題只剩「照字面對答案」，變得像數字鎖。你的看法不一樣也行，寫下理由就好。","reasonPlaceholder":"用一句話寫理由","followups":["回到「文化版」玩一次：哪一個謎多了一層意思？為什麼？","你想加進一條新線索：它要靠哪一個在地知識才讀得懂？"]}}</script>
+<script type="application/json" id="data-culture">{"schema":"puzzle-template/1","meta":{"id":"puzzle-xfs","title":"冠不見了","subtitle":"封神查案・解謎（線索推理）樣板","versionLabel":"文化版","bannerNote":"文化卡：擲筊（問神只能問「是不是」）＋魁星造像（認人看手上的東西，不看臉）","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。","reminder":"小提醒：「小上帝」的「小」，原書先說是一個地名——赤崁樓東邊的小鎮，神和廟後來才跟著叫。","tags":{"orig":"原著","folk":"民間","made":"工坊創作","adapt":"改編","field":"田野"},"tagHelp":{"orig":"許丙丁《小封神》書裡有寫","folk":"民間信仰裡常見的說法","made":"這個遊戲自己加的，原書沒有","adapt":"照原書的意思改寫過","field":"你自己去現場看到、問到的"},"kicker":"天庭稽查書記・案卷之一","tagline":"冠不見了，人被吊在樹上。你只有一個下午。","playTime":"約 10 分鐘"},"intro":{"title":"冠不見了","text":["天庭收到一張狀紙：小上帝說，他的通天冠被一個獠牙大漢搶走了（「冠被搶」是這個遊戲的讀法），還把一個人吊在榕樹上示眾。","你是天庭派來的稽查書記（這個角色是工坊編的）。今天要查清楚：冠到底怎麼了？該放的人，也要放。","故事改自許丙丁《小封神》第二回。案子裡的線索，有的來自原書，有的是工坊補的，每一張卡都有標示。"],"rules":["到「現場」各處走走，撿東西、看線索","到「線索」頁，把兩樣東西湊在一起看","不認得的人和東西，翻「圖鑑」","到「謎題」頁解開三個謎，最後結案"]},"scenes":[{"id":"s_temple","name":"小上帝廟前","desc":"一間簡陋的廟，三分不像寺、四分不像宮。康元帥和趙元帥站在門口，肚子叫得很大聲。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_testimony","label":"聽康、趙兩位元帥怎麼說","at":[18,64],"icon":"🗣️","say":"康元帥（紅臉）搶著說：「冠被一個獠牙大漢搶了！」趙元帥（青臉）在旁邊猛點頭，眼睛卻不敢看你。你把這段話記在口供紙上。"},{"kind":"look","id":"l_zhao","label":"仔細看看趙元帥","at":[82,64],"icon":"👀","text":"趙元帥縮著脖子，兩手一直揣在袖子裡。你問他話，他先看康元帥一眼，才敢開口。（他看起來有心事。）"},{"kind":"look","id":"l_plaque","label":"抬頭看看匾額","at":[50,33],"icon":"🔍","text":"匾額的漆掉了一半，「小上帝廟」四個字只剩輪廓。這間廟很窮，連匾都沒錢重漆。"},{"kind":"look","id":"l_burner","label":"看看門口的香爐","at":[50,80],"icon":"🕯️","text":"香爐裡只有一炷香，快燒完了。看來平常沒什麼人來拜。"}],"art":"temple","short":"廟前"},{"id":"s_banyan","name":"榕樹下","desc":"一棵大榕樹。樹頂吊著一個人，樹根旁散落著幾樣東西。","tag":["orig","made"],"finds":[{"kind":"clue","id":"K2","label":"抬頭看看被吊的人","at":[66,60],"icon":"👀"},{"kind":"item","id":"i_rope","label":"摸摸吊人的繩索","at":[66,24],"icon":"🪢"},{"kind":"item","id":"i_brush","label":"撿起樹根旁的毛筆","at":[30,90],"icon":"🖌️"},{"kind":"item","id":"i_ink","label":"撿起旁邊的墨斗","at":[46,88],"icon":"📏"},{"kind":"look","id":"l_bark","label":"看看榕樹的鬚根","at":[17,52],"icon":"🔍","text":"榕樹的鬚根垂了一地，風一吹就晃。這棵樹很老了，平常大概有人在樹下乘涼。"}],"art":"banyan","short":"榕樹下"},{"id":"s_pawn","name":"打銀街・同裕當店","desc":"打銀街上的同裕當店。櫃台後面沒有人，只有一本攤開的帳冊壓在算盤下。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_ledger","label":"翻看攤開的帳冊","at":[64,62],"icon":"📒"},{"kind":"look","id":"l_abacus","label":"看看櫃台上的算盤","at":[28,60],"icon":"🧮","text":"算盤的珠子停在「五千」的位置，像是剛算完就走了。"},{"kind":"look","id":"l_sign","label":"看看大招牌","at":[50,17],"icon":"🔍","text":"招牌上一個大大的「當」字。當店就是拿東西抵押換錢的地方，之後可以拿錢去贖。（圖鑑裡也有寫。）"},{"kind":"look","id":"l_dark","label":"探頭看櫃台後面","at":[85,50],"icon":"👀","text":"櫃台後面黑黑的，沒有人。門口的簾子還在晃，好像有人剛走。"}],"art":"pawn","short":"當店"},{"id":"s_gate","name":"媽祖宮口","desc":"天上聖母（媽祖）廟的門口。廟門關得緊緊的，四周靜悄悄。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_cloth","label":"看看門前地上的布","at":[50,88],"icon":"🎲"},{"kind":"item","id":"i_incense","label":"拿起供桌上沒點過的三炷香","at":[13,78],"icon":"🕯️"},{"kind":"look","id":"l_door","label":"看看緊閉的廟門","at":[50,44],"icon":"🔍","text":"廟門關得緊緊的，裡面一點聲音都沒有。"},{"kind":"look","id":"l_empty","label":"看看門邊兩側的空位","at":[17,54],"icon":"👀","text":"門邊兩側，原本該站著人的位置，今天是空的。"}],"art":"gate","short":"廟口"},{"id":"s_earth","name":"路邊的土地公廟","desc":"一間小小的土地公廟，香爐還有餘溫。老土地公最會幫人排解糾紛，也許祂知道些什麼。","tag":["made","orig"],"opens":{"clues":["K3","K4"]},"lockedText":"還沒有理由去問神。先把當店和媽祖廟口都看過。","finds":[{"kind":"item","id":"i_bei","label":"拿起香爐旁的筊杯","at":[70,78],"icon":"🌗","needs":"i_incense","needHint":"小廟要先點香，才好動祂的東西。你手上有香嗎？（先去媽祖廟口找找，找到後在道具欄選好它，再點這裡。）","say":"你先點了香，才拿起筊杯。香煙直直往上飄。"},{"kind":"look","id":"l_burner","label":"看看香爐","at":[34,74],"icon":"🕯️","text":"香爐還有餘溫。有人剛剛來過。","uses":{"i_incense":"你把香插進香爐，點燃。香煙直直往上，像是在說：「說吧，什麼事？」"}},{"kind":"look","id":"l_god","label":"看看小小的神像","at":[50,46],"icon":"👀","text":"小小的土地公神像，白鬍子，笑瞇瞇地看著你。（這間小廟是工坊借來讓你問事的。）"}],"art":"shrine","short":"土地公廟"}],"items":[{"id":"i_testimony","name":"口供紙","desc":"記下康、趙兩位元帥說法的紙。","clue":"K1","icon":"📜"},{"id":"i_brush","name":"朱筆","desc":"筆尖還是紅的，掉在樹根旁。","icon":"🖌️"},{"id":"i_ink","name":"墨斗","desc":"木頭做的，線還繞在裡面。","icon":"📏"},{"id":"i_rope","name":"吊人的繩索","desc":"很粗的一條繩，原書叫它捆妖索。","icon":"🪢"},{"id":"i_ledger","name":"當店帳冊","desc":"同裕當店今天那一頁的帳。","clue":"K3","icon":"📒"},{"id":"i_cloth","name":"賭攤布","desc":"畫著格子的布，旁邊散著幾枚錢。","clue":"K4","icon":"🎲"},{"id":"i_bei","name":"筊杯","desc":"兩塊半月形的木片，拿來問神。","icon":"🌗"},{"id":"i_incense","name":"三炷香","desc":"沒點過的香，三炷繫在一起。","icon":"🕯️"}],"clues":[{"id":"K1","title":"康趙的口供","tag":["orig","adapt"],"text":"康元帥、趙元帥回廟稟報：「是在媽祖宮口，被一個獠牙大漢千里眼搶去了。」（原書沒寫被搶的是什麼；這個遊戲讀成「冠被搶」。）你看了看廟裡，冷冷清清，三位神明都像沒吃飽。","src":"P1 第二回 PDF頁6（原句）；「冠被搶」為改編：P3 頁41 讀成冠、頁70 讀成錢，兩說並存"},{"id":"K2","title":"吊在榕樹上的人","tag":["orig","made"],"text":"榕樹頂上吊著一個人，瘦得像柴。他嘴邊露出獠牙，和康趙形容的「獠牙大漢」一模一樣；他委屈得直掉眼淚，卻說不出話。（你記得《小封神》寫過：有一位神，面目和千里眼是同一個樣子。）","src":"P1 第二回 PDF頁6（同是一樣面目）；第三回 PDF頁7（儒弱、骨瘦像柴）、頁9（形容枯槁、榕樹頂）；獠牙為推論；掉淚、說不出話為工坊創作"},{"id":"K3","title":"當店帳冊","tag":["orig","made"],"text":"同裕當店的帳冊，這一頁寫著：「收　銅鍍金通天冠一頂；付　五千錢。」經手的是兩位穿盔甲的神明，一位紅臉、一位青臉。","src":"P1 第二回 PDF頁4（紅面康、青面趙）、頁5（店名、銅鍍金、五千錢）；穿盔甲來自民間造像；帳冊格式為工坊創作（待確認）"},{"id":"K4","title":"媽祖廟口的賭攤","tag":["orig","made"],"text":"媽祖廟門前，廟門關得緊緊的。地上鋪著一塊畫了格子的賭攤布，旁邊散著幾枚錢。平常站在媽祖兩旁的兩位護法，今天不在原位。","src":"P1 第二回 PDF頁5–6（廟口賭戲、關廟門）；賭攤布為工坊創作"},{"id":"K5","title":"成套的筆墨","tag":["folk","orig"],"text":"一支朱筆配一個墨斗，成套出現——民間認得，這是某一位神明的標記。（到圖鑑找找看是誰。）","src":"P3 頁74（右手筆、左手墨斗）；P1 第二十四回 PDF頁90（賜朱筆墨斗）"},{"id":"K6","title":"土地公的回答","tag":["made"],"text":"你向土地公問了幾件事，筊杯這樣回答：","src":"工坊創作（問神的情節）","compose":"oracle"}],"combos":[{"a":"i_brush","b":"i_ink","gives":"K5"},{"a":"i_testimony","b":"i_ledger","msg":"口供說冠被搶走了；帳冊卻寫著冠已經當出去、收了五千錢。兩邊不可能同時是真的。"},{"a":"i_ledger","b":"i_cloth","msg":"當店付出去的五千錢，和賭攤布旁邊的錢……會是同一筆嗎？先記在心裡。"},{"a":"i_rope","b":"i_brush","msg":"繩子綁的是人，不是筆。這樣湊不出什麼。"},{"a":"i_bei","b":"i_ledger","msg":"神明不看帳冊。想知道什麼，要用問的。"},{"a":"i_testimony","b":"i_cloth","msg":"口供說千里眼搶了東西。可是廟口這裡，被拿走的好像只有錢。先記在心裡。"},{"a":"i_incense","b":"i_bei","msg":"香和筊杯是一起用的：點了香，才好用筊杯問事。"},{"a":"i_ink","b":"i_rope","msg":"墨斗的線可以彈出一條直線，可是拿來綁人不行。"}],"comboDefault":"這兩樣湊不出什麼。換兩樣試試。","codex":[{"id":"c_kuixing","name":"魁星","tag":["folk","orig"],"text":"管考運的神。民間造像常見：右手拿筆（原書結尾賜他「朱筆墨斗」）、左手拿墨斗、一腳踩鰲頭、另一腳高高踢起（「魁星踢斗，獨占鰲頭」）。《小封神》裡他是個儒弱的小書生。","src":"P1 第二回、第二十四回；P3 頁74"},{"id":"c_qianli","name":"千里眼・順風耳","tag":["orig","folk"],"text":"天上聖母（媽祖）的兩位手下，民間常見他們分站媽祖兩旁。千里眼眼觀四方，順風耳耳聽八達。有論文記載大天后宮的神像是千里眼綠臉、順風耳紅臉；各廟的顏色不一定一樣——去現場核對看看。","src":"P1 第二回 PDF頁5–6；P3 頁71、頁110（顏色一項待現場核對）","field":"f_qianli"},{"id":"c_kangzhao","name":"康元帥・趙元帥","tag":["orig"],"text":"玉皇大帝派來輔佐小上帝的兩位元帥，總是一起行動。康元帥是紅臉，趙元帥是青臉。","src":"P1 第一回 PDF頁2、第二回 PDF頁4"},{"id":"c_xiaoshangdi","name":"小上帝（玄天上帝）","tag":["orig"],"text":"原書也叫他「上帝爺」。專管龜精蛇怪，腳踩龜和蛇；脫下冠後披頭散髮，發怒時赤腳提劍。他到偏僻的小上帝鎮赴任，廟窮、香火少，脾氣急，受冷落時也忍氣吞聲。","src":"P1 第一、二回；P3 頁62、頁103"},{"id":"c_tongtian","name":"通天冠","tag":["orig"],"text":"小上帝頭上戴的冠，原書寫它是「銅鍍金」的。","src":"P1 第二回 PDF頁5"},{"id":"c_bei","name":"擲筊（簡化）","tag":["folk"],"text":"民間問神的方式：丟兩塊半月形的筊杯，看落地的樣子。常見說法：一面平、一面圓凸＝聖筊（神明同意）；兩塊都凸面朝上＝陰筊（不同意）；兩塊都平面朝上＝笑筊（沒有答案，通常重問）。各地、各廟、各位長輩的說法會有點不同；重要的事常要連擲三個聖筊才算。問神通常一次問一件事、問清楚。遊戲裡的「香有限」是遊戲規則，不是民俗規定。","src":"民間說法（用字待文史顧問確認；說法有地區差異）","field":"f_bei"},{"id":"c_tudi","name":"土地公","tag":["folk","orig"],"text":"管一個地方的神。《小封神》裡有一位老土地（原書是安海街土地），四處奔走幫忙排解糾紛。路邊這間小廟是工坊借來讓你問事的，不是哪一間真實的廟。","src":"P1 第十九回、第二十四回"},{"id":"c_tongyu","name":"打銀街・同裕當店","tag":["orig"],"text":"原書裡的一條街和一間店：打銀街（約是今天臺南忠義路一帶）的同裕當店。當店就是拿東西抵押換錢的地方，之後可以拿錢去贖。","src":"P1 第二回 PDF頁5；P2 頁167 註14；P3 頁115–116"},{"id":"c_mazu","name":"媽祖宮口","tag":["orig"],"text":"天上聖母（媽祖）廟門前一帶，原書的地名；學者對到臺南的大天后宮。","src":"P1 第二回；P3 頁109–111"},{"id":"c_kuixing_field","name":"（留給你）魁星像長什麼樣","tag":["field"],"text":"圖鑑只是紙上的說法。真的魁星像，手上拿什麼、腳怎麼站？","field":"f_kuixing"}],"fieldwork":[{"id":"f_qianli","prompt":"去大天后宮，或你家附近的媽祖廟：千里眼、順風耳各站哪一邊？各是什麼臉色？拍照或畫下來，寫一句你看到的。","placeholder":"例：左邊的是……，臉是……色","note":"這一格 AI 幫不了你，只有去現場的人寫得出來。"},{"id":"f_bei","prompt":"問一位長輩：他擲筊的時候怎麼問？得到笑筊時怎麼辦？","placeholder":"他說：……","note":"長輩的原話，比 AI 寫的更有用。"},{"id":"f_kuixing","prompt":"找一間有魁星像的廟或閣，看看：他手上拿什麼？腳怎麼站？","placeholder":"我看到……","note":"看到的和圖鑑寫的一不一樣？不一樣更好。"}],"puzzles":[{"id":"p1","type":"identify","title":"吊在樹上的人是誰？","prompt":"康趙說搶冠的是「獠牙大漢千里眼」，小上帝就把榕樹上這個人吊起來示眾。他真的是千里眼嗎？先選他是誰，再選你憑什麼這樣認。","needsClues":["K2","K5"],"lockedText":"還缺線索：先去榕樹下看看被吊的人，再把樹根旁撿到的東西湊在一起看。","whoLabel":"他是誰？","who":[{"id":"w_qianli","label":"千里眼","fb":"千里眼是媽祖的護法。康趙說搶冠的是他，但這個被吊的人身上的東西，不是千里眼會拿的。回圖鑑對一對。"},{"id":"w_shunfeng","label":"順風耳","fb":"康趙沒有提到順風耳，現場的東西也和順風耳對不上。再想想。"},{"id":"w_kuixing","label":"魁星"},{"id":"w_zhao","label":"趙元帥","fb":"趙元帥是青臉沒錯，但他是康趙二帥之一，帳冊上還有他的份，他不會被吊在樹上。"}],"answerWho":"w_kuixing","reasonLabel":"你憑什麼這樣認？","reasons":[{"id":"r_face","label":"他有獠牙，跟康趙形容的一模一樣。","fb":"臉不能當證據：書上說有一位神和千里眼「同是一樣面目」。兩個人長得一樣的時候，要看別的。"},{"id":"r_tools","label":"地上的朱筆和墨斗是成套的，那是某一位神明的標記。"},{"id":"r_hung","label":"他被吊在樹上，所以他一定做了壞事。","fb":"被吊只代表小上帝在氣頭上，不代表這個人做過什麼。"},{"id":"r_rope","label":"吊他用的是捆妖索，所以他是妖怪。","fb":"捆妖索是小上帝手上的工具，拿它綁誰，不能證明被綁的是誰。"}],"answerReason":"r_tools","mismatchText":"認的人和理由對不上。再想想：你的理由真的指向你選的那個人嗎？","okText":"對。臉分不出來，但手上的東西不會騙人：朱筆配墨斗，是魁星的標記。被吊的是魁星，不是千里眼——小上帝抓錯人了。","onSolve":{"appendClue":{"id":"K2","text":"【已認出：這位被吊的，是魁星。】"}},"hints":["被吊的人有獠牙，但書上說有一位神和千里眼「同一副面目」。臉分不出來的時候，要看別的東西。","圖鑑裡每一位神明都寫了「拿著什麼」。哪一位的手上是一支朱筆加一個墨斗？","這位神管考運，是個儒弱的小書生，最有名的姿勢是一腳踢斗。選他，再選「成套的筆墨」當理由。"]},{"id":"p2","type":"oracle","title":"問土地公","prompt":"口供和帳冊對不起來，錢又不知去向。用筊杯問土地公吧——但每問一次要燒一炷香，香有限。想清楚再問。","needsClues":["K3","K4"],"needsItems":["i_bei","i_incense"],"lockedText":"要先認出被吊的是誰，再備好筊杯和香，並且看過當店和媽祖廟口，才知道要問什麼。","oracle":{"mode":"bei","incense":3,"laughLimit":2,"strictYesNo":true,"questions":[{"id":"y1","text":"冠被搶走了嗎？","form":"yesno","answer":false,"means":"冠不是被搶走的。"},{"id":"y2","text":"冠是被人拿去換錢了嗎？","form":"yesno","answer":true,"means":"冠是被人拿去換錢的。"},{"id":"y3","text":"換來的錢，還在拿去換錢的人手上嗎？","form":"yesno","answer":false,"means":"錢已經不在他們手上了。"},{"id":"y4","text":"那筆錢是在媽祖宮口的賭攤輸掉的嗎？","form":"yesno","answer":true,"means":"錢是在媽祖宮口的賭攤輸掉的。"},{"id":"y5","text":"被吊在樹上的那位偷了冠嗎？","form":"yesno","answer":false,"means":"被吊的人沒偷冠。你抬頭看了一眼，他還在晃。"},{"id":"y6","text":"康、趙兩位元帥說的是實話嗎？","form":"yesno","answer":false,"means":"康趙說的不是實話。"},{"id":"y7","text":"是小上帝自己叫人把冠拿去當的嗎？","form":"yesno","answer":true,"means":"是小上帝自己叫人拿去當的。"},{"id":"o1","text":"冠到底去哪裡了？","form":"open"},{"id":"o2","text":"冠是被搶走，還是被拿去當？","form":"open"},{"id":"o3","text":"神明，請直接告訴我是誰幹的。","form":"open"}],"solveWhen":["y4","y7"],"laughText":"笑筊——這樣問，筊杯答不出來。拆開來，一次問一件事。","yesText":"聖筊——神明點頭：是。","noText":"陰筊——神明搖頭：不是。","repeatText":"這件事問過了，神明不改口。","emptyText":"香燒完了，土地公說：「明天再來。」公文還在排隊蓋章。（問到的答案你都記下了。）","tiredText":"筊杯連笑兩次，這幾題先放一放；歇一下再重新備香。"},"okText":"兩件關鍵事都問到了：是小上帝自己叫人拿冠去當；錢是在媽祖廟口的賭攤輸掉的。土地公的回答已記成線索。","onSolve":{"giveClue":"K6"},"hints":["神明不是什麼都肯答。看看「笑筊」出現時神明說了什麼，想想問法哪裡不對。","只有「是不是」的問題，神明才答得出來。「到底是A還是B」「是誰」這種問法，祂只會笑。","你還缺兩件事：誰叫人把冠拿去當？錢後來在哪裡不見的？挑這兩件，用「是不是」問。"],"needsPuzzles":["p1"]},{"id":"p3","type":"accuse","title":"結案","prompt":"把案子說清楚。你是書記，沒有憑據不下筆：每一題選一個答案，再勾出支持它的線索卡。","needsPuzzles":["p1","p2"],"lockedText":"先解開前兩個謎，才有資格結案。","evidenceLabel":"證據（勾出支持這個答案的線索卡）","rows":[{"id":"a1","q":"通天冠現在在哪裡？","options":[{"id":"a1a","label":"被獠牙大漢搶走了","fb":"「被搶」只是口供，帳冊和土地公都不是這麼說。"},{"id":"a1b","label":"在同裕當店裡（當出去了）"},{"id":"a1c","label":"在媽祖廟的廟門裡","fb":"賭攤上輸掉的是錢，不是冠。"}],"answer":"a1b","must":["K3"]},{"id":"a2","q":"誰說了謊？","options":[{"id":"a2a","label":"魁星","fb":"狀紙還在排隊蓋章。魁星是被冤枉的那個，連話都說不出來。"},{"id":"a2b","label":"康元帥和趙元帥"},{"id":"a2c","label":"當店","fb":"帳冊寫得清清楚楚，說謊的不在當店。"}],"answer":"a2b","must":["K1","K3"]},{"id":"a3","q":"是誰叫人把冠拿去當的？","options":[{"id":"a3a","label":"小上帝自己"},{"id":"a3b","label":"千里眼","fb":"千里眼只是在廟口贏了錢，冠不是他叫人當的。"},{"id":"a3c","label":"土地公","fb":"土地公只是被你問話的那位。"}],"answer":"a3a","must":["K6"]},{"id":"a4","q":"那筆五千錢，最後輸給了誰？","options":[{"id":"a4a","label":"魁星","fb":"魁星那時候是被吊著的，沒碰過那筆錢。"},{"id":"a4b","label":"千里眼和順風耳（媽祖廟口的護法）"},{"id":"a4c","label":"同裕當店","fb":"當店是付錢給他們的那一方，錢不是輸給當店。"}],"answer":"a4b","must":["K4","K6"]}],"okText":"結案！每一題都有證據撐著。","missingEvidenceText":"答案對了，但還缺證據：請勾出能證明它的線索卡。","hints":["每一題要選一個答案，再勾出能證明它的線索卡。找不到證據的答案，先別選。","哪些人說的話，和物證對不起來？口供和帳冊放在一起看。","帳冊上經手的兩位，一紅臉一青臉——圖鑑裡找他們是誰。再看看土地公回答了什麼。"]}],"ending":{"title":"案情說明","lines":[{"text":"冠沒有被搶。小上帝窮得沒飯吃，叫康、趙二帥把銅鍍金的通天冠拿到打銀街的同裕當店，當了五千錢。","tag":["orig"]},{"text":"二帥路過媽祖廟口，見千里眼、順風耳在「拋璉寶」，想賭贏好贖回冠，結果五千錢輸得精光。沒辦法，只好糊裡糊塗回稟：「在媽祖宮口，被獠牙大漢千里眼搶去了。」","tag":["orig","adapt"]},{"text":"小上帝聽了，氣得赤腳提劍衝出去，把路過的魁星當成千里眼，吊在榕樹上。魁星和千里眼「同是一樣面目」，所以認錯人。","tag":["orig"]},{"text":"有趣的是：康趙那句「被千里眼搶了」，其實半真半假——錢，確實是被千里眼贏走的；「冠」不是。（這一句是工坊的讀法。）","tag":["made"]},{"text":"這個遊戲裡的筆墨、帳冊、賭攤布、土地公問神，是工坊為了讓你「查」出來而補的，原書沒有。「冠被搶」的說法也是工坊的讀法（原書沒寫被搶的是什麼）。","tag":["made"]},{"text":"你遞上結案書，魁星被放了下來。他揉揉手腕，什麼也沒說——倒是小上帝，這回換他說不出話了。","tag":["made"]}],"storyPrompt":"挑一個人（小上帝、康趙、魁星），用一句話說他的故事：他想要什麼？被什麼卡住？最後怎樣？","storyPlaceholder":"例：（挑一個人）他想要……，卡在……，最後……","storyMax":80},"judge":{"title":"玩完之後，想一想","question":"把這個遊戲裡的文化抽掉（神明換成普通人、問神換成普通問答），這個遊戲還玩得下去嗎？","options":[{"id":"j1","label":"照樣玩得下去"},{"id":"j2","label":"故事沒味道了，但還玩得下去"},{"id":"j3","label":"抽掉文化，這個遊戲就沒得玩了"},{"id":"j4","label":"說不準"}],"expected":"j2","expectedText":"參考看法：「找線索→湊東西→推理」這個流程，抽掉文化還在，所以遊戲還玩得下去。但「線索是什麼意思」（朱筆墨斗是誰的、神怎麼回答、什麼問法會被笑）要靠文化知識才讀得懂；抽掉之後，謎題只剩「照字面對答案」，變得像數字鎖。你的看法不一樣也行，寫下理由就好。","reasonPlaceholder":"用一句話寫理由","followups":["切到「抽掉文化版」玩一次：哪一個謎變得最簡單？為什麼？","如果把「問土地公」換成「問證人」，你還需要先想怎麼問嗎？"]},"rating":{"weights":{"hint":6,"wrong":4,"retry":5,"laugh":2},"grades":[{"min":90,"seal":"甲","title":"神探書記","stars":3,"line":"幾乎沒繞路。天庭想把你調去查更大的案子。"},{"min":70,"seal":"乙","title":"稱職書記","stars":2,"line":"有繞路也有靠提示，但案子是你自己查清楚的。"},{"min":0,"seal":"丙","title":"見習書記","stars":1,"line":"多走了一些路，也多問了幾次。查案本來就是這樣，下一次會更順。"}]}}</script>
+<script type="application/json" id="data-skin">{"schema":"puzzle-template/1","meta":{"id":"puzzle-xfs-skin","title":"冠不見了","subtitle":"封神查案・解謎（線索推理）樣板","versionLabel":"抽掉文化版","bannerNote":"這一版把文化抽掉了：名牌代替造像、普通問答代替擲筊。故事和人名留著，但解謎不再需要任何文化知識。","disclaimer":"遊戲為示意與簡化，不是民俗儀式教學。","reminder":"小提醒：「小上帝」的「小」，原書先說是一個地名——赤崁樓東邊的小鎮，神和廟後來才跟著叫。","tags":{"orig":"原著","folk":"民間","made":"工坊創作","adapt":"改編","field":"田野"},"tagHelp":{"orig":"許丙丁《小封神》書裡有寫","folk":"民間信仰裡常見的說法","made":"這個遊戲自己加的，原書沒有","adapt":"照原書的意思改寫過","field":"你自己去現場看到、問到的"},"kicker":"天庭稽查書記・案卷之一","tagline":"冠不見了，人被吊在樹上。你只有一個下午。","playTime":"約 10 分鐘","skinOf":"puzzle-xfs"},"intro":{"title":"冠不見了","text":["天庭收到一張狀紙：小上帝說，他的通天冠被一個獠牙大漢搶走了（「冠被搶」是這個遊戲的讀法），還把一個人吊在榕樹上示眾。","你是天庭派來的稽查書記（這個角色是工坊編的）。今天要查清楚：冠到底怎麼了？該放的人，也要放。","故事改自許丙丁《小封神》第二回。案子裡的線索，有的來自原書，有的是工坊補的，每一張卡都有標示。"],"rules":["到「現場」各處走走，撿東西、看線索","到「線索」頁，把兩樣東西湊在一起看","到「謎題」頁解開三個謎，最後結案"]},"scenes":[{"id":"s_temple","name":"小上帝廟前","desc":"一間簡陋的廟，三分不像寺、四分不像宮。康元帥和趙元帥站在門口，肚子叫得很大聲。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_testimony","label":"聽康、趙兩位元帥怎麼說","at":[18,64],"icon":"🗣️","say":"康元帥（紅臉）搶著說：「冠被一個獠牙大漢搶了！」趙元帥（青臉）在旁邊猛點頭，眼睛卻不敢看你。你把這段話記在口供紙上。"},{"kind":"look","id":"l_zhao","label":"仔細看看趙元帥","at":[82,64],"icon":"👀","text":"趙元帥縮著脖子，兩手一直揣在袖子裡。你問他話，他先看康元帥一眼，才敢開口。（他看起來有心事。）"},{"kind":"look","id":"l_plaque","label":"抬頭看看匾額","at":[50,33],"icon":"🔍","text":"匾額的漆掉了一半，「小上帝廟」四個字只剩輪廓。這間廟很窮，連匾都沒錢重漆。"},{"kind":"look","id":"l_burner","label":"看看門口的香爐","at":[50,80],"icon":"🕯️","text":"香爐裡只有一炷香，快燒完了。看來平常沒什麼人來拜。"}],"art":"temple","short":"廟前"},{"id":"s_banyan","name":"榕樹下","desc":"一棵大榕樹。樹頂吊著一個人，樹根旁散落著幾樣東西。","tag":["orig","made"],"finds":[{"kind":"clue","id":"K2","label":"抬頭看看被吊的人","at":[66,60],"icon":"👀"},{"kind":"item","id":"i_rope","label":"摸摸吊人的繩索","at":[66,24],"icon":"🪢"},{"kind":"item","id":"i_brush","label":"撿起樹根旁的毛筆","at":[30,90],"icon":"🖌️"},{"kind":"item","id":"i_ink","label":"撿起旁邊的墨斗","at":[46,88],"icon":"📏"},{"kind":"look","id":"l_bark","label":"看看榕樹的鬚根","at":[17,52],"icon":"🔍","text":"榕樹的鬚根垂了一地，風一吹就晃。這棵樹很老了，平常大概有人在樹下乘涼。"}],"art":"banyan","short":"榕樹下"},{"id":"s_pawn","name":"打銀街・同裕當店","desc":"打銀街上的同裕當店。櫃台後面沒有人，只有一本攤開的帳冊壓在算盤下。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_ledger","label":"翻看攤開的帳冊","at":[64,62],"icon":"📒"},{"kind":"look","id":"l_abacus","label":"看看櫃台上的算盤","at":[28,60],"icon":"🧮","text":"算盤的珠子停在「五千」的位置，像是剛算完就走了。"},{"kind":"look","id":"l_sign","label":"看看大招牌","at":[50,17],"icon":"🔍","text":"招牌上一個大大的「當」字。當店就是拿東西抵押換錢的地方，之後可以拿錢去贖。（圖鑑裡也有寫。）"},{"kind":"look","id":"l_dark","label":"探頭看櫃台後面","at":[85,50],"icon":"👀","text":"櫃台後面黑黑的，沒有人。門口的簾子還在晃，好像有人剛走。"}],"art":"pawn","short":"當店"},{"id":"s_gate","name":"媽祖宮口","desc":"天上聖母（媽祖）廟的門口。廟門關得緊緊的，四周靜悄悄。","tag":["orig","made"],"finds":[{"kind":"item","id":"i_cloth","label":"看看門前地上的布","at":[50,88],"icon":"🎲"},{"kind":"item","id":"i_incense","label":"撿起地上的三枚銅板","at":[13,78],"icon":"🪙"},{"kind":"look","id":"l_door","label":"看看緊閉的廟門","at":[50,44],"icon":"🔍","text":"廟門關得緊緊的，裡面一點聲音都沒有。"},{"kind":"look","id":"l_empty","label":"看看門邊兩側的空位","at":[17,54],"icon":"👀","text":"門邊兩側，原本該站著人的位置，今天是空的。"}],"art":"gate","short":"廟口"},{"id":"s_earth","name":"路邊的小攤","desc":"路邊的一個小攤，老闆天天看著街上來來往往的人，什麼事都知道一點。","tag":["made"],"opens":{"clues":["K3","K4"]},"lockedText":"還沒有理由去問人。先把當店和媽祖廟口都看過。","finds":[{"kind":"item","id":"i_bei","label":"拿起攤上的紙筆","at":[70,78],"icon":"📝","needs":"i_incense","needHint":"老闆說：先放下錢，才肯借紙筆。你手上有銅板嗎？（先去媽祖廟口找找，找到後在道具欄選好它，再點這裡。）","say":"你放下銅板，老闆才把紙筆遞給你。"},{"kind":"look","id":"l_burner","label":"看看攤上的錢罐","at":[34,74],"icon":"🪙","text":"錢罐裡叮叮噹噹，老闆說問一次放一枚。","uses":{"i_incense":"你把銅板放進錢罐，老闆點點頭：「問吧。」"}},{"kind":"look","id":"l_god","label":"看看老闆","at":[50,46],"icon":"👀","text":"老闆笑瞇瞇的，天天看著街上來來往往的人，什麼事都知道一點。"}],"art":"stall","short":"小攤"}],"items":[{"id":"i_testimony","name":"口供紙","desc":"記下康、趙兩位元帥說法的紙。","clue":"K1","icon":"📜"},{"id":"i_brush","name":"朱筆","desc":"筆尖還是紅的，掉在樹根旁。","icon":"🖌️"},{"id":"i_ink","name":"墨斗","desc":"木頭做的，線還繞在裡面。","icon":"📏"},{"id":"i_rope","name":"吊人的繩索","desc":"很粗的一條繩，原書叫它捆妖索。","icon":"🪢"},{"id":"i_ledger","name":"當店帳冊","desc":"同裕當店今天那一頁的帳。","clue":"K3","icon":"📒"},{"id":"i_cloth","name":"賭攤布","desc":"畫著格子的布，旁邊散著幾枚錢。","clue":"K4","icon":"🎲"},{"id":"i_bei","name":"紙筆","desc":"拿來記問話的紙和筆。","icon":"📝"},{"id":"i_incense","name":"三枚銅板","desc":"三枚銅板，問一次放一枚。","icon":"🪙"}],"clues":[{"id":"K1","title":"康趙的口供","tag":["orig","adapt"],"text":"康元帥、趙元帥回廟稟報：「是在媽祖宮口，被一個獠牙大漢千里眼搶去了。」（原書沒寫被搶的是什麼；這個遊戲讀成「冠被搶」。）你看了看廟裡，冷冷清清，三位神明都像沒吃飽。","src":"P1 第二回 PDF頁6（原句）；「冠被搶」為改編：P3 頁41 讀成冠、頁70 讀成錢，兩說並存"},{"id":"K2","title":"吊在榕樹上的人","tag":["made"],"text":"榕樹頂上吊著一個人，瘦得像柴，委屈得直掉眼淚。他胸前掛著一塊名牌，寫著「魁星」。","src":"抽掉文化版：名牌直接寫出身分"},{"id":"K3","title":"當店帳冊","tag":["orig","made"],"text":"同裕當店的帳冊，這一頁寫著：「收　銅鍍金通天冠一頂；付　五千錢。」經手人欄寫著：康元帥、趙元帥。","src":"P1 第二回 PDF頁4（紅面康、青面趙）、頁5（店名、銅鍍金、五千錢）；穿盔甲來自民間造像；帳冊格式為工坊創作（待確認）"},{"id":"K4","title":"媽祖廟口的賭攤","tag":["orig","made"],"text":"媽祖廟門前，廟門關得緊緊的。地上鋪著一塊畫了格子的賭攤布，旁邊散著幾枚錢。平常站在媽祖兩旁的兩位護法，今天不在原位。","src":"P1 第二回 PDF頁5–6（廟口賭戲、關廟門）；賭攤布為工坊創作"},{"id":"K5","title":"成套的筆墨","tag":["made"],"text":"一支朱筆和一個墨斗，是一套文具。","src":"抽掉文化版：普通文具"},{"id":"K6","title":"攤販的回答","tag":["made"],"text":"你向路邊的攤販問了幾件事，他這樣回答：","src":"工坊創作（問神的情節）","compose":"oracle"}],"combos":[{"a":"i_brush","b":"i_ink","gives":"K5"},{"a":"i_testimony","b":"i_ledger","msg":"口供說冠被搶走了；帳冊卻寫著冠已經當出去、收了五千錢。兩邊不可能同時是真的。"},{"a":"i_ledger","b":"i_cloth","msg":"當店付出去的五千錢，和賭攤布旁邊的錢……會是同一筆嗎？先記在心裡。"},{"a":"i_rope","b":"i_brush","msg":"繩子綁的是人，不是筆。這樣湊不出什麼。"},{"a":"i_bei","b":"i_ledger","msg":"紙筆不是拿來對帳的。想知道什麼，直接問人。"},{"a":"i_testimony","b":"i_cloth","msg":"口供說千里眼搶了東西。可是廟口這裡，被拿走的好像只有錢。先記在心裡。"},{"a":"i_incense","b":"i_bei","msg":"銅板和紙筆是一起用的：先放下錢，老闆才讓你問。"},{"a":"i_ink","b":"i_rope","msg":"墨斗的線可以彈出一條直線，可是拿來綁人不行。"}],"comboDefault":"這兩樣湊不出什麼。換兩樣試試。","codex":[],"fieldwork":[],"puzzles":[{"id":"p1","type":"identify","title":"吊在樹上的人是誰？","prompt":"康趙說搶冠的是「千里眼」，小上帝就把榕樹上這個人吊起來示眾。他真的是千里眼嗎？先選他是誰，再選你憑什麼這樣認。","needsClues":["K2"],"lockedText":"先去榕樹下看看被吊的人。","whoLabel":"他是誰？","who":[{"id":"w_qianli","label":"千里眼","fb":"他胸前的名牌不是這個名字。再看一次線索卡。"},{"id":"w_shunfeng","label":"順風耳","fb":"他胸前的名牌不是這個名字。再看一次線索卡。"},{"id":"w_kuixing","label":"魁星"},{"id":"w_zhao","label":"趙元帥","fb":"他胸前的名牌不是這個名字。再看一次線索卡。"}],"answerWho":"w_kuixing","reasonLabel":"你憑什麼這樣認？","reasons":[{"id":"r_face","label":"他的樣子，跟康趙形容的一模一樣。","fb":"臉色不能當證據，名牌上寫的才是名字。"},{"id":"r_tools","label":"他胸前的名牌寫著名字。"},{"id":"r_hung","label":"他被吊在樹上，所以他一定做了壞事。","fb":"被吊只代表小上帝在氣頭上，不代表這個人做過什麼。"},{"id":"r_rope","label":"吊他用的是一條粗繩，所以他是壞人。","fb":"用什麼繩子吊他，不能證明他是誰。"}],"answerReason":"r_tools","mismatchText":"認的人和理由對不上。再想想：你的理由真的指向你選的那個人嗎？","okText":"對。名牌寫得清清楚楚：被吊的是魁星，不是千里眼——小上帝抓錯人了。","onSolve":{"appendClue":{"id":"K2","text":"【已認出：這位被吊的，是魁星。】"}},"hints":["看看被吊的人身上有沒有寫著什麼。","名牌上寫的是誰的名字？","選「魁星」，理由選名牌那一個。"]},{"id":"p2","type":"oracle","title":"問路邊的攤販","prompt":"口供和帳冊對不起來，錢又不知去向。去問路邊的攤販吧——他只回答「是」或「不是」，次數有限，問法要問得出是非。","needsClues":["K3","K4"],"needsItems":["i_bei","i_incense"],"lockedText":"要先認出被吊的是誰，再備好紙筆和銅板，並且看過當店和媽祖廟口，才知道要問什麼。","oracle":{"mode":"plain","incense":3,"laughLimit":2,"strictYesNo":true,"questions":[{"id":"y1","text":"冠被搶走了嗎？","form":"yesno","answer":false,"means":"冠不是被搶走的。"},{"id":"y2","text":"冠是被人拿去換錢了嗎？","form":"yesno","answer":true,"means":"冠是被人拿去換錢的。"},{"id":"y3","text":"換來的錢，還在拿去換錢的人手上嗎？","form":"yesno","answer":false,"means":"錢已經不在他們手上了。"},{"id":"y4","text":"那筆錢是在媽祖宮口的賭攤輸掉的嗎？","form":"yesno","answer":true,"means":"錢是在媽祖宮口的賭攤輸掉的。"},{"id":"y5","text":"被吊在樹上的那位偷了冠嗎？","form":"yesno","answer":false,"means":"被吊的人沒偷冠。你抬頭看了一眼，他還在晃。"},{"id":"y6","text":"康、趙兩位元帥說的是實話嗎？","form":"yesno","answer":false,"means":"康趙說的不是實話。"},{"id":"y7","text":"是小上帝自己叫人把冠拿去當的嗎？","form":"yesno","answer":true,"means":"是小上帝自己叫人拿去當的。"},{"id":"o1","text":"冠到底去哪裡了？","form":"open"},{"id":"o2","text":"冠是被搶走，還是被拿去當？","form":"open"},{"id":"o3","text":"請直接告訴我是誰幹的。","form":"open"}],"solveWhen":["y4","y7"],"laughText":"這樣問我答不出來，換個問法。","yesText":"是。","noText":"不是。","repeatText":"這個問過了，他的答案不會變。","emptyText":"次數用完了，他說：「明天再來。」（問到的答案你都記下了。）","tiredText":"他不想再回答了。先歇一下再重新來。"},"okText":"兩件關鍵事都問到了：是小上帝自己叫人拿冠去當；錢是在媽祖廟口的賭攤輸掉的。攤販的回答已記成線索。","onSolve":{"giveClue":"K6"},"hints":["還缺什麼消息？想想口供和帳冊哪裡對不起來。","挑跟冠、跟錢有關的問題問。","你還缺兩件事：誰叫人把冠拿去當？錢後來在哪裡不見的？"],"needsPuzzles":["p1"]},{"id":"p3","type":"accuse","title":"結案","prompt":"把案子說清楚。你是書記，沒有憑據不下筆：每一題選一個答案，再勾出支持它的線索卡。","needsPuzzles":["p1","p2"],"lockedText":"先解開前兩個謎，才有資格結案。","evidenceLabel":"證據（勾出支持這個答案的線索卡）","rows":[{"id":"a1","q":"通天冠現在在哪裡？","options":[{"id":"a1a","label":"被獠牙大漢搶走了","fb":"「被搶」只是口供，帳冊和攤販都不是這麼說。"},{"id":"a1b","label":"在同裕當店裡（當出去了）"},{"id":"a1c","label":"在媽祖廟的廟門裡","fb":"賭攤上輸掉的是錢，不是冠。"}],"answer":"a1b","must":["K3"]},{"id":"a2","q":"誰說了謊？","options":[{"id":"a2a","label":"魁星","fb":"狀紙還在排隊蓋章。魁星是被冤枉的那個，連話都說不出來。"},{"id":"a2b","label":"康元帥和趙元帥"},{"id":"a2c","label":"當店","fb":"帳冊寫得清清楚楚，說謊的不在當店。"}],"answer":"a2b","must":["K1","K3"]},{"id":"a3","q":"是誰叫人把冠拿去當的？","options":[{"id":"a3a","label":"小上帝自己"},{"id":"a3b","label":"千里眼","fb":"千里眼只是在廟口贏了錢，冠不是他叫人當的。"},{"id":"a3c","label":"路邊的攤販","fb":"攤販只是被你問話的那位。"}],"answer":"a3a","must":["K6"]},{"id":"a4","q":"那筆五千錢，最後輸給了誰？","options":[{"id":"a4a","label":"魁星","fb":"魁星那時候是被吊著的，沒碰過那筆錢。"},{"id":"a4b","label":"千里眼和順風耳（媽祖廟口的護法）"},{"id":"a4c","label":"同裕當店","fb":"當店是付錢給他們的那一方，錢不是輸給當店。"}],"answer":"a4b","must":["K4","K6"]}],"okText":"結案！每一題都有證據撐著。","missingEvidenceText":"答案對了，但還缺證據：請勾出能證明它的線索卡。","hints":["每一題要選一個答案，再勾出能證明它的線索卡。找不到證據的答案，先別選。","哪些人說的話，和物證對不起來？口供和帳冊放在一起看。","帳冊的經手人欄寫的是誰？再看看攤販回答了什麼。"]}],"ending":{"title":"案情說明","lines":[{"text":"冠沒有被搶。小上帝窮得沒飯吃，叫康、趙二帥把銅鍍金的通天冠拿到打銀街的同裕當店，當了五千錢。","tag":["orig"]},{"text":"二帥路過媽祖廟口，見千里眼、順風耳在「拋璉寶」，想賭贏好贖回冠，結果五千錢輸得精光。沒辦法，只好糊裡糊塗回稟：「在媽祖宮口，被獠牙大漢千里眼搶去了。」","tag":["orig","adapt"]},{"text":"小上帝聽了，氣得赤腳提劍衝出去，把路過的魁星當成千里眼，吊在榕樹上。","tag":["orig"]},{"text":"有趣的是：康趙那句「被千里眼搶了」，其實半真半假——錢，確實是被千里眼贏走的；「冠」不是。（這一句是工坊的讀法。）","tag":["made"]},{"text":"這個遊戲裡的筆墨、帳冊、賭攤布、攤販問話，是工坊為了讓你「查」出來而補的，原書沒有。「冠被搶」的說法也是工坊的讀法（原書沒寫被搶的是什麼）。","tag":["made"]},{"text":"你遞上結案書，魁星被放了下來。他揉揉手腕，什麼也沒說——倒是小上帝，這回換他說不出話了。","tag":["made"]}],"storyPrompt":"挑一個人（小上帝、康趙、魁星），用一句話說他的故事：他想要什麼？被什麼卡住？最後怎樣？","storyPlaceholder":"例：（挑一個人）他想要……，卡在……，最後……","storyMax":80},"judge":{"title":"玩完之後，想一想","question":"把這個遊戲裡的文化抽掉（神明換成普通人、問神換成普通問答），這個遊戲還玩得下去嗎？","options":[{"id":"j1","label":"照樣玩得下去"},{"id":"j2","label":"故事沒味道了，但還玩得下去"},{"id":"j3","label":"抽掉文化，這個遊戲就沒得玩了"},{"id":"j4","label":"說不準"}],"expected":"j2","expectedText":"參考看法：「找線索→湊東西→推理」這個流程，抽掉文化還在，所以遊戲還玩得下去。但「線索是什麼意思」（朱筆墨斗是誰的、神怎麼回答、什麼問法會被笑）要靠文化知識才讀得懂；抽掉之後，謎題只剩「照字面對答案」，變得像數字鎖。你的看法不一樣也行，寫下理由就好。","reasonPlaceholder":"用一句話寫理由","followups":["回到「文化版」玩一次：哪一個謎多了一層意思？為什麼？","你想加進一條新線索：它要靠哪一個在地知識才讀得懂？"]},"rating":{"weights":{"hint":6,"wrong":4,"retry":5,"laugh":2},"grades":[{"min":90,"seal":"甲","title":"神探書記","stars":3,"line":"幾乎沒繞路。天庭想把你調去查更大的案子。"},{"min":70,"seal":"乙","title":"稱職書記","stars":2,"line":"有繞路也有靠提示，但案子是你自己查清楚的。"},{"min":0,"seal":"丙","title":"見習書記","stars":1,"line":"多走了一些路，也多問了幾次。查案本來就是這樣，下一次會更順。"}]}}</script>
+
 <script>
+/* 〈冠不見了〉解謎樣板：機制模組一覽（每個模組：init(cfg, root)／step(state, action)／render(state)）
+   cover     讀 meta、intro                 封面與序幕（狀紙）
+   explore   讀 scenes、items               場景探索：點熱點找東西、用道具、換地點
+   inventory 讀 items、combos、comboDefault 道具欄與湊東西
+   notebook  讀 clues、codex、fieldwork     線索筆記本與圖鑑
+   puzzle    讀 puzzles                     三種謎：認人、問神（擲筊）、結案
+   hint      讀 puzzles[].hints             三層提示
+   scoring   讀 rating                      資源計分與評價（權重與等第都在 JSON）
+   ending    讀 ending、judge               案情重現、故事一句話、文化抽掉反思
+   feedback  讀 meta                        音效、提示字、解開特效
+   視覺語言只用 :root 的 --tk-* token（surface/panel/ink/muted/accent/accent-ink/line/font-title/font-body/radius/shadow） */
 (function(){
 'use strict';
 
@@ -155,6 +282,7 @@ function h(tag, props, kids){
     var v = props[k];
     if (k === 'class') e.className = v;
     else if (k === 'text') e.textContent = v;
+    else if (k === 'html') e.innerHTML = v;
     else if (k.indexOf('on') === 0) e.addEventListener(k.slice(2), v);
     else if (v === true) e.setAttribute(k, '');
     else if (v !== false && v != null) e.setAttribute(k, v);
@@ -172,7 +300,7 @@ function has(arr, v){ return arr.indexOf(v) >= 0; }
 var toastTimer = null;
 function toast(msg){
   var t = $('#toast'); t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+  clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
 }
 
 /* ---------- 聲音（預設關，Web Audio 合成） ---------- */
@@ -191,11 +319,15 @@ function sfx(kind){
   var cult = (mode === 'culture');
   if (kind === 'click') tone(cult ? 520 : 700, .06, cult ? 'triangle' : 'square', .06);
   else if (kind === 'get') { tone(cult ? 392 : 660, .12, 'triangle', .1); tone(cult ? 587 : 880, .18, 'triangle', .1, .1); }
+  else if (kind === 'clue') { [523, 659, 784, 1047].forEach(function(f, i){ tone(f, .16, 'triangle', .09, i * .07); }); }
+  else if (kind === 'look') tone(cult ? 330 : 480, .09, 'sine', .07);
   else if (kind === 'throw') { tone(180, .05, 'square', .08); tone(150, .05, 'square', .08, .16); tone(120, .06, 'square', .08, .32); }
   else if (kind === 'yes') { tone(523, .16, 'sine', .12); tone(784, .28, 'sine', .12, .12); }
   else if (kind === 'no') { tone(150, .3, 'triangle', .14); }
   else if (kind === 'laugh') { tone(440, .1, 'sawtooth', .06); tone(520, .1, 'sawtooth', .06, .1); tone(400, .16, 'sawtooth', .06, .2); }
   else if (kind === 'win') { [392,494,587,784].forEach(function(f,i){ tone(f, .3, 'triangle', .12, i*.12); }); }
+  else if (kind === 'stamp') { tone(90, .22, 'square', .16); tone(60, .3, 'sine', .18, .02); }
+  else if (kind === 'page') tone(cult ? 260 : 400, .08, 'triangle', .05);
   else if (kind === 'bad') tone(200, .2, 'square', .08);
 }
 
@@ -208,10 +340,12 @@ var pendingSwitch = null, pendingTimer = null;
 
 function newState(){
   var st = {
-    tab: 'scene', view: null, items: [], clues: [], appended: {}, taken: {},
-    sel: [], comboMsg: '', hintsUsed: {}, hintShown: {},
+    stage: 'cover', page: 0, tab: 'scene', view: null, scene: (data.scenes[0] || {}).id,
+    items: [], clues: [], newClues: [], appended: {}, taken: {}, usedOn: {},
+    sel: [], comboMsg: '', log: [], hintsUsed: {}, hintShown: {},
     puz: {}, oracle: null, acc: { sel: {}, ev: {}, fb: {}, msg: '' },
-    field: {}, story: '', judge: { id: null, reason: '' }, ended: false, ts: Date.now()
+    field: {}, story: '', judge: { id: null, reason: '' }, ended: false, ts: Date.now(),
+    wrong: 0, codexOpen: {}, reveal: null, endTs: 0
   };
   data.puzzles.forEach(function(p){ st.puz[p.id] = { solved: false, tries: 0, who: null, reason: null, fb: '' }; });
   var op = data.puzzles.filter(function(p){ return p.type === 'oracle'; })[0];
@@ -230,17 +364,20 @@ function tagEls(list){
 
 /* ---------- 取得線索與道具 ---------- */
 function giveClue(id, quiet){
-  if (has(S.clues, id)) return;
-  S.clues.push(id);
+  if (has(S.clues, id)) return false;
+  S.clues.push(id); S.newClues.push(id);
   var c = byId(data.clues, id);
-  if (!quiet) { toast('新線索：' + (c ? c.title : id)); sfx('get'); }
+  if (!quiet) { toast('新線索：' + (c ? c.title : id)); sfx('clue'); }
+  return true;
 }
 function giveItem(id){
-  if (has(S.items, id)) return;
+  if (has(S.items, id)) return null;
   S.items.push(id);
   var it = byId(data.items, id);
-  toast('得到：' + (it ? it.name : id)); sfx('get');
-  if (it && it.clue) giveClue(it.clue, true);
+  var gotClue = false;
+  if (it && it.clue) gotClue = giveClue(it.clue, true);
+  if (gotClue) sfx('clue'); else sfx('get');
+  return { item: it, clue: gotClue ? byId(data.clues, it.clue) : null };
 }
 function sceneOpen(sc){
   if (!sc.opens) return true;
@@ -253,10 +390,33 @@ function puzzleState(p){
           || (p.needsPuzzles || []).some(function(c){ return !S.puz[c].solved; });
   return miss ? { st: 'locked' } : { st: 'open' };
 }
+function hintTotal(){ var n = 0; Object.keys(S.hintsUsed).forEach(function(k){ n += S.hintsUsed[k]; }); return n; }
+function leftIn(sc){
+  var n = 0;
+  (sc.finds || []).forEach(function(f){ if (!S.taken[sc.id + ':' + f.id]) n++; });
+  return n;
+}
+
+/* ---------- 解開特效（不擋點擊） ---------- */
+function celebrate(title, sub){
+  sfx('stamp'); setTimeout(function(){ sfx('win'); }, 300);
+  var old = document.querySelector('.cele'); if (old) old.remove();
+  var el = h('div', { class: 'cele', 'aria-hidden': 'true' }, [h('div', { class: 'st' }, [title, sub ? h('small', { text: sub }) : null])]);
+  var cols = ['var(--red2)', 'var(--gold)', 'var(--jade)', 'var(--blue)', 'var(--t-made)'];
+  for (var i = 0; i < 26; i++) {
+    var a = Math.random() * Math.PI * 2, r = 120 + Math.random() * 190;
+    var p = h('i', { style: 'background:' + cols[i % cols.length] + ';--dx:' + Math.round(Math.cos(a) * r) + 'px;--dy:' + Math.round(Math.sin(a) * r) + 'px;--rot:' + Math.round(Math.random() * 720) + 'deg;animation-delay:' + (Math.random() * .25).toFixed(2) + 's' });
+    el.appendChild(p);
+  }
+  document.body.appendChild(el);
+  setTimeout(function(){ if (el.parentNode) el.remove(); }, 2700);
+}
 
 /* ---------- 版面骨架 ---------- */
 function renderChrome(){
   var m = data.meta;
+  document.body.classList.toggle('skin', mode === 'skin');
+  document.body.classList.toggle('playing', S.stage === 'play');
   $('#gTitle').textContent = m.title;
   $('#gVer').textContent = (mode === 'custom' ? '我的版本' : m.versionLabel);
   $('#gSub').textContent = m.subtitle;
@@ -272,58 +432,195 @@ function renderChrome(){
   foot.appendChild(lg);
 
   var tabs = $('#tabs'); tabs.textContent = '';
-  var defs = [['scene','現場'],['clue','線索'],['codex','圖鑑'],['puzzle','謎題']];
+  tabs.hidden = (S.stage !== 'play');
+  var defs = [['scene','現場'],['clue','筆記本'],['codex','圖鑑'],['puzzle','謎題']];
   if (!data.codex || !data.codex.length) defs = defs.filter(function(d){ return d[0] !== 'codex'; });
   defs.forEach(function(d){
-    var b = h('button', { type: 'button', class: S.tab === d[0] ? 'on' : '', 'data-tab': d[0], onclick: function(){ S.tab = d[0]; S.view = null; sfx('click'); render(); window.scrollTo(0, 0); } }, [d[1]]);
-    if (d[0] === 'clue' && S.clues.length) b.appendChild(h('span', { class: 'badge', text: String(S.clues.length) }));
+    var b = h('button', { type: 'button', class: S.tab === d[0] ? 'on' : '', 'data-tab': d[0], onclick: function(){ S.tab = d[0]; S.view = null; if (d[0] === 'clue') S.newClues = []; sfx('click'); render(); window.scrollTo(0, 0); } }, [d[1]]);
+    if (d[0] === 'clue' && S.clues.length) b.appendChild(h('span', { class: 'badge' + (S.newClues.length ? ' new' : ''), text: String(S.clues.length) }));
+    if (d[0] === 'puzzle' && S.tab !== 'puzzle' && data.puzzles.some(function(p){ return puzzleState(p).st === 'open'; })) b.appendChild(h('i', { class: 'dot', title: '有謎可以解了' }));
     tabs.appendChild(b);
   });
 }
 
 function render(){
+  var y = window.pageYOffset || 0;
   renderChrome();
   var v = $('#view'); v.textContent = '';
-  if (S.tab === 'scene') viewScene(v);
-  else if (S.tab === 'clue') viewClue(v);
-  else if (S.tab === 'codex') viewCodex(v);
-  else viewPuzzle(v);
+  if (S.stage === 'cover' || S.stage === 'story') MOD.cover.render(S);
+  else if (S.tab === 'scene') { MOD.explore.render(S); MOD.inventory.render(S); }
+  else if (S.tab === 'clue') { MOD.inventory.renderBench(S); MOD.notebook.render(S); }
+  else if (S.tab === 'codex') MOD.notebook.renderCodex(S);
+  else MOD.puzzle.render(S);
+  if (y) window.scrollTo(0, y);
+}
+function act(mod, action){
+  MOD[mod].step(S, action);
+  render();
+  if (action.top) window.scrollTo(0, 0);
+  if (action.scroll) { var t = $(action.scroll); if (t && t.scrollIntoView) t.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
 }
 
-/* ---------- 現場 ---------- */
-function viewScene(v){
-  if (!S.introDone) {
-    var ic = h('div', { class: 'card' }, [h('h2', { text: data.intro.title })]);
-    data.intro.text.forEach(function(t){ ic.appendChild(h('p', { text: t })); });
-    ic.appendChild(h('h3', { text: '查案方式' }));
-    var ol = h('ol', { class: 'steps' }, data.intro.rules.map(function(r){ return h('li', { text: r }); }));
-    ic.appendChild(ol);
-    ic.appendChild(h('div', { style: 'margin-top:10px' }, [h('button', { class: 'primary', type: 'button', onclick: function(){ S.introDone = true; sfx('click'); render(); } }, ['開始查案'])]));
-    v.appendChild(ic); return;
+/* ---------- 封面與序幕 ---------- */
+function viewCover(v){
+  var m = data.meta;
+  var cv = h('div', { class: 'cover' });
+  cv.insertAdjacentHTML('beforeend', ART.cover());
+  cv.appendChild(h('div', { class: 'ct' }, [h('div', { class: 'k', text: m.kicker || '天庭稽查書記・案卷之一' }), h('div', { class: 't', text: m.title }), h('div', { class: 's', text: m.tagline || '' })]));
+  var bar = h('div', { class: 'coverbar' }, [
+    h('div', { class: 'facts' }, [h('span', { text: m.playTime || '約 10 分鐘' }), h('span', { text: data.scenes.length + ' 個地點' }), h('span', { text: data.puzzles.length + ' 個謎' }), h('span', { text: '有提示、不會卡死' })]),
+    h('button', { class: 'primary big', type: 'button', id: 'btnStart', onclick: function(){ act('cover', { type: 'start', top: true }); } }, ['開始查案']),
+    h('p', { class: 'muted', style: 'text-align:center;margin:0', text: '可以先按上面的「聲音」打開音效。右上角能切換「文化版／抽掉文化版」，玩完再比一比。' })
+  ]);
+  cv.appendChild(bar);
+  v.appendChild(cv);
+}
+function viewStory(v){
+  var pages = data.intro.text.map(function(t){ return { who: '狀紙', t: t }; });
+  var last = pages.length;           // 最後一頁＝查案方式
+  var n = last + 1, i = Math.min(S.page, last);
+  var sc = h('div', { class: 'scroll' });
+  if (i < last) {
+    sc.appendChild(h('div', { class: 'who', text: data.intro.title + '　' + (i + 1) + '／' + n }));
+    sc.appendChild(h('div', { class: 'pg', 'data-page': String(i), text: pages[i].t }));
+  } else {
+    sc.appendChild(h('div', { class: 'who', text: '查案方式　' + n + '／' + n }));
+    var box = h('div', { class: 'pg', 'data-page': String(i) });
+    box.appendChild(h('ol', { class: 'steps' }, data.intro.rules.map(function(r){ return h('li', { text: r }); })));
+    box.appendChild(h('p', { class: 'muted', text: '小技巧：場景裡亮晶晶的圓點可以點。選好道具欄的東西再點，就是「用」它。' }));
+    sc.appendChild(box);
   }
-  data.scenes.forEach(function(sc){
-    var open = sceneOpen(sc);
-    var card = h('div', { class: 'card' + (open ? '' : ' lock') }, [h('h2', { text: sc.name })]);
-    card.appendChild(tagEls(sc.tag));
-    if (!open) { card.appendChild(h('p', { class: 'muted', text: sc.lockedText || '還不能去。' })); v.appendChild(card); return; }
-    card.appendChild(h('p', { text: sc.desc }));
-    (sc.finds || []).forEach(function(f){
-      var key = sc.id + ':' + f.id;
-      var taken = !!S.taken[key];
-      var row = h('div', { class: 'find' });
-      if (taken) row.appendChild(h('span', { class: 'got', text: '✓ ' + f.label }));
-      else row.appendChild(h('button', { type: 'button', 'data-find': key, onclick: function(){
-        S.taken[key] = true;
-        if (f.kind === 'item') giveItem(f.id); else giveClue(f.id);
-        render();
-      } }, [f.label]));
-      card.appendChild(row);
-    });
-    v.appendChild(card);
-  });
+  v.appendChild(sc);
+  var dots = h('div', { class: 'dots' }); for (var k = 0; k < n; k++) dots.appendChild(h('i', { class: k === i ? 'on' : '' }));
+  v.appendChild(dots);
+  var row = h('div', { class: 'pair', style: 'justify-content:space-between' });
+  row.appendChild(h('button', { type: 'button', class: 'ghost', id: 'btnSkipStory', onclick: function(){ act('cover', { type: 'enter', top: true }); } }, ['略過']));
+  if (i < last) row.appendChild(h('button', { type: 'button', class: 'primary', id: 'btnNext', onclick: function(){ act('cover', { type: 'next' }); } }, ['下一頁']));
+  else row.appendChild(h('button', { type: 'button', class: 'primary', id: 'btnEnter', onclick: function(){ act('cover', { type: 'enter', top: true }); } }, ['進入現場']));
+  v.appendChild(row);
+}
+function enterPlay(){
+  S.stage = 'play'; S.tab = 'scene'; S.ts = Date.now();
+  var sc = byId(data.scenes, S.scene) || data.scenes[0];
+  S.reveal = { ic: '🏮', hd: sc.name, tx: sc.desc };
+  sfx('click'); render(); window.scrollTo(0, 0);
 }
 
-/* ---------- 線索 ---------- */
+/* ---------- 現場：插畫＋熱點＋地圖＋道具欄 ---------- */
+function goalText(){
+  if (!S.clues.length && !S.items.length) return '先在各處走走，點亮晶晶的圓點找線索。';
+  var open = data.puzzles.filter(function(p){ return puzzleState(p).st === 'open'; });
+  if (open.length) return '可以去「謎題」頁解：' + open[0].title;
+  var left = 0; data.scenes.forEach(function(sc){ if (sceneOpen(sc)) left += leftIn(sc); });
+  if (left) return '還有 ' + left + ' 個地方沒查過，看看地圖上的紅色數字。';
+  if (data.puzzles.every(function(p){ return S.puz[p.id].solved; })) return '三個謎都解開了，到「謎題」頁看案情說明。';
+  return '試試把兩樣道具湊在一起看，或翻翻圖鑑。';
+}
+function exploreTap(sc, f){
+  var key = sc.id + ':' + f.id;
+  var sel = S.sel.length === 1 ? S.sel[0] : null;
+  var taken = !!S.taken[key];
+  var head = f.label;
+  if (sel && f.uses && f.uses[sel] && !taken) {
+    var k2 = key + '+' + sel;
+    S.reveal = { ic: '✋', hd: head + '（用「' + byId(data.items, sel).name + '」）', tx: f.uses[sel] };
+    S.usedOn[k2] = true; sfx('look'); return;
+  }
+  if (taken) {
+    S.reveal = { ic: f.icon || KIND_ICON[f.kind], hd: head + '（看過了）', tx: f.again || f.text || f.say || '這裡你已經看過了。' };
+    sfx('click'); return;
+  }
+  if (f.needs && sel !== f.needs) {
+    S.reveal = { ic: '🔒', hd: head, tx: f.needHint || '好像需要拿一樣東西來用。先在道具欄選好它，再點這裡。' };
+    sfx('bad'); return;
+  }
+  S.taken[key] = true;
+  var rv = { ic: f.icon || KIND_ICON[f.kind], hd: head, tx: '' };
+  if (f.kind === 'item') {
+    var r = giveItem(f.id);
+    rv.ic = itemIcon(r.item);
+    rv.tx = (f.say ? f.say + '　' : '') + '得到「' + (r.item ? r.item.name : f.id) + '」：' + (r.item ? r.item.desc : '');
+    if (r.clue) { rv.nw = '新線索卡：' + r.clue.title; rv.isNew = true; }
+    toast('得到：' + (r.item ? r.item.name : f.id));
+  } else if (f.kind === 'clue') {
+    var got = giveClue(f.id, true);
+    var c = byId(data.clues, f.id);
+    sfx('clue');
+    rv.ic = '🧾'; rv.tx = (f.say ? f.say + '　' : '') + (c ? c.title : '');
+    if (got) { rv.nw = '新線索卡：' + (c ? c.title : f.id); rv.isNew = true; }
+  } else {
+    rv.tx = f.text || '看不出什麼特別的。'; sfx('look');
+  }
+  S.reveal = rv;
+}
+function viewScene(v){
+  var sc = byId(data.scenes, S.scene) || data.scenes[0];
+  if (!sceneOpen(sc)) { S.scene = data.scenes[0].id; sc = data.scenes[0]; }
+  /* 地圖 */
+  var map = h('nav', { class: 'map', 'aria-label': '地點' });
+  data.scenes.forEach(function(s){
+    var open = sceneOpen(s);
+    var left = open ? leftIn(s) : 0;
+    var b = h('button', { type: 'button', class: (s.id === S.scene ? 'on' : '') + (open ? '' : ' lock'), 'data-scene': s.id, title: open ? null : '還沒開放', onclick: function(){ act('explore', { type: 'goto', scene: s.id }); } }, [open ? '' : '🔒 ', s.short || s.name]);
+    if (left) b.appendChild(h('span', { class: 'n', text: '還有 ' + left }));
+    else if (open && (s.finds || []).length) b.appendChild(h('span', { class: 'n', style: 'color:var(--ok)', text: '查完 ✓' }));
+    map.appendChild(b);
+  });
+  v.appendChild(map);
+  /* 舞台 */
+  var stage = h('div', { class: 'stage', 'data-art': sc.art || 'generic' });
+  stage.insertAdjacentHTML('afterbegin', sceneArt(sc));
+  var fl = sc.finds || [];
+  fl.forEach(function(f, i){
+    var pos = spotPos(sc, i, fl.length);
+    var key = sc.id + ':' + f.id;
+    var taken = !!S.taken[key];
+    var it = f.kind === 'item' ? byId(data.items, f.id) : null;
+    var ic = taken ? '✓' : (f.icon || (it && it.icon) || KIND_ICON[f.kind] || '❔');
+    var b = h('button', { type: 'button', class: 'spot' + (f.kind === 'look' ? ' look' : '') + (taken ? ' done' : ''), 'data-find': key, 'aria-label': f.label + (taken ? '（看過了）' : ''), title: f.label,
+      style: 'left:' + pos[0] + '%;top:' + pos[1] + '%', onclick: function(){ act('explore', { type: 'tap', scene: sc.id, find: f.id }); } }, [ic]);
+    stage.appendChild(b);
+  });
+  v.appendChild(stage);
+  v.appendChild(h('div', { class: 'cap', text: sc.name + '｜點亮晶晶的圓點調查；✓ 是查過了' }));
+  if (sc.tag) v.appendChild(tagEls(sc.tag));
+  /* 揭示列 */
+  if (S.reveal) {
+    var R = S.reveal;
+    v.appendChild(h('div', { class: 'reveal' + (R.isNew ? ' new' : ''), id: 'reveal', role: 'status' }, [
+      h('div', { class: 'ic', text: R.ic || '🔍' }),
+      h('div', {}, [h('div', { class: 'hd', text: R.hd || '' }), h('div', { class: 'tx', text: R.tx || '' }), R.nw ? h('span', { class: 'nw', text: R.nw }) : null])
+    ]));
+  }
+  v.appendChild(h('div', { class: 'goal', id: 'goal' }, [h('b', { text: '目標：' }), goalText()]));
+}
+function renderBag(v){
+  var bag = h('div', { class: 'bag', id: 'bag' }, [h('div', { class: 'hd', text: '道具欄（點一樣＝拿在手上，再去點場景上的東西；點兩樣＝湊在一起看）' })]);
+  var row = h('div', { class: 'row' });
+  if (!S.items.length) row.appendChild(h('span', { class: 'muted', text: '還是空的。' }));
+  S.items.forEach(function(id){
+    var it = byId(data.items, id);
+    row.appendChild(h('button', { type: 'button', class: 'chip' + (has(S.sel, id) ? ' sel' : ''), 'data-inv': id, 'aria-pressed': has(S.sel, id) ? 'true' : 'false', title: it.desc, onclick: function(){ act('inventory', { type: 'toggle', id: id }); } }, [h('span', { class: 'e', text: itemIcon(it) }), it.name]));
+  });
+  bag.appendChild(row);
+  if (S.items.length >= 2) {
+    var names = S.sel.map(function(id){ return byId(data.items, id).name; });
+    bag.appendChild(h('div', { class: 'bagact' }, [
+      h('button', { type: 'button', class: 'primary', id: 'btnCombineBar', disabled: S.sel.length !== 2, onclick: function(){ act('inventory', { type: 'combine', from: 'bar' }); } }, ['湊在一起看']),
+      h('span', { class: 'muted', text: S.sel.length === 2 ? names.join(' ＋ ') : (S.sel.length === 1 ? '手上拿著「' + names[0] + '」' : '') })
+    ]));
+  } else if (S.sel.length === 1) {
+    bag.appendChild(h('div', { class: 'bagact' }, [h('span', { class: 'muted', text: '手上拿著「' + byId(data.items, S.sel[0]).name + '」' })]));
+  }
+  v.appendChild(bag);
+}
+function toggleSel(id){
+  if (has(S.sel, id)) S.sel = S.sel.filter(function(x){ return x !== id; });
+  else { S.sel.push(id); if (S.sel.length > 2) S.sel.shift(); }
+  sfx('click');
+}
+
+/* ---------- 筆記本（線索卡＋湊東西＋推理紀錄） ---------- */
 function clueText(c){
   var t = c.text;
   if (c.compose === 'oracle') {
@@ -338,39 +635,41 @@ function clueText(c){
   if (S.appended[c.id]) t = t + '\n' + S.appended[c.id];
   return t;
 }
-function viewClue(v){
-  var box = h('div', { class: 'card' }, [h('h2', { text: '道具（選兩樣，湊在一起看）' })]);
+function renderBench(v){
+  var box = h('div', { class: 'card' }, [h('h2', { text: '湊東西工作台（選兩樣，湊在一起看）' })]);
   if (!S.items.length) box.appendChild(h('p', { class: 'muted', text: '還沒有道具。到「現場」走走。' }));
   var its = h('div', { class: 'items' });
   S.items.forEach(function(id){
     var it = byId(data.items, id);
-    its.appendChild(h('button', { type: 'button', class: has(S.sel, id) ? 'sel' : '', 'data-item': id, onclick: function(){
-      if (has(S.sel, id)) S.sel = S.sel.filter(function(x){ return x !== id; });
-      else { S.sel.push(id); if (S.sel.length > 2) S.sel.shift(); }
-      sfx('click'); render();
-    } }, [it.name, h('small', { text: it.desc })]));
+    its.appendChild(h('button', { type: 'button', class: has(S.sel, id) ? 'sel' : '', 'data-item': id, onclick: function(){ act('inventory', { type: 'toggle', id: id }); } }, [itemIcon(it) + ' ' + it.name, h('small', { text: it.desc })]));
   });
   box.appendChild(its);
   if (S.items.length >= 2) {
     var sel = S.sel.map(function(id){ return byId(data.items, id).name; });
     var row = h('div', { class: 'pair', style: 'margin-top:10px' }, [
-      h('button', { type: 'button', id: 'btnCombine', class: 'primary', disabled: S.sel.length !== 2, onclick: doCombine }, ['湊在一起看']),
+      h('button', { type: 'button', id: 'btnCombine', class: 'primary', disabled: S.sel.length !== 2, onclick: function(){ act('inventory', { type: 'combine', from: 'bench' }); } }, ['湊在一起看']),
       h('span', { class: 'muted', text: S.sel.length === 2 ? sel.join(' ＋ ') : '再選 ' + (2 - S.sel.length) + ' 樣' })
     ]);
     box.appendChild(row);
   }
   if (S.comboMsg) box.appendChild(h('div', { class: 'msg', id: 'comboMsg', text: S.comboMsg }));
   v.appendChild(box);
-
-  v.appendChild(h('h2', { text: '線索卡', style: 'margin:14px 0 4px' }));
+}
+function renderClues(v){
+  v.appendChild(h('h2', { text: '線索卡（' + S.clues.length + '／' + data.clues.length + '）', style: 'margin:14px 0 4px' }));
   if (!S.clues.length) v.appendChild(h('p', { class: 'muted', text: '還沒有線索卡。' }));
   S.clues.forEach(function(id){
     var c = byId(data.clues, id);
-    var card = h('div', { class: 'card', 'data-clue': id }, [h('h3', { text: c.title })]);
+    var card = h('div', { class: 'card note' + (has(S.newClues, id) ? ' new' : ''), 'data-clue': id }, [h('h3', { text: c.title })]);
     card.appendChild(tagEls(c.tag));
     card.appendChild(h('p', { text: clueText(c), style: 'white-space:pre-wrap' }));
     v.appendChild(card);
   });
+  if (S.log.length) {
+    var lg = h('div', { class: 'card', id: 'logBox' }, [h('h3', { text: '我的推理紀錄（湊東西得到的發現）' })]);
+    S.log.slice().reverse().forEach(function(l){ lg.appendChild(h('div', { class: 'logline', text: l })); });
+    v.appendChild(lg);
+  }
 }
 function doCombine(){
   var a = S.sel[0], b = S.sel[1];
@@ -379,16 +678,20 @@ function doCombine(){
   if (!hit) { S.comboMsg = data.comboDefault || '湊不出什麼。'; sfx('bad'); }
   else if (hit.gives) {
     if (has(S.clues, hit.gives)) S.comboMsg = '這個你已經湊過了。';
-    else { giveClue(hit.gives); var cc = byId(data.clues, hit.gives); S.comboMsg = hit.msg || ('湊出新線索：' + cc.title + '（在下面）'); }
-  } else { S.comboMsg = hit.msg; sfx('click'); }
-  render();
+    else { giveClue(hit.gives); var cc = byId(data.clues, hit.gives); S.comboMsg = hit.msg || ('湊出新線索：' + cc.title + '（在下面）'); S.log.push('湊出線索「' + cc.title + '」'); }
+  } else {
+    S.comboMsg = hit.msg; sfx('click');
+    var ln = byId(data.items, a).name + ' ＋ ' + byId(data.items, b).name + '：' + hit.msg;
+    if (!has(S.log, ln) && !hit.noLog) S.log.push(ln);
+  }
 }
 
 /* ---------- 圖鑑 ---------- */
 function viewCodex(v){
-  v.appendChild(h('p', { class: 'muted', text: '不認得的人和東西，來這裡找。每一條都標了出處的種類。' }));
+  v.appendChild(h('p', { class: 'muted', text: '不認得的人和東西，來這裡找（已翻 ' + Object.keys(S.codexOpen).length + '／' + data.codex.length + ' 條）。每一條都標了出處的種類。' }));
   data.codex.forEach(function(cx){
     var d = h('details', { class: 'cx', 'data-cx': cx.id }, [h('summary', { text: cx.name })]);
+    d.addEventListener('toggle', function(){ if (d.open) S.codexOpen[cx.id] = true; });
     var inn = h('div', { class: 'in' }, [tagEls(cx.tag), h('p', { text: cx.text })]);
     if (cx.field) {
       var f = byId(data.fieldwork || [], cx.field);
@@ -406,20 +709,179 @@ function viewCodex(v){
   });
 }
 
+/* ---------- 場景插畫（手繪向量，不連外部資源） ---------- */
+function svgWrap(id, label, inner, vb){
+  return '<svg class="art" viewBox="' + (vb || '0 0 400 260') + '" preserveAspectRatio="xMidYMid slice" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+}
+function person(x, y, face, robe, opt){
+  opt = opt || {};
+  var s = opt.s || 1;
+  return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')">' +
+    '<rect x="-11" y="0" width="22" height="34" rx="4" fill="' + robe + '"/>' +
+    '<rect x="-11" y="20" width="22" height="5" fill="rgba(0,0,0,.25)"/>' +
+    '<circle cx="0" cy="-8" r="10" fill="' + face + '"/>' +
+    (opt.hat ? '<path d="M-13 -12 Q0 -30 13 -12 Z" fill="' + opt.hat + '"/><rect x="-14" y="-13" width="28" height="3" fill="' + opt.hat + '"/>' : '') +
+    '<circle cx="-3.5" cy="-9" r="1.3" fill="#2a211a"/><circle cx="3.5" cy="-9" r="1.3" fill="#2a211a"/>' +
+    (opt.fang ? '<path d="M-4 -3 L-2.5 2 L-1 -3 Z M1 -3 L2.5 2 L4 -3 Z" fill="#fff"/>' : '<path d="M-3 -3 Q0 -1 3 -3" stroke="#2a211a" stroke-width="1.2" fill="none"/>') +
+    '<rect x="-4" y="34" width="8" height="10" fill="#3a2a1f"/><rect x="-12" y="34" width="8" height="10" fill="#3a2a1f" opacity="0"/>' +
+    '</g>';
+}
+var ART = {
+  temple: function(){
+    return svgWrap('temple', '小上帝廟前：一間簡陋的小廟，門口站著兩位元帥',
+      '<defs><linearGradient id="gT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7cf97"/><stop offset="1" stop-color="#e48f5b"/></linearGradient></defs>' +
+      '<rect width="400" height="260" fill="url(#gT)"/>' +
+      '<circle cx="330" cy="58" r="28" fill="#fff0c9" opacity=".9"/>' +
+      '<path d="M0 175 Q70 135 150 165 T300 155 T400 168 V260 H0Z" fill="#a98763"/>' +
+      '<rect y="190" width="400" height="70" fill="#8a6a45"/><rect y="190" width="400" height="5" fill="#6f5233"/>' +
+      '<path d="M96 128 L200 78 L304 128 Z" fill="#6d5c4d"/><path d="M96 128 L200 78 L304 128" stroke="#4a3a2d" stroke-width="3" fill="none"/>' +
+      '<rect x="128" y="126" width="144" height="66" fill="#c9a875"/><rect x="128" y="126" width="144" height="6" fill="#a98763"/>' +
+      '<rect x="178" y="146" width="44" height="46" rx="3" fill="#5a3a24"/><path d="M200 146 V192" stroke="#3a2415" stroke-width="2"/>' +
+      '<rect x="168" y="112" width="64" height="18" rx="2" fill="#6b4a2a"/><text x="200" y="125" font-size="11" fill="#e9d6a8" text-anchor="middle" opacity=".7">小上帝廟</text>' +
+      '<g class="fl"><line x1="142" y1="128" x2="142" y2="136" stroke="#5a3a24"/><ellipse cx="142" cy="146" rx="8" ry="10" fill="#d4492f"/></g>' +
+      '<g class="fl"><line x1="258" y1="128" x2="258" y2="136" stroke="#5a3a24"/><ellipse cx="258" cy="146" rx="8" ry="10" fill="#d4492f"/></g>' +
+      person(72, 150, '#d65a46', '#8a3a2f', { hat: '#3a2a1f', s: 1.25 }) +
+      person(330, 150, '#5aa39a', '#2f5a6a', { hat: '#3a2a1f', s: 1.25 }) +
+      '<text x="72" y="140" font-size="10" fill="#fff" text-anchor="middle" opacity=".9">咕嚕～</text>' +
+      '<g stroke="#6f5233" stroke-width="2"><path d="M20 205 l6 -14 M30 207 l-2 -16 M370 207 l4 -14 M380 205 l-6 -12"/></g>');
+  },
+  banyan: function(){
+    return svgWrap('banyan', '榕樹下：大榕樹上吊著一個人，樹根旁散落幾樣東西',
+      '<defs><linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#27424a"/><stop offset="1" stop-color="#5d8a72"/></linearGradient></defs>' +
+      '<rect width="400" height="260" fill="url(#gB)"/>' +
+      '<circle cx="62" cy="48" r="22" fill="#f4f0d6" opacity=".92"/><circle cx="72" cy="42" r="20" fill="#27424a" opacity=".35"/>' +
+      '<rect y="205" width="400" height="55" fill="#43553a"/><rect y="205" width="400" height="4" fill="#33432b"/>' +
+      '<path d="M185 205 Q190 130 178 90 L240 90 Q232 135 242 205 Z" fill="#5a4630"/>' +
+      '<path d="M200 205 Q203 150 200 100" stroke="#3f2f1e" stroke-width="3" fill="none"/>' +
+      '<ellipse cx="205" cy="62" rx="190" ry="58" fill="#1f4a35"/><ellipse cx="110" cy="76" rx="80" ry="38" fill="#2a5e44"/><ellipse cx="305" cy="74" rx="85" ry="40" fill="#2a5e44"/><ellipse cx="205" cy="40" rx="95" ry="30" fill="#34704f"/>' +
+      '<g stroke="#4a3b27" stroke-width="2.5" fill="none"><path d="M120 100 Q116 150 124 200"/><path d="M148 104 Q146 150 150 198"/><path d="M300 100 Q304 150 296 200"/><path d="M330 98 Q332 140 336 190"/><path d="M96 90 Q90 130 98 170"/></g>' +
+      '<g class="sw" style="transform-origin:264px 70px"><line x1="264" y1="70" x2="264" y2="124" stroke="#a98763" stroke-width="4"/>' +
+        '<rect x="256" y="148" width="16" height="30" rx="3" fill="#4b6a8a"/><rect x="253" y="124" width="22" height="6" rx="3" fill="#a98763"/>' +
+        '<circle cx="264" cy="138" r="9" fill="#e8c9a0"/><path d="M259 142 L261 148 L263 142 Z M265 142 L267 148 L269 142 Z" fill="#fff"/>' +
+        '<circle cx="261" cy="136" r="1.3" fill="#2a211a"/><circle cx="267" cy="136" r="1.3" fill="#2a211a"/>' +
+        '<path d="M258 178 L256 196 M270 178 L272 196" stroke="#2a211a" stroke-width="4" stroke-linecap="round"/></g>' +
+      '<g transform="translate(118 232) rotate(-18)"><rect x="-14" y="-2.5" width="28" height="5" rx="2" fill="#6b4a2a"/><rect x="-18" y="-2.5" width="6" height="5" rx="1" fill="#c9392e"/></g>' +
+      '<g transform="translate(182 228)"><rect x="-12" y="-9" width="24" height="18" rx="3" fill="#5a3a24"/><circle cx="12" cy="0" r="4" fill="#3a2415"/><line x1="-12" y1="0" x2="-4" y2="0" stroke="#d8c9a8" stroke-width="1.5"/></g>' +
+      '<g transform="translate(60 230)" stroke="#b79a6a" stroke-width="3" fill="none"><ellipse rx="20" ry="8"/><ellipse rx="13" ry="4"/></g>');
+  },
+  pawn: function(){
+    return svgWrap('pawn', '打銀街同裕當店：櫃台後面沒有人，帳冊攤開在算盤旁',
+      '<defs><linearGradient id="gP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4e2b8"/><stop offset="1" stop-color="#ead09a"/></linearGradient></defs>' +
+      '<rect width="400" height="260" fill="url(#gP)"/>' +
+      '<rect y="212" width="400" height="48" fill="#b49670"/><path d="M0 222 H400 M0 238 H400" stroke="#9a7d58" stroke-width="2"/>' +
+      '<rect x="40" y="62" width="320" height="152" fill="#9b6a44"/><rect x="40" y="62" width="320" height="10" fill="#6d4628"/>' +
+      '<path d="M26 66 L200 30 L374 66 Z" fill="#5d4636"/>' +
+      '<rect x="62" y="86" width="276" height="100" fill="#3a2a1f"/>' +
+      '<path d="M62 86 V120 M338 86 V120" stroke="#a8322a" stroke-width="12"/>' +
+      '<g class="fl"><circle cx="200" cy="52" r="22" fill="#a8322a" stroke="#f1dba8" stroke-width="3"/><text x="200" y="61" font-size="26" font-weight="900" fill="#f8e9c4" text-anchor="middle">當</text></g>' +
+      '<rect x="62" y="150" width="276" height="50" fill="#6d4628"/><rect x="62" y="150" width="276" height="7" fill="#8a5a36"/>' +
+      '<g transform="translate(112 142)"><rect x="-26" y="-12" width="52" height="22" fill="#7a4e2a" stroke="#3a2415" stroke-width="2"/><g stroke="#3a2415"><line x1="-26" y1="-2" x2="26" y2="-2"/></g><g fill="#e9d6a8"><circle cx="-16" cy="-7" r="3"/><circle cx="-6" cy="-7" r="3"/><circle cx="4" cy="-7" r="3"/><circle cx="14" cy="-7" r="3"/><circle cx="-12" cy="4" r="3"/><circle cx="-2" cy="4" r="3"/><circle cx="8" cy="4" r="3"/></g></g>' +
+      '<g transform="translate(256 140)"><path d="M-34 4 L0 -6 L0 14 L-34 22 Z" fill="#fbf4de" stroke="#6d4628" stroke-width="1.5"/><path d="M0 -6 L34 4 L34 22 L0 14 Z" fill="#f4ebcf" stroke="#6d4628" stroke-width="1.5"/><g stroke="#8a6a45" stroke-width="1"><path d="M-28 6 L-6 0 M-28 11 L-6 6 M-28 16 L-6 12 M6 0 L28 6 M6 6 L28 11 M6 12 L28 16"/></g><text x="-16" y="12" font-size="7" fill="#a8322a" transform="rotate(-12 -16 12)">五千</text></g>' +
+      '<g opacity=".85"><rect x="150" y="96" width="14" height="40" fill="#241a12"/><rect x="236" y="96" width="14" height="40" fill="#241a12"/></g>');
+  },
+  gate: function(){
+    return svgWrap('gate', '媽祖宮口：廟門關得緊緊的，地上鋪著畫了格子的賭攤布',
+      '<defs><linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9d3dd"/><stop offset="1" stop-color="#f1e6c8"/></linearGradient></defs>' +
+      '<rect width="400" height="260" fill="url(#gG)"/>' +
+      '<path d="M104 92 L200 44 L296 92 Z" fill="#8a2f26"/><path d="M92 96 H308" stroke="#d1a24a" stroke-width="6"/><path d="M104 92 L200 44 L296 92" stroke="#d1a24a" stroke-width="3" fill="none"/>' +
+      '<rect x="120" y="96" width="160" height="104" fill="#b8392e"/>' +
+      '<rect x="146" y="112" width="52" height="88" fill="#7a2218" stroke="#d1a24a" stroke-width="3"/><rect x="202" y="112" width="52" height="88" fill="#7a2218" stroke="#d1a24a" stroke-width="3"/>' +
+      '<g fill="#d1a24a"><circle cx="160" cy="140" r="3"/><circle cx="178" cy="140" r="3"/><circle cx="160" cy="158" r="3"/><circle cx="178" cy="158" r="3"/><circle cx="222" cy="140" r="3"/><circle cx="240" cy="140" r="3"/><circle cx="222" cy="158" r="3"/><circle cx="240" cy="158" r="3"/><circle cx="196" cy="160" r="4"/><circle cx="204" cy="160" r="4"/></g>' +
+      '<rect x="164" y="102" width="72" height="14" rx="2" fill="#2a211a"/><text x="200" y="113" font-size="10" fill="#f1dba8" text-anchor="middle">天上聖母</text>' +
+      '<g fill="#3a2a1f" opacity=".9"><rect x="76" y="124" width="30" height="64" rx="3"/><rect x="294" y="124" width="30" height="64" rx="3"/></g>' +
+      '<g stroke="#d9c08a" stroke-width="2" fill="none" stroke-dasharray="4 3"><rect x="80" y="130" width="22" height="54" rx="2"/><rect x="298" y="130" width="22" height="54" rx="2"/></g>' +
+      '<g fill="#9aa3a8"><ellipse cx="116" cy="204" rx="16" ry="11"/><ellipse cx="284" cy="204" rx="16" ry="11"/></g>' +
+      '<rect y="200" width="400" height="60" fill="#c9b793"/><path d="M0 214 H400 M0 232 H400" stroke="#b09c76" stroke-width="2"/>' +
+      '<g transform="translate(202 236)"><path d="M-62 -12 L62 -12 L74 14 L-74 14 Z" fill="#35694f" stroke="#1d3d2e" stroke-width="2"/><g stroke="#8fc0a6" stroke-width="1.5"><path d="M-25 -12 L-29 14 M25 -12 L29 14 M-68 1 H68"/></g><g fill="#e1b24c"><circle cx="-40" cy="-2" r="4"/><circle cx="8" cy="5" r="4"/><circle cx="46" cy="-4" r="4"/><circle cx="-6" cy="-6" r="3.5"/></g></g>' +
+      '<g transform="translate(50 214)"><rect x="-24" y="0" width="48" height="26" fill="#6d4628"/><rect x="-26" y="-4" width="52" height="6" fill="#8a5a36"/><rect x="-9" y="-12" width="18" height="12" rx="2" fill="#3a2a1f"/><g stroke="#c9392e" stroke-width="2.5" stroke-linecap="round"><line x1="-4" y1="-12" x2="-4" y2="-24"/><line x1="0" y1="-12" x2="0" y2="-26"/><line x1="4" y1="-12" x2="4" y2="-24"/></g></g>');
+  },
+  shrine: function(){
+    return svgWrap('shrine', '路邊的土地公廟：香爐還有餘溫',
+      '<defs><linearGradient id="gS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2c48a"/><stop offset="1" stop-color="#d99a5b"/></linearGradient></defs>' +
+      '<rect width="400" height="260" fill="url(#gS)"/>' +
+      '<path d="M0 170 Q100 140 200 168 T400 160 V260 H0Z" fill="#a78a5e"/><rect y="200" width="400" height="60" fill="#8a7048"/>' +
+      '<rect x="140" y="104" width="120" height="96" fill="#7d7468"/><rect x="140" y="104" width="120" height="6" fill="#968c7e"/>' +
+      '<path d="M122 108 L200 62 L278 108 Z" fill="#a8322a"/><path d="M122 108 L200 62 L278 108" stroke="#d1a24a" stroke-width="3" fill="none"/>' +
+      '<rect x="160" y="120" width="80" height="80" rx="6" fill="#2b2118"/>' +
+      '<g transform="translate(200 160)"><rect x="-12" y="4" width="24" height="26" rx="4" fill="#c9392e"/><circle cx="0" cy="-6" r="11" fill="#f0d8b0"/><path d="M-9 0 Q0 18 9 0 Z" fill="#fff"/><path d="M-11 -12 Q0 -26 11 -12 Z" fill="#2a2a2a"/><circle cx="-4" cy="-7" r="1.3" fill="#2a211a"/><circle cx="4" cy="-7" r="1.3" fill="#2a211a"/><path d="M-4 -2 Q0 1 4 -2" stroke="#2a211a" fill="none"/></g>' +
+      '<g transform="translate(116 206)"><path d="M-22 0 L22 0 L18 -22 L-18 -22 Z" fill="#6d5a3a" stroke="#3a2a1f" stroke-width="2"/><rect x="-14" y="-26" width="28" height="6" fill="#3a2a1f"/><g stroke="#c9392e" stroke-width="2.5" stroke-linecap="round"><line x1="-5" y1="-26" x2="-5" y2="-36"/><line x1="0" y1="-26" x2="0" y2="-38"/><line x1="5" y1="-26" x2="5" y2="-36"/></g><path class="sm" d="M0 -40 Q-8 -52 0 -62 Q8 -72 0 -82" stroke="#fff" stroke-width="3" fill="none" opacity=".6"/></g>' +
+      '<g transform="translate(276 214)"><path d="M-12 -2 C-14 -16 12 -16 12 -2 Z" fill="#b8452f" stroke="#4a1810" stroke-width="2"/><path d="M-10 12 C-10 -2 18 -2 18 12 Z" fill="#e8c37a" stroke="#6b4a14" stroke-width="2" transform="translate(10 -2)"/></g>' +
+      '<g stroke="#6f5233" stroke-width="2"><path d="M30 214 l6 -14 M40 216 l-2 -16 M350 214 l4 -14"/></g>');
+  },
+  stall: function(){
+    return svgWrap('stall', '路邊的小攤：老闆笑瞇瞇地看著街上來往的人',
+      '<defs><linearGradient id="gM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd8e0"/><stop offset="1" stop-color="#e9edf0"/></linearGradient></defs>' +
+      '<rect width="400" height="260" fill="url(#gM)"/><rect y="200" width="400" height="60" fill="#b8c0c8"/><path d="M0 214 H400 M0 232 H400" stroke="#a2abb4" stroke-width="2"/>' +
+      '<g><rect x="120" y="70" width="8" height="136" fill="#6a7785"/><rect x="272" y="70" width="8" height="136" fill="#6a7785"/></g>' +
+      '<path d="M100 72 H300 L316 108 H84 Z" fill="#3b5f8a"/><g fill="#e4ebf2"><path d="M116 72 H148 L142 108 H108 Z"/><path d="M180 72 H212 L210 108 H176 Z"/><path d="M244 72 H276 L278 108 H244 Z"/></g>' +
+      person(200, 118, '#f0d8b0', '#58636f', { s: 1.2 }) +
+      '<rect x="110" y="150" width="180" height="56" fill="#8b97a3"/><rect x="104" y="146" width="192" height="8" fill="#6a7785"/>' +
+      '<rect x="130" y="136" width="34" height="10" fill="#fbfbf4" stroke="#6a7785"/><rect x="238" y="132" width="20" height="14" rx="3" fill="#d6dde4" stroke="#6a7785"/>');
+  },
+  generic: function(){
+    return svgWrap('generic', '現場', '<defs><linearGradient id="gX" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8e2e6"/><stop offset="1" stop-color="#efe4cb"/></linearGradient></defs><rect width="400" height="260" fill="url(#gX)"/><path d="M0 160 Q100 120 200 150 T400 140 V260 H0Z" fill="#b9c4a4"/><rect y="190" width="400" height="70" fill="#a89a78"/>');
+  },
+  cover: function(){
+    return svgWrap('cover', '封面：月夜下的榕樹與小廟，樹上吊著一個人', 
+      '<defs><linearGradient id="gC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c1a26"/><stop offset="0.7" stop-color="#27424a"/><stop offset="1" stop-color="#4b6a55"/></linearGradient></defs>' +
+      '<rect width="400" height="300" fill="url(#gC)"/>' +
+      '<g fill="#fff6d8"><circle cx="318" cy="76" r="30"/></g><circle cx="332" cy="68" r="28" fill="#0f2230" opacity=".4"/>' +
+      '<g fill="#fff" opacity=".7"><circle cx="40" cy="40" r="1.6"/><circle cx="110" cy="70" r="1.2"/><circle cx="200" cy="30" r="1.5"/><circle cx="260" cy="60" r="1.2"/><circle cx="370" cy="130" r="1.3"/><circle cx="70" cy="120" r="1.2"/></g>' +
+      '<rect y="248" width="400" height="52" fill="#2c3a2a"/>' +
+      '<path d="M222 252 Q226 190 214 150 L282 150 Q274 195 284 252 Z" fill="#33281b"/>' +
+      '<ellipse cx="248" cy="130" rx="150" ry="56" fill="#143127"/><ellipse cx="160" cy="146" rx="84" ry="36" fill="#1c4331"/><ellipse cx="338" cy="144" rx="70" ry="34" fill="#1c4331"/>' +
+      '<g stroke="#2a2014" stroke-width="2.5" fill="none"><path d="M150 160 Q146 200 152 244"/><path d="M180 164 Q178 200 182 244"/><path d="M330 160 Q334 200 328 240"/></g>' +
+      '<g class="sw" style="transform-origin:300px 134px"><line x1="300" y1="134" x2="300" y2="190" stroke="#a98763" stroke-width="3"/><rect x="293" y="212" width="14" height="26" rx="3" fill="#4b6a8a"/><circle cx="300" cy="202" r="8" fill="#e8c9a0"/></g>' +
+      '<g transform="translate(70 236)"><path d="M-46 0 L-12 -34 L22 -34 L46 0 Z" fill="#3a2f28"/><rect x="-34" y="-2" width="68" height="20" fill="#5b4632"/><rect x="-8" y="2" width="18" height="16" fill="#241a12"/><circle cx="-26" cy="8" r="5" fill="#e4492f" opacity=".9"/><circle cx="26" cy="8" r="5" fill="#e4492f" opacity=".9"/></g>' +
+      '<g fill="#fff3c0" opacity=".9"><circle cx="48" cy="244" r="2"/><circle cx="96" cy="244" r="2"/></g>', '0 0 400 300');
+  }
+};
+function sceneArt(sc){
+  var k = sc.art && ART[sc.art] ? sc.art : 'generic';
+  return ART[k]();
+}
+/* 圖示：道具與熱點的預設 emoji */
+var KIND_ICON = { item: '🔎', clue: '🧾', look: '👀' };
+function itemIcon(it){ return (it && it.icon) || '📦'; }
+function spotPos(sc, i, n){
+  var f = sc.finds[i];
+  if (f.at && f.at.length === 2) return f.at;
+  return [Math.round(100 * (i + 0.5) / n), (i % 2) ? 74 : 50];
+}
+
+
 /* ---------- 謎題 ---------- */
+var HINT_LV = ['先看哪裡', '用什麼知識', '幾乎給答案'];
 function hintBlock(p){
   var used = S.hintsUsed[p.id] || 0;
   var box = h('div', { class: 'hintbox' });
   var row = h('div', { class: 'row' }, [
-    h('button', { type: 'button', class: 'ghost', 'data-hint': p.id, disabled: used >= p.hints.length, onclick: function(){
-      S.hintsUsed[p.id] = used + 1; sfx('click'); render();
-    } }, [used >= p.hints.length ? '提示用完了' : '要提示嗎？（已用 ' + used + '／' + p.hints.length + '）'])
+    h('button', { type: 'button', class: 'ghost', 'data-hint': p.id, disabled: used >= p.hints.length, onclick: function(){ act('hint', { type: 'use', id: p.id }); } }, [used >= p.hints.length ? '提示用完了' : '要提示嗎？（已用 ' + used + '／' + p.hints.length + '）']),
+    h('span', { class: 'muted', text: used >= p.hints.length ? '' : '第 ' + (used + 1) + ' 層：' + HINT_LV[used] + '（提示會記在結算，不會卡關）' })
   ]);
   box.appendChild(row);
-  for (var i = 0; i < used; i++) box.appendChild(h('div', { class: 'msg', text: '提示 ' + (i + 1) + '：' + p.hints[i] }));
+  for (var i = 0; i < used; i++) box.appendChild(h('div', { class: 'msg' }, [h('div', { class: 'lv', text: '提示 ' + (i + 1) + '・' + (HINT_LV[i] || '') }), h('div', { text: p.hints[i] })]));
   return box;
 }
-
+function cluePanel(ids, label){
+  var d = h('details', { class: 'cx', 'data-board': label }, [h('summary', { text: label })]);
+  var inn = h('div', { class: 'in' });
+  ids.forEach(function(id){
+    var c = byId(data.clues, id);
+    if (!c) return;
+    inn.appendChild(h('div', { style: 'margin:8px 0' }, [h('b', { text: c.title }), tagEls(c.tag), h('div', { text: clueText(c), style: 'white-space:pre-wrap;font-size:14px' })]));
+  });
+  d.appendChild(inn);
+  return d;
+}
+function chainBar(){
+  var cur = null;
+  data.puzzles.forEach(function(p){ if (!cur && !S.puz[p.id].solved) cur = p.id; });
+  return h('div', { class: 'chain', 'aria-label': '謎題進度' }, data.puzzles.map(function(p, i){
+    var cls = S.puz[p.id].solved ? 'on' : (p.id === cur ? 'cur' : '');
+    return h('span', { class: cls, text: (S.puz[p.id].solved ? '✓ ' : '') + '謎 ' + (i + 1) + '・' + p.title });
+  }));
+}
 function viewPuzzle(v){
   if (S.view === 'ending') return viewEnding(v);
   if (S.view) {
@@ -427,6 +889,8 @@ function viewPuzzle(v){
     v.appendChild(h('button', { type: 'button', class: 'ghost', onclick: function(){ S.view = null; render(); } }, ['← 回謎題清單']));
     var card = h('div', { class: 'card' }, [h('h2', { text: p.title }), h('p', { text: p.prompt })]);
     v.appendChild(card);
+    if (!S.puz[p.id].solved && p.type === 'identify' && (p.needsClues || []).length) v.appendChild(cluePanel(p.needsClues, '看一眼手上的線索'));
+    if (!S.puz[p.id].solved && p.type === 'accuse') v.appendChild(cluePanel(S.clues, '看一眼全部線索卡'));
     if (p.type === 'identify') puzIdentify(v, p);
     else if (p.type === 'oracle') puzOracle(v, p);
     else puzAccuse(v, p);
@@ -434,17 +898,18 @@ function viewPuzzle(v){
     return;
   }
   var solvedAll = data.puzzles.every(function(p){ return S.puz[p.id].solved; });
+  v.appendChild(chainBar());
   data.puzzles.forEach(function(p, i){
     var ps = puzzleState(p);
     var card = h('div', { class: 'card' + (ps.st === 'locked' ? ' lock' : '') }, [
-      h('h2', { text: '謎 ' + (i + 1) + '：' + p.title })
+      h('h2', { text: (ps.st === 'locked' ? '🔒 ' : '') + '謎 ' + (i + 1) + '：' + p.title })
     ]);
     if (ps.st === 'solved') card.appendChild(h('span', { class: 'stamp', text: '已解開' }));
     if (ps.st === 'locked') card.appendChild(h('p', { class: 'muted', text: p.lockedText || '還不能解。' }));
     if (ps.st !== 'locked') card.appendChild(h('div', { style: 'margin-top:8px' }, [h('button', { type: 'button', class: ps.st === 'open' ? 'primary' : '', 'data-puzzle': p.id, onclick: function(){ S.view = p.id; sfx('click'); render(); window.scrollTo(0,0); } }, [ps.st === 'solved' ? '再看一次' : '來解這個謎'])]));
     v.appendChild(card);
   });
-  if (solvedAll) v.appendChild(h('div', { class: 'card' }, [h('button', { type: 'button', class: 'primary', id: 'btnEnding', onclick: function(){ S.view = 'ending'; S.ended = true; render(); window.scrollTo(0,0); } }, ['看案情說明'])]));
+  if (solvedAll) v.appendChild(h('div', { class: 'card' }, [h('button', { type: 'button', class: 'primary', id: 'btnEnding', onclick: function(){ S.view = 'ending'; S.ended = true; if (!S.endTs) S.endTs = Date.now(); render(); window.scrollTo(0,0); } }, ['看案情說明'])]));
 }
 
 function radioGroup(name, opts, curId, onPick){
@@ -457,6 +922,21 @@ function radioGroup(name, opts, curId, onPick){
   }));
 }
 
+function identifySubmit(p){
+  var st = S.puz[p.id];
+  st.tries++;
+  var wOk = st.who === p.answerWho, rOk = st.reason === p.answerReason;
+  if (wOk && rOk) {
+    st.solved = true;
+    if (p.onSolve && p.onSolve.appendClue) S.appended[p.onSolve.appendClue.id] = p.onSolve.appendClue.text;
+    celebrate('解開了', p.title);
+  } else {
+    sfx('bad'); S.wrong++;
+    var w = byId(p.who, st.who), r = byId(p.reasons, st.reason);
+    if (!wOk) st.fb = (w && w.fb) || p.mismatchText || '再想想。';
+    else st.fb = (r && r.fb) || p.mismatchText || '再想想。';
+  }
+}
 function puzIdentify(v, p){
   var st = S.puz[p.id];
   if (st.solved) { v.appendChild(h('div', { class: 'msg ok', text: p.okText })); return; }
@@ -465,21 +945,7 @@ function puzIdentify(v, p){
   card.appendChild(radioGroup('who', p.who, st.who, function(id){ st.who = id; st.fb = ''; render(); }));
   card.appendChild(h('h3', { text: p.reasonLabel || '你憑什麼這樣認？', style: 'margin-top:10px' }));
   card.appendChild(radioGroup('reason', p.reasons, st.reason, function(id){ st.reason = id; st.fb = ''; render(); }));
-  card.appendChild(h('div', { style: 'margin-top:10px' }, [h('button', { type: 'button', class: 'primary', id: 'btnSubmitP', disabled: !(st.who && st.reason), onclick: function(){
-    st.tries++;
-    var wOk = st.who === p.answerWho, rOk = st.reason === p.answerReason;
-    if (wOk && rOk) {
-      st.solved = true; sfx('win');
-      if (p.onSolve && p.onSolve.appendClue) S.appended[p.onSolve.appendClue.id] = p.onSolve.appendClue.text;
-      toast('解開了');
-    } else {
-      sfx('bad');
-      var w = byId(p.who, st.who), r = byId(p.reasons, st.reason);
-      if (!wOk) st.fb = (w && w.fb) || p.mismatchText || '再想想。';
-      else st.fb = (r && r.fb) || p.mismatchText || '再想想。';
-    }
-    render();
-  } }, ['送出'])]));
+  card.appendChild(h('div', { style: 'margin-top:10px' }, [h('button', { type: 'button', class: 'primary', id: 'btnSubmitP', disabled: !(st.who && st.reason), onclick: function(){ act('puzzle', { type: 'identify', id: p.id }); } }, ['送出'])]));
   if (st.fb) card.appendChild(h('div', { class: 'msg bad', id: 'fbP', text: st.fb }));
   v.appendChild(card);
 }
@@ -522,20 +988,22 @@ function puzOracle(v, p){
     var done = !!o.asked[q.id];
     var label = q.text;
     if (done) label += (bei ? (o.asked[q.id] === 'yes' ? '　→ 聖筊' : '　→ 陰筊') : (o.asked[q.id] === 'yes' ? '　→ 是' : '　→ 不是'));
-    ql.appendChild(h('button', { type: 'button', class: done ? 'done' : '', 'data-q': q.id, disabled: blocked && !done, onclick: function(){ askQ(p, q); } }, [label]));
+    ql.appendChild(h('button', { type: 'button', class: done ? 'done' : '', 'data-q': q.id, disabled: blocked && !done, onclick: function(){ act('puzzle', { type: 'ask', id: p.id, q: q.id, scroll: '#oracleTop' }); } }, [label]));
   });
-  v.appendChild(h('div', { class: 'card' }, [h('h3', { text: '要問神什麼？' }), ql]));
+  v.appendChild(h('div', { class: 'card' }, [h('h3', { text: '要問什麼？' }), ql]));
   if (blocked && !st.solved) {
     v.appendChild(h('div', { class: 'msg', text: o.tired ? cfg.tiredText : cfg.emptyText }));
-    v.appendChild(h('button', { type: 'button', class: 'primary', id: 'btnRelight', onclick: function(){
-      o.incense = cfg.incense; o.laughs = 0; o.tired = false; o.retries++; o.lastMsg = ''; o.last = null; sfx('click'); render();
-    } }, ['重新備香（問過的答案保留）']));
+    v.appendChild(h('button', { type: 'button', class: 'primary', id: 'btnRelight', onclick: function(){ act('puzzle', { type: 'relight', id: p.id }); } }, ['重新備香（問過的答案保留）']));
   }
   if (st.solved) v.appendChild(h('div', { class: 'msg ok', text: p.okText }));
 }
+function relight(p){
+  var o = S.oracle, cfg = p.oracle;
+  o.incense = cfg.incense; o.laughs = 0; o.tired = false; o.retries++; o.lastMsg = ''; o.last = null; sfx('click');
+}
 function askQ(p, q){
   var o = S.oracle, cfg = p.oracle, bei = cfg.mode === 'bei', unlimited = !(cfg.incense < 50);
-  if (o.asked[q.id]) { o.lastMsg = cfg.repeatText; o.last = null; render(); return; }
+  if (o.asked[q.id]) { o.lastMsg = cfg.repeatText; o.last = null; return; }
   var res;
   if (q.form === 'open' && cfg.strictYesNo) res = 'laugh';
   else res = q.answer ? 'yes' : 'no';
@@ -549,13 +1017,31 @@ function askQ(p, q){
   var st = S.puz[p.id];
   if (!st.solved && cfg.solveWhen.every(function(id){ return !!o.asked[id]; })) {
     st.solved = true;
-    if (p.onSolve && p.onSolve.giveClue) giveClue(p.onSolve.giveClue);
-    sfx('win');
+    if (p.onSolve && p.onSolve.giveClue) giveClue(p.onSolve.giveClue, true);
+    setTimeout(function(){ celebrate('問到了', p.title); }, bei ? 700 : 0);
   }
-  render();
-  var top = $('#oracleTop'); if (top && top.scrollIntoView) top.scrollIntoView({ block: 'start', behavior: 'smooth' });
 }
 
+function accuseSubmit(p){
+  var st = S.puz[p.id], A = S.acc;
+    var allOk = true, bad = 0;
+    p.rows.forEach(function(r){
+      var pick = A.sel[r.id], opt = pick ? byId(r.options, pick) : null;
+      var fb;
+      if (!pick) { fb = { ok: false, text: '這一題還沒選。' }; }
+      else if (pick !== r.answer) { fb = { ok: false, text: (opt && opt.fb) || '再想想。' }; }
+      else {
+        var evOk = r.must.every(function(cid){ return !!A.ev[r.id + ':' + cid]; });
+        fb = evOk ? { ok: true, text: '對，而且有證據。' } : { ok: false, text: p.missingEvidenceText || '還缺證據。' };
+      }
+      if (!fb.ok) { allOk = false; bad++; }
+      A.fb[r.id] = fb;
+    });
+    st.tries++;
+    if (allOk) { st.solved = true; S.ended = true; S.endTs = Date.now(); S.view = 'ending'; celebrate('結案', '案子查清楚了'); }
+    else { sfx('bad'); S.wrong++; }
+    
+  }
 function puzAccuse(v, p){
   var st = S.puz[p.id], A = S.acc;
   if (st.solved) { v.appendChild(h('div', { class: 'msg ok', text: p.okText })); return; }
@@ -581,34 +1067,51 @@ function puzAccuse(v, p){
     if (A.fb[r.id]) card.appendChild(h('div', { class: 'msg ' + (A.fb[r.id].ok ? 'ok' : 'bad'), 'data-fb': r.id, text: A.fb[r.id].text }));
     v.appendChild(card);
   });
-  v.appendChild(h('button', { type: 'button', class: 'primary', id: 'btnAccuse', onclick: function(){
-    var allOk = true;
-    p.rows.forEach(function(r){
-      var pick = A.sel[r.id], opt = pick ? byId(r.options, pick) : null;
-      var fb;
-      if (!pick) { fb = { ok: false, text: '這一題還沒選。' }; }
-      else if (pick !== r.answer) { fb = { ok: false, text: (opt && opt.fb) || '再想想。' }; }
-      else {
-        var evOk = r.must.every(function(cid){ return !!A.ev[r.id + ':' + cid]; });
-        fb = evOk ? { ok: true, text: '對，而且有證據。' } : { ok: false, text: p.missingEvidenceText || '還缺證據。' };
-      }
-      if (!fb.ok) allOk = false;
-      A.fb[r.id] = fb;
-    });
-    st.tries++;
-    if (allOk) { st.solved = true; S.ended = true; sfx('win'); S.view = 'ending'; }
-    else sfx('bad');
-    render(); window.scrollTo(0, 0);
-  } }, ['送出結案']));
+  v.appendChild(h('button', { type: 'button', class: 'primary', id: 'btnAccuse', onclick: function(){ act('puzzle', { type: 'accuse', id: p.id, top: true }); } }, ['送出結案']));
 }
 
-/* ---------- 結局 ---------- */
+/* ---------- 結局與結算 ---------- */
+var RATING_DEFAULT = { weights: { hint: 6, wrong: 4, retry: 5, laugh: 2 }, grades: [
+  { min: 90, seal: '甲', title: '神探書記', stars: 3, line: '幾乎沒繞路。天庭想把你調去查更大的案子。' },
+  { min: 70, seal: '乙', title: '稱職書記', stars: 2, line: '有繞路也有靠提示，但案子是你自己查清楚的。' },
+  { min: 0, seal: '丙', title: '見習書記', stars: 1, line: '多走了一些路，也多問了幾次。查案本來就是這樣，下一次會更順。' } ] };
+function rating(){
+  var R = data.rating || RATING_DEFAULT, w = R.weights;
+  var score = Math.max(0, 100 - w.hint * hintTotal() - w.wrong * S.wrong - w.retry * S.oracle.retries - w.laugh * S.oracle.laughs);
+  var g = R.grades[R.grades.length - 1];
+  for (var k = 0; k < R.grades.length; k++) if (score >= R.grades[k].min) { g = R.grades[k]; break; }
+  var o = {}; Object.keys(g).forEach(function(x){ o[x] = g[x]; }); o.score = score; return o;
+}
+function mmss(ms){ var s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ' 分 ' + (s % 60) + ' 秒'; }
+function resultCard(){
+  var g = rating(), used = hintTotal();
+  var spots = 0, spotsAll = 0;
+  data.scenes.forEach(function(sc){ (sc.finds || []).forEach(function(f){ spotsAll++; if (S.taken[sc.id + ':' + f.id]) spots++; }); });
+  var star = ''; for (var i = 0; i < 3; i++) star += (i < g.stars ? '★' : '☆');
+  var rc = h('div', { class: 'card', id: 'resultCard' }, [
+    h('h2', { text: '結算' }),
+    h('div', { class: 'grade' }, [h('div', { class: 'seal', id: 'gradeSeal', text: g.seal }), h('div', {}, [h('div', { class: 'stars', 'aria-label': g.stars + ' 顆星', text: star }), h('h3', { id: 'gradeTitle', text: '評價：' + g.title }), h('div', { class: 'muted', text: g.line })])]),
+    h('div', { class: 'stats' }, [
+      h('div', {}, ['查案時間', h('b', { text: mmss((S.endTs || Date.now()) - S.ts) })]),
+      h('div', {}, ['用了提示', h('b', { text: used + '／' + data.puzzles.reduce(function(n, p){ return n + p.hints.length; }, 0) })]),
+      h('div', {}, ['答錯、重想', h('b', { text: S.wrong + ' 次' })]),
+      h('div', {}, ['重新備香', h('b', { text: S.oracle.retries + ' 次' })]),
+      h('div', {}, ['線索卡', h('b', { text: S.clues.length + '／' + data.clues.length })]),
+      h('div', {}, ['調查過的地方', h('b', { text: spots + '／' + spotsAll })])
+    ]),
+    h('p', { class: 'muted', id: 'stats', text: '用了 ' + used + ' 次提示；重新備香 ' + S.oracle.retries + ' 次。評價只看提示和答錯次數，不影響成績，只是讓你知道這一輪查得順不順。' })
+  ]);
+  return rc;
+
+}
 function viewEnding(v){
   var E = data.ending, J = data.judge;
   v.appendChild(h('button', { type: 'button', class: 'ghost', onclick: function(){ S.view = null; render(); } }, ['← 回謎題清單']));
   var c = h('div', { class: 'card', id: 'endingCard' }, [h('h2', { text: E.title }), h('span', { class: 'stamp', text: '結案' })]);
-  E.lines.forEach(function(l){ c.appendChild(h('p', {}, [l.text, ' ', tagEls(l.tag)])); });
+  E.lines.forEach(function(l, i){ var p = h('p', { class: 'rv', style: 'animation-delay:' + (i * 0.55).toFixed(2) + 's' }, [l.text, ' ', tagEls(l.tag)]); c.appendChild(p); });
   v.appendChild(c);
+
+  v.appendChild(resultCard());
 
   var sc = h('div', { class: 'card' }, [h('h3', { text: E.storyPrompt })]);
   var ta = h('textarea', { id: 'storyBox', maxlength: String(E.storyMax || 80), placeholder: E.storyPlaceholder || '', oninput: function(e){ S.story = e.target.value; } });
@@ -627,19 +1130,28 @@ function viewEnding(v){
     if (mode !== 'custom') jc.appendChild(h('div', { style: 'margin-top:10px' }, [h('button', { type: 'button', class: 'primary', id: 'btnOther', onclick: function(){ pendingSwitch = other; switchMode(other); } }, [other === 'skin' ? '去玩「抽掉文化版」' : '回去玩「文化版」'])]));
   }
   v.appendChild(jc);
-
-  var used = 0; Object.keys(S.hintsUsed).forEach(function(k){ used += S.hintsUsed[k]; });
-  v.appendChild(h('div', { class: 'card' }, [h('p', { class: 'muted', id: 'stats', text: '用了 ' + used + ' 次提示；重新備香 ' + S.oracle.retries + ' 次。' })]));
+  v.appendChild(h('div', { class: 'card' }, [
+    h('h3', { text: '想再玩？' }),
+    h('div', { class: 'pair', style: 'margin-top:8px' }, [
+      h('button', { type: 'button', id: 'btnReplay', onclick: function(){ switchMode(mode === 'custom' ? 'custom' : mode); } }, ['重玩這一版（要按兩次確認）']),
+      h('button', { type: 'button', onclick: function(){ if ($('#btnRemix')) $('#btnRemix').click(); } }, ['我要改做成我的案子'])
+    ])
+  ]));
 }
 
 /* ---------- 切換版本 / 重玩（兩段式確認，不用 confirm） ---------- */
 function startGame(newMode, newData){
-  mode = newMode; data = newData; S = newState(); pendingSwitch = null; render();
+  mode = newMode; data = newData; S = newState(); pendingSwitch = null; initModules(); render();
   $('#btnCulture').classList.toggle('on', mode === 'culture');
   $('#btnSkin').classList.toggle('on', mode === 'skin');
+  window.scrollTo(0, 0);
 }
 function switchMode(target){
   var started = S && (S.clues.length || S.items.length);
+  if (target === 'custom') {
+    if (pendingSwitch !== 'again-custom') { pendingSwitch = 'again-custom'; clearTimeout(pendingTimer); pendingTimer = setTimeout(function(){ pendingSwitch = null; }, 6000); toast('要重新開始嗎？再按一次確認。'); return; }
+    startGame('custom', BUILT.custom); return;
+  }
   if (started && mode !== target && pendingSwitch !== target) {
     pendingSwitch = target; clearTimeout(pendingTimer); pendingTimer = setTimeout(function(){ pendingSwitch = null; }, 6000);
     toast('切換會重新開始。再按一次確認。'); return;
@@ -667,7 +1179,7 @@ function validate(d){
   function clue(id, where){ if (!byId(d.clues, id)) errs.push(where + ' 指到不存在的線索：' + id); }
   function item(id, where){ if (!byId(d.items, id)) errs.push(where + ' 指到不存在的道具：' + id); }
   d.scenes.forEach(function(sc){
-    (sc.finds||[]).forEach(function(f){ if (f.kind === 'item') item(f.id, '現場「' + sc.name + '」'); else if (f.kind === 'clue') clue(f.id, '現場「' + sc.name + '」'); else errs.push('現場「' + sc.name + '」有一筆 finds 的 kind 不是 item 或 clue'); });
+    (sc.finds||[]).forEach(function(f){ if (f.kind === 'item') item(f.id, '現場「' + sc.name + '」'); else if (f.kind === 'clue') clue(f.id, '現場「' + sc.name + '」'); else if (f.kind === 'look') { if (!f.text) errs.push('現場「' + sc.name + '」有一個 look 沒有 text'); } else errs.push('現場「' + sc.name + '」有一筆 finds 的 kind 不是 item、clue 或 look'); if (f.needs) item(f.needs, '現場「' + sc.name + '」needs'); });
     if (sc.opens) (sc.opens.clues||[]).forEach(function(c){ clue(c, '現場「' + sc.name + '」opens'); });
   });
   d.items.forEach(function(it){ if (it.clue) clue(it.clue, '道具「' + it.name + '」'); });
@@ -725,15 +1237,102 @@ function openRemix(){
   $('#view').prepend(card); card.scrollIntoView({ block: 'start' });
 }
 
+
+
+/* ---------- 機制模組（各讀 JSON 的一段；固定介面 init(cfg, root)／step(state, action)／render(state)） ---------- */
+function pick(keys){ var o = {}; keys.forEach(function(k){ o[k] = data[k]; }); return o; }
+var MOD = {
+  cover: {
+    reads: ['meta', 'intro'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){
+      if (a.type === 'start') { st.stage = 'story'; st.page = 0; sfx('page'); st.scrollTop = true; }
+      else if (a.type === 'next') { st.page++; sfx('page'); }
+      else if (a.type === 'enter') { enterPlay(); }
+    },
+    render: function(st){ if (st.stage === 'cover') viewCover(this.root); else viewStory(this.root); }
+  },
+  explore: {
+    reads: ['scenes', 'items'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){
+      var sc = byId(this.cfg.scenes, a.scene);
+      if (a.type === 'goto') {
+        if (!sceneOpen(sc)) { st.reveal = { ic: '🔒', hd: sc.name, tx: sc.lockedText || '還不能去。' }; sfx('bad'); }
+        else if (sc.id !== st.scene) { st.scene = sc.id; st.reveal = { ic: '🚶', hd: '來到：' + sc.name, tx: sc.desc }; sfx('page'); }
+      } else if (a.type === 'tap') exploreTap(sc, byId(sc.finds, a.find));
+    },
+    render: function(st){ viewScene(this.root); }
+  },
+  inventory: {
+    reads: ['items', 'combos', 'comboDefault'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){
+      if (a.type === 'toggle') toggleSel(a.id);
+      else if (a.type === 'combine') { doCombine(); if (a.from === 'bar') st.reveal = { ic: '🧩', hd: '湊在一起', tx: st.comboMsg }; }
+    },
+    render: function(st){ renderBag(this.root); },
+    renderBench: function(st){ renderBench(this.root); }
+  },
+  notebook: {
+    reads: ['clues', 'codex', 'fieldwork'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){ if (a.type === 'clearNew') st.newClues = []; },
+    render: function(st){ renderClues(this.root); },
+    renderCodex: function(st){ viewCodex(this.root); }
+  },
+  puzzle: {
+    reads: ['puzzles'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){
+      var p = byId(this.cfg.puzzles, a.id);
+      if (a.type === 'identify') identifySubmit(p);
+      else if (a.type === 'ask') askQ(p, byId(p.oracle.questions, a.q));
+      else if (a.type === 'relight') relight(p);
+      else if (a.type === 'accuse') accuseSubmit(p);
+    },
+    render: function(st){ viewPuzzle(this.root); }
+  },
+  hint: {
+    reads: ['puzzles[].hints'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){
+      if (a.type === 'use') { st.hintsUsed[a.id] = (st.hintsUsed[a.id] || 0) + 1; sfx('click'); }
+    },
+    render: function(st, p){ return hintBlock(p); }
+  },
+  scoring: {
+    reads: ['rating'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){ if (a.type === 'wrong') st.wrong++; else if (a.type === 'retry') st.oracle.retries++; },
+    render: function(st){ return resultCard(); }
+  },
+  ending: {
+    reads: ['ending', 'judge'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){ if (a.type === 'story') st.story = a.text; else if (a.type === 'judge') st.judge.id = a.id; },
+    render: function(st){ viewEnding(this.root); }
+  },
+  feedback: {
+    reads: ['meta'],
+    init: function(cfg, root){ this.cfg = cfg; this.root = root; },
+    step: function(st, a){ if (a.type === 'sfx') sfx(a.kind); else if (a.type === 'toast') toast(a.text); else if (a.type === 'celebrate') celebrate(a.title, a.sub); },
+    render: function(st){ }
+  }
+};
+function initModules(){
+  Object.keys(MOD).forEach(function(k){ MOD[k].init(pick(MOD[k].reads.map(function(r){ return r.split('[')[0]; })), $('#view')); });
+}
+
 /* ---------- 啟動 ---------- */
 $('#btnCulture').addEventListener('click', function(){ sfx('click'); switchMode('culture'); });
 $('#btnSkin').addEventListener('click', function(){ sfx('click'); switchMode('skin'); });
-$('#btnRemix').addEventListener('click', function(){ if (S.tab !== 'scene' || S.view) { S.tab = 'scene'; S.view = null; render(); } openRemix(); });
+$('#btnRemix').addEventListener('click', function(){ if (S.stage !== 'play') S.stage = 'play'; if (S.tab !== 'scene' || S.view) { S.tab = 'scene'; S.view = null; } render(); openRemix(); });
 $('#btnSound').addEventListener('click', function(){
   soundOn = !soundOn; this.textContent = '聲音：' + (soundOn ? '開' : '關'); this.setAttribute('aria-pressed', String(soundOn));
   if (soundOn) { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.resume) ac.resume(); } catch (e) {} sfx('get'); }
 });
-window.__puzzle = { get S(){ return S; }, get data(){ return data; }, get mode(){ return mode; }, validate: validate, askQ: askQ, startGame: startGame, BUILT: BUILT };
+window.__puzzle = { MOD: MOD, render: render, get S(){ return S; }, get data(){ return data; }, get mode(){ return mode; }, validate: validate, askQ: askQ, startGame: startGame, BUILT: BUILT };
 startGame('culture', BUILT.culture);
 })();
 </script>
@@ -748,3 +1347,4 @@ startGame('culture', BUILT.culture);
 <!-- CT-HOOK-END -->
 </body>
 </html>
+

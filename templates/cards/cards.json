@@ -13,66 +13,1076 @@
   "rounds": 3,
   "win_points": 2,
   "attendant_god_bonus": 1,
-  "filler": {"name": "路過的信眾", "power": 1, "cost": 0, "root": 0, "note": "香火燒完、沒有神明可請時，只剩一位信眾幫你站場。"},
-  "pawn": {"incense_gain": 2},
+  "filler": {
+   "name": "路過的信眾",
+   "power": 1,
+   "cost": 0,
+   "root": 0,
+   "note": "香火燒完、沒有神明可請時，只剩一位信眾幫你站場。"
+  },
+  "pawn": {
+   "incense_gain": 2
+  },
   "reward_choices": 3,
   "min_collection": 5,
   "versions": {
-   "culture": {"label": "版本一：相剋有故事", "relations": "story", "special": true, "tiebreak": "root", "loss_penalty": "lowest_root"},
-   "skin": {"label": "版本二：只換了名字", "relations": "triangle", "special": false, "tiebreak": "total_power", "loss_penalty": "none",
-            "triangle": {"types": ["火", "木", "水"], "beats": {"火": "木", "木": "水", "水": "火"}, "bonus": 1}}
+   "culture": {
+    "label": "版本一：相剋有故事",
+    "relations": "story",
+    "special": true,
+    "tiebreak": "root",
+    "loss_penalty": "lowest_root"
+   },
+   "skin": {
+    "label": "版本二：只換了名字",
+    "relations": "triangle",
+    "special": false,
+    "tiebreak": "total_power",
+    "loss_penalty": "none",
+    "triangle": {
+     "types": [
+      "火",
+      "木",
+      "水"
+     ],
+     "beats": {
+      "火": "木",
+      "木": "水",
+      "水": "火"
+     },
+     "bonus": 1
+    }
+   }
   }
  },
- "start": ["deity.xiao_shangdi", "deity.kang", "deity.zhao", "deity.kuixing", "deity.guansheng", "deity.leizhenzi", "item.kunyao_suo", "item.zhubi_doudou", "item.tongtianguan"],
+ "start": [
+  "deity.xiao_shangdi",
+  "deity.kang",
+  "deity.zhao",
+  "deity.kuixing",
+  "deity.guansheng",
+  "deity.leizhenzi",
+  "item.kunyao_suo",
+  "item.zhubi_doudou",
+  "item.tongtianguan"
+ ],
  "cards": [
-  {"id": "deity.xiao_shangdi", "kind": "神明", "name": "小上帝", "entry": "deity.xiao_shangdi", "source": "原著", "tags": ["小上帝陣", "鎮管", "察善惡"], "duty": "專管龜精蛇怪、察人間善惡", "power": 4, "cost": 3, "root": 3, "skin_type": "火", "blurb": "腳下踩著龜和蛇。脾氣急、愛面子，被冷落也只會忍氣吞聲。", "ref": "第一、二回", "loc": "P1 第一回 PDF頁2；第二回 PDF頁4", "field": "", "art": {"bg": "#f3e3c8", "skin": "#f1c9a0", "robe": "#8c4a3a", "head": "loose", "feet": "turtle_snake", "prop": "sword"}},
-  {"id": "deity.kang", "kind": "神明", "name": "康元帥", "entry": "deity.kang_yuanshuai", "source": "原著", "tags": ["小上帝陣", "輔佐", "康趙"], "duty": "輔佐小上帝（紅面）", "power": 2, "cost": 1, "root": 2, "skin_type": "水", "blurb": "紅臉長鬚的元帥，跟趙元帥一起進出。餓到快從座上掉下來。", "ref": "第一、二回", "loc": "P1 第二回 PDF頁4", "field": "", "art": {"bg": "#efd9cf", "skin": "#c8483c", "robe": "#4b5b78", "head": "helmet", "beard": true}},
-  {"id": "deity.zhao", "kind": "神明", "name": "趙元帥", "entry": "deity.zhao_yuanshuai", "source": "原著", "tags": ["小上帝陣", "輔佐", "康趙"], "duty": "輔佐小上帝（青面）", "power": 2, "cost": 1, "root": 2, "skin_type": "木", "blurb": "青臉長鬚。肚子餓了就抱怨「坐的不知豎的艱苦」。", "ref": "第一、二回", "loc": "P1 第二回 PDF頁4", "field": "", "art": {"bg": "#dbe6df", "skin": "#5c8f86", "robe": "#4b5b78", "head": "helmet", "beard": true}},
-  {"id": "deity.kuixing", "kind": "神明", "name": "魁星", "entry": "deity.kuixing", "source": "原著", "tags": ["文運", "受冤屈"], "duty": "文運；單腳踢斗、獨占鰲頭", "power": 2, "cost": 1, "root": 2, "skin_type": "火", "blurb": "儒弱的小書生，臉色青藍帶一點獠牙，被誤會還含著淚。", "ref": "第二、三回", "loc": "P1 第二回 PDF頁5–6；第三回 PDF頁7", "field": "", "art": {"bg": "#dfe6f2", "skin": "#6f8fc4", "robe": "#3d4f8a", "head": "scholar", "fang": true, "feet": "ao", "prop": "brush"}},
-  {"id": "deity.guansheng", "kind": "神明", "name": "關聖帝君", "entry": "deity.guansheng", "source": "原著", "tags": ["武聖", "護義"], "duty": "義氣如山；出面勸放人", "power": 4, "cost": 3, "root": 5, "skin_type": "水", "blurb": "騎赤兔馬單身去勸小上帝放人，被拒絕後氣得桃花面變紅。", "ref": "第三回", "loc": "P1 第三回 PDF頁9–10", "field": "", "art": {"bg": "#f2dcd0", "skin": "#d1523f", "robe": "#3f6b4f", "head": "topknot", "beard": true}},
-  {"id": "deity.leizhenzi", "kind": "神明", "name": "雷震子", "entry": "deity.leizhenzi", "source": "原著", "tags": ["雷部"], "duty": "雷部；專打糟蹋五穀者", "power": 3, "cost": 2, "root": 3, "skin_type": "木", "blurb": "金色虎皮襖、赤腳散髮，手提黃金棍。打碎過龜靈聖母的龜殼。", "ref": "第七至十回", "loc": "P1 第八回 PDF頁29；第九回 PDF頁32–34", "field": "", "art": {"bg": "#f3ead0", "skin": "#e6b98c", "robe": "#d19a2b", "head": "wild", "prop": "cudgel"}},
-  {"id": "char.qianliyan", "kind": "神明", "name": "千里眼", "entry": "char.qianliyan_shunfeng", "source": "原著", "tags": ["賭攤", "天后宮"], "duty": "媽祖手下；眼觀四方", "power": 2, "cost": 1, "root": 1, "skin_type": "水", "blurb": "在媽祖宮口擺「拋璉寶」賭攤，把康趙的五千錢贏光。", "ref": "第二回", "loc": "P1 第二回 PDF頁5–6；P3 頁110（綠臉）", "field": "", "art": {"bg": "#dcebe3", "skin": "#4f9a6e", "robe": "#2e6a4a", "head": "topknot", "fang": true}},
-  {"id": "char.shunfeng", "kind": "神明", "name": "順風耳", "entry": "char.qianliyan_shunfeng", "source": "原著", "tags": ["賭攤", "天后宮"], "duty": "媽祖手下；耳聽八達", "power": 2, "cost": 1, "root": 1, "skin_type": "火", "blurb": "跟千里眼一起顧賭攤。小上帝趕來時，兩人把廟門關起來躲著。", "ref": "第二回", "loc": "P1 第二回 PDF頁5–6；P3 頁110（紅臉）", "field": "", "art": {"bg": "#f2dcd6", "skin": "#c8483c", "robe": "#a33a30", "head": "topknot", "prop": "ear"}},
-  {"id": "deity.guiling", "kind": "神明", "name": "龜靈聖母", "entry": "deity.guiling_shengmu", "source": "原著", "tags": ["龜族", "護龜", "芙蓉洞"], "duty": "芙蓉洞主；護龜族", "power": 4, "cost": 3, "root": 3, "skin_type": "木", "blurb": "綠頭巾、烏色八卦道袍，背後插著混元槌。因為龜族被侮辱才出面。", "ref": "第四、八回", "loc": "P1 第四回 PDF頁11；第八回 PDF頁29", "field": "", "art": {"bg": "#dde8dc", "skin": "#f1d3b0", "robe": "#26302f", "head": "scarf", "prop": "mace"}},
-  {"id": "animal.cupi", "kind": "神明", "name": "粗皮龜", "entry": "animal.turtle_snake", "source": "原著", "tags": ["龜精", "龜族"], "duty": "九龜精之一", "power": 1, "cost": 0, "root": 1, "skin_type": "火", "blurb": "龜靈聖母手下的龜精，名字是原書列的。不花香火。", "ref": "第八回", "loc": "P1 第八回 PDF頁29", "field": "", "art": {"bg": "#e3ead8", "skin": "#6b8c4a", "robe": "#4a6a35", "head": "turtle"}},
-  {"id": "animal.shuanglian", "kind": "神明", "name": "雙鐮龜", "entry": "animal.turtle_snake", "source": "原著", "tags": ["龜精", "龜族"], "duty": "九龜精之一", "power": 1, "cost": 0, "root": 1, "skin_type": "水", "blurb": "九龜精之一。看起來不起眼，但人多勢眾。不花香火。", "ref": "第八回", "loc": "P1 第八回 PDF頁29", "field": "", "art": {"bg": "#dde6e3", "skin": "#5d8f86", "robe": "#3f6f66", "head": "turtle"}},
-  {"id": "animal.meigao", "kind": "神明", "name": "美高龜", "entry": "animal.turtle_snake", "source": "原著", "tags": ["龜精", "龜族"], "duty": "九龜精之一", "power": 1, "cost": 0, "root": 1, "skin_type": "木", "blurb": "九龜精之一。龜靈聖母在場時，牠們會更有勁。不花香火。", "ref": "第八回", "loc": "P1 第八回 PDF頁29", "field": "", "art": {"bg": "#e6e2d2", "skin": "#8c8a4a", "robe": "#6a6835", "head": "turtle"}},
-  {"id": "deity.nezha", "kind": "神明", "name": "哪吒", "entry": "deity.nezha", "source": "原著", "tags": ["少年", "衝動"], "duty": "三太子；火尖槍、乾坤圈、風火輪", "power": 3, "cost": 2, "root": 2, "skin_type": "水", "blurb": "被康趙用話激下凡，結果看到自行車競賽就嚇回天庭。", "ref": "第五、六回", "loc": "P1 第五、六回 PDF頁14–19；第二十四回 PDF頁89", "field": "", "art": {"bg": "#f3e0d8", "skin": "#f0c8a8", "robe": "#d1523f", "head": "bun2", "prop": "spear"}},
-  {"id": "deity.lijing", "kind": "神明", "name": "李靖", "entry": "deity.li_jing", "source": "原著", "tags": ["統率"], "duty": "托塔天王；小上帝陣營的實際領袖", "power": 3, "cost": 2, "root": 4, "skin_type": "木", "blurb": "被混元槌迷昏過，醒來後帶著大家借照妖鏡破黑幕。", "ref": "第五、六、十九回", "loc": "P1 第五、六、十九回", "field": "", "art": {"bg": "#efe6cf", "skin": "#e8c39a", "robe": "#b0832b", "head": "helmet", "prop": "pagoda"}},
-  {"id": "deity.laojun", "kind": "神明", "name": "太上老君", "entry": "deity.taishang_laojun", "source": "原著", "tags": ["仲裁"], "duty": "主持封神廟審判；天平式仲裁", "power": 4, "cost": 3, "root": 5, "skin_type": "火", "blurb": "騎青牛來主持審判。他在場，誰跟誰有什麼關係都不算數，大家憑本事。", "ref": "第二十三、二十四回", "loc": "P1 第二十三、二十四回 PDF頁84–91；P3 頁77", "field": "", "art": {"bg": "#e4e3ee", "skin": "#f1d8bd", "robe": "#e8e4d8", "head": "bun", "beard": true, "prop": "staff"}},
-  {"id": "char.mabian", "kind": "神明", "name": "馬扁禪師", "entry": "char.mabian_chanshi", "source": "原著", "tags": ["欺騙", "黑幕"], "duty": "三十六變；名字是「騙」拆開", "power": 3, "cost": 2, "root": 4, "skin_type": "火", "blurb": "蓬髮頭陀、青灰色臉，擅長騙走別人的法寶。後來被派去掃銅臭殿。", "ref": "第二十、二十二、二十四回", "loc": "P1 第二十回 PDF頁72–76；第二十四回 PDF頁89", "field": "", "art": {"bg": "#d9dde0", "skin": "#8b9aa0", "robe": "#3f4a58", "head": "wild", "prop": "sword"}},
-  {"id": "char.jinyu", "kind": "神明", "name": "金魚大仙", "entry": "char.sijie_mowang", "source": "原著", "tags": ["欺騙", "黑幕"], "duty": "專門騙借臨水夫人的混元金斗", "power": 2, "cost": 1, "root": 1, "skin_type": "木", "blurb": "赤面無鬚、錦鱗道袍，手拿魚刺百節棍。最會借東西不還。", "ref": "第十、十二回", "loc": "P1 第十回 PDF頁36；第十二回 PDF頁45", "field": "", "art": {"bg": "#f3dcd2", "skin": "#c8483c", "robe": "#e08b3a", "head": "topknot", "prop": "cudgel"}},
-  {"id": "deity.qitian", "kind": "神明", "name": "齊天大聖", "entry": "deity.qitian_dasheng", "source": "原著", "tags": ["破陣", "顧孩童"], "duty": "萬福庵；結局封「自由正神」", "power": 4, "cost": 3, "root": 3, "skin_type": "水", "blurb": "帶著猴兄弟破過天羅地網陣，卻被黑幕困住，得借照妖鏡才破。", "ref": "第十五、二十一回", "loc": "P1 第十五、十六回 PDF頁56–61；第二十一回 PDF頁78", "field": "", "art": {"bg": "#f1e4c9", "skin": "#e3b26c", "robe": "#b4452f", "head": "wild", "prop": "cudgel"}},
-  {"id": "deity.linshui", "kind": "神明", "name": "臨水夫人", "entry": "deity.linshui_furen", "source": "原著", "tags": ["生育", "守斗"], "duty": "管生育嬰孩；鎮家寶是混元金斗", "power": 2, "cost": 2, "root": 3, "skin_type": "火", "blurb": "被誤導後跟小上帝陣營對立，金斗還被人騙走。", "ref": "第十一、十二、十七回", "loc": "P1 第十一、十二回 PDF頁43–45；第十七至十九回", "field": "", "art": {"bg": "#efdde6", "skin": "#f1d3b6", "robe": "#a3507a", "head": "bun", "prop": "dou"}},
-
-  {"id": "item.kunyao_suo", "kind": "法器", "name": "捆妖索", "entry": "object.kunyao_suo", "source": "原著", "tags": ["法器", "捆"], "duty": "小上帝用它吊起魁星", "cost": 1, "root": 0, "skin_type": "水", "bonus": 0, "opp_bonus": 0, "bind_attendant": true, "blurb": "對手的隨侍被綁住，這合不算。", "ref": "第二回", "loc": "P1 第二回 PDF頁6", "field": "", "art": {"bg": "#e7e1d4", "prop": "rope"}},
-  {"id": "item.hunyuan_chui", "kind": "法器", "name": "混元槌", "entry": "object.hunyuan_chui", "source": "原著", "tags": ["法器"], "duty": "龜靈聖母的法寶；芙蓉丸放香氣，神佛聞到會昏", "cost": 2, "root": 0, "skin_type": "木", "bonus": 0, "opp_bonus": -2, "blurb": "對手這合的力 −2。", "ref": "第四、八回", "loc": "P1 第四回 PDF頁11；第八回 PDF頁29", "field": "", "art": {"bg": "#dfe6dc", "prop": "mace"}},
-  {"id": "item.hunyuan_doudou", "kind": "法器", "name": "混元金斗", "entry": "object.hunyuan_jindou", "source": "原著", "tags": ["法器", "寶物"], "duty": "臨水夫人的鎮家寶；被借、被騙，轉了好幾手", "cost": 2, "root": 0, "skin_type": "火", "bonus": 2, "opp_bonus": 0, "blurb": "自己這合力 +2。但小心被騙走。", "ref": "第十二、十七回", "loc": "P1 第十二回 PDF頁45；第十七回 PDF頁63", "field": "", "art": {"bg": "#f0e3c8", "prop": "dou"}},
-  {"id": "item.zhubi_doudou", "kind": "法器", "name": "朱筆墨斗", "entry": "deity.kuixing", "source": "原著", "tags": ["法器"], "duty": "封魁星為「文學界取締大天尊」時賜下，用來肅正詩文竊盜詐欺", "cost": 1, "root": 0, "skin_type": "木", "bonus": 1, "opp_bonus": 0, "blurb": "自己這合力 +1。", "ref": "第二十四回", "loc": "P1 第二十四回 PDF頁90", "field": "", "art": {"bg": "#e9dfd0", "prop": "brush"}},
-  {"id": "item.zhaoyaojing", "kind": "法器", "name": "照妖鏡", "entry": "deity.li_jing", "source": "原著（資料庫尚無這件法寶的條目，待文史顧問）", "tags": ["法器"], "duty": "李靖與齊天大聖借它破馬扁的黑幕", "cost": 1, "root": 0, "skin_type": "水", "bonus": 0, "opp_bonus": 0, "blurb": "專門對付會騙人的。", "ref": "第二十二回", "loc": "P1 第二十二回 PDF頁81–83、85（文史顧問校正）", "field": "", "art": {"bg": "#e0e6ee", "prop": "mirror"}},
-  {"id": "item.jingangbang", "kind": "法器", "name": "金剛棒", "entry": "deity.qitian_dasheng", "source": "原著", "tags": ["法器"], "duty": "齊天大聖破天羅地網陣用的兵器", "cost": 2, "root": 0, "skin_type": "火", "bonus": 2, "opp_bonus": 0, "blurb": "自己這合力 +2。", "ref": "第十五、十六回", "loc": "P1 第十五、十六回 PDF頁56–61", "field": "", "art": {"bg": "#f1e4c9", "prop": "cudgel"}},
-  {"id": "item.tongtianguan", "kind": "法器", "name": "通天冠", "entry": "object.tongtianguan", "source": "原著", "tags": ["法器", "可典當"], "duty": "小上帝的銅鍍金冠；拿去打銀街同裕當店當了五千錢", "cost": 0, "root": 0, "skin_type": "木", "bonus": 0, "opp_bonus": 0, "pawn": true, "blurb": "拿去典當，立刻拿到 2 點香火。但這之後小上帝就披頭散髮了。", "ref": "第二回", "loc": "P1 第二回 PDF頁5", "field": "", "art": {"bg": "#efe5c9", "prop": "crown"}}
+  {
+   "id": "deity.xiao_shangdi",
+   "kind": "神明",
+   "name": "小上帝",
+   "entry": "deity.xiao_shangdi",
+   "source": "原著",
+   "tags": [
+    "小上帝陣",
+    "鎮管",
+    "察善惡"
+   ],
+   "duty": "專管龜精蛇怪、察人間善惡",
+   "power": 4,
+   "cost": 3,
+   "root": 3,
+   "skin_type": "火",
+   "blurb": "腳下踩著龜和蛇。脾氣急、愛面子，被冷落也只會忍氣吞聲。",
+   "ref": "第一、二回",
+   "loc": "P1 第一回 PDF頁2；第二回 PDF頁4",
+   "field": "",
+   "art": {
+    "bg": "#f3e3c8",
+    "skin": "#f1c9a0",
+    "robe": "#8c4a3a",
+    "head": "loose",
+    "feet": "turtle_snake",
+    "prop": "sword"
+   }
+  },
+  {
+   "id": "deity.kang",
+   "kind": "神明",
+   "name": "康元帥",
+   "entry": "deity.kang_yuanshuai",
+   "source": "原著",
+   "tags": [
+    "小上帝陣",
+    "輔佐",
+    "康趙"
+   ],
+   "duty": "輔佐小上帝（紅面）",
+   "power": 2,
+   "cost": 1,
+   "root": 2,
+   "skin_type": "水",
+   "blurb": "紅臉長鬚的元帥，跟趙元帥一起進出。餓到快從座上掉下來。",
+   "ref": "第一、二回",
+   "loc": "P1 第二回 PDF頁4",
+   "field": "",
+   "art": {
+    "bg": "#efd9cf",
+    "skin": "#c8483c",
+    "robe": "#4b5b78",
+    "head": "helmet",
+    "beard": true
+   }
+  },
+  {
+   "id": "deity.zhao",
+   "kind": "神明",
+   "name": "趙元帥",
+   "entry": "deity.zhao_yuanshuai",
+   "source": "原著",
+   "tags": [
+    "小上帝陣",
+    "輔佐",
+    "康趙"
+   ],
+   "duty": "輔佐小上帝（青面）",
+   "power": 2,
+   "cost": 1,
+   "root": 2,
+   "skin_type": "木",
+   "blurb": "青臉長鬚。肚子餓了就抱怨「坐的不知豎的艱苦」。",
+   "ref": "第一、二回",
+   "loc": "P1 第二回 PDF頁4",
+   "field": "",
+   "art": {
+    "bg": "#dbe6df",
+    "skin": "#5c8f86",
+    "robe": "#4b5b78",
+    "head": "helmet",
+    "beard": true
+   }
+  },
+  {
+   "id": "deity.kuixing",
+   "kind": "神明",
+   "name": "魁星",
+   "entry": "deity.kuixing",
+   "source": "原著",
+   "tags": [
+    "文運",
+    "受冤屈"
+   ],
+   "duty": "文運；單腳踢斗、獨占鰲頭",
+   "power": 2,
+   "cost": 1,
+   "root": 2,
+   "skin_type": "火",
+   "blurb": "儒弱的小書生，臉色青藍帶一點獠牙，被誤會還含著淚。",
+   "ref": "第二、三回",
+   "loc": "P1 第二回 PDF頁5–6；第三回 PDF頁7",
+   "field": "",
+   "art": {
+    "bg": "#dfe6f2",
+    "skin": "#6f8fc4",
+    "robe": "#3d4f8a",
+    "head": "scholar",
+    "fang": true,
+    "feet": "ao",
+    "prop": "brush"
+   }
+  },
+  {
+   "id": "deity.guansheng",
+   "kind": "神明",
+   "name": "關聖帝君",
+   "entry": "deity.guansheng",
+   "source": "原著",
+   "tags": [
+    "武聖",
+    "護義"
+   ],
+   "duty": "義氣如山；出面勸放人",
+   "power": 4,
+   "cost": 3,
+   "root": 5,
+   "skin_type": "水",
+   "blurb": "騎赤兔馬單身去勸小上帝放人，被拒絕後氣得桃花面變紅。",
+   "ref": "第三回",
+   "loc": "P1 第三回 PDF頁9–10",
+   "field": "",
+   "art": {
+    "bg": "#f2dcd0",
+    "skin": "#d1523f",
+    "robe": "#3f6b4f",
+    "head": "topknot",
+    "beard": true
+   }
+  },
+  {
+   "id": "deity.leizhenzi",
+   "kind": "神明",
+   "name": "雷震子",
+   "entry": "deity.leizhenzi",
+   "source": "原著",
+   "tags": [
+    "雷部"
+   ],
+   "duty": "雷部；專打糟蹋五穀者",
+   "power": 3,
+   "cost": 2,
+   "root": 3,
+   "skin_type": "木",
+   "blurb": "金色虎皮襖、赤腳散髮，手提黃金棍。打碎過龜靈聖母的龜殼。",
+   "ref": "第七至十回",
+   "loc": "P1 第八回 PDF頁29；第九回 PDF頁32–34",
+   "field": "",
+   "art": {
+    "bg": "#f3ead0",
+    "skin": "#e6b98c",
+    "robe": "#d19a2b",
+    "head": "wild",
+    "prop": "cudgel"
+   }
+  },
+  {
+   "id": "char.qianliyan",
+   "kind": "神明",
+   "name": "千里眼",
+   "entry": "char.qianliyan_shunfeng",
+   "source": "原著",
+   "tags": [
+    "賭攤",
+    "天后宮"
+   ],
+   "duty": "媽祖手下；眼觀四方",
+   "power": 2,
+   "cost": 1,
+   "root": 1,
+   "skin_type": "水",
+   "blurb": "在媽祖宮口擺「拋璉寶」賭攤，把康趙的五千錢贏光。",
+   "ref": "第二回",
+   "loc": "P1 第二回 PDF頁5–6；P3 頁110（綠臉）",
+   "field": "",
+   "art": {
+    "bg": "#dcebe3",
+    "skin": "#4f9a6e",
+    "robe": "#2e6a4a",
+    "head": "topknot",
+    "fang": true
+   }
+  },
+  {
+   "id": "char.shunfeng",
+   "kind": "神明",
+   "name": "順風耳",
+   "entry": "char.qianliyan_shunfeng",
+   "source": "原著",
+   "tags": [
+    "賭攤",
+    "天后宮"
+   ],
+   "duty": "媽祖手下；耳聽八達",
+   "power": 2,
+   "cost": 1,
+   "root": 1,
+   "skin_type": "火",
+   "blurb": "跟千里眼一起顧賭攤。小上帝趕來時，兩人把廟門關起來躲著。",
+   "ref": "第二回",
+   "loc": "P1 第二回 PDF頁5–6；P3 頁110（紅臉）",
+   "field": "",
+   "art": {
+    "bg": "#f2dcd6",
+    "skin": "#c8483c",
+    "robe": "#a33a30",
+    "head": "topknot",
+    "prop": "ear"
+   }
+  },
+  {
+   "id": "deity.guiling",
+   "kind": "神明",
+   "name": "龜靈聖母",
+   "entry": "deity.guiling_shengmu",
+   "source": "原著",
+   "tags": [
+    "龜族",
+    "護龜",
+    "芙蓉洞"
+   ],
+   "duty": "芙蓉洞主；護龜族",
+   "power": 4,
+   "cost": 3,
+   "root": 3,
+   "skin_type": "木",
+   "blurb": "綠頭巾、烏色八卦道袍，背後插著混元槌。因為龜族被侮辱才出面。",
+   "ref": "第四、八回",
+   "loc": "P1 第四回 PDF頁11；第八回 PDF頁29",
+   "field": "",
+   "art": {
+    "bg": "#dde8dc",
+    "skin": "#f1d3b0",
+    "robe": "#26302f",
+    "head": "scarf",
+    "prop": "mace"
+   }
+  },
+  {
+   "id": "animal.cupi",
+   "kind": "神明",
+   "name": "粗皮龜",
+   "entry": "animal.turtle_snake",
+   "source": "原著",
+   "tags": [
+    "龜精",
+    "龜族"
+   ],
+   "duty": "九龜精之一",
+   "power": 1,
+   "cost": 0,
+   "root": 1,
+   "skin_type": "火",
+   "blurb": "龜靈聖母手下的龜精，名字是原書列的。不花香火。",
+   "ref": "第八回",
+   "loc": "P1 第八回 PDF頁29",
+   "field": "",
+   "art": {
+    "bg": "#e3ead8",
+    "skin": "#6b8c4a",
+    "robe": "#4a6a35",
+    "head": "turtle"
+   }
+  },
+  {
+   "id": "animal.shuanglian",
+   "kind": "神明",
+   "name": "雙鐮龜",
+   "entry": "animal.turtle_snake",
+   "source": "原著",
+   "tags": [
+    "龜精",
+    "龜族"
+   ],
+   "duty": "九龜精之一",
+   "power": 1,
+   "cost": 0,
+   "root": 1,
+   "skin_type": "水",
+   "blurb": "九龜精之一。看起來不起眼，但人多勢眾。不花香火。",
+   "ref": "第八回",
+   "loc": "P1 第八回 PDF頁29",
+   "field": "",
+   "art": {
+    "bg": "#dde6e3",
+    "skin": "#5d8f86",
+    "robe": "#3f6f66",
+    "head": "turtle"
+   }
+  },
+  {
+   "id": "animal.meigao",
+   "kind": "神明",
+   "name": "美高龜",
+   "entry": "animal.turtle_snake",
+   "source": "原著",
+   "tags": [
+    "龜精",
+    "龜族"
+   ],
+   "duty": "九龜精之一",
+   "power": 1,
+   "cost": 0,
+   "root": 1,
+   "skin_type": "木",
+   "blurb": "九龜精之一。龜靈聖母在場時，牠們會更有勁。不花香火。",
+   "ref": "第八回",
+   "loc": "P1 第八回 PDF頁29",
+   "field": "",
+   "art": {
+    "bg": "#e6e2d2",
+    "skin": "#8c8a4a",
+    "robe": "#6a6835",
+    "head": "turtle"
+   }
+  },
+  {
+   "id": "deity.nezha",
+   "kind": "神明",
+   "name": "哪吒",
+   "entry": "deity.nezha",
+   "source": "原著",
+   "tags": [
+    "少年",
+    "衝動"
+   ],
+   "duty": "三太子；火尖槍、乾坤圈、風火輪",
+   "power": 3,
+   "cost": 2,
+   "root": 2,
+   "skin_type": "水",
+   "blurb": "被康趙用話激下凡，結果看到自行車競賽就嚇回天庭。",
+   "ref": "第五、六回",
+   "loc": "P1 第五、六回 PDF頁14–19；第二十四回 PDF頁89",
+   "field": "",
+   "art": {
+    "bg": "#f3e0d8",
+    "skin": "#f0c8a8",
+    "robe": "#d1523f",
+    "head": "bun2",
+    "prop": "spear"
+   }
+  },
+  {
+   "id": "deity.lijing",
+   "kind": "神明",
+   "name": "李靖",
+   "entry": "deity.li_jing",
+   "source": "原著",
+   "tags": [
+    "統率"
+   ],
+   "duty": "托塔天王；小上帝陣營的實際領袖",
+   "power": 3,
+   "cost": 2,
+   "root": 4,
+   "skin_type": "木",
+   "blurb": "被混元槌迷昏過，醒來後帶著大家借照妖鏡破黑幕。",
+   "ref": "第五、六、十九回",
+   "loc": "P1 第五、六、十九回",
+   "field": "",
+   "art": {
+    "bg": "#efe6cf",
+    "skin": "#e8c39a",
+    "robe": "#b0832b",
+    "head": "helmet",
+    "prop": "pagoda"
+   }
+  },
+  {
+   "id": "deity.laojun",
+   "kind": "神明",
+   "name": "太上老君",
+   "entry": "deity.taishang_laojun",
+   "source": "原著",
+   "tags": [
+    "仲裁"
+   ],
+   "duty": "主持封神廟審判；天平式仲裁",
+   "power": 4,
+   "cost": 3,
+   "root": 5,
+   "skin_type": "火",
+   "blurb": "騎青牛來主持審判。他在場，誰跟誰有什麼關係都不算數，大家憑本事。",
+   "ref": "第二十三、二十四回",
+   "loc": "P1 第二十三、二十四回 PDF頁84–91；P3 頁77",
+   "field": "",
+   "art": {
+    "bg": "#e4e3ee",
+    "skin": "#f1d8bd",
+    "robe": "#e8e4d8",
+    "head": "bun",
+    "beard": true,
+    "prop": "staff"
+   }
+  },
+  {
+   "id": "char.mabian",
+   "kind": "神明",
+   "name": "馬扁禪師",
+   "entry": "char.mabian_chanshi",
+   "source": "原著",
+   "tags": [
+    "欺騙",
+    "黑幕"
+   ],
+   "duty": "三十六變；名字是「騙」拆開",
+   "power": 3,
+   "cost": 2,
+   "root": 4,
+   "skin_type": "火",
+   "blurb": "蓬髮頭陀、青灰色臉，擅長騙走別人的法寶。後來被派去掃銅臭殿。",
+   "ref": "第二十、二十二、二十四回",
+   "loc": "P1 第二十回 PDF頁72–76；第二十四回 PDF頁89",
+   "field": "",
+   "art": {
+    "bg": "#d9dde0",
+    "skin": "#8b9aa0",
+    "robe": "#3f4a58",
+    "head": "wild",
+    "prop": "sword"
+   }
+  },
+  {
+   "id": "char.jinyu",
+   "kind": "神明",
+   "name": "金魚大仙",
+   "entry": "char.sijie_mowang",
+   "source": "原著",
+   "tags": [
+    "欺騙",
+    "黑幕"
+   ],
+   "duty": "專門騙借臨水夫人的混元金斗",
+   "power": 2,
+   "cost": 1,
+   "root": 1,
+   "skin_type": "木",
+   "blurb": "赤面無鬚、錦鱗道袍，手拿魚刺百節棍。最會借東西不還。",
+   "ref": "第十、十二回",
+   "loc": "P1 第十回 PDF頁36；第十二回 PDF頁45",
+   "field": "",
+   "art": {
+    "bg": "#f3dcd2",
+    "skin": "#c8483c",
+    "robe": "#e08b3a",
+    "head": "topknot",
+    "prop": "cudgel"
+   }
+  },
+  {
+   "id": "deity.qitian",
+   "kind": "神明",
+   "name": "齊天大聖",
+   "entry": "deity.qitian_dasheng",
+   "source": "原著",
+   "tags": [
+    "破陣",
+    "顧孩童"
+   ],
+   "duty": "萬福庵；結局封「自由正神」",
+   "power": 4,
+   "cost": 3,
+   "root": 3,
+   "skin_type": "水",
+   "blurb": "帶著猴兄弟破過天羅地網陣，卻被黑幕困住，得借照妖鏡才破。",
+   "ref": "第十五、二十一回",
+   "loc": "P1 第十五、十六回 PDF頁56–61；第二十一回 PDF頁78",
+   "field": "",
+   "art": {
+    "bg": "#f1e4c9",
+    "skin": "#e3b26c",
+    "robe": "#b4452f",
+    "head": "wild",
+    "prop": "cudgel"
+   }
+  },
+  {
+   "id": "deity.linshui",
+   "kind": "神明",
+   "name": "臨水夫人",
+   "entry": "deity.linshui_furen",
+   "source": "原著",
+   "tags": [
+    "生育",
+    "守斗"
+   ],
+   "duty": "管生育嬰孩；鎮家寶是混元金斗",
+   "power": 2,
+   "cost": 2,
+   "root": 3,
+   "skin_type": "火",
+   "blurb": "被誤導後跟小上帝陣營對立，金斗還被人騙走。",
+   "ref": "第十一、十二、十七回",
+   "loc": "P1 第十一、十二回 PDF頁43–45；第十七至十九回",
+   "field": "",
+   "art": {
+    "bg": "#efdde6",
+    "skin": "#f1d3b6",
+    "robe": "#a3507a",
+    "head": "bun",
+    "prop": "dou"
+   }
+  },
+  {
+   "id": "item.kunyao_suo",
+   "kind": "法器",
+   "name": "捆妖索",
+   "entry": "object.kunyao_suo",
+   "source": "原著",
+   "tags": [
+    "法器",
+    "捆"
+   ],
+   "duty": "小上帝用它吊起魁星",
+   "cost": 1,
+   "root": 0,
+   "skin_type": "水",
+   "bonus": 0,
+   "opp_bonus": 0,
+   "bind_attendant": true,
+   "blurb": "對手的隨侍被綁住，這合不算。",
+   "ref": "第二回",
+   "loc": "P1 第二回 PDF頁6",
+   "field": "",
+   "art": {
+    "bg": "#e7e1d4",
+    "prop": "rope"
+   }
+  },
+  {
+   "id": "item.hunyuan_chui",
+   "kind": "法器",
+   "name": "混元槌",
+   "entry": "object.hunyuan_chui",
+   "source": "原著",
+   "tags": [
+    "法器"
+   ],
+   "duty": "龜靈聖母的法寶；芙蓉丸放香氣，神佛聞到會昏",
+   "cost": 2,
+   "root": 0,
+   "skin_type": "木",
+   "bonus": 0,
+   "opp_bonus": -2,
+   "blurb": "對手這合的力 −2。",
+   "ref": "第四、八回",
+   "loc": "P1 第四回 PDF頁11；第八回 PDF頁29",
+   "field": "",
+   "art": {
+    "bg": "#dfe6dc",
+    "prop": "mace"
+   }
+  },
+  {
+   "id": "item.hunyuan_doudou",
+   "kind": "法器",
+   "name": "混元金斗",
+   "entry": "object.hunyuan_jindou",
+   "source": "原著",
+   "tags": [
+    "法器",
+    "寶物"
+   ],
+   "duty": "臨水夫人的鎮家寶；被借、被騙，轉了好幾手",
+   "cost": 2,
+   "root": 0,
+   "skin_type": "火",
+   "bonus": 2,
+   "opp_bonus": 0,
+   "blurb": "自己這合力 +2。但小心被騙走。",
+   "ref": "第十二、十七回",
+   "loc": "P1 第十二回 PDF頁45；第十七回 PDF頁63",
+   "field": "",
+   "art": {
+    "bg": "#f0e3c8",
+    "prop": "dou"
+   }
+  },
+  {
+   "id": "item.zhubi_doudou",
+   "kind": "法器",
+   "name": "朱筆墨斗",
+   "entry": "deity.kuixing",
+   "source": "原著",
+   "tags": [
+    "法器"
+   ],
+   "duty": "封魁星為「文學界取締大天尊」時賜下，用來肅正詩文竊盜詐欺",
+   "cost": 1,
+   "root": 0,
+   "skin_type": "木",
+   "bonus": 1,
+   "opp_bonus": 0,
+   "blurb": "自己這合力 +1。",
+   "ref": "第二十四回",
+   "loc": "P1 第二十四回 PDF頁90",
+   "field": "",
+   "art": {
+    "bg": "#e9dfd0",
+    "prop": "brush"
+   }
+  },
+  {
+   "id": "item.zhaoyaojing",
+   "kind": "法器",
+   "name": "照妖鏡",
+   "entry": "deity.li_jing",
+   "source": "原著（資料庫尚無這件法寶的條目，待文史顧問）",
+   "tags": [
+    "法器"
+   ],
+   "duty": "李靖與齊天大聖借它破馬扁的黑幕",
+   "cost": 1,
+   "root": 0,
+   "skin_type": "水",
+   "bonus": 0,
+   "opp_bonus": 0,
+   "blurb": "專門對付會騙人的。",
+   "ref": "第二十二回",
+   "loc": "P1 第二十二回 PDF頁81–83、85（文史顧問校正）",
+   "field": "",
+   "art": {
+    "bg": "#e0e6ee",
+    "prop": "mirror"
+   }
+  },
+  {
+   "id": "item.jingangbang",
+   "kind": "法器",
+   "name": "金剛棒",
+   "entry": "deity.qitian_dasheng",
+   "source": "原著",
+   "tags": [
+    "法器"
+   ],
+   "duty": "齊天大聖破天羅地網陣用的兵器",
+   "cost": 2,
+   "root": 0,
+   "skin_type": "火",
+   "bonus": 2,
+   "opp_bonus": 0,
+   "blurb": "自己這合力 +2。",
+   "ref": "第十五、十六回",
+   "loc": "P1 第十五、十六回 PDF頁56–61",
+   "field": "",
+   "art": {
+    "bg": "#f1e4c9",
+    "prop": "cudgel"
+   }
+  },
+  {
+   "id": "item.tongtianguan",
+   "kind": "法器",
+   "name": "通天冠",
+   "entry": "object.tongtianguan",
+   "source": "原著",
+   "tags": [
+    "法器",
+    "可典當"
+   ],
+   "duty": "小上帝的銅鍍金冠；拿去打銀街同裕當店當了五千錢",
+   "cost": 0,
+   "root": 0,
+   "skin_type": "木",
+   "bonus": 0,
+   "opp_bonus": 0,
+   "pawn": true,
+   "blurb": "拿去典當，立刻拿到 2 點香火。但這之後小上帝就披頭散髮了。",
+   "ref": "第二回",
+   "loc": "P1 第二回 PDF頁5",
+   "field": "",
+   "art": {
+    "bg": "#efe5c9",
+    "prop": "crown"
+   }
+  }
  ],
  "relations": [
-  {"id": "R01", "name": "專管龜蛇", "who": {"id": "deity.xiao_shangdi", "slot": "main"}, "vs": {"tag": "龜精", "slot": "any"}, "power": 2, "text": "小上帝的職司就是管龜精蛇怪、時時踩住龜蛇，對龜精特別有辦法。", "basis": "原著", "ref": "第一、二回", "loc": "P1 第一回 PDF頁2；第二回 PDF頁4"},
-  {"id": "R02", "name": "護龜族", "who": {"id": "deity.guiling", "slot": "any"}, "vs": {"id": "deity.xiao_shangdi", "slot": "any"}, "power": 2, "text": "龜靈聖母是因為小上帝侮辱龜族才出面的，對上他特別有氣勢。", "basis": "原著", "ref": "第四回", "loc": "P1 第四回 PDF頁11"},
-  {"id": "R03", "name": "龜子龜孫", "who": {"tag": "龜精", "slot": "any"}, "with": {"id": "deity.guiling", "slot": "any"}, "power": 1, "text": "九龜精是龜靈聖母的手下，主子在場就有勁。", "basis": "原著", "ref": "第四、八回", "loc": "P1 第四回 PDF頁11；第八回 PDF頁29"},
-  {"id": "R04", "name": "雷擊龜殼", "who": {"id": "deity.leizhenzi", "slot": "any"}, "vs": {"tag": "龜族", "slot": "any"}, "power": 2, "text": "雷震子在山仔頂打碎過龜靈聖母的龜殼。", "basis": "原著", "ref": "第九回", "loc": "P1 第九回 PDF頁32–34"},
-  {"id": "R05", "name": "誤認冤屈", "who": {"id": "deity.xiao_shangdi", "slot": "main"}, "vs": {"id": "deity.kuixing", "slot": "any"}, "power": 2, "after": {"incense": -1, "to": "self"}, "text": "小上帝誤把魁星當成千里眼抓起來。贏是贏了，但老君後來罵他「用神不明」，下一合香火 −1。", "basis": "原著", "ref": "第二、二十三回", "loc": "P1 第二回 PDF頁5–6；第二十三回 PDF頁87"},
-  {"id": "R06", "name": "康趙輔佐", "who": {"id": "deity.xiao_shangdi", "slot": "main"}, "with": {"tag": "康趙", "slot": "att"}, "power": 1, "text": "玉皇本來就派康、趙兩位元帥來輔佐小上帝。", "basis": "原著", "ref": "第一回", "loc": "P1 第一回 PDF頁2"},
-  {"id": "R07", "name": "拋璉寶", "who": {"tag": "賭攤", "slot": "any"}, "vs": {"tag": "康趙", "slot": "any"}, "power": 2, "text": "千里眼、順風耳在賭攤上把康趙的五千錢贏光。", "basis": "原著", "ref": "第二回", "loc": "P1 第二回 PDF頁5–6"},
-  {"id": "R08", "name": "為魁星出頭", "who": {"id": "deity.guansheng", "slot": "any"}, "with": {"id": "deity.kuixing", "slot": "any"}, "power": 2, "text": "孔子替魁星向關公求情，關公義氣如山，單身去勸小上帝放人；關公和魁星同隊，就有了出頭的理由。", "basis": "原著", "ref": "第三回", "loc": "P1 第三回 PDF頁9–10"},
-  {"id": "R09", "name": "騙走法寶", "who": {"id": "char.mabian", "slot": "any"}, "vs": {"kind": "法器", "slot": "any"}, "steal": "all", "text": "馬扁禪師的名字就是「騙」拆開，他騙走過混元金斗。對手這合的法器，加成算在他這邊。", "basis": "原著", "ref": "第二十回", "loc": "P1 第二十回 PDF頁76"},
-  {"id": "R10", "name": "騙借金斗", "who": {"id": "char.jinyu", "slot": "any"}, "vs": {"id": "item.hunyuan_doudou", "slot": "any"}, "steal": "item.hunyuan_doudou", "text": "金魚大仙騙借走臨水夫人的混元金斗。對手的金斗，加成算在他這邊。", "basis": "原著", "ref": "第十二回", "loc": "P1 第十二回 PDF頁45"},
-  {"id": "R11", "name": "黑幕困大聖", "who": {"id": "char.mabian", "slot": "any"}, "vs": {"id": "deity.qitian", "slot": "any"}, "power": 2, "text": "齊天大聖被馬扁禪師的黑幕困住，得借照妖鏡才破得了。", "basis": "原著", "ref": "第二十一回", "loc": "P1 第二十一回 PDF頁78"},
-  {"id": "R12", "name": "照妖鏡破黑幕", "who": {"id": "item.zhaoyaojing", "slot": "att"}, "vs": {"tag": "黑幕", "slot": "any"}, "power": 2, "blocks": ["R09", "R10", "R11"], "text": "李靖和大聖借照妖鏡破了馬扁的黑幕：騙人的招式這合都失效，還多 +2。", "basis": "原著", "ref": "第二十二回", "loc": "P1 第二十二回 PDF頁81–83、85（文史顧問校正）"},
-  {"id": "R13", "name": "墨斗肅正", "who": {"id": "item.zhubi_doudou", "slot": "att"}, "vs": {"tag": "欺騙", "slot": "any"}, "power": 2, "text": "老君賜朱筆墨斗，是要肅正詩文竊盜詐欺的毛病；用在騙子身上，這是把原著的用意往外推一步（工坊延伸）。", "basis": "工坊延伸", "ref": "第二十四回", "loc": "P1 第二十四回 PDF頁90"},
-  {"id": "R14", "name": "老君仲裁", "who": {"id": "deity.laojun", "slot": "main"}, "void_all": true, "text": "老君主持審判，這合所有的相剋與加成都不算，大家只比本來的力。", "basis": "原著", "ref": "第二十三回", "loc": "P1 第二十三、二十四回 PDF頁84–91；P3 頁77"},
-  {"id": "R15", "name": "金斗鎮家", "who": {"id": "deity.linshui", "slot": "any"}, "with": {"id": "item.hunyuan_doudou", "slot": "any"}, "power": 1, "text": "混元金斗本來就是臨水夫人的鎮家寶，物歸原主更順手。", "basis": "原著", "ref": "第十二、十七回", "loc": "P1 第十二回 PDF頁45；第十七回 PDF頁63"},
-  {"id": "R16", "name": "被激將", "who": {"id": "deity.nezha", "slot": "main"}, "with": {"tag": "康趙", "slot": "att"}, "power": 1, "text": "哪吒是被康、趙用話激下凡的，有他們在旁邊就來勁。", "basis": "原著", "ref": "第五回", "loc": "P1 第五回 PDF頁14"},
-  {"id": "R17", "name": "臨敵畏懼", "who": {"id": "deity.nezha", "slot": "main"}, "cond": {"opp_main_power_gte": 4}, "power": -1, "text": "哪吒最後被判「臨敵畏懼」。碰到力 4 以上的對手，他會手軟。", "basis": "原著", "ref": "第二十四回", "loc": "P1 第二十四回 PDF頁89"},
-  {"id": "R18", "name": "披頭散髮", "who": {"id": "deity.xiao_shangdi", "slot": "main"}, "cond": {"self_pawned": true}, "power": -1, "text": "冠都拿去當了，小上帝只好披頭散髮出場，氣勢弱一截。", "basis": "原著", "ref": "第二回", "loc": "P1 第二回 PDF頁5"},
-  {"id": "R19", "name": "統率", "who": {"id": "deity.lijing", "slot": "main"}, "with": {"tag": "小上帝陣", "slot": "att"}, "power": 1, "text": "李靖是小上帝陣營實際的領頭人，帶自己人更順。", "basis": "原著", "ref": "第六、十九回", "loc": "P1 第六、十九回"}
+  {
+   "id": "R01",
+   "name": "專管龜蛇",
+   "who": {
+    "id": "deity.xiao_shangdi",
+    "slot": "main"
+   },
+   "vs": {
+    "tag": "龜精",
+    "slot": "any"
+   },
+   "power": 2,
+   "text": "小上帝的職司就是管龜精蛇怪、時時踩住龜蛇，對龜精特別有辦法。",
+   "basis": "原著",
+   "ref": "第一、二回",
+   "loc": "P1 第一回 PDF頁2；第二回 PDF頁4"
+  },
+  {
+   "id": "R02",
+   "name": "護龜族",
+   "who": {
+    "id": "deity.guiling",
+    "slot": "any"
+   },
+   "vs": {
+    "id": "deity.xiao_shangdi",
+    "slot": "any"
+   },
+   "power": 2,
+   "text": "龜靈聖母是因為小上帝侮辱龜族才出面的，對上他特別有氣勢。",
+   "basis": "原著",
+   "ref": "第四回",
+   "loc": "P1 第四回 PDF頁11"
+  },
+  {
+   "id": "R03",
+   "name": "龜子龜孫",
+   "who": {
+    "tag": "龜精",
+    "slot": "any"
+   },
+   "with": {
+    "id": "deity.guiling",
+    "slot": "any"
+   },
+   "power": 1,
+   "text": "九龜精是龜靈聖母的手下，主子在場就有勁。",
+   "basis": "原著",
+   "ref": "第四、八回",
+   "loc": "P1 第四回 PDF頁11；第八回 PDF頁29"
+  },
+  {
+   "id": "R04",
+   "name": "雷擊龜殼",
+   "who": {
+    "id": "deity.leizhenzi",
+    "slot": "any"
+   },
+   "vs": {
+    "tag": "龜族",
+    "slot": "any"
+   },
+   "power": 2,
+   "text": "雷震子在山仔頂打碎過龜靈聖母的龜殼。",
+   "basis": "原著",
+   "ref": "第九回",
+   "loc": "P1 第九回 PDF頁32–34"
+  },
+  {
+   "id": "R05",
+   "name": "誤認冤屈",
+   "who": {
+    "id": "deity.xiao_shangdi",
+    "slot": "main"
+   },
+   "vs": {
+    "id": "deity.kuixing",
+    "slot": "any"
+   },
+   "power": 2,
+   "after": {
+    "incense": -1,
+    "to": "self"
+   },
+   "text": "小上帝誤把魁星當成千里眼抓起來。贏是贏了，但老君後來罵他「用神不明」，下一合香火 −1。",
+   "basis": "原著",
+   "ref": "第二、二十三回",
+   "loc": "P1 第二回 PDF頁5–6；第二十三回 PDF頁87"
+  },
+  {
+   "id": "R06",
+   "name": "康趙輔佐",
+   "who": {
+    "id": "deity.xiao_shangdi",
+    "slot": "main"
+   },
+   "with": {
+    "tag": "康趙",
+    "slot": "att"
+   },
+   "power": 1,
+   "text": "玉皇本來就派康、趙兩位元帥來輔佐小上帝。",
+   "basis": "原著",
+   "ref": "第一回",
+   "loc": "P1 第一回 PDF頁2"
+  },
+  {
+   "id": "R07",
+   "name": "拋璉寶",
+   "who": {
+    "tag": "賭攤",
+    "slot": "any"
+   },
+   "vs": {
+    "tag": "康趙",
+    "slot": "any"
+   },
+   "power": 2,
+   "text": "千里眼、順風耳在賭攤上把康趙的五千錢贏光。",
+   "basis": "原著",
+   "ref": "第二回",
+   "loc": "P1 第二回 PDF頁5–6"
+  },
+  {
+   "id": "R08",
+   "name": "為魁星出頭",
+   "who": {
+    "id": "deity.guansheng",
+    "slot": "any"
+   },
+   "with": {
+    "id": "deity.kuixing",
+    "slot": "any"
+   },
+   "power": 2,
+   "text": "孔子替魁星向關公求情，關公義氣如山，單身去勸小上帝放人；關公和魁星同隊，就有了出頭的理由。",
+   "basis": "原著",
+   "ref": "第三回",
+   "loc": "P1 第三回 PDF頁9–10"
+  },
+  {
+   "id": "R09",
+   "name": "騙走法寶",
+   "who": {
+    "id": "char.mabian",
+    "slot": "any"
+   },
+   "vs": {
+    "kind": "法器",
+    "slot": "any"
+   },
+   "steal": "all",
+   "text": "馬扁禪師的名字就是「騙」拆開，他騙走過混元金斗。對手這合的法器，加成算在他這邊。",
+   "basis": "原著",
+   "ref": "第二十回",
+   "loc": "P1 第二十回 PDF頁76"
+  },
+  {
+   "id": "R10",
+   "name": "騙借金斗",
+   "who": {
+    "id": "char.jinyu",
+    "slot": "any"
+   },
+   "vs": {
+    "id": "item.hunyuan_doudou",
+    "slot": "any"
+   },
+   "steal": "item.hunyuan_doudou",
+   "text": "金魚大仙騙借走臨水夫人的混元金斗。對手的金斗，加成算在他這邊。",
+   "basis": "原著",
+   "ref": "第十二回",
+   "loc": "P1 第十二回 PDF頁45"
+  },
+  {
+   "id": "R11",
+   "name": "黑幕困大聖",
+   "who": {
+    "id": "char.mabian",
+    "slot": "any"
+   },
+   "vs": {
+    "id": "deity.qitian",
+    "slot": "any"
+   },
+   "power": 2,
+   "text": "齊天大聖被馬扁禪師的黑幕困住，得借照妖鏡才破得了。",
+   "basis": "原著",
+   "ref": "第二十一回",
+   "loc": "P1 第二十一回 PDF頁78"
+  },
+  {
+   "id": "R12",
+   "name": "照妖鏡破黑幕",
+   "who": {
+    "id": "item.zhaoyaojing",
+    "slot": "att"
+   },
+   "vs": {
+    "tag": "黑幕",
+    "slot": "any"
+   },
+   "power": 2,
+   "blocks": [
+    "R09",
+    "R10",
+    "R11"
+   ],
+   "text": "李靖和大聖借照妖鏡破了馬扁的黑幕：騙人的招式這合都失效，還多 +2。",
+   "basis": "原著",
+   "ref": "第二十二回",
+   "loc": "P1 第二十二回 PDF頁81–83、85（文史顧問校正）"
+  },
+  {
+   "id": "R13",
+   "name": "墨斗肅正",
+   "who": {
+    "id": "item.zhubi_doudou",
+    "slot": "att"
+   },
+   "vs": {
+    "tag": "欺騙",
+    "slot": "any"
+   },
+   "power": 2,
+   "text": "老君賜朱筆墨斗，是要肅正詩文竊盜詐欺的毛病；用在騙子身上，這是把原著的用意往外推一步（工坊延伸）。",
+   "basis": "工坊延伸",
+   "ref": "第二十四回",
+   "loc": "P1 第二十四回 PDF頁90"
+  },
+  {
+   "id": "R14",
+   "name": "老君仲裁",
+   "who": {
+    "id": "deity.laojun",
+    "slot": "main"
+   },
+   "void_all": true,
+   "text": "老君主持審判，這合所有的相剋與加成都不算，大家只比本來的力。",
+   "basis": "原著",
+   "ref": "第二十三回",
+   "loc": "P1 第二十三、二十四回 PDF頁84–91；P3 頁77"
+  },
+  {
+   "id": "R15",
+   "name": "金斗鎮家",
+   "who": {
+    "id": "deity.linshui",
+    "slot": "any"
+   },
+   "with": {
+    "id": "item.hunyuan_doudou",
+    "slot": "any"
+   },
+   "power": 1,
+   "text": "混元金斗本來就是臨水夫人的鎮家寶，物歸原主更順手。",
+   "basis": "原著",
+   "ref": "第十二、十七回",
+   "loc": "P1 第十二回 PDF頁45；第十七回 PDF頁63"
+  },
+  {
+   "id": "R16",
+   "name": "被激將",
+   "who": {
+    "id": "deity.nezha",
+    "slot": "main"
+   },
+   "with": {
+    "tag": "康趙",
+    "slot": "att"
+   },
+   "power": 1,
+   "text": "哪吒是被康、趙用話激下凡的，有他們在旁邊就來勁。",
+   "basis": "原著",
+   "ref": "第五回",
+   "loc": "P1 第五回 PDF頁14"
+  },
+  {
+   "id": "R17",
+   "name": "臨敵畏懼",
+   "who": {
+    "id": "deity.nezha",
+    "slot": "main"
+   },
+   "cond": {
+    "opp_main_power_gte": 4
+   },
+   "power": -1,
+   "text": "哪吒最後被判「臨敵畏懼」。碰到力 4 以上的對手，他會手軟。",
+   "basis": "原著",
+   "ref": "第二十四回",
+   "loc": "P1 第二十四回 PDF頁89"
+  },
+  {
+   "id": "R18",
+   "name": "披頭散髮",
+   "who": {
+    "id": "deity.xiao_shangdi",
+    "slot": "main"
+   },
+   "cond": {
+    "self_pawned": true
+   },
+   "power": -1,
+   "text": "冠都拿去當了，小上帝只好披頭散髮出場，氣勢弱一截。",
+   "basis": "原著",
+   "ref": "第二回",
+   "loc": "P1 第二回 PDF頁5"
+  },
+  {
+   "id": "R19",
+   "name": "統率",
+   "who": {
+    "id": "deity.lijing",
+    "slot": "main"
+   },
+   "with": {
+    "tag": "小上帝陣",
+    "slot": "att"
+   },
+   "power": 1,
+   "text": "李靖是小上帝陣營實際的領頭人，帶自己人更順。",
+   "basis": "原著",
+   "ref": "第六、十九回",
+   "loc": "P1 第六、十九回"
+  }
  ],
  "rules_text": {
   "pawn": "典當：通天冠打出來不算力，馬上得 2 點香火。原著是小上帝叫康趙拿冠去當了五千錢買米（第二回）。",
@@ -80,9 +1090,48 @@
   "loss_penalty": "輸了就被「行政整理」：這場你打出的神明裡，根最淺的那位被淘汰，退出收藏。（收藏只剩 5 張就不再淘汰。）"
  },
  "opponents": [
-  {"id": "S1", "incense": 6, "incense_skin": 7, "name": "媽祖宮口的賭攤", "intro": "康趙把當冠換來的五千錢輸在這裡。千里眼、順風耳守著攤子，哪吒和魁星在旁邊看熱鬧。", "deck": ["char.qianliyan", "char.shunfeng", "deity.nezha", "deity.kuixing", "item.jingangbang"]},
-  {"id": "S2", "incense": 7, "incense_skin": 8, "name": "芙蓉洞", "intro": "龜靈聖母帶著手下龜精，因為龜族被侮辱，要找小上帝討個說法。", "deck": ["deity.guiling", "animal.cupi", "animal.shuanglian", "item.hunyuan_chui", "deity.linshui"]},
-  {"id": "S3", "incense": 7, "incense_skin": 8, "name": "黑幕", "intro": "馬扁禪師和金魚大仙擺下黑幕，齊天大聖也被困在裡面。", "deck": ["char.mabian", "char.jinyu", "deity.qitian", "item.hunyuan_doudou", "item.kunyao_suo"]}
+  {
+   "id": "S1",
+   "incense": 6,
+   "incense_skin": 7,
+   "name": "媽祖宮口的賭攤",
+   "intro": "康趙把當冠換來的五千錢輸在這裡。千里眼、順風耳守著攤子，哪吒和魁星在旁邊看熱鬧。",
+   "deck": [
+    "char.qianliyan",
+    "char.shunfeng",
+    "deity.nezha",
+    "deity.kuixing",
+    "item.jingangbang"
+   ]
+  },
+  {
+   "id": "S2",
+   "incense": 7,
+   "incense_skin": 8,
+   "name": "芙蓉洞",
+   "intro": "龜靈聖母帶著手下龜精，因為龜族被侮辱，要找小上帝討個說法。",
+   "deck": [
+    "deity.guiling",
+    "animal.cupi",
+    "animal.shuanglian",
+    "item.hunyuan_chui",
+    "deity.linshui"
+   ]
+  },
+  {
+   "id": "S3",
+   "incense": 7,
+   "incense_skin": 8,
+   "name": "黑幕",
+   "intro": "馬扁禪師和金魚大仙擺下黑幕，齊天大聖也被困在裡面。",
+   "deck": [
+    "char.mabian",
+    "char.jinyu",
+    "deity.qitian",
+    "item.hunyuan_doudou",
+    "item.kunyao_suo"
+   ]
+  }
  ],
  "final": {
   "name": "封神廟審判",
@@ -90,14 +1139,17 @@
   "text_win": "三關都過了。太上老君騎著青牛來到封神廟，把你收進收藏——他一到場，誰跟誰有什麼關係就都不算數了。",
   "text_lose": "封神廟的審判還沒輪到你。回頭看看哪些關係是你沒注意到的？"
  },
- "judgment": {
-  "title": "抽掉小封神，這個遊戲還玩得下去嗎？",
-  "a": "把神明的名字全部換成別的，相剋也改成「火打木、木打水、水打火」，這個遊戲照樣玩得下去。所以它可以只是一層名字。",
-  "b": "但在版本一，你得知道「為什麼」才能贏：小上帝為什麼對龜精有辦法、老君為什麼能讓所有關係作廢。這些理由全都來自故事。",
-  "questions": [
-   "你在版本一贏下哪一合，是因為你記得原著裡的哪件事？",
-   "版本二的「火打木」你記得住嗎？跟版本一的「小上帝管龜蛇」比，哪個比較好記？為什麼？",
-   "如果你要做自己的卡牌遊戲，你會用哪個地方的廟、哪幾位神明？他們之間有什麼是只有去現場才看得到的分工或關係？"
-  ]
+ "compose": {
+  "skin": "cards",
+  "modules": {
+   "核心動作": "出牌：一位主將＋最多一張隨侍",
+   "資源計分": "力＋法器＋相剋加成（版本一）／火木水三角（版本二）",
+   "時間回合": "每場最多三合，先拿兩分",
+   "空間": "收藏格與出陣五席",
+   "角色": "26 張神明與法器卡，每張附出處",
+   "事件選擇": "贏了挑一張新牌；輸了行政整理",
+   "勝負": "三關過完，太上老君審判",
+   "回饋": "一句話故事、相剋理由、音效（預設靜音）"
+  }
  }
 }

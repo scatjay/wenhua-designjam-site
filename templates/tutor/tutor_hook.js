@@ -21,7 +21,7 @@
   /* 印尼文（遊戲設計學 101–130 自動中文＋印尼文並列；?lang=id 強制、?lang=zh 強制只有中文）。只涵蓋 ③ 的「誰的決定」表單；中文原文與行為不變，印尼文只是中文下方的小字灰色一行。
      譯文由 Vertex（gemini-3.7-flash，經 vertex_cap）依 glossary_id.json 產生，尚無母語者審稿。角色名稱保留中文（授課計畫書表 2 的正式名稱），括號附印尼文說明。 */
   var I18N = {
-    legend: ["出處標示欄", "Kolom keterangan sumber"],
+    legend: ["紀錄欄", "Kolom keterangan sumber"],
     q1: ["① 這一版裡，哪些部分交給了 AI？（可複選）", "① Di versi ini, bagian mana saja yang diserahkan ke AI? (bisa pilih lebih dari satu)"],
     q2: ["② 這一版裡，哪一兩處是我自己決定的？", "② Di versi ini, satu atau dua bagian mana yang saya putuskan sendiri?"],
     q3: ["③ 其中一處，我為什麼這樣決定？（一句話）", "③ Untuk salah satu bagian tersebut, mengapa saya memutuskan demikian? (satu kalimat)"],
@@ -37,15 +37,15 @@
     copy: ["複製這段", "Salin bagian ini"],
     copied: ["已複製", "Sudah disalin"],
     manual: ["請手動複製上面的字", "Silakan salin teks di atas secara manual"],
-    title: ["出處標示欄", "Kolom keterangan sumber"],
+    title: ["紀錄欄", "Kolom keterangan sumber"],
     note1: ["這一欄不計分，照實寫就好。", "Kolom ini tidak dinilai, silakan tulis apa adanya."],
     note2: ["請不要寫同學或家人的名字。", "Harap jangan menulis nama teman sekelas atau keluarga."],
     qlast: ["最後一句指令：你貼給 AI 的最後一句話（只貼一句，200 字以內；這一版沒有用 AI 就留空）", "Instruksi terakhir: Kalimat terakhir yang Anda tempel ke AI (tempel satu kalimat saja, maksimal 200 karakter; jika versi ini tidak menggunakan AI, biarkan kosong)"],
     outlast: ["最後一句指令", "Instruksi terakhir"],
-    ck_title: ["繳交檢核", "Pemeriksaan Pengumpulan"], ck_tip: ["這是你這一版的紀錄，不用另外截圖：助教討論完的「結果卡」會帶上這份檢核，W11-2 只交結果卡。畫面只顯示代碼與完成狀態，不顯示你寫的內容。", "Ini catatan versi ini, tidak perlu tangkapan layar terpisah: 「結果卡」 (kartu hasil) dari diskusi dengan asisten akan memuat pemeriksaan ini, W11-2 cukup mengumpulkan kartu hasil. Layar hanya menampilkan kode dan status, bukan isi tulisanmu."], ck_env: ["代碼", "Kode"], ck_unit: ["單元", "Unit"], ck_ver: ["第 {n} 版", "Versi ke-{n}"], ck_time: ["時間", "Waktu"],
+    ck_title: ["交件檢查", "Pemeriksaan Pengumpulan"], ck_tip: ["這是你這一版的紀錄，不用另外截圖：助教討論完的「結果卡」會帶上這份檢核，W11-2 只交結果卡。畫面只顯示代碼與完成狀態，不顯示你寫的內容。", "Ini catatan versi ini, tidak perlu tangkapan layar terpisah: 「結果卡」 (kartu hasil) dari diskusi dengan asisten akan memuat pemeriksaan ini, W11-2 cukup mengumpulkan kartu hasil. Layar hanya menampilkan kode dan status, bukan isi tulisanmu."], ck_env: ["代碼", "Kode"], ck_unit: ["單元", "Unit"], ck_ver: ["第 {n} 版", "Versi ke-{n}"], ck_time: ["時間", "Waktu"],
     ck_ai: ["交給 AI 的部分", "Bagian yang diserahkan ke AI"], ck_mine: ["自己決定的一兩處", "Satu atau dua bagian yang ditentukan sendiri"], ck_why: ["其中一處的理由", "Alasan untuk salah satu bagian"], ck_last: ["最後一句指令", "Kalimat instruksi terakhir"], ck_empty: ["未填", "Belum diisi"],
-    err_feel: ["請填「本週那一句」，一句話就好；想不到就寫「沒有」。", "Tolong isi 「本週那一句」(kalimat minggu ini), cukup satu kalimat saja. Kalau tidak terpikirkan, tulis saja 「沒有」(tidak ada)."], sv_label: ["問卷完成碼（填了問卷才有；沒填問卷就空著）", "Kode penyelesaian kuesioner (hanya ada kalau sudah isi kuesioner; kalau tidak isi, kosongkan saja)"], sv_bad: ["完成碼不對，請再檢查一次。", "Kode penyelesaian salah, silakan periksa lagi ya."], more: ["更多紀錄（選填，不填也可以）", "Catatan tambahan (opsional, boleh tidak diisi)"], ck_survey: ["問卷完成碼", "Kode penyelesaian kuesioner"],
-    feel_title: ["本週那一句", "Satu kalimat minggu ini"], ck_feel: ["本週那一句", "Satu kalimat minggu ini"], devcount: ["這台裝置上有 {n} 筆紀錄；空的話，請回到你填寫的那台裝置。", "Ada {n} catatan di perangkat ini. Kalau kosong, silakan kembali ke perangkat tempat kamu mengisinya."]
+    err_feel: ["請填「本週重點」，一句話就好；想不到就寫「沒有」。", "Tolong isi 「本週重點」(kalimat minggu ini), cukup satu kalimat saja. Kalau tidak terpikirkan, tulis saja 「沒有」(tidak ada)."], sv_label: ["問卷完成碼（填了問卷才有；沒填問卷就空著）", "Kode penyelesaian kuesioner (hanya ada kalau sudah isi kuesioner; kalau tidak isi, kosongkan saja)"], sv_bad: ["完成碼不對，請再檢查一次。", "Kode penyelesaian salah, silakan periksa lagi ya."], more: ["更多紀錄（選填，不填也可以）", "Catatan tambahan (opsional, boleh tidak diisi)"], ck_survey: ["問卷完成碼", "Kode penyelesaian kuesioner"],
+    feel_title: ["本週重點", "Satu kalimat minggu ini"], ck_feel: ["本週重點", "Satu kalimat minggu ini"], devcount: ["這台裝置上有 {n} 筆紀錄；空的話，請回到你填寫的那台裝置。", "Ada {n} catatan di perangkat ini. Kalau kosong, silakan kembali ke perangkat tempat kamu mengisinya."]
   }, ROLES_ID = [
     ["Navigator basis kasus", "Mencari contoh kasus dan merangkum metode"],
     ["Pencari celah lintas waktu", "Sengaja membuat kesalahan agar Anda menemukan kejanggalan"],
@@ -108,7 +108,7 @@
 
   function css() {
     if ($('chCss')) return; var s = document.createElement('style'); s.id = 'chCss';
-    s.textContent = '#ctHook{display:none!important}' +   /* 11-17 21:06／21:08 母線裁示：「📒 我的紀錄」（出處標示欄、內容出處五類、先猜／判斷）整個從學生畫面拿掉；程式與資料結構先保留（樣板會呼叫），只是不顯示 */
+    s.textContent = '#ctHook{display:none!important}' +   /* 11-17 21:06／21:08 母線裁示：「📒 我的紀錄」（紀錄欄、內容出處五類、先猜／判斷）整個從學生畫面拿掉；程式與資料結構先保留（樣板會呼叫），只是不顯示 */
       '#ctHook{--ch-bg:#fffaf3;--ch-panel:#fff;--ch-ink:#2b2420;--ch-line:#d9cbbd;--ch-soft:#f6ece0;--ch-acc:#b5462f;--ch-on:#fff;max-width:720px;margin:24px auto 96px;padding:0 16px;font:16px/1.6 system-ui,"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ch-ink)}' +
       '@media (prefers-color-scheme:dark){#ctHook{--ch-bg:#1d1916;--ch-panel:#27211d;--ch-ink:#f3ebe3;--ch-line:#4a3f37;--ch-soft:#352c26;--ch-acc:#e0795f;--ch-on:#1d1916}}' +
       '#ctHook #chMore>summary{min-height:44px;display:flex;align-items:center;font-weight:700;cursor:pointer;margin:8px 0}' +
@@ -147,7 +147,7 @@
   }
   function pfKey() { return 'ct_pf_' + O.env; }
   function pfGet() { try { var d = JSON.parse(localStorage.getItem(pfKey()) || 'null'); return d && d.unit === O.unit ? d : null; } catch (e) { return null; } }
-  function prefillNow() {   // 助教討論結束後，把「你自己決定的那一處」和「本週那一句」預先填進第 2、3 格（只在格子是空的時候填；學生看過可以改）
+  function prefillNow() {   // 助教討論結束後，把「你自己決定的那一處」和「本週重點」預先填進第 2、3 格（只在格子是空的時候填；學生看過可以改）
     if (typeof O === 'undefined' || !O) return; var d = pfGet(); if (!d || !$('chMine')) return;
     [['chMine', d.mine], ['chFeel', d.feel]].forEach(function (x) {
       var el = $(x[0]); if (!el || !x[1]) return;
@@ -161,7 +161,7 @@
       '<p class="m" id="chPvHint"></p><label>① 這一版，哪些部分交給了 AI？（可多選）</label><div id="chAiRow" class="row" role="group" aria-label="交給 AI 的部分">' +
       AI7.map(function (a) { return '<button type="button" data-ai7="' + a[0] + '" aria-pressed="false">' + a[1] + '</button>'; }).join('') + '</div>' +
       '<label for="chMine">② 你自己決定的那一處是什麼？</label><textarea id="chMine" maxlength="200"></textarea>' +
-      '<div id="chFeelBox"><label for="chFeel">③ 本週那一句</label><textarea id="chFeel" maxlength="120"></textarea></div>' +
+      '<div id="chFeelBox"><label for="chFeel">③ 本週重點</label><textarea id="chFeel" maxlength="120"></textarea></div>' +
       '<p class="m" id="chPfNote" style="display:none">②③ 是助教幫你填的，看過、想改就改，再按存檔。</p><p id="chPvMsg" class="m" role="status"></p>' +
       '<div class="row"><button type="button" id="chVb" class="pri">存檔</button></div>' +
       '<div id="chSurveyBox" style="display:none"><input type="text" id="chSurvey"><p id="chSvMsg" class="m"></p></div>' +
@@ -183,17 +183,17 @@
       '<p class="m">讀過的資料卡：</p><div class="row" id="chFolk">' + ((t.folk || []).map(function (id) { var f = C.FOLK_BY_ID[id]; return f ? '<button type="button" data-folk="' + id + '">📖 ' + esc(f.name) + '</button>' : ''; }).join(' ')) + '</div></div>',
       s4 = '<div class="sec"><h3>AI 的建議</h3><div class="row"><button type="button" data-ai="accepted">照用一條</button><button type="button" data-ai="modified">改了再用一條</button><button type="button" data-ai="rejected">不用一條</button><button type="button" id="chAiR">我回看完了</button></div><p class="m" id="chAi">還沒有紀錄。</p></div>',
       s5 = '<div class="sec"><h3>做出來之後</h3>' + post('chPt', '試玩觀察（誰玩、玩多久、停在哪、說了什麼）') + post('chIn', '我原本想讓玩家感到什麼／玩家實際感受到的') + post('chFf', '田野回饋（到現場問到、看到、聽到的）') + post('chFq', '回到現場時，我想問誰、問什麼') + post('chCh', '這一輪我改或不改的理由') + post('chLn', '用我本科系的眼光，我會改哪裡') + post('chMe', '一句話：這個遊戲在講什麼') + '</div>';
-    d.innerHTML = '<summary>📒 我的紀錄（出處標示欄、版本）</summary>' + s2 + provHtml() + '<details id="chMore"><summary>' + th('more') + '</summary>' + s1 + s4 + s5 + '</details>';
+    d.innerHTML = '<summary>📒 我的紀錄（紀錄欄、版本）</summary>' + s2 + provHtml() + '<details id="chMore"><summary>' + th('more') + '</summary>' + s1 + s4 + s5 + '</details>';
     document.body.appendChild(d);
     applyShow();
     wire();
   }
 
-  /* 繳交檢核畫面（楊老師 11-13 12:14：資料輸入都在學習單裡，flipclass 只收去識別化的檢核截圖）：只列編號、單元、第幾版、時間、完成了哪幾項（打勾），
+  /* 交件檢查畫面（楊老師 11-13 12:14：資料輸入都在學習單裡，flipclass 只收去識別化的檢核截圖）：只列編號、單元、第幾版、時間、完成了哪幾項（打勾），
      不顯示學生寫的任何文字。複製那一段文字預設關閉（hook.decision.copyText＝'on' 才有，以防萬一）。 */
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function stamp(t) { var d = new Date(t || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
-  function ckCode(un) { var c = ''; try { c = localStorage.getItem('ct_code_' + un) || ''; } catch (e) { c = ''; } return c || '—'; }   // 繳交檢核不顯示信封編號：顯示助教討論發的一次性代碼（還沒討論就是 —）
+  function ckCode(un) { var c = ''; try { c = localStorage.getItem('ct_code_' + un) || ''; } catch (e) { c = ''; } return c || '—'; }   // 交件檢查不顯示信封編號：顯示助教討論發的一次性代碼（還沒討論就是 —）
   function checkHtml(v, L) {
     var pv = v.pv || {}, un = v.unit || O.unit, rows = [['ck_ai', !!((pv.ai && pv.ai.length) || (pv.roNames && pv.roNames.length))], ['ck_mine', !!pv.mine]];
     rows.push(['ck_feel', !!((L && L.feel && L.feel[un]) || '')]);
@@ -202,7 +202,7 @@
       '<div style="font-size:15px">' + th('ck_env') + '：<b>' + esc(ckCode(un)) + '</b>｜' + th('ck_unit') + '：<b>' + esc(un) + '</b>｜' + esc(tz('ck_ver').replace('{n}', v.n || v.vn)) + (ID ? idl(I18N.ck_ver[1].replace('{n}', v.n || v.vn)) : '') + '｜' + th('ck_time') + '：' + esc(stamp(v.t)) + '</div>' +
       rows.map(function (x) { return '<div style="font-size:16px;padding:3px 0">' + (x[1] ? '<b style="color:#1b6b3a">✓</b> ' : '<span style="color:#7a6a55">－</span> ') + th(x[0]) + (x[1] ? '' : ' <span class="m">' + th('ck_empty') + '</span>') + '</div>'; }).join('');
   }
-  function showCheck() {   // 顯示最近一次有填出處標示欄的版本（重新整理後也找得回來；樣板頁與學習單頁看到同一筆）
+  function showCheck() {   // 顯示最近一次有填紀錄欄的版本（重新整理後也找得回來；樣板頁與學習單頁看到同一筆）
     var L = loadLedger(), v = null;
     for (var i = L.entries.length - 1; i >= 0; i--) if (L.entries[i].pv) { v = L.entries[i]; break; }
     if ($('chSurvey') && L.survey && document.activeElement !== $('chSurvey')) $('chSurvey').value = L.survey;
@@ -213,7 +213,7 @@
     var hk = dd.why === 'every' ? 'hint_every' : dd.why === 'weekly_done' ? 'hint_weekly_done' : dd.why === 'weekly_first' ? 'hint_weekly_first' : '';
     $('chPvHint').innerHTML = hk ? th(hk) : '';
   }
-  function renderLite() {   // 學習單頁（只有出處標示欄）用的簡版
+  function renderLite() {   // 學習單頁（只有紀錄欄）用的簡版
     var n = loadLedger().entries.length;
     $('chVers').innerHTML = esc(tz('devcount').replace('{n}', n)) + (ID ? idl(I18N.devcount[1].replace('{n}', n)) : ''); renderHint();
   }
@@ -346,7 +346,7 @@
     var info = UI.mount({ env: O.env, unit: O.unit, course: O.course, table: O.table, forceMode: O.forceMode, writer: O.writer, getState: state, cfg: O.cfg });
     UI.notify('load'); return info;
   }
-  /* 學習單頁用：只放「改作版本存檔＋出處標示欄」那一段，不連助教、不載樣板；紀錄與樣板頁共用同一本紀錄簿（ct_prov_<編號>）。 */
+  /* 學習單頁用：只放「改作版本存檔＋紀錄欄」那一段，不連助教、不載樣板；紀錄與樣板頁共用同一本紀錄簿（ct_prov_<編號>）。 */
   function mountProv(el, o) {
     O = o || {}; O.env = O.env == null ? 57 : O.env; O.unit = O.unit || C.unitOfDate(Date.now()); O.tpl = 'sheet'; O.provOnly = true; ID = wantId(); H = load();
     css(); var d = document.createElement('div'); d.id = 'ctHook'; d.innerHTML = provHtml();

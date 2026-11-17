@@ -24,7 +24,7 @@
   function stepHintsOf(env, unit, n) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = pageCourse(); var u = ((HINTS[c] || {})[unit]) || {}; return ((u.steps || {})[String(n)]) || []; }
   function curStep() { var ds = document.querySelectorAll('details.stage'), cur = 0, h = window.innerHeight * 0.55; for (var i = 0; i < ds.length; i++) { var r = ds[i].getBoundingClientRect(); if (r.top < h) cur = i + 1; } if (!ds.length) return 0; if (cur === 0) cur = 1; var sn = ds[cur - 1].querySelector('.sn'); return sn ? parseInt(sn.textContent, 10) || cur : cur; }
   function decisionOf(env, unit) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = pageCourse(); return (((HINTS.decision || {})[c]) || {})[unit] || ''; }
-  function ledgerChecks() { return []; }   // 出處標示欄已撤除（11-17 21:06）；保留空函式以免舊呼叫處出錯
+  function ledgerChecks() { return []; }   // 紀錄欄已撤除（11-17 21:06）；保留空函式以免舊呼叫處出錯
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function stampNow(ms) { var d = new Date(ms || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
   function qid() { return String(Date.now()) + '_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0'); }

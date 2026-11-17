@@ -263,8 +263,8 @@
  ],
  "versions": {
   "rule": {
-   "label": "文化長在規則裡",
-   "short": "規則版",
+   "label": "玩法版",
+   "short": "玩法版",
    "intro": "這一版的規則，都是從禁忌長出來的。沒有血條，也沒有人會攔你——但每一次踩線，都會被記住。",
    "zoneNames": {
     "mazu": "① 媽祖宮口",
@@ -447,8 +447,8 @@
    }
   },
   "skin": {
-   "label": "文化只是皮",
-   "short": "皮版",
+   "label": "換皮版",
+   "short": "換皮版",
    "intro": "這一版用同樣的地圖、同樣的角色名字。但規則是一般的潛行遊戲：踩到紅色方塊扣血，血用完就結束。",
    "zoneNames": {
     "mazu": "① 媽祖宮口",
@@ -567,7 +567,7 @@
    {
     "n": 2,
     "name": "換規則：把一張文化卡從「皮」變成「規則」",
-    "task": "打開「文化只是皮」那一版（versions.skin）。挑一張禁忌卡（例如 #20 廟門的進出方向），把它變成一條真的規則：在 skin 的 rules 把 doorDirection 改成 true，再替龍門、虎門寫訊息（wrongIn、rightIn…），最後在 ruleList 加一條規則、needs 寫上卡的編號。玩一次皮版，看看這條規則有沒有真的改變你怎麼走。",
+    "task": "打開「換皮版」那一版（versions.skin）。挑一張禁忌卡（例如 #20 廟門的進出方向），把它變成一條真的規則：在 skin 的 rules 把 doorDirection 改成 true，再替龍門、虎門寫訊息（wrongIn、rightIn…），最後在 ruleList 加一條規則、needs 寫上卡的編號。玩一次換皮版，看看這條規則有沒有真的改變你怎麼走。",
     "where": "versions.skin.rules、msgs、tiles、ruleList",
     "prompt": "請修改這份 JSON 的 versions.skin：把 rules.doorDirection 改成 true；tiles 的 L 改成「龍」、H 改成「虎」；msgs 加上 wrongIn、wrongOut、rightIn、rightOut、altarRefuse 五句（用一般遊戲的口氣，例如「走錯門了」）；ruleList 加一條「小屋要從右邊的門進、左邊的門出，走錯門拿不到煙霧彈」，needs 寫 [20]。其他地方不要動。只回傳 JSON。"
    },

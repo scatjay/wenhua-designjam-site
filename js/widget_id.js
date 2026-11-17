@@ -102,5 +102,6 @@ window.CT_WID = {
  "先綁定你的編號才能送出：點頁面右上角的小圓標，或重新整理頁面。綁好之後，這裡就能和助教討論。": "Tautkan nomor kamu dulu sebelum kirim: klik ikon bulat kecil di pojok kanan atas halaman, atau muat ulang halaman. Setelah ditautkan, kamu bisa berdiskusi dengan asisten pengajar di sini.",
  "AI 助教": "AI asisten pengajar",
  "打開右下角助教": "Buka asisten pengajar di pojok kanan bawah",
- "AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。": "AI asisten pengajar ada di pojok kanan bawah layar pada 「💬 AI asisten pengajar」, klik untuk mulai mengobrol."
+ "AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。": "AI asisten pengajar ada di pojok kanan bawah layar pada 「💬 AI asisten pengajar」, klik untuk mulai mengobrol.",
+ "尚未綁定編號：助教先鎖住，你可以先看下面的引導問項。請點頁面右上角的小圓標，或重新整理頁面來綁定；綁好之後這裡就能和助教討論。": "ID belum ditautkan: Asisten masih terkunci, kamu bisa lihat pertanyaan panduan di bawah dulu. Silakan klik ikon bulat di pojok kanan atas atau muat ulang halaman untuk menautkannya; setelah terhubung, kamu bisa berdiskusi dengan asisten di sini."
 };

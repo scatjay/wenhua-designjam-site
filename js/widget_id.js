@@ -152,5 +152,6 @@ window.CT_WID = {
  "台南的東西放在這一步：＿＿": "Unsur Tainan diletakkan pada langkah ini: ＿＿",
  "我的遊戲和原本樣板不一樣的是＿＿": "Hal yang membuat game saya berbeda dari template aslinya adalah ＿＿",
  "我拼進來的＿＿這塊負責＿＿": "Blok ＿＿ yang saya pasang ini berfungsi untuk ＿＿",
- "把台南的那個東西換掉，我覺得＿＿，因為＿＿": "Jika unsur Tainan tersebut diganti, menurut saya ＿＿, karena ＿＿"
+ "把台南的那個東西換掉，我覺得＿＿，因為＿＿": "Jika unsur Tainan tersebut diganti, menurut saya ＿＿, karena ＿＿",
+ "尚未綁定編號：助教先鎖住，你可以先看下面的提示句。請點頁面右上角的小圓標，或重新整理頁面來綁定；綁好之後這裡就能和助教討論。": "ID belum ditautkan: Asisten masih terkunci, kamu bisa lihat pertanyaan panduan di bawah dulu. Silakan klik ikon bulat di pojok kanan atas atau muat ulang halaman untuk menautkannya; setelah terhubung, kamu bisa berdiskusi dengan asisten di sini."
 };

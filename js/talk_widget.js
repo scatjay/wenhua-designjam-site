@@ -161,7 +161,7 @@
     paint();
     if (unbound) {
       inp.disabled = true; btn.disabled = true; msg.textContent = '';
-      if (DOCK) DOCK.setLock(T('尚未綁定編號：助教先鎖住，你可以先看下面的引導問項。請點頁面右上角的小圓標，或重新整理頁面來綁定；綁好之後這裡就能和助教討論。'));
+      if (DOCK) DOCK.setLock(T('尚未綁定編號：助教先鎖住，你可以先看下面的提示句。請點頁面右上角的小圓標，或重新整理頁面來綁定；綁好之後這裡就能和助教討論。'));
       hintBox.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
       var iv = setInterval(function () { var e = parseInt(localStorage.getItem('designjam_env'), 10); if (isFinite(e)) { clearInterval(iv); if (DOCK) DOCK.setLock(''); mount(el, DOCK); } }, 2000);
     }

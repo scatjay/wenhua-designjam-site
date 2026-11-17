@@ -24,17 +24,7 @@
   function stepHintsOf(env, unit, n) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = pageCourse(); var u = ((HINTS[c] || {})[unit]) || {}; return ((u.steps || {})[String(n)]) || []; }
   function curStep() { var ds = document.querySelectorAll('details.stage'), cur = 0, h = window.innerHeight * 0.55; for (var i = 0; i < ds.length; i++) { var r = ds[i].getBoundingClientRect(); if (r.top < h) cur = i + 1; } if (!ds.length) return 0; if (cur === 0) cur = 1; var sn = ds[cur - 1].querySelector('.sn'); return sn ? parseInt(sn.textContent, 10) || cur : cur; }
   function decisionOf(env, unit) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = pageCourse(); return (((HINTS.decision || {})[c]) || {})[unit] || ''; }
-  function ledgerChecks(env, unit) {   // 結果卡上的「繳交檢核」：讀這台裝置上出處標示欄最近一筆（和 tutor_hook 同一個 localStorage 鍵）
-    try {
-      var L = JSON.parse(localStorage.getItem('ct_prov_' + env) || 'null'); if (!L || !L.entries) return [];
-      var v = null; for (var i = L.entries.length - 1; i >= 0; i--) if (L.entries[i].pv) { v = L.entries[i]; break; }
-      if (!v) return [[T('還沒有存過版本'), false]];
-      var pv = v.pv || {}, rows = [[T('交給 AI 的部分'), !!(pv.roNames && pv.roNames.length)], [T('自己決定的一兩處'), !!pv.mine]];
-      if (pv.f !== 2) rows.push([T('其中一處的理由'), !!pv.why]);
-      rows.push([T('本週那一句'), !!((L.feel || {})[unit])]);
-      return rows;
-    } catch (e) { return []; }
-  }
+  function ledgerChecks() { return []; }   // 出處標示欄已撤除（11-17 21:06）；保留空函式以免舊呼叫處出錯
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function stampNow(ms) { var d = new Date(ms || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
   function qid() { return String(Date.now()) + '_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0'); }
@@ -64,18 +54,23 @@
     var st = { rounds: 0, done: false, summary: '', confirmed: false, msgs: [] };
     try { var sv = JSON.parse(localStorage.getItem(LK) || 'null'); if (sv && sv.msgs) st = sv; } catch (e) { /* 讀不到就從頭 */ }
     var open = openOf(env, unit); if (open) open = T(open);
+    var TPL = ['我想放進遊戲的台南東西是＿＿（像廟、節慶、小吃、老街）', '我想讓它在遊戲裡變成＿＿', '我現在卡在＿＿'];
     el.innerHTML = '<div class="tk"><div class="log" id="tk-log" aria-live="polite"></div>'
+      + '<p class="note" id="tk-warn" style="margin:4px 0">' + T('AI 不一定是對的') + '</p>'
       + '<div class="hints" id="tk-hints"></div>'
+      + '<div class="hints" id="tk-tpl"><div class="hb"></div></div>'
       + '<textarea id="tk-in" maxlength="600" placeholder="' + T('用你自己的話回答（一兩句就好）') + '" aria-label="' + T('用你自己的話回答（一兩句就好）') + '"></textarea>'
       + '<div class="row"><button type="button" id="tk-send">' + T('送出') + '</button><span class="cnt" id="tk-cnt"></span></div>'
       + '<p class="note" id="tk-msg" role="status"></p><div id="tk-sum"></div></div>';
+    var tplRow = $('tk-tpl').firstChild; TPL.forEach(function (h) { var b = document.createElement('button'); b.type = 'button'; b.className = 'h'; b.textContent = T(h); b.onclick = function () { inp.value = (inp.value ? inp.value + ' ' : '') + h; inp.focus(); }; tplRow.appendChild(b); });
     var hintBox = $('tk-hints'), log = $('tk-log'), inp = $('tk-in'), btn = $('tk-send'), msg = $('tk-msg'), cnt = $('tk-cnt'), sum = $('tk-sum');
     function save() { try { localStorage.setItem(LK, JSON.stringify(st)); } catch (e) { /* 存不下照樣可用 */ } }
     function bubble(cls, t) { var d = document.createElement('div'); d.className = 'b ' + cls; if (cls === 'a' && window.TA_DOCK) window.TA_DOCK.linkify(d, t); else d.textContent = t; log.appendChild(d); log.scrollTop = log.scrollHeight; }
     function paint() {
       log.innerHTML = ''; if (open) bubble('a', open);
       st.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t); });
-      cnt.textContent = T('已討論 {n} 輪（至少 {m} 輪才會被評；一天最多 {d} 輪）').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP);
+      cnt.textContent = T('已討論 {n} 輪（至少 {m} 輪才會被評；一天最多 {d} 輪）').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP + (st.granted || 0));
+      if (st.granted) { cnt.textContent += T('（老師已幫你加開 {g} 輪）').split('{g}').join(st.granted); }
       if (st.done && !st.confirmed) showSummary();
       paintHints();
       if (st.confirmed) { paintCard(); var mo = document.createElement('p'); mo.className = 'note'; mo.textContent = T('還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。今天最多 {d} 輪。').split('{d}').join(DAY_CAP); sum.appendChild(mo); }
@@ -91,15 +86,23 @@
     }
     function paintCard() {
       sum.innerHTML = '';
+      var cd = st.card || {}, cell = function (k) { return (cd[k] || {}).text || ''; }, clr = function (k) { return (cd[k] || {}).state === 'clear'; };
       var card = document.createElement('div'); card.className = 'rc'; card.setAttribute('role', 'group');
-      var rows = [[T('單元'), unit], [T('這週的決定點'), decisionOf(env, unit)], [T('你確認的那一句'), st.summary], [T('討論輪數'), String(st.rounds)], [T('代碼'), st.code || '—'], [T('完成時間'), st.at || '']];
-      var h = document.createElement('h4'); h.textContent = T('已完成本週討論'); card.appendChild(h);
-      var dl = document.createElement('dl');
-      rows.forEach(function (r) { if (!r[1] && r[0] !== T('代碼')) return; var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('代碼')) dd.className = 'code'; dl.appendChild(dt); dl.appendChild(dd); });
-      card.appendChild(dl);
-      var ck = ledgerChecks(env, unit); if (ck.length) { var ch = document.createElement('div'); ch.style.cssText = 'margin-top:8px;font-size:14px;line-height:1.7'; var ct = document.createElement('b'); ct.textContent = T('出處標示欄'); ch.appendChild(ct); ck.forEach(function (r) { var d = document.createElement('div'); d.textContent = (r[1] ? '✓ ' : '－ ') + r[0]; ch.appendChild(d); }); card.appendChild(ch); }
-      var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = (st.edited ? T('那一句是你自己改寫的。') : T('那一句由助教整理，你確認過。')); card.appendChild(tag);
-      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張卡截圖，交到 flipclass。這是 W11-2 要交的唯一一張截圖；畫面上只有代碼，不顯示你的編號。'); card.appendChild(tip);
+      var h = document.createElement('h4'); h.textContent = T('結果卡'); card.appendChild(h);
+      function sec(title) { var b = document.createElement('b'); b.textContent = title; b.style.cssText = 'display:block;margin-top:8px'; card.appendChild(b); }
+      function line(l, v) { if (!v) return; var d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.55;margin:2px 0'; d.textContent = l + '：' + v; card.appendChild(d); }
+      sec(T('你的提案（用你自己的話）'));
+      line(T('一句話說你的遊戲'), st.summary); line(T('最好玩的一刻'), cell('moment')); line(T('台南的東西，在遊戲裡變成'), cell('tainan'));
+      sec(T('這週的及格線'));
+      [[T('3 個遊戲畫面'), clr('screens')], [T('一句話說你的遊戲'), !!st.summary], [T('一個台南的東西'), clr('tainan')]].forEach(function (r) {
+        var d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.7'; d.textContent = (r[1] ? '✓ ' : '－ ') + r[0] + (r[1] ? '' : T('（還缺）')); card.appendChild(d);
+      });
+      if (st.next_step) { sec(T('下一步建議')); var ns = document.createElement('div'); ns.style.cssText = 'font-size:15px;line-height:1.55'; ns.textContent = st.next_step; card.appendChild(ns); }
+      var meta = document.createElement('dl'), rows = [[T('代碼'), st.code || '—'], [T('完成時間'), st.at || '']];
+      rows.forEach(function (r) { var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('代碼')) dd.className = 'code'; meta.appendChild(dt); meta.appendChild(dd); });
+      meta.style.marginTop = '8px'; card.appendChild(meta);
+      var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = T('助教不打分數，但討論會被評分、老師會讀。'); card.appendChild(tag);
+      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張卡截圖，連同你的 Figma 連結交到 flipclass。畫面上只有代碼，不顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的框，送給助教（選填）。'); card.appendChild(tip);
       sum.appendChild(card);
     }
     function showSummary() {
@@ -143,7 +146,8 @@
       put('talk', text).then(function (a) {
         st.msgs.push({ w: 'a', t: a.say }); if (!a.rule && !a.capped) st.rounds = a.n || (st.rounds + 1);
         if (a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 沒存成也沒關係 */ } }
-        if (a.done && !st.confirmed) { st.done = true; st.summary = a.summary || ''; st.autoSummary = st.summary; }
+        if (a.card) st.card = a.card; if (a.granted != null) st.granted = a.granted;
+        if (a.done && !st.confirmed) { st.done = true; st.summary = a.summary || ''; st.autoSummary = st.summary; st.next_step = a.next_step || ''; }
         if (a.capped) showRequest();
         if (DOCK) DOCK.setPause(false);
         save(); msg.textContent = ''; btn.disabled = false; inp.disabled = false; paint(); inp.focus();

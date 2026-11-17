@@ -108,7 +108,8 @@
 
   function css() {
     if ($('chCss')) return; var s = document.createElement('style'); s.id = 'chCss';
-    s.textContent = '#ctHook{--ch-bg:#fffaf3;--ch-panel:#fff;--ch-ink:#2b2420;--ch-line:#d9cbbd;--ch-soft:#f6ece0;--ch-acc:#b5462f;--ch-on:#fff;max-width:720px;margin:24px auto 96px;padding:0 16px;font:16px/1.6 system-ui,"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ch-ink)}' +
+    s.textContent = '#ctHook{display:none!important}' +   /* 11-17 21:06／21:08 母線裁示：「📒 我的紀錄」（出處標示欄、內容出處五類、先猜／判斷）整個從學生畫面拿掉；程式與資料結構先保留（樣板會呼叫），只是不顯示 */
+      '#ctHook{--ch-bg:#fffaf3;--ch-panel:#fff;--ch-ink:#2b2420;--ch-line:#d9cbbd;--ch-soft:#f6ece0;--ch-acc:#b5462f;--ch-on:#fff;max-width:720px;margin:24px auto 96px;padding:0 16px;font:16px/1.6 system-ui,"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ch-ink)}' +
       '@media (prefers-color-scheme:dark){#ctHook{--ch-bg:#1d1916;--ch-panel:#27211d;--ch-ink:#f3ebe3;--ch-line:#4a3f37;--ch-soft:#352c26;--ch-acc:#e0795f;--ch-on:#1d1916}}' +
       '#ctHook #chMore>summary{min-height:44px;display:flex;align-items:center;font-weight:700;cursor:pointer;margin:8px 0}' +
       '#ctHook>summary{min-height:48px;display:flex;align-items:center;font-weight:700;cursor:pointer;background:var(--ch-panel);border:1px solid var(--ch-line);border-radius:12px;padding:0 14px}' +

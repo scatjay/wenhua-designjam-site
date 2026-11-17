@@ -93,7 +93,7 @@ function fb(){var a=document.createElement('textarea');a.value=t;document.body.a
 if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();}});
 })();
 </script>
-<script src="templates/tutor/folk_index.js?v=202611151707"></script><script src="templates/tutor/tutor_templates.js?v=202611172750"></script><script src="templates/tutor/tutor_core.js?v=202611172750"></script><script src="templates/tutor/tutor_config.js?v=202611172750"></script><script src="templates/tutor/tutor_hook.js?v=202611172750"></script>
+<script src="templates/tutor/folk_index.js?v=202611151707"></script><script src="templates/tutor/tutor_templates.js?v=202611180650"></script><script src="templates/tutor/tutor_core.js?v=202611180650"></script><script src="templates/tutor/tutor_config.js?v=202611180650"></script><script src="templates/tutor/tutor_hook.js?v=202611180650"></script>
 <script>document.getElementById("provMount")&&window.CT_HOOK&&(function(){var el=document.getElementById("provMount"),done=false;function go(){if(done)return;var env=parseInt(localStorage.getItem("designjam_env"),10);if(!isFinite(env))return;done=true;try{var cfg=(window.CT_CONFIG&&CT_CONFIG.base)||{};CT_HOOK.mountProv(el,{env:env,unit:CT_CORE.unitOfDate(Date.now(),cfg.term),cfg:{hook:cfg.hook}});var h=document.getElementById("provHint");if(h)h.style.display="none";}catch(e){}}go();if(!done){var t=setInterval(function(){go();if(done)clearInterval(t);},1500);}})();</script>
 
 <script src="js/collapse.js?v=202611172600"></script>

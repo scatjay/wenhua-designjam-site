@@ -169,7 +169,7 @@ img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(-
  "meta": {
   "id": "xfs-walk-rules",
   "title": "通天冠去哪了",
-  "subtitle": "跟著《小封神》走一趟台南舊城（規則版）",
+  "subtitle": "跟著《小封神》走一趟台南舊城（玩法版）",
   "author": "工坊示範（可以改成你的名字）",
   "updated": "2026-11-11",
   "intro": "廟裡沒米了。小上帝把頭上那頂通天冠（神明戴的冠）摘下來，叫康元帥、趙元帥拿去典當換米錢，而你是跟在旁邊跑腿的小幫手。順序不能亂：沒有接到差事，當店不會理你；沒有拿到錢，到了媽祖宮口也沒東西可以輸。故事的人物和地點大多來自許丙丁的《小封神》，每一站會告訴你哪些是原著、哪些是工坊加的。",
@@ -666,11 +666,11 @@ img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(-
   }
  ],
  "reflect": {
-  "question": "抽掉《小封神》和台南的廟，換成別的主題，這個走讀遊戲還玩得下去嗎？",
+  "question": "把那裡的東西換掉（例如把廟換成便利商店），你當時的決定會變嗎？",
   "choices": [
-   "照樣玩得下去",
-   "故事沒了，但玩法還在",
-   "玩法也玩不下去了",
+   "決定不會變",
+   "感覺變了，決定沒變",
+   "決定會變",
    "說不準"
   ],
   "story_prompt": "用一句話寫這趟的故事：誰想要什麼？卡到什麼？最後怎樣？"
@@ -723,10 +723,10 @@ img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(-
  "meta": {
   "id": "xfs-walk-skin",
   "title": "通天冠去哪了",
-  "subtitle": "跟著《小封神》走一趟台南舊城（外觀版）",
+  "subtitle": "跟著《小封神》走一趟台南舊城（換皮版）",
   "author": "工坊示範（可以改成你的名字）",
   "updated": "2026-11-11",
-  "intro": "這是同一條路的另一個版本：每一站只有打卡和問答，順序隨你走，答對就得分。廟的名字和小封神的故事都在，但沒有任何一個步驟靠它們才成立。玩完以後，和規則版比一比。",
+  "intro": "這是同一條路的另一個版本：每一站只有打卡和問答，順序隨你走，答對就得分。廟的名字和小封神的故事都在，但沒有任何一個步驟靠它們才成立。玩完以後，和玩法版比一比。",
   "minutes": "約 6–8 分鐘",
   "cover": "📍",
   "tagline": "一站一站打卡答題，看誰得分高"
@@ -1045,15 +1045,15 @@ img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(-
    "requires": [],
    "title": "打卡完成",
    "origin": "工坊創作",
-   "text": "你走完了所有的站，也答完了所有的題。看一下你的分數。接著回答下面的問題，再去玩規則版比一比。"
+   "text": "你走完了所有的站，也答完了所有的題。看一下你的分數。接著回答下面的問題，再去玩玩法版比一比。"
   }
  ],
  "reflect": {
-  "question": "抽掉《小封神》和台南的廟，換成別的主題，這個走讀遊戲還玩得下去嗎？",
+  "question": "把那裡的東西換掉（例如把廟換成便利商店），你當時的決定會變嗎？",
   "choices": [
-   "照樣玩得下去",
-   "故事沒了，但玩法還在",
-   "玩法也玩不下去了",
+   "決定不會變",
+   "感覺變了，決定沒變",
+   "決定會變",
    "說不準"
   ],
   "story_prompt": "用一句話寫這趟的故事：誰想要什麼？卡到什麼？最後怎樣？"
@@ -1079,7 +1079,7 @@ img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(-
   {
    "min": 70,
    "title": "問答高手",
-   "text": "題目答得很好。接下來去玩規則版，看看多了順序和抉擇之後，感覺有什麼不同。"
+   "text": "題目答得很好。接下來去玩玩法版，看看多了順序和抉擇之後，感覺有什麼不同。"
   },
   {
    "min": 90,
@@ -1115,7 +1115,7 @@ img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(-
     list: function () { return TK.order.map(function (id) { var m = TK.mods[id]; return { id: id, section: m.section, root: m.root || null, api: ['init', 'step', 'render'].filter(function (k) { return typeof m[k] === 'function'; }) }; }); }
   };
   var BUILTIN = ['walk.json', 'walk_skin.json'];
-  var LABEL = { 'walk.json': '規則版', 'walk_skin.json': '外觀版' };
+  var LABEL = { 'walk.json': '玩法版', 'walk_skin.json': '換皮版' };
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
@@ -1269,7 +1269,7 @@ img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(-
     h += '<button class="btn pri big" data-act="start">' + (ST.started ? '🎒 繼續這一趟，出發！' : '🎒 開始走讀，出發！') + '</button>';
     h += '<div class="card"><b>探險隊守則</b><ul class="how"><li><b>1</b><span>看地圖，點一個地點，按「走過去」。在教室裡玩就用模擬，真的在現場可以用定位檢查。</span></li><li><b>2</b><span>到了先聽站上的人說話，再一題一題做任務。</span></li><li><b>3</b><span>每做完一站，蓋一個章、拿一塊碎片。走完全程，看你的結局和評價。</span></li></ul></div>';
     h += '<div class="small" style="margin-top:10px">玩哪一版：</div>' + switcher();
-    h += '<div class="small">規則版：順序、抉擇和現場題都會影響結局。外觀版：同一條路，只有打卡答題。玩完兩版，比一比。</div>';
+    h += '<div class="small">玩法版：順序、抉擇和現場題都會影響結局。換皮版：同一條路，只有打卡答題。玩完兩版，比一比。</div>';
     h += dataBox();
     APP.innerHTML = h;
   }

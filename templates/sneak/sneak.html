@@ -4,76 +4,79 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>夜巡不踩線1112</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <style>
 :root{
-  --bg:#f6f1e7; --card:#fffdf8; --ink:#2b2620; --mute:#6b6257; --line:#ddd2c0;
-  --accent:#9c2f22; --accent-ink:#fff; --wall:#4a4038; --floor:#efe6d6; --thr:#c9a15a; --room:#f3dfc2;
-  --sight:rgba(230,170,20,.55); --ear:rgba(70,120,200,.16); --ok:#2f6b3a; --warn:#a4541a; --chip:#efe5d3;
+  /* 外觀 token：夜巷燈籠（正本第五節「潛行 sneak」）。樣式只准用這十一個。 */
+  --tk-surface:#121619; --tk-panel:#1e252a; --tk-ink:#d9e2e4; --tk-muted:#8fa2a8;
+  --tk-accent:#ff9d2e; --tk-accent-ink:#121619; --tk-line:#34434b;
+  --tk-font-title:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --tk-font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --tk-radius:0px;
+  --tk-shadow:0 0 0 1px var(--tk-line), 0 0 22px color-mix(in srgb, var(--tk-accent) 20%, transparent);
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#1b1815; --card:#25211d; --ink:#efe8dc; --mute:#b3a898; --line:#3d362f;
-  --accent:#e0705c; --accent-ink:#1b1815; --wall:#0f0d0b; --floor:#3a332c; --thr:#a98443; --room:#4d3e2c;
-  --sight:rgba(240,190,40,.5); --ear:rgba(110,160,240,.2); --ok:#7fc58a; --warn:#e5a066; --chip:#302a24;
-}}
-:root[data-theme="dark"]{
-  --bg:#1b1815; --card:#25211d; --ink:#efe8dc; --mute:#b3a898; --line:#3d362f;
-  --accent:#e0705c; --accent-ink:#1b1815; --wall:#0f0d0b; --floor:#3a332c; --thr:#a98443; --room:#4d3e2c;
-  --sight:rgba(240,190,40,.5); --ear:rgba(110,160,240,.2); --ok:#7fc58a; --warn:#e5a066; --chip:#302a24;
+:root{
+  /* 以下全由 token 推出來，不再寫死顏色 */
+  --floor:color-mix(in srgb, var(--tk-panel) 70%, var(--tk-line));
+  --wall:var(--tk-surface);
+  --thr:color-mix(in srgb, var(--tk-accent) 38%, var(--tk-panel));
+  --room:color-mix(in srgb, var(--tk-accent) 12%, var(--tk-panel));
+  --sight:color-mix(in srgb, var(--tk-accent) 55%, transparent);
+  --ear:color-mix(in srgb, var(--tk-ink) 16%, transparent);
+  --chip:color-mix(in srgb, var(--tk-panel) 80%, var(--tk-line));
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
-main{max-width:760px;margin:0 auto;padding:12px 16px 48px}
-h1{font-size:1.45rem;margin:.2em 0 0}
-h2{font-size:1.1rem;margin:1.2em 0 .4em}
-.sub{color:var(--mute);font-size:.92rem;margin:0 0 .6em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+html,body{margin:0;background:var(--tk-surface);color:var(--tk-ink);font-family:var(--tk-font-body);line-height:1.6}
+main{max-width:760px;margin:0 auto;padding:14px 16px 48px}
+h1,h2{font-family:var(--tk-font-title);font-weight:900;letter-spacing:.06em}
+h1{font-size:1.5rem;margin:.2em 0 0;display:flex;align-items:center;gap:.5em}
+h1::before{content:"";flex:0 0 auto;width:.7em;height:1em;background:var(--tk-accent);box-shadow:0 0 14px var(--tk-accent)}
+h2{font-size:1.1rem;margin:1.2em 0 .4em;border-bottom:2px solid var(--tk-accent);padding-bottom:.15em;display:inline-block}
+.sub{color:var(--tk-muted);font-size:.92rem;margin:0 0 .6em}
+.card{background:var(--tk-panel);border:1px solid var(--tk-line);border-radius:var(--tk-radius);box-shadow:var(--tk-shadow);padding:12px 14px;margin:12px 0}
+.tabs{display:flex;gap:0;flex-wrap:wrap;margin:12px 0;border-bottom:3px solid var(--tk-line)}
 button{font:inherit;color:inherit;cursor:pointer}
-.tab{min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
-.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.btn{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--chip)}
-.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.btn:disabled{opacity:.38;cursor:not-allowed}
+.tab{min-height:44px;padding:8px 14px;border:0;border-radius:var(--tk-radius);background:transparent;color:var(--tk-muted);font-family:var(--tk-font-title);font-weight:900;margin-bottom:-3px;border-bottom:3px solid transparent}
+.tab[aria-selected="true"]{color:var(--tk-accent);border-bottom-color:var(--tk-accent)}
+.btn{min-height:44px;padding:8px 14px;border-radius:var(--tk-radius);border:1px solid var(--tk-line);background:var(--chip);color:var(--tk-ink)}
+.btn:hover{border-color:var(--tk-accent)}
+.btn.primary{background:var(--tk-accent);color:var(--tk-accent-ink);border-color:var(--tk-accent);font-weight:900}
+.btn:disabled{opacity:.35;cursor:not-allowed}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
-.cc{border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:8px;padding:8px 10px;background:var(--card);font-size:.92rem}
-.cc b{font-size:1rem}
-.no{display:inline-block;font-size:.78rem;background:var(--chip);border-radius:6px;padding:0 6px;margin-right:4px}
-.tag{display:inline-block;font-size:.75rem;border:1px solid var(--line);border-radius:6px;padding:0 5px;color:var(--mute);margin-left:4px}
-.status{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
-.pill{background:var(--chip);border-radius:999px;padding:2px 10px;font-size:.9rem}
-.pill.hot{background:var(--warn);color:var(--card)}
-.boardwrap{display:flex;justify-content:center;margin:6px 0}
-.board{display:grid;gap:2px;user-select:none}
-.cell{display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:.92rem;position:relative;background:var(--floor)}
+.cc{border:1px solid var(--tk-line);border-left:5px solid var(--tk-accent);border-radius:var(--tk-radius);padding:8px 10px;background:var(--tk-surface);font-size:.92rem}
+.cc b{font-size:1rem;font-family:var(--tk-font-title);font-weight:900}
+.no{display:inline-block;font-size:.78rem;background:var(--tk-accent);color:var(--tk-accent-ink);padding:0 6px;margin-right:4px;font-weight:700}
+.tag{display:inline-block;font-size:.75rem;border:1px solid var(--tk-line);padding:0 5px;color:var(--tk-muted);margin-left:4px}
+.status{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.pill{background:var(--chip);border:1px solid var(--tk-line);padding:2px 10px;font-size:.9rem}
+.pill.hot{background:var(--tk-accent);color:var(--tk-accent-ink);border-color:var(--tk-accent);font-weight:700}
+.boardwrap{display:flex;justify-content:center;margin:8px 0}
+.board{display:grid;gap:1px;user-select:none;background:var(--tk-line);border:1px solid var(--tk-line);box-shadow:var(--tk-shadow)}
+.cell{display:flex;align-items:center;justify-content:center;font-size:.92rem;position:relative;background:var(--floor)}
 .cell.w{background:var(--wall)}
-.cell.t{background:var(--thr);font-weight:700}
+.cell.t{background:var(--thr);font-weight:900}
 .cell.i{background:var(--room)}
-.cell.ear::after{content:"";position:absolute;inset:0;background:var(--ear);border-radius:4px}
-.cell.s::before{content:"";position:absolute;inset:0;background:var(--sight);border-radius:4px}
+.cell.ear::after{content:"";position:absolute;inset:0;background:var(--ear)}
+.cell.s::before{content:"";position:absolute;inset:0;background:var(--sight)}
 .cell .who{position:relative;z-index:2;font-size:1.1rem}
-.cell.me{outline:3px solid var(--accent);outline-offset:-3px}
-.legend{font-size:.82rem;color:var(--mute);text-align:center}
-.pad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,52px);gap:6px;justify-content:center;margin:8px 0}
+.cell.me{outline:3px solid var(--tk-accent);outline-offset:-3px;box-shadow:0 0 12px var(--tk-accent)}
+.legend{font-size:.82rem;color:var(--tk-muted);text-align:center}
+.pad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,52px);gap:6px;justify-content:center;margin:10px 0}
 .pad .btn{min-height:48px;padding:0;font-size:1.2rem}
-.pad .btn.on{background:var(--accent);color:var(--accent-ink)}
+.pad .btn.on{background:var(--tk-accent);color:var(--tk-accent-ink)}
 .extra{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.log{font-size:.9rem;max-height:9.5em;overflow:auto;border-top:1px dashed var(--line);margin-top:8px;padding-top:6px}
-.log p{margin:.15em 0}
-.log p:last-child{font-weight:700}
-.panel{border:2px solid var(--accent);border-radius:12px;padding:12px;margin:10px 0;background:var(--card)}
+.log{font-size:.9rem;max-height:9.5em;overflow:auto;border-top:1px dashed var(--tk-line);margin-top:8px;padding-top:6px}
+.log p{margin:.15em 0;color:var(--tk-muted)}
+.log p:last-child{font-weight:700;color:var(--tk-ink)}
+.panel{border:2px solid var(--tk-accent);border-radius:var(--tk-radius);box-shadow:var(--tk-shadow);padding:12px;margin:12px 0;background:var(--tk-panel)}
 .opts{display:grid;gap:6px}
 .opts .btn{text-align:left}
-textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
-.judge .btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.rl{padding-left:1.2em}
-.rl li{margin:.2em 0}
-.rl li.gone{color:var(--mute);text-decoration:line-through}
-.note{font-size:.85rem;color:var(--mute)}
-.err{color:var(--accent);font-size:.9rem;white-space:pre-wrap}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--tk-ink);background:var(--tk-surface);border:1px solid var(--tk-line);border-radius:var(--tk-radius);padding:8px}
+.note{font-size:.85rem;color:var(--tk-muted)}
+.err{color:var(--tk-accent);font-size:.9rem;white-space:pre-wrap}
 .hidden{display:none !important}
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.cmp div{background:var(--chip);border-radius:8px;padding:6px 8px}
-code{background:var(--chip);border-radius:4px;padding:0 4px;font-size:.88em;word-break:break-all}
+code{background:var(--chip);padding:0 4px;font-size:.88em;word-break:break-all}
 .small{font-size:.86rem}
 </style>
 </head>
@@ -101,7 +104,7 @@ code{background:var(--chip);border-radius:4px;padding:0 4px;font-size:.88em;word
         <b id="zoneName"></b>
         <button class="btn" id="restart">從頭再玩這一版</button>
       </div>
-      <div class="status" id="status"></div>
+      <div class="status"><span id="statusRes" style="display:contents"></span><span id="statusTurn" style="display:contents"></span></div>
       <div class="boardwrap"><div class="board" id="board" aria-label="地圖"></div></div>
       <div class="legend" id="legend"></div>
       <div id="voicePanel" class="panel hidden"><b id="voicePrompt"></b><div class="opts" id="voiceOpts" style="margin-top:8px"></div></div>
@@ -122,20 +125,9 @@ code{background:var(--chip);border-radius:4px;padding:0 4px;font-size:.88em;word
       <p id="endText"></p>
       <p class="small" id="endStats"></p>
       <p class="note" id="endAfter"></p>
-      <div class="judge">
-        <b id="jq"></b>
-        <div class="opts" id="jopts" style="margin-top:6px"></div>
-        <p class="small" style="margin:.6em 0 .2em">寫一句為什麼：</p>
-        <textarea id="jwhy" rows="2" placeholder="例如：拿掉之後，哪一條規則就沒有理由存在了？"></textarea>
-        <button class="btn primary" id="jsend" style="margin-top:6px">送出我的判斷</button>
-        <p class="err" id="jerr"></p>
-      </div>
-      <div id="reveal" class="hidden">
-        <h2>抽掉文化之後，這一版的規則還剩幾條？</h2>
-        <ul class="rl" id="rlist"></ul>
-        <p id="rtext"></p>
-        <div id="compare" class="hidden"><h2>你兩版的答案</h2><div class="cmp" id="cmp"></div><p class="small" id="cmpNote"></p></div>
-        <button class="btn primary" id="toOther" style="margin-top:6px"></button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn" id="again">從頭再玩這一版</button>
+        <button class="btn primary" id="toOther"></button>
       </div>
     </div>
   </section>
@@ -160,7 +152,7 @@ code{background:var(--chip);border-radius:4px;padding:0 4px;font-size:.88em;word
   <p class="note" id="disclaimer"></p>
   <p class="note">標示：原著＝許丙丁《小封神》書裡有寫；民間＝民間信仰常見的說法；工坊創作＝這個遊戲自己加的；田野＝你自己去看、去問到的。</p>
 </main>
-<script id="data" type="application/json">{"schema": "sneak-template/1", "meta": {"id": "sneak-xfs", "title": "夜巡不踩線", "subtitle": "潛行躲避樣板・文化卡類別：禁忌・規矩", "cardKind": "禁忌・規矩", "cardKindHint": "禁忌本身就是規則，而且是有代價的規則；沒有人會攔你，但踩到就出事。", "story": ["許丙丁《小封神》第二回：小上帝誤把魁星當成千里眼，叫黃巾力士把他吊在上帝廟前示眾。", "這個遊戲接著往下想（這段是工坊編的）：那天夜裡，廟祝提著一壺清茶，想偷偷送到魁星嘴邊。路上要經過媽祖宮口、土地公廟，最後才到小上帝廟前。黃巾力士守夜與站崗、千里眼順風耳夜裡守望，也都是工坊改編。", "原書裡廟被颱風吹倒後，三位神明餓了好幾天，只有廟祝的清茶可以喝——所以送茶的人是廟祝。"], "disclaimer": "遊戲是示意與簡化，不是民俗儀式教學。門檻、龍邊虎邊、夜裡的忌諱、收驚，各地說法都不一樣，以你去的那間廟、你問到的人為準。", "tags": {"orig": "原著", "folk": "民間", "made": "工坊創作", "field": "田野"}}, "cards": [{"no": 17, "v": "不能踩門檻", "k": "禁忌・規矩", "note": "一條看不見但踩到就出事的線", "here": "地圖上的「檻」格：踩上去會被記住，要用「跨」過去，但跨步會出聲。", "tag": "folk"}, {"no": 18, "v": "忌諱講的話", "k": "禁忌・規矩", "note": "有些詞一講出來，狀態就變了", "here": "夜裡有聲音叫你：怎麼回話會改變你的狀態（被盯上，或受驚）。", "tag": "folk"}, {"no": 20, "v": "廟門的進出方向", "k": "禁忌・規矩", "note": "走錯邊有代價，但沒有人會攔你", "here": "土地公廟有龍邊、虎邊兩個門。走錯邊沒有人擋你，但土地公不會幫你。（兩個門和土地公幫不幫你，是遊戲設定）", "tag": "folk"}], "field": {"title": "這一格 AI 幫不了你：去一間廟走一趟", "why": "AI 沒有去過你家附近那間廟。下面三題要你自己去看、去問，答案可能和遊戲裡寫的不一樣——不一樣更好，那就是你的改作材料。", "prompts": [{"id": "f_door", "q": "那間廟的門檻有多高？你看到大家怎麼過門檻？（拍一張照片，寫一句話）"}, {"id": "f_dir", "q": "那間廟從哪一邊進、哪一邊出？廟裡有沒有標示？問廟裡的人，他怎麼說？"}, {"id": "f_word", "q": "問一位長輩：晚上有什麼話不能講、有什麼事不能做？他說了什麼？為什麼？"}]}, "judge": {"question": "把這一版的文化抽掉（廟、門檻、神明、夜裡的聲音全部拿掉），這個遊戲還玩得下去嗎？", "options": ["照樣玩", "故事垮了，玩法還在", "玩法本身就垮了", "說不準"], "minWhy": 6}, "zones": [{"id": "mazu", "map": ["#######E#", "#.......#", "#.#.#.#.#", "#TTTTTTT#", "#.......#", "#.......#", "####S####"], "watchers": [{"id": "eye", "kind": "eye", "pos": [1, 1], "dirs": ["R", "R", "D", "D"], "range": 4}, {"id": "ear", "kind": "ear", "pos": [5, 7], "radius": 2}]}, {"id": "tudi", "map": ["####E####", "##IIAII##", "##IIIII##", "##H###L##", "#.......#", "#.......#", "####S####"], "watchers": [{"id": "guard1", "kind": "patrol", "range": 3, "path": [[4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [3, 6], [2, 6], [2, 5], [2, 4], [2, 3], [2, 2], [3, 2], [4, 2]]}]}, {"id": "xiao", "map": ["####K####", "#.......#", "####.####", "#X..V...#", "####.####", "#...V...#", "####S####"], "watchers": [{"id": "guard2", "kind": "patrol", "range": 2, "path": [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 6], [1, 5], [1, 4], [1, 3], [1, 2]]}, {"id": "eye3", "kind": "eye", "pos": [1, 7], "dirs": ["L"], "range": 1}]}], "versions": {"rule": {"label": "文化長在規則裡", "short": "規則版", "intro": "這一版的規則，都是從禁忌長出來的。沒有血條，也沒有人會攔你——但每一次踩線，都會被記住。", "zoneNames": {"mazu": "① 媽祖宮口", "tudi": "② 土地公廟", "xiao": "③ 小上帝廟前"}, "zoneEnter": {"mazu": "媽祖宮口。千里眼（👁）在左上角看直線，順風耳（👂）在右邊聽。前面一整排是廟的門檻（檻）。", "tudi": "土地公廟。要從廟裡穿到後面的小門（出）。龍邊的門在右，虎邊的門在左（這間廟有兩個門、土地公會不會幫你，都是遊戲設定）。黃巾力士（💪）會進廟巡一圈。", "xiao": "小上帝廟前。魁星就吊在最上面（🙏）。一個黃巾力士在廟前來回走，另一個在右邊站崗往左看——你今晚被盯上越多次，他看得越遠。路上好像有聲音……"}, "names": {"eye": "千里眼", "ear": "順風耳", "guard1": "黃巾力士", "guard2": "黃巾力士", "eye3": "黃巾力士（站崗）"}, "icons": {"eye": "👁", "ear": "👂", "guard1": "💪", "guard2": "💪", "eye3": "🛡️"}, "tiles": {"T": "檻", "L": "龍", "H": "虎", "A": "爐", "V": "　", "X": "香", "E": "出", "K": "🙏", "S": "　", "I": ""}, "rules": {"penaltyMode": "notice", "noticeGrowsSight": true, "doorDirection": true, "voiceMode": "choice", "shock": true, "hp": null, "startIncense": 0}, "status": {"notice": "被盯上", "incense": "香", "shock": "受驚", "hp": ""}, "actions": {"jump": "跨", "wait": "屏住氣等一下", "hide": "上一炷香（土地公遮你三回合）", "cure": "上一炷香定定神（簡化的收驚）"}, "msgs": {"threshold": "你踩到門檻了。沒有人說話，但你覺得被記住了。（被盯上 +1：之後守望的人看得更遠）", "heard": "跨步聲太大，順風耳聽見了。（被盯上 +1）", "jump": "你抬腳跨過門檻。", "wrongIn": "你從虎邊進了廟。沒有人攔你，可是土地公不會幫你了。（被盯上 +1）", "wrongOut": "你從龍邊出了廟。（被盯上 +1）", "rightIn": "你從龍邊進廟。", "rightOut": "你從虎邊出廟。", "enterRoom": "你進了廟裡。", "altarGive": "香爐前多了一炷香，你收進袖子裡。（香 +1）", "altarRefuse": "香爐前什麼也沒有。土地公好像沒看見你。", "hide": "你插上一炷香，煙把你擋住了。（三回合內沒人看得到你）", "cure": "你在香爐前上一炷香，定定神。腳不軟了。", "wait": "你屏住氣，等了一下。", "trap": "", "caught": "{who}看見你了。清茶灑了一地。"}, "voices": {"xiao": [{"at": [5, 4], "prompt": "背後有人輕輕叫你的名字。", "options": [{"text": "回頭應一聲：「誰？」", "effect": "shock", "reply": "你一回頭，背脊發涼，腳開始發軟。（受驚：之後每走一步，守衛都多走一步）"}, {"text": "不回頭、不出聲，繼續走", "effect": "none", "reply": "你沒有回頭。聲音慢慢遠了。"}, {"text": "大聲問：「是不是鬼在叫我？」", "effect": "notice", "reply": "你說出了那個字。黃巾力士往這邊看了一眼。（被盯上 +1）"}]}, {"at": [3, 4], "prompt": "路邊供桌前，好像有誰擋在你前面。", "options": [{"text": "「好兄弟，借過一下。」", "effect": "none", "reply": "前面空了出來，你輕輕走過去。"}, {"text": "「走開啦，鬼！」", "effect": "notice", "reply": "話一出口，四周突然安靜下來。（被盯上 +1）"}, {"text": "停下來，盯著看到底是誰", "effect": "shock", "reply": "你越看越覺得不對，心跳得好快。（受驚）"}]}]}, "ruleList": [{"text": "門檻不能踩：踩上去不會痛，但會被記住（被盯上 +1，之後守望的人看得更遠）。要過就跨過去，可是跨步會出聲。", "needs": [17]}, {"text": "廟門龍邊進、虎邊出：從虎邊進廟，土地公不給香，也不幫你躲。", "needs": [20]}, {"text": "夜裡有聲音叫你：講錯話會被盯上，回頭應聲會受驚。", "needs": [18]}, {"text": "受驚了，要到香爐前上一炷香定定神（簡化的收驚），不然每走一步，守衛都多走一步。", "needs": [18]}, {"text": "千里眼看直線、順風耳聽跨步聲、黃巾力士來回巡。", "needs": []}, {"text": "被看見就結束，不能重來。", "needs": []}], "endings": {"win": [{"maxNotice": 0, "text": "魁星喝了一口清茶，小聲說：「多謝。」整條路上，沒有一個人知道你來過。"}, {"maxNotice": 2, "text": "魁星喝到了清茶。可是你知道，今晚有幾雙眼睛記住了你。"}, {"maxNotice": 99, "text": "茶是送到了。天亮前，街上已經在傳：廟祝昨晚到處亂走、到處踩線。"}], "caught": "{who}看見你了。清茶灑了一地，這一夜不能重來。", "hp": "", "after": "原著裡，魁星當天三更就被龜靈聖母用迷煙救走（第五回）；小上帝侮辱無辜的錯，要到第二十三回的封神審判才被數落。今晚這壺茶，是工坊替他加的。"}}, "skin": {"label": "文化只是皮", "short": "皮版", "intro": "這一版用同樣的地圖、同樣的角色名字。但規則是一般的潛行遊戲：踩到紅色方塊扣血，血用完就結束。", "zoneNames": {"mazu": "① 媽祖宮口", "tudi": "② 土地公廟", "xiao": "③ 小上帝廟前"}, "zoneEnter": {"mazu": "第一關。千里眼（👁）看直線，順風耳（👂）聽聲音。前面一整排是紅色方塊（■）。", "tudi": "第二關。穿過中間的小屋到後面的出口（出）。小屋的兩個門都一樣。黃巾力士（💪）會進屋巡一圈。", "xiao": "第三關。終點在最上面（🙏）。黃巾力士在上面來回走，右邊還有一個站崗的。"}, "names": {"eye": "千里眼", "ear": "順風耳", "guard1": "黃巾力士", "guard2": "黃巾力士", "eye3": "黃巾力士（站崗）"}, "icons": {"eye": "👁", "ear": "👂", "guard1": "💪", "guard2": "💪", "eye3": "🛡️"}, "tiles": {"T": "■", "L": "■", "H": "■", "A": "箱", "V": "　", "X": "　", "E": "出", "K": "🙏", "S": "　", "I": ""}, "rules": {"penaltyMode": "damage", "noticeGrowsSight": false, "doorDirection": false, "voiceMode": "none", "shock": false, "hp": 3, "startIncense": 0}, "status": {"notice": "", "incense": "煙霧彈", "shock": "", "hp": "血"}, "actions": {"jump": "跳", "wait": "等一回合", "hide": "丟煙霧彈（隱身三回合）", "cure": ""}, "msgs": {"threshold": "", "thresholdDamage": "你踩到紅色方塊。（血 -1）", "heard": "", "heardDamage": "跳的聲音被聽到了。（血 -1）", "jump": "你跳過紅色方塊。", "enterRoom": "你進了小屋。", "altarGive": "箱子裡有一顆煙霧彈。（煙霧彈 +1）", "altarRefuse": "", "hide": "你丟出煙霧彈。（三回合內沒人看得到你）", "cure": "", "wait": "你等了一回合。", "damage": "血 -1", "caught": "{who}看見你了。遊戲結束。"}, "voices": {}, "ruleList": [{"text": "紅色方塊：踩到扣 1 滴血；可以跳過去，可是跳會出聲，被聽到也扣血。", "needs": []}, {"text": "小屋裡的箱子有煙霧彈，丟了可以隱身三回合。", "needs": []}, {"text": "千里眼看直線、順風耳聽跳的聲音、黃巾力士來回巡。", "needs": []}, {"text": "被看見或血用完就結束。", "needs": []}], "endings": {"win": [{"maxNotice": 99, "text": "你到了終點。過關！"}], "caught": "{who}看見你了。遊戲結束。", "hp": "血用完了。遊戲結束。", "after": ""}}}, "reveal": {"same": "這一版裡，文化只出現在名字和故事上。把廟祝換成小偷、千里眼換成監視器、紅色方塊還是紅色方塊——每一條規則都還在。所以大部分人會選「照樣玩」。", "collapse": "這一版有 {need}／{total} 條規則是從禁忌長出來的。把門檻、廟門方向、夜裡不能講的話拿掉，這幾條規則就沒有理由存在，剩下的只是「別被看到」。所以大部分人會選「玩法本身就垮了」。", "story": "這一版有一部分規則靠文化撐著，一部分是一般的潛行規則。抽掉文化，遊戲會變得很不一樣，但還走得動。"}, "remix": {"title": "怎麼改做", "steps": [{"n": 1, "name": "換內容", "task": "把三個區域換成你去過的三個地方（例如你家附近的廟、巷子、市場），改每個區域的名字和進場那一句話。地圖可以先不動。", "where": "versions.rule.zoneNames、zoneEnter、voices 的文字", "prompt": "這是一個潛行遊戲的資料檔（JSON）。請保留所有欄位名稱和結構，地圖 map 不要動，只把 versions.rule 裡的 zoneNames、zoneEnter、voices 的文字改成發生在【寫你的三個地方】。每個 voices 的選項保留三個，effect 只能是 none／notice／shock。只回傳 JSON。"}, {"n": 2, "name": "換規則：把一張文化卡從「皮」變成「規則」", "task": "打開「文化只是皮」那一版（versions.skin）。挑一張禁忌卡（例如 #20 廟門的進出方向），把它變成一條真的規則：在 skin 的 rules 把 doorDirection 改成 true，再替龍門、虎門寫訊息（wrongIn、rightIn…），最後在 ruleList 加一條規則、needs 寫上卡的編號。玩一次皮版，再回答一次判斷題：答案有沒有變？", "where": "versions.skin.rules、msgs、tiles、ruleList", "prompt": "請修改這份 JSON 的 versions.skin：把 rules.doorDirection 改成 true；tiles 的 L 改成「龍」、H 改成「虎」；msgs 加上 wrongIn、wrongOut、rightIn、rightOut、altarRefuse 五句（用一般遊戲的口氣，例如「走錯門了」）；ruleList 加一條「小屋要從右邊的門進、左邊的門出，走錯門拿不到煙霧彈」，needs 寫 [20]。其他地方不要動。只回傳 JSON。"}, {"n": 3, "name": "換形式", "task": "把你的禁忌搬進另一個樣板。例如「擲筊問路」（爬塔）：踩到禁忌的那一層，擲筊的結果變差；或「遶境不能停」（跑酷）：路線上有不能踩的線。", "where": "另一個樣板的 JSON", "prompt": "這是我做的潛行遊戲資料，裡面有三條禁忌規則（ruleList 中 needs 有編號的那幾條）。請依照【另一個樣板名稱】樣板的格式，把這三條禁忌改寫成那個樣板裡的規則，保留卡片編號。回傳新的 JSON。"}], "addOne": "想多加一關？在 zones 最後面複製一個區域：map 每一列一樣長；# 是牆、. 是地、T 是門檻、L／H 是龍門虎門、I 是廟裡、A 是香爐、V 是聲音、X 是收驚的香爐、S 是起點、E 是出口（最後一關用 K 當終點）。守望的人三種：eye（站著轉頭看）、patrol（照 path 走，每一步只能走一格）、ear（聽 radius 格內的跨步聲）。存好之後按「載入我的版本」，錯誤會告訴你是哪一列、哪一格。"}}</script>
+<script id="data" type="application/json">{"schema": "sneak-template/1", "meta": {"id": "sneak-xfs", "title": "夜巡不踩線", "subtitle": "潛行躲避樣板・文化卡類別：禁忌・規矩", "cardKind": "禁忌・規矩", "cardKindHint": "禁忌本身就是規則，而且是有代價的規則；沒有人會攔你，但踩到就出事。", "story": ["許丙丁《小封神》第二回：小上帝誤把魁星當成千里眼，叫黃巾力士把他吊在上帝廟前示眾。", "這個遊戲接著往下想（這段是工坊編的）：那天夜裡，廟祝提著一壺清茶，想偷偷送到魁星嘴邊。路上要經過媽祖宮口、土地公廟，最後才到小上帝廟前。黃巾力士守夜與站崗、千里眼順風耳夜裡守望，也都是工坊改編。", "原書裡廟被颱風吹倒後，三位神明餓了好幾天，只有廟祝的清茶可以喝——所以送茶的人是廟祝。"], "disclaimer": "遊戲是示意與簡化，不是民俗儀式教學。門檻、龍邊虎邊、夜裡的忌諱、收驚，各地說法都不一樣，以你去的那間廟、你問到的人為準。", "tags": {"orig": "原著", "folk": "民間", "made": "工坊創作", "field": "田野"}}, "cards": [{"no": 17, "v": "不能踩門檻", "k": "禁忌・規矩", "note": "一條看不見但踩到就出事的線", "here": "地圖上的「檻」格：踩上去會被記住，要用「跨」過去，但跨步會出聲。", "tag": "folk"}, {"no": 18, "v": "忌諱講的話", "k": "禁忌・規矩", "note": "有些詞一講出來，狀態就變了", "here": "夜裡有聲音叫你：怎麼回話會改變你的狀態（被盯上，或受驚）。", "tag": "folk"}, {"no": 20, "v": "廟門的進出方向", "k": "禁忌・規矩", "note": "走錯邊有代價，但沒有人會攔你", "here": "土地公廟有龍邊、虎邊兩個門。走錯邊沒有人擋你，但土地公不會幫你。（兩個門和土地公幫不幫你，是遊戲設定）", "tag": "folk"}], "field": {"title": "這一格 AI 幫不了你：去一間廟走一趟", "why": "AI 沒有去過你家附近那間廟。下面三題要你自己去看、去問，答案可能和遊戲裡寫的不一樣——不一樣更好，那就是你的改作材料。", "prompts": [{"id": "f_door", "q": "那間廟的門檻有多高？你看到大家怎麼過門檻？（拍一張照片，寫一句話）"}, {"id": "f_dir", "q": "那間廟從哪一邊進、哪一邊出？廟裡有沒有標示？問廟裡的人，他怎麼說？"}, {"id": "f_word", "q": "問一位長輩：晚上有什麼話不能講、有什麼事不能做？他說了什麼？為什麼？"}]}, "zones": [{"id": "mazu", "map": ["#######E#", "#.......#", "#.#.#.#.#", "#TTTTTTT#", "#.......#", "#.......#", "####S####"], "watchers": [{"id": "eye", "kind": "eye", "pos": [1, 1], "dirs": ["R", "R", "D", "D"], "range": 4}, {"id": "ear", "kind": "ear", "pos": [5, 7], "radius": 2}]}, {"id": "tudi", "map": ["####E####", "##IIAII##", "##IIIII##", "##H###L##", "#.......#", "#.......#", "####S####"], "watchers": [{"id": "guard1", "kind": "patrol", "range": 3, "path": [[4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [3, 6], [2, 6], [2, 5], [2, 4], [2, 3], [2, 2], [3, 2], [4, 2]]}]}, {"id": "xiao", "map": ["####K####", "#.......#", "####.####", "#X..V...#", "####.####", "#...V...#", "####S####"], "watchers": [{"id": "guard2", "kind": "patrol", "range": 2, "path": [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 6], [1, 5], [1, 4], [1, 3], [1, 2]]}, {"id": "eye3", "kind": "eye", "pos": [1, 7], "dirs": ["L"], "range": 1}]}], "versions": {"rule": {"label": "文化長在規則裡", "short": "規則版", "intro": "這一版的規則，都是從禁忌長出來的。沒有血條，也沒有人會攔你——但每一次踩線，都會被記住。", "zoneNames": {"mazu": "① 媽祖宮口", "tudi": "② 土地公廟", "xiao": "③ 小上帝廟前"}, "zoneEnter": {"mazu": "媽祖宮口。千里眼（👁）在左上角看直線，順風耳（👂）在右邊聽。前面一整排是廟的門檻（檻）。", "tudi": "土地公廟。要從廟裡穿到後面的小門（出）。龍邊的門在右，虎邊的門在左（這間廟有兩個門、土地公會不會幫你，都是遊戲設定）。黃巾力士（💪）會進廟巡一圈。", "xiao": "小上帝廟前。魁星就吊在最上面（🙏）。一個黃巾力士在廟前來回走，另一個在右邊站崗往左看——你今晚被盯上越多次，他看得越遠。路上好像有聲音……"}, "names": {"eye": "千里眼", "ear": "順風耳", "guard1": "黃巾力士", "guard2": "黃巾力士", "eye3": "黃巾力士（站崗）"}, "icons": {"eye": "👁", "ear": "👂", "guard1": "💪", "guard2": "💪", "eye3": "🛡️"}, "tiles": {"T": "檻", "L": "龍", "H": "虎", "A": "爐", "V": "　", "X": "香", "E": "出", "K": "🙏", "S": "　", "I": ""}, "rules": {"penaltyMode": "notice", "noticeGrowsSight": true, "doorDirection": true, "voiceMode": "choice", "shock": true, "hp": null, "startIncense": 0}, "status": {"notice": "被盯上", "incense": "香", "shock": "受驚", "hp": ""}, "actions": {"jump": "跨", "wait": "屏住氣等一下", "hide": "上一炷香（土地公遮你三回合）", "cure": "上一炷香定定神（簡化的收驚）"}, "msgs": {"threshold": "你踩到門檻了。沒有人說話，但你覺得被記住了。（被盯上 +1：之後守望的人看得更遠）", "heard": "跨步聲太大，順風耳聽見了。（被盯上 +1）", "jump": "你抬腳跨過門檻。", "wrongIn": "你從虎邊進了廟。沒有人攔你，可是土地公不會幫你了。（被盯上 +1）", "wrongOut": "你從龍邊出了廟。（被盯上 +1）", "rightIn": "你從龍邊進廟。", "rightOut": "你從虎邊出廟。", "enterRoom": "你進了廟裡。", "altarGive": "香爐前多了一炷香，你收進袖子裡。（香 +1）", "altarRefuse": "香爐前什麼也沒有。土地公好像沒看見你。", "hide": "你插上一炷香，煙把你擋住了。（三回合內沒人看得到你）", "cure": "你在香爐前上一炷香，定定神。腳不軟了。", "wait": "你屏住氣，等了一下。", "trap": "", "caught": "{who}看見你了。清茶灑了一地。"}, "voices": {"xiao": [{"at": [5, 4], "prompt": "背後有人輕輕叫你的名字。", "options": [{"text": "回頭應一聲：「誰？」", "effect": "shock", "reply": "你一回頭，背脊發涼，腳開始發軟。（受驚：之後每走一步，守衛都多走一步）"}, {"text": "不回頭、不出聲，繼續走", "effect": "none", "reply": "你沒有回頭。聲音慢慢遠了。"}, {"text": "大聲問：「是不是鬼在叫我？」", "effect": "notice", "reply": "你說出了那個字。黃巾力士往這邊看了一眼。（被盯上 +1）"}]}, {"at": [3, 4], "prompt": "路邊供桌前，好像有誰擋在你前面。", "options": [{"text": "「好兄弟，借過一下。」", "effect": "none", "reply": "前面空了出來，你輕輕走過去。"}, {"text": "「走開啦，鬼！」", "effect": "notice", "reply": "話一出口，四周突然安靜下來。（被盯上 +1）"}, {"text": "停下來，盯著看到底是誰", "effect": "shock", "reply": "你越看越覺得不對，心跳得好快。（受驚）"}]}]}, "ruleList": [{"text": "門檻不能踩：踩上去不會痛，但會被記住（被盯上 +1，之後守望的人看得更遠）。要過就跨過去，可是跨步會出聲。", "needs": [17]}, {"text": "廟門龍邊進、虎邊出：從虎邊進廟，土地公不給香，也不幫你躲。", "needs": [20]}, {"text": "夜裡有聲音叫你：講錯話會被盯上，回頭應聲會受驚。", "needs": [18]}, {"text": "受驚了，要到香爐前上一炷香定定神（簡化的收驚），不然每走一步，守衛都多走一步。", "needs": [18]}, {"text": "千里眼看直線、順風耳聽跨步聲、黃巾力士來回巡。", "needs": []}, {"text": "被看見就結束，不能重來。", "needs": []}], "endings": {"win": [{"maxNotice": 0, "text": "魁星喝了一口清茶，小聲說：「多謝。」整條路上，沒有一個人知道你來過。"}, {"maxNotice": 2, "text": "魁星喝到了清茶。可是你知道，今晚有幾雙眼睛記住了你。"}, {"maxNotice": 99, "text": "茶是送到了。天亮前，街上已經在傳：廟祝昨晚到處亂走、到處踩線。"}], "caught": "{who}看見你了。清茶灑了一地，這一夜不能重來。", "hp": "", "after": "原著裡，魁星當天三更就被龜靈聖母用迷煙救走（第五回）；小上帝侮辱無辜的錯，要到第二十三回的封神審判才被數落。今晚這壺茶，是工坊替他加的。"}}, "skin": {"label": "文化只是皮", "short": "皮版", "intro": "這一版用同樣的地圖、同樣的角色名字。但規則是一般的潛行遊戲：踩到紅色方塊扣血，血用完就結束。", "zoneNames": {"mazu": "① 媽祖宮口", "tudi": "② 土地公廟", "xiao": "③ 小上帝廟前"}, "zoneEnter": {"mazu": "第一關。千里眼（👁）看直線，順風耳（👂）聽聲音。前面一整排是紅色方塊（■）。", "tudi": "第二關。穿過中間的小屋到後面的出口（出）。小屋的兩個門都一樣。黃巾力士（💪）會進屋巡一圈。", "xiao": "第三關。終點在最上面（🙏）。黃巾力士在上面來回走，右邊還有一個站崗的。"}, "names": {"eye": "千里眼", "ear": "順風耳", "guard1": "黃巾力士", "guard2": "黃巾力士", "eye3": "黃巾力士（站崗）"}, "icons": {"eye": "👁", "ear": "👂", "guard1": "💪", "guard2": "💪", "eye3": "🛡️"}, "tiles": {"T": "■", "L": "■", "H": "■", "A": "箱", "V": "　", "X": "　", "E": "出", "K": "🙏", "S": "　", "I": ""}, "rules": {"penaltyMode": "damage", "noticeGrowsSight": false, "doorDirection": false, "voiceMode": "none", "shock": false, "hp": 3, "startIncense": 0}, "status": {"notice": "", "incense": "煙霧彈", "shock": "", "hp": "血"}, "actions": {"jump": "跳", "wait": "等一回合", "hide": "丟煙霧彈（隱身三回合）", "cure": ""}, "msgs": {"threshold": "", "thresholdDamage": "你踩到紅色方塊。（血 -1）", "heard": "", "heardDamage": "跳的聲音被聽到了。（血 -1）", "jump": "你跳過紅色方塊。", "enterRoom": "你進了小屋。", "altarGive": "箱子裡有一顆煙霧彈。（煙霧彈 +1）", "altarRefuse": "", "hide": "你丟出煙霧彈。（三回合內沒人看得到你）", "cure": "", "wait": "你等了一回合。", "damage": "血 -1", "caught": "{who}看見你了。遊戲結束。"}, "voices": {}, "ruleList": [{"text": "紅色方塊：踩到扣 1 滴血；可以跳過去，可是跳會出聲，被聽到也扣血。", "needs": []}, {"text": "小屋裡的箱子有煙霧彈，丟了可以隱身三回合。", "needs": []}, {"text": "千里眼看直線、順風耳聽跳的聲音、黃巾力士來回巡。", "needs": []}, {"text": "被看見或血用完就結束。", "needs": []}], "endings": {"win": [{"maxNotice": 99, "text": "你到了終點。過關！"}], "caught": "{who}看見你了。遊戲結束。", "hp": "血用完了。遊戲結束。", "after": ""}}}, "remix": {"title": "怎麼改做", "steps": [{"n": 1, "name": "換內容", "task": "把三個區域換成你去過的三個地方（例如你家附近的廟、巷子、市場），改每個區域的名字和進場那一句話。地圖可以先不動。", "where": "versions.rule.zoneNames、zoneEnter、voices 的文字", "prompt": "這是一個潛行遊戲的資料檔（JSON）。請保留所有欄位名稱和結構，地圖 map 不要動，只把 versions.rule 裡的 zoneNames、zoneEnter、voices 的文字改成發生在【寫你的三個地方】。每個 voices 的選項保留三個，effect 只能是 none／notice／shock。只回傳 JSON。"}, {"n": 2, "name": "換規則：把一張文化卡從「皮」變成「規則」", "task": "打開「文化只是皮」那一版（versions.skin）。挑一張禁忌卡（例如 #20 廟門的進出方向），把它變成一條真的規則：在 skin 的 rules 把 doorDirection 改成 true，再替龍門、虎門寫訊息（wrongIn、rightIn…），最後在 ruleList 加一條規則、needs 寫上卡的編號。玩一次皮版，看看這條規則有沒有真的改變你怎麼走。", "where": "versions.skin.rules、msgs、tiles、ruleList", "prompt": "請修改這份 JSON 的 versions.skin：把 rules.doorDirection 改成 true；tiles 的 L 改成「龍」、H 改成「虎」；msgs 加上 wrongIn、wrongOut、rightIn、rightOut、altarRefuse 五句（用一般遊戲的口氣，例如「走錯門了」）；ruleList 加一條「小屋要從右邊的門進、左邊的門出，走錯門拿不到煙霧彈」，needs 寫 [20]。其他地方不要動。只回傳 JSON。"}, {"n": 3, "name": "換形式", "task": "把你的禁忌搬進另一個樣板。例如「擲筊問路」（爬塔）：踩到禁忌的那一層，擲筊的結果變差；或「遶境不能停」（跑酷）：路線上有不能踩的線。", "where": "另一個樣板的 JSON", "prompt": "這是我做的潛行遊戲資料，裡面有三條禁忌規則（ruleList 中 needs 有編號的那幾條）。請依照【另一個樣板名稱】樣板的格式，把這三條禁忌改寫成那個樣板裡的規則，保留卡片編號。回傳新的 JSON。"}], "addOne": "想多加一關？在 zones 最後面複製一個區域：map 每一列一樣長；# 是牆、. 是地、T 是門檻、L／H 是龍門虎門、I 是廟裡、A 是香爐、V 是聲音、X 是收驚的香爐、S 是起點、E 是出口（最後一關用 K 當終點）。守望的人三種：eye（站著轉頭看）、patrol（照 path 走，每一步只能走一格）、ear（聽 radius 格內的跨步聲）。存好之後按「載入我的版本」，錯誤會告訴你是哪一列、哪一格。"}, "compose": {"skin": "sneak", "modules": {"核心動作": "移動與跨越", "資源計分": "被盯上與香", "時間回合": "守望者輪值回合", "空間": "格狀廟宇地圖", "角色": "千里眼・順風耳・黃巾力士", "事件選擇": "夜裡的聲音", "勝負": "送茶到終點／被看見", "回饋": "提示文字與紀錄"}}}</script>
 <script>// 夜巡不踩線：潛行躲避樣板的遊戲規則（瀏覽器與 node 共用，不碰畫面）
 // 規則全部由 JSON 的 rules 開關決定；「文化只是皮」與「文化長在規則裡」用的是同一支程式。
 (function (root) {
@@ -429,7 +421,6 @@ const E = window.SneakEngine;
 const ORIG = JSON.parse(document.getElementById("data").textContent);
 let DATA = JSON.parse(JSON.stringify(ORIG));
 let vkey = "rule", cfg = null, S = null, jumpMode = false;
-const answers = {}; // 兩版的判斷題答案（只存在這個頁面裡）
 const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t == null ? "" : t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const TAGS = () => DATA.meta.tags || {};
@@ -444,157 +435,210 @@ function renderHeader(){
   $("disclaimer").textContent = DATA.meta.disclaimer;
 }
 
-function startVersion(k){
-  vkey = k; cfg = E.compose(DATA, k); S = E.newGame(cfg); jumpMode = false;
-  $("vIntro").innerHTML = `<b>${esc(cfg.label)}：</b>${esc(DATA.versions[k].intro)}`;
-  $("endPanel").classList.add("hidden");
-  $("reveal").classList.add("hidden");
-  $("jerr").textContent = ""; $("jwhy").value = "";
-  $("controls").classList.remove("hidden");
-  render();
-}
+/* ==================================================================
+   八個模組（同一支規則核心 SneakEngine 之上分段）。
+   每一段都有 init(cfg, root)／step(state, action)／render(state)：
+   init＝接上這一版的設定與畫面容器；step＝只做這一段的事，回傳新的 state（或這一段算出的結果）；
+   render＝只畫這一段負責的那塊畫面。
+   JSON 的 compose.modules 只是宣告「這個樣板每一段用的是哪一種變體」，W12 才拿來拼接。
+   ================================================================== */
+const MOD = {};
+const MOD_NAMES = ["核心動作", "資源計分", "時間回合", "空間", "角色", "事件選擇", "勝負", "回饋"];
+let endMarked = false;
 
-function cellSize(){
-  const cols = cfg.zones[S.z].map[0].length;
-  const avail = Math.min(document.documentElement.clientWidth, 760) - 32 - 28;
-  return Math.max(26, Math.min(44, Math.floor((avail - (cols - 1) * 2) / cols)));
-}
-
-function render(){
-  const zone = cfg.zones[S.z], V = DATA.versions[vkey];
-  $("zoneName").textContent = zone.name + `（${S.z + 1}／${cfg.zones.length}）`;
-  // 狀態列
-  const st = [], lab = V.status || {};
-  if (cfg.rules.hp != null) st.push(`<span class="pill ${S.hp <= 1 ? "hot" : ""}">${esc(lab.hp || "血")}：${"❤".repeat(Math.max(0, S.hp))}${"·".repeat(Math.max(0, cfg.rules.hp - S.hp))}</span>`);
-  if (cfg.rules.penaltyMode === "notice") st.push(`<span class="pill ${S.notice ? "hot" : ""}">${esc(lab.notice)}：${S.notice}</span>`);
-  st.push(`<span class="pill">${esc(lab.incense)}：${S.incense}</span>`);
-  if (cfg.rules.shock && S.shock) st.push(`<span class="pill hot">${esc(lab.shock)}</span>`);
-  if (S.hidden) st.push(`<span class="pill">躲著：還有 ${S.hidden} 回合</span>`);
-  st.push(`<span class="pill">回合 ${S.stats.turns}</span>`);
-  $("status").innerHTML = st.join("");
-  // 地圖
-  const size = cellSize(), rows = zone.map.length, cols = zone.map[0].length;
-  const b = $("board");
-  b.style.gridTemplateColumns = `repeat(${cols}, ${size}px)`;
-  b.style.gridAutoRows = size + "px";
-  const step = (S.shock && cfg.rules.shock) ? 2 : 1;
-  const sight = new Set();
-  for (let k = 1; k <= step; k++) E.sightTiles(cfg, S, S.t + k).forEach((x) => { if (!x.self) sight.add(x.r + "," + x.c); });
-  const ears = zone.watchers.filter((w) => w.kind === "ear");
-  const who = {};
-  zone.watchers.forEach((w) => { const p = E.watcherAt(w, S.t).pos; who[p[0] + "," + p[1]] = w.icon; });
-  let html = "";
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-    const ch = zone.map[r][c], k = r + "," + c;
-    let cls = "cell";
-    if (ch === "#") cls += " w"; else if (E.isThreshold(ch)) cls += " t"; else if (E.isInterior(ch)) cls += " i";
-    if (sight.has(k) && ch !== "#") cls += " s";
-    if (ears.some((w) => Math.abs(w.pos[0] - r) + Math.abs(w.pos[1] - c) <= w.radius) && ch !== "#") cls += " ear";
-    const me = S.p[0] === r && S.p[1] === c;
-    if (me) cls += " me";
-    let glyph = ch === "#" || ch === "." ? "" : ((cfg.tiles || {})[ch] != null ? cfg.tiles[ch] : ch);
-    if (who[k]) glyph = `<span class="who">${who[k]}</span>`;
-    if (me) glyph = `<span class="who">🍵</span>`;
-    html += `<div class="${cls}" data-rc="${k}">${glyph}</div>`;
+/* ---------- 模組 1：核心動作（走、跨、等、上香） ---------- */
+MOD["核心動作"] = {
+  init(c, root) { this.cfg = c; this.root = root; jumpMode = false; },
+  step(state, action) { return E.act(this.cfg, state, action); },
+  render(state) {
+    const legal = E.legal(this.cfg, state);
+    const has = (t, d) => legal.some((x) => x.type === t && (d === undefined || x.d === d));
+    ["U", "D", "L", "R"].forEach((d) => {
+      this.root.querySelector(`[data-act="${d}"]`).disabled = !!(state.over || state.pending || !(jumpMode ? has("jump", d) : has("move", d)));
+    });
+    $("waitBtn").disabled = !!(state.over || state.pending);
+    const canJump = ["U", "D", "L", "R"].some((d) => has("jump", d));
+    const ja = DATA.versions[vkey].actions || {};
+    $("jumpBtn").textContent = ja.jump || "跨";
+    $("jumpHint").textContent = `先按「${ja.jump || "跨"}」，再按方向：一步越過前面那一格${this.cfg.rules.penaltyMode === "notice" ? "門檻" : "紅色方塊"}。`;
+    if (!canJump && jumpMode) jumpMode = false;
+    $("jumpBtn").disabled = !canJump || !!state.over || !!state.pending;
+    $("jumpBtn").classList.toggle("on", jumpMode);
+    $("jumpBtn").setAttribute("aria-pressed", String(jumpMode));
+    $("hideBtn").textContent = ja.hide || ""; $("hideBtn").classList.toggle("hidden", !has("hide"));
+    $("cureBtn").textContent = ja.cure || ""; $("cureBtn").classList.toggle("hidden", !has("cure"));
   }
-  b.innerHTML = html;
-  $("legend").textContent = "你＝🍵　黃色格＝你走完這一步後，會被看到的地方" + (ears.length ? "　藍色格＝" + ears.map((w) => w.name).join("、") + "聽得到跨步聲的範圍" : "");
-  // 按鈕
-  const legal = E.legal(cfg, S);
-  const has = (t, d) => legal.some((x) => x.type === t && (d === undefined || x.d === d));
-  ["U", "D", "L", "R"].forEach((d) => {
-    const bt = document.querySelector(`[data-act="${d}"]`);
-    bt.disabled = S.over || S.pending || !(jumpMode ? has("jump", d) : has("move", d));
-  });
-  $("waitBtn").disabled = !!(S.over || S.pending);
-  const canJump = ["U", "D", "L", "R"].some((d) => has("jump", d));
-  const ja = V.actions || {};
-  $("jumpBtn").textContent = ja.jump || "跨";
-  $("jumpHint").textContent = `先按「${ja.jump || "跨"}」，再按方向：一步越過前面那一格${cfg.rules.penaltyMode === "notice" ? "門檻" : "紅色方塊"}。`;
-  if (!canJump && jumpMode) jumpMode = false;
-  $("jumpBtn").disabled = !canJump || !!S.over || !!S.pending;
-  $("jumpBtn").classList.toggle("on", jumpMode);
-  $("jumpBtn").setAttribute("aria-pressed", String(jumpMode));
-  $("hideBtn").textContent = ja.hide || ""; $("hideBtn").classList.toggle("hidden", !has("hide"));
-  $("cureBtn").textContent = ja.cure || ""; $("cureBtn").classList.toggle("hidden", !has("cure"));
-  // 聲音
-  if (S.pending) {
-    $("voicePanel").classList.remove("hidden");
-    $("voicePrompt").textContent = S.pending.prompt;
-    $("voiceOpts").innerHTML = S.pending.options.map((o, i) => `<button class="btn" data-voice="${i}">${esc(o.text)}</button>`).join("");
-  } else $("voicePanel").classList.add("hidden");
-  $("log").innerHTML = S.log.slice(-6).map((m) => `<p>${esc(m)}</p>`).join("");
-  $("log").scrollTop = 1e6;
-  if (S.over) showEnd();
+};
+
+/* ---------- 模組 2：資源計分（被盯上／香／血／受驚） ---------- */
+MOD["資源計分"] = {
+  init(c, root) { this.cfg = c; this.root = root; },
+  step(state) {   // 只讀：把這一刻的資源與分數算成一份
+    return { notice: state.notice, incense: state.incense, hp: state.hp, shock: state.shock, hidden: state.hidden };
+  },
+  render(state) {
+    const V = DATA.versions[vkey], lab = V.status || {}, sc = this.step(state), R = this.cfg.rules, st = [];
+    if (R.hp != null) st.push(`<span class="pill ${sc.hp <= 1 ? "hot" : ""}">${esc(lab.hp || "血")}：${"❤".repeat(Math.max(0, sc.hp))}${"·".repeat(Math.max(0, R.hp - sc.hp))}</span>`);
+    if (R.penaltyMode === "notice") st.push(`<span class="pill ${sc.notice ? "hot" : ""}">${esc(lab.notice)}：${sc.notice}</span>`);
+    st.push(`<span class="pill">${esc(lab.incense)}：${sc.incense}</span>`);
+    if (R.shock && sc.shock) st.push(`<span class="pill hot">${esc(lab.shock)}</span>`);
+    if (sc.hidden) st.push(`<span class="pill">躲著：還有 ${sc.hidden} 回合</span>`);
+    this.root.querySelector("#statusRes").innerHTML = st.join("");
+  }
+};
+
+/* ---------- 模組 3：時間回合（每走一步守望者動一格；受驚時動兩格） ---------- */
+MOD["時間回合"] = {
+  init(c, root) { this.cfg = c; this.root = root; },
+  step(state) {   // 只讀：走完這一步之後，守望者會再動幾格
+    return { turn: state.stats.turns, t: state.t, perStep: (state.shock && this.cfg.rules.shock) ? 2 : 1 };
+  },
+  render(state) {
+    const zone = this.cfg.zones[state.z];
+    $("zoneName").textContent = zone.name + `（${state.z + 1}／${this.cfg.zones.length}）`;
+    $("statusTurn").innerHTML = `<span class="pill">回合 ${this.step(state).turn}</span>`;
+  }
+};
+
+/* ---------- 模組 4：空間（格狀地圖：牆、門檻、廟裡） ---------- */
+MOD["空間"] = {
+  init(c, root) { this.cfg = c; this.root = root; },
+  step(state, action) {   // 只讀：這個動作的目標格是什麼
+    if (!action || !action.d) return null;
+    const d = E.DIRS[action.d], n = action.type === "jump" ? 2 : 1;
+    const p = [state.p[0] + d[0] * n, state.p[1] + d[1] * n];
+    return { pos: p, ch: E.tile(this.cfg.zones[state.z], p[0], p[1]) };
+  },
+  cellSize(state) {
+    const cols = this.cfg.zones[state.z].map[0].length;
+    const avail = Math.min(document.documentElement.clientWidth, 760) - 32 - 28;
+    return Math.max(26, Math.min(44, Math.floor((avail - (cols - 1) * 1) / cols)));
+  },
+  render(state) {
+    const zone = this.cfg.zones[state.z], size = this.cellSize(state), rows = zone.map.length, cols = zone.map[0].length;
+    const b = $("board");
+    b.style.gridTemplateColumns = `repeat(${cols}, ${size}px)`;
+    b.style.gridAutoRows = size + "px";
+    const sight = MOD["角色"].step(state).sight;
+    const ears = MOD["角色"].step(state).ears;
+    const who = MOD["角色"].step(state).who;
+    let html = "";
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const ch = zone.map[r][c], k = r + "," + c;
+      let cls = "cell";
+      if (ch === "#") cls += " w"; else if (E.isThreshold(ch)) cls += " t"; else if (E.isInterior(ch)) cls += " i";
+      if (sight.has(k) && ch !== "#") cls += " s";
+      if (ears.some((w) => Math.abs(w.pos[0] - r) + Math.abs(w.pos[1] - c) <= w.radius) && ch !== "#") cls += " ear";
+      const me = state.p[0] === r && state.p[1] === c;
+      if (me) cls += " me";
+      let glyph = ch === "#" || ch === "." ? "" : ((this.cfg.tiles || {})[ch] != null ? this.cfg.tiles[ch] : ch);
+      if (who[k]) glyph = `<span class="who">${who[k]}</span>`;
+      if (me) glyph = `<span class="who">🍵</span>`;
+      html += `<div class="${cls}" data-rc="${k}">${glyph}</div>`;
+    }
+    b.innerHTML = html;
+  }
+};
+
+/* ---------- 模組 5：角色（千里眼、順風耳、黃巾力士：誰站哪、看哪裡、聽哪裡） ---------- */
+MOD["角色"] = {
+  init(c, root) { this.cfg = c; this.root = root; },
+  step(state) {   // 只讀：這一刻每個守望者的位置、走完這一步後會被看到的格子、耳朵的範圍
+    const zone = this.cfg.zones[state.z], n = (state.shock && this.cfg.rules.shock) ? 2 : 1;
+    const sight = new Set();
+    for (let k = 1; k <= n; k++) E.sightTiles(this.cfg, state, state.t + k).forEach((x) => { if (!x.self) sight.add(x.r + "," + x.c); });
+    const who = {};
+    zone.watchers.forEach((w) => { const p = E.watcherAt(w, state.t).pos; who[p[0] + "," + p[1]] = w.icon; });
+    return { sight, who, ears: zone.watchers.filter((w) => w.kind === "ear") };
+  },
+  render(state) {
+    const ears = this.step(state).ears;
+    $("legend").textContent = "你＝🍵　亮色格＝你走完這一步後，會被看到的地方" + (ears.length ? "　灰白格＝" + ears.map((w) => w.name).join("、") + "聽得到跨步聲的範圍" : "");
+  }
+};
+
+/* ---------- 模組 6：事件選擇（夜裡的聲音：三個選項，各有後果） ---------- */
+MOD["事件選擇"] = {
+  init(c, root) { this.cfg = c; this.root = root; },
+  step(state, action) {   // 選一個選項；沒有待選的事件就原樣回傳
+    if (!state.pending || !action || action.type !== "voice") return state;
+    return E.act(this.cfg, state, action);
+  },
+  render(state) {
+    if (state.pending) {
+      $("voicePanel").classList.remove("hidden");
+      $("voicePrompt").textContent = state.pending.prompt;
+      $("voiceOpts").innerHTML = state.pending.options.map((o, i) => `<button class="btn" data-voice="${i}">${esc(o.text)}</button>`).join("");
+    } else $("voicePanel").classList.add("hidden");
+  }
+};
+
+/* ---------- 模組 7：勝負（送到終點，或被看見、血用完） ---------- */
+MOD["勝負"] = {
+  init(c, root) { this.cfg = c; this.root = root; },
+  step(state) {   // 只讀：結局是哪一種、標題與結尾文字
+    if (!state.over) return null;
+    const en = this.cfg.endings || {};
+    let title = "", text = "";
+    if (state.over.type === "win") {
+      title = vkey === "rule" ? "清茶送到了" : "過關";
+      const list = en.win || [];
+      const pick = list.find((x) => state.notice <= x.maxNotice) || list[list.length - 1] || { text: "" };
+      text = pick.text;
+    } else if (state.over.type === "caught") { title = "被看見了"; text = (en.caught || "").replace("{who}", state.over.by); }
+    else { title = "血用完了"; text = en.hp || ""; }
+    return { type: state.over.type, title: `${this.cfg.label}｜${title}`, text, after: en.after || "" };
+  },
+  render(state) {
+    const r = this.step(state);
+    if (!r) { $("endPanel").classList.add("hidden"); $("controls").classList.remove("hidden"); return; }
+    $("endTitle").textContent = r.title;
+    $("endText").textContent = r.text;
+    const s = state.stats, parts = [`走了 ${s.turns} 回合`];
+    if (s.thresholdSteps) parts.push(`踩到 ${s.thresholdSteps} 次`);
+    if (s.heard) parts.push(`被聽到 ${s.heard} 次`);
+    if (s.wrongDoor) parts.push(`走錯門 ${s.wrongDoor} 次`);
+    if (s.badWords) parts.push(`講錯話 ${s.badWords} 次`);
+    if (s.shocked) parts.push(`受驚 ${s.shocked} 次`);
+    $("endStats").textContent = parts.join("・");
+    $("endAfter").textContent = r.after;
+    const other = vkey === "rule" ? "skin" : "rule";
+    $("toOther").textContent = `去玩另一版：${DATA.versions[other].label}`;
+    $("toOther").dataset.to = other;
+    $("endPanel").classList.remove("hidden");
+    $("controls").classList.add("hidden");
+    if (!endMarked) {
+      endMarked = true;
+      try { if (window.CT_HOOK) CT_HOOK.markPlayed(vkey); } catch (e) { /* 助教出錯不能影響樣板 */ }
+      setTimeout(() => $("endPanel").scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+    }
+  }
+};
+
+/* ---------- 模組 8：回饋（每一步的一句話提示與紀錄） ---------- */
+MOD["回饋"] = {
+  init(c, root) { this.cfg = c; this.root = root; },
+  step(state) { return state.log.slice(-6); },   // 只讀：最近六句
+  render(state) {
+    $("log").innerHTML = this.step(state).map((m) => `<p>${esc(m)}</p>`).join("");
+    $("log").scrollTop = 1e6;
+  }
+};
+
+function initModules() { MOD_NAMES.forEach((n) => MOD[n].init(cfg, $("play"))); }
+function render(){ ["時間回合", "資源計分", "角色", "空間", "核心動作", "事件選擇", "回饋", "勝負"].forEach((n) => MOD[n].render(S)); }
+
+function startVersion(k){
+  vkey = k; cfg = E.compose(DATA, k); S = E.newGame(cfg); jumpMode = false; endMarked = false;
+  $("vIntro").innerHTML = `<b>${esc(cfg.label)}：</b>${esc(DATA.versions[k].intro)}`;
+  initModules();
+  render();
 }
 
 function doAct(a){
   if (!S || S.over) return;
-  S = E.act(cfg, S, a);
+  S = (a.type === "voice" ? MOD["事件選擇"] : MOD["核心動作"]).step(S, a);
   render();
-}
-
-function showEnd(){
-  const en = cfg.endings || {};
-  let title = "", text = "";
-  if (S.over.type === "win") {
-    title = vkey === "rule" ? "清茶送到了" : "過關";
-    const list = en.win || [];
-    const pick = list.find((x) => S.notice <= x.maxNotice) || list[list.length - 1] || { text: "" };
-    text = pick.text;
-  } else if (S.over.type === "caught") { title = "被看見了"; text = (en.caught || "").replace("{who}", S.over.by); }
-  else { title = "血用完了"; text = en.hp || ""; }
-  $("endTitle").textContent = `${cfg.label}｜${title}`;
-  $("endText").textContent = text;
-  const s = S.stats, parts = [`走了 ${s.turns} 回合`];
-  if (s.thresholdSteps) parts.push(`踩到 ${s.thresholdSteps} 次`);
-  if (s.heard) parts.push(`被聽到 ${s.heard} 次`);
-  if (s.wrongDoor) parts.push(`走錯門 ${s.wrongDoor} 次`);
-  if (s.badWords) parts.push(`講錯話 ${s.badWords} 次`);
-  if (s.shocked) parts.push(`受驚 ${s.shocked} 次`);
-  $("endStats").textContent = parts.join("・");
-  $("endAfter").textContent = en.after || "";
-  const J = DATA.judge;
-  $("jq").textContent = J.question;
-  const prev = answers[vkey];
-  $("jopts").innerHTML = J.options.map((o, i) => `<button class="btn" data-judge="${i}" aria-pressed="${prev && prev.i === i ? "true" : "false"}">${esc(o)}</button>`).join("");
-  $("endPanel").classList.remove("hidden");
-  $("controls").classList.add("hidden");
-  if (prev) { $("jwhy").value = prev.why; showReveal(); }
-  setTimeout(() => $("endPanel").scrollIntoView({ behavior: "smooth", block: "start" }), 30);
-}
-
-let pickedJudge = null;
-function sendJudge(){
-  const why = $("jwhy").value.trim();
-  const sel = document.querySelector('[data-judge][aria-pressed="true"]');
-  if (!sel) { $("jerr").textContent = "先選一個答案。"; return; }
-  if (why.length < (DATA.judge.minWhy || 1)) { $("jerr").textContent = `為什麼要寫一句話（至少 ${DATA.judge.minWhy} 個字）。`; return; }
-  $("jerr").textContent = "";
-  answers[vkey] = { i: Number(sel.dataset.judge), text: DATA.judge.options[Number(sel.dataset.judge)], why };
-  try { if (window.CT_HOOK) { CT_HOOK.markPlayed(vkey); CT_HOOK.judged(vkey, Number(sel.dataset.judge) + 1, why); } } catch (e) { /* 助教出錯不能影響樣板 */ }
-  showReveal();
-}
-
-function showReveal(){
-  const cc = E.cultureCheck(cfg);
-  const cardName = (n) => { const c = DATA.cards.find((x) => x.no === n); return c ? `#${n} ${c.v}` : `#${n}`; };
-  $("rlist").innerHTML = cfg.ruleList.map((r) => {
-    const need = (r.needs || []).length > 0;
-    return `<li class="${need ? "gone" : ""}">${esc(r.text)}${need ? `<span class="tag">靠 ${esc(r.needs.map(cardName).join("、"))}</span>` : `<span class="tag">一般規則</span>`}</li>`;
-  }).join("");
-  $("rtext").textContent = (DATA.reveal[cc.verdict] || "").replace("{need}", cc.needCulture).replace("{total}", cc.total) + `（劃掉的是抽掉文化就沒有理由存在的規則：${cc.total} 條劃掉 ${cc.needCulture} 條，剩 ${cc.remain} 條。）`;
-  $("reveal").classList.remove("hidden");
-  const other = vkey === "rule" ? "skin" : "rule";
-  $("toOther").textContent = `去玩另一版：${DATA.versions[other].label}`;
-  $("toOther").dataset.to = other;
-  if (answers.rule && answers.skin) {
-    $("compare").classList.remove("hidden");
-    $("cmp").innerHTML = ["skin", "rule"].map((k) => `<div><b>${esc(DATA.versions[k].label)}</b><br>${esc(answers[k].text)}<br><span class="note">${esc(answers[k].why)}</span></div>`).join("");
-    $("cmpNote").textContent = answers.rule.i === answers.skin.i
-      ? "你兩版選了一樣的答案。回頭看看：哪幾條規則是皮版沒有、規則版才有的？"
-      : "你兩版的答案不一樣。這個差別就是 W2 說的：文化只是皮，還是文化長在規則裡。";
-  }
 }
 
 function setTab(t){
@@ -625,7 +669,7 @@ function importData(){
   const errs = [];
   if (!d.versions || !d.versions.rule || !d.versions.skin) errs.push("versions 裡要有 rule 和 skin 兩版");
   else ["rule", "skin"].forEach((k) => { try { E.validate(E.compose(d, k)).forEach((x) => errs.push(`[${d.versions[k].label || k}] ${x}`)); } catch (e) { errs.push(`[${k}] ${e.message}`); } });
-  ["meta", "cards", "judge", "reveal", "remix", "field"].forEach((k) => { if (!d[k]) errs.push("缺少 " + k); });
+  ["meta", "cards", "remix", "field"].forEach((k) => { if (!d[k]) errs.push("缺少 " + k); });
   if (errs.length) { $("importMsg").textContent = "載入不了，請修這幾處：\n" + errs.join("\n"); return; }
   DATA = d; renderHeader(); $("importMsg").textContent = "載入成功！回到上面的分頁去玩你的版本。";
 }
@@ -635,13 +679,12 @@ document.addEventListener("click", (ev) => {
   if (!t) return;
   if (t.dataset.tab) return setTab(t.dataset.tab);
   if (t.dataset.voice != null) return doAct({ type: "voice", i: Number(t.dataset.voice) });
-  if (t.dataset.judge != null) { document.querySelectorAll("[data-judge]").forEach((b) => b.setAttribute("aria-pressed", String(b === t))); return; }
   const a = t.dataset.act;
   if (a === "jump") { jumpMode = !jumpMode; return render(); }
   if (["U", "D", "L", "R"].includes(a)) { const ty = jumpMode ? "jump" : "move"; jumpMode = false; return doAct({ type: ty, d: a }); }
   if (a === "wait" || a === "hide" || a === "cure") return doAct({ type: a });
   if (t.id === "restart") return startVersion(vkey);
-  if (t.id === "jsend") return sendJudge();
+  if (t.id === "again") return startVersion(vkey);
   if (t.id === "toOther") { setTab(t.dataset.to); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
   if (t.id === "exportBtn") return exportData();
   if (t.id === "importBtn") return importData();
@@ -659,7 +702,7 @@ window.addEventListener("resize", () => { if (S && !$("play").classList.contains
 renderHeader();
 setTab("skin");
 // 給自動測試用的入口（不影響遊戲）
-window.__sneak = { get state(){ return S; }, get cfg(){ return cfg; }, get answers(){ return answers; } };
+window.__sneak = { get state(){ return S; }, get cfg(){ return cfg; }, get modules(){ return MOD; } };
 })();
 </script>
 <!-- CT-HOOK-BEGIN -->

@@ -4,83 +4,261 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>小上帝廟的半年｜經營模擬樣板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=Noto+Sans+TC:wght@400;700;900&family=Noto+Serif+TC:wght@500;700&display=swap">
 <style>
 :root{
-  --bg:#f7f1e6; --card:#fffaf0; --ink:#2b2118; --mute:#6b5d4d; --line:#d9c9ad;
-  --accent:#a8271d; --accent-ink:#fff; --gold:#b8861b; --good:#2f6b3a; --bad:#a8271d; --info:#2f5f8a;
-  --chip:#efe3cc; --btn:#fff3d6; --btn-line:#c9a45a; --dis:#e9e0cf;
+  --tk-font-title:"Cactus Classical Serif","Noto Serif TC","Songti TC",serif;
+  --tk-font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --font-num:Consolas,"Cascadia Mono","Courier New",monospace;
+  --tk-radius:4px;
+  --tk-shadow:3px 3px 0 rgba(58,36,18,.35);
+  --tk-surface:#e9d8b4; --tk-panel:#f6ead0; --tk-ink:#3a2412; --tk-muted:#7a5f45; --tk-line:#b99a66;
+  --tk-accent:#2f6b3a; --tk-accent-ink:#ffffff;
+  --gold:#a8741a; --good:#2f6b3a; --bad:#a8271d; --info:#2f5f8a;
+  --chip:#efdcb2; --btn:#fbf1d9; --btn-line:#b08a4a; --dis:#e4d6b6; --scrim:rgba(40,25,10,.55);
+  --notch:none;
+  /* 色盤（只在 :root 定義；元件一律用 var(--…)） */
+  --pal-2b1a12:#2b1a12;
+  --pal-2f6b3a:#2f6b3a;
+  --pal-34475e:#34475e;
+  --pal-3a6ea5:#3a6ea5;
+  --pal-3d2c22:#3d2c22;
+  --pal-4a3220:#4a3220;
+  --pal-4a3f2d:#4a3f2d;
+  --pal-4a8a56:#4a8a56;
+  --pal-4b5560:#4b5560;
+  --pal-4f9a5c:#4f9a5c;
+  --pal-55606b:#55606b;
+  --pal-56616c:#56616c;
+  --pal-58bdb7:#58bdb7;
+  --pal-6a4a2e:#6a4a2e;
+  --pal-6b7886:#6b7886;
+  --pal-6b9be0:#6b9be0;
+  --pal-6f8fb3:#6f8fb3;
+  --pal-7a6a4d:#7a6a4d;
+  --pal-7b8794:#7b8794;
+  --pal-7cbf7c:#7cbf7c;
+  --pal-8895a3:#8895a3;
+  --pal-8a4a2e:#8a4a2e;
+  --pal-8a5a2b:#8a5a2b;
+  --pal-8a6a1f:#8a6a1f;
+  --pal-8a6a2e:#8a6a2e;
+  --pal-9aa7b4:#9aa7b4;
+  --pal-9b7a46:#9b7a46;
+  --pal-a12085:rgba(255,255,255,.7);
+  --pal-a15761:rgba(120,100,70,.22);
+  --pal-a18317:rgba(0,0,0,.45);
+  --pal-a24882:rgba(255,255,255,.22);
+  --pal-a35550:rgba(0,0,0,.25);
+  --pal-a47244:rgba(0,0,0,.3);
+  --pal-a66801:rgba(30,18,8,.6);
+  --pal-a70245:rgba(0,0,0,.12);
+  --pal-a71258:rgba(16,26,36,.86);
+  --pal-a72850:rgba(47,107,58,.7);
+  --pal-a7636:rgba(47,107,58,0);
+  --pal-a77ce0:#a77ce0;
+  --pal-a9806b:#a9806b;
+  --pal-b5392c:#b5392c;
+  --pal-b79a6b:#b79a6b;
+  --pal-b8861b:#b8861b;
+  --pal-c0853f:#c0853f;
+  --pal-c4962e:#c4962e;
+  --pal-c9372c:#c9372c;
+  --pal-c97a4a:#c97a4a;
+  --pal-c9a45a:#c9a45a;
+  --pal-d6a86f:#d6a86f;
+  --pal-d9c58e:#d9c58e;
+  --pal-d9ccb2:#d9ccb2;
+  --pal-dbe4ee:#dbe4ee;
+  --pal-e0786b:#e0786b;
+  --pal-e0b04a:#e0b04a;
+  --pal-e0b24f:#e0b24f;
+  --pal-e5533d:#e5533d;
+  --pal-efe6d3:#efe6d3;
+  --pal-f0b429:#f0b429;
+  --pal-f1c9a0:#f1c9a0;
+  --pal-f3ead7:#f3ead7;
+  --pal-f6e7c8:#f6e7c8;
+  --pal-f7f0d8:#f7f0d8;
+  --pal-f7f0e0:#f7f0e0;
+  --pal-ffcf6b:#ffcf6b;
+  --pal-ffd36b:#ffd36b;
+  --pal-ffe2a8:#ffe2a8;
+  --pal-ffffff:#fff;
 }
 :root[data-mode="skin"]{
-  --bg:#eef1f4; --card:#ffffff; --ink:#1f2933; --mute:#5a6672; --line:#cfd6dd;
-  --accent:#3b6ea5; --accent-ink:#fff; --gold:#6b7a89; --chip:#e3e8ee; --btn:#f4f7fa; --btn-line:#aab6c2; --dis:#e8ecf0;
-}
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#1d1812; --card:#2a2319; --ink:#f1e8d8; --mute:#b9ab94; --line:#4a3f2d; --accent:#d9483b; --gold:#e0b04a;
-    --good:#7bc88a; --bad:#ff8a7c; --info:#8cbcf0; --chip:#3a3123; --btn:#3a3023; --btn-line:#8a7338; --dis:#322a1e; }
-  :root[data-mode="skin"]{ --bg:#14181d; --card:#1e252d; --ink:#e8edf2; --mute:#9aa7b4; --line:#33404d; --accent:#6aa3dc; --gold:#9aa7b4;
-    --chip:#2a333d; --btn:#26303a; --btn-line:#4c5d6d; --dis:#222a32; }
+  --tk-shadow:3px 3px 0 rgba(23,48,42,.18);
+  --tk-radius:10px;
+  --tk-surface:#eef3ef; --tk-panel:#ffffff; --tk-ink:#17302a; --tk-muted:#566a63; --tk-line:#b9cdc4;
+  --tk-accent:#0f7b6c; --tk-accent-ink:#fff; --gold:#5d7a72; --good:#1f7a4d; --bad:#b3362b; --info:#2f5f8a;
+  --chip:#dfece6; --btn:#f4faf7; --btn-line:#8fb3a6; --dis:#e4ece8; --scrim:rgba(20,40,34,.5);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;max-width:100vw;overflow-x:hidden}
-main{max-width:560px;margin:0 auto;padding:12px 14px 80px}
-h1{font-size:20px;margin:6px 0 2px;letter-spacing:.04em}
-h2{font-size:16px;margin:18px 0 8px;border-left:4px solid var(--accent);padding-left:8px}
-.sub{color:var(--mute);font-size:14px;margin:0 0 8px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
-button{font:inherit;color:var(--ink);background:var(--btn);border:1.5px solid var(--btn-line);border-radius:10px;min-height:46px;padding:8px 12px;cursor:pointer;text-align:left;width:100%}
+body{background:var(--tk-surface);color:var(--tk-ink);font:17px/1.6 var(--tk-font-body);max-width:100vw;overflow-x:hidden}
+main{max-width:560px;margin:0 auto;padding:12px 14px 90px}
+main.wide{max-width:1040px}
+h1{font-family:var(--tk-font-title);font-size:22px;margin:6px 0 2px;letter-spacing:.08em;color:var(--tk-accent)}
+h2{font-family:var(--tk-font-title);font-size:16px;margin:16px 0 8px;border-bottom:2px solid var(--tk-accent);padding-bottom:2px;letter-spacing:.1em}
+.sub{color:var(--tk-muted);font-size:14px;margin:0 0 8px}
+.card{background:var(--tk-panel);border:2px solid var(--tk-line);border-radius:var(--tk-radius);padding:10px 14px;margin:10px 0;clip-path:var(--notch);outline:1px solid var(--tk-accent);outline-offset:-6px}
+button{font:inherit;color:var(--tk-ink);background:var(--btn);border:2px solid var(--btn-line);border-left:7px solid var(--tk-accent);border-radius:var(--tk-radius);clip-path:var(--notch);min-height:46px;padding:8px 12px;cursor:pointer;text-align:left;width:100%}
 button:hover:not(:disabled){filter:brightness(.97)}
 button:focus-visible{outline:3px solid var(--info);outline-offset:2px}
-button:disabled{background:var(--dis);color:var(--mute);border-color:var(--line);cursor:not-allowed}
-button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);text-align:center;font-weight:700}
+button:disabled{background:var(--dis);color:var(--tk-muted);border-color:var(--tk-line);cursor:not-allowed}
+button.primary{background:var(--tk-accent);color:var(--tk-accent-ink);border-color:var(--tk-accent);border-left-width:2px;text-align:center;font-weight:700;letter-spacing:.2em;font-size:18px}
 button.small{min-height:44px;width:auto;padding:6px 12px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .row>*{flex:1 1 140px}
 .modes{display:flex;gap:8px;margin:8px 0}
 .modes button{text-align:center;font-weight:700}
-.modes button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:6px}
-.res .c{background:var(--chip);border-radius:10px;padding:6px 8px;min-height:44px}
-.res .c b{display:block;font-size:20px;line-height:1.2}
-.res .c span{font-size:12px;color:var(--mute)}
-.res .c.low b{color:var(--bad)}
-.dots{letter-spacing:3px;font-size:18px}
-.wait{display:flex;flex-wrap:wrap;gap:6px}
-.wait .w{background:var(--chip);border-radius:999px;padding:6px 12px;min-height:44px;display:flex;align-items:center;gap:6px;font-size:15px}
-.wait .w.zero{opacity:.45}
-.wait small{display:block;color:var(--mute);font-size:12px;line-height:1.3}
-.act{display:flex;flex-direction:column;gap:2px}
-.act .t{font-weight:700}
-.act .d{font-size:13px;color:var(--mute)}
-.act .why{font-size:12px;color:var(--bad)}
-.badge{display:inline-block;font-size:11px;border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:middle;border:1px solid currentColor}
-.b-原著{color:var(--good)} .b-改編{color:var(--gold)} .b-工坊創作{color:var(--mute)} .b-田野{color:var(--info)}
-.log{list-style:none;margin:0;padding:0}
-.log li{padding:6px 0;border-bottom:1px dashed var(--line);font-size:15px}
-.log li.bad{color:var(--bad)} .log li.good{color:var(--good)} .log li.event{font-weight:600} .log li.act{color:var(--mute)} .log li.field{color:var(--info)}
-.note{font-size:13px;color:var(--mute)}
-.banner{border:2px solid var(--accent);border-radius:12px;padding:10px 12px;margin:10px 0;background:var(--card)}
+.modes button[aria-pressed="true"]{background:var(--tk-accent);color:var(--tk-accent-ink);border-color:var(--tk-accent)}
+.note{font-size:13px;color:var(--tk-muted)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.top button{width:auto;min-height:44px;text-align:center}
+.pre{white-space:pre-wrap;word-break:break-word;font:13px/1.5 var(--font-num);background:var(--chip);border-radius:8px;padding:8px}
+.opts{display:grid;gap:8px}
+.foot{font-size:12px;color:var(--tk-muted);margin-top:18px}
+.err{color:var(--bad);font-size:14px;white-space:pre-wrap}
+.ok{color:var(--good);font-size:14px}
+textarea{width:100%;min-height:120px;font:13px/1.45 var(--font-num);background:var(--tk-panel);color:var(--tk-ink);border:1.5px solid var(--tk-line);border-radius:10px;padding:8px}
+details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
+.badge{display:inline-block;font-size:11px;border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:middle;border:1px solid currentColor;white-space:nowrap}
+.b-原著{color:var(--good)} .b-改編{color:var(--gold)} .b-工坊創作{color:var(--tk-muted)} .b-田野{color:var(--info)} .b-slot{color:var(--tk-muted)}
+.banner{border:2px solid var(--tk-accent);border-radius:12px;padding:10px 12px;margin:10px 0;background:var(--tk-panel)}
 .banner.win{border-color:var(--good)}
 .ck{list-style:none;padding:0;margin:6px 0}
 .ck li{padding:4px 0}
-textarea{width:100%;min-height:120px;font:13px/1.45 ui-monospace,Consolas,monospace;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:8px}
-details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.top button{width:auto;min-height:44px;text-align:center}
-.pre{white-space:pre-wrap;word-break:break-word;font:13px/1.5 ui-monospace,Consolas,monospace;background:var(--chip);border-radius:8px;padding:8px}
-.opts{display:grid;gap:8px}
-.foot{font-size:12px;color:var(--mute);margin-top:18px}
-.err{color:var(--bad);font-size:14px;white-space:pre-wrap}
-.ok{color:var(--good);font-size:14px}
-@media (max-width:420px){ main{padding:10px 10px 80px} }
+
+/* ---------- 開場 ---------- */
+.hero{position:relative;border-radius:var(--tk-radius);overflow:hidden;border:3px solid var(--tk-accent);margin:8px 0}
+.hero .scene{display:block;width:100%;height:auto}
+.hero .ttl{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);padding:10px 24px;border:3px double var(--tk-accent);background:var(--pal-a71258);color:var(--pal-f3ead7);text-align:center;width:max-content;max-width:92%}
+.hero .ttl b{font-family:var(--tk-font-title);font-size:26px;letter-spacing:.2em;display:block;line-height:1.3;color:var(--pal-f0b429)}
+.hero .ttl span{font-size:13px;opacity:.92}
+.goal li{padding:3px 0}
+.howto{margin:6px 0;padding-left:1.3em}
+.howto li{padding:2px 0}
+.pill{display:inline-block;background:var(--chip);border:1px solid var(--tk-accent);border-radius:3px;padding:2px 10px;font-size:13px;margin:2px 4px 2px 0}
+
+/* ---------- 遊戲畫面 ---------- */
+.game{display:block}
+.stagebar{background:var(--tk-panel);border:2px solid var(--tk-line);border-radius:var(--tk-radius);clip-path:var(--notch);padding:8px 10px;margin:8px 0}
+.stagebar .nm{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
+.stagebar .nm b{font-family:var(--tk-font-title);font-size:15px}
+.track{display:flex;align-items:center;gap:0;margin:8px 2px 2px}
+.pip{flex:1 1 0;height:8px;background:var(--chip);position:relative}
+.pip:first-child{border-radius:6px 0 0 6px} .pip.last{border-radius:0 6px 6px 0}
+.pip.s0{background:var(--pal-d9c58e)} .pip.s1{background:var(--pal-d6a86f)} .pip.s2{background:var(--pal-a9806b)}
+.pip.done{filter:saturate(1)} .pip:not(.done):not(.cur){opacity:.45}
+.pip.cur::after{content:"";position:absolute;left:50%;top:-5px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--tk-accent);border:3px solid var(--tk-panel);box-shadow:0 0 0 1px var(--tk-accent)}
+.pip.tf{background:var(--pal-6b7886)}
+.monthlbl{display:flex;justify-content:space-between;font-size:11px;color:var(--tk-muted);margin:3px 0 0}
+.hud{background:var(--tk-panel);border:2px solid var(--tk-accent);border-radius:var(--tk-radius);padding:8px;margin:8px 0;position:sticky;top:0;z-index:20;box-shadow:var(--tk-shadow)}
+.hud .hd{display:flex;justify-content:space-between;align-items:center;margin:0 2px 6px;font-size:14px}
+.dots{letter-spacing:3px;font-size:17px;color:var(--tk-accent)}
+.dots i{font-style:normal;opacity:.3}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.res .c{position:relative;background:var(--chip);border-radius:var(--tk-radius);border-bottom:3px solid var(--tk-line);padding:5px 8px 6px;min-height:44px}
+.res .c .l{font-size:12px;color:var(--tk-muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .c b{font:700 21px/1.1 var(--font-num);color:var(--tk-accent)}
+.res .c .bar{position:relative;height:5px;background:var(--pal-a15761);border-radius:3px;margin-top:3px;overflow:visible}
+.res .c .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--good);transition:width .5s}
+.res .c .bar i.mid{background:var(--gold)} .res .c .bar i.lo{background:var(--bad)}
+.res .c .bar u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--tk-ink);opacity:.7;text-decoration:none}
+.res .c.low b{color:var(--bad)}
+:root[data-mode="skin"] .res .c b{color:var(--tk-ink)}
+.res .c .fl{position:absolute;right:6px;top:-2px;font-weight:800;font-size:15px;pointer-events:none;animation:rise 1.5s ease-out forwards;text-shadow:0 0 3px var(--tk-panel),0 0 3px var(--tk-panel)}
+.res .c .fl.up{color:var(--good)} .res .c .fl.dn{color:var(--bad)}
+@keyframes rise{0%{transform:translateY(8px);opacity:0}15%{opacity:1}100%{transform:translateY(-18px);opacity:0}}
+.hud.shake{animation:shake .38s} @keyframes shake{20%{transform:translateX(-5px)}50%{transform:translateX(5px)}80%{transform:translateX(-3px)}}
+.hud.glow{animation:glow .7s} @keyframes glow{0%{box-shadow:0 0 0 0 var(--pal-a72850)}100%{box-shadow:0 0 0 12px var(--pal-a7636)}}
+.scenebox{box-shadow:var(--tk-shadow);border-radius:var(--tk-radius);overflow:hidden;border:3px solid var(--tk-line);margin:8px 0;position:relative}
+.scenebox .scene{display:block;width:100%;height:auto;max-height:150px}
+.scenebox .cap{position:absolute;left:8px;bottom:6px;background:var(--pal-a66801);color:var(--pal-ffffff);font-size:12px;padding:1px 8px;border-radius:999px}
+.queue h2{margin-top:12px}
+.wait{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.cust{display:flex;gap:8px;align-items:center;background:var(--chip);border-radius:var(--tk-radius);border-left:5px solid var(--tk-accent);padding:6px 8px;min-height:50px}
+.cust.zero{opacity:.4}
+.av{flex:0 0 auto;width:38px;height:38px;border-radius:6px;transform:rotate(-4deg);display:flex;align-items:center;justify-content:center;font-size:19px;border:2px solid var(--tk-panel);box-shadow:0 0 0 1px var(--tk-line)}
+.cust b{font-size:14px;display:block;line-height:1.25}
+.cust small{display:block;color:var(--tk-muted);font-size:12px;line-height:1.3}
+.tokens{display:inline-flex;gap:2px;margin-left:4px;vertical-align:middle}
+.tokens i{width:9px;height:9px;border-radius:50%;display:inline-block;border:1px solid var(--pal-a35550)}
+.act{display:flex;flex-direction:column;gap:2px}
+.act .t{font-weight:700}
+.act .d{font-size:13px;color:var(--tk-muted)}
+.act .why{font-size:12px;color:var(--bad)}
+.abtn{display:flex;gap:10px;align-items:center}
+.abtn .ic{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid var(--tk-accent);background:var(--chip);display:flex;align-items:center;justify-content:center;font-size:19px}
+.abtn.locked{opacity:.8}
+.abtn.locked .ic{filter:grayscale(1)}
+.endbtn{margin-top:12px}
+.log{list-style:none;margin:0;padding:0}
+.log li{padding:6px 0;border-bottom:1px dashed var(--tk-line);font-size:15px}
+.log li.bad{color:var(--bad)} .log li.good{color:var(--good)} .log li.event{font-weight:600} .log li.act{color:var(--tk-muted)} .log li.field{color:var(--info)}
+.tip{background:var(--chip);border-radius:10px;padding:8px 10px;font-size:14px;margin:8px 0}
+.toast{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:calc(100% - 20px);max-width:520px;z-index:30;background:var(--tk-panel);color:var(--tk-ink);border:2px solid var(--tk-accent);border-radius:var(--tk-radius);padding:8px 12px;box-shadow:var(--tk-shadow);pointer-events:none;animation:toast 6.5s ease-out forwards;font-size:14px}
+.toast .tl{font-weight:700}
+.toast .ln{margin-top:2px}
+.toast .ln.good{color:var(--good)} .toast .ln.bad{color:var(--bad)} .toast .ln.event{font-weight:600}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,14px)}6%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
+
+/* ---------- 卡片（事件、階段、月結算） ---------- */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:50;display:flex;align-items:center;justify-content:center;padding:14px;animation:fadein .25s}
+@keyframes fadein{from{opacity:0}}
+.pop{width:100%;max-width:440px;max-height:92vh;overflow:auto;background:var(--tk-panel);border-radius:var(--tk-radius);border:4px double var(--tk-accent);box-shadow:var(--tk-shadow);animation:pop .3s ease-out}
+@keyframes pop{from{transform:translateY(24px) scale(.96);opacity:0}}
+.pop .band{padding:16px 14px 12px;text-align:center;color:var(--pal-ffffff)}
+.pop .band.ev{background:linear-gradient(135deg,var(--pal-8a5a2b),var(--pal-c0853f))}
+.pop .band.ev.原著{background:linear-gradient(135deg,var(--pal-2f6b3a),var(--pal-4f9a5c))}
+.pop .band.ev.改編{background:linear-gradient(135deg,var(--pal-8a6a1f),var(--pal-c4962e))}
+.pop .band.ev.工坊創作{background:linear-gradient(135deg,var(--pal-55606b),var(--pal-7b8794))}
+.pop .band.st0{background:linear-gradient(135deg,var(--pal-8a6a2e),var(--pal-c9a45a))}
+.pop .band.st1{background:linear-gradient(135deg,var(--pal-8a4a2e),var(--pal-c97a4a))}
+.pop .band.st2{background:linear-gradient(135deg,var(--pal-34475e),var(--pal-6b7886))}
+.pop .band.rp{background:linear-gradient(135deg,var(--pal-4a3f2d),var(--pal-7a6a4d))}
+.pop .band .big{width:64px;height:64px;border-radius:50%;background:var(--pal-a24882);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 6px;border:3px solid var(--pal-a12085)}
+.pop .band .kicker{font-size:12px;opacity:.9;letter-spacing:.12em}
+.pop .band h3{font-family:var(--tk-font-title);margin:2px 0 0;font-size:19px;line-height:1.3}
+.pop .bd{padding:12px 14px 14px}
+.pop .bd p{margin:6px 0}
+.ln-good{color:var(--good)} .ln-bad{color:var(--bad)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chips span{border-radius:999px;padding:2px 10px;font-size:14px;font-weight:700;background:var(--chip)}
+.chips span.up{color:var(--good)} .chips span.dn{color:var(--bad)}
+.rtab{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0}
+.rtab td{padding:3px 4px;border-bottom:1px dashed var(--tk-line)}
+.rtab td:last-child{text-align:right;white-space:nowrap}
+.rtab .up{color:var(--good)} .rtab .dn{color:var(--bad)}
+.unl{background:var(--chip);border-radius:10px;padding:6px 10px;font-size:14px;margin:8px 0}
+
+/* ---------- 結局 ---------- */
+.stars{font-size:26px;letter-spacing:4px;color:var(--gold);line-height:1.2}
+.rec{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.best{font-size:13px;color:var(--tk-muted)}
+
+@media (min-width:900px){
+  .game{display:grid;grid-template-columns:400px 1fr;grid-template-areas:"stg stg" "hud hud" "scn play" "que play";column-gap:18px;grid-template-rows:auto auto auto 1fr;align-items:start}
+  .stagebar{grid-area:stg} .hud{grid-area:hud;position:static} .scenebox{grid-area:scn} .scenebox .scene{max-height:none} .queue{grid-area:que} .play{grid-area:play}
+  .res{grid-template-columns:repeat(5,1fr)}
+  .hud{margin-bottom:12px}
+  .opts{grid-template-columns:1fr 1fr}
+  h1{font-size:24px}
+  .toast{left:auto;right:18px;transform:none;bottom:18px;width:380px}
+  @keyframes toast{0%{opacity:0;transform:translateY(14px)}6%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
+}
+@media (max-width:420px){ main{padding:10px 10px 90px} .res .c b{font-size:17px} .pop .band h3{font-size:17px} }
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} .toast{opacity:1} }
 </style>
 </head>
 <body>
 <main id="app" aria-live="polite"></main>
 
-<script type="application/json" id="data-culture">{"_說明":"小封神版（文化長在規則裡）。這份檔案就是整個遊戲的內容與規則：改這裡，遊戲就跟著變。每一段的作用寫在 README.md 的『欄位對照』。tag 欄標示來源：原著＝書裡有寫；改編＝依書裡的事改成遊戲規則；工坊創作＝書裡沒有、我們自己加的。","meta":{"id":"temple_sim","version":"culture","label":"小封神版","title":"小上帝廟的半年","subtitle":"你是廟祝，替小上帝、康元帥、趙元帥撐過半年，等七月三日夜的颱風。","months":6,"slots_per_month":5,"noise":1},"intro":["小上帝奉命駐在赤崁樓東邊的小鎮，鎮上的廟「三分不像寺、四分不像宮」，香煙稀微，燒金的人很少。","原書裡，半年後的七月三日夜，颱風把廟吹倒；之後三位神明挨餓，只靠廟祝的一壺清茶撐著。","這一次由你當廟祝。你每個月有 5 個時辰，要決定：先接待誰、米夠不夠、廟要不要修、那頂銅鍍金的通天冠留不留。"],"resources":{"money":{"label":"香油錢","icon":"🪙","start":24,"max":999,"note":"信眾投的錢。糴米、修廟都要它。"},"rice":{"label":"米","icon":"🍚","start":6,"max":30,"note":"三位神明每個月要吃 3 份。"},"incense":{"label":"香火","icon":"🕯️","start":18,"max":100,"decay_pct":25,"note":"信眾上門才有。放著不管，每個月會散掉四分之一，而且不能拿來花。"},"face":{"label":"體面","icon":"🎩","start":60,"max":100,"note":"神明的臉面。掉到 0，你們就被調走了。"},"repair":{"label":"廟況","icon":"🧱","start":30,"max":100,"note":"屋瓦、梁柱的狀況。每個月會自己舊掉一點。颱風夜要撐得住。"}},"flags":{"crown":"worn","kangzhao":"here"},"counters":{"grudge":0,"favor":0,"gambles":0,"verified":0},"reset_counters_monthly":["verified"],"customers":{"shuibian":{"label":"水邊人家","icon":"🌊","want":"夜裡水邊有怪聲，怕龜精蛇怪作怪","fit":"管得到","tag":"改編","src":"小上帝奉命『專管龜精蛇怪，並察人間善惡』（第一回）"},"yuan":{"label":"含冤的人","icon":"⚖️","want":"被人誣賴，想請神明看個公道","fit":"管得到","tag":"改編","src":"『察人間善惡』（第一回）；小上帝誤認魁星、被斥『用神不明』（第二、二十三回）"},"scholar":{"label":"趕考的書生","icon":"📜","want":"想求功名順利","fit":"管不到","tag":"改編","src":"功名是魁星的事；魁星出自赤崁樓文昌閣（第二回照片說明）"},"trader":{"label":"做生意的人","icon":"🧺","want":"想求生意興隆","fit":"管不到","tag":"工坊創作","src":"遊戲簡化：原書裡他專管龜蛇，功名、生意不是他的專長"},"passerby":{"label":"路過歇腳的人","icon":"🚶","want":"走累了，想坐一下","fit":"不求事","tag":"改編","src":"三神挨餓時，廟裡只有廟祝的清茶（第二回）"}},"calendar":{"shuibian":[2,2,1,2,2,1],"yuan":[0,1,0,1,0,1],"scholar":[2,2,2,1,2,1],"trader":[1,1,2,1,1,1],"passerby":[3,3,2,3,3,2]},"actions":[{"id":"comfort","label":"安撫水邊人家","desc":"慢慢來，一次顧 2 戶。","slots":1,"target":"shuibian","cap":2,"log":"你去水邊燒香、說明，慢慢安撫。","effects":[{"each_group":[{"add":{"incense":6,"money":3}}]}]},{"id":"drive","label":"鎮住龜蛇","desc":"快，一次最多 4 戶。但龜蛇會記仇。","slots":1,"target":"shuibian","cap":4,"log":"你照著小上帝的本分，把水邊的龜蛇通通鎮住。","effects":[{"each_group":[{"add":{"incense":4,"money":2}}]},{"counter":["grudge",1]}]},{"id":"verify","label":"查證誰才是對的","desc":"先把兩邊的說法對一對，一次查 2 件。","slots":1,"target":"yuan","cap":2,"log":"你一個一個去問、去對。","effects":[{"each_group":[{"counter":["verified",1]}]}]},{"id":"judge","label":"替含冤的人斷理","desc":"一次斷 2 件。沒查證就斷，可能冤枉到人。","slots":1,"target":"yuan","cap":2,"log":"你請神明作主，替含冤的人說句公道話。","effects":[{"each_group":[{"if":["counter","verified",">",0],"then":[{"counter":["verified",-1]},{"add":{"incense":8,"face":4,"money":2}},{"log":"查清楚了，斷得準，信眾都服氣。","kind":"good"}],"else":[{"roll":{"p":0.5,"yes":[{"add":{"incense":8,"face":4,"money":2}},{"log":"沒查證就斷，這次運氣好，斷對了。","kind":"good"}],"no":[{"add":{"incense":-4,"face":-15}},{"log":"沒查證就斷，冤枉了好人，傳得全鎮都知道。","kind":"bad"}]}}]}]}]},{"id":"refer","label":"請書生去文昌閣","desc":"功名不是這位神明管的，一次送 3 位。","slots":1,"target":"scholar","cap":3,"log":"你指路，請書生到赤崁樓的文昌閣去拜魁星。","effects":[{"each_group":[{"add":{"incense":1}}]},{"counter":["favor",1]}]},{"id":"take_scholar","label":"硬接書生的香","desc":"收他們的香油錢，一次 3 位。","slots":1,"target":"scholar","cap":3,"log":"你收下書生的香油錢，替他們求功名。","effects":[{"each_group":[{"add":{"money":3,"incense":-3}}]},{"log":"書生考不好，到處說早知道該去文昌閣。","kind":"bad"}]},{"id":"trader","label":"接待做生意的人","desc":"他們捐得多，一次 2 位。靈不靈，要看運氣。","slots":1,"target":"trader","cap":2,"log":"你收下做生意的人的香油錢，請神明保佑他們。","effects":[{"each_group":[{"add":{"money":8}},{"roll":{"p":0.4,"yes":[{"add":{"incense":6}}],"no":[{"add":{"incense":-5,"face":-3}}]}}]}]},{"id":"tea","label":"奉茶給路過的人","desc":"不求事，坐下喝杯茶就好。一次 4 位。","slots":1,"target":"passerby","cap":4,"log":"你端出廟祝的清茶。","effects":[{"each_group":[{"add":{"incense":2}}]}]},{"id":"buy_self","label":"你自己去糴米","desc":"花 10 錢，換 6 份米。","slots":1,"requires":["res","money",">=",10],"why_not":"香油錢不到 10","log":"你自己走一趟，把米扛回來。","effects":[{"add":{"money":-10,"rice":6}}]},{"id":"buy_kz","label":"派康、趙元帥去糴米","desc":"不花你的時辰，每月一次。但錢在他們手上……","slots":0,"once_per_month":true,"requires":["and",["res","money",">=",10],["flag","kangzhao","==","here"]],"why_not":"香油錢不到 10，或兩位元帥已經不在","log":"你把糴米錢交給康元帥和趙元帥。","effects":[{"add":{"money":-10,"rice":6}},{"if":["flag","crown","==","pawned"],"then":[{"roll":{"p":0.55,"yes":[{"add":{"rice":-6,"money":-10}},{"counter":["gambles",1]},{"log":"兩位元帥路過媽祖宮口，想把通天冠贏回來，賭輸了，還把糴米錢賠進去。回來只說錢被一個獠牙大漢搶走了。","kind":"bad"}],"no":[]}}],"else":[{"roll":{"p":0.15,"yes":[{"add":{"rice":-6,"money":-10}},{"counter":["gambles",1]},{"log":"兩位元帥路過媽祖宮口，被攤子勾住，賭了兩把，糴米錢輸光。回來只說錢被一個獠牙大漢搶走了。","kind":"bad"}],"no":[]}}]}]},{"id":"repair","label":"修廟","desc":"花 8 錢，廟況 +12。","slots":1,"requires":["res","money",">=",8],"why_not":"香油錢不到 8","log":"你請人補瓦、換梁。","effects":[{"add":{"money":-8,"repair":12}}]},{"id":"pawn","label":"當掉通天冠","desc":"銅鍍金的通天冠，換一大筆錢。可是冠沒了……","slots":1,"requires":["flag","crown","==","worn"],"why_not":"冠已經不在身上","log":"小上帝脫下通天冠，交給你去打銀街的當店。","effects":[{"add":{"money":50,"face":-10}},{"flag":["crown","pawned"]},{"log":"當出了不少錢，可是小上帝披頭散髮，臉色很難看。","kind":"bad"}]},{"id":"redeem","label":"把通天冠贖回來","desc":"要 55 錢（連利息）。","slots":1,"requires":["and",["flag","crown","==","pawned"],["res","money",">=",55]],"why_not":"冠還戴著，或香油錢不到 55","log":"你湊足錢，去把通天冠贖回來。","effects":[{"add":{"money":-55,"face":10}},{"flag":["crown","worn"]},{"log":"小上帝重新戴上冠，腰桿直了。（原書沒寫贖回，這是遊戲加的。）","kind":"good"}]}],"upkeep":[{"add":{"rice":-3,"repair":-5}}],"events":[{"id":"e_tea","phase":"start","month":[1,1],"once":true,"tag":"原著","title":"廟祝的清茶","text":"廟祝端來一壺清茶。原書裡，廟被颱風吹倒之後，三位神明餓著，只有這樣的清茶。這半年，你要改寫這件事。","effects":[]},{"id":"e_surge","phase":"start","month":[2,2],"once":true,"tag":"工坊創作","title":"水邊傳出怪聲","text":"河邊的人家說夜裡有東西在水裡翻，一下子多來了兩戶。","effects":[{"arrive":{"shuibian":2}}]},{"id":"e_audit","phase":"start","month":[3,3],"once":true,"tag":"改編","title":"天庭來清點","text":"天庭派人清點各廟的香火。書裡李靖說過，神仙也躲不過『行政整理』。","effects":[{"if":["res","incense",">=",25],"then":[{"add":{"face":5}},{"log":"香火夠旺，清點通過。","kind":"good"}],"else":[{"add":{"face":-15}},{"log":"香火太稀，被記了一筆：『可以整理』。","kind":"bad"}]}]},{"id":"e_yuan","phase":"start","month":[4,4],"once":true,"tag":"改編","title":"兩個鄰居互告","text":"兩個鄰居都說對方偷了東西，而且兩人長得很像。（書裡，小上帝就是把魁星和千里眼認錯了。）","effects":[{"arrive":{"yuan":2}}]},{"id":"e_report_bad","phase":"start","month":[5,5],"once":true,"when":["flag","crown","==","pawned"],"tag":"改編","title":"要上天庭述職了","text":"通天冠卻還在當鋪裡。書裡康、趙兩位元帥早就嘀咕過：這樣上天庭，成甚麼體統？","effects":[{"add":{"face":-25}}]},{"id":"e_report_ok","phase":"start","month":[5,5],"once":true,"when":["flag","crown","==","worn"],"tag":"改編","title":"要上天庭述職了","text":"小上帝戴著通天冠上天庭，總算有個樣子。","effects":[{"add":{"face":5}}]},{"id":"e_wenchang","phase":"start","month":[4,6],"once":true,"when":["counter","favor",">=",2],"tag":"工坊創作","title":"文昌閣來幫忙","text":"文昌閣那邊記得你送過去的書生，派了幾個人來幫忙補瓦。（廟與廟之間互相幫忙，民間叫「交陪」。）","effects":[{"add":{"repair":15}}]},{"id":"e_wind","phase":"start","month":[6,6],"once":true,"tag":"工坊創作","title":"風聲轉緊","text":"老人說，這種悶熱的天，颱風快來了。屋瓦鬆了幾片。","effects":[{"add":{"repair":-8}}]},{"id":"e_turtle","phase":"end","when":["counter","grudge",">=",3],"tag":"改編","title":"龜靈聖母出面","text":"龜蛇被趕得太兇，龜靈聖母親自來講話：『你們侮辱龜族。』（書裡她出面，就是這個原因。）","effects":[{"add":{"face":-25,"incense":-10}},{"counter_set":["grudge",0]}]},{"id":"e_hungry","phase":"end","when":["res","rice","<",3],"tag":"原著","title":"米不夠三位吃","text":"康元帥餓到撐不住，趙元帥小聲抱怨：坐著的人，哪知道站著的辛苦。","effects":[{"add":{"face":-8}}]},{"id":"e_kz_gone","phase":"end","once":true,"when":["counter","gambles",">=",2],"tag":"改編","title":"兩位元帥被調走","text":"李老君說他們『好賭誤事』，把康、趙兩位元帥調去採藥。以後糴米只能你自己跑。","effects":[{"flag":["kangzhao","gone"]},{"add":{"face":-5}}]}],"fail_conditions":[{"id":"f_face","cond":["res","face","<=",0],"title":"被天庭調走了","text":"體面掃地，天庭把小上帝調去別的地方。這座廟，連七月三日夜的颱風都沒等到。（遊戲加的結局，書裡沒有。）"}],"finale":{"label":"七月三日夜","text":"颱風來了。","checks":[{"id":"temple","label":"廟沒被吹倒（廟況 70 以上）","cond":["res","repair",">=",70],"canon":"原書：廟被吹倒"},{"id":"fed","label":"三位神明都有飯吃（米 3 以上）","cond":["res","rice",">=",3],"canon":"原書：三神挨餓，只有清茶"},{"id":"incense","label":"香火夠旺（40 以上）","cond":["res","incense",">=",40],"canon":"原書：香煙稀微，燒金罕到"},{"id":"face","label":"神明還有體面（40 以上）","cond":["res","face",">=",40]},{"id":"crown","label":"通天冠回到小上帝頭上","cond":["flag","crown","==","worn"],"canon":"原書：冠典當後全書沒寫贖回"}],"endings":[{"id":"rekindled","min_passed":5,"requires":["temple","crown"],"win":true,"title":"香火重燃","text":"廟撐住了，三位神明吃飽，信眾還排隊來燒香。你改寫了原書的結局。（這是小說裡的廟，現實中的廟風光得多。）"},{"id":"survived","min_passed":4,"requires":["temple","crown"],"win":true,"title":"撐過颱風","text":"廟沒倒。有一兩樣還是不夠好，但天亮的時候，三位神明都還在。"},{"id":"barely","min_passed":1,"requires":["temple"],"win":false,"title":"廟還在，但很勉強","text":"屋頂勉強撐住，可是米、香火、體面都吃緊。下一個月怎麼辦，沒人知道。"},{"id":"fell","min_passed":0,"win":false,"title":"跟原書一樣：廟被吹倒了","text":"七月三日夜，颱風把廟吹倒。（這是小說裡的廟，現實中的廟風光得多。）你回頭看：哪個月做了不一樣的選擇，會改變這一夜？"}]},"field":{"_說明":"這一段是『AI 做不到、要靠你自己去問去看』的欄位。去一間真的廟待半小時，記下來的人各是哪一類，填在 observed_counts；再問廟祝一句話，填在 interview_line。填了，遊戲的來客比例和每個月開頭的廟祝台詞就換成你的。","observed_counts":null,"interview_line":null}}</script>
-<script type="application/json" id="data-skin">{"_說明":"普通經營版（文化只是皮）。故事、角色、地點都留著，但規則換成最普通的『開店賺錢』：來客都一樣、沒有誰管得到誰管不到、錢和香火不會散、沒有冠、沒有面子。拿它和 sim.json 對照，就看得出文化在哪裡長進規則裡。","meta":{"id":"temple_sim","version":"skin","label":"普通經營版","title":"小上帝廟的半年","subtitle":"你是廟祝，替小上帝、康元帥、趙元帥撐過半年，等七月三日夜的颱風。","months":6,"slots_per_month":5,"noise":1},"intro":["小上帝廟香煙稀微，你要靠接待客人賺錢，米吃完要買，廟舊了要修。","半年後的七月三日夜颱風來襲。這一版沒有特別的規矩：客人都一樣，賺到錢就能買任何東西。"],"resources":{"money":{"label":"金幣","icon":"🪙","start":30,"max":999,"note":"賺到的錢。糴米、修廟都要它。"},"rice":{"label":"米","icon":"🍚","start":6,"max":30,"note":"三位神明每個月要吃 3 份。"},"incense":{"label":"人氣","icon":"🕯️","start":18,"max":100,"note":"接待客人就會增加，不會散掉。"},"repair":{"label":"廟況","icon":"🧱","start":30,"max":100,"note":"每個月會自己舊掉一點。颱風夜要撐得住。"}},"flags":{},"counters":{},"reset_counters_monthly":[],"customers":{"guest":{"label":"客人","icon":"🙂","want":"上門逛逛","fit":"都一樣","tag":"工坊創作","src":"普通經營版：所有客人一樣"}},"calendar":{"guest":[8,9,8,8,8,6]},"actions":[{"id":"serve","label":"接待客人","desc":"一次最多 4 位，每位賺 4 金幣、加 3 人氣。","slots":1,"target":"guest","cap":4,"log":"你招呼客人。","effects":[{"each_group":[{"add":{"money":4,"incense":3}}]}]},{"id":"buy_self","label":"去買米","desc":"花 10 金幣，換 6 份米。","slots":1,"requires":["res","money",">=",10],"why_not":"金幣不到 10","log":"你去市場買米。","effects":[{"add":{"money":-10,"rice":6}}]},{"id":"repair","label":"修廟","desc":"花 8 金幣，廟況 +12。","slots":1,"requires":["res","money",">=",8],"why_not":"金幣不到 8","log":"你請人修屋頂。","effects":[{"add":{"money":-8,"repair":12}}]}],"upkeep":[{"add":{"rice":-3,"repair":-5}}],"events":[{"id":"e_wind","phase":"start","month":[6,6],"once":true,"tag":"工坊創作","title":"風聲轉緊","text":"天氣變悶，颱風快來了。屋瓦鬆了幾片。","effects":[{"add":{"repair":-8}}]}],"fail_conditions":[],"finale":{"label":"七月三日夜","text":"颱風來了。","checks":[{"id":"temple","label":"廟沒被吹倒（廟況 70 以上）","cond":["res","repair",">=",70]},{"id":"fed","label":"三位神明都有飯吃（米 3 以上）","cond":["res","rice",">=",3]},{"id":"incense","label":"人氣夠旺（40 以上）","cond":["res","incense",">=",40]},{"id":"money","label":"金幣夠多（40 以上）","cond":["res","money",">=",40]}],"endings":[{"id":"rekindled","min_passed":4,"requires":["temple"],"win":true,"title":"大賺一筆","text":"廟撐住了，米夠、人氣旺、口袋滿。"},{"id":"survived","min_passed":3,"requires":["temple"],"win":true,"title":"撐過颱風","text":"廟沒倒，有一兩項不夠漂亮，但過關了。"},{"id":"barely","min_passed":1,"requires":["temple"],"win":false,"title":"廟還在，但很勉強","text":"屋頂撐住了，其他項目都吃緊。"},{"id":"fell","min_passed":0,"win":false,"title":"廟被吹倒了","text":"颱風把廟吹倒。"}]},"field":{"observed_counts":null,"interview_line":null}}</script>
-<script type="application/json" id="data-remix">{"title":"怎麼改做：小上帝廟的半年","lead":"這個遊戲的內容和規矩都放在一個叫 sim.json 的資料檔裡，網頁只是讀它、播它。所以你不用會寫程式，會改文字和數字就能改做。改完把整份貼回頁面最下面的「我的資料檔」，按「載入」就能玩。每改一次，按一下「試跑 100 局」，看看遊戲有沒有被你改壞。","tiers":[{"n":1,"name":"換內容","one_line":"不動規矩，只換人、換話、換比例。","task":"找一間你去得到的廟（進廟要安靜、不要擋路、拍照先問過），待半小時，記下來的人各是哪一類（問事情的、拜拜的、路過的、做生意的……）。再問廟祝或管理員一句話：「最近最常有人來問什麼？」把你記到的人數填進資料檔最下面的 field.observed_counts，把那句話填進 interview_line。再把來客的名字和「想要什麼」換成你看到的。","ai_cannot":"你去現場看到的人數、廟祝說的那句話，AI 沒去過，編出來的也不算數。","prompt":"我貼給你一份小遊戲的資料檔（JSON）。我去了〔廟名〕待半小時，看到的人大概是：〔例：問考試的 5 位、路過歇腳的 8 位、問身體的 2 位〕。廟祝跟我說：「〔那句話〕」。請只改 customers 的 label、want、icon，calendar 的數字，和 field 裡的 observed_counts、interview_line。不要動 actions、events、finale 裡的規則和條件。改完把整份資料檔原樣回傳，不要省略。"},{"n":2,"name":"換規矩","one_line":"選一條規矩改掉，看遊戲變成什麼樣。","task":"從下面挑一條改：①香火每個月散掉多少（resources.incense.decay_pct，25 改成 0 或 50）；②鎮龜蛇幾次龜靈聖母才會出面（events 裡 e_turtle 的 ['counter','grudge','>=',3]）；③康、趙兩位元帥賭輸的機率（actions 裡 buy_kz 的 p：0.15 和 0.55）；④沒查證就斷理的冤枉機率（judge 裡的 p：0.5）。改完按「試跑 100 局」，記下勝率從多少變多少，再用一句話寫：這條規矩被改掉以後，玩的人的選擇變少了還是變多了？","ai_cannot":"「改完好不好玩」要你自己玩一局才知道；AI 只能算勝率。","prompt":"這是小遊戲的資料檔（JSON）。請把〔例：香火每個月散掉四分之一〕改成〔例：每個月散掉一半〕，只改必要的欄位，並列出你改了哪幾個欄位。再告訴我：這樣改會讓哪些選擇變得更重要、哪些選擇變得沒意義？我會把「試跑 100 局」的勝率貼給你，請幫我判斷有沒有太簡單或太難。"},{"n":3,"name":"換形式","one_line":"同一套資料格式，換成別的場景；或拆一段去做別的遊戲。","task":"兩條路選一條。（甲）換場景：資料檔的格式不變，把「廟」換成「辦桌」——來客改成賓客（長輩、晚輩、有過節的兩家人），動作改成安排座位、上菜，資源改成體面、菜、時間。（乙）拆一段：把「含冤的人」那一段（兩個長得很像的人，先查證再斷理）拆出來，做成一個解謎小遊戲，用解謎樣板去做。","ai_cannot":"辦桌真正的規矩（誰坐哪、先上哪道菜）要問長輩或辦桌的人，AI 寫的常常是想像出來的。","prompt":"請用和這份資料檔完全相同的格式（meta、resources、customers、calendar、actions、events、finale），把場景改成「辦桌」。來客改成〔例：長輩、晚輩、兩個有過節的親戚〕，動作改成〔例：安排主桌、安排前排、請人換桌〕。要有一個「沒有人會攔你、但做錯會被記一筆」的規矩。回傳完整的 JSON，並用三句話說明：把辦桌的規矩拿掉後，這個遊戲還玩得下去嗎？"}],"extend_title":"加一個東西：兩種最常見的擴充","extend":[{"title":"加一種來客","why":"例如「受驚的孩子」。三個地方各加一筆就好：customers（他是誰）、calendar（每個月來幾個）、actions（你怎麼接待他）。","snippet":"\"customers\"（在裡面多加這一筆）: { \"shock\": { \"label\": \"受驚的孩子\", \"icon\": \"🧒\", \"want\": \"被嚇到，家長想讓他安心\", \"fit\": \"管得到\", \"tag\": \"工坊創作\", \"src\": \"我自己查的來源\" } }\n\"calendar\"（在裡面多加這一筆）: { \"shock\": [0, 1, 1, 0, 1, 0] }\n\"actions\"（在陣列裡多加這一筆）: { \"id\": \"calm\", \"label\": \"替孩子收驚\", \"desc\": \"一次 2 位\", \"slots\": 1, \"target\": \"shock\", \"cap\": 2, \"effects\": [ { \"each_group\": [ { \"add\": { \"incense\": 6, \"money\": 2 } } ] } ] }","note":"收驚是真的有人在做的習俗。遊戲裡只是簡化的示意，真正怎麼做、說什麼，請去問長輩或廟方，不要照 AI 寫的。"},{"title":"加一個事件","why":"例如「廟口有人辦桌」。events 裡加一筆：什麼時候發生（month）、發生什麼（effects）、一句話（text）。","snippet":"{ \"id\": \"e_feast\", \"phase\": \"start\", \"month\": [3, 3], \"once\": true, \"tag\": \"工坊創作\", \"title\": \"廟口有人辦桌\", \"text\": \"隔壁辦桌，路過的人變多，可是廟裡的米被借走兩份。\", \"effects\": [ { \"arrive\": { \"passerby\": 4 } }, { \"add\": { \"rice\": -2 } } ] }","note":"tag 要老實填：原著（書裡有）、改編（依書裡的事改的）、工坊創作（你加的）。這是你的作品，標清楚就是你的功勞。"}],"tool_chain":{"title":"這一單元多學的一個工具串接","text":"把頁面上「試跑 100 局」的結果貼給 Claude 或 Gemini，連同你改的那一行，問它：這樣改合理嗎？下一步該調哪個數字？它建議、你改、再試跑——這個來回，就是用工具改遊戲最常用的流程。"},"judge_prompt":"兩個版本都玩過之後，回答這一題：把小封神的規矩拿掉，只剩普通的開店賺錢，這個遊戲還玩得下去嗎？"}</script>
+<script type="application/json" id="data-culture">{"_說明":"小封神版（文化長在規則裡）。這份檔案就是整個遊戲的內容與規則：改這裡，遊戲就跟著變。每一段的作用寫在 README.md 的『欄位對照』。tag 欄標示來源：原著＝書裡有寫；改編＝依書裡的事改成遊戲規則；工坊創作＝書裡沒有、我們自己加的。","meta":{"id":"temple_sim","version":"culture","label":"小封神版","title":"小上帝廟的半年","subtitle":"你是廟祝，替小上帝、康元帥、趙元帥撐過半年，等七月三日夜的颱風。","months":6,"slots_per_month":5,"noise":1,"play_minutes":"8–12","goal":"撐過 6 個月：七月三日夜颱風來時，廟不倒、三位神明有飯吃。","finale_label":"七月三日夜"},"intro":["小上帝奉命駐在赤崁樓東邊的小鎮，鎮上的廟「三分不像寺、四分不像宮」，香煙稀微，燒金的人很少。","原書裡，半年後的七月三日夜，颱風把廟吹倒；之後三位神明挨餓，只靠廟祝的一壺清茶撐著。","這一次由你當廟祝。你每個月有 5 個時辰，要決定：先接待誰、米夠不夠、廟要不要修、那頂銅鍍金的通天冠留不留。"],"resources":{"money":{"label":"香油錢","icon":"🪙","start":24,"max":999,"note":"信眾投的錢。糴米、修廟都要它。"},"rice":{"label":"米","icon":"🍚","start":6,"max":30,"note":"三位神明每個月要吃 3 份。"},"incense":{"label":"香火","icon":"🕯️","start":18,"max":100,"decay_pct":25,"note":"信眾上門才有。放著不管，每個月會散掉四分之一，而且不能拿來花。"},"face":{"label":"體面","icon":"🎩","start":60,"max":100,"note":"神明的臉面。掉到 0，你們就被調走了。"},"repair":{"label":"廟況","icon":"🧱","start":30,"max":100,"note":"屋瓦、梁柱的狀況。每個月會自己舊掉一點。颱風夜要撐得住。"}},"flags":{"crown":"worn","kangzhao":"here"},"counters":{"grudge":0,"favor":0,"gambles":0,"verified":0},"reset_counters_monthly":["verified"],"customers":{"shuibian":{"label":"水邊人家","icon":"🌊","want":"夜裡水邊有怪聲，怕龜精蛇怪作怪","fit":"管得到","tag":"改編","src":"小上帝奉命『專管龜精蛇怪，並察人間善惡』（第一回）"},"yuan":{"label":"含冤的人","icon":"⚖️","want":"被人誣賴，想請神明看個公道","fit":"管得到","tag":"改編","src":"『察人間善惡』（第一回）；小上帝誤認魁星、被斥『用神不明』（第二、二十三回）"},"scholar":{"label":"趕考的書生","icon":"📜","want":"想求功名順利","fit":"管不到","tag":"改編","src":"功名是魁星的事；魁星出自赤崁樓文昌閣（第二回照片說明）"},"trader":{"label":"做生意的人","icon":"🧺","want":"想求生意興隆","fit":"管不到","tag":"工坊創作","src":"遊戲簡化：原書裡他專管龜蛇，功名、生意不是他的專長"},"passerby":{"label":"路過歇腳的人","icon":"🚶","want":"走累了，想坐一下","fit":"不求事","tag":"改編","src":"三神挨餓時，廟裡只有廟祝的清茶（第二回）"},"evac":{"label":"來避風的人","icon":"🧳","want":"颱風要來了，想借廟裡的長椅躲一躲","fit":"不求事","tag":"工坊創作","src":"遊戲加的：颱風前夕的情境，書裡沒有"}},"calendar":{"shuibian":[2,2,1,2,2,1],"yuan":[0,1,0,1,0,1],"scholar":[2,2,2,1,2,1],"trader":[1,1,2,1,1,1],"passerby":[3,3,2,3,3,2],"evac":[0,0,0,0,2,3]},"actions":[{"id":"comfort","label":"安撫水邊人家","desc":"慢慢來，一次顧 2 戶。","slots":1,"target":"shuibian","cap":2,"log":"你去水邊燒香、說明，慢慢安撫。","effects":[{"each_group":[{"add":{"incense":6,"money":3}}]}],"icon":"🕯️"},{"id":"drive","label":"鎮住龜蛇","desc":"快，一次最多 4 戶。但龜蛇會記仇。","slots":1,"target":"shuibian","cap":4,"log":"你照著小上帝的本分，把水邊的龜蛇通通鎮住。","effects":[{"each_group":[{"add":{"incense":4,"money":2}}]},{"counter":["grudge",1]}],"icon":"🐢"},{"id":"verify","label":"查證誰才是對的","desc":"先把兩邊的說法對一對，一次查 2 件。","slots":1,"target":"yuan","cap":2,"log":"你一個一個去問、去對。","effects":[{"each_group":[{"counter":["verified",1]}]}],"icon":"🔍"},{"id":"judge","label":"替含冤的人斷理","desc":"一次斷 2 件。沒查證就斷，可能冤枉到人。","slots":1,"target":"yuan","cap":2,"log":"你請神明作主，替含冤的人說句公道話。","effects":[{"each_group":[{"if":["counter","verified",">",0],"then":[{"counter":["verified",-1]},{"add":{"incense":8,"face":4,"money":2}},{"log":"查清楚了，斷得準，信眾都服氣。","kind":"good"}],"else":[{"roll":{"p":0.5,"yes":[{"add":{"incense":8,"face":4,"money":2}},{"log":"沒查證就斷，這次運氣好，斷對了。","kind":"good"}],"no":[{"add":{"incense":-4,"face":-15}},{"log":"沒查證就斷，冤枉了好人，傳得全鎮都知道。","kind":"bad"}]}}]}]}],"icon":"⚖️"},{"id":"refer","label":"請書生去文昌閣","desc":"功名不是這位神明管的，一次送 3 位。","slots":1,"target":"scholar","cap":3,"log":"你指路，請書生到赤崁樓的文昌閣去拜魁星。","effects":[{"each_group":[{"add":{"incense":1}}]},{"counter":["favor",1]}],"icon":"📜"},{"id":"take_scholar","label":"硬接書生的香","desc":"收他們的香油錢，一次 3 位。","slots":1,"target":"scholar","cap":3,"log":"你收下書生的香油錢，替他們求功名。","effects":[{"each_group":[{"add":{"money":3,"incense":-3}}]},{"log":"書生考不好，到處說早知道該去文昌閣。","kind":"bad"}],"icon":"💰"},{"id":"trader","label":"接待做生意的人","desc":"他們捐得多，一次 2 位。靈不靈，要看運氣。","slots":1,"target":"trader","cap":2,"log":"你收下做生意的人的香油錢，請神明保佑他們。","effects":[{"each_group":[{"add":{"money":8}},{"roll":{"p":0.4,"yes":[{"add":{"incense":6}}],"no":[{"add":{"incense":-5,"face":-3}}]}}]}],"icon":"🧺"},{"id":"tea","label":"奉茶給路過的人","desc":"不求事，坐下喝杯茶就好。一次 4 位。","slots":1,"target":"passerby","cap":4,"log":"你端出廟祝的清茶。","effects":[{"each_group":[{"add":{"incense":2}}]}],"icon":"🍵"},{"id":"buy_self","label":"你自己去糴米","desc":"花 10 錢，換 6 份米。","slots":1,"requires":["res","money",">=",10],"why_not":"香油錢不到 10","log":"你自己走一趟，把米扛回來。","effects":[{"add":{"money":-10,"rice":6}}],"icon":"🍚"},{"id":"buy_kz","label":"派康、趙元帥去糴米","desc":"不花你的時辰，每月一次。但錢在他們手上……","slots":0,"once_per_month":true,"requires":["and",["res","money",">=",10],["flag","kangzhao","==","here"]],"why_not":"香油錢不到 10，或兩位元帥已經不在","log":"你把糴米錢交給康元帥和趙元帥。","effects":[{"add":{"money":-10,"rice":6}},{"if":["flag","crown","==","pawned"],"then":[{"roll":{"p":0.55,"yes":[{"add":{"rice":-6,"money":-10}},{"counter":["gambles",1]},{"log":"兩位元帥路過媽祖宮口，想把通天冠贏回來，賭輸了，還把糴米錢賠進去。回來只說錢被一個獠牙大漢搶走了。","kind":"bad"},{"arrive":{"yuan":1}},{"log":"過沒多久，一位被康、趙指認成「獠牙大漢」的路人，上門喊冤。小上帝，這回別再認錯人。","kind":"event","tag":"改編"}],"no":[]}}],"else":[{"roll":{"p":0.15,"yes":[{"add":{"rice":-6,"money":-10}},{"counter":["gambles",1]},{"log":"兩位元帥路過媽祖宮口，被攤子勾住，賭了兩把，糴米錢輸光。回來只說錢被一個獠牙大漢搶走了。","kind":"bad"},{"arrive":{"yuan":1}},{"log":"過沒多久，一位被康、趙指認成「獠牙大漢」的路人，上門喊冤。小上帝，這回別再認錯人。","kind":"event","tag":"改編"}],"no":[]}}]}],"icon":"🏃"},{"id":"repair","label":"修廟","desc":"花 8 錢，廟況 +12。","slots":1,"requires":["res","money",">=",8],"why_not":"香油錢不到 8","log":"你請人補瓦、換梁。","effects":[{"add":{"money":-8,"repair":12}}],"icon":"🧱"},{"id":"pawn","label":"當掉通天冠","desc":"銅鍍金的通天冠，換一大筆錢。可是冠沒了……","slots":1,"requires":["flag","crown","==","worn"],"why_not":"冠已經不在身上","log":"小上帝脫下通天冠，交給你去打銀街的當店。","effects":[{"add":{"money":50,"face":-10}},{"flag":["crown","pawned"]},{"log":"當出了不少錢，可是小上帝披頭散髮，臉色很難看。","kind":"bad"}],"icon":"🎩"},{"id":"redeem","label":"把通天冠贖回來","desc":"要 55 錢（連利息）。","slots":1,"requires":["and",["flag","crown","==","pawned"],["res","money",">=",55]],"why_not":"冠還戴著，或香油錢不到 55","log":"你湊足錢，去把通天冠贖回來。","effects":[{"add":{"money":-55,"face":10}},{"flag":["crown","worn"]},{"log":"小上帝重新戴上冠，腰桿直了。（原書沒寫贖回，這是遊戲加的。）","kind":"good"}],"icon":"🎩"},{"id":"tidy","label":"整理廟務","desc":"擦神像、掃廟埕。不花錢，體面 +3。","slots":1,"log":"你把神像擦亮，廟埕掃得乾乾淨淨。","effects":[{"add":{"face":3}}],"icon":"🧹"},{"id":"festival","label":"辦一場小廟會","desc":"花 12 錢、佔 2 個時辰，香火大漲、路過的人變多；碰上下雨就白辦。每月一次。","slots":2,"unlock_month":3,"once_per_month":true,"requires":["res","money",">=",12],"why_not":"香油錢不到 12","log":"你在廟埕擺桌、掛燈，請鄰居來湊熱鬧。","effects":[{"add":{"money":-12}},{"roll":{"p":0.7,"yes":[{"add":{"incense":14,"face":2}},{"arrive":{"passerby":3}},{"log":"廟埕熱鬧起來，連路過的人都停下來看。","kind":"good"}],"no":[{"add":{"incense":3}},{"log":"下起雨，桌椅收到一半，人都跑光了。","kind":"bad"}]}}],"icon":"🏮"},{"id":"kauppe","label":"請文昌閣的人情來幫忙","desc":"你先前送書生過去，人家記得。用掉 1 份人情，廟況 +8。","slots":1,"unlock_month":4,"requires":["counter","favor",">=",1],"why_not":"還沒有人情可用（把書生送去文昌閣會累積）","log":"你上門道謝，順便請文昌閣的人過來幫忙補瓦。","effects":[{"counter":["favor",-1]},{"add":{"repair":8}},{"log":"人情用掉一份，屋頂補好一塊。（人情往來，台語叫「交陪」。）","kind":"good","tag":"工坊創作"}],"icon":"🤝"},{"id":"reinforce","label":"趕工加固屋頂","desc":"颱風前夕才請得到工班：花 16 錢、佔 2 個時辰，廟況 +20。","slots":2,"unlock_month":5,"requires":["res","money",">=",16],"why_not":"香油錢不到 16","log":"你把工班請到廟裡，趕在風雨前把屋頂釘牢。","effects":[{"add":{"money":-16,"repair":20}}],"icon":"🔨"},{"id":"shelter","label":"收留來避風的人","desc":"一次 2 位。每位吃掉 1 份米，換香火和體面。","slots":1,"target":"evac","cap":2,"log":"你把長椅讓出來，煮了一鍋稀飯。","effects":[{"each_group":[{"add":{"rice":-1,"incense":5,"face":3}}]}],"icon":"🧳"}],"upkeep":[{"add":{"rice":-3,"repair":-5}}],"events":[{"id":"e_tea","phase":"start","month":[1,1],"once":true,"tag":"原著","title":"廟祝的清茶","text":"廟祝端來一壺清茶。原書裡，廟被颱風吹倒之後，三位神明餓著，只有這樣的清茶。這半年，你要改寫這件事。","effects":[],"icon":"🍵"},{"id":"e_surge","phase":"start","month":[2,2],"once":true,"tag":"工坊創作","title":"水邊傳出怪聲","text":"河邊的人家說夜裡有東西在水裡翻，一下子多來了兩戶。","effects":[{"arrive":{"shuibian":2}}],"icon":"🌊"},{"id":"e_audit","phase":"start","month":[3,3],"once":true,"tag":"改編","title":"天庭來清點","text":"天庭派人清點各廟的香火。書裡李靖說過，神仙也躲不過『行政整理』。","effects":[{"if":["res","incense",">=",25],"then":[{"add":{"face":5}},{"log":"香火夠旺，清點通過。","kind":"good"}],"else":[{"add":{"face":-15}},{"log":"香火太稀，被記了一筆：『可以整理』。","kind":"bad"}]}],"icon":"📋"},{"id":"e_yuan","phase":"start","month":[4,4],"once":true,"tag":"改編","title":"兩個鄰居互告","text":"兩個鄰居都說對方偷了東西，而且兩人長得很像。（書裡，小上帝就是把魁星和千里眼認錯了。）","effects":[{"arrive":{"yuan":2}}],"icon":"⚖️"},{"id":"e_report_bad","phase":"start","month":[5,5],"once":true,"when":["flag","crown","==","pawned"],"tag":"改編","title":"要上天庭述職了","text":"通天冠卻還在當鋪裡。書裡康、趙兩位元帥早就嘀咕過：這樣上天庭，成甚麼體統？","effects":[{"add":{"face":-25}}],"icon":"🏮"},{"id":"e_report_ok","phase":"start","month":[5,5],"once":true,"when":["flag","crown","==","worn"],"tag":"改編","title":"要上天庭述職了","text":"小上帝戴著通天冠上天庭，總算有個樣子。","effects":[{"add":{"face":5}}],"icon":"🏮"},{"id":"e_wenchang","phase":"start","month":[4,6],"once":true,"when":["counter","favor",">=",2],"tag":"工坊創作","title":"文昌閣來幫忙","text":"文昌閣那邊記得你送過去的書生，派了幾個人來幫忙補瓦。（廟與廟之間互相幫忙，民間叫「交陪」。）","effects":[{"add":{"repair":15}}],"icon":"🤝"},{"id":"e_wind","phase":"start","month":[6,6],"once":true,"tag":"工坊創作","title":"風聲轉緊","text":"老人說，這種悶熱的天，颱風快來了。屋瓦鬆了幾片。","effects":[{"add":{"repair":-8}}],"icon":"🌀"},{"id":"e_turtle","phase":"end","when":["counter","grudge",">=",3],"tag":"改編","title":"龜靈聖母出面","text":"龜蛇被趕得太兇，龜靈聖母親自來講話：『你們侮辱龜族。』（書裡她出面，就是這個原因。）","effects":[{"add":{"face":-25,"incense":-10}},{"counter_set":["grudge",0]}],"icon":"🐢"},{"id":"e_hungry","phase":"end","when":["res","rice","<",3],"tag":"原著","title":"米不夠三位吃","text":"康元帥餓到撐不住，趙元帥小聲抱怨：坐著的人，哪知道站著的辛苦。","effects":[{"add":{"face":-8}}],"icon":"🍚"},{"id":"e_kz_gone","phase":"end","once":true,"when":["counter","gambles",">=",2],"tag":"改編","title":"兩位元帥被調走","text":"李老君說他們『好賭誤事』，把康、趙兩位元帥調去採藥。以後糴米只能你自己跑。","effects":[{"flag":["kangzhao","gone"]},{"add":{"face":-5}}],"icon":"🧳"},{"id":"e_fame","phase":"start","month":[3,6],"once":true,"when":["and",["res","incense",">=",40],["res","face",">=",50]],"tag":"工坊創作","icon":"✨","title":"鎮上有人說：這間廟最近挺好","text":"香火旺、神明也有個樣子，鎮上的人開始互相介紹。","effects":[{"add":{"incense":5}}]},{"id":"e_rain_leak","phase":"start","month":[2,5],"p":0.4,"once":true,"tag":"工坊創作","icon":"🌧️","title":"連日大雨，神龕後面漏水","text":"瓦縫進水，牆角發黑。","effects":[{"add":{"repair":-8}}]},{"id":"e_rats","phase":"end","p":0.35,"once":true,"when":["res","rice",">=",8],"tag":"工坊創作","icon":"🐀","title":"老鼠鑽進米缸","text":"一覺醒來，米少了兩份。","effects":[{"add":{"rice":-2}}]},{"id":"e_evac","phase":"start","month":[5,5],"once":true,"tag":"工坊創作","icon":"🧳","title":"有人拖著棉被走來","text":"他問：颱風要來了，廟裡可以借個地方嗎？後面還跟著幾個人。","effects":[]}],"fail_conditions":[{"id":"f_face","cond":["res","face","<=",0],"title":"被天庭調走了","text":"體面掃地，天庭把小上帝調去別的地方。這座廟，連七月三日夜的颱風都沒等到。（遊戲加的結局，書裡沒有。）"}],"finale":{"label":"七月三日夜","text":"颱風來了。","checks":[{"id":"temple","label":"廟沒被吹倒（廟況 70 以上）","cond":["res","repair",">=",70],"canon":"原書：廟被吹倒"},{"id":"fed","label":"三位神明都有飯吃（米 3 以上）","cond":["res","rice",">=",3],"canon":"原書：三神挨餓，只有清茶"},{"id":"incense","label":"香火夠旺（40 以上）","cond":["res","incense",">=",40],"canon":"原書：香煙稀微，燒金罕到"},{"id":"face","label":"神明還有體面（40 以上）","cond":["res","face",">=",40]},{"id":"crown","label":"通天冠回到小上帝頭上","cond":["flag","crown","==","worn"],"canon":"原書：冠典當後全書沒寫贖回"},{"id":"money","label":"香油錢有結餘（60 以上）","cond":["res","money",">=",60]}],"endings":[{"id":"legend","min_passed":6,"requires":["temple","crown","fed"],"win":true,"title":"鎮上都說這間廟靈","text":"廟穩穩立著，三位神明吃飽，香火旺、體面在、口袋還有餘。颱風過後，隔壁鎮的人也特地來上香。你不只改寫了原書的結局，還把這間廟變成鎮上的招牌。（這是小說裡的廟，現實中的廟風光得多。）"},{"id":"rekindled","min_passed":5,"requires":["temple","crown","incense"],"win":true,"title":"香火重燃","text":"廟撐住了，三位神明吃飽，信眾還排隊來燒香。你改寫了原書的結局。（這是小說裡的廟，現實中的廟風光得多。）"},{"id":"survived","min_passed":5,"requires":["temple","crown"],"win":true,"title":"撐過颱風","text":"廟沒倒，三位神明都在，只是香火還沒真正旺起來。但天亮的時候，大家都吃到了熱粥。"},{"id":"barely","min_passed":1,"requires":["temple"],"win":false,"title":"廟還在，但很勉強","text":"屋頂勉強撐住，可是米、香火、體面都吃緊（或是通天冠還沒回來）。下一個月怎麼辦，沒人知道。"},{"id":"fell","min_passed":0,"win":false,"title":"跟原書一樣：廟被吹倒了","text":"七月三日夜，颱風把廟吹倒。（這是小說裡的廟，現實中的廟風光得多。）你回頭看：哪個月做了不一樣的選擇，會改變這一夜？"}]},"field":{"_說明":"這一段是『AI 做不到、要靠你自己去問去看』的欄位。去一間真的廟待半小時，記下來的人各是哪一類，填在 observed_counts；再問廟祝一句話，填在 interview_line。填了，遊戲的來客比例和每個月開頭的廟祝台詞就換成你的。","observed_counts":null,"interview_line":null},"stages":[{"id":"s1","name":"第一幕　香煙稀微","months":[1,2],"icon":"🕯️","blurb":"廟小，客少，米不多。先把米糧和屋頂顧住，認識鎮上來的是哪些人，看看哪些事做了會留下後果。"},{"id":"s2","name":"第二幕　天庭的眼睛","months":[3,4],"icon":"📋","blurb":"天庭開始清點各廟，鄰居也開始互告。你有了更多選擇，也有了更多取捨：廟會能把人氣拉起來，只是要花時辰和香油錢。"},{"id":"s3","name":"第三幕　颱風前夕","months":[5,6],"icon":"🌀","blurb":"風聲轉緊，要上天庭述職，附近的人開始往廟裡躲。最後兩個月，每一個時辰都要想清楚：米、屋頂、體面，哪一樣最不能輸。"}],"compose":{"skin":"sim","modules":{"核心動作":"接待來客＋廟務","資源計分":"五項資源（香油錢、米、香火、體面、廟況）","時間回合":"六個月三幕、每月五個時辰","空間":"廟埕插畫（廟況、香火會變）","角色":"等候的來客五類＋三位神明","事件選擇":"月初事件卡（含隨機）","勝負":"七月三日夜逐項檢查＋分級結局","回饋":"數值飄字、月結算、提示"}}}</script>
+<script type="application/json" id="data-skin">{"_說明":"普通經營版（文化只是皮）。故事、角色、地點都留著，但規則換成最普通的『開店賺錢』：來客都一樣、沒有誰管得到誰管不到、錢和香火不會散、沒有冠、沒有面子。拿它和 sim.json 對照，就看得出文化在哪裡長進規則裡。","meta":{"id":"temple_sim","version":"skin","label":"普通經營版","title":"小上帝廟的半年","subtitle":"你是廟祝，替小上帝、康元帥、趙元帥撐過半年，等七月三日夜的颱風。","months":6,"slots_per_month":5,"noise":1,"play_minutes":"5–8","goal":"撐過 6 個月：颱風來時廟不倒、米夠、人氣和金幣都不差。","finale_label":"七月三日夜"},"intro":["小上帝廟香煙稀微，你要靠接待客人賺錢，米吃完要買，廟舊了要修。","半年後的七月三日夜颱風來襲。這一版沒有特別的規矩：客人都一樣，賺到錢就能買任何東西。"],"resources":{"money":{"label":"金幣","icon":"🪙","start":30,"max":999,"note":"賺到的錢。糴米、修廟都要它。"},"rice":{"label":"米","icon":"🍚","start":6,"max":30,"note":"三位神明每個月要吃 3 份。"},"incense":{"label":"人氣","icon":"🕯️","start":18,"max":100,"note":"接待客人就會增加，不會散掉。"},"repair":{"label":"廟況","icon":"🧱","start":30,"max":100,"note":"每個月會自己舊掉一點。颱風夜要撐得住。"}},"flags":{},"counters":{},"reset_counters_monthly":[],"customers":{"guest":{"label":"客人","icon":"🙂","want":"上門逛逛","fit":"都一樣","tag":"工坊創作","src":"普通經營版：所有客人一樣"}},"calendar":{"guest":[8,9,8,8,8,6]},"actions":[{"id":"serve","label":"接待客人","desc":"一次最多 4 位，每位賺 4 金幣、加 3 人氣。","slots":1,"target":"guest","cap":4,"log":"你招呼客人。","effects":[{"each_group":[{"add":{"money":4,"incense":3}}]}],"icon":"🙂"},{"id":"buy_self","label":"去買米","desc":"花 10 金幣，換 6 份米。","slots":1,"requires":["res","money",">=",10],"why_not":"金幣不到 10","log":"你去市場買米。","effects":[{"add":{"money":-10,"rice":6}}],"icon":"🍚"},{"id":"repair","label":"修廟","desc":"花 8 金幣，廟況 +12。","slots":1,"requires":["res","money",">=",8],"why_not":"金幣不到 8","log":"你請人修屋頂。","effects":[{"add":{"money":-8,"repair":12}}],"icon":"🧱"}],"upkeep":[{"add":{"rice":-3,"repair":-5}}],"events":[{"id":"e_wind","phase":"start","month":[6,6],"once":true,"tag":"工坊創作","title":"風聲轉緊","text":"天氣變悶，颱風快來了。屋瓦鬆了幾片。","effects":[{"add":{"repair":-8}}],"icon":"🌀"}],"fail_conditions":[],"finale":{"label":"七月三日夜","text":"颱風來了。","checks":[{"id":"temple","label":"廟沒被吹倒（廟況 70 以上）","cond":["res","repair",">=",70]},{"id":"fed","label":"三位神明都有飯吃（米 3 以上）","cond":["res","rice",">=",3]},{"id":"incense","label":"人氣夠旺（40 以上）","cond":["res","incense",">=",40]},{"id":"money","label":"金幣夠多（40 以上）","cond":["res","money",">=",40]}],"endings":[{"id":"rekindled","min_passed":4,"requires":["temple"],"win":true,"title":"大賺一筆","text":"廟撐住了，米夠、人氣旺、口袋滿。"},{"id":"survived","min_passed":3,"requires":["temple"],"win":true,"title":"撐過颱風","text":"廟沒倒，有一兩項不夠漂亮，但過關了。"},{"id":"barely","min_passed":1,"requires":["temple"],"win":false,"title":"廟還在，但很勉強","text":"屋頂撐住了，其他項目都吃緊。"},{"id":"fell","min_passed":0,"win":false,"title":"廟被吹倒了","text":"颱風把廟吹倒。"}]},"field":{"observed_counts":null,"interview_line":null},"stages":[{"id":"s1","name":"第一幕　開張","months":[1,2],"icon":"🏪","blurb":"客人少，先賺錢、買米、顧好屋頂。"},{"id":"s2","name":"第二幕　站穩","months":[3,4],"icon":"📈","blurb":"客人變多了，手上的錢要怎麼分配？"},{"id":"s3","name":"第三幕　颱風前夕","months":[5,6],"icon":"🌀","blurb":"最後兩個月，把屋頂、米和人氣準備好。"}],"compose":{"skin":"sim","modules":{"核心動作":"接待客人＋買米＋修廟","資源計分":"五項資源（香油錢、米、香火、體面、廟況）","時間回合":"六個月三幕、每月五個時辰","空間":"廟埕插畫（廟況、香火會變）","角色":"等候的來客五類＋三位神明","事件選擇":"月初事件卡（含隨機）","勝負":"七月三日夜逐項檢查＋分級結局","回饋":"數值飄字、月結算、提示"}}}</script>
+<script type="application/json" id="data-remix">{"title":"怎麼改做：小上帝廟的半年","lead":"這個遊戲的內容和規矩都放在一個叫 sim.json 的資料檔裡，網頁只是讀它、播它。所以你不用會寫程式，會改文字和數字就能改做。改完把整份貼回頁面最下面的「我的資料檔」，按「載入」就能玩。每改一次，按一下「試跑 100 局」，看看遊戲有沒有被你改壞。","tiers":[{"n":1,"name":"換內容","one_line":"不動規矩，只換人、換話、換比例。","task":"找一間你去得到的廟（進廟要安靜、不要擋路、拍照先問過），待半小時，記下來的人各是哪一類（問事情的、拜拜的、路過的、做生意的……）。再問廟祝或管理員一句話：「最近最常有人來問什麼？」把你記到的人數填進資料檔最下面的 field.observed_counts，把那句話填進 interview_line。再把來客的名字和「想要什麼」換成你看到的。","ai_cannot":"你去現場看到的人數、廟祝說的那句話，AI 沒去過，編出來的也不算數。","prompt":"我貼給你一份小遊戲的資料檔（JSON）。我去了〔廟名〕待半小時，看到的人大概是：〔例：問考試的 5 位、路過歇腳的 8 位、問身體的 2 位〕。廟祝跟我說：「〔那句話〕」。請只改 customers 的 label、want、icon，calendar 的數字，和 field 裡的 observed_counts、interview_line。不要動 actions、events、finale 裡的規則和條件。改完把整份資料檔原樣回傳，不要省略。"},{"n":2,"name":"換規矩","one_line":"選一條規矩改掉，看遊戲變成什麼樣。","task":"從下面挑一條改：①香火每個月散掉多少（resources.incense.decay_pct，25 改成 0 或 50）；②鎮龜蛇幾次龜靈聖母才會出面（events 裡 e_turtle 的 ['counter','grudge','>=',3]）；③康、趙兩位元帥賭輸的機率（actions 裡 buy_kz 的 p：0.15 和 0.55）；④沒查證就斷理的冤枉機率（judge 裡的 p：0.5）。改完按「試跑 100 局」，記下勝率從多少變多少，再用一句話寫：這條規矩被改掉以後，玩的人的選擇變少了還是變多了？","ai_cannot":"「改完好不好玩」要你自己玩一局才知道；AI 只能算勝率。","prompt":"這是小遊戲的資料檔（JSON）。請把〔例：香火每個月散掉四分之一〕改成〔例：每個月散掉一半〕，只改必要的欄位，並列出你改了哪幾個欄位。再告訴我：這樣改會讓哪些選擇變得更重要、哪些選擇變得沒意義？我會把「試跑 100 局」的勝率貼給你，請幫我判斷有沒有太簡單或太難。"},{"n":3,"name":"換形式","one_line":"同一套資料格式，換成別的場景；或拆一段去做別的遊戲。","task":"兩條路選一條。（甲）換場景：資料檔的格式不變，把「廟」換成「辦桌」——來客改成賓客（長輩、晚輩、有過節的兩家人），動作改成安排座位、上菜，資源改成體面、菜、時間。（乙）拆一段：把「含冤的人」那一段（兩個長得很像的人，先查證再斷理）拆出來，做成一個解謎小遊戲，用解謎樣板去做。","ai_cannot":"辦桌真正的規矩（誰坐哪、先上哪道菜）要問長輩或辦桌的人，AI 寫的常常是想像出來的。","prompt":"請用和這份資料檔完全相同的格式（meta、resources、customers、calendar、actions、events、finale），把場景改成「辦桌」。來客改成〔例：長輩、晚輩、兩個有過節的親戚〕，動作改成〔例：安排主桌、安排前排、請人換桌〕。要有一個「沒有人會攔你、但做錯會被記一筆」的規矩。回傳完整的 JSON，並用三句話說明：把辦桌的規矩拿掉後，這個遊戲還玩得下去嗎？"}],"extend_title":"加一個東西：兩種最常見的擴充","extend":[{"title":"加一種來客","why":"例如「受驚的孩子」。三個地方各加一筆就好：customers（他是誰）、calendar（每個月來幾個）、actions（你怎麼接待他）。","snippet":"\"customers\"（在裡面多加這一筆）: { \"shock\": { \"label\": \"受驚的孩子\", \"icon\": \"🧒\", \"want\": \"被嚇到，家長想讓他安心\", \"fit\": \"管得到\", \"tag\": \"工坊創作\", \"src\": \"我自己查的來源\" } }\n\"calendar\"（在裡面多加這一筆）: { \"shock\": [0, 1, 1, 0, 1, 0] }\n\"actions\"（在陣列裡多加這一筆）: { \"id\": \"calm\", \"label\": \"替孩子收驚\", \"desc\": \"一次 2 位\", \"slots\": 1, \"target\": \"shock\", \"cap\": 2, \"effects\": [ { \"each_group\": [ { \"add\": { \"incense\": 6, \"money\": 2 } } ] } ] }","note":"收驚是真的有人在做的習俗。遊戲裡只是簡化的示意，真正怎麼做、說什麼，請去問長輩或廟方，不要照 AI 寫的。"},{"title":"加一個事件","why":"例如「廟口有人辦桌」。events 裡加一筆：什麼時候發生（month）、發生什麼（effects）、一句話（text）。","snippet":"{ \"id\": \"e_feast\", \"phase\": \"start\", \"month\": [3, 3], \"once\": true, \"tag\": \"工坊創作\", \"title\": \"廟口有人辦桌\", \"text\": \"隔壁辦桌，路過的人變多，可是廟裡的米被借走兩份。\", \"effects\": [ { \"arrive\": { \"passerby\": 4 } }, { \"add\": { \"rice\": -2 } } ] }","note":"tag 要老實填：原著（書裡有）、改編（依書裡的事改的）、工坊創作（你加的）。這是你的作品，標清楚就是你的功勞。"}],"tool_chain":{"title":"這一單元多學的一個工具串接","text":"把頁面上「試跑 100 局」的結果貼給 Claude 或 Gemini，連同你改的那一行，問它：這樣改合理嗎？下一步該調哪個數字？它建議、你改、再試跑——這個來回，就是用工具改遊戲最常用的流程。"},"judge_prompt":"兩個版本都玩過之後，回答這一題：同一間廟、同一批人，哪一版讓你想多玩一局？是哪一個選擇或哪一件事讓你這樣想？"}</script>
 <script>
 /* 經營模擬樣板：資料驅動引擎（純邏輯，不碰畫面）。
    由 build.py 內嵌進 sim.html；也能在 Node 裡 require 起來做自動測試。 */
@@ -108,7 +286,7 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
       data: data, seed: seed, rng: mulberry32(seed),
       month: 1, slotsLeft: 0, res: {}, flags: clone(data.flags || {}),
       counters: clone(data.counters || {}), waiting: {}, fired: {}, used: {},
-      log: [], phase: 'play', result: null, field: opts.field || data.field || {}
+      log: [], cards: [], acts: {}, stageSeen: -1, phase: 'play', result: null, field: opts.field || data.field || {}
     };
     Object.keys(data.resources).forEach(function (k) { g.res[k] = data.resources[k].start; });
     startMonth(g);
@@ -195,6 +373,26 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
       g.waiting[id] = Math.max(0, n);
     });
   }
+  /* ---------- 階段（選填）：data.stages = [{id,name,months:[a,b],blurb,icon}] ---------- */
+  function stageIndex(g) {
+    var st = g.data.stages || [];
+    for (var i = 0; i < st.length; i++) if (g.month >= st[i].months[0] && g.month <= st[i].months[1]) return i;
+    return -1;
+  }
+  function unlocksOf(g, i) {
+    var st = (g.data.stages || [])[i]; if (!st) return [];
+    return g.data.actions.filter(function (a) { return a.unlock_month && a.unlock_month >= st.months[0] && a.unlock_month <= st.months[1]; })
+      .map(function (a) { return a.label; });
+  }
+  function pushStageCard(g) {
+    var i = stageIndex(g);
+    if (i < 0 || i === g.stageSeen) return;
+    g.stageSeen = i;
+    var st = g.data.stages[i];
+    g.cards.push({ kind: 'stage', id: 'stage' + i, n: i + 1, of: g.data.stages.length, title: st.name, text: st.blurb || '', icon: st.icon || '📜',
+                   unlocks: unlocksOf(g, i), month: g.month, phase: 'start', tag: '', delta: {}, lines: [] });
+  }
+  function diffRes(a, b) { var d = {}; Object.keys(b).forEach(function (k) { if (b[k] !== a[k]) d[k] = b[k] - a[k]; }); return d; }
   function runEvents(g, phase) {
     (g.data.events || []).forEach(function (ev) {
       if ((ev.phase || 'start') !== phase) return;
@@ -204,7 +402,10 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
       if (ev.p != null && g.rng() >= ev.p) return;
       g.fired[ev.id] = true;
       say(g, ev.title + '：' + ev.text, ev.kind || 'event', ev.tag);
+      var r0 = clone(g.res), l0 = g.log.length;
       apply(g, ev.effects, {});
+      g.cards.push({ kind: 'event', id: ev.id, title: ev.title, text: ev.text, icon: ev.icon || '', tag: ev.tag || '', month: g.month, phase: phase,
+                     delta: diffRes(r0, g.res), lines: g.log.slice(l0).map(function (x) { return { text: x.text, kind: x.kind }; }) });
     });
   }
   function checkFail(g) {
@@ -214,7 +415,7 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
       if (test(g, fc[i].cond)) {
         g.phase = 'ended';
         g.result = { id: fc[i].id, title: fc[i].title, text: fc[i].text, win: false, early: true,
-                     passed: [], checks: [], score: 0 };
+                     passed: [], checks: [], score: 0, total: (g.data.finale.checks || []).length, month: g.month, acts: g.acts };
         return;
       }
     }
@@ -223,20 +424,26 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
     g.slotsLeft = g.data.meta.slots_per_month;
     g.used = {};
     arrivals(g);
+    pushStageCard(g);
     if (g.field && g.field.interview_line) {
       say(g, '廟祝說：「' + g.field.interview_line + '」', 'field', '田野');
     }
     runEvents(g, 'start');
     checkFail(g);
   }
-  function endMonth(g) {
-    if (g.phase !== 'play') return;
-    runEvents(g, 'end');
+  function upkeep(g) {      // 固定開銷與自然散去（resources 模組用）
     apply(g, g.data.upkeep, {});
     Object.keys(g.data.resources).forEach(function (k) {
       var dp = g.data.resources[k].decay_pct;
       if (dp) { g.res[k] = Math.floor(g.res[k] * (1 - dp / 100)); clampRes(g, k); }
     });
+  }
+  function endMonth(g) {
+    if (g.phase !== 'play') return;
+    var rep0 = clone(g.res);
+    runEvents(g, 'end');
+    upkeep(g);
+    g.report = { month: g.month, before: rep0, after: clone(g.res) };
     (g.data.reset_counters_monthly || []).forEach(function (c) { g.counters[c] = 0; });
     checkFail(g);
     if (g.phase !== 'play') return;
@@ -261,7 +468,7 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
     }
     g.phase = 'ended';
     g.result = { id: pick.id, title: pick.title, text: pick.text, win: !!pick.win, early: false,
-                 passed: passed, checks: checks, score: passed.length };
+                 passed: passed, checks: checks, score: passed.length, total: f.checks.length, month: g.month, acts: g.acts };
   }
 
   /* ---------- 玩家動作 ---------- */
@@ -269,6 +476,7 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
     if (g.phase !== 'play') return { ok: false, why: '這一局結束了', n: 0 };
     if (a.slots > g.slotsLeft) return { ok: false, why: '這個月的時辰用完了', n: 0 };
     if (a.once_per_month && g.used[a.id]) return { ok: false, why: '這個月已經做過了', n: 0 };
+    if (a.unlock_month && g.month < a.unlock_month) return { ok: false, why: '第 ' + a.unlock_month + ' 個月起才能做', n: 0, locked: true };
     var n = 0;
     if (a.target) {
       n = Math.min(a.cap || 99, g.waiting[a.target] || 0);
@@ -280,7 +488,7 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
   function legal(g) {
     return g.data.actions.map(function (a) {
       var s = actionState(g, a);
-      return { id: a.id, ok: s.ok, why: s.why, n: s.n, def: a };
+      return { id: a.id, ok: s.ok, why: s.why, n: s.n, locked: !!s.locked, def: a };
     });
   }
   function act(g, id) {
@@ -290,6 +498,7 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
     if (!s.ok) return { ok: false, why: s.why };
     var before = g.log.length;
     g.slotsLeft -= a.slots;
+    g.acts[a.id] = (g.acts[a.id] || 0) + 1;
     if (a.once_per_month) g.used[a.id] = true;
     if (a.target) g.waiting[a.target] -= s.n;
     say(g, a.log || a.label, 'act', '');
@@ -336,7 +545,7 @@ details{margin:8px 0} summary{cursor:pointer;min-height:44px;display:flex;align-
     return errs;
   }
 
-  return { create: create, legal: legal, act: act, endMonth: endMonth, validate: validate, test: test, clone: clone };
+  return { apply: apply, upkeep: upkeep, runEvents: runEvents, checkFail: checkFail, finale: finale, startMonth: startMonth, endMonth: endMonth, stageIndex: stageIndex, create: create, legal: legal, act: act, validate: validate, test: test, clone: clone };
 });
 
 </script>
@@ -349,14 +558,17 @@ var DATA = {
   skin: JSON.parse(document.getElementById('data-skin').textContent)
 };
 var REMIX = JSON.parse(document.getElementById('data-remix').textContent);
-var S = { mode: 'culture', g: null, lastDelta: '', played: { culture: null, skin: null }, judged: null,
-          showRemix: false, jsonOpen: false, jsonMsg: null, sim: null, muted: true, startedOnce: false };
+var S = { mode: 'culture', g: null, played: { culture: null, skin: null }, judged: null,
+          showRemix: false, jsonOpen: false, jsonMsg: null, sim: null, muted: true, startedOnce: false,
+          queue: [], flash: null, toast: null, mood: '', tipSeen: false, logAll: false, focusAct: null, recorded: {}, best: null };
 
 function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 function seedFromUrl() { var m = /[?&]seed=(\d+)/.exec(location.search); return m ? parseInt(m[1], 10) : null; }
+function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 私密模式或被擋：不影響遊戲 */ } }
 
 /* ---------- 聲音：全部用 Web Audio 現場合成；預設靜音，按了才建立 AudioContext ---------- */
-var AC = null, master = null;
+var AC = null, master = null, bgmTimer = null;
 function ensureAudio() {
   if (AC || S.muted) return;
   try { AC = new (window.AudioContext || window.webkitAudioContext)(); master = AC.createGain(); master.gain.value = 0.2; master.connect(AC.destination); } catch (e) { AC = null; }
@@ -383,7 +595,84 @@ function sfx(kind) {
   if (kind === 'good') cul ? (tone(392, 0.25, 'triangle', 0.4), tone(523, 0.3, 'triangle', 0.4, 0.12), tone(659, 0.4, 'triangle', 0.4, 0.24)) : (tone(523, 0.12, 'square', 0.2), tone(784, 0.15, 'square', 0.2, 0.12));
   if (kind === 'bad') cul ? (tone(196, 0.4, 'sawtooth', 0.3, 0, 120)) : tone(220, 0.25, 'square', 0.2);
   if (kind === 'event') cul ? gong(196, 1.6) : tone(440, 0.12, 'square', 0.2);
+  if (kind === 'card') cul ? (tone(660, 0.12, 'triangle', 0.3), tone(880, 0.18, 'triangle', 0.3, 0.1)) : tone(600, 0.08, 'square', 0.15);
+  if (kind === 'stage') cul ? (gong(147, 2.4), tone(294, 0.5, 'triangle', 0.3, 0.3), tone(392, 0.7, 'triangle', 0.3, 0.6)) : tone(330, 0.3, 'square', 0.2);
 }
+var PENTA = [262, 294, 330, 392, 440, 523], bgmI = 0;
+function bgmOn() {      // 很輕的背景音：五聲音階隨機漫步，只有開聲音才會響
+  if (bgmTimer || S.muted) return;
+  bgmTimer = setInterval(function () {
+    if (S.muted || !AC) return;
+    bgmI = Math.max(0, Math.min(PENTA.length - 1, bgmI + Math.floor(Math.random() * 3) - 1));
+    tone(PENTA[bgmI] / (S.mode === 'culture' ? 2 : 1), 1.6, 'sine', 0.06);
+  }, 1900);
+}
+function bgmOff() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; } }
+
+
+/* ============ 機制模組（每個機制各自獨立；對外只有 init(cfg, root)、step(state, action)、render(state)） ============
+   八個模組名（與 Figma 端、其他樣板同名）：核心動作、資源計分、時間回合、空間、角色、事件選擇、勝負、回饋
+   actions    核心動作   接待上門的人、廟務          讀 JSON：actions、customers
+   resources  資源計分   資源、固定開銷、散去         讀 JSON：resources、upkeep、flags、counters
+   time       時間回合   月份、階段、來客            讀 JSON：meta、stages（選填）、calendar、field（選填）
+   space      空間       廟埕插畫（隨廟況、香火變）  讀 JSON：meta
+   characters 角色       在等的人、三位神明          讀 JSON：customers
+   events     事件選擇   事件卡（隨機、有條件）      讀 JSON：events
+   verdict    勝負       失敗條件、結局分級          讀 JSON：fail_conditions、finale
+   feedback   回饋       數值動畫、提示、月結算      讀 JSON：meta、resources、finale（只取目標線）
+   JSON 末端 compose 宣告每個模組用哪個變體（W12 拼接用，現在只是宣告）。
+   ※ 底層規則運算在 SimEngine；各模組的 step 呼叫它自己負責的那一段。換別的樣板的模組時，只要保留這三個函式。 */
+function slice(cfg, keys) {
+  var o = {};
+  keys.forEach(function (k) { var opt = k.charAt(0) === '?', key = opt ? k.slice(1) : k; if (key in cfg) o[key] = cfg[key]; else if (!opt) throw new Error('資料檔缺少「' + key + '」這一段'); });
+  return o;
+}
+function defMod(name, reads, impl) {
+  var m = { name: name, reads: reads, cfg: null, root: null, init: function (cfg, root) { this.cfg = slice(cfg, this.reads); this.root = root || null; return this; } };
+  Object.keys(impl).forEach(function (k) { m[k] = impl[k]; });
+  return m;
+}
+var MOD = {
+  time: defMod('time', ['meta', '?stages', 'calendar', '?field'], {
+    step: function (g, a) { if (a.type === 'endMonth') E.endMonth(g); else if (a.type === 'start') E.startMonth(g); return g; },
+    render: function (g) { return stageBarHtml(g); },
+    renderCard: function (c) { return stageCardInner(c); }
+  }),
+  resources: defMod('resources', ['resources', 'upkeep', 'flags', 'counters'], {
+    step: function (g, a) { if (a.type === 'effects') E.apply(g, a.effects, { n: a.n || 0 }); else if (a.type === 'upkeep') E.upkeep(g); return g; },
+    render: function (g) { return ''; },
+    renderCard: function (c) { return reportCardInner(c); }
+  }),
+  actions: defMod('actions', ['actions', 'customers'], {
+    step: function (g, a) { return E.act(g, a.id); },
+    render: function (g) { return actHtml(g); },
+    renderQueue: function (g) { return MOD.characters.render(g); }
+  }),
+  space: defMod('space', ['meta'], {
+    step: function (g, a) { return a; },
+    render: function (g, extra) { return sceneOf(g, extra); }
+  }),
+  characters: defMod('characters', ['customers'], {
+    step: function (g, a) { return a; },
+    render: function (g) { return waitHtml(g); }
+  }),
+  events: defMod('events', ['events'], {
+    step: function (g, a) { E.runEvents(g, a.phase); return g; },
+    render: function (g) { return logHtml(g); },
+    renderCard: function (c) { return eventCardInner(c); }
+  }),
+  verdict: defMod('verdict', ['fail_conditions', 'finale'], {
+    step: function (g, a) { if (a.type === 'fail') E.checkFail(g); else if (a.type === 'finale') E.finale(g); return g; },
+    render: function (g) { return endHtml(g); }
+  }),
+  feedback: defMod('feedback', ['meta', 'resources', 'finale'], {
+    step: function (g, a) { return a; },
+    render: function (g) { return hudHtml(g); },
+    scene: function (g, extra) { return MOD.space.render(g, extra); },
+    chips: function (delta) { return chipsHtml(delta, this.cfg); }
+  })
+};
+function initModules(d) { var root = document.getElementById('app'); Object.keys(MOD).forEach(function (k) { MOD[k].init(d, root); }); }
 
 /* ---------- 開始／重來 ---------- */
 function startGame(mode) {
@@ -392,13 +681,18 @@ function startGame(mode) {
   var d = DATA[mode];
   var errs = E.validate(d);
   if (errs.length) { S.jsonMsg = { err: '這份資料檔有問題，沒辦法開始：\n' + errs.join('\n') }; S.g = null; render(); return; }
+  try { initModules(d); } catch (e) { S.jsonMsg = { err: String(e.message) }; S.g = null; render(); return; }
   S.g = E.create(d, { seed: S.startedOnce ? null : seedFromUrl() });
-  S.startedOnce = true; S.lastDelta = ''; S.logAll = false;
+  S.startedOnce = true; S.logAll = false; S.flash = null; S.toast = null; S.last = null; S.mood = '';
+  S.queue = S.g.cards.splice(0);
+  S.best = lsGet('simbest-' + mode);
   render();
 }
 function snap(g) { return JSON.parse(JSON.stringify(g.res)); }
-function deltaText(a, b, data) {
-  return Object.keys(b).map(function (k) { var d = b[k] - a[k]; return d ? data.resources[k].icon + data.resources[k].label + (d > 0 ? ' +' : ' ') + d : ''; }).filter(Boolean).join('　');
+function diff(a, b) { var d = {}; Object.keys(b).forEach(function (k) { if (b[k] !== a[k]) d[k] = b[k] - a[k]; }); return d; }
+function chipsHtml(delta, data) {
+  var ks = Object.keys(delta || {}); if (!ks.length) return '';
+  return '<div class="chips">' + ks.map(function (k) { var r = data.resources[k], v = delta[k]; return '<span class="' + (v > 0 ? 'up' : 'dn') + '">' + r.icon + ' ' + esc(r.label) + ' ' + (v > 0 ? '+' : '−') + Math.abs(v) + '</span>'; }).join('') + '</div>';
 }
 
 /* ---------- 內建的機器玩家：試跑 100 局用 ---------- */
@@ -430,19 +724,90 @@ function simulate(data, bot, n) {
   return { win: Math.round(1000 * win / n) / 10, ends: ends };
 }
 
-/* ---------- 畫面 ---------- */
+/* ---------- 插畫：用色塊畫的廟（隨資源改變：屋瓦破洞、香煙、冠、天氣） ---------- */
+function sceneSvg(o) {
+  var cul = o.culture !== false;
+  var sky = ['var(--pal-f6e7c8)', 'var(--pal-d9ccb2)', 'var(--pal-6b7886)'][o.weather || 0]; if (o.sun) sky = 'var(--pal-ffe2a8)';
+  var ground = cul ? 'var(--pal-b79a6b)' : 'var(--pal-9aa7b4)', wall = cul ? 'var(--pal-b5392c)' : 'var(--pal-6f8fb3)', roof = cul ? 'var(--pal-3d2c22)' : 'var(--pal-34475e)';
+  var s = '<svg class="scene" viewBox="0 0 320 180" role="img" aria-label="' + esc(o.label || '小上帝廟的畫面') + '" xmlns="http://www.w3.org/2000/svg">';
+  s += '<rect width="320" height="180" fill="' + sky + '"/>';
+  if ((o.weather || 0) === 0 || o.sun) s += '<circle cx="268" cy="34" r="' + (o.sun ? 20 : 13) + '" fill="var(--pal-ffd36b)"/>';
+  if ((o.weather || 0) >= 1) s += '<ellipse cx="62" cy="34" rx="40" ry="12" fill="' + (o.weather === 2 ? 'var(--pal-4b5560)' : 'var(--pal-efe6d3)') + '"/><ellipse cx="96" cy="28" rx="28" ry="10" fill="' + (o.weather === 2 ? 'var(--pal-56616c)' : 'var(--pal-f7f0e0)') + '"/><ellipse cx="248" cy="40" rx="38" ry="11" fill="' + (o.weather === 2 ? 'var(--pal-4b5560)' : 'var(--pal-efe6d3)') + '"/>';
+  if (o.weather === 2) { for (var i = 0; i < 26; i++) { var x = (i * 37) % 330, y = (i * 53) % 150; s += '<line x1="' + x + '" y1="' + y + '" x2="' + (x - 6) + '" y2="' + (y + 14) + '" stroke="var(--pal-dbe4ee)" stroke-width="1.4" opacity=".7"/>'; } }
+  s += '<rect y="148" width="320" height="32" fill="' + ground + '"/>';
+  if (o.collapsed) {
+    s += '<rect x="70" y="124" width="180" height="26" fill="' + wall + '"/><polygon points="52,134 138,114 188,142 270,126 262,150 60,150" fill="' + roof + '"/>';
+    s += '<rect x="96" y="140" width="22" height="8" fill="var(--pal-6a4a2e)" transform="rotate(-18 96 140)"/><rect x="200" y="138" width="26" height="8" fill="var(--pal-6a4a2e)" transform="rotate(14 200 138)"/><rect x="150" y="144" width="14" height="6" fill="var(--pal-4a3220)"/>';
+  } else {
+    s += '<rect x="70" y="96" width="180" height="54" fill="' + wall + '"/>';
+    s += '<polygon points="46,100 160,50 274,100 256,104 160,62 64,104" fill="' + roof + '"/><polygon points="64,104 160,62 256,104 256,98 160,56 64,98" fill="' + roof + '"/>';
+    s += '<rect x="148" y="46" width="24" height="8" rx="3" fill="' + (cul ? 'var(--pal-b8861b)' : 'var(--pal-8895a3)') + '"/>';
+    var gaps = [[104, 86], [214, 86], [132, 72], [186, 72], [160, 64]], dmg = Math.max(0, Math.min(5, Math.round((100 - o.repair) / 16)));
+    for (var j = 0; j < dmg; j++) s += '<rect x="' + gaps[j][0] + '" y="' + gaps[j][1] + '" width="13" height="8" fill="' + sky + '" transform="rotate(' + (gaps[j][0] < 160 ? -12 : 12) + ' ' + gaps[j][0] + ' ' + gaps[j][1] + ')"/>';
+    if (o.repair < 40) s += '<path d="M92 104 L100 122 L94 134 L104 146" stroke="var(--pal-2b1a12)" stroke-width="2" fill="none"/><path d="M226 106 L218 120 L226 136" stroke="var(--pal-2b1a12)" stroke-width="2" fill="none"/>';
+    s += '<rect x="138" y="108" width="44" height="42" rx="3" fill="var(--pal-2b1a12)"/><rect x="144" y="114" width="32" height="36" fill="var(--pal-4a3220)"/>';
+    var gl = 0.25 + Math.min(1, o.incense / 60) * 0.6;
+    s += '<circle cx="108" cy="116" r="' + (13 + o.incense / 12) + '" fill="var(--pal-ffcf6b)" opacity="' + (gl * 0.5) + '"/><circle cx="212" cy="116" r="' + (13 + o.incense / 12) + '" fill="var(--pal-ffcf6b)" opacity="' + (gl * 0.5) + '"/>';
+    s += '<circle cx="108" cy="116" r="8" fill="var(--pal-e5533d)"/><circle cx="212" cy="116" r="8" fill="var(--pal-e5533d)"/>';
+  }
+  s += '<rect x="226" y="148" width="22" height="12" rx="2" fill="var(--pal-8a6a2e)"/>';
+  var sm = o.incense >= 65 ? 3 : o.incense >= 40 ? 2 : o.incense >= 15 ? 1 : 0;
+  for (var k = 0; k < sm; k++) s += '<path d="M' + (231 + k * 6) + ' 148 q-6 -12 0 -22 q6 -10 0 -20" stroke="var(--pal-ffffff)" stroke-width="2.5" fill="none" opacity="' + (0.8 - k * 0.15) + '"/>';
+  s += '<rect x="34" y="136" width="24" height="26" rx="3" fill="var(--pal-9b7a46)"/><rect x="37" y="' + (160 - Math.min(20, o.rice * 2)) + '" width="18" height="' + Math.min(20, o.rice * 2) + '" fill="var(--pal-f7f0d8)"/>';
+  function person(x, body, hat) {
+    var t = '<rect x="' + (x - 9) + '" y="130" width="18" height="30" rx="5" fill="' + body + '"/><circle cx="' + x + '" cy="124" r="8" fill="var(--pal-f1c9a0)"/>';
+    return t + (hat || '');
+  }
+  if (o.kz !== false) { s += person(118, 'var(--pal-3a6ea5)'); s += person(202, 'var(--pal-4a8a56)'); }
+  var crown = o.crown === 'pawned' ? '<path d="M152 122 l-4 10 M160 116 l0 12 M168 122 l4 10" stroke="var(--pal-2b1a12)" stroke-width="2"/>' : (o.crown === 'worn' ? '<rect x="151" y="109" width="18" height="7" rx="2" fill="var(--pal-e0b04a)"/><rect x="156" y="104" width="8" height="6" fill="var(--pal-e0b04a)"/>' : '');
+  s += person(160, 'var(--pal-c9372c)', crown);
+  return s + '</svg>';
+}
+function weatherOf(g) { var m = g.month, M = MOD.time.cfg.meta.months; return m >= M ? 2 : (m >= M - 1 ? 1 : 0); }
+function sceneOf(g, extra) {
+  var o = { repair: g.res.repair, incense: g.res.incense || 0, rice: g.res.rice || 0, crown: g.flags.crown, kz: g.flags.kangzhao !== 'gone', weather: weatherOf(g), culture: S.mode === 'culture', label: '小上帝廟：廟況 ' + g.res.repair };
+  for (var k in (extra || {})) o[k] = extra[k];
+  return sceneSvg(o);
+}
+
+/* ---------- 畫面零件 ---------- */
+var AVC = ['var(--pal-e0786b)', 'var(--pal-6b9be0)', 'var(--pal-7cbf7c)', 'var(--pal-e0b24f)', 'var(--pal-a77ce0)', 'var(--pal-58bdb7)'];
+function goalsOf(d) {
+  var m = {}; ((d.finale && d.finale.checks) || []).forEach(function (c) { if (c.cond && c.cond[0] === 'res' && c.cond[2] === '>=') m[c.cond[1]] = Math.min(m[c.cond[1]] || 9999, c.cond[3]); });
+  return m;
+}
 function resHtml(g) {
-  var d = g.data;
+  var d = MOD.feedback.cfg, goals = goalsOf(d);
   return '<div class="res">' + Object.keys(d.resources).map(function (k) {
-    var r = d.resources[k], low = (k === 'rice' && g.res[k] < 3);
-    return '<div class="c' + (low ? ' low' : '') + '" title="' + esc(r.note || '') + '"><span>' + r.icon + ' ' + esc(r.label) + '</span><b>' + g.res[k] + '</b></div>';
+    var r = d.resources[k], low = (k === 'rice' && g.res[k] < 3), v = g.res[k];
+    var scale = r.max <= 100 ? r.max : Math.max(60, goals[k] ? goals[k] * 1.5 : 60);
+    var pct = Math.max(0, Math.min(100, 100 * v / scale)), cls = (goals[k] ? (v >= goals[k] ? '' : (v >= goals[k] * 0.6 ? 'mid' : 'lo')) : '');
+    var tick = goals[k] ? '<u style="left:' + Math.min(100, 100 * goals[k] / scale) + '%" title="結局檢查線：' + goals[k] + '"></u>' : '';
+    var fl = S.flash && S.flash[k] ? '<span class="fl ' + (S.flash[k] > 0 ? 'up' : 'dn') + '">' + (S.flash[k] > 0 ? '+' : '−') + Math.abs(S.flash[k]) + '</span>' : '';
+    return '<div class="c' + (low ? ' low' : '') + '" title="' + esc(r.note || '') + '"><span class="l">' + r.icon + ' ' + esc(r.label) + '</span><b>' + v + '</b>' + fl + '<div class="bar"><i class="' + cls + '" style="width:' + pct + '%"></i>' + tick + '</div></div>';
   }).join('') + '</div>';
 }
+function stageBarHtml(g) {
+  var d = MOD.time.cfg, M = d.meta.months, st = d.stages || [], si = E.stageIndex(g), pips = '';
+  for (var m = 1; m <= M; m++) {
+    var sx = 0; for (var i = 0; i < st.length; i++) if (m >= st[i].months[0] && m <= st[i].months[1]) sx = i;
+    pips += '<div class="pip s' + sx + (m < g.month ? ' done' : '') + (m === g.month ? ' cur' : '') + '"></div>';
+  }
+  pips += '<div class="pip tf last' + (g.phase === 'ended' ? ' cur' : '') + '"></div>';
+  var nm = si >= 0 ? st[si].icon + ' ' + esc(st[si].name) : '第 ' + g.month + ' 個月';
+  return '<div class="stagebar"><div class="nm"><b>' + nm + '</b><span class="note">第 ' + Math.min(g.month, M) + ' / ' + M + ' 個月</span></div><div class="track">' + pips + '</div><div class="monthlbl"><span>開店</span><span>' + esc(d.meta.finale_label || '最後一夜') + ' 🌀</span></div></div>';
+}
+function hudHtml(g) {
+  var d = MOD.feedback.cfg, n = d.meta.slots_per_month;
+  var cls = 'hud' + (S.mood ? ' ' + S.mood : '');
+  return '<div class="' + cls + '"><div class="hd"><b>第 ' + Math.min(g.month, d.meta.months) + ' 個月</b><span class="dots" aria-label="剩 ' + g.slotsLeft + ' 個時辰">' + '●'.repeat(g.slotsLeft) + '<i>' + '●'.repeat(Math.max(0, n - g.slotsLeft)) + '</i></span></div>' + resHtml(g) + '</div>';
+}
 function waitHtml(g) {
-  var d = g.data;
+  var d = MOD.characters.cfg, idx = 0;
   return '<div class="wait">' + Object.keys(d.customers).map(function (k) {
-    var c = d.customers[k], n = g.waiting[k] || 0;
-    return '<div class="w' + (n ? '' : ' zero') + '"><span>' + c.icon + '</span><div><b>' + esc(c.label) + ' × ' + n + '</b><small>' + esc(c.want) + '</small></div></div>';
+    var c = d.customers[k], n = g.waiting[k] || 0, col = AVC[(idx++) % AVC.length];
+    var tk = ''; for (var i = 0; i < Math.min(n, 6); i++) tk += '<i style="background:' + col + '"></i>';
+    return '<div class="cust' + (n ? '' : ' zero') + '"><span class="av" style="background:color-mix(in srgb,' + col + ' 28%,transparent)">' + c.icon + '</span><div><b>' + esc(c.label) + ' × ' + n + (n ? '<span class="tokens">' + tk + '</span>' : '') + '</b><small>' + esc(c.want) + '</small></div></div>';
   }).join('') + '</div>';
 }
 function actHtml(g) {
@@ -450,11 +815,14 @@ function actHtml(g) {
   return groups.map(function (gr) {
     var items = L.filter(function (x) { return gr[1](x); });
     if (!items.length) return '';
-    return '<h2>' + gr[0] + '</h2><div class="opts">' + items.map(function (x) {
-      var a = x.def, slot = a.slots ? a.slots + ' 個時辰' : '不佔時辰';
+    var live = items.filter(function (x) { return !x.locked; }), lock = items.filter(function (x) { return x.locked; });
+    function btn(x) {
+      var a = x.def, slot = a.slots ? '●'.repeat(a.slots) + ' ' + a.slots + ' 個時辰' : '不佔時辰';
       var who = a.target && x.ok ? '（這次 ' + x.n + ' 戶）' : '';
-      return '<button data-act="' + esc(a.id) + '"' + (x.ok ? '' : ' disabled') + '><span class="act"><span class="t">' + esc(a.label) + who + '<span class="badge b-工坊創作">' + slot + '</span></span><span class="d">' + esc(a.desc || '') + '</span>' + (x.ok ? '' : '<span class="why">' + esc(x.why) + '</span>') + '</span></button>';
-    }).join('') + '</div>';
+      var lk = x.locked ? '🔒 ' : '';
+      return '<button data-act="' + esc(a.id) + '"' + (x.ok ? '' : ' disabled') + '><span class="abtn' + (x.locked ? ' locked' : '') + '"><span class="ic">' + (x.locked ? '🔒' : esc(a.icon || '🔸')) + '</span><span class="act"><span class="t">' + lk + esc(a.label) + who + '<span class="badge b-slot">' + slot + '</span></span><span class="d">' + esc(a.desc || '') + '</span>' + (x.ok ? '' : '<span class="why">' + esc(x.why) + '</span>') + '</span></span></button>';
+    }
+    return '<h2>' + gr[0] + '</h2><div class="opts">' + live.map(btn).join('') + lock.map(btn).join('') + '</div>';
   }).join('');
 }
 function logHtml(g) {
@@ -464,12 +832,47 @@ function logHtml(g) {
     return '<li class="' + esc(l.kind) + '">' + (S.logAll ? '<span class="note">第' + l.m + '月 </span>' : '') + esc(l.text) + (l.tag ? '<span class="badge b-' + esc(l.tag) + '">' + esc(l.tag) + '</span>' : '') + '</li>';
   }).join('') + '</ul>';
 }
+function toastHtml() {
+  var t = S.toast; if (!t) return '';
+  return '<div class="toast" role="status"><div class="tl">' + esc(t.title) + '</div>' + t.lines.map(function (l) { return '<div class="ln ' + esc(l.kind) + '">' + esc(l.text) + '</div>'; }).join('') + chipsHtml(t.delta, MOD.feedback.cfg) + '</div>';
+}
+function cardHtml(c, g) {
+  var h = '<div class="scrim"><div class="pop" role="dialog" aria-modal="true" aria-label="' + esc(c.title || '月結算') + '">';
+  h += c.kind === 'stage' ? MOD.time.renderCard(c) : c.kind === 'report' ? MOD.resources.renderCard(c) : MOD.events.renderCard(c);
+  return h + '</div></div>';
+}
+function stageCardInner(c) {
+  var h = '<div class="band st' + (c.n - 1) + '"><div class="big">' + esc(c.icon) + '</div><div class="kicker">第 ' + c.n + ' 幕 / 共 ' + c.of + ' 幕</div><h3>' + esc(c.title) + '</h3></div><div class="bd"><p>' + esc(c.text) + '</p>';
+  if (c.unlocks && c.unlocks.length) h += '<div class="unl">🔓 這一幕新開放：' + c.unlocks.map(esc).join('、') + '</div>';
+  return h + '<button class="primary" id="cardbtn" data-act="__card">' + (c.n === 1 ? '開始第一個月' : '進入這一幕') + '</button></div>';
+}
+function reportCardInner(c) {
+  var d = MOD.resources.cfg, up = d.upkeep && d.upkeep[0] && d.upkeep[0].add, notes = [];
+  if (up) notes.push('固定開銷：' + Object.keys(up).map(function (k) { return d.resources[k].label + ' ' + (up[k] > 0 ? '+' : '−') + Math.abs(up[k]); }).join('、'));
+  Object.keys(d.resources).forEach(function (k) { if (d.resources[k].decay_pct) notes.push(d.resources[k].label + '散去 ' + d.resources[k].decay_pct + '%'); });
+  return '<div class="band rp"><div class="big">📒</div><div class="kicker">月底</div><h3>第 ' + c.month + ' 個月結算</h3></div><div class="bd"><table class="rtab">' + Object.keys(d.resources).map(function (k) {
+    var a = c.before[k], b = c.after[k], dd = b - a;
+    return '<tr><td>' + d.resources[k].icon + ' ' + esc(d.resources[k].label) + '</td><td>' + a + ' → <b>' + b + '</b> <span class="' + (dd > 0 ? 'up' : dd < 0 ? 'dn' : '') + '">' + (dd ? '(' + (dd > 0 ? '+' : '−') + Math.abs(dd) + ')' : '') + '</span></td></tr>';
+  }).join('') + '</table><p class="note">' + esc(notes.join('；')) + '</p><button class="primary" id="cardbtn" data-act="__card">' + esc(c.btn) + '</button></div>';
+}
+function eventCardInner(c) {
+  var h = '<div class="band ev ' + esc(c.tag || '') + '"><div class="big">' + esc(c.icon || '📜') + '</div><div class="kicker">' + (c.phase === 'end' ? '月底的事' : '這個月的事') + (c.tag ? '　' + esc(c.tag) : '') + '</div><h3>' + esc(c.title) + '</h3></div><div class="bd"><p>' + esc(c.text) + '</p>';
+  (c.lines || []).filter(function (l) { return l.text !== c.title + '：' + c.text; }).forEach(function (l) { h += '<p class="ln-' + esc(l.kind) + '" style="margin:4px 0">' + esc(l.text) + '</p>'; });
+  return h + MOD.feedback.chips(c.delta) + '<button class="primary" id="cardbtn" data-act="__card">知道了</button></div>';
+}
 function endHtml(g) {
-  var r = g.result;
-  var h = '<div class="banner ' + (r.win ? 'win' : '') + '"><h2 style="margin-top:0">' + esc(g.data.finale.label) + '：' + esc(r.title) + '</h2><p>' + esc(r.text) + '</p>';
-  if (r.checks.length) {
-    h += '<ul class="ck">' + r.checks.map(function (c) { return '<li>' + (c.ok ? '✅ ' : '❌ ') + esc(c.label) + (c.canon ? '<div class="note">' + esc(c.canon) + '</div>' : '') + '</li>'; }).join('') + '</ul>';
-  }
+  var r = g.result, d = MOD.verdict.cfg, acts = MOD.actions.cfg.actions, tot = r.total || (r.checks || []).length;
+  var h = '<div class="banner ' + (r.win ? 'win' : '') + '">';
+  h += '<div class="scenebox" style="margin:0 0 8px">' + MOD.feedback.scene(g, { collapsed: r.id === 'fell', sun: r.win, weather: r.win ? 0 : 2, label: '結局的畫面' }) + '</div>';
+  h += '<div class="note">' + esc(d.finale.label) + '</div><h2 style="margin:2px 0 6px;border:0;padding:0;font-size:21px">' + esc(r.title) + '</h2>';
+  if (!r.early && tot) h += '<div class="stars" aria-label="達成 ' + r.score + ' / ' + tot + ' 項">' + '★'.repeat(r.score) + '<span style="opacity:.3">' + '★'.repeat(Math.max(0, tot - r.score)) + '</span></div>';
+  h += '<p>' + esc(r.text) + '</p>';
+  if (r.checks.length) h += '<ul class="ck">' + r.checks.map(function (c) { return '<li>' + (c.ok ? '✅ ' : '❌ ') + esc(c.label) + (c.canon ? '<div class="note">' + esc(c.canon) + '</div>' : '') + '</li>'; }).join('') + '</ul>';
+  var done = Object.keys(r.acts || {}).map(function (id) { var a = acts.filter(function (x) { return x.id === id; })[0]; return a ? { l: a.label, n: r.acts[id], ic: a.icon || '' } : null; }).filter(Boolean).sort(function (a, b) { return b.n - a.n; });
+  if (done.length) h += '<h2>這' + (r.early ? '段' : '半年') + '你做了</h2><div class="rec">' + done.map(function (x) { return '<span class="pill">' + esc(x.ic) + ' ' + esc(x.l) + ' ×' + x.n + '</span>'; }).join('') + '</div>';
+  var untried = acts.filter(function (a) { return !(r.acts || {})[a.id]; }).slice(0, 5);
+  if (untried.length) h += '<p class="note">這局沒試過的路：' + untried.map(function (a) { return esc(a.label); }).join('、') + '。換一種做法，結局會不一樣。</p>';
+  if (S.best) h += '<p class="best">這個版本的最好紀錄（這台裝置）：' + esc(S.best.title) + '，達成 ' + S.best.score + ' / ' + S.best.total + ' 項</p>';
   h += '<p class="note">種子 ' + g.seed + '（網址後面加 ?seed=' + g.seed + ' 可以重玩同一局）</p>';
   h += '<h2>用一句話說這局的故事</h2><p class="note">誰想要什麼？卡到了什麼？最後怎樣？（不用交，說給旁邊的人聽。）</p>';
   h += '<button class="primary" data-act="__restart">再玩一局</button></div>';
@@ -484,7 +887,7 @@ function judgeHtml() {
   var h = '<div class="banner"><h2 style="margin-top:0">比一比</h2>';
   h += '<p>你在小封神版的結果：<b>' + esc(cs.title) + '</b>；在普通經營版：<b>' + esc(sk.title) + '</b>。</p>';
   h += '<p><b>' + esc(REMIX.judge_prompt) + '</b></p><div class="opts" role="group">';
-  var opts = ['照樣好玩', '故事沒了，玩法還在', '沒什麼好玩了', '說不準'];
+  var opts = ['小封神版比較想再玩', '普通經營版比較想再玩', '兩個差不多', '說不準'];
   h += opts.map(function (o, i) { return '<button data-act="__judge' + i + '" aria-pressed="' + (S.judged === i) + '">' + o + '</button>'; }).join('') + '</div>';
   if (S.judged != null) {
     if (!S.sim) { S.sim = { culture: simulate(DATA.culture, botRandom, 300), skin: simulate(DATA.skin, botRandom, 300), cg: simulate(DATA.culture, botGeneric, 300), sg: simulate(DATA.skin, botGeneric, 300) }; }
@@ -510,36 +913,67 @@ function jsonPanel() {
   if (S.jsonMsg) h += S.jsonMsg.err ? '<p class="err">' + esc(S.jsonMsg.err) + '</p>' : '<p class="ok">' + esc(S.jsonMsg.ok) + '</p>';
   return h + '</details>';
 }
+function titleHtml(d) {
+  var goalLis = (d.finale.checks || []).map(function (c) { return '<li>' + esc(c.label) + '</li>'; }).join('');
+  var h = '<div class="hero">' + sceneSvg({ repair: 62, incense: 22, rice: 6, crown: 'worn', kz: true, weather: 0, culture: S.mode === 'culture', label: '小上帝廟的開場畫面' }) + '<div class="ttl"><b>' + esc(d.meta.title) + '</b><span>' + esc(d.meta.subtitle) + '</span></div></div>';
+  h += '<div class="card">' + (d.intro || []).map(function (p) { return '<p style="margin:6px 0">' + esc(p) + '</p>'; }).join('') + '</div>';
+  h += '<div class="card goal"><b>🎯 你的目標</b><p style="margin:4px 0">' + esc(d.meta.goal || '撐過這半年。') + '</p><p class="note" style="margin:2px 0">七月三日夜會逐項檢查：</p><ul class="ck goal" style="margin:2px 0">' + goalLis + '</ul>';
+  h += '<span class="pill">⏱ 約 ' + esc(d.meta.play_minutes || '8–12') + ' 分鐘</span><span class="pill">📅 ' + d.meta.months + ' 個月</span><span class="pill">⏳ 每月 ' + d.meta.slots_per_month + ' 個時辰</span></div>';
+  h += '<div class="card"><b>怎麼玩</b><ol class="howto"><li>每個月會有人上門、有事發生。看右邊（手機在下面）在等的人與他們要什麼。</li><li>用時辰做事：接待某一類人，或處理廟務。時辰用完、或你覺得夠了，就按「結束這個月」。</li><li>資源會此消彼長，月底還會自動扣米、舊屋瓦。每個選擇都有後果，先想一想。</li></ol></div>';
+  if (S.jsonMsg && S.jsonMsg.err) h += '<p class="err">' + esc(S.jsonMsg.err) + '</p>';
+  var best = lsGet('simbest-' + S.mode);
+  if (best) h += '<p class="best">這個版本的最好紀錄（這台裝置）：' + esc(best.title) + '，達成 ' + best.score + ' / ' + best.total + ' 項</p>';
+  return h + '<button class="primary" data-act="__restart">開始這半年</button>';
+}
 
 function render() {
   var app = document.getElementById('app'), d = DATA[S.mode], g = S.g;
   var keepJson = document.getElementById('jsonbox') ? document.getElementById('jsonbox').value : '';
+  var final = g && g.phase === 'ended' && !S.queue.length;
+  if (final && !S.recorded[S.mode + g.seed]) {      // 結局只記一次：存結果、存最好紀錄、播音效
+    S.recorded[S.mode + g.seed] = true; S.played[S.mode] = g.result;
+    var bk = 'simbest-' + S.mode, old = lsGet(bk);
+    if (!g.result.early && (!old || g.result.score > old.score)) lsSet(bk, { score: g.result.score, total: g.result.total, title: g.result.title });
+    S.best = lsGet(bk) || { score: g.result.score, total: g.result.total, title: g.result.title };
+    sfx(g.result.win ? 'good' : 'bad');
+  }
+  document.getElementById('app').classList.toggle('wide', !!g);
   var h = '<div class="top"><h1>' + esc(d.meta.title) + '</h1><button data-act="__mute" aria-pressed="' + (!S.muted) + '" aria-label="聲音開關">' + (S.muted ? '🔇 靜音' : '🔊 有聲') + '</button></div>';
-  h += '<p class="sub">' + esc(d.meta.subtitle) + '</p>';
+  if (g) h += '<p class="sub">' + esc(d.meta.label) + '　·　' + esc(d.meta.subtitle) + '</p>';
   h += '<div class="modes" role="group" aria-label="選版本"><button data-act="__m_culture" aria-pressed="' + (S.mode === 'culture') + '">' + esc(DATA.culture.meta.label) + '</button><button data-act="__m_skin" aria-pressed="' + (S.mode === 'skin') + '">' + esc(DATA.skin.meta.label) + '</button></div>';
   if (!g) {
-    h += '<div class="card">' + (d.intro || []).map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '</div>';
-    if (S.jsonMsg && S.jsonMsg.err) h += '<p class="err">' + esc(S.jsonMsg.err) + '</p>';
-    h += '<button class="primary" data-act="__restart">開始</button>';
+    h += titleHtml(d);
   } else {
-    h += '<div class="card"><div class="top"><b>第 ' + g.month + ' 個月 / 共 ' + d.meta.months + ' 個月</b><span class="dots" aria-label="剩 ' + g.slotsLeft + ' 個時辰">' + '●'.repeat(g.slotsLeft) + '○'.repeat(Math.max(0, d.meta.slots_per_month - g.slotsLeft)) + '</span></div>' + resHtml(g) + (S.lastDelta ? '<p class="note">上個月底：' + esc(S.lastDelta) + '</p>' : '') + '</div>';
+    var cardOpen = S.queue.length > 0;
+    h += '<div class="game"' + (cardOpen ? ' inert' : '') + '>' + MOD.time.render(g) + MOD.feedback.render(g);
+    h += '<div class="scenebox">' + MOD.feedback.scene(g, g.phase === 'ended' ? { weather: 2 } : null) + '<span class="cap">' + (S.mode === 'culture' ? '小上帝廟' : '小上帝廟（普通經營版）') + '</span></div>';
     if (g.phase === 'ended') {
-      h += endHtml(g);
-      h += judgeHtml();
+      h += '<div class="play" style="grid-area:play">' + (final ? MOD.verdict.render(g) + judgeHtml() : '') + '<h2>' + (S.logAll ? '全部紀錄' : '這個月發生的事') + '</h2><div class="card">' + MOD.events.render(g) + '<button class="small" data-act="__logall">' + (S.logAll ? '只看這個月' : '看全部紀錄') + '</button></div></div>';
     } else {
-      h += '<h2>現在在等的人</h2>' + waitHtml(g) + actHtml(g);
-      h += '<div style="margin-top:12px"><button class="primary" data-act="__end">結束這個月</button></div>';
+      h += '<div class="queue"><h2>現在在等的人</h2>' + MOD.actions.renderQueue(g) + '</div>';
+      h += '<div class="play">' + ((!S.tipSeen) ? '<div class="tip">💡 上面是你的資源（黑線＝七月三日夜的檢查線）。選一件事做，會用掉時辰；做完要結束這個月。人和事每個月都不一樣。</div>' : '') + MOD.actions.render(g);
+      h += '<div class="endbtn"><button class="primary" data-act="__end">結束這個月</button></div>';
+      h += '<h2>' + (S.logAll ? '全部紀錄' : '這個月發生的事') + '</h2><div class="card">' + MOD.events.render(g) + '<button class="small" data-act="__logall">' + (S.logAll ? '只看這個月' : '看全部紀錄') + '</button></div></div>';
     }
-    h += '<h2>' + (S.logAll ? '全部紀錄' : '這個月發生的事') + '</h2><div class="card">' + logHtml(g) + '<button class="small" data-act="__logall">' + (S.logAll ? '只看這個月' : '看全部紀錄') + '</button></div>';
+    h += '</div>';
+    if (cardOpen) h += cardHtml(S.queue[0], g);
+    else h += toastHtml();
   }
   h += '<h2>想自己改一改？</h2>' + (S.showRemix ? remixHtml() : '') + '<button data-act="__remix">' + (S.showRemix ? '收起「怎麼改做」' : '看「怎麼改做」') + '</button>' + jsonPanel();
   h += '<p class="foot">遊戲為示意與簡化，不是民俗儀式教學。故事取材自許丙丁《小封神》；每個事件旁的標籤說明它是「原著」、「改編」還是「工坊創作」。聲音由瀏覽器現場合成。</p>';
   app.innerHTML = h;
+  S.flash = null; S.mood = '';
   var jb = document.getElementById('jsonbox'); if (jb && keepJson) jb.value = keepJson;
-  if (g && g.phase === 'ended' && !S.played[S.mode + '_rec' + g.seed]) {
-    S.played[S.mode + '_rec' + g.seed] = true; S.played[S.mode] = g.result; sfx(g.result.win ? 'good' : 'bad');
-    render();
+  var cb = document.getElementById('cardbtn');
+  if (cb) { try { cb.focus({ preventScroll: true }); } catch (e) { cb.focus(); } }
+  else if (S.focusAct) {
+    var fb = app.querySelector('button[data-act="' + S.focusAct + '"]:not([disabled])');
+    if (fb) { try { fb.focus({ preventScroll: true }); } catch (e) { fb.focus(); } }
   }
+  S.focusAct = null;
+  var key = S.queue.length ? S.queue[0].kind + (S.queue[0].id || S.queue[0].month) : '';
+  if (key && key !== S.lastCardKey) sfx(S.queue[0].kind === 'stage' ? 'stage' : S.queue[0].kind === 'report' ? 'click' : 'card');
+  S.lastCardKey = key;
 }
 
 /* ---------- 事件 ---------- */
@@ -556,9 +990,13 @@ document.getElementById('app').addEventListener('click', function (ev) {
   var b = ev.target.closest('button'); if (!b) return;
   if (b.hasAttribute('data-copy')) { copyFrom(b.getAttribute('data-copy'), b); return; }
   var a = b.getAttribute('data-act'); if (!a) return;
-  if (a === '__mute') { S.muted = !S.muted; if (!S.muted) { ensureAudio(); if (AC && AC.state === 'suspended') AC.resume(); sfx('click'); } render(); return; }
-  if (a === '__m_culture' || a === '__m_skin') { startGame(a === '__m_skin' ? 'skin' : 'culture'); return; }
-  if (a === '__restart') { startGame(S.mode); return; }
+  if (a === '__mute') { S.muted = !S.muted; if (!S.muted) { ensureAudio(); if (AC && AC.state === 'suspended') AC.resume(); sfx('click'); bgmOn(); } else bgmOff(); render(); return; }
+  if (a === '__m_culture' || a === '__m_skin') {
+    var nm = a === '__m_skin' ? 'skin' : 'culture';
+    if (S.g) { startGame(nm); window.scrollTo(0, 0); return; }          // 玩到一半或玩完：直接開新的一局
+    S.mode = nm; document.documentElement.setAttribute('data-mode', nm === 'skin' ? 'skin' : 'culture'); render(); return;   // 還在開場畫面：只換畫面
+  }
+  if (a === '__restart') { startGame(S.mode); window.scrollTo(0, 0); return; }
   if (a === '__remix') { S.showRemix = !S.showRemix; render(); return; }
   if (a === '__logall') { S.logAll = !S.logAll; render(); return; }
   if (a.indexOf('__judge') === 0) { S.judged = parseInt(a.slice(7), 10); render(); return; }
@@ -578,26 +1016,36 @@ document.getElementById('app').addEventListener('click', function (ev) {
     } catch (e) { S.jsonMsg = { err: '試跑時出錯：' + e.message }; }
     var keep = document.getElementById('jsonbox').value; render(); document.getElementById('jsonbox').value = keep; return;
   }
-  if (!S.g) return;
+  if (a === '__card') { S.queue.shift(); render(); return; }
+  if (!S.g || S.queue.length) return;
+  S.tipSeen = true;
   if (a === '__end') {
     var before = snap(S.g); sfx('click');
-    var nLog = S.g.log.length;
-    E.endMonth(S.g);
-    S.lastDelta = deltaText(before, S.g.res, S.g.data);
-    var newer = S.g.log.slice(nLog);
-    if (newer.some(function (l) { return l.kind === 'bad'; })) sfx('bad'); else if (newer.some(function (l) { return l.kind === 'event'; })) sfx('event');
-    render(); return;
+    var m0 = S.g.month;
+    MOD.time.step(S.g, { type: 'endMonth' });
+    var all = S.g.cards.splice(0), endc = all.filter(function (c) { return c.phase === 'end'; }), rest = all.filter(function (c) { return c.phase !== 'end'; });
+    var rp = S.g.report ? { kind: 'report', id: 'rp' + m0, month: m0, before: S.g.report.before, after: S.g.report.after, last: S.g.phase !== 'play', btn: S.g.phase !== 'play' ? (S.g.result && S.g.result.early ? '看結果' : '迎接' + (MOD.time.cfg.meta.finale_label || '最後一夜')) : '進入下一個月' } : null;
+    S.queue = endc.concat(rp ? [rp] : [], rest);
+    S.toast = null;
+    var bad = endc.concat(rest).some(function (c) { return (c.lines || []).some(function (l) { return l.kind === 'bad'; }); });
+    if (bad) sfx('bad');
+    render(); window.scrollTo(0, 0); return;
   }
-  var n0 = S.g.log.length, res = E.act(S.g, a);
+  var before2 = snap(S.g), n0 = S.g.log.length, res = MOD.actions.step(S.g, { type: 'act', id: a });
   if (res.ok) {
-    var ls = S.g.log.slice(n0);
-    if (ls.some(function (l) { return l.kind === 'bad'; })) sfx('bad'); else if (ls.some(function (l) { return l.kind === 'good'; })) sfx('good'); else sfx('click');
+    var ls = S.g.log.slice(n0), dl = diff(before2, S.g.res), def = MOD.actions.cfg.actions.filter(function (x) { return x.id === a; })[0];
+    S.flash = dl; S.toast = { title: (def.icon ? def.icon + ' ' : '') + def.label, lines: ls.map(function (l) { return { text: l.text, kind: l.kind }; }), delta: dl };
+    var hasBad = ls.some(function (l) { return l.kind === 'bad'; }), hasGood = ls.some(function (l) { return l.kind === 'good'; });
+    S.mood = hasBad ? 'shake' : (hasGood ? 'glow' : '');
+    if (hasBad) sfx('bad'); else if (hasGood) sfx('good'); else sfx('click');
+    S.focusAct = a;
   }
   render();
 });
 
 window.__SIM = { S: S, E: E, DATA: DATA, simulate: simulate };   // 給自動驗收用
-startGame('culture');
+document.documentElement.setAttribute('data-mode', 'culture');
+render();
 })();
 </script>
 <!-- CT-HOOK-BEGIN -->

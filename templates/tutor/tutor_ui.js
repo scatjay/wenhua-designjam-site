@@ -37,7 +37,7 @@
     t.textContent = 'AI助教'; cx.className = 'ctx'; cx.id = 'ta-ctx'; x.id = 'ta-x'; x.type = 'button'; x.setAttribute('aria-label', '關閉AI助教'); x.textContent = '×';
     hd.appendChild(t); hd.appendChild(cx); hd.appendChild(x);
     var lock = document.createElement('p'); lock.id = 'ta-lockmsg'; lock.hidden = true;
-    var pause = document.createElement('p'); pause.id = 'ta-pause'; pause.hidden = true; pause.setAttribute('role', 'status'); pause.textContent = '助教暫停中，請先看影片或舉手。你寫的字還在框裡，過一下再按送出。';
+    var pause = document.createElement('p'); pause.id = 'ta-pause'; pause.hidden = true; pause.setAttribute('role', 'status'); pause.textContent = 'AI 助教暫停中，請先看老師放的說明影片，或舉手問老師。你寫的字還在框裡，過一下再按送出。';
     var body = document.createElement('div'); body.id = 'ta-body';
     p.appendChild(hd); p.appendChild(lock); p.appendChild(pause); p.appendChild(body);
     document.body.appendChild(fab); document.body.appendChild(p);
@@ -123,7 +123,7 @@
     p.innerHTML = '<div id="ctTags"></div><div id="ctMsg">還沒有提示。玩一玩，卡住時助教會開口；也可以隨時按「問AI助教」要一個提示。</div>' +
       '<label for="ctReply" style="font-size:14px">想回答助教的話寫這裡（只存在你的瀏覽器）</label><textarea id="ctReply" maxlength="300"></textarea>' +
       '<div class="ctRow"><button type="button" class="pri" id="ctSend">回答</button><button type="button" id="ctMore">還是卡住，多一點提示</button><button type="button" id="ctSelf">我自己想想</button></div>' +
-      '<div id="ctNote">助教只會問你問題、指出去哪裡看，不會替你寫答案。要和助教討論你的企劃，請回學習單右下角的「問AI助教」。</div>';
+      '<div id="ctNote">AI 助教只會問你問題、告訴你去哪裡看，不會替你寫答案。要討論你的單頁企劃，請回到 W11 學習單頁，點右下角的「問AI助教」。</div>';
     D.body.appendChild(p); D.setCtx('樣板：' + (S.unit || ''));
     $('ctSend').onclick = reply; $('ctMore').onclick = more; $('ctSelf').onclick = dismiss;
   }
@@ -231,16 +231,16 @@
        防順從的特徵（重複助教用語、雷同、貼上）只記錄、不顯示、不影響回饋。 */
     if (S.mode === 'B') { $('ctMsg').textContent = '已記下。' + C.nextMove(st, S.mem, { askedByStudent: true, mode: 'B', unit: S.unit }).text; return; }
     var POST_SC = ['own', 'version', 'lens', 'playtest', 'intent', 'fieldq', 'fieldcite', 'meaning'];
-    var fb = /＿/.test(txt) ? '句子裡的空格要換成你作品裡的具體東西：哪一層、哪一張、哪個數字。' :
+    var fb = /＿/.test(txt) ? '句子裡的「＿＿」要換成你遊戲裡真的有的東西，例如某個畫面、某個數字。' :
       S.cur.sc === 'own' ? '那有沒有哪一個地方，是你看了之後決定保留或不要的？那就是你的決定，把它放進「② 內容出處」，誰決定選「我」。' :
-      POST_SC.indexOf(S.cur.sc) >= 0 && lvR !== 'rule_cause' ? '寫一個你作品裡具體的地方（哪一層、哪一張、哪個數字），再寫你為什麼這樣決定。' :
+      POST_SC.indexOf(S.cur.sc) >= 0 && lvR !== 'rule_cause' ? '寫一個你遊戲裡具體的地方（例如哪個畫面、哪個數字），再寫你為什麼這樣做。' :
       lvR === 'rule_cause' ? '你講到了一條規則，也講出了「因為…所以…」。把這句放進你的判斷理由裡。' :
       lvR === 'rule' ? '你講到了規則。再補一句「因為…所以…」，說明它怎麼改變你的做法。' :
       f.idk ? '說「不知道」也可以。先回去玩一次，只看「' + ((C.TPL_BY_ID[st.tpl] || {}).card || '文化') + '」出現的那一刻。' :
-      (S.cur.sc === 'ai_review' || f.ai) ? '你提到 AI 的建議。挑一條，你怎麼確認它是對的？自己玩過、問過人，還是讀過出處？' :
-      S.cur.sc === 'source' ? '先去讀那一段，讀完用自己的話說一個你沒想到的細節。' :
+      (S.cur.sc === 'ai_review' || f.ai) ? '你提到 AI 給的建議。拿其中一條來說：你怎麼確認它是對的？是自己玩過、問過人，還是讀過資料？' :
+      S.cur.sc === 'source' ? '先回去讀你剛才點開的那張資料卡，讀完說一個你原本沒想到的細節。' :
       S.cur.sc === 'field' ? '這一格要寫你自己看到或問到的。寫下地點或對象，再寫一句你看到什麼。' :
-      '你講的比較像畫面或故事。那一刻有沒有哪條規則讓你不得不那樣做？';
+      '你講的是畫面或劇情。遊戲裡有沒有一條規則，讓玩家非那樣選不可？';
     if (f.src) fb += ' 你也回到了出處，很好——記得標明哪些是原著、哪些是你加的。';
     $('ctMsg').textContent = fb;
   }

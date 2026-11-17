@@ -37,7 +37,7 @@
     t.textContent = 'AI助教'; cx.className = 'ctx'; cx.id = 'ta-ctx'; x.id = 'ta-x'; x.type = 'button'; x.setAttribute('aria-label', '關閉AI助教'); x.textContent = '×';
     hd.appendChild(t); hd.appendChild(cx); hd.appendChild(x);
     var lock = document.createElement('p'); lock.id = 'ta-lockmsg'; lock.hidden = true;
-    var pause = document.createElement('p'); pause.id = 'ta-pause'; pause.hidden = true; pause.setAttribute('role', 'status'); pause.textContent = '助教暫停中，請先看影片或舉手。你寫的字還在框裡，過一下再按送出。';
+    var pause = document.createElement('p'); pause.id = 'ta-pause'; pause.hidden = true; pause.setAttribute('role', 'status'); pause.textContent = 'AI 助教暫停中，請先看老師放的說明影片，或舉手問老師。你寫的字還在框裡，過一下再按送出。';
     var body = document.createElement('div'); body.id = 'ta-body';
     p.appendChild(hd); p.appendChild(lock); p.appendChild(pause); p.appendChild(body);
     document.body.appendChild(fab); document.body.appendChild(p);

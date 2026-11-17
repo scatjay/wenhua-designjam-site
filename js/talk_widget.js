@@ -4,7 +4,7 @@
 (function () {
   var DB = 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', NS = 'gen-lang-client-0929530380-default-rtdb';
   var OPEN = {
-    '47602': { W11: '你的畫面裡最好玩的那一刻是什麼？' },
+    '47602': { W11: '你的遊戲裡最好玩的那一刻是什麼？' },
     '46582': { W11: '你把走讀的畫面做成網頁，你選了哪一個畫面來還原？' }
   };
   var HINTS = window.CT_HINTS || {};
@@ -69,7 +69,7 @@
     function paint() {
       log.innerHTML = ''; if (open) bubble('a', open);
       st.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t); });
-      cnt.textContent = T('已討論 {n} 輪（至少 {m} 輪才會被評；一天最多 {d} 輪）').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP + (st.granted || 0));
+      cnt.textContent = T('已聊 {n} 輪（你說一次、AI 助教回一次＝1 輪）。至少 {m} 輪老師才會評分；一天最多 {d} 輪。').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP + (st.granted || 0));
       if (st.granted) { cnt.textContent += T('（老師已幫你加開 {g} 輪）').split('{g}').join(st.granted); }
       if (st.done && !st.confirmed) showSummary();
       paintHints();
@@ -79,7 +79,7 @@
       hintBox.innerHTML = '';
       if (st.confirmed || st.done || st.editing || st.rounds >= MAX_ROUNDS) return;
       var stp = forced || (st.rounds === 0 ? curStep() : 0), hs = stp ? stepHintsOf(env, unit, stp) : []; if (!hs.length) hs = hintsOf(env, unit, st.rounds); if (!hs.length) return;
-      var p = document.createElement('p'); p.className = 'note'; p.textContent = (stp && stepHintsOf(env, unit, stp).length) ? T('你現在在第 {n} 步，可以這樣開口（點一個放進框裡，改成你自己的話再送出）：').split('{n}').join(stp) : T('不知道怎麼開口？點一個句型放進框裡，改成你自己的話再送出。'); hintBox.appendChild(p);
+      var p = document.createElement('p'); p.className = 'note'; p.textContent = (stp && stepHintsOf(env, unit, stp).length) ? T('你在第 {n} 步。不知道怎麼說，點下面一句（會放進輸入框），改成你自己的話再送出。').split('{n}').join(stp) : T('不知道怎麼說？點一個填空句放進輸入框，把＿＿換成你自己的話再送出。'); hintBox.appendChild(p);
       var row = document.createElement('div'); row.className = 'hb';
       hs.forEach(function (h) { var b = document.createElement('button'); b.type = 'button'; b.className = 'h'; b.textContent = T(h); b.onclick = function () { inp.value = h; inp.focus(); }; row.appendChild(b); });
       hintBox.appendChild(row);
@@ -88,33 +88,33 @@
       sum.innerHTML = '';
       var cd = st.card || {}, cell = function (k) { return (cd[k] || {}).text || ''; }, clr = function (k) { return (cd[k] || {}).state === 'clear'; };
       var card = document.createElement('div'); card.className = 'rc'; card.setAttribute('role', 'group');
-      var h = document.createElement('h4'); h.textContent = T('結果卡'); card.appendChild(h);
+      var h = document.createElement('h4'); h.textContent = T('助教結果卡（本週討論已完成）'); card.appendChild(h);
       function sec(title) { var b = document.createElement('b'); b.textContent = title; b.style.cssText = 'display:block;margin-top:8px'; card.appendChild(b); }
       function line(l, v) { if (!v) return; var d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.55;margin:2px 0'; d.textContent = l + '：' + v; card.appendChild(d); }
-      sec(T('你的提案（用你自己的話）'));
+      sec(T('AI 助教看到的提案（用你自己的話）'));
       line(T('一句話說你的遊戲'), st.summary); line(T('最好玩的一刻'), cell('moment')); line(T('台南的東西，在遊戲裡變成'), cell('tainan'));
-      sec(T('這週的及格線'));
+      sec(T('這週的及格線（AI 助教看到的）'));
       [[T('3 個遊戲畫面'), clr('screens')], [T('一句話說你的遊戲'), !!st.summary], [T('一個台南的東西'), clr('tainan')]].forEach(function (r) {
         var d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.7'; d.textContent = (r[1] ? '✓ ' : '－ ') + r[0] + (r[1] ? '' : T('（還缺）')); card.appendChild(d);
       });
       if (st.next_step) { sec(T('下一步建議')); var ns = document.createElement('div'); ns.style.cssText = 'font-size:15px;line-height:1.55'; ns.textContent = st.next_step; card.appendChild(ns); }
-      var meta = document.createElement('dl'), rows = [[T('代碼'), st.code || '—'], [T('完成時間'), st.at || '']];
-      rows.forEach(function (r) { var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('代碼')) dd.className = 'code'; meta.appendChild(dt); meta.appendChild(dd); });
+      var meta = document.createElement('dl'), rows = [[T('完成碼'), st.code || '—'], [T('完成時間'), st.at || '']];
+      rows.forEach(function (r) { var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('完成碼')) dd.className = 'code'; meta.appendChild(dt); meta.appendChild(dd); });
       meta.style.marginTop = '8px'; card.appendChild(meta);
-      var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = T('助教不打分數，但討論會被評分、老師會讀。'); card.appendChild(tag);
-      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張卡截圖，連同你的 Figma 連結交到 flipclass。畫面上只有代碼，不顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的框，送給助教（選填）。'); card.appendChild(tip);
+      var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = T('AI 助教不打分數，但討論會被評分、老師會讀。'); card.appendChild(tag);
+      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張「助教結果卡」截圖，連同你的 Figma 連結交到 flipclass 的 W11-2。畫面上只有完成碼，不會顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的輸入框，送給 AI 助教（選填）。'); card.appendChild(tip);
       sum.appendChild(card);
     }
     function showSummary() {
       sum.innerHTML = '<div class="sumbox"><b id="tk-sh"></b><div id="tk-s"></div><div class="row"><button type="button" id="tk-ok"></button><button type="button" class="g" id="tk-ed"></button></div></div>';
-      $('tk-sh').textContent = T('助教幫你整理成一句：'); $('tk-ok').textContent = T('對，就這樣'); $('tk-ed').textContent = T('我改一下');
+      $('tk-sh').textContent = T('AI 助教把你剛剛說的整理成一句話：'); $('tk-ok').textContent = T('對，就這樣'); $('tk-ed').textContent = T('我改一下');
       $('tk-s').textContent = st.summary;
       $('tk-ok').onclick = function () { confirmIt(st.summary); };
-      $('tk-ed').onclick = function () { inp.value = st.summary; inp.focus(); msg.textContent = T('改好之後按「送出」，就會用你改的這一句。'); st.editing = true; };
+      $('tk-ed').onclick = function () { inp.value = st.summary; inp.focus(); msg.textContent = T('改好後按「送出」，結果卡就會用你改的版本。'); st.editing = true; };
     }
     function showRequest() {
       var box = $('tk-req'); if (!box) { box = document.createElement('div'); box.id = 'tk-req'; box.className = 'row'; msg.parentNode.insertBefore(box, msg); }
-      box.innerHTML = ''; var b = document.createElement('button'); b.type = 'button'; b.textContent = T('申請加開');
+      box.innerHTML = ''; var b = document.createElement('button'); b.type = 'button'; b.textContent = T('申請多聊幾輪');
       b.onclick = function () { b.disabled = true; put('talk', '__REQUEST_MORE__').then(function () { box.innerHTML = ''; var n = document.createElement('span'); n.className = 'note'; n.textContent = T('申請已送出，老師看到之後會回覆你。'); box.appendChild(n); }).catch(function () { b.disabled = false; msg.textContent = T('現在送不出去，過一下再按一次。'); }); };
       box.appendChild(b);
     }
@@ -141,7 +141,7 @@
       if (!text) { msg.textContent = T('先寫一兩句再送出。'); return; }
       if (st.editing) { confirmIt(text); inp.value = ''; return; }
       if (!st.confirmed && st.rounds >= MAX_ROUNDS) { msg.textContent = T('這次討論已經滿 8 輪了。'); return; }
-      btn.disabled = true; inp.disabled = true; msg.textContent = T('助教想一下…（最多等 1 分半）');
+      btn.disabled = true; inp.disabled = true; msg.textContent = T('AI 助教想一下…（最多等 1 分半）');
       st.msgs.push({ w: 's', t: text }); inp.value = ''; forced = 0; paint(); save(); hintBox.innerHTML = '';
       put('talk', text).then(function (a) {
         st.msgs.push({ w: 'a', t: a.say }); if (!a.rule && !a.capped) st.rounds = a.n || (st.rounds + 1);
@@ -154,14 +154,14 @@
       }).catch(function (e) {
         if (DOCK) DOCK.setPause(true);
         st.msgs.pop(); inp.value = text; save(); paint();
-        msg.textContent = e && e.message === 'timeout' ? T('助教這會兒沒有回。你寫的字還在框裡，過一下再按送出。') : T('現在送不出去。你寫的字還在框裡，過一下再按送出。');
+        msg.textContent = e && e.message === 'timeout' ? T('AI 助教這會兒沒有回。你寫的字還在框裡，過一下再按送出。') : T('現在送不出去。你寫的字還在框裡，過一下再按送出。');
         btn.disabled = false; inp.disabled = false;
       });
     };
     paint();
     if (unbound) {
       inp.disabled = true; btn.disabled = true; msg.textContent = '';
-      if (DOCK) DOCK.setLock(T('尚未綁定編號：助教先鎖住，你可以先看下面的提示句。請點頁面右上角的小圓標，或重新整理頁面來綁定；綁好之後這裡就能和助教討論。'));
+      if (DOCK) DOCK.setLock(T('你還沒綁定編號，AI 助教先鎖住。請按頁面右上角的編號鈕（或重新整理頁面），登入並輸入編號。綁好就能聊了。'));
       hintBox.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
       var iv = setInterval(function () { var e = parseInt(localStorage.getItem('designjam_env'), 10); if (isFinite(e)) { clearInterval(iv); if (DOCK) DOCK.setLock(''); mount(el, DOCK); } }, 2000);
     }
@@ -178,7 +178,7 @@
     holder.setAttribute('data-unit', unit); DK.body.appendChild(holder);
     function ensure() { if (!mounted) { mounted = true; mount(holder, DK); } }
     DK.onOpen = function () { ensure(); if (!APIREF.a || !DK.panel.querySelector('#ta-ctx').textContent) DK.setCtx('目前在：第 ' + (curStep() || 1) + ' 步'); };
-    el.innerHTML = '<p class="note">' + esc(T('AI 助教在畫面右下角的「問AI助教」，還沒綁定編號也能先打開看。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開右下角助教')) + '</button>';
+    el.innerHTML = '<p class="note">' + esc(T('右下角的「問AI助教」，還沒綁定編號也能先打開看看。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開「問AI助教」')) + '</button>';
     $('tk-open').onclick = function () { DK.open(true); };
     // 每一步旁邊的「問AI助教」小鈕＋給每一步一個可以被連結的 id
     document.querySelectorAll('details.stage').forEach(function (d) {

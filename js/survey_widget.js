@@ -8,7 +8,7 @@
   var SURVEY = /*SVY*/{
     "ready": true, "version": "v3", "unit": "W11", "code": "GPS1118",
     "title": "課程自我檢核問卷（約 4 分鐘）",
-    "intro": "這份問卷想了解你平常怎麼用 AI。不計分，跟成績無關，也沒有標準答案。每一句請照你平常的情況選一個：「主要為了學分」「卡住就直接問 AI」都是很常見、很正常的答案，填了不會有任何影響。只用你的編號作答，不寫名字。大約 4 分鐘。",
+    "intro": "這份問卷想了解你平常怎麼用 AI。答案沒有對錯，你怎麼回答都不影響成績；填完（或選這次不填）就拿到 W11-1 的 3%。每一句請照你平常的情況選一個：「主要為了學分」「卡住就直接問 AI」都是很常見的答案。只用你的編號作答，不寫名字。大約 4 分鐘。",
     "ask": "這句話跟你平常的情況有多符合？",
     "scale": ["完全不符合", "不太符合", "有點符合", "相當符合", "非常符合"],
     "dims": [
@@ -106,7 +106,7 @@
     var DK = 'survey_' + SURVEY.unit + '_done';
     var ORD = makeOrder(seedFor(env)), t0 = 0;
     var TXT = {}, DIM = {}; SURVEY.dims.forEach(function (d) { DIM[d.id] = d; d.items.forEach(function (t, i) { TXT[d.id + (i + 1)] = t; }); });
-    var ans = {}, html = ['<div class="sy"><p class="note" id="sy-intro"></p><div id="sy-open" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button type="button" id="sy-yes">' + esc(T('願意填')) + '</button><button type="button" class="g" id="sy-no">' + esc(T('這次不填')) + '</button></div><div id="sy-form" hidden>'];
+    var ans = {}, html = ['<div class="sy"><p class="note" id="sy-intro"></p><div id="sy-open" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button type="button" id="sy-yes">' + esc(T('願意填')) + '</button><button type="button" class="g" id="sy-no">' + esc(T('這次不填（照樣拿完成卡）')) + '</button></div><div id="sy-form" hidden>'];
     ORD.dims.forEach(function (id, di) {
       var d = DIM[id], ks = ORD.per[id];
       html.push('<div class="dim" data-d="' + d.id + '"><h3><span class="tag">' + esc(T('第')) + ' ' + (di + 1) + '／' + SURVEY.dims.length + ' ' + esc(T('部分')) + '</span>' + esc(plain(T(d.name))) + '<span class="cnt">' + ks.length + ' ' + esc(T('題')) + '</span></h3>');
@@ -129,12 +129,12 @@
       $('sy-open').hidden = true; $('sy-form').hidden = true; $('sy-intro').hidden = true;
       var box = $('sy-done'); box.innerHTML = '';
       var card = document.createElement('div'); card.className = 'card'; card.setAttribute('role', 'group');
-      var h = document.createElement('h4'); h.textContent = T('已完成課程自我檢核問卷'); card.appendChild(h);
+      var h = document.createElement('h4'); h.textContent = T('問卷完成卡（已完成課程自我檢核問卷）'); card.appendChild(h);
       var dl = document.createElement('dl');
       [[T('完成碼'), SURVEY.code, 'code'], [T('完成時間'), at, '']].forEach(function (r) { var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[2]) dd.className = r[2]; dl.appendChild(dt); dl.appendChild(dd); });
       card.appendChild(dl); box.appendChild(card);
-      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這個畫面截圖，交到 flipclass 的 W11-1。'); box.appendChild(tip);
-      var sn = document.createElement('p'); sn.className = 'note'; sn.textContent = sent === 'skip' ? T('這次不填也算完成，不影響你。') : (sent ? T('已收到你的回答。') : T('你的回答這次沒送出去（網路或老師電腦沒開），完成碼照樣有效，不影響你。')); box.appendChild(sn);
+      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張「問卷完成卡」截圖，交到 flipclass 的 W11-1。'); box.appendChild(tip);
+      var sn = document.createElement('p'); sn.className = 'note'; sn.textContent = sent === 'skip' ? T('這次不填也算完成，不影響你。') : (sent ? T('已收到你的回答。') : T('你的回答這次沒有送出去（可能是網路問題）。完成碼照樣有效，不影響你的分數。')); box.appendChild(sn);
     }
     function remember(sent) { var at = stampNow(); try { localStorage.setItem(DK, JSON.stringify({ at: at, sent: sent })); } catch (e) { /* 存不下也沒關係 */ } return at; }
     function send(text) {

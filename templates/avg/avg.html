@@ -60,6 +60,14 @@ button{cursor:pointer}
 #cast{display:flex;gap:6px;flex-wrap:wrap}
 .cm{display:flex;flex-direction:column;align-items:center;width:62px;font-size:11px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 .av{border-radius:50%;background:rgba(255,255,255,.88);border:2px solid rgba(255,255,255,.9);display:block}
+
+.ovl{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(160deg,#3d2f22,#14161d);color:#f0e6cf;animation:fi .4s ease-out}
+.ovl h1{font-size:2.4rem;margin:.2em 0;letter-spacing:.2em}.ovl p{max-width:30em;margin:.4em 0;line-height:1.7}
+.ovl button{min-height:48px;padding:10px 28px;font-size:1.1rem;border-radius:24px;border:0;background:#e4b04a;color:#2a1c0a;font-weight:700;margin-top:16px;cursor:pointer}
+.ovl .sub{color:#e4b04a;letter-spacing:.1em}.ovl.chap{background:rgba(20,16,12,.92);cursor:pointer}.ovl.chap h2{font-size:1.6rem;letter-spacing:.15em;margin:0}
+.ovl .fig{display:flex;gap:10px;margin:14px 0}
+.cur::after{content:"▍";opacity:.6;animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:0}}
+.ach{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.ach span{border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:.9rem}.ach span.on{background:var(--accent2);color:#fff;border-color:var(--accent2)}.ach span.off{opacity:.55}
 #log{padding:10px 12px 4px}
 .ln{display:flex;gap:8px;margin:0 0 10px;align-items:flex-start;animation:fi .25s ease-out}
 .ln .who{font-size:12px;color:var(--ink2);margin-bottom:1px}
@@ -217,7 +225,10 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
     "silent": false,
     "rage": false,
     "kuixing_hung": false,
-    "rage_forced": false
+    "rage_forced": false,
+    "got_ticket": false,
+    "knows_redeem": false,
+    "shown_ticket": false
   },
   "rules": {
     "culture": {
@@ -423,6 +434,11 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
           "text": "（肚子叫了一聲，他假裝沒聽見）"
         },
         {
+          "who": "shangdi",
+          "mood": "sad",
+          "text": "颱風來得快，去得也快。人餓著，倒比風還難過。"
+        },
+        {
           "who": "narr",
           "text": "上帝爺什麼也沒說，只是看著倒下的屋樑。"
         }
@@ -511,6 +527,16 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
           "text": "兩位元帥把冠抱在懷裡，出了門。"
         },
         {
+          "who": "kang",
+          "mood": "worry",
+          "text": "（走到門口又回頭）上帝爺，這可是您上天庭要戴的冠……"
+        },
+        {
+          "who": "shangdi",
+          "mood": "normal",
+          "text": "上天庭的事，等有飯吃了再說。去吧。"
+        },
+        {
           "who": "narr",
           "text": "你摸摸袖子裡的錢袋——那是廟裡這陣子收到的香油錢，不多。"
         }
@@ -530,7 +556,7 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
             "上帝爺看看錢袋，又看看你。「不夠買米。」他說，「但本座記著了。」",
             "冠還是被拿走了。你的錢袋，只夠一頓粥。"
           ],
-          "goto": "s3_gate"
+          "goto": "s2b_pawn"
         },
         {
           "id": "advise_god",
@@ -541,7 +567,7 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
             "上帝爺嘆了一口氣：「餓著肚子，哪裡還顧得上天庭的體統。」",
             "冠還是被拿走了。"
           ],
-          "goto": "s3_gate"
+          "goto": "s2b_pawn"
         },
         {
           "id": "keep_quiet",
@@ -552,6 +578,84 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
           },
           "result": [
             "你把錢袋收回袖子裡。"
+          ],
+          "goto": "s2b_pawn"
+        }
+      ]
+    },
+    "s2b_pawn": {
+      "title": "第二幕之一　打銀街的當店",
+      "cast": [
+        "kang",
+        "zhao",
+        "you"
+      ],
+      "bg": [
+        "#8a7a4a",
+        "#3a2f22"
+      ],
+      "hint": "長輩說：東西當出去，白紙黑字的當票比嘴巴可靠。（簡化的說法）",
+      "src": [
+        {
+          "k": "原著",
+          "t": "第二回：康、趙把通天冠提往打銀街的同裕當店典借，當出五千錢。"
+        },
+        {
+          "k": "工坊創作",
+          "t": "你跟到當店、當票上的字、掌櫃的台詞與「三個月內可贖」；原著對這間當店沒有任何人物或擺設描寫。"
+        }
+      ],
+      "lines": [
+        {
+          "who": "narr",
+          "text": "你不放心，悄悄跟在康、趙後頭，走進打銀街的同裕當店。"
+        },
+        {
+          "who": "narr",
+          "text": "掌櫃把通天冠翻來覆去看了三遍，才慢吞吞地說：「銅鍍金的。五千錢，不能再多了。」"
+        },
+        {
+          "who": "kang",
+          "mood": "worry",
+          "text": "五千就五千……"
+        },
+        {
+          "who": "narr",
+          "text": "他們收下錢，掌櫃撕了一張當票，遞給康元帥。康元帥看也沒看，隨手塞進袖子。"
+        }
+      ],
+      "choices": [
+        {
+          "id": "copy_ticket",
+          "text": "趁他們不注意，把當票上的字默默記下來",
+          "tone": "good",
+          "set": {
+            "got_ticket": true
+          },
+          "result": [
+            "你把當票上的字在心裡背了一遍：同裕當店、通天冠一頂、五千錢。（遊戲設定：這個記憶之後可以當證據。）"
+          ],
+          "goto": "s3_gate"
+        },
+        {
+          "id": "ask_redeem",
+          "text": "問掌櫃：「這頂冠，要贖回來得多少錢？」",
+          "tone": "neutral",
+          "set": {
+            "knows_redeem": true
+          },
+          "result": [
+            "掌櫃撥著算盤：「本錢五千，再加一點利息。三個月內來贖，我替你留著。」（遊戲設定：贖冠的期限與利息是工坊編的。）",
+            "你把這句話記在心裡。"
+          ],
+          "goto": "s3_gate"
+        },
+        {
+          "id": "wait_outside",
+          "text": "退到店門口，等他們出來",
+          "tone": "neutral",
+          "result": [
+            "你在門口數著路過的人，什麼也沒聽見。康、趙出來時，袖子鼓鼓的，兩個人都沒說話。"
           ],
           "goto": "s3_gate"
         }
@@ -604,6 +708,10 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
         {
           "who": "narr",
           "text": "康、趙兩位元帥站在賭攤旁邊，手裡捏著用通天冠換來的錢袋。"
+        },
+        {
+          "who": "narr",
+          "text": "那個錢袋，原本是要換米的。"
         },
         {
           "who": "narr",
@@ -761,6 +869,23 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
           },
           "result": [],
           "goto": "s5_confess"
+        },
+        {
+          "id": "show_ticket",
+          "text": "拿出記下的當票：「冠是當出去的，五千錢是這個數。」",
+          "address": "shangdi",
+          "tone": "good",
+          "requires": "got_ticket",
+          "lock": "你沒有記下當票，空口無憑。",
+          "set": {
+            "truth_told": true,
+            "shown_ticket": true
+          },
+          "add": {
+            "face": -1
+          },
+          "result": [],
+          "goto": "s5_ticket"
         },
         {
           "id": "stay_silent",
@@ -958,6 +1083,87 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
         }
       ]
     },
+    "s5_ticket": {
+      "title": "第五幕之一　當票",
+      "cast": [
+        "shangdi",
+        "kang",
+        "zhao"
+      ],
+      "bg": [
+        "#7a6a4a",
+        "#2f2a22"
+      ],
+      "src": [
+        {
+          "k": "改編",
+          "t": "原著裡康、趙是最後被太上老君審判才受罰，沒有人拿當票拆穿謊話。這條路是工坊讓你先用一張當票說話。"
+        }
+      ],
+      "lines": [
+        {
+          "who": "narr",
+          "text": "你把當票上的字一個一個說給上帝爺聽：同裕當店、通天冠一頂、五千錢。"
+        },
+        {
+          "who": "narr",
+          "text": "上帝爺握劍的手停在半空。他沒有看你，慢慢轉過頭，看著兩位元帥。"
+        },
+        {
+          "who": "shangdi",
+          "mood": "normal",
+          "text": "……錢呢？"
+        },
+        {
+          "who": "zhao",
+          "mood": "sad",
+          "text": "在媽祖宮口，輸了。我們不敢說，才說是被獠牙大漢搶了。"
+        },
+        {
+          "who": "narr",
+          "text": "這一次，沒有人被當眾罵。你說的是當票上的字，不是哪個人的錯，上帝爺還撐得住。"
+        },
+        {
+          "who": "narr",
+          "if": "face<2",
+          "text": "可是上帝爺的手還在抖。你知道，他的面子快用光了。"
+        }
+      ],
+      "choices": [
+        {
+          "id": "plead_ticket",
+          "text": "替他們求情：「讓他們把錢和冠的帳慢慢還清，行嗎？」",
+          "address": "shangdi",
+          "tone": "good",
+          "requires": "offered_savings",
+          "lock": "你沒有給過香油錢，上帝爺不欠你人情，你的話他聽不進去。",
+          "set": {
+            "private_confess": true
+          },
+          "add": {
+            "face": 1,
+            "favor": -1
+          },
+          "result": [
+            "上帝爺看了你一眼，手慢慢鬆開劍柄。「……本座欠你一份情。這回，算了。帳，他們自己還。」",
+            "人情用掉了一份。"
+          ],
+          "goto": "s6_road"
+        },
+        {
+          "id": "say_no_more",
+          "text": "什麼都不再說，讓上帝爺自己決定",
+          "tone": "neutral",
+          "set": {
+            "private_confess": true
+          },
+          "result": [
+            "你退後一步。上帝爺看了康、趙很久，才開口：「起來。冠是本座叫你們去當的，錢是你們輸掉的。各擔一半。」"
+          ],
+          "goto": "s6_road"
+        }
+      ]
+    },
     "s6_road": {
       "title": "第六幕　路上遇見的人",
       "cast": [
@@ -1102,6 +1308,10 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
           "goto": "end_orig"
         },
         {
+          "if": "shown_ticket",
+          "goto": "end_ticket"
+        },
+        {
           "goto": "end_new"
         }
       ]
@@ -1204,12 +1414,77 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
         },
         {
           "who": "narr",
+          "if": "shown_ticket",
+          "text": "你拿出記下來的當票。白紙黑字，謊話站不住腳，上帝爺連劍都沒拔出來。"
+        },
+        {
+          "who": "narr",
           "text": "通天冠還躺在同裕當店的櫃台上。誰去贖？拿什麼贖？康、趙要為賭輸的事付出什麼代價？原著的答案是：他們最後被貶去採藥。但在這一條路上，由你來寫。"
+        },
+        {
+          "who": "narr",
+          "if": "knows_redeem",
+          "text": "掌櫃說過：三個月內可以贖。這個期限是你問來的，可以拿來寫下一段。"
         },
         {
           "who": "narr",
           "if": "favor>=2",
           "text": "上帝爺欠你的人情，還在一天天變重。你可以拿它換什麼？這也是可以續寫的地方。"
+        }
+      ]
+    },
+    "end_ticket": {
+      "title": "結局　白紙黑字",
+      "cast": [
+        "shangdi",
+        "zhao",
+        "kang"
+      ],
+      "bg": [
+        "#6a7f5a",
+        "#1f2a1f"
+      ],
+      "end": {
+        "title": "白紙黑字",
+        "tag": "當票的路"
+      },
+      "src": [
+        {
+          "k": "改編",
+          "t": "整個結局都是原著沒有的走向：魁星沒有被吊，謊話被一張當票拆穿。"
+        },
+        {
+          "k": "工坊創作",
+          "t": "當票的內容、上帝爺聽到後的反應，以及「各擔一半」的收場。"
+        }
+      ],
+      "lines": [
+        {
+          "who": "narr",
+          "text": "這一次，沒有人被吊在榕樹上。"
+        },
+        {
+          "who": "narr",
+          "text": "你記下的那張當票，讓整件事停在上帝爺拔劍之前：同裕當店、通天冠一頂、五千錢。謊話一說就站不住腳。"
+        },
+        {
+          "who": "shangdi",
+          "mood": "normal",
+          "text": "冠是本座叫你們去當的，錢是你們輸掉的。各擔一半。"
+        },
+        {
+          "who": "narr",
+          "if": "knows_redeem",
+          "text": "你還問過掌櫃：三個月內可以贖。這張當票，也成了贖冠的憑據。"
+        },
+        {
+          "who": "narr",
+          "if": "favor>=1",
+          "text": "上帝爺欠你的人情還在。你可以拿它換什麼？這是可以續寫的地方。"
+        },
+        {
+          "who": "narr",
+          "text": "原著裡，同一件事一路鬧到太上老君的審判；在這條路上，它在當天傍晚就收了場。你覺得，這樣的結局比較好，還是少了什麼？"
         }
       ]
     }
@@ -1507,12 +1782,23 @@ function renderFieldwork(sc){
     paint(); box.appendChild(d);
   });
 }
+function FASTMODE(){ return /[?&]fast(=|&|$)/.test(location.search); }
+var TY={el:null,full:'',timer:0};
+function finishTyping(){ if(TY.timer){ clearInterval(TY.timer); TY.timer=0; } if(TY.el){ TY.el.textContent=TY.full; TY.el.classList.remove('cur'); TY.el=null; } }
+function typeInto(el,text){
+  finishTyping();
+  if(FASTMODE()||!text||text.length<2||ui.noType){ el.textContent=text; return; }
+  TY.el=el; TY.full=text; var i=0; el.classList.add('cur'); el.textContent='';
+  TY.timer=setInterval(function(){ i+=1; el.textContent=text.slice(0,i); if(i>=text.length) finishTyping(); },24);
+}
 function addLine(l){
   var d=document.createElement('div'); var isN=(l.who==='narr');
   d.className='ln '+(isN?'narr':(l.who==='you'?'me':'say'));
-  if(isN) d.innerHTML='<div class="bubble">'+esc(l.text)+'</div>';
-  else d.innerHTML=avatar(l.who,l.mood,40)+'<div><div class="who">'+esc(nameOf(l.who))+'</div><div class="bubble">'+esc(l.text)+'</div></div>';
+  if(isN) d.innerHTML='<div class="bubble"></div>';
+  else d.innerHTML=avatar(l.who,l.mood,40)+'<div><div class="who">'+esc(nameOf(l.who))+'</div><div class="bubble"></div></div>';
   $('#log').appendChild(d);
+  typeInto(d.querySelector('.bubble'),l.text);
+  d.addEventListener('click',finishTyping);
   try{ d.scrollIntoView({block:'nearest'}); }catch(e){}
 }
 function addPick(text,tone){
@@ -1522,6 +1808,7 @@ function setActions(nodes){ var a=$('#actions'); a.innerHTML=''; nodes.forEach(f
 function goBtn(text,fn){ var b=document.createElement('button'); b.className='go'; b.textContent=text; b.onclick=function(){sfx('click');fn();}; return b; }
 
 function showScene(instant){
+  finishTyping();
   var sc=S.scenes[st.scene];
   $('#log').innerHTML=''; $('#hintbox').hidden=true; ui.hintShown=false; $('#endpanel').hidden=true;
   if(!sc){
@@ -1530,6 +1817,7 @@ function showScene(instant){
     setActions([goBtn('回到開頭',function(){restart();})]); renderStatus(); return;
   }
   renderHead(sc); renderFieldwork(sc);
+  if(!instant) chapterCard(sc);
   ui.items=linesOf(st); ui.shown=0; ui.phase='lines';
   if(instant){ while(ui.shown<ui.items.length) addLine(ui.items[ui.shown++]); afterLines(); }
   else { revealNext(); }
@@ -1588,12 +1876,46 @@ function choose(i){
 function gotoScene(id){ enter(st,id); ui.phase=''; showScene(false); }
 function doUndo(){ if(!ui.undo.length) return; st=ui.undo.pop(); sfx('click'); showScene(true); }
 
+
+function chapterCard(sc){
+  if(FASTMODE()||!sc||sc.end||!sc.title||document.getElementById('startbtn')) return;
+  var o=document.createElement('div'); o.className='ovl chap'; o.setAttribute('role','dialog');
+  var t=(sc.title||'').split(/\s+/); o.innerHTML='<p class="sub">'+esc(t.length>1?t[0]:'')+'</p><h2>'+esc(t.length>1?t.slice(1).join(' '):t[0])+'</h2><p class="hint" style="color:#b3a98f">（點一下繼續）</p>';
+  var gone=false; function off(){ if(gone) return; gone=true; if(o.parentNode) o.parentNode.removeChild(o); }
+  o.onclick=off; document.body.appendChild(o); setTimeout(off,1700);
+}
+function titleScreen(){
+  if(FASTMODE()||window.__avgTitled) return; window.__avgTitled=true;
+  var o=document.createElement('div'); o.className='ovl'; o.setAttribute('role','dialog'); o.setAttribute('aria-label','開場');
+  var m=S.meta||{}; var who=['shangdi','kang','zhao','you'].filter(function(id){return S.characters[id];});
+  o.innerHTML='<p class="sub">許丙丁《小封神》改編互動故事</p><h1>'+esc(m.title||'')+'</h1><div class="fig">'+who.map(function(id){return avatar(id,'normal',64);}).join('')+'</div>'+
+    '<p>七月三日夜，颱風把小廟吹倒了。三位神明餓了好幾天，你只剩一壺清茶。<br>你是廟祝：一天之內，你要決定先奉茶給誰、說不說、怎麼說。</p><p style="color:#b3a98f;font-size:.9rem">每個選擇都會改變後面的故事，有三種結局與幾個隱藏成就。約 8–12 分鐘。</p><button type="button" id="startbtn">開始</button>';
+  document.body.appendChild(o);
+  $('#startbtn').onclick=function(){ if(o.parentNode) o.parentNode.removeChild(o); sfx('click'); chapterCard(S.scenes[st.scene]); try{ document.getElementById('card').scrollIntoView({block:'start'}); }catch(e){} };
+}
+var ACH=[
+ {id:'a_god',t:'奉茶有序：先奉上帝爺',f:'!served_wrong'},
+ {id:'a_ticket',t:'白紙黑字：拿當票說話',f:'shown_ticket'},
+ {id:'a_redeem',t:'留一手：問過贖冠的事',f:'knows_redeem'},
+ {id:'a_clean',t:'沒踩門檻：守住千里眼的信任',f:'!taboo_broken'},
+ {id:'a_private',t:'留面子：私下勸說',f:'private_confess'},
+ {id:'a_public',t:'當眾說破：拆穿謊話',f:'exposed_public'},
+ {id:'a_save',t:'魁星平安：沒有人被吊',f:'!kuixing_hung'}
+];
+function achBlock(){
+  var got=[],h='';
+  try{ got=JSON.parse(localStorage.getItem('avg_ach')||'[]'); }catch(e){ got=[]; }
+  var now=[]; ACH.forEach(function(a){ var f=a.f; var ok=(f.charAt(0)==='!')?!st.flags[f.slice(1)]:!!st.flags[f]; if(ok){ now.push(a.id); if(got.indexOf(a.id)<0) got.push(a.id); } });
+  try{ localStorage.setItem('avg_ach',JSON.stringify(got)); }catch(e){}
+  h='<h4>這一輪的回顧與成就（本機累計 '+got.length+'／'+ACH.length+'）</h4><div class="ach">'+ACH.map(function(a){ return '<span class="'+(now.indexOf(a.id)>=0?'on':(got.indexOf(a.id)>=0?'':'off'))+'">'+(now.indexOf(a.id)>=0?'★ ':(got.indexOf(a.id)>=0?'☆ ':'？ '))+esc(now.indexOf(a.id)>=0||got.indexOf(a.id)>=0?a.t:'還沒解鎖')+'</span>'; }).join('')+'</div><p class="hint">★ 這一輪拿到　☆ 以前拿過　？ 再玩一次，走不同的路。</p>';
+  return h;
+}
 function showEnd(sc){
   var e=sc.end, p=$('#endpanel'), r=R(mode);
   var chosen=st.chosen.map(function(k){ var a=k.split(':'),s=S.scenes[a[0]]; var c=((s&&s.choices)||[]).filter(function(x){return x.id===a[1];})[0]; return c?c.text:k; });
   var lk=Object.keys(st.locked).map(function(k){return st.locked[k];});
   var h='<h3>'+esc(e.title)+'</h3><span class="tag">'+esc(e.tag||'')+'</span>';
-  h+='<h4>你這一路的選擇</h4><ul>'+chosen.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>';
+  h+=(mode==='culture'?achBlock():'')+'<h4>你這一路的選擇</h4><ul>'+chosen.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>';
   if(mode==='culture'){
     h+='<h4>被鎖起來的選項</h4>';
     h+=lk.length?'<ul>'+lk.map(function(x){return '<li>'+esc(x.text)+'<br><small>鎖住的原因：'+esc(x.why)+'</small></li>';}).join('')+'</ul><p class="hint">想知道它們怎麼解鎖？再玩一次，換一條路。</p>':'<p class="hint">這一輪沒有任何選項被鎖住。</p>';
@@ -1654,7 +1976,7 @@ try{
 S=JSON.parse(DEFAULT_TEXT);
 document.body.classList.toggle('skin',mode==='skin');
 $('#m-skin').setAttribute('aria-pressed',String(mode==='skin')); $('#m-cult').setAttribute('aria-pressed',String(mode==='culture'));
-restart(); runLint();
+titleScreen(); restart(); runLint();
 
 window.__AVG={
   explore:function(m){ return explore(m); },
@@ -1671,7 +1993,7 @@ window.__AVG={
 <script src="../tutor/tutor_templates.js?v=202611151156"></script>
 <script src="../tutor/tutor_core.js?v=202611151156"></script>
 <script src="../tutor/tutor_ui.js?v=202611151156"></script>
-<script src="../tutor/tutor_hook.js?v=202611172110"></script>
+<script src="../tutor/tutor_hook.js?v=202611151156"></script>
 <script src="../tutor/tutor_boot.js?v=202611151156"></script>
 <script>if (window.CT_BOOT) CT_BOOT('avg');</script>
 <!-- CT-HOOK-END -->

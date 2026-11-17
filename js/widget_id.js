@@ -98,5 +98,9 @@ window.CT_WID = {
  "助教": "asisten pengajar",
  "打開助教": "Buka asisten pengajar",
  "助教在畫面右下角的「🧭 助教」，點開就能聊。": "Asisten pengajar ada di pojok kanan bawah layar pada 「🧭 asisten pengajar」, klik untuk mulai mengobrol.",
- "你現在在第 {n} 步，可以這樣開口（點一個放進框裡，改成你自己的話再送出）：": "Kamu sekarang di langkah ke-{n}, bisa mulai bertanya seperti ini (klik salah satu untuk memasukkan ke kotak, ubah dengan kata-katamu sendiri lalu kirim):"
+ "你現在在第 {n} 步，可以這樣開口（點一個放進框裡，改成你自己的話再送出）：": "Kamu sekarang di langkah ke-{n}, bisa mulai bertanya seperti ini (klik salah satu untuk memasukkan ke kotak, ubah dengan kata-katamu sendiri lalu kirim):",
+ "先綁定你的編號才能送出：點頁面右上角的小圓標，或重新整理頁面。綁好之後，這裡就能和助教討論。": "Tautkan nomor kamu dulu sebelum kirim: klik ikon bulat kecil di pojok kanan atas halaman, atau muat ulang halaman. Setelah ditautkan, kamu bisa berdiskusi dengan asisten pengajar di sini.",
+ "AI 助教": "AI asisten pengajar",
+ "打開右下角助教": "Buka asisten pengajar di pojok kanan bawah",
+ "AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。": "AI asisten pengajar ada di pojok kanan bawah layar pada 「💬 AI asisten pengajar」, klik untuk mulai mengobrol."
 };

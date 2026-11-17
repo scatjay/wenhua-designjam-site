@@ -44,7 +44,7 @@
     var env = parseInt(localStorage.getItem('designjam_env'), 10);
     var qe = parseInt(qparam('env'), 10); if (isFinite(qe) && qe >= 55 && qe <= 60) env = qe;
     ID = idOn(env);
-    if (!isFinite(env)) { el.innerHTML = '<p class="note">' + T('先在上面綁定你的編號，助教討論才會出現。') + '</p>'; return; }
+    var unbound = !isFinite(env);
     var emu = qparam('emu') === '1' && env >= 55 && env <= 60, port = qparam('emuPort') || '9012';
     var base = emu ? 'http://127.0.0.1:' + port : DB, qs = emu ? '?ns=' + NS : '';
     var sess = sessKey(env, Date.now()), LK = 'talk_' + sess + '_' + env + '_' + unit;
@@ -132,6 +132,11 @@
       });
     };
     paint();
+    if (unbound) {
+      inp.disabled = true; btn.disabled = true; msg.textContent = T('先綁定你的編號才能送出：點頁面右上角的小圓標，或重新整理頁面。綁好之後，這裡就能和助教討論。');
+      hintBox.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+      var iv = setInterval(function () { var e = parseInt(localStorage.getItem('designjam_env'), 10); if (isFinite(e)) { clearInterval(iv); mount(el); } }, 2000);
+    }
     var tmr = null; window.addEventListener('scroll', function () { if (st.rounds !== 0 || st.confirmed) return; clearTimeout(tmr); tmr = setTimeout(paintHints, 250); }, { passive: true });
   }
   window.CT_TALK = { mount: mount, _sessKey: sessKey, _courseOf: courseOf };
@@ -144,12 +149,12 @@
     var hd = document.createElement('div'); hd.className = 'hd'; var ttl = document.createElement('span'), cl = document.createElement('button'); cl.type = 'button'; cl.textContent = '✕'; cl.setAttribute('aria-label', '關閉'); hd.appendChild(ttl); hd.appendChild(cl);
     var body = document.createElement('div'); body.setAttribute('data-unit', unit); panel.appendChild(hd); panel.appendChild(body);
     var env0 = parseInt(localStorage.getItem('designjam_env'), 10), id0 = idOn(env0); ID = id0;
-    fab.textContent = '🧭 ' + T('助教'); ttl.textContent = T('助教討論');
+    fab.textContent = '💬 ' + T('AI 助教'); ttl.textContent = T('助教討論');
     document.body.appendChild(fab); document.body.appendChild(panel);
     var mounted = false;
     function setOpen(o) { panel.hidden = !o; fab.setAttribute('aria-expanded', o ? 'true' : 'false'); if (o && !mounted) { mounted = true; mount(body); } else if (o && window.CT_TALK) { var ev = document.createEvent('Event'); ev.initEvent('scroll', true, true); window.dispatchEvent(ev); } }
     fab.onclick = function () { setOpen(panel.hidden); }; cl.onclick = function () { setOpen(false); };
-    el.innerHTML = '<p class="note">' + esc(T('助教在畫面右下角的「🧭 助教」，點開就能聊。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開助教')) + '</button>';
+    el.innerHTML = '<p class="note">' + esc(T('AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開右下角助教')) + '</button>';
     $('tk-open').onclick = function () { setOpen(true); };
     window.CT_TALK_OPEN = function () { setOpen(true); };
   }

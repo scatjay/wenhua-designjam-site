@@ -184,8 +184,8 @@ textarea{width:100%;min-height:84px;padding:8px;font:inherit;border:1px solid va
     <button id="mute" aria-pressed="true" aria-label="開關聲音">🔇 靜音</button>
   </div>
   <div class="seg" role="group" aria-label="選擇版本">
-    <button id="m-skin" aria-pressed="false">文化只是皮</button>
-    <button id="m-cult" aria-pressed="true">文化長在規則裡</button>
+    <button id="m-skin" aria-pressed="false">換皮版</button>
+    <button id="m-cult" aria-pressed="true">玩法版</button>
   </div>
   <p class="hint" id="modehint"></p>
   <div class="status" id="status"></div>
@@ -1818,7 +1818,7 @@ function renderBanner(){
   document.title=S.meta.title+'｜故事導向 AVG 樣板';
   $('#foot').textContent=S.meta.disclaimer||'';
   $('#cardsl').innerHTML=(S.meta.cards||[]).map(function(c){return '<li><b>'+esc(c.name)+'</b>：'+esc(c.note)+'</li>';}).join('');
-  $('#cardsnote').textContent=(mode==='culture')?'「文化長在規則裡」這一版，這些文化卡都是玩的時候真的會用到的規則。':'「文化只是皮」這一版，這些文化卡只剩名字，規則被拿掉了。';
+  $('#cardsnote').textContent=(mode==='culture')?'「玩法版」這一版，這些文化卡都是玩的時候真的會用到的規則。':'「換皮版」這一版，這些文化卡只剩名字，規則被拿掉了。';
   $('#charsl').innerHTML=Object.keys(S.characters).map(function(id){var c=S.characters[id];
     return '<li>'+avatar(id,'normal',56)+'<div><b>'+esc(c.name)+'</b> <span class="k k-'+esc(c.src)+'">'+esc(c.src)+'</span><br><span style="font-size:13px">'+esc(c.note)+'</span></div></li>';}).join('');
 }
@@ -2003,7 +2003,7 @@ function showEndImpl(sc){
     ['這一版你有回上一步重來過嗎？重來的時候，你失去了什麼？','你是不是每次都選同一個選項？為什麼？'];
   h+='<ul style="margin-top:8px">'+qs.map(function(q){return '<li>'+esc(q)+'</li>';}).join('')+'</ul>';
   h+='<h4>一句話故事（不計分，想寫再寫）</h4><textarea aria-label="一句話故事" placeholder="誰想要什麼？卡到什麼？最後怎樣？"></textarea>';
-  h+='<div class="row"><button id="again" class="primary" type="button">再玩一次（這一版）</button><button id="other" type="button">換玩「'+(mode==='culture'?'文化只是皮':'文化長在規則裡')+'」</button></div>';
+  h+='<div class="row"><button id="again" class="primary" type="button">再玩一次（這一版）</button><button id="other" type="button">換玩「'+(mode==='culture'?'換皮版':'玩法版')+'」</button></div>';
   p.innerHTML=h; p.hidden=false;
   try{ if(window.CT_HOOK) CT_HOOK.markPlayed(mode==='culture'?'rule':'skin'); }catch(er){}
   $('#again').onclick=function(){ restart(); };
@@ -2015,8 +2015,8 @@ function showEndImpl(sc){
 function hintText(){
   var r=R(mode);
   $('#modehint').textContent=(mode==='culture')?
-    '文化長在規則裡：誰能對誰開口、面子會被用掉、做錯的事回不去。':
-    '文化只是皮：故事一樣，但誰都能說話、什麼都不會被用掉，做錯了還能回上一步。';
+    '玩法版：誰能對誰開口、面子會被用掉、做錯的事回不去。':
+    '換皮版：故事一樣，但誰都能說話、什麼都不會被用掉，做錯了還能回上一步。';
 }
 function restart(){ ui.undo=[]; ui.warn=[]; st=newState(mode); renderBanner(); hintText(); showScene(false); }
 function setMode(m){

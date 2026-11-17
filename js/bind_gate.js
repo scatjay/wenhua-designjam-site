@@ -492,7 +492,7 @@
      「本週」＝wk 數字最大的那個，一樣不看陣列順序（見下面 NOW_KEY）。 */
   var TONES = ['warm', 'cool', 'plum', 'leaf', 'clay'];
   var UNITS = [
-    { key: 'hub',  href: 'index.html', name: '總入口', desc: '每一週的學習單都在這裡', tone: 'slate' },
+    { key: 'hub',  href: 'hub.html', name: '總入口', desc: '每一週的學習單都在這裡', tone: 'slate' },
     /* 行政調查，跟週次無關 ⇒ 不給 wk（不進 index.html 的每週清單，只在下拉選單裡）。
        排在總入口之後——tone 借用 clay（磚色）：目前 W1-4 用掉 warm/cool/plum/leaf，
        clay 還空著，跟任何一週的顏色都不會混淆；之後真的排到 W5 用掉 clay 時再挑一個新色。 */

@@ -85,5 +85,18 @@ window.CT_WID = {
  "AI 還原的結果我留了＿＿，改回了＿＿，因為＿＿": "Dari hasil rekonstruksi AI, saya mempertahankan ＿＿ dan mengubah kembali ＿＿, karena ＿＿",
  "我怎麼確認它沒有改到歷史：＿＿": "Cara saya memastikan bahwa sejarahnya tidak diubah: ＿＿",
  "我不同意助教剛剛說的，因為＿＿": "Saya tidak setuju dengan apa yang baru saja disampaikan asisten pengajar, karena ＿＿",
- "選哪個走讀畫面來還原、哪裡和原圖不同": "Pilih tampilan tur jalan kaki mana untuk direkonstruksi, dan bagian mana yang berbeda dari gambar asli"
+ "選哪個走讀畫面來還原、哪裡和原圖不同": "Pilih tampilan tur jalan kaki mana untuk direkonstruksi, dan bagian mana yang berbeda dari gambar asli",
+ "我選了＿＿這個畫面，因為＿＿": "Saya memilih tampilan ＿＿ ini, karena ＿＿",
+ "這個畫面最重要的是＿＿": "Hal terpenting dari tampilan ini adalah ＿＿",
+ "我卡在＿＿，目前畫面是＿＿": "Saya terhenti di ＿＿, tampilan saat ini adalah ＿＿",
+ "我用的指令是＿＿": "Perintah yang saya gunakan adalah ＿＿",
+ "還原後和原圖不一樣的是＿＿": "Hal yang berbeda dari gambar asli setelah dipulihkan adalah ＿＿",
+ "我改回了＿＿，因為＿＿": "Saya mengubah kembali ＿＿, karena ＿＿",
+ "我怎麼確認沒改到歷史：＿＿": "Cara saya memastikan tidak mengubah riwayat: ＿＿",
+ "交件前我最不確定的是＿＿": "Sebelum mengumpulkan, hal yang paling saya tidak yakin adalah ＿＿",
+ "我確認別人打得開的方法是＿＿": "Cara saya memastikan orang lain bisa membukanya adalah ＿＿",
+ "助教": "asisten pengajar",
+ "打開助教": "Buka asisten pengajar",
+ "助教在畫面右下角的「🧭 助教」，點開就能聊。": "Asisten pengajar ada di pojok kanan bawah layar pada 「🧭 asisten pengajar」, klik untuk mulai mengobrol.",
+ "你現在在第 {n} 步，可以這樣開口（點一個放進框裡，改成你自己的話再送出）：": "Kamu sekarang di langkah ke-{n}, bisa mulai bertanya seperti ini (klik salah satu untuk memasukkan ke kotak, ubah dengan kata-katamu sendiri lalu kirim):"
 };

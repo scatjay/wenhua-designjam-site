@@ -4,7 +4,7 @@
 (function () {
   var DB = 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', NS = 'gen-lang-client-0929530380-default-rtdb';
   var OPEN = {
-    '47602': { W11: '兩版都玩完了，你選哪一個樣板？' },
+    '47602': { W11: '用一句話說說你的遊戲：誰、在哪裡、要做什麼、好玩在哪？' },
     '46582': { W11: '你把走讀的畫面做成網頁，你選了哪一個畫面來還原？' }
   };
   var HINTS = window.CT_HINTS || {};
@@ -19,7 +19,9 @@
   function courseOf(env) { env = Number(env); if (env >= 55 && env <= 60) return 'test'; if (env >= 1 && env <= 52) return '47602'; if (env >= 101 && env <= 130) return '46582'; return ''; }
   function sessKey(env, ms) { var p = tw(ms), c = courseOf(env), half = p.h < 14 ? 'am' : 'pm'; if (!c) c = half === 'am' ? '47602' : '46582'; return c + '-' + p.ymd + half; }
   function openOf(env, unit) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; return (OPEN[c] || {})[unit] || ''; }
-  function hintsOf(env, unit, rounds) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; var st = ((HINTS[c] || {})[unit]) || []; return st.length ? st[Math.min(rounds, st.length - 1)] : []; }
+  function hintsOf(env, unit, rounds) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; var u = ((HINTS[c] || {})[unit]) || {}, st = u.rounds || []; return st.length ? st[Math.min(rounds, st.length - 1)] : []; }
+  function stepHintsOf(env, unit, n) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; var u = ((HINTS[c] || {})[unit]) || {}; return ((u.steps || {})[String(n)]) || []; }
+  function curStep() { var ds = document.querySelectorAll('details.stage'), cur = 0, h = window.innerHeight * 0.55; for (var i = 0; i < ds.length; i++) { var r = ds[i].getBoundingClientRect(); if (r.top < h) cur = i + 1; } if (!ds.length) return 0; if (cur === 0) cur = 1; var sn = ds[cur - 1].querySelector('.sn'); return sn ? parseInt(sn.textContent, 10) || cur : cur; }
   function decisionOf(env, unit) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; return (((HINTS.decision || {})[c]) || {})[unit] || ''; }
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function stampNow(ms) { var d = new Date(ms || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
@@ -33,7 +35,7 @@
       + '.tk button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer}.tk button.g{background:transparent;color:var(--accent)}.tk button[disabled]{opacity:.5;cursor:default}'
       + '.tk .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.tk .cnt{font-size:13px;opacity:.8}.tk .sumbox{border:1px dashed var(--accent);border-radius:10px;padding:10px;margin-top:8px}'
       + '.tk .hints{margin-top:8px}.tk .hints .hb{display:flex;gap:6px;flex-wrap:wrap}.tk .hints button.h{min-width:0;min-height:44px;padding:6px 12px;border-radius:12px;background:transparent;color:var(--accent);text-align:left;font-size:14px;line-height:1.35}'
-      + '.tk .rc{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--bg,#fff)}.tk .rc h4{margin:0 0 6px;font-size:17px}.tk .rc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.5}.tk .rc dt{opacity:.75}.tk .rc dd{margin:0;word-break:break-word}.tk .rc .code{font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.1em}.tk .rc .tag{font-size:12px;opacity:.8}';
+      + '.tk .rc{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--bg,#fff)}.tk .rc h4{margin:0 0 6px;font-size:17px}.tk .rc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.5}.tkfab{position:fixed;right:14px;bottom:max(14px,env(safe-area-inset-bottom));z-index:60;min-height:48px;padding:0 18px;border-radius:999px;border:2px solid var(--accent);background:var(--accent);color:#fff;font:700 16px/1 inherit;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}.tkpanel{position:fixed;right:12px;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 58px);z-index:61;width:min(420px,calc(100vw - 24px));max-height:68vh;overflow:auto;background:var(--bg,#fff);color:inherit;border:2px solid var(--accent);border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.28);padding:8px 12px 12px}.tkpanel[hidden]{display:none}.tkpanel .hd{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;background:var(--bg,#fff);padding:4px 0 6px;font-weight:700}.tkpanel .hd button{min-height:44px;min-width:44px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;cursor:pointer}.tkpanel .tk{border:none;padding:0;margin:0;background:transparent}@media (max-width:520px){.tkpanel{left:8px;right:8px;width:auto;max-height:62vh}}.tk .rc dt{opacity:.75}.tk .rc dd{margin:0;word-break:break-word}.tk .rc .code{font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.1em}.tk .rc .tag{font-size:12px;opacity:.8}';
     document.head.appendChild(s);
   }
   function mount(el) {
@@ -68,8 +70,8 @@
     function paintHints() {
       hintBox.innerHTML = '';
       if (st.confirmed || st.done || st.editing || st.rounds >= MAX_ROUNDS) return;
-      var hs = hintsOf(env, unit, st.rounds); if (!hs.length) return;
-      var p = document.createElement('p'); p.className = 'note'; p.textContent = T('不知道怎麼開口？點一個句型放進框裡，改成你自己的話再送出。'); hintBox.appendChild(p);
+      var stp = st.rounds === 0 ? curStep() : 0, hs = stp ? stepHintsOf(env, unit, stp) : []; if (!hs.length) hs = hintsOf(env, unit, st.rounds); if (!hs.length) return;
+      var p = document.createElement('p'); p.className = 'note'; p.textContent = (stp && stepHintsOf(env, unit, stp).length) ? T('你現在在第 {n} 步，可以這樣開口（點一個放進框裡，改成你自己的話再送出）：').split('{n}').join(stp) : T('不知道怎麼開口？點一個句型放進框裡，改成你自己的話再送出。'); hintBox.appendChild(p);
       var row = document.createElement('div'); row.className = 'hb';
       hs.forEach(function (h) { var b = document.createElement('button'); b.type = 'button'; b.className = 'h'; b.textContent = T(h); b.onclick = function () { inp.value = h; inp.focus(); }; row.appendChild(b); });
       hintBox.appendChild(row);
@@ -130,8 +132,26 @@
       });
     };
     paint();
+    var tmr = null; window.addEventListener('scroll', function () { if (st.rounds !== 0 || st.confirmed) return; clearTimeout(tmr); tmr = setTimeout(paintHints, 250); }, { passive: true });
   }
   window.CT_TALK = { mount: mount, _sessKey: sessKey, _courseOf: courseOf };
-  function auto() { var el = $('talkMount'); if (el) mount(el); }
+  function auto() {
+    var el = $('talkMount'); if (!el) return;
+    css();
+    var unit = el.getAttribute('data-unit') || 'W11';
+    var fab = document.createElement('button'); fab.type = 'button'; fab.className = 'tkfab'; fab.id = 'tk-fab'; fab.setAttribute('aria-expanded', 'false');
+    var panel = document.createElement('div'); panel.className = 'tkpanel'; panel.id = 'tk-panel'; panel.hidden = true; panel.setAttribute('role', 'dialog');
+    var hd = document.createElement('div'); hd.className = 'hd'; var ttl = document.createElement('span'), cl = document.createElement('button'); cl.type = 'button'; cl.textContent = '✕'; cl.setAttribute('aria-label', '關閉'); hd.appendChild(ttl); hd.appendChild(cl);
+    var body = document.createElement('div'); body.setAttribute('data-unit', unit); panel.appendChild(hd); panel.appendChild(body);
+    var env0 = parseInt(localStorage.getItem('designjam_env'), 10), id0 = idOn(env0); ID = id0;
+    fab.textContent = '🧭 ' + T('助教'); ttl.textContent = T('助教討論');
+    document.body.appendChild(fab); document.body.appendChild(panel);
+    var mounted = false;
+    function setOpen(o) { panel.hidden = !o; fab.setAttribute('aria-expanded', o ? 'true' : 'false'); if (o && !mounted) { mounted = true; mount(body); } else if (o && window.CT_TALK) { var ev = document.createEvent('Event'); ev.initEvent('scroll', true, true); window.dispatchEvent(ev); } }
+    fab.onclick = function () { setOpen(panel.hidden); }; cl.onclick = function () { setOpen(false); };
+    el.innerHTML = '<p class="note">' + esc(T('助教在畫面右下角的「🧭 助教」，點開就能聊。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開助教')) + '</button>';
+    $('tk-open').onclick = function () { setOpen(true); };
+    window.CT_TALK_OPEN = function () { setOpen(true); };
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto); else auto();
 })();

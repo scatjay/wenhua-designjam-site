@@ -5,115 +5,159 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>走讀樣板：通天冠去哪了</title>
 <link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Iansui&display=swap">
 <style>
-:root{--bg:#f6f1e6;--fg:#241f19;--mute:#6a604f;--card:#fffdf7;--line:#d9ceb8;--acc:#b23a26;--acc2:#1d6a63;--chip:#ece3cf;--ok:#1f7a4a;--bad:#a8321f;--map:#efe6d0;--blk:#e4d8bb;--road:#c9b88f;--gold:#c8901c}
-@media (prefers-color-scheme:dark){:root{--bg:#12161a;--fg:#ece7dc;--mute:#a1a9b0;--card:#1b2127;--line:#33404a;--acc:#e5755f;--acc2:#58d0bf;--chip:#27323b;--ok:#5ccf8f;--bad:#ff8d78;--map:#1a2228;--blk:#222d35;--road:#3b4a55;--gold:#e0b04a}}
+/* ===== 走讀（walk）視覺語言：白天的手繪街區地圖＋田野筆記本。顏色只在 :root 的變數區塊裡出現，元件只用 --tk-* 與 --wk-* ===== */
+:root{
+  /* 共用語意 token（名稱固定，值各樣板自己定） */
+  --tk-surface:#dff2fb; --tk-panel:#fffdf3; --tk-ink:#173f56; --tk-muted:#486e84;
+  --tk-accent:#ffc933; --tk-accent-ink:#173f56; --tk-line:#173f56;
+  --tk-font-title:"Iansui","Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --tk-font-body:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --tk-radius:16px; --tk-shadow:3px 4px 0 var(--tk-line);
+  /* 私有變數（走讀專用） */
+  --wk-sky:#bfe7f6; --wk-grid:rgba(23,63,86,.07); --wk-grass:#79c98b; --wk-grass-d:#2e9b5b; --wk-tomato:#e8452a; --wk-pink:#ff9db1;
+  --wk-tape-a:rgba(255,201,51,.8); --wk-tape-b:rgba(255,157,177,.75); --wk-tape-c:rgba(121,201,139,.75);
+  --wk-mapbg:#f7f0d9; --wk-water:#a5dcf0; --wk-park:#c3e8b8; --wk-block-a:#f8dcae; --wk-block-b:#f7c9c3; --wk-block-c:#d9d0f1; --wk-block-d:#fff0b8;
+  --wk-road:#ffffff; --wk-road-edge:#cdbb8e; --wk-ok:#2e9b5b; --wk-bad:#c8321f; --wk-chip:#fff0b8; --wk-soft:rgba(23,63,86,.16);
+  --wk-white:#ffffff; --wk-ground:#fff7de; --wk-lock:#e3e6e8;
+}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;overflow-wrap:anywhere;-webkit-text-size-adjust:100%}
-.wrap{max-width:720px;margin:0 auto;padding:12px 14px 56px}
-h1{font-size:22px;margin:4px 0 2px;line-height:1.3}
-h2{font-size:18px;margin:18px 0 6px}
-.sub{color:var(--mute);font-size:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
-.btn{display:block;width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);font:inherit;font-weight:600;text-align:left;margin:8px 0;cursor:pointer}
-.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc);text-align:center}
-.btn.ghost{text-align:center;font-weight:500}
-.btn.on{border-color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc)}
+body{background-color:var(--tk-surface);
+  background-image:linear-gradient(var(--wk-sky),transparent 260px),linear-gradient(var(--wk-grid) 1px,transparent 1px),linear-gradient(90deg,var(--wk-grid) 1px,transparent 1px);
+  background-size:100% 100%,26px 26px,26px 26px;background-attachment:fixed;
+  color:var(--tk-ink);font:16px/1.7 var(--tk-font-body);overflow-wrap:anywhere;-webkit-text-size-adjust:100%;color-scheme:light}
+.wrap{max-width:720px;margin:0 auto;padding:12px 14px 60px}
+.wrap[data-v=map]{max-width:1140px}
+h1{font-family:var(--tk-font-title);font-size:26px;margin:4px 0 2px;line-height:1.25;letter-spacing:.02em}
+h2{font-family:var(--tk-font-title);font-size:20px;margin:20px 0 8px;display:inline-block;background:linear-gradient(transparent 58%,var(--wk-tape-a) 58%);padding:0 4px}
+.sub{color:var(--tk-muted);font-size:14px}
+.card{position:relative;background:var(--tk-panel);border:2.5px solid var(--tk-line);border-radius:var(--tk-radius);padding:14px 16px;margin:14px 0;box-shadow:var(--tk-shadow);
+  background-image:linear-gradient(var(--wk-grid) 1px,transparent 1px);background-size:100% 26px}
+.card::before{content:"";position:absolute;top:-9px;left:22px;width:62px;height:18px;background:var(--wk-tape-a);transform:rotate(-4deg);border-left:2px dashed var(--wk-soft);border-right:2px dashed var(--wk-soft)}
+.btn{display:block;width:100%;min-height:46px;padding:10px 16px;border:2.5px solid var(--tk-line);border-radius:999px;background:var(--wk-white);color:var(--tk-ink);font:inherit;font-weight:700;text-align:left;margin:9px 0;cursor:pointer;box-shadow:0 4px 0 var(--tk-line);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tk-line)}
+.btn.pri{background:var(--tk-accent);color:var(--tk-accent-ink);text-align:center;letter-spacing:.04em}
+.btn.ghost{text-align:center;font-weight:600;background:var(--wk-ground)}
+.btn.on{background:var(--wk-park)}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
-.btn.big{min-height:54px;font-size:18px}
-.row{display:flex;gap:8px}
-.row .btn{margin:6px 0;text-align:center}
-.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:3px 10px;margin:2px 4px 2px 0;font-size:13px}
-.tag{display:inline-block;border-radius:6px;padding:0 7px;font-size:12px;font-weight:700;margin-right:6px;color:#fff;background:var(--acc2)}
-.tag.art{background:#7a5a1c}.tag.sch{background:#4c5fa8}
-.st{float:right;font-size:13px;color:var(--mute)}
-.field{font-size:13px;color:var(--acc);font-weight:700}
-input[type=text],textarea{width:100%;font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;min-height:44px}
-textarea{min-height:96px}
-.rw{color:var(--ok);margin-top:6px}
-.err{color:var(--bad)}
-.fb{color:var(--bad);margin:4px 0}
-details{margin:12px 0}
-summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--mute)}
-input[type=file]{width:100%;min-height:44px;padding:8px 0}
-img.pv{max-width:100%;border-radius:8px;margin-top:6px}
+.btn.big{min-height:58px;font-size:19px;font-family:var(--tk-font-title)}
+.row{display:flex;gap:10px}
+.row .btn{margin:8px 0;text-align:center}
+.chip{display:inline-block;background:var(--wk-chip);border:2px solid var(--tk-line);border-radius:999px;padding:1px 11px;margin:3px 5px 3px 0;font-size:13px;font-weight:700}
+.tag{display:inline-block;border-radius:8px;padding:0 8px;font-size:12px;font-weight:700;margin-right:6px;color:var(--tk-ink);background:var(--wk-park);border:1.5px solid var(--tk-line)}
+.tag.art{background:var(--wk-tape-b)}.tag.sch{background:var(--wk-block-c)}
+.st{float:right;font-size:13px;color:var(--tk-muted)}
+.field{display:inline-block;font-size:13px;color:var(--tk-ink);font-weight:700;background:var(--wk-tape-b);padding:1px 10px;border-radius:8px;transform:rotate(-1deg);margin-bottom:6px}
+input[type=text],textarea{width:100%;font:inherit;color:var(--tk-ink);background:var(--wk-white);border:2.5px solid var(--tk-line);border-radius:12px;padding:10px 12px;min-height:46px}
+textarea{min-height:104px}
+.rw{color:var(--wk-ok);margin-top:6px}
+.err{color:var(--wk-bad)}
+.fb{color:var(--wk-bad);margin:6px 0;font-weight:700}
+details{margin:14px 0}
+summary{min-height:46px;display:flex;align-items:center;cursor:pointer;color:var(--tk-muted);font-weight:700}
+input[type=file]{width:100%;min-height:46px;padding:8px 0}
+img.pv{max-width:100%;border-radius:12px;margin-top:6px;border:2.5px solid var(--tk-line)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.small{font-size:13px;color:var(--mute)}
-/* 標題畫面 */
-.hero{text-align:center;padding:26px 14px 20px;margin:8px 0 12px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(160deg,var(--chip),var(--card) 70%)}
-.hero .cv{font-size:64px;line-height:1.1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
-.hero h1{font-size:30px;margin:10px 0 4px;letter-spacing:.04em}
-.hero .tg{font-size:15px;color:var(--mute);margin:0 0 10px}
-.hero .meta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 4px}
+.small{font-size:13px;color:var(--tk-muted)}
+/* 封面：探險隊出發通知 */
+.hero{position:relative;text-align:center;padding:34px 16px 26px;margin:10px 0 14px;border-radius:24px;border:3px solid var(--tk-line);overflow:hidden;box-shadow:var(--tk-shadow);
+  background:radial-gradient(circle at 18% 22%,var(--wk-white) 0 14px,transparent 15px),radial-gradient(circle at 26% 26%,var(--wk-white) 0 18px,transparent 19px),radial-gradient(circle at 82% 16%,var(--wk-white) 0 15px,transparent 16px),radial-gradient(circle at 88% 20%,var(--wk-white) 0 11px,transparent 12px),linear-gradient(var(--wk-sky) 0 68%,var(--wk-grass) 68% 100%)}
+.hero .cv{font-size:68px;line-height:1.1;display:inline-block;background:var(--tk-accent);border:3px solid var(--tk-line);border-radius:50%;width:112px;height:112px;line-height:104px;box-shadow:var(--tk-shadow);transform:rotate(-6deg)}
+.hero h1{font-size:34px;margin:14px 0 4px;transform:rotate(-1.5deg);display:inline-block;background:var(--tk-panel);border:3px solid var(--tk-line);border-radius:12px;padding:2px 16px;box-shadow:var(--tk-shadow)}
+.hero .tg{font-size:16px;color:var(--tk-ink);margin:8px 0 6px;font-weight:700}
+.hero .sub{color:var(--tk-ink)}
+.hero .meta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 4px}
+.cap-say{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+.cap-say .face{flex:0 0 52px;height:52px;border-radius:50%;background:var(--tk-accent);border:2.5px solid var(--tk-line);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 3px 0 var(--tk-line)}
+.cap-say .say{position:relative;background:var(--wk-white);border:2.5px solid var(--tk-line);border-radius:6px 18px 18px 18px;padding:8px 14px;font-weight:700}
 .how{margin:8px 0;padding-left:0;list-style:none}
-.how li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
-.how b{flex:0 0 30px;font-size:22px;text-align:center}
-/* 進度列 */
-.hud{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 6px}
-.hud .chip{margin:0;font-weight:600}
-.tray{display:flex;gap:6px;margin:6px 0 2px}
-.slot{flex:1 1 0;min-width:0;border:1.5px dashed var(--line);border-radius:10px;text-align:center;padding:5px 2px;font-size:12px;color:var(--mute);background:var(--card)}
-.slot .ic{display:block;font-size:22px;line-height:1.3}
-.slot.got{border:1.5px solid var(--gold);color:var(--fg);background:var(--chip)}
-.slot.opt{opacity:.8}
-/* 地圖 */
-.mapbox{background:var(--map);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
-.mapbox svg{display:block;width:100%;height:auto;max-height:62vh}
-.mapbox .cap{position:absolute;right:8px;bottom:5px;font-size:11px;color:var(--mute)}
+.how li{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+.how b{flex:0 0 34px;height:34px;font-size:18px;text-align:center;background:var(--wk-chip);border:2px solid var(--tk-line);border-radius:50%;line-height:30px}
+/* 進度列：隊員手冊 */
+.hud{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 8px}
+.hud .chip{margin:0;font-size:14px}
+.tray{display:flex;gap:7px;margin:8px 0 4px;flex-wrap:wrap}
+.slot{flex:1 1 0;min-width:64px;border:2.5px dashed var(--tk-line);border-radius:12px;text-align:center;padding:6px 2px;font-size:12px;color:var(--tk-muted);background:var(--wk-white);font-weight:700}
+.slot .ic{display:block;font-size:24px;line-height:1.3}
+.slot.got{border-style:solid;color:var(--tk-ink);background:var(--wk-chip);transform:rotate(-2deg)}
+.slot.opt{opacity:.85}
+/* 地圖：主角 */
+.mapgrid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.mapgrid{grid-template-columns:minmax(0,1.7fr) minmax(320px,1fr);align-items:start}.mapgrid .mapcol{grid-column:1;grid-row:1/span 2;position:sticky;top:12px}.mapgrid .mh{grid-column:2;grid-row:1}.mapgrid .mr{grid-column:2;grid-row:2}}
+.mapbox{position:relative;border:3px solid var(--tk-line);border-radius:20px;overflow:hidden;box-shadow:var(--tk-shadow);transform:rotate(-.4deg);
+  background-color:var(--wk-mapbg);background-image:linear-gradient(var(--wk-grid) 1px,transparent 1px),linear-gradient(90deg,var(--wk-grid) 1px,transparent 1px);background-size:20px 20px}
+.mapbox::before,.mapbox::after{content:"";position:absolute;z-index:2;width:84px;height:22px;background:var(--wk-tape-b);pointer-events:none}
+.mapbox::before{top:-4px;left:-14px;transform:rotate(-38deg)}
+.mapbox::after{bottom:-4px;right:-14px;transform:rotate(-38deg);background:var(--wk-tape-c)}
+.mapbox svg{display:block;width:100%;height:auto;max-height:78vh}
+.mapbox .cap{position:absolute;right:12px;bottom:8px;font-size:11px;color:var(--tk-muted);font-weight:700}
+.mapbox .ttl{position:absolute;left:12px;top:10px;font-family:var(--tk-font-title);font-size:13px;background:var(--tk-panel);border:2px solid var(--tk-line);border-radius:8px;padding:0 10px;transform:rotate(-2deg);z-index:1}
 .node{cursor:pointer}
 .node:focus{outline:none}
-.node:focus-visible circle.nc{stroke:var(--acc);stroke-width:1.2}
-.node .nc{stroke:var(--fg);stroke-width:.5;fill:var(--card)}
-.node.done .nc{fill:var(--ok);stroke:var(--ok)}
-.node.lock .nc{fill:var(--chip);stroke:var(--mute);stroke-dasharray:1.2 1}
-.node.next .nc{fill:var(--acc);stroke:var(--acc)}
+.node:focus-visible circle.nc{stroke:var(--wk-tomato);stroke-width:1.4}
+.node .nc{stroke:var(--tk-line);stroke-width:.7;fill:var(--wk-white)}
+.node.done .nc{fill:var(--wk-ok)}
+.node.lock .nc{fill:var(--wk-lock);stroke-dasharray:1.2 1}
+.node.next .nc{fill:var(--wk-tomato)}
 .node.sel .ring{opacity:1}
-.node .ring{fill:none;stroke:var(--acc);stroke-width:.8;opacity:0}
-.node .num{font-size:4.4px;font-weight:800;text-anchor:middle;dominant-baseline:central;fill:var(--fg);pointer-events:none}
-.node.done .num,.node.next .num{fill:#fff}
-.node .lbl{font-size:3.5px;font-weight:700;text-anchor:middle;fill:var(--fg);paint-order:stroke;stroke:var(--map);stroke-width:1.1px;stroke-linejoin:round;pointer-events:none}
-.node .opt{font-size:2.8px;text-anchor:middle;fill:var(--mute);paint-order:stroke;stroke:var(--map);stroke-width:1px;pointer-events:none}
-.node.next .pulse{animation:pls 1.6s ease-out infinite}
-.pulse{fill:var(--acc);opacity:0;transform-origin:center;transform-box:fill-box}
-@keyframes pls{0%{opacity:.45;transform:scale(1)}100%{opacity:0;transform:scale(2.1)}}
-#pl{transition:transform .85s ease-in-out}
-.pawn{font-size:6.6px;text-anchor:middle;pointer-events:none}
+.node .ring{fill:none;stroke:var(--tk-ink);stroke-width:.8;stroke-dasharray:1.6 1.2;opacity:0}
+.node .num{font-size:4.6px;font-weight:800;text-anchor:middle;dominant-baseline:central;fill:var(--tk-ink);pointer-events:none}
+.node.done .num,.node.next .num{fill:var(--wk-white)}
+.node .lbl{font-size:3.7px;font-weight:800;text-anchor:middle;fill:var(--tk-ink);paint-order:stroke;stroke:var(--wk-mapbg);stroke-width:1.3px;stroke-linejoin:round;pointer-events:none}
+.node .opt{font-size:2.8px;text-anchor:middle;fill:var(--tk-muted);paint-order:stroke;stroke:var(--wk-mapbg);stroke-width:1px;pointer-events:none}
+.node.next .pulse{animation:pls 1.3s ease-out infinite}
+.pulse{fill:var(--wk-tomato);opacity:0;transform-origin:center;transform-box:fill-box}
+.stampc{fill:none;stroke:var(--wk-tomato);stroke-width:.6;stroke-dasharray:1.1 .7;transform-origin:center;transform-box:fill-box;transform:rotate(-14deg)}
+.stampt{font-size:2.5px;font-weight:800;fill:var(--wk-tomato);text-anchor:middle;pointer-events:none}
+@keyframes pls{0%{opacity:.5;transform:scale(1)}100%{opacity:0;transform:scale(2.2)}}
+#pl{transition:transform .55s ease-in-out}
+.pawn{font-size:7px;text-anchor:middle;pointer-events:none}
 .selcard h2{margin:0 0 2px}
-/* 場景與對話 */
-.scene{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(160deg,var(--chip),var(--card));margin:8px 0}
-.scene .em{font-size:44px;line-height:1}
-.scene .nm{font-size:20px;font-weight:800;line-height:1.3}
-.bub{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
-.bub .av{flex:0 0 40px;height:40px;border-radius:50%;background:var(--chip);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:22px}
-.bub .tx{background:var(--card);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:8px 12px;max-width:calc(100% - 50px)}
-.bub .who{font-size:12px;color:var(--mute);font-weight:700;display:block}
-.bub.last .tx{animation:pop .3s ease-out}
-.bub.me{flex-direction:row-reverse}.bub.me .tx{border-radius:14px 4px 14px 14px;background:var(--chip)}
-.dots{display:flex;gap:6px;align-items:center;margin:8px 0 2px}
-.dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);background:transparent;display:inline-block}
-.dots i.d{background:var(--ok);border-color:var(--ok)}
-.dots i.c{border-color:var(--acc);background:var(--acc)}
-.dots span{font-size:13px;color:var(--mute);margin-left:4px}
-.res{border-color:var(--ok);border-width:2px}
-.res .hd{font-weight:800;color:var(--ok)}
-.frag{text-align:center;border:2px solid var(--gold);background:linear-gradient(160deg,var(--chip),var(--card));border-radius:16px;padding:16px 14px;margin:12px 0;animation:pop .5s ease-out}
-.frag .ic{font-size:54px;line-height:1.1}
-.frag .nm{font-size:19px;font-weight:800;margin:4px 0}
-.frag .got{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.1em}
+.tip{display:flex;gap:10px;align-items:center;margin:6px 0 2px;font-weight:700}
+.tip .face{flex:0 0 44px;height:44px;border-radius:50%;background:var(--tk-accent);border:2.5px solid var(--tk-line);display:flex;align-items:center;justify-content:center;font-size:24px}
+.tip .say{background:var(--wk-white);border:2.5px solid var(--tk-line);border-radius:6px 16px 16px 16px;padding:5px 12px;font-size:14px}
+/* 站上：現場 */
+.scene{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:20px;border:3px solid var(--tk-line);background:linear-gradient(var(--wk-sky) 0 55%,var(--wk-grass) 55% 100%);margin:10px 0;box-shadow:var(--tk-shadow)}
+.scene .em{font-size:46px;line-height:1;background:var(--tk-panel);border:2.5px solid var(--tk-line);border-radius:50%;width:72px;height:72px;display:flex;align-items:center;justify-content:center;flex:none}
+.scene .nm{font-family:var(--tk-font-title);font-size:22px;line-height:1.3;background:var(--tk-panel);border:2.5px solid var(--tk-line);border-radius:10px;padding:0 10px;display:inline-block}
+.scene .sub{color:var(--tk-ink);font-weight:700;margin-top:4px}
+.bub{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+.bub .av{flex:0 0 46px;height:46px;border-radius:50%;background:var(--tk-accent);border:2.5px solid var(--tk-line);display:flex;align-items:center;justify-content:center;font-size:24px}
+.bub .tx{background:var(--wk-white);border:2.5px solid var(--tk-line);border-radius:6px 18px 18px 18px;padding:9px 14px;max-width:calc(100% - 58px);box-shadow:0 3px 0 var(--tk-line)}
+.bub .who{font-size:12px;color:var(--tk-muted);font-weight:800;display:block}
+.bub.last .tx{animation:pop .22s ease-out}
+.bub.me{flex-direction:row-reverse}.bub.me .tx{border-radius:18px 6px 18px 18px;background:var(--wk-chip)}
+.dots{display:flex;gap:7px;align-items:center;margin:10px 0 2px}
+.dots i{width:16px;height:16px;border-radius:50%;border:2.5px solid var(--tk-line);background:var(--wk-white);display:inline-block}
+.dots i.d{background:var(--wk-ok)}
+.dots i.c{background:var(--tk-accent)}
+.dots span{font-size:13px;color:var(--tk-muted);margin-left:4px;font-weight:700}
+.res{border-color:var(--wk-ok)}
+.res .hd{font-weight:800;color:var(--wk-ok);font-family:var(--tk-font-title);font-size:19px}
+.frag{position:relative;overflow:hidden;text-align:center;border:3px solid var(--tk-line);background:var(--wk-chip);border-radius:20px;padding:20px 16px 16px;margin:14px 0;box-shadow:var(--tk-shadow);animation:pop .3s ease-out}
+.frag::after{content:"到此一遊";position:absolute;right:10px;top:10px;font-family:var(--tk-font-title);font-size:15px;color:var(--wk-tomato);border:3px double var(--wk-tomato);border-radius:50%;width:70px;height:70px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;transform:rotate(14deg);animation:stamp .35s .15s ease-in both}
+.frag .ic{font-size:56px;line-height:1.1}
+.frag .nm{font-family:var(--tk-font-title);font-size:21px;margin:4px 0}
+.frag .got{font-size:12px;font-weight:800;color:var(--wk-ok);letter-spacing:.14em}
 .frag p{margin:6px 0;text-align:left}
-@keyframes pop{0%{transform:scale(.85);opacity:0}70%{transform:scale(1.04);opacity:1}100%{transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){#pl{transition:none}.frag,.bub.last .tx,.node.next .pulse{animation:none}}
-/* 結算 */
-.stars{font-size:30px;letter-spacing:4px;color:var(--gold);text-align:center;margin:2px 0}
-.rank{text-align:center;font-size:22px;font-weight:800;margin:2px 0}
-.bd{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 2px}
-.bd div{background:var(--chip);border-radius:10px;padding:6px 8px;font-size:13px}
-.bd b{display:block;font-size:20px}
-.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
-.fgrid .frag{margin:0;animation:none;padding:10px}
-.fgrid .frag .ic{font-size:34px}
-.fgrid .frag .nm{font-size:16px}
+@keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes stamp{0%{transform:rotate(14deg) scale(2.4);opacity:0}70%{transform:rotate(14deg) scale(.92);opacity:1}100%{transform:rotate(14deg) scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){#pl{transition:none}.frag,.frag::after,.bub.last .tx,.node.next .pulse{animation:none}}
+/* 結算：探險結算單 */
+.stars{font-size:34px;letter-spacing:5px;color:var(--tk-accent);text-align:center;margin:2px 0;-webkit-text-stroke:1.5px var(--tk-line)}
+.rank{text-align:center;font-family:var(--tk-font-title);font-size:26px;margin:2px 0}
+.bd{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 2px}
+.bd div{background:var(--wk-chip);border:2px solid var(--tk-line);border-radius:12px;padding:6px 10px;font-size:13px;font-weight:700}
+.bd b{display:block;font-size:22px;font-family:var(--tk-font-title)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.fgrid .frag{margin:0;animation:none;padding:14px 12px}
+.fgrid .frag::after{display:none}
+.fgrid .frag .ic{font-size:36px}
+.fgrid .frag .nm{font-size:17px}
 .fgrid .frag p{font-size:13px}
 </style>
 </head>
@@ -657,9 +701,22 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   {
    "min": 90,
    "title": "舊城活地圖",
-   "text": "幾乎每一站都一次到位。可以回頭想想：換成別的主題，你還走得出這樣的路線嗎？"
+   "text": "幾乎每一站都一次到位。"
   }
- ]
+ ],
+ "compose": {
+  "skin": "walk",
+  "modules": {
+   "核心動作": "逐題任務（選擇、填字、排序、現場筆記）",
+   "資源計分": "碎片與星等評價",
+   "時間回合": "一站一站推進",
+   "空間": "手繪示意地圖",
+   "角色": "站上對話",
+   "事件選擇": "抉擇旗標",
+   "勝負": "依旗標分歧結局",
+   "回饋": "到此一遊蓋章"
+  }
+ }
 }</script>
 <script id="inline-walk_skin.json" type="application/json">{
  "format": "walk-template-0.1",
@@ -1017,7 +1074,7 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   {
    "min": 40,
    "title": "打卡達人",
-   "text": "答對不少題。想一想：這些題目拿掉廟的名字，還成立嗎？"
+   "text": "答對不少題。"
   },
   {
    "min": 70,
@@ -1029,7 +1086,20 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "title": "滿分打卡王",
    "text": "幾乎全對。但這個版本裡，你的選擇有沒有改變過任何事？"
   }
- ]
+ ],
+ "compose": {
+  "skin": "walk",
+  "modules": {
+   "核心動作": "逐題任務（選擇、填字、排序、現場筆記）",
+   "資源計分": "碎片與星等評價",
+   "時間回合": "一站一站推進",
+   "空間": "手繪示意地圖",
+   "角色": "站上對話",
+   "事件選擇": "抉擇旗標",
+   "勝負": "依旗標分歧結局",
+   "回饋": "到此一遊蓋章"
+  }
+ }
 }</script>
 <!--INLINE-END-->
 <script>
@@ -1037,6 +1107,13 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   'use strict';
   var APP = document.getElementById('app');
   var D = null, NAME = 'walk.json', ST = null, PHOTO = {}, WALKING = false;
+  /* ---------- 積木模組登錄：每個模組只讀 JSON 裡屬於自己的那一段，介面固定 init(cfg,root)／step(state,action)／render(state) ---------- */
+  var TK = {
+    mods: {}, order: [],
+    reg: function (m) { TK.mods[m.id] = m; TK.order.push(m.id); return m; },
+    initAll: function (d) { TK.order.forEach(function (id) { var m = TK.mods[id]; m.init(d[m.section], m.root ? document.querySelector(m.root) : null); }); },
+    list: function () { return TK.order.map(function (id) { var m = TK.mods[id]; return { id: id, section: m.section, root: m.root || null, api: ['init', 'step', 'render'].filter(function (k) { return typeof m[k] === 'function'; }) }; }); }
+  };
   var BUILTIN = ['walk.json', 'walk_skin.json'];
   var LABEL = { 'walk.json': '規則版', 'walk_skin.json': '外觀版' };
 
@@ -1184,12 +1261,13 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
 
   function titleView() {
     var n = reqStops().length, opt = D.stops.length - n, m = D.meta;
-    var h = '<div class="hero"><div class="cv" aria-hidden="true">' + esc(m.cover || '🗺️') + '</div><h1>' + esc(m.title) + '</h1>' +
+    var h = '<div class="hero"><div class="cv" aria-hidden="true">' + esc(m.cover || '🗺️') + '</div><br><h1>' + esc(m.title) + '</h1>' +
       '<div class="tg">' + esc(m.tagline || m.subtitle || '') + '</div><div class="sub">' + esc(m.subtitle || '') + '</div>' +
       '<div class="meta"><span class="chip">🗺️ ' + n + ' 站' + (opt ? '＋' + opt + ' 站選擇性' : '') + '</span><span class="chip">⏱ ' + esc(m.minutes || '約 10 分鐘') + '</span><span class="chip">' + (D.rules.mode === 'gated' ? '🔒 要照順序走' : '🧭 順序隨你') + '</span></div></div>';
+    h += '<div class="cap-say"><div class="face" aria-hidden="true">🧢</div><div class="say">隊員集合！今天的任務簡報在這裡。</div></div>';
     h += '<div class="card">' + esc(m.intro || '') + '</div>';
-    h += '<button class="btn pri big" data-act="start">' + (ST.started ? '▶ 繼續這一趟' : '▶ 開始走讀') + '</button>';
-    h += '<div class="card"><b>怎麼玩</b><ul class="how"><li><b>🗺️</b><span>在地圖上點一個地點，按「走過去」（在教室裡玩就用模擬；真的在現場可以用定位檢查）。</span></li><li><b>💬</b><span>到了先聽站上的人說話，再一題一題做任務。</span></li><li><b>🧩</b><span>做完一站，拿到一塊碎片；走完全程，看你的結局和評價。</span></li></ul></div>';
+    h += '<button class="btn pri big" data-act="start">' + (ST.started ? '🎒 繼續這一趟，出發！' : '🎒 開始走讀，出發！') + '</button>';
+    h += '<div class="card"><b>探險隊守則</b><ul class="how"><li><b>1</b><span>看地圖，點一個地點，按「走過去」。在教室裡玩就用模擬，真的在現場可以用定位檢查。</span></li><li><b>2</b><span>到了先聽站上的人說話，再一題一題做任務。</span></li><li><b>3</b><span>每做完一站，蓋一個章、拿一塊碎片。走完全程，看你的結局和評價。</span></li></ul></div>';
     h += '<div class="small" style="margin-top:10px">玩哪一版：</div>' + switcher();
     h += '<div class="small">規則版：順序、抉擇和現場題都會影響結局。外觀版：同一條路，只有打卡答題。玩完兩版，比一比。</div>';
     h += dataBox();
@@ -1211,7 +1289,8 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   function mapSvg() {
     var S = startPos(), cur = whereIs(ST.pos), nx = nextStop(), parts = [];
     parts.push('<svg viewBox="0 0 100 80" role="img" aria-label="路線示意圖">');
-    [[4, 6, 30, 16], [38, 4, 22, 12], [66, 6, 28, 18], [6, 28, 22, 14], [58, 52, 36, 12], [6, 56, 28, 16], [36, 72, 40, 6], [78, 30, 18, 10]].forEach(function (r) { parts.push('<rect x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="2.5" fill="var(--blk)" opacity=".55"/>'); });
+    var BLK = ['--wk-block-a', '--wk-park', '--wk-block-b', '--wk-block-c', '--wk-water', '--wk-block-d', '--wk-park', '--wk-block-a'];
+    [[4, 6, 30, 16], [38, 4, 22, 12], [66, 6, 28, 18], [6, 28, 22, 14], [58, 52, 36, 12], [6, 56, 28, 16], [36, 72, 40, 6], [78, 30, 18, 10]].forEach(function (r, bi) { parts.push('<rect x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="2.5" fill="var(' + BLK[bi] + ')" stroke="var(--tk-line)" stroke-width=".35" stroke-dasharray="1.4 1"/>'); });
     // 路：必經站依序連線；選擇性站用虛線接到最近的一站
     var req = reqStops(), prev = null, edges = [];
     req.forEach(function (s, i) { var p = posOf(s); if (i === 0) edges.push([S, p, false]); else edges.push([posOf(req[i - 1]), p, false]); });
@@ -1221,9 +1300,12 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     });
     edges.forEach(function (e) {
       var mx = (e[0].x + e[1].x) / 2, my = (e[0].y + e[1].y) / 2 + (e[0].x < e[1].x ? 3 : -3);
-      parts.push('<path d="M' + e[0].x + ' ' + e[0].y + ' Q' + mx + ' ' + my + ' ' + e[1].x + ' ' + e[1].y + '" fill="none" stroke="var(--road)" stroke-width="2.2" stroke-linecap="round"' + (e[2] ? ' stroke-dasharray="1.5 2.2"' : '') + '/>');
+      var dd = 'M' + e[0].x + ' ' + e[0].y + ' Q' + mx + ' ' + my + ' ' + e[1].x + ' ' + e[1].y;
+      parts.push('<path d="' + dd + '" fill="none" stroke="var(--wk-road-edge)" stroke-width="3.6" stroke-linecap="round"/>');
+      parts.push('<path d="' + dd + '" fill="none" stroke="var(--wk-road)" stroke-width="2.4" stroke-linecap="round"/>');
+      parts.push('<path d="' + dd + '" fill="none" stroke="var(--wk-tomato)" stroke-width=".7" stroke-linecap="round" stroke-dasharray="' + (e[2] ? '.4 1.8' : '1.6 1.5') + '"/>');
     });
-    parts.push('<g><circle cx="' + S.x + '" cy="' + S.y + '" r="2.4" fill="var(--acc2)"/><text x="' + S.x + '" y="' + (S.y + 5.2) + '" class="opt" style="font-size:3px;text-anchor:middle;fill:var(--acc2);font-weight:700">出發</text></g>');
+    parts.push('<g><circle cx="' + S.x + '" cy="' + S.y + '" r="2.6" fill="var(--wk-grass-d)" stroke="var(--tk-line)" stroke-width=".5"/><text x="' + S.x + '" y="' + (S.y + 5.6) + '" class="opt" style="font-size:3.2px;text-anchor:middle;fill:var(--tk-ink);font-weight:800">出發</text></g>');
     D.stops.forEach(function (s, i) {
       var p = posOf(s), lk = locked(s), dn = stopDone(s), isNext = nx && nx.id === s.id, sel = ST.sel === s.id;
       var cls = 'node' + (dn ? ' done' : (lk ? ' lock' : (isNext ? ' next' : ''))) + (sel ? ' sel' : '');
@@ -1231,13 +1313,14 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
       var below = p.y > 60;
       parts.push('<g class="' + cls + '" data-act="sel" data-s="' + esc(s.id) + '" tabindex="0" role="button" aria-label="' + esc(shortName(s) + '，' + st) + '">' +
         '<circle class="pulse" cx="' + p.x + '" cy="' + p.y + '" r="5.4"/><circle class="ring" cx="' + p.x + '" cy="' + p.y + '" r="7"/>' +
-        '<circle class="nc" cx="' + p.x + '" cy="' + p.y + '" r="5.4"/><text class="num" x="' + p.x + '" y="' + p.y + '">' + (dn ? '✓' : (lk ? '🔒' : (i + 1))) + '</text>' +
+        '<circle class="nc" cx="' + p.x + '" cy="' + p.y + '" r="5.4"/>' + (dn ? '<circle class="stampc" cx="' + p.x + '" cy="' + p.y + '" r="8"/><text class="stampt" x="' + p.x + '" y="' + (p.y - 9.3) + '">已蓋章</text>' : '') + '<text class="num" x="' + p.x + '" y="' + p.y + '">' + (dn ? '✓' : (lk ? '🔒' : (i + 1))) + '</text>' +
         '<text class="lbl" x="' + p.x + '" y="' + (below ? p.y - 7.4 : p.y + 10.6) + '">' + esc(shortName(s)) + '</text>' +
         (s.optional ? '<text class="opt" x="' + p.x + '" y="' + (below ? p.y - 11.2 : p.y + 14) + '">（選擇性）</text>' : '') + '</g>');
     });
-    parts.push('<g id="pl" style="transform:translate(' + cur.x + 'px,' + cur.y + 'px)"><text class="pawn" x="0" y="-6.2">🚶</text><circle r="1.1" fill="var(--acc)"/></g>');
+    parts.push('<g id="pl" style="transform:translate(' + cur.x + 'px,' + cur.y + 'px)"><text class="pawn" x="0" y="-6.2">🚶</text><circle r="1.1" fill="var(--wk-tomato)"/></g>');
+    parts.push('<g transform="translate(91 69)"><circle r="5.2" fill="var(--wk-white)" stroke="var(--tk-line)" stroke-width=".6"/><path d="M0 -4 L1.7 0 L0 4 L-1.7 0Z" fill="var(--wk-tomato)"/><text y="-6.4" style="font-size:3px;font-weight:800;text-anchor:middle;fill:var(--tk-ink)">北</text></g>');
     parts.push('</svg>');
-    return '<div class="mapbox">' + parts.join('') + '<div class="cap">' + esc((D.map && D.map.note) || '示意圖，不照比例') + '</div></div>';
+    return '<div class="mapbox"><div class="ttl">' + esc(D.meta.title) + '・手繪走讀地圖</div>' + parts.join('') + '<div class="cap">' + esc((D.map && D.map.note) || '示意圖，不照比例') + '</div></div>';
   }
   function selCard() {
     var s = ST.sel && sget(ST.sel); if (!s) { s = nextStop(); }
@@ -1245,7 +1328,7 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     var lk = locked(s), dn = stopDone(s), here = ST.pos === s.id, hasXY = typeof s.lat === 'number' && D.rules.geofence;
     var h = '<div class="card selcard"><h2>' + (D.stops.indexOf(s) + 1) + '. ' + esc(s.name) + (s.optional ? '（選擇性）' : '') + '</h2>';
     h += '<div class="sub">' + (lk ? '🔒 還沒開' : (dn ? '✅ 完成了，可以回去再看看' : (ST.at[s.id] ? '📍 進行中' : '⬜ 還沒到'))) + (here ? '・你現在在這裡' : '') + '</div>';
-    if (lk) return h + '<div class="fb" style="color:var(--mute)">' + esc(s.locked_msg || '還沒輪到這一站。') + '</div></div>';
+    if (lk) return h + '<div class="fb" style="color:var(--tk-muted)">' + esc(s.locked_msg || '還沒輪到這一站。') + '</div></div>';
     if (ST.at[s.id] || here) h += '<button class="btn pri" data-act="open" data-s="' + esc(s.id) + '">' + (dn ? '回去看看這一站' : '進入這一站 ▶') + '</button>';
     else {
       h += '<button class="btn pri" data-act="walk" data-s="' + esc(s.id) + '">🚶 走過去（教室裡用這個）</button>';
@@ -1255,16 +1338,22 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     }
     return h + '</div>';
   }
+  function paceHtml() {
+    var nx = nextStop(), h = hud();
+    if (nx && !allDone()) h += '<div class="tip"><div class="face" aria-hidden="true">🧢</div><div class="say">隊長說：下一站「' + esc(shortName(nx)) + '」，點地圖上的紅點！</div></div>';
+    return h;
+  }
   function mapView() {
-    var h = '<h1>' + esc(D.meta.title) + '</h1>' + hud() + mapSvg() + tray();
-    if (allDone()) h += '<div class="card res"><div class="hd">路走完了！</div><div>每一站都到過了。去看你的結局和評價。</div></div><button class="btn pri big" data-act="end">🎬 走到終點，看結局</button>';
-    h += selCard();
-    h += '<details><summary>路線清單與設定</summary>' + D.stops.map(function (s, i) {
+    var h1 = '<h1>' + esc(D.meta.title) + '</h1>' + TK.mods['時間回合'].render(ST);
+    var h2 = tray();
+    if (allDone()) h2 += '<div class="card res"><div class="hd">路走完了！</div><div>每一站都到過了。去看你的結局和評價。</div></div><button class="btn pri big" data-act="end">🎬 走到終點，看結局</button>';
+    h2 += selCard();
+    h2 += '<details><summary>路線清單與設定</summary>' + D.stops.map(function (s, i) {
       var st = locked(s) ? '🔒 還沒開' : (stopDone(s) ? '✅ 完成' : (ST.at[s.id] ? '📍 進行中' : '⬜ 還沒到'));
       return '<button class="btn" data-act="sel" data-s="' + esc(s.id) + '"><span class="st">' + st + '</span>' + (i + 1) + '. ' + esc(s.name) + (s.optional ? '（選擇性）' : '') + '</button>';
     }).join('') + switcher() + dataBox() + '</details>';
-    if (D.__warn && D.__warn.length) h += '<div class="small">提醒：' + esc(D.__warn.join('；')) + '</div>';
-    APP.innerHTML = h;
+    if (D.__warn && D.__warn.length) h2 += '<div class="small">提醒：' + esc(D.__warn.join('；')) + '</div>';
+    APP.innerHTML = '<div class="mapgrid"><div class="mh">' + h1 + '</div><div class="mapcol">' + mapSvg() + '</div><div class="mr">' + h2 + '</div></div>';
   }
 
   function dotsHtml(s) {
@@ -1305,10 +1394,9 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
       h += '<button class="btn pri big" data-act="cont" data-s="' + esc(s.id) + '">' + (stopDone(s) ? '拿碎片 🧩' : '下一題 ▶') + '</button>';
       APP.innerHTML = h; return;
     }
-    if (stopDone(s)) { APP.innerHTML = h + fragView(s); return; }
+    if (stopDone(s)) { APP.innerHTML = h + TK.mods['回饋'].render(ST); return; }
     h += dotsHtml(s);
-    var cur = tasksOf(s).filter(function (t) { return !ST.done[key(s, t)] && !t.optional; })[0];
-    if (cur) h += taskView(s, cur);
+    h += TK.mods['核心動作'].render(ST);
     APP.innerHTML = h;
   }
   function taskView(s, t) {
@@ -1334,22 +1422,27 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   function fillText(t) {   // 結局文字裡的 {{站id.題id}}，換成玩家在現場寫下的那一句
     return String(t || '').replace(/\{\{(\w+)\.(\w+)\}\}/g, function (m, sid, tid) { var v = ST.ans[sid + '.' + tid]; return v ? v : '（你沒有寫）'; });
   }
+  function scoreHtml() {
+    var T = tally();
+    return '<h2>你的評價</h2><div class="card"><div class="stars" aria-label="' + T.stars + ' 顆星">' + new Array(T.stars + 1).join('★') + new Array(6 - T.stars).join('☆') + '</div><div class="rank">' + esc(T.rank.title) + '</div><div class="sub" style="text-align:center">' + esc(T.rank.text || '') + '</div>' +
+      '<div class="bd"><div><b>' + T.earned + ' / ' + T.poss + '</b>總分（' + T.pct + '%）</div><div><b>' + T.right + ' / ' + T.quiz + '</b>一次答對</div><div><b>' + fragCount() + ' / ' + D.stops.length + '</b>碎片</div><div><b>' + T.notes + '</b>現場筆記' + (T.dec ? '・' + T.dec + ' 個抉擇' : '') + '</div></div></div>';
+  }
+  function flagsHtml() {
+    var got = Object.keys(D.flags || {}).filter(function (f) { return ST.flags[f]; });
+    return got.length ? '<h2>你這一路的選擇與紀錄</h2><div>' + got.map(function (f) { return '<span class="chip">✓ ' + esc(D.flags[f]) + '</span>'; }).join('') + '</div>' : '';
+  }
   function endView() {
     var en = D.endings.filter(function (e) { return (e.requires || []).every(function (f) { return ST.flags[f]; }); })[0] || D.endings[D.endings.length - 1];
     var T = tally();
     var h = '<button class="btn ghost" data-act="home">← 回地圖</button><div class="hero" style="padding:18px 12px"><div class="cv" style="font-size:44px">🎬</div><h1 style="font-size:24px">' + esc(en.title) + '</h1><div>' + tagOf(en.origin || '工坊創作') + '</div></div>';
     h += '<div class="card">' + esc(fillText(en.text)) + '</div>';
-    h += '<h2>你的評價</h2><div class="card"><div class="stars" aria-label="' + T.stars + ' 顆星">' + new Array(T.stars + 1).join('★') + new Array(6 - T.stars).join('☆') + '</div><div class="rank">' + esc(T.rank.title) + '</div><div class="sub" style="text-align:center">' + esc(T.rank.text || '') + '</div>' +
-      '<div class="bd"><div><b>' + T.earned + ' / ' + T.poss + '</b>總分（' + T.pct + '%）</div><div><b>' + T.right + ' / ' + T.quiz + '</b>一次答對</div><div><b>' + fragCount() + ' / ' + D.stops.length + '</b>碎片</div><div><b>' + T.notes + '</b>現場筆記' + (T.dec ? '・' + T.dec + ' 個抉擇' : '') + '</div></div></div>';
+    h += TK.mods['資源計分'].render(ST);
     h += '<h2>你的碎片冊</h2><div class="fgrid">' + D.stops.filter(function (s) { return ST.completed[s.id]; }).map(function (s) { var f = fragOf(s); return '<div class="frag"><div class="ic">' + esc(f.icon) + '</div><div class="nm">' + esc(f.name) + '</div><p>' + esc(f.text) + '</p></div>'; }).join('') + '</div>';
-    var got = Object.keys(D.flags || {}).filter(function (f) { return ST.flags[f]; });
-    if (got.length) h += '<h2>你這一路的選擇與紀錄</h2><div>' + got.map(function (f) { return '<span class="chip">✓ ' + esc(D.flags[f]) + '</span>'; }).join('') + '</div>';
+    h += TK.mods['事件選擇'].render(ST);
     var notes = [];
     D.stops.forEach(function (s) { s.tasks.forEach(function (t) { var k = key(s, t); if (t.type === 'observe' && ST.ans[k]) notes.push('<li><b>' + esc(shortName(s)) + '</b>：' + esc(ST.ans[k]) + '</li>'); }); });
     if (notes.length) h += '<h2>你在現場寫下的</h2><ul>' + notes.join('') + '</ul>';
-    h += '<h2>想一想</h2><div class="card"><b>' + esc(D.reflect.question) + '</b>' +
-      D.reflect.choices.map(function (c, i) { return '<button class="btn' + (ST.reflect.c === i ? ' on' : '') + '" data-act="refl" data-i="' + i + '">' + esc(c) + '</button>'; }).join('') +
-      '<p><b>' + esc(D.reflect.story_prompt || '') + '</b></p><textarea id="story">' + esc(ST.reflect.story) + '</textarea>' +
+    h += '<h2>寫下這一趟</h2><div class="card"><p><b>' + esc(D.reflect.story_prompt || '') + '</b></p><textarea id="story">' + esc(ST.reflect.story) + '</textarea>' +
       '<button class="btn pri" data-act="share">整理成一段文字，貼給老師或貼給 AI</button><textarea id="out" readonly hidden></textarea></div>';
     h += '<h2>再玩一次</h2><div class="small">換另一版玩，或把這一版重新走一遍，看看結局會不會不同。</div>' + switcher() + '<button class="btn ghost" data-act="reset">' + (ST.confirmReset ? '再按一次就清掉這一版的進度' : '重新開始這一版') + '</button>';
     APP.innerHTML = h;
@@ -1358,17 +1451,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     var T = tally(), out = ['【' + D.meta.title + '／' + (D.meta.subtitle || '') + '】', '評價：' + T.rank.title + '（' + T.earned + ' / ' + T.poss + ' 分）、碎片 ' + fragCount() + ' / ' + D.stops.length];
     Object.keys(D.flags || {}).forEach(function (f) { if (ST.flags[f]) out.push('✓ ' + D.flags[f]); });
     D.stops.forEach(function (s) { s.tasks.forEach(function (t) { var k = key(s, t); if (t.type === 'observe' && ST.ans[k]) out.push('現場（' + s.name + '）：' + ST.ans[k]); }); });
-    out.push('抽掉文化還玩得下去嗎：' + (ST.reflect.c >= 0 ? D.reflect.choices[ST.reflect.c] : '還沒選'));
     out.push('一句話故事：' + (ST.reflect.story || '還沒寫'));
     return out.join('\n');
   }
   function render() {
     if (!D) return;
     var v = ST.view;
-    if (v === 'stop' && ST.cur && sget(ST.cur)) return stopView(sget(ST.cur));
-    if (v === 'end') return endView();
-    if (v === 'map') return mapView();
-    ST.view = 'title'; titleView();
+    APP.setAttribute('data-v', v === 'stop' && ST.cur && sget(ST.cur) ? 'stop' : (v === 'end' || v === 'map' ? v : 'title'));
+    if (v === 'stop' && ST.cur && sget(ST.cur)) return TK.mods['角色'].render(ST);
+    if (v === 'end') return TK.mods['勝負'].render(ST);
+    if (v === 'map') return TK.mods['空間'].render(ST);
+    ST.view = 'title'; TK.mods['空間'].renderTitle(ST);
   }
   function fatal(list) {
     APP.innerHTML = '<h1>這份資料有地方錯了</h1><div class="card err"><ul>' + list.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul></div><p class="small">改好 JSON 以後重新整理，或在下面重新選一個檔。</p><input type="file" id="pick" accept=".json,application/json">' + '<div class="row">' + BUILTIN.map(function (n) { return '<button class="btn ghost" data-act="variant" data-n="' + n + '">' + LABEL[n] + '</button>'; }).join('') + '</div>';
@@ -1378,7 +1471,7 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   function start(d, name) {
     var v = validate(d);
     if (v.e.length) { D = null; return fatal(v.e); }
-    d.__warn = v.w; D = d; NAME = name; ST = load(); render(); window.__walkReady = true;
+    d.__warn = v.w; D = d; NAME = name; ST = load(); TK.initAll(D); render(); window.__walkReady = true;
   }
   function parseThen(text, name) { var d; try { d = JSON.parse(text); } catch (x) { return fatal(['JSON 格式不對（多一個逗號、少一個引號？）：' + x.message]); } start(d, name); }
   function loadByName(name) {
@@ -1398,8 +1491,92 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     void pl.getBoundingClientRect();
     pl.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)';
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setTimeout(function () { WALKING = false; arriveAt(s); }, reduce ? 50 : 950);
+    setTimeout(function () { WALKING = false; arriveAt(s); }, reduce ? 50 : 650);
   }
+
+
+  /* ---------- 八個模組（名稱與規格正本一致；薄包裝：版面函式留在上面，模組負責「讀自己的那一段 JSON」與固定介面） ---------- */
+  TK.reg({ id: '空間', section: 'stops', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || []; this.root = root; },
+    step: function (state, a) {
+      var s = a.s;
+      if (a.type === 'title') { state.view = 'title'; }
+      else if (a.type === 'start') { state.started = true; state.view = 'map'; state.sel = null; }
+      else if (a.type === 'home') { state.view = 'map'; state.note = ''; state.fail = false; state.pend = null; state.sel = null; }
+      else if (a.type === 'sel') { state.sel = s.id; state.note = ''; state.fail = false; state.view = 'map'; }
+      else if (a.type === 'open') { state.view = 'stop'; state.cur = s.id; state.note = ''; state.fail = false; state.pend = null; }
+      else if (a.type === 'end') { state.view = 'end'; }
+      return state;
+    },
+    render: function (state) { mapView(); },
+    renderTitle: function (state) { titleView(); } });
+  TK.reg({ id: '時間回合', section: 'rules', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || {}; this.root = root; },
+    step: function (state, a) { if (a.type === 'arrive') { state.at[a.s.id] = 1; state.pos = a.s.id; state.note = ''; state.fail = false; } return state; },
+    render: function (state) { return paceHtml(); } });
+  TK.reg({ id: '角色', section: 'stops', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || []; this.root = root; },
+    step: function (state, a) {
+      if (a.type === 'next') { var ls = (a.s.npc && a.s.npc.lines) || [], ni = (state.talk[a.s.id] || 0) + 1; if (ni >= ls.length) state.talked[a.s.id] = true; else state.talk[a.s.id] = ni; }
+      return state;
+    },
+    render: function (state) { stopView(sget(state.cur)); } });
+  TK.reg({ id: '核心動作', section: 'stops', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || []; this.root = root; },
+    step: function (state, a) {
+      var s = a.s, t = a.t, b = a.el, k = key(s, t);
+      function done(pts_, head, msg, note) { state.done[k] = true; state.fb[k] = ''; state.pts[k] = pts_; state.pend = { s: s.id, head: head, msg: msg, note: note || '' }; afterTask(s); }
+    if (a.type === 'choice') {
+      var o = t.options[+b.getAttribute('data-i')];
+      if (o === t.answer) { if (!state.wrong[k] && D.rules.score) state.score++; done(state.wrong[k] ? 1 : 2, '✓ 答對了' + (state.wrong[k] ? '（第二次）' : '，一次就中'), t.reward || '對。'); }
+      else { state.wrong[k] = true; state.fb[k] = '不是這個。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
+    }
+    else if (a.type === 'text') {
+      var v = norm(document.getElementById('in-' + k).value || '');
+      if (t.accept.some(function (a) { return norm(a) === v; })) { if (!state.wrong[k] && D.rules.score) state.score++; done(state.wrong[k] ? 1 : 2, '✓ 答對了' + (state.wrong[k] ? '（第二次）' : '，一次就中'), t.reward || '對。'); }
+      else { state.wrong[k] = true; state.fb[k] = '不對，再試一次。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
+    }
+    else if (a.type === 'pick') {
+      var pk = state.order[k] = state.order[k] || []; pk.push(b.getAttribute('data-v'));
+      if (pk.length === t.items.length) {
+        if (pk.join('|') === t.answer.join('|')) done(state.wrong[k] ? 1 : 2, '✓ 順序對了', t.reward || '順序對了。');
+        else { state.wrong[k] = true; state.order[k] = []; state.fb[k] = '順序不對，重排。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
+      }
+    }
+    else if (a.type === 'unpick') { state.order[k] = []; }
+    else if (a.type === 'observe') {
+      var tx = (document.getElementById('in-' + k).value || '').trim();
+      if (tx.length < (t.min || 8)) { state.fb[k] = '再多寫一點（至少 ' + (t.min || 8) + ' 個字）。'; }
+      else { state.ans[k] = tx; done(2, '✍ 筆記收進冊子了', t.reward || '記下來了。', tx); }
+    }
+      return state;
+    },
+    render: function (state) { var s = sget(state.cur), cur = tasksOf(s).filter(function (t) { return !state.done[key(s, t)] && !t.optional; })[0]; return cur ? taskView(s, cur) : ''; } });
+  TK.reg({ id: '事件選擇', section: 'flags', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || {}; this.root = root; },
+    step: function (state, a) {
+      var s = a.s, t = a.t, b = a.el, k = key(s, t);
+      function done(pts_, head, msg, note) { state.done[k] = true; state.fb[k] = ''; state.pts[k] = pts_; state.pend = { s: s.id, head: head, msg: msg, note: note || '' }; afterTask(s); }
+      if (a.type === 'decide') {
+      var op = t.options[+b.getAttribute('data-i')]; grant(op.grant); state.ans[k] = op.reply || op.text; done(1, '你選了：' + op.text, op.reply || '');
+      }
+      return state;
+    },
+    render: function (state) { return flagsHtml(); } });
+  TK.reg({ id: '資源計分', section: 'ranks', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || []; this.root = root; },
+    step: function (state, a) { if (a.type === 'point') state.score += (a.n || 1); return state; },
+    render: function (state) { return scoreHtml(); } });
+  TK.reg({ id: '勝負', section: 'endings', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || []; this.root = root; },
+    step: function (state, a) { return state; },
+    render: function (state) { endView(); } });
+  TK.reg({ id: '回饋', section: 'stops', root: '#app',
+    init: function (cfg, root) { this.cfg = cfg || []; this.root = root; },
+    step: function (state, a) { if (a.type === 'complete') afterTask(a.s); return state; },
+    render: function (state) { return fragView(sget(state.cur)); } });
+
+  window.__walkModules = function () { return TK.list(); };
 
   /* ---------- 事件 ---------- */
   APP.addEventListener('keydown', function (ev) { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.getAttribute && ev.target.getAttribute('role') === 'button' && ev.target.tagName.toLowerCase() === 'g') { ev.preventDefault(); ev.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
@@ -1411,16 +1588,11 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     if (act === 'variant') { return loadByName(b.getAttribute('data-n')); }
     if (!D || WALKING) return;
     function done(pts_, head, msg, note) { ST.done[k] = true; ST.fb[k] = ''; ST.pts[k] = pts_; ST.pend = { s: s.id, head: head, msg: msg, note: note || '' }; afterTask(s); }
-    if (act === 'title') { ST.view = 'title'; }
-    else if (act === 'start') { ST.started = true; ST.view = 'map'; ST.sel = null; }
-    else if (act === 'home') { ST.view = 'map'; ST.note = ''; ST.fail = false; ST.pend = null; ST.sel = null; }
-    else if (act === 'sel') { ST.sel = s.id; ST.note = ''; ST.fail = false; ST.view = 'map'; }
-    else if (act === 'open') { ST.view = 'stop'; ST.cur = s.id; ST.note = ''; ST.fail = false; ST.pend = null; }
+    if (['title', 'start', 'home', 'sel', 'open', 'end'].indexOf(act) >= 0) { TK.mods['空間'].step(ST, { type: act, s: s }); }
+    else if (act === 'arrive') { TK.mods['時間回合'].step(ST, { type: 'arrive', s: s }); }
     else if (act === 'walk') { if (locked(s)) { ST.sel = s.id; } else { return walkTo(s); } }
-    else if (act === 'end') { ST.view = 'end'; }
     else if (act === 'reset') { if (!ST.confirmReset) { ST.confirmReset = true; render(); setTimeout(function () { if (ST && ST.confirmReset) { ST.confirmReset = false; render(); } }, 6000); return; } var sim = ST.sim; ST = fresh(); ST.sim = sim; ST.started = false; ST.view = 'title'; }
-    else if (act === 'arrive') { ST.at[s.id] = 1; ST.pos = s.id; ST.note = ''; ST.fail = false; }
-    else if (act === 'talknext') { var ls = (s.npc && s.npc.lines) || [], ni = (ST.talk[s.id] || 0) + 1; if (ni >= ls.length) ST.talked[s.id] = true; else ST.talk[s.id] = ni; }
+    else if (act === 'talknext') { TK.mods['角色'].step(ST, { type: 'next', s: s }); }
     else if (act === 'cont') { ST.pend = null; }
     else if (act === 'gps') {
       if (!navigator.geolocation) { ST.note = '這個瀏覽器不能定位，請改按「走過去」。'; ST.fail = true; render(); return; }
@@ -1432,33 +1604,8 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
       }, function () { ST.note = '拿不到定位（可能沒開權限或在室內）。可以改按「走過去」。'; ST.fail = true; render(); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
       return;
     }
-    else if (act === 'choice') {
-      var o = t.options[+b.getAttribute('data-i')];
-      if (o === t.answer) { if (!ST.wrong[k] && D.rules.score) ST.score++; done(ST.wrong[k] ? 1 : 2, '✓ 答對了' + (ST.wrong[k] ? '（第二次）' : '，一次就中'), t.reward || '對。'); }
-      else { ST.wrong[k] = true; ST.fb[k] = '不是這個。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
-    }
-    else if (act === 'decide') {
-      var op = t.options[+b.getAttribute('data-i')]; grant(op.grant); ST.ans[k] = op.reply || op.text; done(1, '你選了：' + op.text, op.reply || '');
-    }
-    else if (act === 'text') {
-      var v = norm(document.getElementById('in-' + k).value || '');
-      if (t.accept.some(function (a) { return norm(a) === v; })) { if (!ST.wrong[k] && D.rules.score) ST.score++; done(ST.wrong[k] ? 1 : 2, '✓ 答對了' + (ST.wrong[k] ? '（第二次）' : '，一次就中'), t.reward || '對。'); }
-      else { ST.wrong[k] = true; ST.fb[k] = '不對，再試一次。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
-    }
-    else if (act === 'pick') {
-      var pk = ST.order[k] = ST.order[k] || []; pk.push(b.getAttribute('data-v'));
-      if (pk.length === t.items.length) {
-        if (pk.join('|') === t.answer.join('|')) done(ST.wrong[k] ? 1 : 2, '✓ 順序對了', t.reward || '順序對了。');
-        else { ST.wrong[k] = true; ST.order[k] = []; ST.fb[k] = '順序不對，重排。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
-      }
-    }
-    else if (act === 'unpick') { ST.order[k] = []; }
-    else if (act === 'observe') {
-      var tx = (document.getElementById('in-' + k).value || '').trim();
-      if (tx.length < (t.min || 8)) { ST.fb[k] = '再多寫一點（至少 ' + (t.min || 8) + ' 個字）。'; }
-      else { ST.ans[k] = tx; done(2, '✍ 筆記收進冊子了', t.reward || '記下來了。', tx); }
-    }
-    else if (act === 'refl') { ST.reflect.c = +b.getAttribute('data-i'); }
+    else if (act === 'decide') { TK.mods['事件選擇'].step(ST, { type: act, s: s, t: t, el: b }); }
+    else if (['choice', 'text', 'pick', 'unpick', 'observe'].indexOf(act) >= 0) { TK.mods['核心動作'].step(ST, { type: act, s: s, t: t, el: b }); }
     else if (act === 'share') {
       var sv = document.getElementById('story'); if (sv) ST.reflect.story = sv.value;
       save(); render();

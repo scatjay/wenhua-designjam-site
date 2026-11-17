@@ -130,7 +130,7 @@
     }
     function confirmIt(text) {
       btn.disabled = true; msg.textContent = T('記下中…');
-      put('confirm', text).then(function (a) { st.confirmed = true; st.edited = (text !== st.autoSummary); st.summary = text; st.editing = false; st.at = stampNow(); btn.disabled = false; inp.disabled = false; if (a && a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 存不下照樣可用 */ } } save(); msg.textContent = ''; paint(); })
+      put('confirm', text).then(function (a) { st.confirmed = true; st.edited = (text !== st.autoSummary); st.summary = text; st.editing = false; st.at = stampNow(); try { var fm = st.msgs.filter(function (m) { return m.w === 's'; })[0]; localStorage.setItem('ct_pf_' + env, JSON.stringify({ unit: unit, mine: text, feel: fm ? String(fm.t).slice(0, 100) : '', t: Date.now() })); if (window.CT_HOOK && window.CT_HOOK.prefill) window.CT_HOOK.prefill(); } catch (e) { /* 預填失敗不影響結果卡 */ } btn.disabled = false; inp.disabled = false; if (a && a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 存不下照樣可用 */ } } save(); msg.textContent = ''; paint(); })
         .catch(function () { msg.textContent = T('現在送不出去，過一下再按一次。'); btn.disabled = false; });
     }
     btn.onclick = function () {

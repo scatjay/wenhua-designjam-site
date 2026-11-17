@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>走讀樣板</title>
+<title>走讀樣板：通天冠去哪了</title>
 <link rel="icon" href="data:,">
 <style>
-:root{--bg:#f6f1e6;--fg:#241f19;--mute:#6a604f;--card:#fffdf7;--line:#d9ceb8;--acc:#b23a26;--acc2:#1d6a63;--chip:#ece3cf;--ok:#1f7a4a;--bad:#a8321f}
-@media (prefers-color-scheme:dark){:root{--bg:#12161a;--fg:#ece7dc;--mute:#a1a9b0;--card:#1b2127;--line:#33404a;--acc:#e5755f;--acc2:#58d0bf;--chip:#27323b;--ok:#5ccf8f;--bad:#ff8d78}}
+:root{--bg:#f6f1e6;--fg:#241f19;--mute:#6a604f;--card:#fffdf7;--line:#d9ceb8;--acc:#b23a26;--acc2:#1d6a63;--chip:#ece3cf;--ok:#1f7a4a;--bad:#a8321f;--map:#efe6d0;--blk:#e4d8bb;--road:#c9b88f;--gold:#c8901c}
+@media (prefers-color-scheme:dark){:root{--bg:#12161a;--fg:#ece7dc;--mute:#a1a9b0;--card:#1b2127;--line:#33404a;--acc:#e5755f;--acc2:#58d0bf;--chip:#27323b;--ok:#5ccf8f;--bad:#ff8d78;--map:#1a2228;--blk:#222d35;--road:#3b4a55;--gold:#e0b04a}}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;overflow-wrap:anywhere;-webkit-text-size-adjust:100%}
-.wrap{max-width:520px;margin:0 auto;padding:14px 14px 48px}
+.wrap{max-width:720px;margin:0 auto;padding:12px 14px 56px}
 h1{font-size:22px;margin:4px 0 2px;line-height:1.3}
 h2{font-size:18px;margin:18px 0 6px}
 .sub{color:var(--mute);font-size:14px}
@@ -20,16 +20,14 @@ h2{font-size:18px;margin:18px 0 6px}
 .btn.pri{background:var(--acc);color:#fff;border-color:var(--acc);text-align:center}
 .btn.ghost{text-align:center;font-weight:500}
 .btn.on{border-color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc)}
-.btn[disabled]{opacity:.5}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.big{min-height:54px;font-size:18px}
 .row{display:flex;gap:8px}
 .row .btn{margin:6px 0;text-align:center}
 .chip{display:inline-block;background:var(--chip);border-radius:999px;padding:3px 10px;margin:2px 4px 2px 0;font-size:13px}
 .tag{display:inline-block;border-radius:6px;padding:0 7px;font-size:12px;font-weight:700;margin-right:6px;color:#fff;background:var(--acc2)}
 .tag.art{background:#7a5a1c}.tag.sch{background:#4c5fa8}
-.stop{display:block;width:100%;min-height:56px;text-align:left}
 .st{float:right;font-size:13px;color:var(--mute)}
-.npc{border-left:4px solid var(--acc2);padding:4px 10px;margin:8px 0;background:var(--chip);border-radius:0 8px 8px 0}
-.npc b{display:block;font-size:14px}
 .field{font-size:13px;color:var(--acc);font-weight:700}
 input[type=text],textarea{width:100%;font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;min-height:44px}
 textarea{min-height:96px}
@@ -39,11 +37,84 @@ textarea{min-height:96px}
 details{margin:12px 0}
 summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--mute)}
 input[type=file]{width:100%;min-height:44px;padding:8px 0}
-label.chk{display:flex;align-items:center;gap:10px;min-height:44px}
-label.chk input{width:22px;height:22px}
 img.pv{max-width:100%;border-radius:8px;margin-top:6px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .small{font-size:13px;color:var(--mute)}
+/* 標題畫面 */
+.hero{text-align:center;padding:26px 14px 20px;margin:8px 0 12px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(160deg,var(--chip),var(--card) 70%)}
+.hero .cv{font-size:64px;line-height:1.1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
+.hero h1{font-size:30px;margin:10px 0 4px;letter-spacing:.04em}
+.hero .tg{font-size:15px;color:var(--mute);margin:0 0 10px}
+.hero .meta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 4px}
+.how{margin:8px 0;padding-left:0;list-style:none}
+.how li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.how b{flex:0 0 30px;font-size:22px;text-align:center}
+/* 進度列 */
+.hud{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 6px}
+.hud .chip{margin:0;font-weight:600}
+.tray{display:flex;gap:6px;margin:6px 0 2px}
+.slot{flex:1 1 0;min-width:0;border:1.5px dashed var(--line);border-radius:10px;text-align:center;padding:5px 2px;font-size:12px;color:var(--mute);background:var(--card)}
+.slot .ic{display:block;font-size:22px;line-height:1.3}
+.slot.got{border:1.5px solid var(--gold);color:var(--fg);background:var(--chip)}
+.slot.opt{opacity:.8}
+/* 地圖 */
+.mapbox{background:var(--map);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+.mapbox svg{display:block;width:100%;height:auto;max-height:62vh}
+.mapbox .cap{position:absolute;right:8px;bottom:5px;font-size:11px;color:var(--mute)}
+.node{cursor:pointer}
+.node:focus{outline:none}
+.node:focus-visible circle.nc{stroke:var(--acc);stroke-width:1.2}
+.node .nc{stroke:var(--fg);stroke-width:.5;fill:var(--card)}
+.node.done .nc{fill:var(--ok);stroke:var(--ok)}
+.node.lock .nc{fill:var(--chip);stroke:var(--mute);stroke-dasharray:1.2 1}
+.node.next .nc{fill:var(--acc);stroke:var(--acc)}
+.node.sel .ring{opacity:1}
+.node .ring{fill:none;stroke:var(--acc);stroke-width:.8;opacity:0}
+.node .num{font-size:4.4px;font-weight:800;text-anchor:middle;dominant-baseline:central;fill:var(--fg);pointer-events:none}
+.node.done .num,.node.next .num{fill:#fff}
+.node .lbl{font-size:3.5px;font-weight:700;text-anchor:middle;fill:var(--fg);paint-order:stroke;stroke:var(--map);stroke-width:1.1px;stroke-linejoin:round;pointer-events:none}
+.node .opt{font-size:2.8px;text-anchor:middle;fill:var(--mute);paint-order:stroke;stroke:var(--map);stroke-width:1px;pointer-events:none}
+.node.next .pulse{animation:pls 1.6s ease-out infinite}
+.pulse{fill:var(--acc);opacity:0;transform-origin:center;transform-box:fill-box}
+@keyframes pls{0%{opacity:.45;transform:scale(1)}100%{opacity:0;transform:scale(2.1)}}
+#pl{transition:transform .85s ease-in-out}
+.pawn{font-size:6.6px;text-anchor:middle;pointer-events:none}
+.selcard h2{margin:0 0 2px}
+/* 場景與對話 */
+.scene{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(160deg,var(--chip),var(--card));margin:8px 0}
+.scene .em{font-size:44px;line-height:1}
+.scene .nm{font-size:20px;font-weight:800;line-height:1.3}
+.bub{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
+.bub .av{flex:0 0 40px;height:40px;border-radius:50%;background:var(--chip);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:22px}
+.bub .tx{background:var(--card);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:8px 12px;max-width:calc(100% - 50px)}
+.bub .who{font-size:12px;color:var(--mute);font-weight:700;display:block}
+.bub.last .tx{animation:pop .3s ease-out}
+.bub.me{flex-direction:row-reverse}.bub.me .tx{border-radius:14px 4px 14px 14px;background:var(--chip)}
+.dots{display:flex;gap:6px;align-items:center;margin:8px 0 2px}
+.dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);background:transparent;display:inline-block}
+.dots i.d{background:var(--ok);border-color:var(--ok)}
+.dots i.c{border-color:var(--acc);background:var(--acc)}
+.dots span{font-size:13px;color:var(--mute);margin-left:4px}
+.res{border-color:var(--ok);border-width:2px}
+.res .hd{font-weight:800;color:var(--ok)}
+.frag{text-align:center;border:2px solid var(--gold);background:linear-gradient(160deg,var(--chip),var(--card));border-radius:16px;padding:16px 14px;margin:12px 0;animation:pop .5s ease-out}
+.frag .ic{font-size:54px;line-height:1.1}
+.frag .nm{font-size:19px;font-weight:800;margin:4px 0}
+.frag .got{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.1em}
+.frag p{margin:6px 0;text-align:left}
+@keyframes pop{0%{transform:scale(.85);opacity:0}70%{transform:scale(1.04);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){#pl{transition:none}.frag,.bub.last .tx,.node.next .pulse{animation:none}}
+/* 結算 */
+.stars{font-size:30px;letter-spacing:4px;color:var(--gold);text-align:center;margin:2px 0}
+.rank{text-align:center;font-size:22px;font-weight:800;margin:2px 0}
+.bd{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 2px}
+.bd div{background:var(--chip);border-radius:10px;padding:6px 8px;font-size:13px}
+.bd b{display:block;font-size:20px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.fgrid .frag{margin:0;animation:none;padding:10px}
+.fgrid .frag .ic{font-size:34px}
+.fgrid .frag .nm{font-size:16px}
+.fgrid .frag p{font-size:13px}
 </style>
 </head>
 <body>
@@ -57,7 +128,10 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   "subtitle": "跟著《小封神》走一趟台南舊城（規則版）",
   "author": "工坊示範（可以改成你的名字）",
   "updated": "2026-11-11",
-  "intro": "廟裡沒米了。小上帝把頭上那頂通天冠（神明戴的冠）摘下來，叫康元帥、趙元帥拿去典當換米錢，而你是跟在旁邊跑腿的小幫手。順序不能亂：沒有接到差事，當店不會理你；沒有拿到錢，到了媽祖宮口也沒東西可以輸。故事的人物和地點大多來自許丙丁的《小封神》，每一站會告訴你哪些是原著、哪些是工坊加的。"
+  "intro": "廟裡沒米了。小上帝把頭上那頂通天冠（神明戴的冠）摘下來，叫康元帥、趙元帥拿去典當換米錢，而你是跟在旁邊跑腿的小幫手。順序不能亂：沒有接到差事，當店不會理你；沒有拿到錢，到了媽祖宮口也沒東西可以輸。故事的人物和地點大多來自許丙丁的《小封神》，每一站會告訴你哪些是原著、哪些是工坊加的。",
+  "minutes": "約 10–12 分鐘",
+  "cover": "👑",
+  "tagline": "跟著跑腿的小幫手，把通天冠的下落走一遍"
  },
  "rules": {
   "mode": "gated",
@@ -144,7 +218,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
      "接了差事"
     ],
     "msg": "廟祝把你叫過去：「好，現在你知道這位是誰了。去打銀街吧。」"
-   }
+   },
+   "map": {
+    "x": 60,
+    "y": 16
+   },
+   "frag": {
+    "icon": "🐢",
+    "name": "龜蛇的記號",
+    "text": "「小上帝」先是一個地名，神才跟著這樣叫；他腳踏龜蛇，是管著牠們，不是騎牠們。"
+   },
+   "icon": "🏮"
   },
   {
    "id": "pawn",
@@ -215,7 +299,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
      "領到五千錢"
     ],
     "msg": "你把五千錢收進袋子。康元帥、趙元帥說：「去媽祖宮口，那邊有人在擺攤。」"
-   }
+   },
+   "map": {
+    "x": 44,
+    "y": 32
+   },
+   "frag": {
+    "icon": "💰",
+    "name": "五千錢的當票",
+    "text": "通天冠是銅鍍金的，在打銀街的當店當出五千錢。"
+   },
+   "icon": "🏪"
   },
   {
    "id": "tianhou",
@@ -324,7 +418,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
      "去過媽祖宮口"
     ],
     "msg": "天色暗下來，遠處傳來吵鬧聲。有人說：封神廟那邊開庭了。"
-   }
+   },
+   "map": {
+    "x": 22,
+    "y": 46
+   },
+   "frag": {
+    "icon": "🎲",
+    "name": "璉寶的籌碼",
+    "text": "媽祖宮口的賭攤是她手下千里眼、順風耳擺的，不是媽祖本人。"
+   },
+   "icon": "🏮"
   },
   {
    "id": "beiji",
@@ -380,7 +484,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
      "見過大上帝"
     ],
     "msg": "老香客點點頭：「這段是舊事了，慢慢聽。」"
-   }
+   },
+   "map": {
+    "x": 76,
+    "y": 44
+   },
+   "frag": {
+    "icon": "🏯",
+    "name": "資歷長一級",
+    "text": "大上帝比小上帝早到、資歷長一級，所以小上帝一到任就被冷落（舊神食新神）。"
+   },
+   "icon": "🏮"
   },
   {
    "id": "fengshen",
@@ -409,6 +523,19 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     ]
    },
    "tasks": [
+    {
+     "id": "k1",
+     "type": "choice",
+     "title": "開庭之前，先看看這座廟：原書說，封神廟是誰監工，一天就蓋好的？",
+     "options": [
+      "魯班",
+      "哪吒",
+      "魁星"
+     ],
+     "answer": "魯班",
+     "hint": "木匠的祖師爺。",
+     "reward": "對。原書寫魯班監工，一日就把封神廟築成。"
+    },
     {
      "id": "ord1",
      "type": "order",
@@ -441,7 +568,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "on_complete": {
     "grant": [],
     "msg": "開庭結束。你可以回到首頁，看看這一趟的結局。"
-   }
+   },
+   "map": {
+    "x": 48,
+    "y": 64
+   },
+   "frag": {
+    "icon": "⚖️",
+    "name": "開庭的木槌",
+    "text": "魁星被誤認成千里眼吊起來示眾；開庭時，小上帝挨的批評是用神不明、輕信讒言。"
+   },
+   "icon": "⚖️"
   }
  ],
  "endings": [
@@ -493,7 +630,36 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "說不準"
   ],
   "story_prompt": "用一句話寫這趟的故事：誰想要什麼？卡到什麼？最後怎樣？"
- }
+ },
+ "map": {
+  "note": "示意圖，位置只是大概，不照比例",
+  "start": {
+   "x": 90,
+   "y": 14
+  }
+ },
+ "ranks": [
+  {
+   "min": 0,
+   "title": "路過看看的人",
+   "text": "你走過了這條路，細節還沒抓住。回頭看看碎片冊，再玩一次會不一樣。"
+  },
+  {
+   "min": 40,
+   "title": "認真的跑腿小幫手",
+   "text": "大部分的線索你都接住了，現場筆記也寫下了。"
+  },
+  {
+   "min": 70,
+   "title": "走讀好手",
+   "text": "題目、現場和抉擇你都顧到了，這趟走得很紮實。"
+  },
+  {
+   "min": 90,
+   "title": "舊城活地圖",
+   "text": "幾乎每一站都一次到位。可以回頭想想：換成別的主題，你還走得出這樣的路線嗎？"
+  }
+ ]
 }</script>
 <script id="inline-walk_skin.json" type="application/json">{
  "format": "walk-template-0.1",
@@ -503,7 +669,10 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   "subtitle": "跟著《小封神》走一趟台南舊城（外觀版）",
   "author": "工坊示範（可以改成你的名字）",
   "updated": "2026-11-11",
-  "intro": "這是同一條路的另一個版本：每一站只有打卡和問答，順序隨你走，答對就得分。廟的名字和小封神的故事都在，但沒有任何一個步驟靠它們才成立。玩完以後，和規則版比一比。"
+  "intro": "這是同一條路的另一個版本：每一站只有打卡和問答，順序隨你走，答對就得分。廟的名字和小封神的故事都在，但沒有任何一個步驟靠它們才成立。玩完以後，和規則版比一比。",
+  "minutes": "約 6–8 分鐘",
+  "cover": "📍",
+  "tagline": "一站一站打卡答題，看誰得分高"
  },
  "rules": {
   "mode": "free",
@@ -567,7 +736,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "on_complete": {
     "grant": [],
     "msg": ""
-   }
+   },
+   "map": {
+    "x": 60,
+    "y": 16
+   },
+   "frag": {
+    "icon": "🏅",
+    "name": "靈祐宮印章",
+    "text": "「小上帝」先是一個地名，神才跟著這樣叫；他腳踏龜蛇，是管著牠們，不是騎牠們。"
+   },
+   "icon": "🏮"
   },
   {
    "id": "pawn",
@@ -620,7 +799,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "on_complete": {
     "grant": [],
     "msg": ""
-   }
+   },
+   "map": {
+    "x": 44,
+    "y": 32
+   },
+   "frag": {
+    "icon": "🏅",
+    "name": "打銀街印章",
+    "text": "通天冠是銅鍍金的，在打銀街的當店當出五千錢。"
+   },
+   "icon": "🏪"
   },
   {
    "id": "tianhou",
@@ -674,7 +863,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "on_complete": {
     "grant": [],
     "msg": ""
-   }
+   },
+   "map": {
+    "x": 22,
+    "y": 46
+   },
+   "frag": {
+    "icon": "🏅",
+    "name": "大天后宮印章",
+    "text": "媽祖宮口的賭攤是她手下千里眼、順風耳擺的，不是媽祖本人。"
+   },
+   "icon": "🏮"
   },
   {
    "id": "beiji",
@@ -718,7 +917,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "on_complete": {
     "grant": [],
     "msg": ""
-   }
+   },
+   "map": {
+    "x": 76,
+    "y": 44
+   },
+   "frag": {
+    "icon": "🏅",
+    "name": "北極殿印章",
+    "text": "大上帝比小上帝早到、資歷長一級，所以小上帝一到任就被冷落（舊神食新神）。"
+   },
+   "icon": "🏮"
   },
   {
    "id": "fengshen",
@@ -761,7 +970,17 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "on_complete": {
     "grant": [],
     "msg": ""
-   }
+   },
+   "map": {
+    "x": 48,
+    "y": 64
+   },
+   "frag": {
+    "icon": "🏅",
+    "name": "封神廟印章",
+    "text": "魁星被誤認成千里眼吊起來示眾；開庭時，小上帝挨的批評是用神不明、輕信讒言。"
+   },
+   "icon": "⚖️"
   }
  ],
  "endings": [
@@ -781,14 +1000,43 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
    "說不準"
   ],
   "story_prompt": "用一句話寫這趟的故事：誰想要什麼？卡到什麼？最後怎樣？"
- }
+ },
+ "map": {
+  "note": "示意圖，位置只是大概，不照比例",
+  "start": {
+   "x": 90,
+   "y": 14
+  }
+ },
+ "ranks": [
+  {
+   "min": 0,
+   "title": "打卡新手",
+   "text": "每一站都只是答題。換個版本玩，比一比哪裡不一樣。"
+  },
+  {
+   "min": 40,
+   "title": "打卡達人",
+   "text": "答對不少題。想一想：這些題目拿掉廟的名字，還成立嗎？"
+  },
+  {
+   "min": 70,
+   "title": "問答高手",
+   "text": "題目答得很好。接下來去玩規則版，看看多了順序和抉擇之後，感覺有什麼不同。"
+  },
+  {
+   "min": 90,
+   "title": "滿分打卡王",
+   "text": "幾乎全對。但這個版本裡，你的選擇有沒有改變過任何事？"
+  }
+ ]
 }</script>
 <!--INLINE-END-->
 <script>
 (function () {
   'use strict';
   var APP = document.getElementById('app');
-  var D = null, NAME = 'walk.json', ST = null, PHOTO = {}, TICK = 0;
+  var D = null, NAME = 'walk.json', ST = null, PHOTO = {}, WALKING = false;
   var BUILTIN = ['walk.json', 'walk_skin.json'];
   var LABEL = { 'walk.json': '規則版', 'walk_skin.json': '外觀版' };
 
@@ -812,7 +1060,8 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
       if (!s.name) bad(p + '：沒有 name');
       var hasLat = typeof s.lat === 'number', hasLon = typeof s.lon === 'number';
       if (hasLat !== hasLon) bad(p + '：lat 和 lon 要一起有、或一起是 null');
-      if (!hasLat && d.rules && d.rules.geofence) w.push(p + '：沒有座標，到了要自己按「我到了」');
+      if (s.map && (typeof s.map.x !== 'number' || typeof s.map.y !== 'number' || s.map.x < 0 || s.map.x > 100 || s.map.y < 0 || s.map.y > 80)) w.push(p + '：map 的 x 要在 0–100、y 要在 0–80 之間（這一站會被自動排位置）');
+      if (s.frag && (!s.frag.name || !s.frag.text)) w.push(p + '：frag 要有 name 和 text（這一站會用預設碎片）');
       chkFlags(s.requires, p + ' 的 requires');
       if (s.on_complete) chkFlags(s.on_complete.grant, p + ' 的 on_complete.grant');
       if (!Array.isArray(s.tasks) || !s.tasks.length) { bad(p + '：tasks 至少要有一題'); return; }
@@ -856,8 +1105,8 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
 
   /* ---------- 存檔（只存在這支手機的瀏覽器；讀不到也能玩） ---------- */
   function skey() { return 'walktpl:' + D.meta.id; }
-  function fresh() { return { view: 'home', cur: null, at: {}, done: {}, flags: {}, ans: {}, wrong: {}, fb: {}, order: {}, completed: {}, msg: '', score: 0, sim: false, note: '', reflect: { c: -1, story: '' } }; }
-  function load() { try { var r = localStorage.getItem(skey()); if (r) { var o = JSON.parse(r); return Object.assign(fresh(), o); } } catch (x) { } return fresh(); }
+  function fresh() { return { view: 'title', started: false, pos: 'start', sel: null, cur: null, at: {}, done: {}, flags: {}, ans: {}, wrong: {}, fb: {}, order: {}, completed: {}, pts: {}, talk: {}, talked: {}, pend: null, score: 0, sim: false, note: '', reflect: { c: -1, story: '' } }; }
+  function load() { try { var r = localStorage.getItem(skey()); if (r) { var o = JSON.parse(r); if (o.view === 'home') o.view = 'map'; return Object.assign(fresh(), o); } } catch (x) { } return fresh(); }
   function save() { try { localStorage.setItem(skey(), JSON.stringify(ST)); } catch (x) { } }
 
   /* ---------- 狀態 ---------- */
@@ -866,8 +1115,11 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   function key(s, t) { return s.id + '.' + t.id; }
   function tasksOf(s) { return s.tasks.filter(function (t) { return !(t.show_if || []).some(function (f) { return !ST.flags[f]; }); }); }
   function stopDone(s) { return !!ST.at[s.id] && tasksOf(s).filter(function (t) { return !t.optional; }).every(function (t) { return ST.done[key(s, t)]; }); }
-  function allDone() { return D.stops.filter(function (s) { return !s.optional; }).every(stopDone); }
+  function reqStops() { return D.stops.filter(function (s) { return !s.optional; }); }
+  function allDone() { return reqStops().every(stopDone); }
   function grant(list) { (list || []).forEach(function (f) { ST.flags[f] = true; }); }
+  function shortName(s) { return s.short || String(s.name).replace(/（.*?）/g, '').replace(/\(.*?\)/g, ''); }
+  function fragOf(s) { var c = s.culture || {}; var f = s.frag || {}; return { icon: f.icon || '🧩', name: f.name || (shortName(s) + '的碎片'), text: f.text || c.note || '', origin: c.origin || '' }; }
   function afterTask(s) {
     if (stopDone(s) && !ST.completed[s.id]) {
       ST.completed[s.id] = true;
@@ -882,65 +1134,186 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     return 2 * R * Math.asin(Math.sqrt(x));
   }
   function norm(s) { return String(s).trim().toLowerCase().replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 65248); }).replace(/\s+/g, ''); }
+  function nextStop() { var l = reqStops().filter(function (s) { return !stopDone(s) && !locked(s); }); return l[0] || null; }
+  function doneCount() { return reqStops().filter(stopDone).length; }
+  function fragCount() { return D.stops.filter(function (s) { return ST.completed[s.id]; }).length; }
+  function pts(t) { return t.type === 'decision' ? 1 : 2; }
+
+  /* ---------- 評價 ---------- */
+  function tally() {
+    var earned = 0, poss = 0, right = 0, quiz = 0, notes = 0, dec = 0;
+    D.stops.forEach(function (s) {
+      if (s.optional && !ST.at[s.id]) return;
+      poss += 1; if (ST.completed[s.id]) earned += 1;
+      tasksOf(s).forEach(function (t) {
+        var k = key(s, t); poss += pts(t);
+        if (ST.done[k]) earned += (ST.pts[k] || 0);
+        if (t.type === 'choice' || t.type === 'text' || t.type === 'order') { quiz++; if (ST.done[k] && !ST.wrong[k]) right++; }
+        if (t.type === 'observe' && ST.done[k]) notes++;
+        if (t.type === 'decision' && ST.done[k]) dec++;
+      });
+    });
+    var pct = poss ? Math.round(earned * 100 / poss) : 0;
+    var ranks = (D.ranks && D.ranks.length ? D.ranks : [{ min: 0, title: '走完了這條路', text: '' }]).slice().sort(function (a, b) { return a.min - b.min; });
+    var rk = ranks[0]; ranks.forEach(function (r) { if (pct >= r.min) rk = r; });
+    return { earned: earned, poss: poss, pct: pct, right: right, quiz: quiz, notes: notes, dec: dec, rank: rk, stars: Math.max(1, Math.min(5, Math.round(pct / 20))) };
+  }
+
+  /* ---------- 地圖座標 ---------- */
+  function posOf(s) {
+    if (s.map && typeof s.map.x === 'number' && typeof s.map.y === 'number') return { x: s.map.x, y: s.map.y };
+    var i = D.stops.indexOf(s), n = D.stops.length;
+    return { x: i % 2 ? 70 : 30, y: n > 1 ? 14 + i * (50 / (n - 1)) : 36 };
+  }
+  function startPos() {
+    var m = D.map && D.map.start;
+    if (m && typeof m.x === 'number') return { x: m.x, y: m.y };
+    var p = posOf(D.stops[0]); return { x: Math.min(94, p.x + 16), y: Math.max(8, p.y - 2) };
+  }
+  function whereIs(id) { return id === 'start' || !sget(id) ? startPos() : posOf(sget(id)); }
 
   /* ---------- 畫面 ---------- */
   function tagOf(o) { return '<span class="tag ' + (o === '學者說法' ? 'sch' : (o === '工坊創作' ? 'art' : '')) + '">' + esc(o) + '</span>'; }
   function switcher() {
     return '<div class="row">' + BUILTIN.map(function (n) { return '<button class="btn ghost' + (n === NAME ? ' on' : '') + '" data-act="variant" data-n="' + n + '">' + LABEL[n] + '</button>'; }).join('') + '</div>';
   }
-  function home() {
-    var h = '<div class="top"><h1>' + esc(D.meta.title) + '</h1></div><div class="sub">' + esc(D.meta.subtitle || '') + '</div>';
-    h += switcher();
-    h += '<div class="card">' + esc(D.meta.intro || '') + '</div>';
-    var got = Object.keys(D.flags || {}).filter(function (f) { return ST.flags[f]; });
-    if (got.length) h += '<div>' + got.map(function (f) { return '<span class="chip">✓ ' + esc(D.flags[f]) + '</span>'; }).join('') + '</div>';
-    if (D.rules.score) h += '<div class="small">目前得分：' + ST.score + '</div>';
-    h += '<h2>路線</h2>';
-    D.stops.forEach(function (s, i) {
-      var st = locked(s) ? '🔒 還沒開' : (stopDone(s) ? '✅ 完成' : (ST.at[s.id] ? '📍 進行中' : '⬜ 還沒到'));
-      h += '<button class="btn stop" data-act="open" data-s="' + esc(s.id) + '"><span class="st">' + st + '</span>' + (i + 1) + '. ' + esc(s.name) + (s.optional ? '（選擇性）' : '') + '</button>';
-    });
-    if (allDone()) h += '<button class="btn pri" data-act="end">路走完了，看結局</button>';
-    var errs = D.__warn && D.__warn.length ? '<div class="small">提醒：' + esc(D.__warn.join('；')) + '</div>' : '';
-    h += errs;
-    h += '<details><summary>測試與資料</summary>' +
-      '<label class="small chk"><input type="checkbox" id="sim"' + (ST.sim ? ' checked' : '') + '> 桌面測試：不用真的走到，按一下就當作到了</label>' +
-      '<p class="small">想用自己改過的資料玩：選一個 JSON 檔。</p><input type="file" id="pick" accept=".json,application/json">' +
+  function dataBox() {
+    return '<details><summary>測試與資料</summary><p class="small">想用自己改過的資料玩：選一個 JSON 檔。</p><input type="file" id="pick" accept=".json,application/json">' +
       '<button class="btn ghost" data-act="reset">' + (ST.confirmReset ? '再按一次就清掉這一版的進度' : '重新開始這一版') + '</button></details>';
+  }
+
+  function titleView() {
+    var n = reqStops().length, opt = D.stops.length - n, m = D.meta;
+    var h = '<div class="hero"><div class="cv" aria-hidden="true">' + esc(m.cover || '🗺️') + '</div><h1>' + esc(m.title) + '</h1>' +
+      '<div class="tg">' + esc(m.tagline || m.subtitle || '') + '</div><div class="sub">' + esc(m.subtitle || '') + '</div>' +
+      '<div class="meta"><span class="chip">🗺️ ' + n + ' 站' + (opt ? '＋' + opt + ' 站選擇性' : '') + '</span><span class="chip">⏱ ' + esc(m.minutes || '約 10 分鐘') + '</span><span class="chip">' + (D.rules.mode === 'gated' ? '🔒 要照順序走' : '🧭 順序隨你') + '</span></div></div>';
+    h += '<div class="card">' + esc(m.intro || '') + '</div>';
+    h += '<button class="btn pri big" data-act="start">' + (ST.started ? '▶ 繼續這一趟' : '▶ 開始走讀') + '</button>';
+    h += '<div class="card"><b>怎麼玩</b><ul class="how"><li><b>🗺️</b><span>在地圖上點一個地點，按「走過去」（在教室裡玩就用模擬；真的在現場可以用定位檢查）。</span></li><li><b>💬</b><span>到了先聽站上的人說話，再一題一題做任務。</span></li><li><b>🧩</b><span>做完一站，拿到一塊碎片；走完全程，看你的結局和評價。</span></li></ul></div>';
+    h += '<div class="small" style="margin-top:10px">玩哪一版：</div>' + switcher();
+    h += '<div class="small">規則版：順序、抉擇和現場題都會影響結局。外觀版：同一條路，只有打卡答題。玩完兩版，比一比。</div>';
+    h += dataBox();
     APP.innerHTML = h;
   }
+
+  function hud() {
+    var h = '<div class="hud"><span class="chip">📍 ' + doneCount() + ' / ' + reqStops().length + ' 站</span><span class="chip">🧩 ' + fragCount() + ' / ' + D.stops.length + ' 碎片</span>';
+    if (D.rules.score) h += '<span class="chip">⭐ ' + tally().earned + ' 分</span>';
+    h += '<button class="btn ghost" style="width:auto;min-height:44px;margin:0 0 0 auto;padding:4px 14px" data-act="title">封面</button></div>';
+    return h;
+  }
+  function tray() {
+    return '<div class="tray">' + D.stops.map(function (s) {
+      var got = !!ST.completed[s.id], f = fragOf(s);
+      return '<div class="slot' + (got ? ' got' : '') + (s.optional ? ' opt' : '') + '"><span class="ic">' + (got ? esc(f.icon) : '❔') + '</span>' + (got ? esc(f.name) : (s.optional ? '選擇性' : '還沒到')) + '</div>';
+    }).join('') + '</div>';
+  }
+  function mapSvg() {
+    var S = startPos(), cur = whereIs(ST.pos), nx = nextStop(), parts = [];
+    parts.push('<svg viewBox="0 0 100 80" role="img" aria-label="路線示意圖">');
+    [[4, 6, 30, 16], [38, 4, 22, 12], [66, 6, 28, 18], [6, 28, 22, 14], [58, 52, 36, 12], [6, 56, 28, 16], [36, 72, 40, 6], [78, 30, 18, 10]].forEach(function (r) { parts.push('<rect x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="2.5" fill="var(--blk)" opacity=".55"/>'); });
+    // 路：必經站依序連線；選擇性站用虛線接到最近的一站
+    var req = reqStops(), prev = null, edges = [];
+    req.forEach(function (s, i) { var p = posOf(s); if (i === 0) edges.push([S, p, false]); else edges.push([posOf(req[i - 1]), p, false]); });
+    D.stops.filter(function (s) { return s.optional; }).forEach(function (s) {
+      var p = posOf(s), best = null, bd = 1e9; req.forEach(function (r) { var q = posOf(r), dd = Math.hypot(p.x - q.x, p.y - q.y); if (dd < bd) { bd = dd; best = q; } });
+      if (best) edges.push([best, p, true]);
+    });
+    edges.forEach(function (e) {
+      var mx = (e[0].x + e[1].x) / 2, my = (e[0].y + e[1].y) / 2 + (e[0].x < e[1].x ? 3 : -3);
+      parts.push('<path d="M' + e[0].x + ' ' + e[0].y + ' Q' + mx + ' ' + my + ' ' + e[1].x + ' ' + e[1].y + '" fill="none" stroke="var(--road)" stroke-width="2.2" stroke-linecap="round"' + (e[2] ? ' stroke-dasharray="1.5 2.2"' : '') + '/>');
+    });
+    parts.push('<g><circle cx="' + S.x + '" cy="' + S.y + '" r="2.4" fill="var(--acc2)"/><text x="' + S.x + '" y="' + (S.y + 5.2) + '" class="opt" style="font-size:3px;text-anchor:middle;fill:var(--acc2);font-weight:700">出發</text></g>');
+    D.stops.forEach(function (s, i) {
+      var p = posOf(s), lk = locked(s), dn = stopDone(s), isNext = nx && nx.id === s.id, sel = ST.sel === s.id;
+      var cls = 'node' + (dn ? ' done' : (lk ? ' lock' : (isNext ? ' next' : ''))) + (sel ? ' sel' : '');
+      var st = lk ? '還沒開' : (dn ? '已完成' : (isNext ? '下一站' : '可以去'));
+      var below = p.y > 60;
+      parts.push('<g class="' + cls + '" data-act="sel" data-s="' + esc(s.id) + '" tabindex="0" role="button" aria-label="' + esc(shortName(s) + '，' + st) + '">' +
+        '<circle class="pulse" cx="' + p.x + '" cy="' + p.y + '" r="5.4"/><circle class="ring" cx="' + p.x + '" cy="' + p.y + '" r="7"/>' +
+        '<circle class="nc" cx="' + p.x + '" cy="' + p.y + '" r="5.4"/><text class="num" x="' + p.x + '" y="' + p.y + '">' + (dn ? '✓' : (lk ? '🔒' : (i + 1))) + '</text>' +
+        '<text class="lbl" x="' + p.x + '" y="' + (below ? p.y - 7.4 : p.y + 10.6) + '">' + esc(shortName(s)) + '</text>' +
+        (s.optional ? '<text class="opt" x="' + p.x + '" y="' + (below ? p.y - 11.2 : p.y + 14) + '">（選擇性）</text>' : '') + '</g>');
+    });
+    parts.push('<g id="pl" style="transform:translate(' + cur.x + 'px,' + cur.y + 'px)"><text class="pawn" x="0" y="-6.2">🚶</text><circle r="1.1" fill="var(--acc)"/></g>');
+    parts.push('</svg>');
+    return '<div class="mapbox">' + parts.join('') + '<div class="cap">' + esc((D.map && D.map.note) || '示意圖，不照比例') + '</div></div>';
+  }
+  function selCard() {
+    var s = ST.sel && sget(ST.sel); if (!s) { s = nextStop(); }
+    if (!s) return allDone() ? '' : '<div class="card small">點地圖上的地點。</div>';
+    var lk = locked(s), dn = stopDone(s), here = ST.pos === s.id, hasXY = typeof s.lat === 'number' && D.rules.geofence;
+    var h = '<div class="card selcard"><h2>' + (D.stops.indexOf(s) + 1) + '. ' + esc(s.name) + (s.optional ? '（選擇性）' : '') + '</h2>';
+    h += '<div class="sub">' + (lk ? '🔒 還沒開' : (dn ? '✅ 完成了，可以回去再看看' : (ST.at[s.id] ? '📍 進行中' : '⬜ 還沒到'))) + (here ? '・你現在在這裡' : '') + '</div>';
+    if (lk) return h + '<div class="fb" style="color:var(--mute)">' + esc(s.locked_msg || '還沒輪到這一站。') + '</div></div>';
+    if (ST.at[s.id] || here) h += '<button class="btn pri" data-act="open" data-s="' + esc(s.id) + '">' + (dn ? '回去看看這一站' : '進入這一站 ▶') + '</button>';
+    else {
+      h += '<button class="btn pri" data-act="walk" data-s="' + esc(s.id) + '">🚶 走過去（教室裡用這個）</button>';
+      if (hasXY) h += '<button class="btn ghost" data-act="gps" data-s="' + esc(s.id) + '">📡 我在現場：用定位檢查我到了沒</button>';
+      else h += '<div class="small">這一站還沒有座標，真的到現場時，按「走過去」就當作到了。</div>';
+      if (ST.note && ST.sel === s.id) h += '<div class="fb">' + esc(ST.note) + '</div>';
+    }
+    return h + '</div>';
+  }
+  function mapView() {
+    var h = '<h1>' + esc(D.meta.title) + '</h1>' + hud() + mapSvg() + tray();
+    if (allDone()) h += '<div class="card res"><div class="hd">路走完了！</div><div>每一站都到過了。去看你的結局和評價。</div></div><button class="btn pri big" data-act="end">🎬 走到終點，看結局</button>';
+    h += selCard();
+    h += '<details><summary>路線清單與設定</summary>' + D.stops.map(function (s, i) {
+      var st = locked(s) ? '🔒 還沒開' : (stopDone(s) ? '✅ 完成' : (ST.at[s.id] ? '📍 進行中' : '⬜ 還沒到'));
+      return '<button class="btn" data-act="sel" data-s="' + esc(s.id) + '"><span class="st">' + st + '</span>' + (i + 1) + '. ' + esc(s.name) + (s.optional ? '（選擇性）' : '') + '</button>';
+    }).join('') + switcher() + dataBox() + '</details>';
+    if (D.__warn && D.__warn.length) h += '<div class="small">提醒：' + esc(D.__warn.join('；')) + '</div>';
+    APP.innerHTML = h;
+  }
+
+  function dotsHtml(s) {
+    var ts = tasksOf(s), cur = -1, i;
+    for (i = 0; i < ts.length; i++) if (!ST.done[key(s, ts[i])]) { cur = i; break; }
+    var h = '<div class="dots" aria-label="任務進度">';
+    ts.forEach(function (t, j) { h += '<i class="' + (ST.done[key(s, t)] ? 'd' : (j === cur ? 'c' : '')) + '"></i>'; });
+    var nd = ts.filter(function (t) { return ST.done[key(s, t)]; }).length;
+    return h + '<span>任務 ' + Math.min(nd + 1, ts.length) + ' / ' + ts.length + '</span></div>';
+  }
+  function fragView(s) {
+    var f = fragOf(s), c = s.culture || {};
+    var h = '<div class="frag"><div class="got">🧩 取得碎片</div><div class="ic">' + esc(f.icon) + '</div><div class="nm">' + esc(f.name) + '</div><p>' + esc(f.text) + '</p>' + (c.origin ? '<div class="small" style="text-align:left">' + tagOf(c.origin) + (s.frag && s.frag.text ? '' : esc(c.note || '')) + '</div>' : '') + '</div>';
+    if (ST.msg) h += '<div class="card"><b>' + esc(ST.msg) + '</b></div>';
+    var nx = nextStop();
+    h += allDone() ? '<button class="btn pri big" data-act="end">🎬 路走完了，看結局</button>' : '<button class="btn pri big" data-act="home">' + (nx ? '回地圖，下一站：' + esc(shortName(nx)) : '回地圖') + ' ▶</button>';
+    return h;
+  }
   function stopView(s) {
-    var h = '<button class="btn ghost" data-act="home">← 回路線</button><h1>' + esc(s.name) + '</h1>';
+    var i = D.stops.indexOf(s), n = D.stops.length;
+    var h = '<div class="top"><button class="btn ghost" style="width:auto;margin:0" data-act="home">← 回地圖</button><span class="small">第 ' + (i + 1) + ' 站 / 共 ' + n + ' 站' + (s.optional ? '（選擇性）' : '') + '</span></div>';
     if (locked(s)) { h += '<div class="card">🔒 ' + esc(s.locked_msg || '還沒輪到這一站。') + '</div>'; APP.innerHTML = h; return; }
-    if (s.culture) h += '<div class="small">' + tagOf(s.culture.origin) + esc(s.culture.note) + '</div>';
-    if (s.npc) {
-      h += '<div class="npc"><b>' + esc(s.npc.ava || '') + ' ' + esc(s.npc.name) + '</b>' + (s.npc.lines || []).map(function (l) { return '<div>' + esc(l) + '</div>'; }).join('') + '</div>';
+    h += '<div class="scene"><div class="em" aria-hidden="true">' + esc(s.icon || (s.kind === '廟' ? '🏮' : (s.kind === '店' ? '🏪' : '📍'))) + '</div><div><div class="nm">' + esc(s.name) + '</div><div class="sub">' + esc(s.kind || '') + '</div></div></div>';
+    if (!ST.at[s.id]) {   // 保底：沒有透過地圖到達（例如舊存檔）
+      h += '<div class="card"><b>先到這一站</b><button class="btn pri" data-act="arrive" data-s="' + esc(s.id) + '">我到了</button></div>'; APP.innerHTML = h; return;
     }
-    if (!ST.at[s.id]) {
-      var hasXY = typeof s.lat === 'number' && D.rules.geofence;
-      h += '<div class="card"><b>先到這一站</b>' + (hasXY ? '<div class="small">要走到離這裡 ' + (s.r || 60) + ' 公尺內。' + (s.coord_status === '待確認' ? '這個位置是概略值，如果你已經在廟前，就按下面的「自己確認」。' : '') + '</div>' : '<div class="small">這一站還沒有座標，到了以後自己按「我到了」。</div>');
-      if (hasXY) h += '<button class="btn pri" data-act="gps" data-s="' + esc(s.id) + '">用定位檢查我到了沒</button>';
-      if (!hasXY) h += '<button class="btn pri" data-act="arrive" data-s="' + esc(s.id) + '">我到了</button>';
-      if (hasXY && (ST.fail || s.coord_status === '待確認')) h += '<button class="btn ghost" data-act="arrive" data-s="' + esc(s.id) + '">定位不準，我已經到了（自己確認）</button>';
-      if (ST.sim) h += '<button class="btn ghost" data-act="arrive" data-s="' + esc(s.id) + '">（測試）直接傳送到這裡</button>';
-      if (ST.note) h += '<div class="fb">' + esc(ST.note) + '</div>';
-      h += '</div>'; APP.innerHTML = h; return;
+    var lines = (s.npc && s.npc.lines) || [], ti = ST.talk[s.id] || 0;
+    if (lines.length && !ST.talked[s.id]) {
+      for (var j = 0; j <= Math.min(ti, lines.length - 1); j++) {
+        h += '<div class="bub' + (j === ti ? ' last' : '') + '"><div class="av">' + esc(s.npc.ava || '💬') + '</div><div class="tx"><span class="who">' + esc(s.npc.name) + '</span>' + esc(lines[j]) + '</div></div>';
+      }
+      h += '<button class="btn pri" data-act="talknext" data-s="' + esc(s.id) + '">' + (ti < lines.length - 1 ? '下一句 ▶' : '好，開始這一站的任務 ▶') + '</button>';
+      APP.innerHTML = h; return;
     }
-    h += '<h2>任務</h2>';
-    tasksOf(s).forEach(function (t) { h += taskView(s, t); });
-    if (ST.msg && stopDone(s)) h += '<div class="card"><b>' + esc(ST.msg) + '</b></div>';
-    if (stopDone(s)) h += '<button class="btn pri" data-act="home">這一站完成，回路線</button>';
+    var pd = ST.pend && ST.pend.s === s.id ? ST.pend : null;
+    if (pd) {
+      h += dotsHtml(s) + '<div class="card res"><div class="hd">' + esc(pd.head) + '</div><div>' + esc(pd.msg) + '</div>' + (pd.note ? '<div class="small">你寫的：' + esc(pd.note) + '</div>' : '') + '</div>';
+      h += '<button class="btn pri big" data-act="cont" data-s="' + esc(s.id) + '">' + (stopDone(s) ? '拿碎片 🧩' : '下一題 ▶') + '</button>';
+      APP.innerHTML = h; return;
+    }
+    if (stopDone(s)) { APP.innerHTML = h + fragView(s); return; }
+    h += dotsHtml(s);
+    var cur = tasksOf(s).filter(function (t) { return !ST.done[key(s, t)] && !t.optional; })[0];
+    if (cur) h += taskView(s, cur);
     APP.innerHTML = h;
   }
   function taskView(s, t) {
     var k = key(s, t), b = ' data-s="' + esc(s.id) + '" data-t="' + esc(t.id) + '"';
-    var h = '<div class="card">' + (t.fieldwork ? '<div class="field">📍 這一題要到現場才寫得出來</div>' : '') + '<b>' + esc(t.title) + '</b>';
-    if (ST.done[k]) {
-      var a = ST.ans[k];
-      h += '<div class="rw">✓ ' + esc(t.type === 'decision' ? (a || '') : (t.reward || '完成')) + '</div>';
-      if (t.type === 'observe' && a) h += '<div class="small">你寫的：' + esc(a) + '</div>';
-      return h + '</div>';
-    }
+    var h = '<div class="card">' + (t.fieldwork ? '<div class="field">📍 這一題要到現場才寫得出來（在教室就寫你想像或查到的）</div>' : '') + '<b>' + esc(t.title) + '</b>';
     if (ST.fb[k]) h += '<div class="fb">' + esc(ST.fb[k]) + '</div>';
     if (t.type === 'choice') t.options.forEach(function (o, i) { h += '<button class="btn" data-act="choice"' + b + ' data-i="' + i + '">' + esc(o) + '</button>'; });
     if (t.type === 'decision') t.options.forEach(function (o, i) { h += '<button class="btn" data-act="decide"' + b + ' data-i="' + i + '">' + esc(o.text) + '</button>'; });
@@ -963,36 +1336,39 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
   }
   function endView() {
     var en = D.endings.filter(function (e) { return (e.requires || []).every(function (f) { return ST.flags[f]; }); })[0] || D.endings[D.endings.length - 1];
-    var h = '<button class="btn ghost" data-act="home">← 回路線</button><h1>' + esc(en.title) + '</h1><div class="small">' + tagOf(en.origin || '工坊創作') + '</div><div class="card">' + esc(fillText(en.text)) + '</div>';
-    if (D.rules.score) {
-      var total = 0; D.stops.forEach(function (s) { s.tasks.forEach(function (t) { if (t.type === 'choice' || t.type === 'text') total++; }); });
-      h += '<div class="card"><b>得分：' + ST.score + ' / ' + total + '</b></div>';
-    }
+    var T = tally();
+    var h = '<button class="btn ghost" data-act="home">← 回地圖</button><div class="hero" style="padding:18px 12px"><div class="cv" style="font-size:44px">🎬</div><h1 style="font-size:24px">' + esc(en.title) + '</h1><div>' + tagOf(en.origin || '工坊創作') + '</div></div>';
+    h += '<div class="card">' + esc(fillText(en.text)) + '</div>';
+    h += '<h2>你的評價</h2><div class="card"><div class="stars" aria-label="' + T.stars + ' 顆星">' + new Array(T.stars + 1).join('★') + new Array(6 - T.stars).join('☆') + '</div><div class="rank">' + esc(T.rank.title) + '</div><div class="sub" style="text-align:center">' + esc(T.rank.text || '') + '</div>' +
+      '<div class="bd"><div><b>' + T.earned + ' / ' + T.poss + '</b>總分（' + T.pct + '%）</div><div><b>' + T.right + ' / ' + T.quiz + '</b>一次答對</div><div><b>' + fragCount() + ' / ' + D.stops.length + '</b>碎片</div><div><b>' + T.notes + '</b>現場筆記' + (T.dec ? '・' + T.dec + ' 個抉擇' : '') + '</div></div></div>';
+    h += '<h2>你的碎片冊</h2><div class="fgrid">' + D.stops.filter(function (s) { return ST.completed[s.id]; }).map(function (s) { var f = fragOf(s); return '<div class="frag"><div class="ic">' + esc(f.icon) + '</div><div class="nm">' + esc(f.name) + '</div><p>' + esc(f.text) + '</p></div>'; }).join('') + '</div>';
     var got = Object.keys(D.flags || {}).filter(function (f) { return ST.flags[f]; });
     if (got.length) h += '<h2>你這一路的選擇與紀錄</h2><div>' + got.map(function (f) { return '<span class="chip">✓ ' + esc(D.flags[f]) + '</span>'; }).join('') + '</div>';
     var notes = [];
-    D.stops.forEach(function (s) { s.tasks.forEach(function (t) { var k = key(s, t); if (t.type === 'observe' && ST.ans[k]) notes.push('<li><b>' + esc(s.name) + '</b>：' + esc(ST.ans[k]) + '</li>'); }); });
+    D.stops.forEach(function (s) { s.tasks.forEach(function (t) { var k = key(s, t); if (t.type === 'observe' && ST.ans[k]) notes.push('<li><b>' + esc(shortName(s)) + '</b>：' + esc(ST.ans[k]) + '</li>'); }); });
     if (notes.length) h += '<h2>你在現場寫下的</h2><ul>' + notes.join('') + '</ul>';
     h += '<h2>想一想</h2><div class="card"><b>' + esc(D.reflect.question) + '</b>' +
       D.reflect.choices.map(function (c, i) { return '<button class="btn' + (ST.reflect.c === i ? ' on' : '') + '" data-act="refl" data-i="' + i + '">' + esc(c) + '</button>'; }).join('') +
       '<p><b>' + esc(D.reflect.story_prompt || '') + '</b></p><textarea id="story">' + esc(ST.reflect.story) + '</textarea>' +
       '<button class="btn pri" data-act="share">整理成一段文字，貼給老師或貼給 AI</button><textarea id="out" readonly hidden></textarea></div>';
+    h += '<h2>再玩一次</h2><div class="small">換另一版玩，或把這一版重新走一遍，看看結局會不會不同。</div>' + switcher() + '<button class="btn ghost" data-act="reset">' + (ST.confirmReset ? '再按一次就清掉這一版的進度' : '重新開始這一版') + '</button>';
     APP.innerHTML = h;
   }
   function shareText() {
-    var out = ['【' + D.meta.title + '／' + (D.meta.subtitle || '') + '】'];
+    var T = tally(), out = ['【' + D.meta.title + '／' + (D.meta.subtitle || '') + '】', '評價：' + T.rank.title + '（' + T.earned + ' / ' + T.poss + ' 分）、碎片 ' + fragCount() + ' / ' + D.stops.length];
     Object.keys(D.flags || {}).forEach(function (f) { if (ST.flags[f]) out.push('✓ ' + D.flags[f]); });
     D.stops.forEach(function (s) { s.tasks.forEach(function (t) { var k = key(s, t); if (t.type === 'observe' && ST.ans[k]) out.push('現場（' + s.name + '）：' + ST.ans[k]); }); });
-    if (D.rules.score) out.push('得分：' + ST.score);
     out.push('抽掉文化還玩得下去嗎：' + (ST.reflect.c >= 0 ? D.reflect.choices[ST.reflect.c] : '還沒選'));
     out.push('一句話故事：' + (ST.reflect.story || '還沒寫'));
     return out.join('\n');
   }
   function render() {
     if (!D) return;
-    if (ST.view === 'stop' && ST.cur && sget(ST.cur)) return stopView(sget(ST.cur));
-    if (ST.view === 'end') return endView();
-    ST.view = 'home'; home();
+    var v = ST.view;
+    if (v === 'stop' && ST.cur && sget(ST.cur)) return stopView(sget(ST.cur));
+    if (v === 'end') return endView();
+    if (v === 'map') return mapView();
+    ST.view = 'title'; titleView();
   }
   function fatal(list) {
     APP.innerHTML = '<h1>這份資料有地方錯了</h1><div class="card err"><ul>' + list.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul></div><p class="small">改好 JSON 以後重新整理，或在下面重新選一個檔。</p><input type="file" id="pick" accept=".json,application/json">' + '<div class="row">' + BUILTIN.map(function (n) { return '<button class="btn ghost" data-act="variant" data-n="' + n + '">' + LABEL[n] + '</button>'; }).join('') + '</div>';
@@ -1012,54 +1388,75 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
     fetch(name, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) { parseThen(t, name); }).catch(useInline);
   }
 
+  /* ---------- 走過去（地圖上的小人移動） ---------- */
+  function arriveAt(s) { ST.pos = s.id; ST.at[s.id] = 1; ST.note = ''; ST.fail = false; ST.view = 'stop'; ST.cur = s.id; ST.pend = null; save(); render(); window.scrollTo(0, 0); }
+  function walkTo(s) {
+    if (WALKING) return;
+    ST.sel = s.id; WALKING = true; ST.note = ''; render();
+    var pl = document.getElementById('pl'), p = posOf(s);
+    if (!pl) { WALKING = false; return arriveAt(s); }
+    void pl.getBoundingClientRect();
+    pl.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)';
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(function () { WALKING = false; arriveAt(s); }, reduce ? 50 : 950);
+  }
+
   /* ---------- 事件 ---------- */
+  APP.addEventListener('keydown', function (ev) { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.getAttribute && ev.target.getAttribute('role') === 'button' && ev.target.tagName.toLowerCase() === 'g') { ev.preventDefault(); ev.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
   APP.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-act]'); if (!b) return;
     var act = b.getAttribute('data-act'), s = b.getAttribute('data-s') ? sget(b.getAttribute('data-s')) : null;
     var t = s && b.getAttribute('data-t') ? s.tasks.filter(function (x) { return x.id === b.getAttribute('data-t'); })[0] : null;
     var k = s && t ? key(s, t) : '';
     if (act === 'variant') { return loadByName(b.getAttribute('data-n')); }
-    if (!D) return;
-    if (act === 'home') { ST.view = 'home'; ST.note = ''; ST.fail = false; }
-    else if (act === 'open') { ST.view = 'stop'; ST.cur = s.id; ST.note = ''; ST.fail = false; }
+    if (!D || WALKING) return;
+    function done(pts_, head, msg, note) { ST.done[k] = true; ST.fb[k] = ''; ST.pts[k] = pts_; ST.pend = { s: s.id, head: head, msg: msg, note: note || '' }; afterTask(s); }
+    if (act === 'title') { ST.view = 'title'; }
+    else if (act === 'start') { ST.started = true; ST.view = 'map'; ST.sel = null; }
+    else if (act === 'home') { ST.view = 'map'; ST.note = ''; ST.fail = false; ST.pend = null; ST.sel = null; }
+    else if (act === 'sel') { ST.sel = s.id; ST.note = ''; ST.fail = false; ST.view = 'map'; }
+    else if (act === 'open') { ST.view = 'stop'; ST.cur = s.id; ST.note = ''; ST.fail = false; ST.pend = null; }
+    else if (act === 'walk') { if (locked(s)) { ST.sel = s.id; } else { return walkTo(s); } }
     else if (act === 'end') { ST.view = 'end'; }
-    else if (act === 'reset') { if (!ST.confirmReset) { ST.confirmReset = true; render(); setTimeout(function () { if (ST && ST.confirmReset) { ST.confirmReset = false; render(); } }, 6000); return; } var sim = ST.sim; ST = fresh(); ST.sim = sim; }
-    else if (act === 'arrive') { ST.at[s.id] = 1; ST.note = ''; ST.fail = false; }
+    else if (act === 'reset') { if (!ST.confirmReset) { ST.confirmReset = true; render(); setTimeout(function () { if (ST && ST.confirmReset) { ST.confirmReset = false; render(); } }, 6000); return; } var sim = ST.sim; ST = fresh(); ST.sim = sim; ST.started = false; ST.view = 'title'; }
+    else if (act === 'arrive') { ST.at[s.id] = 1; ST.pos = s.id; ST.note = ''; ST.fail = false; }
+    else if (act === 'talknext') { var ls = (s.npc && s.npc.lines) || [], ni = (ST.talk[s.id] || 0) + 1; if (ni >= ls.length) ST.talked[s.id] = true; else ST.talk[s.id] = ni; }
+    else if (act === 'cont') { ST.pend = null; }
     else if (act === 'gps') {
-      if (!navigator.geolocation) { ST.note = '這個瀏覽器不能定位，請用「自己確認」。'; ST.fail = true; render(); return; }
-      ST.note = '定位中……'; render();
+      if (!navigator.geolocation) { ST.note = '這個瀏覽器不能定位，請改按「走過去」。'; ST.fail = true; render(); return; }
+      ST.sel = s.id; ST.note = '定位中……'; render();
       navigator.geolocation.getCurrentPosition(function (p) {
         var d = Math.round(dist(p.coords.latitude, p.coords.longitude, s.lat, s.lon));
-        if (d <= (s.r || 60)) { ST.at[s.id] = 1; ST.note = ''; } else { ST.note = '你離這裡還有約 ' + d + ' 公尺，再走近一點。'; ST.fail = true; }
+        if (d <= (s.r || 60)) { arriveAt(s); return; } else { ST.note = '你離這裡還有約 ' + d + ' 公尺，再走近一點（或按「走過去」）。'; ST.fail = true; }
         save(); render();
-      }, function () { ST.note = '拿不到定位（可能沒開權限或在室內）。你可以用「自己確認」。'; ST.fail = true; render(); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+      }, function () { ST.note = '拿不到定位（可能沒開權限或在室內）。可以改按「走過去」。'; ST.fail = true; render(); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
       return;
     }
     else if (act === 'choice') {
       var o = t.options[+b.getAttribute('data-i')];
-      if (o === t.answer) { ST.done[k] = true; ST.fb[k] = ''; if (!ST.wrong[k] && D.rules.score) ST.score++; afterTask(s); }
+      if (o === t.answer) { if (!ST.wrong[k] && D.rules.score) ST.score++; done(ST.wrong[k] ? 1 : 2, '✓ 答對了' + (ST.wrong[k] ? '（第二次）' : '，一次就中'), t.reward || '對。'); }
       else { ST.wrong[k] = true; ST.fb[k] = '不是這個。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
     }
     else if (act === 'decide') {
-      var op = t.options[+b.getAttribute('data-i')]; grant(op.grant); ST.done[k] = true; ST.ans[k] = op.reply || op.text; afterTask(s);
+      var op = t.options[+b.getAttribute('data-i')]; grant(op.grant); ST.ans[k] = op.reply || op.text; done(1, '你選了：' + op.text, op.reply || '');
     }
     else if (act === 'text') {
       var v = norm(document.getElementById('in-' + k).value || '');
-      if (t.accept.some(function (a) { return norm(a) === v; })) { ST.done[k] = true; ST.fb[k] = ''; if (!ST.wrong[k] && D.rules.score) ST.score++; afterTask(s); }
+      if (t.accept.some(function (a) { return norm(a) === v; })) { if (!ST.wrong[k] && D.rules.score) ST.score++; done(ST.wrong[k] ? 1 : 2, '✓ 答對了' + (ST.wrong[k] ? '（第二次）' : '，一次就中'), t.reward || '對。'); }
       else { ST.wrong[k] = true; ST.fb[k] = '不對，再試一次。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
     }
     else if (act === 'pick') {
       var pk = ST.order[k] = ST.order[k] || []; pk.push(b.getAttribute('data-v'));
       if (pk.length === t.items.length) {
-        if (pk.join('|') === t.answer.join('|')) { ST.done[k] = true; ST.fb[k] = ''; afterTask(s); }
-        else { ST.order[k] = []; ST.fb[k] = '順序不對，重排。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
+        if (pk.join('|') === t.answer.join('|')) done(ST.wrong[k] ? 1 : 2, '✓ 順序對了', t.reward || '順序對了。');
+        else { ST.wrong[k] = true; ST.order[k] = []; ST.fb[k] = '順序不對，重排。' + (D.rules.hints && t.hint ? '提示：' + t.hint : ''); }
       }
     }
     else if (act === 'unpick') { ST.order[k] = []; }
     else if (act === 'observe') {
       var tx = (document.getElementById('in-' + k).value || '').trim();
       if (tx.length < (t.min || 8)) { ST.fb[k] = '再多寫一點（至少 ' + (t.min || 8) + ' 個字）。'; }
-      else { ST.done[k] = true; ST.ans[k] = tx; ST.fb[k] = ''; afterTask(s); }
+      else { ST.ans[k] = tx; done(2, '✍ 筆記收進冊子了', t.reward || '記下來了。', tx); }
     }
     else if (act === 'refl') { ST.reflect.c = +b.getAttribute('data-i'); }
     else if (act === 'share') {
@@ -1069,11 +1466,10 @@ img.pv{max-width:100%;border-radius:8px;margin-top:6px}
       try { if (navigator.clipboard) navigator.clipboard.writeText(out.value).catch(function () { }); } catch (x) { }
       return;
     }
-    save(); render(); window.scrollTo(0, 0);
+    save(); render(); if (act !== 'choice' && act !== 'text' && act !== 'pick' && act !== 'unpick' && act !== 'refl') window.scrollTo(0, 0);
   });
   APP.addEventListener('change', function (ev) {
     var t = ev.target;
-    if (t.id === 'sim') { ST.sim = t.checked; save(); return; }
     if (t.id === 'pick' && t.files[0]) { var r = new FileReader(); r.onload = function () { parseThen(r.result, 'custom'); }; r.readAsText(t.files[0]); return; }
     if (t.getAttribute && t.getAttribute('data-photo') && t.files[0]) { ST.draft = ST.draft || {}; Array.prototype.forEach.call(APP.querySelectorAll('textarea[id^="in-"]'), function (x) { ST.draft[x.id.slice(3)] = x.value; }); PHOTO[t.getAttribute('data-photo')] = URL.createObjectURL(t.files[0]); var top = window.scrollY; render(); window.scrollTo(0, top); }
   });

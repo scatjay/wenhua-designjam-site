@@ -36,16 +36,17 @@
       + '.tk button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer}.tk button.g{background:transparent;color:var(--accent)}.tk button[disabled]{opacity:.5;cursor:default}'
       + '.tk .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.tk .cnt{font-size:13px;opacity:.8}.tk .sumbox{border:1px dashed var(--accent);border-radius:10px;padding:10px;margin-top:8px}'
       + '.tk .hints{margin-top:8px}.tk .hints .hb{display:flex;gap:6px;flex-wrap:wrap}.tk .hints button.h{min-width:0;min-height:44px;padding:6px 12px;border-radius:12px;background:transparent;color:var(--accent);text-align:left;font-size:14px;line-height:1.35}'
-      + '.tk .rc{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--bg,#fff)}.tk .rc h4{margin:0 0 6px;font-size:17px}.tk .rc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.5}.tkfab{position:fixed;right:14px;bottom:max(14px,env(safe-area-inset-bottom));z-index:60;min-height:48px;padding:0 18px;border-radius:999px;border:2px solid var(--accent);background:var(--accent);color:#fff;font:700 16px/1 inherit;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}.tkpanel{position:fixed;right:12px;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 58px);z-index:61;width:min(420px,calc(100vw - 24px));max-height:68vh;overflow:auto;background:var(--bg,#fff);color:inherit;border:2px solid var(--accent);border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.28);padding:8px 12px 12px}.tkpanel[hidden]{display:none}.tkpanel .hd{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;background:var(--bg,#fff);padding:4px 0 6px;font-weight:700}.tkpanel .hd button{min-height:44px;min-width:44px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;cursor:pointer}.tkpanel .tk{border:none;padding:0;margin:0;background:transparent}@media (max-width:520px){.tkpanel{left:8px;right:8px;width:auto;max-height:62vh}}.tk .rc dt{opacity:.75}.tk .rc dd{margin:0;word-break:break-word}.tk .rc .code{font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.1em}.tk .rc .tag{font-size:12px;opacity:.8}';
+      + '.tk .rc{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--bg,#fff)}.tk .rc h4{margin:0 0 6px;font-size:17px}.tk .rc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.5}.tk .rc dt{opacity:.75}.tk .rc dd{margin:0;word-break:break-word}.tk .rc .code{font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.1em}.tk .rc .tag{font-size:12px;opacity:.8}';
     document.head.appendChild(s);
   }
-  function mount(el) {
+  var APIREF = { a: null };
+  function mount(el, DK) {
     css();
     var unit = el.getAttribute('data-unit') || 'W11';
     var env = parseInt(localStorage.getItem('designjam_env'), 10);
     var qe = parseInt(qparam('env'), 10); if (isFinite(qe) && qe >= 55 && qe <= 60) env = qe;
     ID = idOn(env);
-    var unbound = !isFinite(env);
+    var unbound = !isFinite(env), forced = 0, DOCK = DK || window.TA_DOCK && window.TA_DOCK.get();
     var emu = qparam('emu') === '1' && env >= 55 && env <= 60, port = qparam('emuPort') || '9012';
     var base = emu ? 'http://127.0.0.1:' + port : DB, qs = emu ? '?ns=' + NS : '';
     var sess = sessKey(env, Date.now()), LK = 'talk_' + sess + '_' + env + '_' + unit;
@@ -59,7 +60,7 @@
       + '<p class="note" id="tk-msg" role="status"></p><div id="tk-sum"></div></div>';
     var hintBox = $('tk-hints'), log = $('tk-log'), inp = $('tk-in'), btn = $('tk-send'), msg = $('tk-msg'), cnt = $('tk-cnt'), sum = $('tk-sum');
     function save() { try { localStorage.setItem(LK, JSON.stringify(st)); } catch (e) { /* 存不下照樣可用 */ } }
-    function bubble(cls, t) { var d = document.createElement('div'); d.className = 'b ' + cls; d.textContent = t; log.appendChild(d); log.scrollTop = log.scrollHeight; }
+    function bubble(cls, t) { var d = document.createElement('div'); d.className = 'b ' + cls; if (cls === 'a' && window.TA_DOCK) window.TA_DOCK.linkify(d, t); else d.textContent = t; log.appendChild(d); log.scrollTop = log.scrollHeight; }
     function paint() {
       log.innerHTML = ''; if (open) bubble('a', open);
       st.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t); });
@@ -71,7 +72,7 @@
     function paintHints() {
       hintBox.innerHTML = '';
       if (st.confirmed || st.done || st.editing || st.rounds >= MAX_ROUNDS) return;
-      var stp = st.rounds === 0 ? curStep() : 0, hs = stp ? stepHintsOf(env, unit, stp) : []; if (!hs.length) hs = hintsOf(env, unit, st.rounds); if (!hs.length) return;
+      var stp = forced || (st.rounds === 0 ? curStep() : 0), hs = stp ? stepHintsOf(env, unit, stp) : []; if (!hs.length) hs = hintsOf(env, unit, st.rounds); if (!hs.length) return;
       var p = document.createElement('p'); p.className = 'note'; p.textContent = (stp && stepHintsOf(env, unit, stp).length) ? T('你現在在第 {n} 步，可以這樣開口（點一個放進框裡，改成你自己的話再送出）：').split('{n}').join(stp) : T('不知道怎麼開口？點一個句型放進框裡，改成你自己的話再送出。'); hintBox.appendChild(p);
       var row = document.createElement('div'); row.className = 'hb';
       hs.forEach(function (h) { var b = document.createElement('button'); b.type = 'button'; b.className = 'h'; b.textContent = T(h); b.onclick = function () { inp.value = h; inp.focus(); }; row.appendChild(b); });
@@ -120,13 +121,15 @@
       if (st.editing) { confirmIt(text); inp.value = ''; return; }
       if (st.rounds >= MAX_ROUNDS) { msg.textContent = T('這次討論已經滿 8 輪了。'); return; }
       btn.disabled = true; inp.disabled = true; msg.textContent = T('助教想一下…（最多等 1 分半）');
-      st.msgs.push({ w: 's', t: text }); inp.value = ''; paint(); save(); hintBox.innerHTML = '';
+      st.msgs.push({ w: 's', t: text }); inp.value = ''; forced = 0; paint(); save(); hintBox.innerHTML = '';
       put('talk', text).then(function (a) {
         st.msgs.push({ w: 'a', t: a.say }); if (!a.rule && !a.capped) st.rounds = a.n || (st.rounds + 1);
         if (a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 沒存成也沒關係 */ } }
         if (a.done) { st.done = true; st.summary = a.summary || ''; st.autoSummary = st.summary; }
+        if (DOCK) DOCK.setPause(false);
         save(); msg.textContent = ''; btn.disabled = false; inp.disabled = false; paint(); inp.focus();
       }).catch(function (e) {
+        if (DOCK) DOCK.setPause(true);
         st.msgs.pop(); inp.value = text; save(); paint();
         msg.textContent = e && e.message === 'timeout' ? T('助教這會兒沒有回。你寫的字還在框裡，過一下再按送出。') : T('現在送不出去。你寫的字還在框裡，過一下再按送出。');
         btn.disabled = false; inp.disabled = false;
@@ -134,30 +137,35 @@
     };
     paint();
     if (unbound) {
-      inp.disabled = true; btn.disabled = true; msg.textContent = T('先綁定你的編號才能送出：點頁面右上角的小圓標，或重新整理頁面。綁好之後，這裡就能和助教討論。');
+      inp.disabled = true; btn.disabled = true; msg.textContent = '';
+      if (DOCK) DOCK.setLock(T('尚未綁定編號：助教先鎖住，你可以先看下面的引導問項。請點頁面右上角的小圓標，或重新整理頁面來綁定；綁好之後這裡就能和助教討論。'));
       hintBox.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
-      var iv = setInterval(function () { var e = parseInt(localStorage.getItem('designjam_env'), 10); if (isFinite(e)) { clearInterval(iv); mount(el); } }, 2000);
+      var iv = setInterval(function () { var e = parseInt(localStorage.getItem('designjam_env'), 10); if (isFinite(e)) { clearInterval(iv); if (DOCK) DOCK.setLock(''); mount(el, DOCK); } }, 2000);
     }
+    APIREF.a = { ask: function (n, title) { forced = n; if (DOCK) DOCK.setCtx('第 ' + n + ' 步：' + title); paintHints(); } };
     var tmr = null; window.addEventListener('scroll', function () { if (st.rounds !== 0 || st.confirmed) return; clearTimeout(tmr); tmr = setTimeout(paintHints, 250); }, { passive: true });
   }
   window.CT_TALK = { mount: mount, _sessKey: sessKey, _courseOf: courseOf };
   function auto() {
-    var el = $('talkMount'); if (!el) return;
+    var el = $('talkMount'); if (!el || !window.TA_DOCK) return;
     css();
     var unit = el.getAttribute('data-unit') || 'W11';
-    var fab = document.createElement('button'); fab.type = 'button'; fab.className = 'tkfab'; fab.id = 'tk-fab'; fab.setAttribute('aria-expanded', 'false');
-    var panel = document.createElement('div'); panel.className = 'tkpanel'; panel.id = 'tk-panel'; panel.hidden = true; panel.setAttribute('role', 'dialog');
-    var hd = document.createElement('div'); hd.className = 'hd'; var ttl = document.createElement('span'), cl = document.createElement('button'); cl.type = 'button'; cl.textContent = '✕'; cl.setAttribute('aria-label', '關閉'); hd.appendChild(ttl); hd.appendChild(cl);
-    var body = document.createElement('div'); body.setAttribute('data-unit', unit); panel.appendChild(hd); panel.appendChild(body);
-    var env0 = parseInt(localStorage.getItem('designjam_env'), 10), id0 = idOn(env0); ID = id0;
-    fab.textContent = '💬 ' + T('AI 助教'); ttl.textContent = T('助教討論');
-    document.body.appendChild(fab); document.body.appendChild(panel);
-    var mounted = false;
-    function setOpen(o) { panel.hidden = !o; fab.setAttribute('aria-expanded', o ? 'true' : 'false'); if (o && !mounted) { mounted = true; mount(body); } else if (o && window.CT_TALK) { var ev = document.createEvent('Event'); ev.initEvent('scroll', true, true); window.dispatchEvent(ev); } }
-    fab.onclick = function () { setOpen(panel.hidden); }; cl.onclick = function () { setOpen(false); };
-    el.innerHTML = '<p class="note">' + esc(T('AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開右下角助教')) + '</button>';
-    $('tk-open').onclick = function () { setOpen(true); };
-    window.CT_TALK_OPEN = function () { setOpen(true); };
+    var env0 = parseInt(localStorage.getItem('designjam_env'), 10); ID = idOn(env0);
+    var DK = window.TA_DOCK.create({}), holder = document.createElement('div'), mounted = false;
+    holder.setAttribute('data-unit', unit); DK.body.appendChild(holder);
+    function ensure() { if (!mounted) { mounted = true; mount(holder, DK); } }
+    DK.onOpen = function () { ensure(); if (!APIREF.a || !DK.panel.querySelector('#ta-ctx').textContent) DK.setCtx('目前在：第 ' + (curStep() || 1) + ' 步'); };
+    el.innerHTML = '<p class="note">' + esc(T('AI 助教在畫面右下角的「問AI助教」，還沒綁定編號也能先打開看。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開右下角助教')) + '</button>';
+    $('tk-open').onclick = function () { DK.open(true); };
+    // 每一步旁邊的「問AI助教」小鈕＋給每一步一個可以被連結的 id
+    document.querySelectorAll('details.stage').forEach(function (d) {
+      var sn = d.querySelector('.sn'), n = sn ? parseInt(sn.textContent, 10) : 0, sb = d.querySelector('.sb'); if (!n || !sb) return;
+      if (!d.id) d.id = 'step' + n;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'askbtn'; b.textContent = '問AI助教';
+      b.onclick = function () { ensure(); DK.open(true); var t = d.querySelector('.st2'); if (APIREF.a) APIREF.a.ask(n, t ? t.textContent : ''); };
+      sb.insertBefore(b, sb.firstChild);
+    });
+    window.CT_TALK_OPEN = function () { DK.open(true); };
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto); else auto();
 })();

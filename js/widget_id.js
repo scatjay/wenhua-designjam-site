@@ -104,5 +104,14 @@ window.CT_WID = {
  "打開右下角助教": "Buka asisten pengajar di pojok kanan bawah",
  "AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。": "AI asisten pengajar ada di pojok kanan bawah layar pada 「💬 AI asisten pengajar」, klik untuk mulai mengobrol.",
  "尚未綁定編號：助教先鎖住，你可以先看下面的引導問項。請點頁面右上角的小圓標，或重新整理頁面來綁定；綁好之後這裡就能和助教討論。": "ID belum ditautkan: Asisten masih terkunci, kamu bisa lihat pertanyaan panduan di bawah dulu. Silakan klik ikon bulat di pojok kanan atas atau muat ulang halaman untuk menautkannya; setelah terhubung, kamu bisa berdiskusi dengan asisten di sini.",
- "這一題請直接選「不太符合」，用來確認畫面有正常顯示。": "Untuk soal ini, pilih langsung 「不太符合」 (Kurang sesuai), untuk memastikan tampilan layar normal."
+ "還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。今天最多 {d} 輪。": "Mau lanjut bahas idemu? Cukup tulis di kotak atas, asisten akan lanjut bertanya. Maksimal {d} sesi hari ini.",
+ "申請加開": "Ajukan Tambahan",
+ "申請已送出，老師看到之後會回覆你。": "Pengajuan terkirim, pengajar akan membalas setelah melihatnya.",
+ "出處標示欄": "Kolom Sumber",
+ "還沒有存過版本": "Belum ada versi tersimpan",
+ "交給 AI 的部分": "Bagian yang dikerjakan AI",
+ "自己決定的一兩處": "1–2 bagian pilihan sendiri",
+ "其中一處的理由": "Alasan salah satunya",
+ "本週那一句": "Kalimat minggu ini",
+ "請把這張卡截圖，交到 flipclass。這是 W11-2 要交的唯一一張截圖；畫面上只有代碼，不顯示你的編號。": "Silakan screenshot kartu ini dan kumpulkan ke flipclass. Ini satu-satunya screenshot untuk W11-2; layar hanya menampilkan kode tanpa nomor identitasmu."
 };

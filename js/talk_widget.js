@@ -8,7 +8,7 @@
     '46582': { W11: '你把走讀的畫面做成網頁，你選了哪一個畫面來還原？' }
   };
   var HINTS = window.CT_HINTS || {};
-  var DAY_CAP = 20, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;
+  var DAY_CAP = 50, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;
   var $ = function (id) { return document.getElementById(id); };
   var WID = window.CT_WID || {}, ID = false;
   function T(zh) { var t = WID[zh]; return ID && t ? zh + ' / ' + t.charAt(0).toUpperCase() + t.slice(1) : zh; }
@@ -24,6 +24,17 @@
   function stepHintsOf(env, unit, n) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = pageCourse(); var u = ((HINTS[c] || {})[unit]) || {}; return ((u.steps || {})[String(n)]) || []; }
   function curStep() { var ds = document.querySelectorAll('details.stage'), cur = 0, h = window.innerHeight * 0.55; for (var i = 0; i < ds.length; i++) { var r = ds[i].getBoundingClientRect(); if (r.top < h) cur = i + 1; } if (!ds.length) return 0; if (cur === 0) cur = 1; var sn = ds[cur - 1].querySelector('.sn'); return sn ? parseInt(sn.textContent, 10) || cur : cur; }
   function decisionOf(env, unit) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = pageCourse(); return (((HINTS.decision || {})[c]) || {})[unit] || ''; }
+  function ledgerChecks(env, unit) {   // 結果卡上的「繳交檢核」：讀這台裝置上出處標示欄最近一筆（和 tutor_hook 同一個 localStorage 鍵）
+    try {
+      var L = JSON.parse(localStorage.getItem('ct_prov_' + env) || 'null'); if (!L || !L.entries) return [];
+      var v = null; for (var i = L.entries.length - 1; i >= 0; i--) if (L.entries[i].pv) { v = L.entries[i]; break; }
+      if (!v) return [[T('還沒有存過版本'), false]];
+      var pv = v.pv || {}, rows = [[T('交給 AI 的部分'), !!(pv.roNames && pv.roNames.length)], [T('自己決定的一兩處'), !!pv.mine]];
+      if (pv.f !== 2) rows.push([T('其中一處的理由'), !!pv.why]);
+      rows.push([T('本週那一句'), !!((L.feel || {})[unit])]);
+      return rows;
+    } catch (e) { return []; }
+  }
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function stampNow(ms) { var d = new Date(ms || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
   function qid() { return String(Date.now()) + '_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0'); }
@@ -67,7 +78,7 @@
       cnt.textContent = T('已討論 {n} 輪（至少 {m} 輪才會被評；一天最多 {d} 輪）').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP);
       if (st.done && !st.confirmed) showSummary();
       paintHints();
-      if (st.confirmed) { paintCard(); inp.disabled = true; btn.disabled = true; }
+      if (st.confirmed) { paintCard(); var mo = document.createElement('p'); mo.className = 'note'; mo.textContent = T('還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。今天最多 {d} 輪。').split('{d}').join(DAY_CAP); sum.appendChild(mo); }
     }
     function paintHints() {
       hintBox.innerHTML = '';
@@ -86,8 +97,9 @@
       var dl = document.createElement('dl');
       rows.forEach(function (r) { if (!r[1] && r[0] !== T('代碼')) return; var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('代碼')) dd.className = 'code'; dl.appendChild(dt); dl.appendChild(dd); });
       card.appendChild(dl);
+      var ck = ledgerChecks(env, unit); if (ck.length) { var ch = document.createElement('div'); ch.style.cssText = 'margin-top:8px;font-size:14px;line-height:1.7'; var ct = document.createElement('b'); ct.textContent = T('出處標示欄'); ch.appendChild(ct); ck.forEach(function (r) { var d = document.createElement('div'); d.textContent = (r[1] ? '✓ ' : '－ ') + r[0]; ch.appendChild(d); }); card.appendChild(ch); }
       var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = (st.edited ? T('那一句是你自己改寫的。') : T('那一句由助教整理，你確認過。')); card.appendChild(tag);
-      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這個畫面截圖，交到 flipclass。畫面上只有代碼，不顯示你的編號。'); card.appendChild(tip);
+      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張卡截圖，交到 flipclass。這是 W11-2 要交的唯一一張截圖；畫面上只有代碼，不顯示你的編號。'); card.appendChild(tip);
       sum.appendChild(card);
     }
     function showSummary() {
@@ -96,6 +108,12 @@
       $('tk-s').textContent = st.summary;
       $('tk-ok').onclick = function () { confirmIt(st.summary); };
       $('tk-ed').onclick = function () { inp.value = st.summary; inp.focus(); msg.textContent = T('改好之後按「送出」，就會用你改的這一句。'); st.editing = true; };
+    }
+    function showRequest() {
+      var box = $('tk-req'); if (!box) { box = document.createElement('div'); box.id = 'tk-req'; box.className = 'row'; msg.parentNode.insertBefore(box, msg); }
+      box.innerHTML = ''; var b = document.createElement('button'); b.type = 'button'; b.textContent = T('申請加開');
+      b.onclick = function () { b.disabled = true; put('talk', '__REQUEST_MORE__').then(function () { box.innerHTML = ''; var n = document.createElement('span'); n.className = 'note'; n.textContent = T('申請已送出，老師看到之後會回覆你。'); box.appendChild(n); }).catch(function () { b.disabled = false; msg.textContent = T('現在送不出去，過一下再按一次。'); }); };
+      box.appendChild(b);
     }
     function put(kind, text) {
       var id = qid(), url = function (n) { return base + '/ctalk/' + (n === 'talkq' ? 'q' : 'a') + '/' + encodeURIComponent(sess) + '/' + encodeURIComponent(env) + '/' + id + '.json' + qs; };
@@ -112,20 +130,21 @@
     }
     function confirmIt(text) {
       btn.disabled = true; msg.textContent = T('記下中…');
-      put('confirm', text).then(function (a) { st.confirmed = true; st.edited = (text !== st.autoSummary); st.summary = text; st.editing = false; st.at = stampNow(); if (a && a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 存不下照樣可用 */ } } save(); msg.textContent = ''; paint(); })
+      put('confirm', text).then(function (a) { st.confirmed = true; st.edited = (text !== st.autoSummary); st.summary = text; st.editing = false; st.at = stampNow(); btn.disabled = false; inp.disabled = false; if (a && a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 存不下照樣可用 */ } } save(); msg.textContent = ''; paint(); })
         .catch(function () { msg.textContent = T('現在送不出去，過一下再按一次。'); btn.disabled = false; });
     }
     btn.onclick = function () {
       var text = inp.value.trim();
       if (!text) { msg.textContent = T('先寫一兩句再送出。'); return; }
       if (st.editing) { confirmIt(text); inp.value = ''; return; }
-      if (st.rounds >= MAX_ROUNDS) { msg.textContent = T('這次討論已經滿 8 輪了。'); return; }
+      if (!st.confirmed && st.rounds >= MAX_ROUNDS) { msg.textContent = T('這次討論已經滿 8 輪了。'); return; }
       btn.disabled = true; inp.disabled = true; msg.textContent = T('助教想一下…（最多等 1 分半）');
       st.msgs.push({ w: 's', t: text }); inp.value = ''; forced = 0; paint(); save(); hintBox.innerHTML = '';
       put('talk', text).then(function (a) {
         st.msgs.push({ w: 'a', t: a.say }); if (!a.rule && !a.capped) st.rounds = a.n || (st.rounds + 1);
         if (a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 沒存成也沒關係 */ } }
-        if (a.done) { st.done = true; st.summary = a.summary || ''; st.autoSummary = st.summary; }
+        if (a.done && !st.confirmed) { st.done = true; st.summary = a.summary || ''; st.autoSummary = st.summary; }
+        if (a.capped) showRequest();
         if (DOCK) DOCK.setPause(false);
         save(); msg.textContent = ''; btn.disabled = false; inp.disabled = false; paint(); inp.focus();
       }).catch(function (e) {

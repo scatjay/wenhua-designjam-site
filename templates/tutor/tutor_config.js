@@ -47,7 +47,7 @@ window.CT_CONFIG = /*CFG*/{
     "unbound": { "text": "先到學習單綁定編號，助教才會出現", "href": "../../w11.html" },
     "fade": { "enabled": true, "askThrough": 12, "selfThrough": 14, "basis": "week+performance", "successN": 3 },
     "selfCheck": { "showTip": true, "tipItems": ["both", "why", "rule", "src"] },
-    "hook": { "writer": "off", "show": { "judge": true, "source": true, "decider": true, "post": true, "provenance": true }, "decision": { "freq": "weekly", "keyStages": [2, 3], "lastPrompt": "aistudio", "fields": 3, "copyText": "off" }, "survey": { "code": "GPS1118" } }
+    "hook": { "writer": "off", "show": { "judge": true, "source": true, "decider": true, "post": true, "provenance": true }, "decision": { "freq": "weekly", "keyStages": [2, 3], "lastPrompt": "aistudio", "fields": 3, "copyText": "off" } }
   },
   "presets": {
     "teach":    { "_說明": "純教學版：只有樣板與證據掛鉤，沒有助教面板、沒有 LLM。",

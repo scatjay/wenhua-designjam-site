@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>第11–16週 · 文化遊戲松</title>
+<link rel="stylesheet" href="css/sprint_deco.css?v=202611171915">
 </head>
-<body>
+<body data-week="11">
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* 版面：單欄，步驟卡可收合；色彩：灰藍底、深藍灰字、青藍主色、金色只用在《小封神》標籤 */
@@ -68,27 +69,28 @@ details.adv .advb{padding:0 16px 14px}
 <p class="upd">最後更新：<b>2026-11-13 01:00</b></p>
 <p class="lede">後半學期，你會從十二種小遊戲樣板裡挑一個，一路改成你自己的作品。第一步先畫出它的樣子：用 <b>Figma</b> 畫一個畫面，輸出成圖片。下週會把這張圖交給 AI Studio，做成會動的東西。</p>
 <p class="lede"><b>今天課堂做完，期限不是讓你拖。</b>做到哪一階都可以交。</p>
-<nav class="tabs" aria-label="頁面"><a href="#intro">十二個樣板</a><a href="#play2">玩兩版</a><a href="#steps">六步做完</a><a id="nav-survey" href="#survey" hidden>問卷</a><a href="#three">出處標示欄</a><a href="#check">檢核</a><a href="#stuck">卡住了</a><a href="#phone">手機注意</a></nav>
+<nav class="tabs" aria-label="頁面"><a data-kind="learn" href="#intro">十二個樣板</a><a data-kind="learn" href="#play2">玩兩版</a><a data-kind="do" href="#steps">六步做完</a><a data-kind="log" id="nav-survey" href="#survey" hidden>問卷</a><a data-kind="log" href="#three">出處標示欄</a><a data-kind="do" href="#check">檢核</a><a data-kind="learn" href="#stuck">卡住了</a><a data-kind="learn" href="#phone">手機注意</a></nav>
+<p class="kind-key" aria-hidden="true"><span class="kl">學一下：先看懂</span><span class="kd">動手做：照步驟做</span><span class="kg">留紀錄：交件前填</span></p>
 
-<section id="intro"><h2><span class="num">認識</span>十二種樣板，挑一個</h2>
+<section id="intro" data-kind="learn"><h2><span class="num">認識</span>十二種樣板，挑一個</h2>
 <p class="sub">每一種玩法不同，要畫的畫面也不同。示範人物與法器都來自《小封神》；你畫自己的內容時，請標清楚哪些是原著、哪些是你改的、哪些是你加的。</p>
 <div class="six">
-<div><b>故事（《通天冠》）</b><span class="draw">讀劇情，在關鍵處做選擇。要畫：一個場景（背景、人物、對話框、兩個選項）。</span><span class="demo">示範：小上帝、魁星</span></div>
-<div><b>走讀</b><span class="draw">走到真實地點，完成任務。要畫：一張任務卡（地點、題目、拍照按鈕）。</span><span class="demo">示範：舊城裡的天后宮</span></div>
-<div><b>解謎</b><span class="draw">蒐集線索，推出答案。要畫：一張線索卡與道具欄。</span><span class="demo">示範：通天冠、同裕當店</span></div>
-<div><b>經營</b><span class="draw">資源有限，排出先後，撐過一天。要畫：經營畫面（資源列、來客、行動按鈕）。</span><span class="demo">示範：小上帝廟</span></div>
-<div><b>卡牌</b><span class="draw">收集卡牌，靠相剋關係對戰。要畫：一張卡面。</span><span class="demo">示範：雷震子、哪吒、龜靈聖母</span></div>
-<div><b>節奏</b><span class="draw">跟著節拍抓準時機。要畫：節奏譜面（落點、判定線、分數）。</span><span class="demo">示範：鑼、鼓、筊杯</span></div>
-<div><b>潛行（夜巡不踩線）</b><span class="draw">俯視地圖，避開看不見的線。要畫：一張地圖（路線、禁忌的線、你的位置）。練的是：禁忌・規矩。</span><span class="demo">示範：廟門的門檻</span></div>
-<div><b>談判（人情與面子）</b><span class="draw">跟幾個人談結盟，人情和面子是本錢。要畫：談判畫面（對象、人情與面子的數字、選項）。練的是：人際關係。</span><span class="demo">示範：小上帝廟的人情</span></div>
-<div><b>塔防（普渡七日）</b><span class="draw">一波一波來的訪客，用供品和法器安頓。要畫：防守畫面（日期、供品欄、訪客）。練的是：時間節奏。</span><span class="demo">示範：普渡的七個夜晚</span></div>
-<div><b>爬塔（擲筊問路）</b><span class="draw">每一層用擲筊決定走哪條路。要畫：選路畫面（擲筊結果、路線、獎勵）。練的是：行為・儀式。</span><span class="demo">示範：擲筊、收驚</span></div>
-<div><b>拼接（五條港接水道）</b><span class="draw">一次放一塊地圖板塊，相鄰決定得分。要畫：板塊地圖（水道、廟埕、攤位）。練的是：物件・地點。</span><span class="demo">示範：五條港</span></div>
-<div><b>跑酷（遶境不能停）</b><span class="draw">抬著神轎沿路線前進，接駕、補給不能亂。要畫：路線畫面（神轎、接駕點、補給）。練的是：行為・儀式。</span><span class="demo">示範：遶境的路線</span></div>
+<div data-tpl="avg"><b>故事（《通天冠》）</b><span class="draw">讀劇情，在關鍵處做選擇。要畫：一個場景（背景、人物、對話框、兩個選項）。</span><span class="demo">示範：小上帝、魁星</span></div>
+<div data-tpl="walk"><b>走讀</b><span class="draw">走到真實地點，完成任務。要畫：一張任務卡（地點、題目、拍照按鈕）。</span><span class="demo">示範：舊城裡的天后宮</span></div>
+<div data-tpl="puzzle"><b>解謎</b><span class="draw">蒐集線索，推出答案。要畫：一張線索卡與道具欄。</span><span class="demo">示範：通天冠、同裕當店</span></div>
+<div data-tpl="sim"><b>經營</b><span class="draw">資源有限，排出先後，撐過一天。要畫：經營畫面（資源列、來客、行動按鈕）。</span><span class="demo">示範：小上帝廟</span></div>
+<div data-tpl="cards"><b>卡牌</b><span class="draw">收集卡牌，靠相剋關係對戰。要畫：一張卡面。</span><span class="demo">示範：雷震子、哪吒、龜靈聖母</span></div>
+<div data-tpl="rhythm"><b>節奏</b><span class="draw">跟著節拍抓準時機。要畫：節奏譜面（落點、判定線、分數）。</span><span class="demo">示範：鑼、鼓、筊杯</span></div>
+<div data-tpl="sneak"><b>潛行（夜巡不踩線）</b><span class="draw">俯視地圖，避開看不見的線。要畫：一張地圖（路線、禁忌的線、你的位置）。練的是：禁忌・規矩。</span><span class="demo">示範：廟門的門檻</span></div>
+<div data-tpl="social"><b>談判（人情與面子）</b><span class="draw">跟幾個人談結盟，人情和面子是本錢。要畫：談判畫面（對象、人情與面子的數字、選項）。練的是：人際關係。</span><span class="demo">示範：小上帝廟的人情</span></div>
+<div data-tpl="towerdef"><b>塔防（普渡七日）</b><span class="draw">一波一波來的訪客，用供品和法器安頓。要畫：防守畫面（日期、供品欄、訪客）。練的是：時間節奏。</span><span class="demo">示範：普渡的七個夜晚</span></div>
+<div data-tpl="roguelike"><b>爬塔（擲筊問路）</b><span class="draw">每一層用擲筊決定走哪條路。要畫：選路畫面（擲筊結果、路線、獎勵）。練的是：行為・儀式。</span><span class="demo">示範：擲筊、收驚</span></div>
+<div data-tpl="tiles"><b>拼接（五條港接水道）</b><span class="draw">一次放一塊地圖板塊，相鄰決定得分。要畫：板塊地圖（水道、廟埕、攤位）。練的是：物件・地點。</span><span class="demo">示範：五條港</span></div>
+<div data-tpl="runner"><b>跑酷（遶境不能停）</b><span class="draw">抬著神轎沿路線前進，接駕、補給不能亂。要畫：路線畫面（神轎、接駕點、補給）。練的是：行為・儀式。</span><span class="demo">示範：遶境的路線</span></div>
 </div>
 <p class="note">這週的畫面包有前面六種（故事、走讀、解謎、經營、卡牌、節奏）。如果你挑的是後面六種（潛行、談判、塔防、爬塔、拼接、跑酷），先選畫面包裡最像的一個畫面來畫，下週會補上你那個樣板的畫面包。</p></section>
 
-<section id="play2"><h2><span class="num">課堂先做</span>玩兩版，再回答一個問題</h2>
+<section id="play2" data-kind="learn"><h2><span class="num">課堂先做</span>玩兩版，再回答一個問題</h2>
 <p class="sub">約 18 分鐘。每個樣板都有兩個版本：一版「文化只是皮」，一版「文化長在規則裡」。看看差在哪裡。</p>
 <ol class="plain">
 <li><b>先猜：</b>玩之前，你覺得這兩版各會落在哪個答案（下面四個選一個）？</li>
@@ -97,7 +99,7 @@ details.adv .advb{padding:0 16px 14px}
 <li><b>換人講：</b>跟旁邊玩另一個樣板的人，各講三句：你玩的像什麼、抽掉文化會怎樣、你的答案跟猜的一樣嗎。</li></ol>
 <p class="note">玩樣板時，右下角如果出現「🧭 助教」，它只會問你問題，不會替你做。</p></section>
 
-<section><h2><span class="num">概覽</span>這份作業一頁看完</h2>
+<section data-kind="learn"><h2><span class="num">概覽</span>這份作業一頁看完</h2>
 <div class="jt-wrap"><table class="jt"><tbody>
 <tr><td>要交什麼</td><td>Figma 連結（確認別人打得開）和一張匯出的 PNG。一句話「你想讓玩的人有什麼感覺」寫在學習單的填寫區；繳交留言附上存版本後出現的「繳交檢核」畫面截圖。</td></tr>
 <tr><td>大約多久</td><td>課堂 100～120 分鐘，今天做完</td></tr>
@@ -106,7 +108,7 @@ details.adv .advb{padding:0 16px 14px}
 <tr><td>評分</td><td>以 flipclass 這份作業的說明為準</td></tr>
 </tbody></table></div></section>
 
-<section id="steps"><h2><span class="num">步驟</span>六步做完這一份</h2>
+<section id="steps" data-kind="do"><h2><span class="num">步驟</span>六步做完這一份</h2>
 <p class="note">每一步是一張卡片，點標題可以收合或展開。英文按鈕的中文意思放在括號裡。</p>
 
 <details class="stage" open><summary><span class="sn">1</span><span class="st2">玩兩版，再把十二個樣板都看一眼</span><span class="sm">約 30 分鐘</span></summary><div class="sb">
@@ -157,7 +159,7 @@ details.adv .advb{padding:0 16px 14px}
 </div></details>
 </section>
 
-<section id="survey" hidden><h2><span class="num">問卷</span>課程自我檢核（約 1 分鐘）</h2>
+<section id="survey" hidden data-kind="log"><h2><span class="num">問卷</span>課程自我檢核（約 1 分鐘）</h2>
 <p class="sub">這份問卷不計分、跟成績無關，也沒有標準答案。請照你實際的情況填——「主要為了學分」「照指示做完就交」都是很常見、很正常的答案，填了不會有任何影響。問卷由徐芳真老師收，只寫你的編號、不寫名字；學期成績送出之前，楊老師不會看到任何人的答案。</p>
 <div class="fld"><label for="sv-env"><b>你的編號</b>（信封上的編號）</label> <input type="text" id="sv-env" inputmode="numeric" maxlength="3" autocomplete="off" style="font:inherit;min-height:48px;padding:8px 12px;border:1.5px solid var(--hair);border-radius:10px;width:8em"> <button type="button" id="sv-go" style="font:inherit;font-weight:700;min-height:48px;padding:8px 18px;border-radius:10px;border:0;background:var(--accent);color:var(--bg);cursor:pointer">開始</button></div>
 <p class="note" id="sv-msg" role="status"></p>
@@ -184,7 +186,7 @@ var SURVEY_CFG = /*SV*/{"formUrl": "", "entryEnv": ""}/*END*/;
 })();
 </script>
 
-<section id="three"><h2><span class="num">出處標示欄</span>存版本時填三格</h2>
+<section id="three" data-kind="log"><h2><span class="num">出處標示欄</span>存版本時填三格</h2>
 <p class="sub">每週至少寫一次；換規則或換形式的版本一定要寫。很短就好，目的是讓你自己看清楚哪些是你決定的。在這一頁下方的填寫區（或樣板頁的「📒 我的紀錄」）填，兩邊是同一份；填的內容只留在你自己的瀏覽器。存好後畫面會出現「繳交檢核」（只列編號、單元、第幾版、時間、完成了哪幾項的打勾，不顯示你寫的字），把它截圖交到 flipclass。</p>
 <ol class="plain"><li><b>這一版裡，哪些部分交給了 AI？</b>從下面挑（可以多個）；沒有用 AI 就寫「沒有用 AI」。</li>
 <li><b>這一版裡，哪一兩處是你自己決定的？</b>一句話就好；想不到就寫「沒有」。</li>
@@ -194,7 +196,7 @@ var SURVEY_CFG = /*SV*/{"formUrl": "", "entryEnv": ""}/*END*/;
 <p class="note">範例：「交給 AI：技術助教，幫我寫指令範例。我自己決定：按鈕改成紅色、標題換成廟口的名字。本週那一句：像走進廟口一樣安心。」</p>
 <div id="provMount"></div><p id="provHint" class="note">先在上面綁定你的編號，這裡才會出現填寫區。</p></section>
 
-<section id="check"><h2><span class="num">檢核</span>交之前，自己對照五點</h2>
+<section id="check" data-kind="do"><h2><span class="num">檢核</span>交之前，自己對照五點</h2>
 <ul class="checks">
 <li><b class="n">1</b><span><b>有自己的一份。</b>檔名已改成「班級＋你挑的樣板」。</span></li>
 <li><b class="n">2</b><span><b>改了三處。</b>一處文字、一處顏色、一處自選。</span></li>
@@ -202,7 +204,7 @@ var SURVEY_CFG = /*SV*/{"formUrl": "", "entryEnv": ""}/*END*/;
 <li><b class="n">4</b><span><b>別人打得開。</b>Anyone 那一列是 can view，無痕視窗貼上連結打得開。</span></li>
 <li><b class="n">5</b><span><b>填了出處標示欄、附了檢核截圖。</b>填寫區寫了三格（含「你想讓玩的人有什麼感覺」），繳交留言附上「繳交檢核」截圖。</span></li></ul></section>
 
-<section id="stuck"><h2><span class="num">卡住了</span>常見的卡住與解法</h2>
+<section id="stuck" data-kind="learn"><h2><span class="num">卡住了</span>常見的卡住與解法</h2>
 <dl class="stuck">
 <dt>畫面包上找不到複製的選項</dt><dd>先登入 Figma；沒登入只能看，沒有複製的選項。字樣不一樣時，找意思是「複製」的那個，找不到就截圖問老師。</dd>
 <dt>不小心點到 Move to trash</dt><dd>到 Figma 檔案首頁左邊找「Trash（垃圾桶）」，把檔案還原；找不到就再複製一份。</dd>
@@ -211,15 +213,15 @@ var SURVEY_CFG = /*SV*/{"formUrl": "", "entryEnv": ""}/*END*/;
 <dt>找不到下載的 PNG</dt><dd>到瀏覽器右上角的下載圖示找；檔名就是你的畫面名稱。</dd>
 <dt>不知道挑哪一個樣板</dt><dd>挑你最想「畫出來」的那一個。想不出來就挑卡牌或解謎，畫面最單純。</dd></dl></section>
 
-<section id="phone"><h2><span class="num">手機</span>手機注意事項</h2>
+<section id="phone" data-kind="learn"><h2><span class="num">手機</span>手機注意事項</h2>
 <ul class="plain"><li>手機版的 Figma 網頁只能看，不能複製、改字、改顏色，也沒有 Export。這些步驟請用教室電腦或同組同學的電腦。</li>
 <li>玩六個樣板、登入、決定要畫哪一個，在手機上可以先做。</li>
 <li>以上是別堂課用手機尺寸的網頁模擬測過的，真手機可能不同。</li></ul></section>
 
-<section><h2><span class="num">下一份</span>做完之後接哪一份</h2>
+<section data-kind="learn"><h2><span class="num">下一份</span>做完之後接哪一份</h2>
 <p>下週是 AI Studio 1/3：把你今天的 PNG 和樣板交給 AI Studio，做成會動的畫面。再下一週（W13）才開始用 Claude 免費版幫忙。它每五個小時只能問很少幾次，所以問題要少量、一次問一件事。Figma 檔一直用同一個，不用重新開始。</p></section>
 
-<section id="addon-a" data-addon="A" hidden><h2><span class="num">最後一題</span>這個單元你花了多少腦力？</h2>
+<section id="addon-a" data-addon="A" hidden data-kind="log"><h2><span class="num">最後一題</span>這個單元你花了多少腦力？</h2>
 <p>做完這個單元，你覺得自己花了多少腦力？　1（非常少）……9（非常多）</p></section>
 
 <section id="adv"><details class="adv"><summary>帶筆電的進階任務（自願，加分，不扣分）</summary>

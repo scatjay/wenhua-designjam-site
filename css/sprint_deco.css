@@ -1,0 +1,93 @@
+/* W11–W16 學習單細節區分（2026-11-17）
+   參考工作坊線學習單：區塊分線（三色＋標籤）、單元紋理（點、斜線、格線、弧、圈、交叉）。
+   ①每週一個主色＋紋理（body[data-week]）②區塊三種（section[data-kind]）：學一下／動手做／留紀錄
+   ③十二個樣板各一個顏色（[data-tpl]）。只改外觀，不動內容。 */
+:root{
+  --k-learn:#2b7a3e;--k-learn-soft:#e3f4e6;
+  --k-do:#c2410c;--k-do-soft:#fdeadd;
+  --k-log:#3650c9;--k-log-soft:#e6ebff;
+  --tp:38%;
+  --t-avg:#9a3b2e;--t-walk:#2b8a3e;--t-puzzle:#5f3dc4;--t-sim:#9a6b00;--t-cards:#c2255c;--t-rhythm:#0b7285;
+  --t-sneak:#364fc7;--t-social:#5c7f0d;--t-towerdef:#862e9c;--t-roguelike:#495057;--t-tiles:#1971c2;--t-runner:#d9480f;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --k-learn:#69db7c;--k-learn-soft:#173a22;--k-do:#ffa94d;--k-do-soft:#43301a;--k-log:#91a7ff;--k-log-soft:#232c57;--tp:45%;
+  --t-avg:#f08a74;--t-walk:#69db7c;--t-puzzle:#b197fc;--t-sim:#ffd43b;--t-cards:#f783ac;--t-rhythm:#66d9e8;
+  --t-sneak:#91a7ff;--t-social:#a9e34b;--t-towerdef:#e599f7;--t-roguelike:#ced4da;--t-tiles:#74c0fc;--t-runner:#ffa94d}}
+:root[data-theme="dark"]{
+  --k-learn:#69db7c;--k-learn-soft:#173a22;--k-do:#ffa94d;--k-do-soft:#43301a;--k-log:#91a7ff;--k-log-soft:#232c57;--tp:45%;
+  --t-avg:#f08a74;--t-walk:#69db7c;--t-puzzle:#b197fc;--t-sim:#ffd43b;--t-cards:#f783ac;--t-rhythm:#66d9e8;
+  --t-sneak:#91a7ff;--t-social:#a9e34b;--t-towerdef:#e599f7;--t-roguelike:#ced4da;--t-tiles:#74c0fc;--t-runner:#ffa94d}
+
+/* ① 每週主色（亮色） */
+body[data-week="11"]{--accent:#b23a26}
+body[data-week="12"]{--accent:#2f4fa8}
+body[data-week="13"]{--accent:#1f7a5c}
+body[data-week="14"]{--accent:#6b3fa0}
+body[data-week="15"]{--accent:#8a5a10}
+body[data-week="16"]{--accent:#1b6578}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body[data-week="11"]{--accent:#f08a74}
+  :root:not([data-theme="light"]) body[data-week="12"]{--accent:#93a9f0}
+  :root:not([data-theme="light"]) body[data-week="13"]{--accent:#6fd1ac}
+  :root:not([data-theme="light"]) body[data-week="14"]{--accent:#c3a3ec}
+  :root:not([data-theme="light"]) body[data-week="15"]{--accent:#e6b85c}
+  :root:not([data-theme="light"]) body[data-week="16"]{--accent:#7cc3d6}}
+:root[data-theme="dark"] body[data-week="11"]{--accent:#f08a74}
+:root[data-theme="dark"] body[data-week="12"]{--accent:#93a9f0}
+:root[data-theme="dark"] body[data-week="13"]{--accent:#6fd1ac}
+:root[data-theme="dark"] body[data-week="14"]{--accent:#c3a3ec}
+:root[data-theme="dark"] body[data-week="15"]{--accent:#e6b85c}
+:root[data-theme="dark"] body[data-week="16"]{--accent:#7cc3d6}
+body[data-week]{--accent-soft:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+
+/* 每週紋理：tx 用在頁首色帶、步驟編號圓 */
+body[data-week="11"]{--tx:radial-gradient(circle at 1px 1px,var(--txc) 1.1px,transparent 1.6px);--txs:8px 8px}
+body[data-week="12"]{--tx:repeating-linear-gradient(45deg,var(--txc) 0 1.5px,transparent 1.5px 8px);--txs:auto}
+body[data-week="13"]{--tx:linear-gradient(var(--txc) 1px,transparent 1px),linear-gradient(90deg,var(--txc) 1px,transparent 1px);--txs:10px 10px}
+body[data-week="14"]{--tx:repeating-radial-gradient(circle at 0 100%,transparent 0 6px,var(--txc) 6px 7px);--txs:auto}
+body[data-week="15"]{--tx:repeating-radial-gradient(circle at 50% 50%,transparent 0 5px,var(--txc) 5px 6px);--txs:auto}
+body[data-week="16"]{--tx:repeating-linear-gradient(45deg,var(--txc) 0 1px,transparent 1px 7px),repeating-linear-gradient(-45deg,var(--txc) 0 1px,transparent 1px 7px);--txs:auto}
+body[data-week]{--txc:color-mix(in srgb,var(--accent) var(--tp),transparent)}
+body[data-week]::before{content:"";position:fixed;left:0;right:0;top:0;height:calc(6px + env(safe-area-inset-top,0px));
+  background-color:color-mix(in srgb,var(--accent) 22%,var(--bg));background-image:var(--tx);background-size:var(--txs);z-index:50;pointer-events:none}
+body[data-week] .sn{position:relative;overflow:hidden}
+body[data-week] .sn::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  --txc:rgba(255,255,255,.28);background-image:var(--tx);background-size:var(--txs)}
+body[data-week] details.stage>summary{border-left:4px solid var(--accent);border-radius:12px 0 0 12px}
+body[data-week] details.stage[open]>summary{background-color:var(--accent-soft);background-image:var(--tx);background-size:var(--txs);
+  --txc:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:12px 12px 0 0}
+
+/* ② 區塊三種：學一下（綠）／動手做（橘）／留紀錄（藍） */
+section[data-kind]{--kc:var(--accent);--kcs:var(--accent-soft);border-left:3px solid var(--kc);padding-left:14px;margin-left:-2px}
+section[data-kind="learn"]{--kc:var(--k-learn);--kcs:var(--k-learn-soft)}
+section[data-kind="do"]{--kc:var(--k-do);--kcs:var(--k-do-soft)}
+section[data-kind="log"]{--kc:var(--k-log);--kcs:var(--k-log-soft)}
+section[data-kind]>h2{flex-wrap:wrap}
+section[data-kind]>h2::before{order:-1;font:700 11.5px/1 var(--sans);letter-spacing:.08em;padding:4px 8px;border-radius:6px;
+  color:var(--kc);background:var(--kcs);border:1px solid color-mix(in srgb,var(--kc) 40%,transparent);white-space:nowrap;align-self:center}
+section[data-kind="learn"]>h2::before{content:"學一下"}
+section[data-kind="do"]>h2::before{content:"動手做"}
+section[data-kind="log"]>h2::before{content:"留紀錄"}
+section[data-kind="do"]>h2::before{background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--kc) 18%,transparent) 0 1.5px,transparent 1.5px 6px)}
+section[data-kind="log"]>h2::before{background-image:linear-gradient(color-mix(in srgb,var(--kc) 16%,transparent) 1px,transparent 1px);background-size:100% 5px}
+section[data-kind="log"]{background:linear-gradient(90deg,color-mix(in srgb,var(--kcs) 70%,transparent),transparent 60%);border-radius:0 12px 12px 0;padding-block:2px 6px}
+nav.tabs a[data-kind]{border-color:var(--kc);color:var(--kc)}
+nav.tabs a[data-kind]::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--kc);margin-right:7px;flex:0 0 auto}
+nav.tabs a[data-kind="learn"]{--kc:var(--k-learn)} nav.tabs a[data-kind="do"]{--kc:var(--k-do)} nav.tabs a[data-kind="log"]{--kc:var(--k-log)}
+.kind-key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);margin:6px 0 0}
+.kind-key span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--kc)}
+.kind-key .kl{--kc:var(--k-learn)} .kind-key .kd{--kc:var(--k-do)} .kind-key .kg{--kc:var(--k-log)}
+
+/* ③ 十二個樣板各一個顏色 */
+[data-tpl="avg"]{--tc:var(--t-avg)} [data-tpl="walk"]{--tc:var(--t-walk)} [data-tpl="puzzle"]{--tc:var(--t-puzzle)}
+[data-tpl="sim"]{--tc:var(--t-sim)} [data-tpl="cards"]{--tc:var(--t-cards)} [data-tpl="rhythm"]{--tc:var(--t-rhythm)}
+[data-tpl="sneak"]{--tc:var(--t-sneak)} [data-tpl="social"]{--tc:var(--t-social)} [data-tpl="towerdef"]{--tc:var(--t-towerdef)}
+[data-tpl="roguelike"]{--tc:var(--t-roguelike)} [data-tpl="tiles"]{--tc:var(--t-tiles)} [data-tpl="runner"]{--tc:var(--t-runner)}
+.six>div[data-tpl]{border-top:4px solid var(--tc);background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 9%,var(--surface)),var(--surface) 46px)}
+.six>div[data-tpl]>b{color:var(--tc)}
+.six>div[data-tpl]>b::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--tc);margin-right:7px;vertical-align:1px}
+a.tpl[data-tpl]{display:inline-block;padding:1px 9px;margin:2px 0;border-radius:999px;border:1px solid color-mix(in srgb,var(--tc) 55%,transparent);
+  color:var(--tc);background:color-mix(in srgb,var(--tc) 10%,var(--surface));text-decoration:none;font-weight:700;white-space:nowrap}
+a.tpl[data-tpl]:hover{background:color-mix(in srgb,var(--tc) 20%,var(--surface))}
+@media (max-width:420px){section[data-kind]{padding-left:10px}}

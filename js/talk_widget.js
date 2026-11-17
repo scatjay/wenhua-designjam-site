@@ -4,7 +4,7 @@
 (function () {
   var DB = 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', NS = 'gen-lang-client-0929530380-default-rtdb';
   var OPEN = {
-    '47602': { W11: '用一句話說說你的遊戲：誰、在哪裡、要做什麼、好玩在哪？' },
+    '47602': { W11: '你的畫面裡最好玩的那一刻是什麼？' },
     '46582': { W11: '你把走讀的畫面做成網頁，你選了哪一個畫面來還原？' }
   };
   var HINTS = window.CT_HINTS || {};

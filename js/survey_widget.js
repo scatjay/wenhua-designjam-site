@@ -1,11 +1,12 @@
 /* 學習單內問卷元件：課程自我檢核問卷（W11 前測，11-17 楊老師：問卷直接放學習單裡、不用 Google 表單；配分 3%，貼完成畫面截圖就好）。
    題本＝教學實踐線 Q1–Q4 原句＋課程線母線 11-17 19:3x 定稿 Q5–Q15（15 題、4 構面、五點）。
+   v3（11-17 夜）：構面順序與題序依信封編號固定偽隨機；B4、C2 為反向鍵（flags.rev）；D5 為檢核題（flags.attn，不計分）；送出改 S2 格式（含 o＝實際顯示順序、t0／t1＝開始與送出時間）。
    送出：寫 ctalk/q（kind=survey）→ 本機代理程式封存到 _scan/_survey_w11_sealed/（gitignore）；不寫進公開資料庫。
    完成碼學生端本來就拿得到：不填也能拿碼，網路送不出去也能拿碼。完成畫面不顯示信封編號，適合手機一張截圖。⚠ 不用 alert／confirm／prompt。 */
 (function () {
   var DB = 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', NS = 'gen-lang-client-0929530380-default-rtdb';
   var SURVEY = /*SVY*/{
-    "ready": true, "version": "v2", "unit": "W11", "code": "GPS1118",
+    "ready": true, "version": "v3", "unit": "W11", "code": "GPS1118",
     "title": "課程自我檢核問卷（約 4 分鐘）",
     "intro": "這份問卷想了解你平常怎麼用 AI。不計分，跟成績無關，也沒有標準答案。每一句請照你平常的情況選一個：「主要為了學分」「卡住就直接問 AI」都是很常見、很正常的答案，填了不會有任何影響。只用你的編號作答，不寫名字。大約 4 分鐘。",
     "ask": "這句話跟你平常的情況有多符合？",
@@ -29,8 +30,10 @@
         "我一個星期裡有好幾天都會用 AI（例如 ChatGPT、Gemini、Claude）。",
         "我平常也會用 AI 做課業以外的事（例如生活、興趣、打工）。",
         "修這門課之前，我做過完整的遊戲或互動作品（課堂作業、比賽或自己做的都算）。",
-        "修這門課之前，我寫過程式，或用過遊戲製作工具（例如 Unity、Unreal、RPG Maker、Scratch）。"]}
-    ]
+        "修這門課之前，我寫過程式，或用過遊戲製作工具（例如 Unity、Unreal、RPG Maker、Scratch）。",
+        "這一題請直接選「不太符合」，用來確認畫面有正常顯示。"]}
+    ],
+    "flags": {"B4": {"rev": true, "pair": "B3"}, "C2": {"rev": true, "pair": "C1"}, "D5": {"attn": true, "want": 2}}
   }/*END*/;
   var $ = function (id) { return document.getElementById(id); };
   var WID = window.CT_WID || {}, ID = false;
@@ -43,6 +46,29 @@
   function tw(ms) { var d = new Date(ms + 8 * 3600 * 1000); return { ymd: d.toISOString().slice(0, 10).replace(/-/g, ''), h: d.getUTCHours() }; }
   function courseOf(env) { env = Number(env); if (env >= 55 && env <= 60) return 'test'; if (env >= 1 && env <= 52) return '47602'; if (env >= 101 && env <= 130) return '46582'; return ''; }
   function sessKey(env, ms) { var p = tw(ms), c = courseOf(env), half = p.h < 14 ? 'am' : 'pm'; if (!c) c = half === 'am' ? '47602' : '46582'; return c + '-' + p.ymd + half; }
+  function hseed(s) { var h = 1779033703 ^ s.length; for (var i = 0; i < s.length; i++) { h = Math.imul(h ^ s.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; } h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); return (h ^ h >>> 16) >>> 0; }
+  function rng(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function shuf(arr, r) { var a = arr.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  /* 順序：依種子（信封編號）固定的偽隨機。構面順序與構面內題序各洗一次；檢核題落在第 9–14 個位置（不會排第一），不合就用同一種子的下一個子序列重洗，結果仍固定。 */
+  function makeOrder(seed) {
+    var ids = SURVEY.dims.map(function (d) { return d.id; }), attn = null, F = SURVEY.flags || {};
+    Object.keys(F).forEach(function (k) { if (F[k].attn) attn = k; });
+    var res = null;
+    for (var at = 0; at < 300; at++) {
+      var r = rng(hseed(seed + '#' + at)), dord = shuf(ids, r), flat = [], per = {};
+      dord.forEach(function (id) { var d = SURVEY.dims.filter(function (x) { return x.id === id; })[0], ks = d.items.map(function (t, i) { return id + (i + 1); }); per[id] = shuf(ks, r); flat = flat.concat(per[id]); });
+      res = { dims: dord, flat: flat, per: per, attempt: at };
+      var p = attn ? flat.indexOf(attn) : 9; if (p >= 8 && p <= 13) break;
+    }
+    return res;
+  }
+  function seedFor(env) {
+    if (isFinite(env) && env >= 0 && env <= 130) return 'svy|e' + env;
+    var k = 'survey_seed', v = null; try { v = localStorage.getItem(k); } catch (e) { v = null; }
+    if (!v) { v = 'r' + Math.floor(Math.random() * 4294967296); try { localStorage.setItem(k, v); } catch (e) { /* 存不下就只在這一次固定 */ } }
+    return 'svy|' + v;
+  }
+  function plain(n) { return String(n).replace(/^(\d+\.\s*|[一二三四五六七八九十]+、\s*)/, ''); }
   function qid() { return String(Date.now()) + '_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0'); }
   function css() {
     if ($('svycss')) return;
@@ -78,12 +104,15 @@
     var emu = qparam('emu') === '1' && env >= 55 && env <= 60, port = qparam('emuPort') || '9012';
     var base = emu ? 'http://127.0.0.1:' + port : DB, qs = emu ? '?ns=' + NS : '';
     var DK = 'survey_' + SURVEY.unit + '_done';
+    var ORD = makeOrder(seedFor(env)), t0 = 0;
+    var TXT = {}, DIM = {}; SURVEY.dims.forEach(function (d) { DIM[d.id] = d; d.items.forEach(function (t, i) { TXT[d.id + (i + 1)] = t; }); });
     var ans = {}, html = ['<div class="sy"><p class="note" id="sy-intro"></p><div id="sy-open" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button type="button" id="sy-yes">' + esc(T('願意填')) + '</button><button type="button" class="g" id="sy-no">' + esc(T('這次不填')) + '</button></div><div id="sy-form" hidden>'];
-    SURVEY.dims.forEach(function (d, di) {
-      html.push('<div class="dim" data-d="' + d.id + '"><h3><span class="tag">' + esc(T('第')) + ' ' + (di + 1) + '／' + SURVEY.dims.length + ' ' + esc(T('部分')) + '</span>' + esc(T(d.name)) + '<span class="cnt">' + d.items.length + ' ' + esc(T('題')) + '</span></h3>');
+    ORD.dims.forEach(function (id, di) {
+      var d = DIM[id], ks = ORD.per[id];
+      html.push('<div class="dim" data-d="' + d.id + '"><h3><span class="tag">' + esc(T('第')) + ' ' + (di + 1) + '／' + SURVEY.dims.length + ' ' + esc(T('部分')) + '</span>' + esc(plain(T(d.name))) + '<span class="cnt">' + ks.length + ' ' + esc(T('題')) + '</span></h3>');
       html.push('<p class="svkey" aria-hidden="true"><span>' + esc(T(SURVEY.scale[0])) + '</span><i></i><span>' + esc(T(SURVEY.scale[4])) + '</span></p>');
-      d.items.forEach(function (t, i) {
-        var k = d.id + (i + 1);
+      ks.forEach(function (k) {
+        var t = TXT[k];
         html.push('<div class="it" data-k="' + k + '"><p class="q">' + esc(T(t)) + '</p><p class="ask">' + esc(T(SURVEY.ask)) + '</p><div class="sc" role="radiogroup" aria-label="' + esc(t) + '">');
         SURVEY.scale.forEach(function (lab, v) { html.push('<label data-v="' + (v + 1) + '"><input type="radio" name="' + k + '" value="' + (v + 1) + '">' + (v + 1) + ' ' + esc(T(lab)) + '</label>'); });
         html.push('</div></div>');
@@ -118,17 +147,17 @@
       send(text).then(function () { showCard(skipped ? 'skip' : true, remember(skipped ? 'skip' : true)); }).catch(function () { showCard(skipped ? 'skip' : false, remember(skipped ? 'skip' : false)); });
     }
     var go = $('sy-go'), yes = $('sy-yes'), no = $('sy-no');
-    yes.onclick = function () { $('sy-open').hidden = true; $('sy-form').hidden = false; $('sy-msg').textContent = ''; };
-    no.onclick = function () { $('sy-msg').textContent = ''; finish('S1|' + SURVEY.unit + '|' + SURVEY.version + '|skip', [yes, no], true); };
+    yes.onclick = function () { if (!t0) t0 = Date.now(); $('sy-open').hidden = true; $('sy-form').hidden = false; $('sy-msg').textContent = ''; };
+    no.onclick = function () { $('sy-msg').textContent = ''; finish(['S2', SURVEY.unit, SURVEY.version, 'skip', 't0=' + (t0 || Date.now()), 't1=' + Date.now()].join('|'), [yes, no], true); };
     go.onclick = function () {
       var miss = [], csv = []; SURVEY.dims.forEach(function (d) { d.items.forEach(function (t, i) { var v = ans[d.id + (i + 1)]; if (!v) miss.push(d.id + (i + 1)); csv.push(v); }); });
       if (miss.length) { $('sy-msg').textContent = T('還有 {n} 題沒選。').split('{n}').join(miss.length); return; }
-      $('sy-msg').textContent = ''; finish('S1|' + SURVEY.unit + '|' + SURVEY.version + '|' + csv.join(','), [go], false);
+      $('sy-msg').textContent = ''; finish(['S2', SURVEY.unit, SURVEY.version, csv.join(','), 'o=' + ORD.flat.join('.'), 't0=' + (t0 || Date.now()), 't1=' + Date.now()].join('|'), [go], false);
     };
     var done = null; try { done = localStorage.getItem(DK); } catch (e) { /* 沒有就當沒填 */ }
     if (done) { var o = null; try { o = JSON.parse(done); } catch (e) { o = null; } showCard(o && o.sent !== undefined ? o.sent : true, (o && o.at) || ''); }
   }
-  window.CT_SURVEY = { mount: mount, _cfg: SURVEY };
+  window.CT_SURVEY = { mount: mount, _cfg: SURVEY, _order: makeOrder };
   function auto() { var el = $('surveyMount'); if (el) mount($('survey'), el); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto); else auto();
 })();

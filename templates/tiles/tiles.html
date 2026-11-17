@@ -3,215 +3,345 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 <title>五條港接水道</title>
 <style>
-:root{--bg:#f7f3ea;--card:#fffdf8;--ink:#2b2620;--muted:#6b6256;--line:#d9cfbf;--accent:#9c3d2e;--accent-ink:#fff;--ok:#2e7d4f;--bad:#b3261e;--sea:#9fc9e0;--hl:#ffe08a}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1d1a16;--card:#28241f;--ink:#efe7da;--muted:#b3a897;--line:#4a4238;--accent:#e07a5f;--accent-ink:#1d1a16;--ok:#7fd1a0;--bad:#ff8a80;--sea:#2f5d78;--hl:#7a6420}}
-:root[data-theme="dark"]{--bg:#1d1a16;--card:#28241f;--ink:#efe7da;--muted:#b3a897;--line:#4a4238;--accent:#e07a5f;--accent-ink:#1d1a16;--ok:#7fd1a0;--bad:#ff8a80;--sea:#2f5d78;--hl:#7a6420}
+/* 〈五條港接水道〉的外觀（規格正本第五節：花磚白藍）：白底淡藍花磚、深藍字、藍色重點、12 的圓角、貼紙感的方塊；標題 Huninn。
+   所有元件只用 --tk-* 語意 token 與下面的私有變數；顏色只在這個 :root 裡寫一次。 */
+:root{
+  --tk-surface:#f7f7f2; --tk-panel:#ffffff; --tk-ink:#14254a; --tk-muted:#5a6a8f; --tk-accent:#2459c9; --tk-accent-ink:#ffffff; --tk-line:#14254a;
+  --tk-font-title:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --tk-font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --tk-radius:12px; --tk-shadow:0 3px 0 #14254a;
+  --ok:#1b7f4a; --bad:#c0281e; --hl:#ffe08a; --tile-a:#dbe6fb; --tile-b:#f1f5fd; --soft:#c7d4ef;
+  --t-sea:#a9cdf2; --t-canal:#4b8fe0; --t-dockA:#d98f3f; --t-dockB:#a8683c; --t-temple:#c43a2e; --t-plaza:#e0a9a2; --t-street:#7f9a6a; --t-stall:#e5ac2a;
+  --t-gray1:#7a7a7a; --t-gray2:#5f5f5f; --t-gray3:#949494; --t-gray4:#6c6c6c; --t-gray5:#868686; --t-gray6:#535353;
+}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
-#app{max-width:520px;margin:0 auto;padding:12px 16px 40px}
-h1{font-size:1.45rem;margin:.3em 0 .1em}
-h2{font-size:1.1rem;margin:1.1em 0 .4em}
-.sub{color:var(--muted);font-size:.92rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
-.kind{display:inline-block;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 12px;font-size:.85rem;font-weight:700}
-.w2c{border-left:4px solid var(--accent);padding:4px 10px;margin:8px 0}
-.w2c b{font-size:1rem}.w2c small{display:block;color:var(--muted)}
-button{font:inherit;min-height:44px;min-width:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;cursor:pointer}
-button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
-button:disabled{opacity:.45;cursor:not-allowed}
-.row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.row>button{flex:1 1 140px}
-.hud{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:.92rem}
+html,body{margin:0;background:var(--tk-surface);color:var(--tk-ink);font-family:var(--tk-font-body);line-height:1.65;font-size:16px}
+body{background-image:radial-gradient(circle at 50% 50%,var(--tile-a) 0 5px,transparent 6px),radial-gradient(circle at 0 0,var(--tile-b) 0 9px,transparent 10px),radial-gradient(circle at 100% 100%,var(--tile-b) 0 9px,transparent 10px);background-size:32px 32px}
+#app{max-width:520px;margin:0 auto;padding:12px 8px 40px}
+h1{font-family:var(--tk-font-title);font-size:1.7rem;margin:.2em 0;font-weight:400;letter-spacing:.2em}
+h2{font-family:var(--tk-font-title);font-size:1.08rem;margin:1em 0 .4em;font-weight:400;color:var(--tk-accent)}
+.sub{color:var(--tk-muted);font-size:.88rem}
+.chartframe{border:3px solid var(--tk-accent);border-radius:var(--tk-radius);background:var(--tk-panel);padding:8px 6px 12px;margin:6px 0;box-shadow:var(--tk-shadow)}
+.cartouche{position:relative;border:3px solid var(--tk-accent);border-radius:24px;background:var(--tk-panel);padding:22px 16px 16px;margin:10px 0;text-align:center;box-shadow:var(--tk-shadow)}
+.compass{position:absolute;right:12px;top:12px;width:40px;height:40px;border:2px solid var(--tk-accent);border-radius:50%}
+.compass i{position:absolute;left:50%;top:3px;width:0;height:0;margin-left:-6px;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:20px solid var(--tk-accent)}
+.compass b{position:absolute;left:0;right:0;bottom:1px;font-size:.65rem;text-align:center}
+.waves{height:16px;margin:8px 0;background:radial-gradient(circle at 8px 0,transparent 7px,var(--tk-accent) 8px 10px,transparent 11px) 0 0/16px 16px repeat-x}
+.lead{margin:6px 0}
+.legendtab{margin:8px auto;border-collapse:separate;border-spacing:4px;font-size:.95rem}.legendtab th,.legendtab td{background:var(--tile-b);border-radius:8px;padding:3px 12px}.legendtab th{background:var(--tk-accent);color:var(--tk-accent-ink);font-weight:400}
+.panel{background:var(--tk-panel);border:2px solid var(--tk-line);border-radius:var(--tk-radius);padding:10px 14px;margin:12px 0;box-shadow:var(--tk-shadow)}
+ul.plain{list-style:none;padding:0;margin:6px 0}ul.plain li{margin:6px 0;border-bottom:2px dotted var(--soft);padding-bottom:4px}
+.kind{display:inline-block;background:var(--tk-accent);color:var(--tk-accent-ink);border-radius:999px;padding:1px 12px;font-size:.82rem}
+.w2c{border-left:4px solid var(--tk-accent);padding:2px 10px;margin:8px 0}.w2c small{display:block;color:var(--tk-muted)}
+button{font:inherit;min-height:46px;min-width:46px;border-radius:var(--tk-radius);border:2px solid var(--tk-line);background:var(--tk-panel);color:var(--tk-ink);padding:6px 14px;cursor:pointer;touch-action:manipulation;box-shadow:var(--tk-shadow)}
+button:active{transform:translateY(3px);box-shadow:none}
+button.primary{background:var(--tk-accent);color:var(--tk-accent-ink)}
+button.big{font-size:1.15rem;min-height:56px;letter-spacing:.2em}
+button.quiet{box-shadow:none;border-style:dashed}
+button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}.row>button{flex:1 1 140px}
+.hud{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:.9rem;border-bottom:2px dotted var(--soft);padding-bottom:3px}
+.score{font-family:var(--tk-font-title);font-size:1.9rem;margin-top:4px}
+.meter{position:relative;height:12px;border:2px solid var(--tk-line);border-radius:999px;background:var(--tile-b);margin:2px 0 8px}.meter i{display:block;height:100%;background:var(--tk-accent);border-radius:999px}.meter b{position:absolute;top:-5px;width:3px;height:18px;background:var(--tk-ink)}
 .hand{display:flex;gap:8px;margin:8px 0}
-.hand button{flex:1;display:flex;align-items:center;gap:8px;text-align:left;min-height:56px}
-.hand button.sel{outline:3px solid var(--accent);outline-offset:1px}
-.chip{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;color:#fff;font-weight:800;flex:0 0 auto;text-shadow:0 1px 1px rgba(0,0,0,.35)}
-.board{display:grid;gap:4px;margin:8px 0;touch-action:manipulation}
-.cell{aspect-ratio:1/1;min-height:44px;min-width:44px;padding:0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;border:1px dashed var(--line);background:var(--card);color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.35)}
-.cell.sea{background:var(--sea);border-style:solid;cursor:default;font-size:.8rem;color:var(--ink);text-shadow:none}
-.cell.filled{border-style:solid}
-.cell.cand{background:var(--hl);border-style:solid}
+.hand button{flex:1;display:flex;align-items:center;gap:8px;text-align:left;min-height:54px}
+.hand button.sel{outline:3px solid var(--tk-accent);outline-offset:2px}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;color:var(--tk-accent-ink);font-weight:700;flex:0 0 auto;border:2px solid var(--tk-line);text-shadow:0 1px 1px var(--tk-ink)}
+.board{display:grid;gap:2px;margin:8px 0;touch-action:manipulation;align-items:center;padding:4px;border-radius:var(--tk-radius);background:var(--tile-a)}
+.ax{font-style:normal;font-size:.75rem;text-align:center;color:var(--tk-muted)}
+.cell{aspect-ratio:1/1;min-height:44px;min-width:0;padding:0;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.05rem;border:2px dashed var(--soft);background:var(--tk-panel);color:var(--tk-accent-ink);text-shadow:0 1px 1px var(--tk-ink);box-shadow:none}
+.cell.sea{background:var(--t-sea);border:2px solid var(--tk-line);color:var(--tk-ink);text-shadow:none;font-size:.75rem}
+.cell.filled{border:2px solid var(--tk-line)}
+.cell.cand{background:var(--hl);border:2px solid var(--tk-line)}
 .cell.bad{animation:shake .25s}
 @keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
-.msg{min-height:3.2em;padding:8px 10px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:.95rem}
+.msg{min-height:3.2em;padding:6px 12px;border-radius:var(--tk-radius);border:2px solid var(--tk-line);background:var(--tile-b);font-size:.92rem}
 .msg.bad{border-color:var(--bad);color:var(--bad)}.msg.ok{border-color:var(--ok)}
+.overlay{border:3px solid var(--tk-accent);border-radius:var(--tk-radius);padding:10px 12px;margin:10px 0;background:var(--tk-panel);box-shadow:var(--tk-shadow)}
+.card-ovl h2{font-size:1.25rem}
+.newbox,.recap{border:2px solid var(--soft);border-radius:var(--tk-radius);background:var(--tile-b);padding:4px 12px;margin:8px 0}
+.stele{border:2px solid var(--tk-accent);border-radius:var(--tk-radius);padding:5px 10px;margin:6px 0;font-size:.9rem;background:var(--tile-b)}
+.strip-on{outline:3px dashed var(--tk-muted);outline-offset:4px}
 .rules li{margin:2px 0}
-.stele{border:2px solid var(--accent);border-radius:10px;padding:6px 10px;margin:6px 0;font-size:.92rem}
-.strip-on{outline:3px dashed var(--muted);outline-offset:4px;border-radius:10px}
-.score-list{margin:0;padding-left:1.2em}
-.opt{display:block;width:100%;text-align:left;margin:6px 0}
-.opt.sel{outline:3px solid var(--accent)}
-textarea{width:100%;min-height:88px;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-.err{color:var(--bad);font-size:.92rem;white-space:pre-wrap}
-details{margin:10px 0}summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:700}
-.tag{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:.8rem;margin-right:4px;color:var(--muted)}
-.foot{color:var(--muted);font-size:.8rem;margin-top:18px}
-.legend{display:grid;grid-template-columns:1fr;gap:4px;font-size:.9rem}
-.legend div{display:flex;gap:8px;align-items:center}
-.legend .chip{width:26px;height:26px;font-size:.8rem}
+.opt{display:block;width:100%;text-align:left;margin:8px 0}.opt.sel{outline:3px solid var(--tk-accent)}
+textarea{width:100%;min-height:88px;font:inherit;padding:8px;border:2px solid var(--tk-line);border-radius:var(--tk-radius);background:var(--tk-panel);color:var(--tk-ink)}
+.err{color:var(--bad);font-size:.9rem;white-space:pre-wrap}
+details{margin:10px 0}summary{min-height:46px;display:flex;align-items:center;cursor:pointer}
+.tag{display:inline-block;border:1px solid var(--tk-muted);border-radius:6px;padding:0 6px;font-size:.78rem;margin-right:4px;color:var(--tk-muted)}
+.foot{color:var(--tk-muted);font-size:.8rem;margin-top:18px}
+.legend{display:grid;grid-template-columns:1fr;gap:4px;font-size:.9rem}.legend div{display:flex;gap:8px;align-items:center}.legend .chip{width:26px;height:26px;font-size:.8rem}
+.ach{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.ach span{border:2px solid var(--tk-line);border-radius:999px;padding:2px 10px;font-size:.88rem}.ach span.on{background:var(--tk-accent);color:var(--tk-accent-ink)}.ach span.off{opacity:.55}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<script type="application/json" id="data-rule"><!--DATA_RULE-->{"version_id": "rule", "title": "五條港接水道", "version_label": "文化長在規則裡", "tagline": "一次放一塊地，讓港道、碼頭、廟和街連成熱鬧的港邊。每一塊能放在哪裡、怎麼得分，都由「它在台南是什麼」決定。", "w2_kind": {"label": "物件・地點", "line": "這個樣板練的是 W2 的「物件・地點」類文化卡：這一類最容易只變成貼圖，要多花力氣，才能讓它扛起玩法。"}, "w2_cards": [{"no": 1, "v": "五條港", "note": "清代的貿易水道，扛貨的苦力分派系", "more": "補充：資料說的是搬貨工人按姓氏、原鄉分地盤，沒有「派系」這個詞。"}, {"no": 3, "v": "廟埕", "note": "廟前的空地，什麼事都在那裡發生", "more": "補充：普度、迎神都在廟埕上演。"}, {"no": 4, "v": "夜市攤車", "note": "推著走的店，位置每天在變", "more": "補充：「位置每天在變」查不到根據，這裡改成「攤車要找有人潮的地方」，是遊戲自己加的規則。"}], "board": {"rows": 5, "cols": 6, "sea_col": 0, "sea_name": "台江（海）", "sea_icon": "🌊"}, "turns": 14, "stele_turn": 9, "stele_text": "第 9 手起：官府立了一塊碑，改成「貨主決定請誰搬」，一條港不再只歸一姓。兩姓碼頭貼在一起，各加 2 分——試試看把它們排在同一條港。", "tiles": {"canal": {"name": "港道", "icon": "≈", "color": "#5aa0c8", "meaning": "從海往城裡挖進來的水道，船靠它把貨送進城。"}, "dockA": {"name": "甲姓碼頭", "icon": "甲", "color": "#c9853f", "meaning": "甲姓搬工的碼頭。清代一條港的貨，多半由同一幫工人包下來搬。"}, "dockB": {"name": "乙姓碼頭", "icon": "乙", "color": "#a0623a", "meaning": "乙姓搬工的碼頭。兩幫人搶同一條港的搬貨生意，會吵到官府出面。"}, "temple": {"name": "廟", "icon": "廟", "color": "#c0392b", "meaning": "《小封神》裡，土地公們說：神仙要迎來送往，蓋封神廟得挑「水陸交通利便」的地方。"}, "plaza": {"name": "廟埕", "icon": "埕", "color": "#d8a7a0", "meaning": "廟前面的空地，迎神、普度、看戲都在這裡。沒有廟，就沒有廟埕。"}, "street": {"name": "街屋", "icon": "街", "color": "#8e8e6a", "meaning": "沿著港邊長出來的街，貨上岸之後往街上送。"}, "stall": {"name": "攤車", "icon": "攤", "color": "#e0a526", "meaning": "推著走的小店，哪裡人多就往哪裡去。"}}, "deck": [["canal", "street"], ["canal", "temple"], ["dockA", "canal"], ["temple", "street"], ["plaza", "dockB"], ["canal", "stall"], ["dockB", "street"], ["dockA", "plaza"], ["stall", "dockB"], ["canal", "temple"], ["plaza", "street"], ["dockA", "stall"], ["street", "dockB"], ["stall", "plaza"]], "place_rules": {"canal": [{"type": "adj_any", "dir": "left", "of": ["sea", "canal"], "why": "水是連著的：港道要從海那一邊接過來，左邊要是海或港道。"}, {"type": "turf", "why": "碑立之前，一條港只歸一姓搬：這樣接會讓兩姓的碼頭擠在同一條港。"}], "dockA": [{"type": "adj_any", "dir": "vertical", "of": ["canal"], "why": "碼頭要蓋在港道的岸邊（港道的正上方或正下方）。"}, {"type": "turf", "why": "碑立之前，一條港只歸一姓搬：這條港已經是乙姓的地盤。"}], "dockB": [{"type": "adj_any", "dir": "vertical", "of": ["canal"], "why": "碼頭要蓋在港道的岸邊（港道的正上方或正下方）。"}, {"type": "turf", "why": "碑立之前，一條港只歸一姓搬：這條港已經是甲姓的地盤。"}], "temple": [], "plaza": [{"type": "adj_any", "dir": "any", "of": ["temple"], "why": "廟埕是廟前面的空地，一定要貼著廟。"}], "street": [], "stall": [{"type": "adj_any", "dir": "any", "of": ["plaza", "dockA", "dockB"], "why": "攤車要找人潮：貼著廟埕或碼頭（這條是遊戲自己加的）。"}]}, "score_rules": {"canal": [], "dockA": [{"type": "base", "pts": 1, "label": "碼頭"}, {"type": "per_adj", "of": ["street"], "pts": 2, "label": "貨上岸送到街上"}, {"type": "per_adj", "of": ["dockB"], "pts": 2, "label": "碑立之後：貨主挑人，兩姓都有生意"}], "dockB": [{"type": "base", "pts": 1, "label": "碼頭"}, {"type": "per_adj", "of": ["street"], "pts": 2, "label": "貨上岸送到街上"}, {"type": "per_adj", "of": ["dockA"], "pts": 2, "label": "碑立之後：貨主挑人，兩姓都有生意"}], "temple": [{"type": "base", "pts": 1, "label": "廟"}, {"type": "if_adj_all", "groups": [["canal", "dockA", "dockB"], ["street"]], "pts": 4, "label": "水陸交通利便"}], "plaza": [{"type": "base", "pts": 1, "label": "廟埕"}, {"type": "per_adj", "of": ["stall", "street"], "pts": 1, "label": "廟口熱鬧"}], "street": [{"type": "base", "pts": 1, "label": "街屋"}, {"type": "per_adj", "of": ["plaza"], "pts": 1, "label": "靠廟口"}], "stall": [{"type": "base", "pts": 2, "label": "攤車有生意"}]}, "rules_text": [{"text": "港道要從海那一邊接過來（水是連著的）。一橫排就是一條港，最多五條港。", "culture": true}, {"text": "碼頭蓋在港道的岸邊。碑立之前，一條港只歸一姓搬（真實情況是「多半」，遊戲把它簡化成「一定」）；碑立之後，兩姓碼頭貼在一起反而加分。", "culture": true}, {"text": "廟埕是廟前面的空地，要貼著廟。", "culture": true}, {"text": "廟要「水陸交通利便」：同時貼著水邊（港道或碼頭）和街屋，才有大加分。", "culture": true}, {"text": "碼頭旁邊有街屋，貨才送得出去；攤車要找人潮：貼著廟埕或碼頭。", "culture": true}, {"text": "兩塊都放不下時，可以丟掉一塊，這一手就過了。", "culture": false}], "endings": [{"min": 28, "title": "港街熱鬧", "text": "船進得來、貨上得了岸、廟口有人看戲吃攤。你蓋的不是一張好看的地圖，是一個會動的港邊。"}, {"min": 18, "title": "港邊有人氣", "text": "有幾條港接通了，但有些碼頭的貨送不到街上，有些廟離水太遠。再試一次，看哪一塊放錯了地方。"}, {"min": 0, "title": "冷清的水邊", "text": "很多塊放下去了，卻彼此不相干。想一想：這一塊在真的台南，旁邊應該是什麼？"}], "reflect": {"question": "按「抽掉文化試試看」再玩一次：名字、圖示、規則說明都換成代號。抽掉文化之後，這個遊戲還玩得下去嗎？", "options": ["照樣玩", "故事垮了玩法還在", "玩法本身就垮了", "說不準"], "expected": "玩法本身就垮了", "our_view": "我們的看法：這一版的規則，全部是用「它是什麼」講出來的——廟埕要貼著廟、廟要挑水陸交通方便的地方、碑立之前一條港歸一姓。抽掉文化之後，你只看到「這裡不能放」，卻不知道為什麼，只能猜；我們用電腦亂試，被擋 33 次、分數少一半。所以我們選「玩法本身就垮了」。但這題沒有標準答案：如果你覺得「多試幾次就摸出來了」，那你選的可能是「故事垮了玩法還在」——也很好，把你摸出規則花了幾手寫下來，就是最好的理由。"}, "field": {"title": "AI 做不到的欄位：去現場找一條「相鄰規則」", "prompt": "去神農街、信義街一帶或你家附近的廟口走一趟，找一個真的「什麼東西一定挨著什麼東西」（例如：金紙店在廟的哪一邊、攤車停在廟埕的哪一角）。寫下你在哪裡、看到什麼，再把它改成一條放置規則。", "placeholder": "例：我在＿＿廟口看到＿＿都貼著＿＿，所以規則可以寫成：＿＿要貼著＿＿才能放。", "min_chars": 15}, "basis": [{"tag": "原著", "text": "封神廟要選「水陸交通利便」的地方：土地公們說，神仙要迎來送往（《小封神》第二十三回）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "五條港是清代府城的商用港道；搬貨工人按姓氏、原鄉分地盤（資料記載佛頭港有同姓不同村的兩幫人搶生意）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第 9 手。"}, {"tag": "民間", "text": "廟埕是廟前面的空地，普度、迎神在這裡舉行。"}, {"tag": "工坊創作", "text": "甲姓、乙姓是代號，不是真實姓氏；一橫排＝一條港、攤車找人潮、所有分數，都是遊戲自己定的。這張地圖沒有照五條港的真實位置畫，五條港各叫什麼、在哪裡，請以文史資料為準（還要再查證）。"}]}<!--/DATA_RULE--></script>
-<script type="application/json" id="data-skin"><!--DATA_SKIN-->{"title": "五條港接水道", "w2_kind": {"label": "物件・地點", "line": "這個樣板練的是 W2 的「物件・地點」類文化卡：這一類最容易只變成貼圖，要多花力氣，才能讓它扛起玩法。"}, "w2_cards": [{"no": 1, "v": "五條港", "note": "清代的貿易水道，扛貨的苦力分派系", "more": "補充：資料說的是搬貨工人按姓氏、原鄉分地盤，沒有「派系」這個詞。"}, {"no": 3, "v": "廟埕", "note": "廟前的空地，什麼事都在那裡發生", "more": "補充：普度、迎神都在廟埕上演。"}, {"no": 4, "v": "夜市攤車", "note": "推著走的店，位置每天在變", "more": "補充：「位置每天在變」查不到根據，這裡改成「攤車要找有人潮的地方」，是遊戲自己加的規則。"}], "board": {"rows": 5, "cols": 6, "sea_col": 0, "sea_name": "台江（海）", "sea_icon": "🌊"}, "turns": 14, "tiles": {"canal": {"name": "港道", "icon": "≈", "color": "#5aa0c8", "meaning": "從海往城裡挖進來的水道，船靠它把貨送進城。"}, "dockA": {"name": "甲姓碼頭", "icon": "甲", "color": "#c9853f", "meaning": "甲姓搬工的碼頭。清代一條港的貨，多半由同一幫工人包下來搬。"}, "dockB": {"name": "乙姓碼頭", "icon": "乙", "color": "#a0623a", "meaning": "乙姓搬工的碼頭。兩幫人搶同一條港的搬貨生意，會吵到官府出面。"}, "temple": {"name": "廟", "icon": "廟", "color": "#c0392b", "meaning": "《小封神》裡，土地公們說：神仙要迎來送往，蓋封神廟得挑「水陸交通利便」的地方。"}, "plaza": {"name": "廟埕", "icon": "埕", "color": "#d8a7a0", "meaning": "廟前面的空地，迎神、普度、看戲都在這裡。沒有廟，就沒有廟埕。"}, "street": {"name": "街屋", "icon": "街", "color": "#8e8e6a", "meaning": "沿著港邊長出來的街，貨上岸之後往街上送。"}, "stall": {"name": "攤車", "icon": "攤", "color": "#e0a526", "meaning": "推著走的小店，哪裡人多就往哪裡去。"}}, "deck": [["canal", "street"], ["canal", "temple"], ["dockA", "canal"], ["temple", "street"], ["plaza", "dockB"], ["canal", "stall"], ["dockB", "street"], ["dockA", "plaza"], ["stall", "dockB"], ["canal", "temple"], ["plaza", "street"], ["dockA", "stall"], ["street", "dockB"], ["stall", "plaza"]], "field": {"title": "AI 做不到的欄位：去現場找一條「相鄰規則」", "prompt": "去神農街、信義街一帶或你家附近的廟口走一趟，找一個真的「什麼東西一定挨著什麼東西」（例如：金紙店在廟的哪一邊、攤車停在廟埕的哪一角）。寫下你在哪裡、看到什麼，再把它改成一條放置規則。", "placeholder": "例：我在＿＿廟口看到＿＿都貼著＿＿，所以規則可以寫成：＿＿要貼著＿＿才能放。", "min_chars": 15}, "basis": [{"tag": "原著", "text": "封神廟要選「水陸交通利便」的地方：土地公們說，神仙要迎來送往（《小封神》第二十三回）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "五條港是清代府城的商用港道；搬貨工人按姓氏、原鄉分地盤（資料記載佛頭港有同姓不同村的兩幫人搶生意）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第 9 手。"}, {"tag": "民間", "text": "廟埕是廟前面的空地，普度、迎神在這裡舉行。"}, {"tag": "工坊創作", "text": "甲姓、乙姓是代號，不是真實姓氏；一橫排＝一條港、攤車找人潮、所有分數，都是遊戲自己定的。這張地圖沒有照五條港的真實位置畫，五條港各叫什麼、在哪裡，請以文史資料為準（還要再查證）。"}], "version_id": "skin", "version_label": "文化只是皮", "tagline": "一次放一塊地。名字和圖示都是台南的，但放哪裡都可以、相同的排在一起就得分。", "stele_turn": 0, "stele_text": "", "place_rules": {"canal": [], "dockA": [], "dockB": [], "temple": [], "plaza": [], "street": [], "stall": []}, "score_rules": {"canal": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["canal"], "pts": 1, "label": "相同的排在一起"}], "dockA": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["dockA"], "pts": 1, "label": "相同的排在一起"}], "dockB": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["dockB"], "pts": 1, "label": "相同的排在一起"}], "temple": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["temple"], "pts": 1, "label": "相同的排在一起"}], "plaza": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["plaza"], "pts": 1, "label": "相同的排在一起"}], "street": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["street"], "pts": 1, "label": "相同的排在一起"}], "stall": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["stall"], "pts": 1, "label": "相同的排在一起"}]}, "rules_text": [{"text": "海以外的空格都能放。", "culture": false}, {"text": "每放一塊得 1 分；同一種的兩塊貼在一起，各再加 1 分。", "culture": false}, {"text": "兩塊都不想放時，可以丟掉一塊，這一手就過了。", "culture": false}], "endings": [{"min": 28, "title": "排得很整齊", "text": "同一種的都排在一起了，分數很高。可是這個港邊，船進得來嗎？"}, {"min": 18, "title": "排得還可以", "text": "有幾群排在一起。換一種排法，分數會更高。"}, {"min": 0, "title": "排得很散", "text": "相同的沒有排在一起。試著把同一種集中起來。"}], "reflect": {"question": "按「抽掉文化試試看」再玩一次：名字、圖示、規則說明都換成代號。抽掉文化之後，這個遊戲還玩得下去嗎？", "options": ["照樣玩", "故事垮了玩法還在", "玩法本身就垮了", "說不準"], "expected": "照樣玩", "our_view": "我們的看法：這一版的名字和圖示都是台南的，但規則只看「是不是同一種」。抽掉文化，換成代號，規則一個字都不用改，照樣玩。文化在這裡只是貼圖——這正是 W2 說「物件・地點」最容易掉進去的坑。對照「文化長在規則裡」那一版，看看差在哪。"}}<!--/DATA_SKIN--></script>
+<script type="application/json" id="data-rule"><!--DATA_RULE-->{"version_id": "rule", "title": "五條港接水道", "version_label": "文化長在規則裡", "tagline": "三盤地圖，一盤比一盤複雜：先挖港道、再處理兩姓搶港、最後讓廟口熱鬧起來。每一塊能放在哪裡、怎麼得分，都由「它在台南是什麼」決定。", "w2_kind": {"label": "物件・地點", "line": "這個樣板練的是 W2 的「物件・地點」類文化卡：這一類最容易只變成貼圖，要多花力氣，才能讓它扛起玩法。"}, "w2_cards": [{"no": 1, "v": "五條港", "note": "清代的貿易水道，扛貨的苦力分派系", "more": "補充：資料說的是搬貨工人按姓氏、原鄉分地盤，沒有「派系」這個詞。"}, {"no": 3, "v": "廟埕", "note": "廟前的空地，什麼事都在那裡發生", "more": "補充：普度、迎神都在廟埕上演。"}, {"no": 4, "v": "夜市攤車", "note": "推著走的店，位置每天在變", "more": "補充：「位置每天在變」查不到根據，這裡改成「攤車要找有人潮的地方」，是遊戲自己加的規則。"}], "tiles": {"canal": {"name": "港道", "icon": "≈", "color": "canal", "meaning": "從海往城裡挖進來的水道，船靠它把貨送進城。"}, "dockA": {"name": "甲姓碼頭", "icon": "甲", "color": "dockA", "meaning": "甲姓搬工的碼頭。清代一條港的貨，多半由同一幫工人包下來搬。"}, "dockB": {"name": "乙姓碼頭", "icon": "乙", "color": "dockB", "meaning": "乙姓搬工的碼頭。兩幫人搶同一條港的搬貨生意，會吵到官府出面。"}, "temple": {"name": "廟", "icon": "廟", "color": "temple", "meaning": "《小封神》裡，土地公們說：神仙要迎來送往，蓋封神廟得挑「水陸交通利便」的地方。"}, "plaza": {"name": "廟埕", "icon": "埕", "color": "plaza", "meaning": "廟前面的空地，迎神、普度、看戲都在這裡。沒有廟，就沒有廟埕。"}, "street": {"name": "街屋", "icon": "街", "color": "street", "meaning": "沿著港邊長出來的街，貨上岸之後往街上送。"}, "stall": {"name": "攤車", "icon": "攤", "color": "stall", "meaning": "推著走的小店，哪裡人多就往哪裡去。"}}, "place_rules": {"canal": [{"type": "adj_any", "dir": "left", "of": ["sea", "canal"], "why": "水是連著的：港道要從海那一邊接過來，左邊要是海或港道。"}, {"type": "turf", "why": "碑立之前，一條港只歸一姓搬：這樣接會讓兩姓的碼頭擠在同一條港。"}], "dockA": [{"type": "adj_any", "dir": "vertical", "of": ["canal"], "why": "碼頭要蓋在港道的岸邊（港道的正上方或正下方）。"}, {"type": "turf", "why": "碑立之前，一條港只歸一姓搬：這條港已經是乙姓的地盤。"}], "dockB": [{"type": "adj_any", "dir": "vertical", "of": ["canal"], "why": "碼頭要蓋在港道的岸邊（港道的正上方或正下方）。"}, {"type": "turf", "why": "碑立之前，一條港只歸一姓搬：這條港已經是甲姓的地盤。"}], "temple": [], "plaza": [{"type": "adj_any", "dir": "any", "of": ["temple"], "why": "廟埕是廟前面的空地，一定要貼著廟。"}], "street": [], "stall": [{"type": "adj_any", "dir": "any", "of": ["plaza", "dockA", "dockB"], "why": "攤車要找人潮：貼著廟埕或碼頭（這條是遊戲自己加的）。"}]}, "score_rules": {"canal": [], "dockA": [{"type": "base", "pts": 1, "label": "碼頭"}, {"type": "per_adj", "of": ["street"], "pts": 2, "label": "貨上岸送到街上"}, {"type": "per_adj", "of": ["dockB"], "pts": 2, "label": "碑立之後：貨主挑人，兩姓都有生意"}], "dockB": [{"type": "base", "pts": 1, "label": "碼頭"}, {"type": "per_adj", "of": ["street"], "pts": 2, "label": "貨上岸送到街上"}, {"type": "per_adj", "of": ["dockA"], "pts": 2, "label": "碑立之後：貨主挑人，兩姓都有生意"}], "temple": [{"type": "base", "pts": 1, "label": "廟"}, {"type": "if_adj_all", "groups": [["canal", "dockA", "dockB"], ["street"]], "pts": 4, "label": "水陸交通利便"}], "plaza": [{"type": "base", "pts": 1, "label": "廟埕"}, {"type": "per_adj", "of": ["stall", "street"], "pts": 1, "label": "廟口熱鬧"}], "street": [{"type": "base", "pts": 1, "label": "街屋"}, {"type": "per_adj", "of": ["plaza"], "pts": 1, "label": "靠廟口"}], "stall": [{"type": "base", "pts": 2, "label": "攤車有生意"}]}, "rules_text": [{"text": "港道要從海那一邊接過來（水是連著的）。一橫排就是一條港。", "culture": true}, {"text": "碼頭蓋在港道的岸邊。碑立之前，一條港只歸一姓搬（真實情況是「多半」，遊戲把它簡化成「一定」）；碑立之後，兩姓碼頭貼在一起反而加分。", "culture": true}, {"text": "廟埕是廟前面的空地，要貼著廟。", "culture": true}, {"text": "廟要「水陸交通利便」：同時貼著水邊（港道或碼頭）和街屋，才有大加分。", "culture": true}, {"text": "碼頭旁邊有街屋，貨才送得出去；攤車要找人潮：貼著廟埕或碼頭。", "culture": true}, {"text": "每一盤有一個目標分。達到目標得 1 顆星，超過目標的 1.25 倍 2 顆星，1.5 倍 3 顆星；沒達到可以「這一盤再蓋一次」，也可以先往下一盤。", "culture": false}, {"text": "兩塊都放不下時，可以丟掉一塊，這一手就過了。", "culture": false}], "endings": [{"min": 50, "title": "港街熱鬧", "text": "船進得來、貨上得了岸、廟口有人看戲吃攤。三盤蓋完，你蓋的不是一張好看的地圖，是一個會動的港邊。"}, {"min": 31, "title": "港邊有人氣", "text": "有幾條港接通了，但有些碼頭的貨送不到街上，有些廟離水太遠。再試一次，看哪一塊放錯了地方。"}, {"min": 0, "title": "冷清的水邊", "text": "很多塊放下去了，卻彼此不相干。想一想：這一塊在真的台南，旁邊應該是什麼？"}], "reflect": {"question": "你玩完三盤了：這個遊戲最讓你「有感」的是哪一個設計？", "options": ["一塊一塊放，要先想好前後（規劃）", "「放不下」時它會告訴你為什麼（規則說得出理由）", "第二盤中途立碑，規則突然改變", "兩塊選一塊的取捨"], "expected": "開放", "our_view": "我們的看法：沒有標準答案。這四個設計各自撐起不同的好玩——規劃靠前瞻，說得出理由的規則讓人願意試錯，立碑讓同一張地圖前後半場玩法不同，兩選一製造取捨。你的企劃只要選一個當核心，其他可以簡化。請寫下：你玩的時候哪一刻最想再來一盤？是哪個設計造成的？ 附電腦玩家的數字（各玩 300 局）：知道規則、每手挑最高分的，三盤合計約 62 分、被擋 0 次；看不懂規則、亂放的，約 33 分、被擋 235 次——規則看不看得懂，結果差很多。"}, "field": {"title": "AI 做不到的欄位：去現場找一條「相鄰規則」", "prompt": "去神農街、信義街一帶或你家附近的廟口走一趟，找一個真的「什麼東西一定挨著什麼東西」（例如：金紙店在廟的哪一邊、攤車停在廟埕的哪一角）。寫下你在哪裡、看到什麼，再把它改成一條放置規則。", "placeholder": "例：我在＿＿廟口看到＿＿都貼著＿＿，所以規則可以寫成：＿＿要貼著＿＿才能放。", "min_chars": 15}, "basis": [{"tag": "原著", "text": "封神廟要選「水陸交通利便」的地方：土地公們說，神仙要迎來送往（《小封神》第二十三回）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "五條港是清代府城的商用港道；搬貨工人按姓氏、原鄉分地盤（資料記載佛頭港有同姓不同村的兩幫人搶生意）。"}, {"tag": "民間", "text": "廟埕是廟前面的空地，普度、迎神在這裡舉行。"}, {"tag": "工坊創作", "text": "甲姓、乙姓是代號，不是真實姓氏；一橫排＝一條港、攤車找人潮、所有分數，都是遊戲自己定的。這張地圖沒有照五條港的真實位置畫，五條港各叫什麼、在哪裡，請以文史資料為準（還要再查證）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}], "boards": [{"id": "b1", "name": "第一盤・港道開鑿", "rows": 5, "cols": 6, "sea_col": 0, "turns": 12, "goal": 12, "tiles": ["canal", "dockA", "street", "temple", "plaza"], "stele_turn": 0, "stele_text": "", "intro": "先學會放港道和碼頭：港道要從海那一邊接過來，碼頭蓋在港道的岸邊，貨上岸要有街屋，廟前要留廟埕。", "new": ["港道（≈）要從左邊的海一格一格接過來", "碼頭（甲）要蓋在港道的正上方或正下方", "廟埕要貼著廟；廟要靠水又靠街，才有大加分"], "deck": [["canal", "plaza"], ["canal", "plaza"], ["temple", "plaza"], ["dockA", "canal"], ["temple", "street"], ["plaza", "temple"], ["canal", "dockA"], ["street", "dockA"], ["canal", "dockA"], ["temple", "canal"], ["temple", "street"], ["street", "canal"]]}, {"id": "b2", "name": "第二盤・兩姓搶港", "rows": 5, "cols": 6, "sea_col": 0, "turns": 14, "goal": 14, "tiles": ["canal", "dockA", "street", "temple", "plaza", "dockB"], "stele_turn": 9, "stele_text": "第 9 手起：官府立了一塊碑，改成「貨主決定請誰搬」，一條港不再只歸一姓。兩姓碼頭貼在一起，各加 2 分——試試看把它們排在同一條港。", "intro": "又來了一個乙姓碼頭。前半盤，一條港（一橫排）只歸一姓搬；到第 9 手立碑之後，兩姓碼頭貼在一起反而加分。", "new": ["新增乙姓碼頭（乙）：一條港只能有一個姓，直到立碑", "第 9 手立碑：規則改變，兩姓貼在一起各加 2 分", "先想好哪一條港給甲、哪一條給乙，立碑後再把它們接起來"], "deck": [["canal", "street"], ["canal", "dockB"], ["street", "canal"], ["plaza", "canal"], ["plaza", "dockB"], ["street", "canal"], ["dockA", "street"], ["canal", "temple"], ["temple", "canal"], ["temple", "dockB"], ["plaza", "street"], ["plaza", "canal"], ["temple", "canal"], ["temple", "dockA"]]}, {"id": "b3", "name": "第三盤・廟口人潮", "rows": 5, "cols": 7, "sea_col": 0, "turns": 16, "goal": 12, "tiles": ["canal", "dockA", "street", "temple", "plaza", "dockB", "stall"], "stele_turn": 0, "stele_text": "", "intro": "地圖變寬了，碑早就立好，兩姓可以放在一起。這一盤多了攤車：攤車要找人潮，貼著廟埕或碼頭才放得下，而廟口越熱鬧分數越高。", "new": ["新增攤車（攤）：要貼著廟埕或碼頭才能放", "廟埕旁邊有攤車、街屋，各加 1 分", "地圖寬 7 格，一共 16 手"], "deck": [["canal", "dockB"], ["canal", "dockA"], ["stall", "plaza"], ["street", "dockB"], ["plaza", "dockB"], ["stall", "street"], ["temple", "dockB"], ["canal", "street"], ["dockB", "dockA"], ["stall", "canal"], ["dockB", "stall"], ["temple", "street"], ["street", "canal"], ["canal", "temple"], ["temple", "dockA"], ["canal", "stall"]]}], "stars": {"one": 1.0, "two": 1.25, "three": 1.5}, "compose": {"skin": "tiles", "modules": {"核心動作": "選一塊、放一格（有放置規則）", "資源計分": "相鄰加分（每種板塊自己的得分規則）", "時間回合": "三盤、每盤 12–16 手、發兩塊選一塊", "空間": "5×6、5×6、5×7 的方格地圖，左邊一排海", "角色": "七種板塊：港道、兩姓碼頭、廟、廟埕、街屋、攤車", "事件選擇": "第二盤第 9 手立碑（規則改變）", "勝負": "每盤目標分與三星、沒達標可再蓋", "回饋": "放不下時說出原因＋水滴與木頭的音效"}}}<!--/DATA_RULE--></script>
+<script type="application/json" id="data-skin"><!--DATA_SKIN-->{"title": "五條港接水道", "w2_kind": {"label": "物件・地點", "line": "這個樣板練的是 W2 的「物件・地點」類文化卡：這一類最容易只變成貼圖，要多花力氣，才能讓它扛起玩法。"}, "w2_cards": [{"no": 1, "v": "五條港", "note": "清代的貿易水道，扛貨的苦力分派系", "more": "補充：資料說的是搬貨工人按姓氏、原鄉分地盤，沒有「派系」這個詞。"}, {"no": 3, "v": "廟埕", "note": "廟前的空地，什麼事都在那裡發生", "more": "補充：普度、迎神都在廟埕上演。"}, {"no": 4, "v": "夜市攤車", "note": "推著走的店，位置每天在變", "more": "補充：「位置每天在變」查不到根據，這裡改成「攤車要找有人潮的地方」，是遊戲自己加的規則。"}], "tiles": {"canal": {"name": "港道", "icon": "≈", "color": "canal", "meaning": "從海往城裡挖進來的水道，船靠它把貨送進城。"}, "dockA": {"name": "甲姓碼頭", "icon": "甲", "color": "dockA", "meaning": "甲姓搬工的碼頭。清代一條港的貨，多半由同一幫工人包下來搬。"}, "dockB": {"name": "乙姓碼頭", "icon": "乙", "color": "dockB", "meaning": "乙姓搬工的碼頭。兩幫人搶同一條港的搬貨生意，會吵到官府出面。"}, "temple": {"name": "廟", "icon": "廟", "color": "temple", "meaning": "《小封神》裡，土地公們說：神仙要迎來送往，蓋封神廟得挑「水陸交通利便」的地方。"}, "plaza": {"name": "廟埕", "icon": "埕", "color": "plaza", "meaning": "廟前面的空地，迎神、普度、看戲都在這裡。沒有廟，就沒有廟埕。"}, "street": {"name": "街屋", "icon": "街", "color": "street", "meaning": "沿著港邊長出來的街，貨上岸之後往街上送。"}, "stall": {"name": "攤車", "icon": "攤", "color": "stall", "meaning": "推著走的小店，哪裡人多就往哪裡去。"}}, "field": {"title": "AI 做不到的欄位：去現場找一條「相鄰規則」", "prompt": "去神農街、信義街一帶或你家附近的廟口走一趟，找一個真的「什麼東西一定挨著什麼東西」（例如：金紙店在廟的哪一邊、攤車停在廟埕的哪一角）。寫下你在哪裡、看到什麼，再把它改成一條放置規則。", "placeholder": "例：我在＿＿廟口看到＿＿都貼著＿＿，所以規則可以寫成：＿＿要貼著＿＿才能放。", "min_chars": 15}, "basis": [{"tag": "原著", "text": "封神廟要選「水陸交通利便」的地方：土地公們說，神仙要迎來送往（《小封神》第二十三回）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "五條港是清代府城的商用港道；搬貨工人按姓氏、原鄉分地盤（資料記載佛頭港有同姓不同村的兩幫人搶生意）。"}, {"tag": "民間", "text": "廟埕是廟前面的空地，普度、迎神在這裡舉行。"}, {"tag": "工坊創作", "text": "甲姓、乙姓是代號，不是真實姓氏；一橫排＝一條港、攤車找人潮、所有分數，都是遊戲自己定的。這張地圖沒有照五條港的真實位置畫，五條港各叫什麼、在哪裡，請以文史資料為準（還要再查證）。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}, {"tag": "歷史資料（單一來源，待查）", "text": "1816 年知縣立碑，禁止佛頭港劃分地盤，改由貨主決定請誰搬；這塊碑現存南門碑林。這個樣板把立碑放在第二盤的第 9 手。"}, {"tag": "工坊創作", "text": "「三盤遞進」「每一盤的目標分與星等」「攤車放第三盤」是工坊為了讓樣板夠長、夠好玩編的遊戲設計，不是史實。"}], "stars": {"one": 1.0, "two": 1.25, "three": 1.5}, "version_id": "skin", "version_label": "文化只是皮", "tagline": "一次放一塊地。名字和圖示都是台南的，但放哪裡都可以、相同的排在一起就得分。", "boards": [{"id": "b1", "name": "第一盤・港道開鑿", "rows": 5, "cols": 6, "sea_col": 0, "turns": 12, "goal": 21, "tiles": ["canal", "dockA", "street", "temple", "plaza"], "stele_turn": 0, "stele_text": "", "intro": "名字和圖示都是台南的，但規則只有一條：同一種排在一起就得分。", "new": [], "deck": [["canal", "plaza"], ["canal", "plaza"], ["temple", "plaza"], ["dockA", "canal"], ["temple", "street"], ["plaza", "temple"], ["canal", "dockA"], ["street", "dockA"], ["canal", "dockA"], ["temple", "canal"], ["temple", "street"], ["street", "canal"]]}, {"id": "b2", "name": "第二盤・兩姓搶港", "rows": 5, "cols": 6, "sea_col": 0, "turns": 14, "goal": 21, "tiles": ["canal", "dockA", "street", "temple", "plaza", "dockB"], "stele_turn": 0, "stele_text": "", "intro": "名字和圖示都是台南的，但規則只有一條：同一種排在一起就得分。", "new": [], "deck": [["canal", "street"], ["canal", "dockB"], ["street", "canal"], ["plaza", "canal"], ["plaza", "dockB"], ["street", "canal"], ["dockA", "street"], ["canal", "temple"], ["temple", "canal"], ["temple", "dockB"], ["plaza", "street"], ["plaza", "canal"], ["temple", "canal"], ["temple", "dockA"]]}, {"id": "b3", "name": "第三盤・廟口人潮", "rows": 5, "cols": 7, "sea_col": 0, "turns": 16, "goal": 22, "tiles": ["canal", "dockA", "street", "temple", "plaza", "dockB", "stall"], "stele_turn": 0, "stele_text": "", "intro": "名字和圖示都是台南的，但規則只有一條：同一種排在一起就得分。", "new": [], "deck": [["canal", "dockB"], ["canal", "dockA"], ["stall", "plaza"], ["street", "dockB"], ["plaza", "dockB"], ["stall", "street"], ["temple", "dockB"], ["canal", "street"], ["dockB", "dockA"], ["stall", "canal"], ["dockB", "stall"], ["temple", "street"], ["street", "canal"], ["canal", "temple"], ["temple", "dockA"], ["canal", "stall"]]}], "place_rules": {"canal": [], "dockA": [], "dockB": [], "temple": [], "plaza": [], "street": [], "stall": []}, "score_rules": {"canal": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["canal"], "pts": 1, "label": "相同的排在一起"}], "dockA": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["dockA"], "pts": 1, "label": "相同的排在一起"}], "dockB": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["dockB"], "pts": 1, "label": "相同的排在一起"}], "temple": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["temple"], "pts": 1, "label": "相同的排在一起"}], "plaza": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["plaza"], "pts": 1, "label": "相同的排在一起"}], "street": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["street"], "pts": 1, "label": "相同的排在一起"}], "stall": [{"type": "base", "pts": 1, "label": "放下一塊"}, {"type": "per_adj", "of": ["stall"], "pts": 1, "label": "相同的排在一起"}]}, "rules_text": [{"text": "海以外的空格都能放。", "culture": false}, {"text": "每放一塊得 1 分；同一種的兩塊貼在一起，各再加 1 分。", "culture": false}, {"text": "兩塊都不想放時，可以丟掉一塊，這一手就過了。", "culture": false}], "endings": [{"min": 150, "title": "排得很整齊", "text": "同一種的都排在一起了，分數很高。可是這個港邊，船進得來嗎？"}, {"min": 90, "title": "排得還可以", "text": "有幾群排在一起。換一種排法，分數會更高。"}, {"min": 0, "title": "排得很散", "text": "相同的沒有排在一起。試著把同一種集中起來。"}], "reflect": {"question": "你玩完三盤了：這個遊戲最讓你「有感」的是哪一個設計？", "options": ["一塊一塊放，要先想好前後（規劃）", "「放不下」時它會告訴你為什麼（規則說得出理由）", "第二盤中途立碑，規則突然改變", "兩塊選一塊的取捨"], "expected": "開放", "our_view": "我們的看法：這一版（文化只是皮）名字和圖示都是台南的，但規則只有一條：同一種排在一起就得分，沒有「放不下」，也沒有立碑。跟「文化長在規則裡」那一版比，少了什麼？請寫下：哪一個設計讓你最想再來一盤？"}, "compose": {"skin": "tiles", "modules": {"核心動作": "選一塊、放一格（有放置規則）", "資源計分": "相鄰加分（每種板塊自己的得分規則）", "時間回合": "三盤、每盤 12–16 手、發兩塊選一塊", "空間": "5×6、5×6、5×7 的方格地圖，左邊一排海", "角色": "七種板塊：港道、兩姓碼頭、廟、廟埕、街屋、攤車", "事件選擇": "第二盤第 9 手立碑（規則改變）", "勝負": "每盤目標分與三星、沒達標可再蓋", "回饋": "放不下時說出原因＋水滴與木頭的音效"}}}<!--/DATA_SKIN--></script>
 <script>
 (function(){
 'use strict';
-// ===================== 引擎（不碰畫面，可單獨模擬） =====================
-function readData(id){ var t=document.getElementById(id).textContent.replace(/<!--\/?DATA_(RULE|SKIN)-->/g,''); return JSON.parse(t); }
+/* =====================================================================
+   〈五條港接水道〉八個模組（規格正本第三節：核心動作、資源計分、時間回合、空間、角色、事件選擇、勝負、回饋）。
+   每個模組：init(cfg, root)、step(state, action)、render(state)；只讀自己那一段 JSON。JSON 的 compose 宣告每個模組用哪個變體（W12 拼接用）。
+   模組(id)            負責                                  讀 JSON 的哪一段
+   核心動作 core       放一塊、丟一塊、能不能放                place_rules
+   資源計分 resource   每塊的得分規則、分數                    score_rules
+   時間回合 time       一手一手、一盤一盤、發牌                  boards[].turns、boards[].deck
+   空間 space          地圖大小、海在哪一排、相鄰、一橫排＝一條港   boards[].rows/cols/sea_col
+   角色 actor          手上的兩塊、每種板塊的名字圖示顏色          tiles、boards[].tiles
+   事件選擇 event      第二盤第 9 手立碑、每盤開場章節卡          boards[].stele_turn/stele_text/intro/new
+   勝負 verdict        目標分、星等、再蓋一次、結局              boards[].goal、stars、endings、reflect
+   回饋 feedback       訊息文字、水與木頭的音效                  place_rules[].why、rules_text
+   動作（action）：{type:'go'} 開始這一盤｜{type:'pick',i} 拿起一塊｜{type:'place',t,r,c}｜{type:'discard'}｜{type:'next'} 下一盤｜{type:'retry'} 這一盤再蓋一次
+   ===================================================================== */
+// ===================== 引擎（不碰畫面，可單獨模擬；node 的 _sim.js 只載入這一段） =====================
+function readData(id){ var t=document.getElementById(id).textContent.replace(/<!--\/?DATA_(RULE|SKIN)-->/g,''); return E.prep(JSON.parse(t)); }
 var RULE_TYPES={adj_any:1,turf:1}, SCORE_TYPES={base:1,per_adj:1,if_adj_all:1}, DIRS={left:1,vertical:1,any:1};
-var E={
-  newState:function(D){ var b=[]; for(var r=0;r<D.board.rows;r++){ b.push([]); for(var c=0;c<D.board.cols;c++) b[r].push(c===D.board.sea_col?'sea':null);} return {board:b,turn:0,rejects:0,discards:0,placed:0}; },
-  at:function(D,b,r,c){ if(r<0||c<0||r>=D.board.rows||c>=D.board.cols) return null; return b[r][c]; },
-  nbrs:function(dir){ if(dir==='left') return [[0,-1]]; if(dir==='vertical') return [[-1,0],[1,0]]; return [[-1,0],[1,0],[0,-1],[0,1]]; },
-  turfActive:function(D,S){ return D.stele_turn>0 && (S.turn+1)<D.stele_turn; },
-  rowSurnames:function(D,b){ // 每一橫排的港道，岸邊碼頭是哪幾姓
-    var out=[]; for(var r=0;r<D.board.rows;r++){ var s={}; for(var c=0;c<D.board.cols;c++){ if(b[r][c]!=='canal') continue; [r-1,r+1].forEach(function(rr){ var t=E.at(D,b,rr,c); if(t==='dockA'||t==='dockB') s[t]=1; }); } out.push(Object.keys(s)); } return out; },
-  canPlace:function(D,S,t,r,c){
-    if(r<0||c<0||r>=D.board.rows||c>=D.board.cols) return {ok:false,why:'超出地圖了。'};
+var cur=null;
+function Bof(D,S){ return D.boards[S.bi]; }
+
+var Core={ id:'core', name:'核心動作', reads:'place_rules, boards[].rows/cols/sea_col, tiles', cfg:null,
+  init:function(cfg,root){ Core.cfg=cfg; },
+  canPlace:function(D,S,t,r,c){ var B=Bof(D,S);
+    if(r<0||c<0||r>=B.rows||c>=B.cols) return {ok:false,why:'超出地圖了。'};
     if(S.board[r][c]!==null) return {ok:false,why:S.board[r][c]==='sea'?'這一格是海。':'這一格已經有東西了。',occupied:true};
     var rules=(D.place_rules&&D.place_rules[t])||[];
     for(var i=0;i<rules.length;i++){ var R=rules[i];
-      if(R.type==='adj_any'){ var hit=false; E.nbrs(R.dir).forEach(function(d){ var v=E.at(D,S.board,r+d[0],c+d[1]); if(v&&R.of.indexOf(v)>=0) hit=true; }); if(!hit) return {ok:false,why:R.why}; }
-      else if(R.type==='turf'){ if(!E.turfActive(D,S)) continue; var b2=S.board.map(function(x){return x.slice();}); b2[r][c]=t; var rs=E.rowSurnames(D,b2); for(var k=0;k<rs.length;k++){ if(rs[k].length>1) return {ok:false,why:R.why}; } }
-    }
-    return {ok:true};
-  },
-  place:function(D,S,t,r,c){ var v=E.canPlace(D,S,t,r,c); if(!v.ok){ S.rejects++; return v;} S.board[r][c]=t; S.turn++; S.placed++; return v; },
-  discard:function(D,S){ S.turn++; S.discards++; },
-  offer:function(D,S){ return D.deck[S.turn]||[]; },
-  done:function(D,S){ return S.turn>=D.turns; },
-  score:function(D,b){
-    var total=0, by={}, order=[];
+      if(R.type==='adj_any'){ var hit=false; Space.nbrs(R.dir).forEach(function(d){ var v=Space.at(D,S,S.board,r+d[0],c+d[1]); if(v&&R.of.indexOf(v)>=0) hit=true; }); if(!hit) return {ok:false,why:R.why}; }
+      else if(R.type==='turf'){ if(!Event.turfActive(D,S)) continue; var b2=S.board.map(function(x){return x.slice();}); b2[r][c]=t; var rs=Space.rowSurnames(D,S,b2); for(var k=0;k<rs.length;k++){ if(rs[k].length>1) return {ok:false,why:R.why}; } } }
+    return {ok:true}; },
+  step:function(S,a){ var D=cur; if(S.mode!=='play') return;
+    if(a.type==='place'){ var v=Core.canPlace(D,S,a.t,a.r,a.c); S.last=v; if(!v.ok){ S.rejects++; S.ev.push('reject'); return; } S.board[a.r][a.c]=a.t; S.turn++; S.placed++; S.ev.push(a.t==='canal'?'canal':'place'); }
+    else if(a.type==='discard'){ S.turn++; S.discards++; S.last={ok:true,discard:true}; S.ev.push('discard'); } }
+};
+var Space={ id:'space', name:'空間', reads:'boards[].rows/cols/sea_col', cfg:null,
+  init:function(cfg,root){ Space.cfg=cfg; },
+  at:function(D,S,b,r,c){ var B=Bof(D,S); if(r<0||c<0||r>=B.rows||c>=B.cols) return null; return b[r][c]; },
+  nbrs:function(dir){ if(dir==='left') return [[0,-1]]; if(dir==='vertical') return [[-1,0],[1,0]]; return [[-1,0],[1,0],[0,-1],[0,1]]; },
+  rowSurnames:function(D,S,b){ var B=Bof(D,S), out=[]; for(var r=0;r<B.rows;r++){ var s={}; for(var c=0;c<B.cols;c++){ if(b[r][c]!=='canal') continue; [r-1,r+1].forEach(function(rr){ var t=Space.at(D,S,b,rr,c); if(t==='dockA'||t==='dockB') s[t]=1; }); } out.push(Object.keys(s)); } return out; },
+  newBoard:function(D,S){ var B=Bof(D,S); S.board=[]; for(var r=0;r<B.rows;r++){ S.board.push([]); for(var c=0;c<B.cols;c++) S.board[r].push(c===B.sea_col?'sea':null); } S.turn=0; S.rejects=0; S.discards=0; S.placed=0; S.last=null; },
+  step:function(S,a){ }
+};
+var Actor={ id:'actor', name:'角色', reads:'tiles, boards[].tiles', cfg:null,
+  init:function(cfg,root){ Actor.cfg=cfg; },
+  step:function(S,a){ if(S.mode==='play'&&a.type==='pick') S.pick=a.i; if(a.type==='place'||a.type==='discard') S.pick=null; }
+};
+var Time={ id:'time', name:'時間回合', reads:'boards[].turns, boards[].deck, boards[].tiles', cfg:null,
+  init:function(cfg,root){ Time.cfg=cfg; },
+  // 舊格式（單一地圖）自動包成一盤
+  prep:function(D){ if(!D||typeof D!=='object') return D; if(!D.boards&&D.board&&D.deck){ D.boards=[{id:'b1',name:D.title,rows:D.board.rows,cols:D.board.cols,sea_col:D.board.sea_col,turns:D.turns,goal:0,tiles:Object.keys(D.tiles||{}),stele_turn:D.stele_turn||0,stele_text:D.stele_text||'',intro:'',new:[],deck:D.deck}]; } return D; },
+  offer:function(D,S){ var B=Bof(D,S); return B.deck[S.turn]||[]; },
+  done:function(D,S){ return S.turn>=Bof(D,S).turns; },
+  step:function(S,a){ var D=cur;
+    if(a.type==='go'&&S.mode==='card'){ Space.newBoard(D,S); S.mode='play'; S.ev.push('start'); }
+    if(S.mode==='play'&&(a.type==='place'||a.type==='discard')&&Time.done(D,S)){ S.mode='boardend'; } }
+};
+var Event={ id:'event', name:'事件選擇', reads:'boards[].stele_turn, boards[].stele_text, boards[].intro/new', cfg:null,
+  init:function(cfg,root){ Event.cfg=cfg; },
+  turfActive:function(D,S){ var B=Bof(D,S); return B.stele_turn>0 && (S.turn+1)<B.stele_turn; },
+  step:function(S,a){ var D=cur, B=Bof(D,S); if(S.mode!=='play') return; if(B.stele_turn>0 && S.turn+1===B.stele_turn && (a.type==='place'||a.type==='discard')){ S.ev.push('stele'); S.lastEvent='stele'; } }
+};
+var Resource={ id:'resource', name:'資源計分', reads:'score_rules', cfg:null,
+  init:function(cfg,root){ Resource.cfg=cfg; },
+  score:function(D,S,b){ var B=Bof(D,S), total=0, by={}, order=[];
     function add(label,p){ if(!p) return; total+=p; if(!(label in by)){by[label]=0;order.push(label);} by[label]+=p; }
-    for(var r=0;r<D.board.rows;r++) for(var c=0;c<D.board.cols;c++){ var t=b[r][c]; if(!t||t==='sea') continue;
+    for(var r=0;r<B.rows;r++) for(var c=0;c<B.cols;c++){ var t=b[r][c]; if(!t||t==='sea') continue;
       ((D.score_rules&&D.score_rules[t])||[]).forEach(function(R){
         if(R.type==='base') add(R.label,R.pts);
-        else if(R.type==='per_adj'){ var n=0; E.nbrs('any').forEach(function(d){ var v=E.at(D,b,r+d[0],c+d[1]); if(v&&R.of.indexOf(v)>=0) n++; }); add(R.label,n*R.pts); }
-        else if(R.type==='if_adj_all'){ var all=R.groups.every(function(g){ return E.nbrs('any').some(function(d){ var v=E.at(D,b,r+d[0],c+d[1]); return v&&g.indexOf(v)>=0; }); }); if(all) add(R.label,R.pts); }
-      }); }
-    return {total:total, items:order.map(function(l){return {label:l,pts:by[l]};})};
-  },
+        else if(R.type==='per_adj'){ var n=0; Space.nbrs('any').forEach(function(d){ var v=Space.at(D,S,b,r+d[0],c+d[1]); if(v&&R.of.indexOf(v)>=0) n++; }); add(R.label,n*R.pts); }
+        else if(R.type==='if_adj_all'){ var all=R.groups.every(function(g){ return Space.nbrs('any').some(function(d){ var v=Space.at(D,S,b,r+d[0],c+d[1]); return v&&g.indexOf(v)>=0; }); }); if(all) add(R.label,R.pts); } }); }
+    return {total:total, items:order.map(function(l){return {label:l,pts:by[l]};})}; },
+  step:function(S,a){ if(S.board) S.score=Resource.score(cur,S,S.board).total; }
+};
+var Verdict={ id:'verdict', name:'勝負', reads:'boards[].goal, stars, endings, reflect', cfg:null,
+  init:function(cfg,root){ Verdict.cfg=cfg; },
+  starsFor:function(D,B,score){ var s=D.stars||{one:1,two:1.25,three:1.5}; if(!B.goal) return 0; return score>=B.goal*s.three?3:(score>=B.goal*s.two?2:(score>=B.goal*s.one?1:0)); },
+  step:function(S,a){ var D=cur, B=Bof(D,S);
+    if(S.mode==='boardend'&&!S.ended){ S.ended=true; var sc=S.score||0, st=Verdict.starsFor(D,B,sc); S.results[S.bi]={score:sc,goal:B.goal,stars:st,rejects:S.rejects,discards:S.discards,placed:S.placed,tries:S.tries[S.bi]||1,items:Resource.score(D,S,S.board).items}; S.ev.push(st>0?'win':'lose'); }
+    if(S.mode==='boardend'&&a.type==='retry'){ S.tries[S.bi]=(S.tries[S.bi]||1)+1; S.ended=false; Space.newBoard(D,S); S.mode='play'; S.ev.push('start'); }
+    else if(S.mode==='boardend'&&a.type==='next'){ if(S.bi+1>=D.boards.length){ S.mode='done'; S.ev.push('end'); } else { S.bi++; S.ended=false; S.mode='card'; S.ev.push('card'); } } },
+  totals:function(D,S){ var t=0,st=0; S.results.forEach(function(r){ if(r){ t+=r.score; st+=r.stars; } }); return {score:t,stars:st,maxStars:D.boards.length*3}; },
+  ending:function(D,total){ return D.endings.slice().sort(function(a,b){return b.min-a.min;}).filter(function(x){return total>=x.min;})[0]||{title:'',text:''}; }
+};
+var Feedback={ id:'feedback', name:'回饋', reads:'place_rules[].why, rules_text', cfg:null,
+  init:function(cfg,root){ Feedback.cfg=cfg; },
+  step:function(S,a){ if(S.ev.length>40) S.ev=S.ev.slice(-40); }
+};
+var MODS=[Core,Space,Actor,Time,Event,Resource,Verdict,Feedback];
+
+var E={
+  M:{core:Core,space:Space,actor:Actor,time:Time,event:Event,resource:Resource,verdict:Verdict,feedback:Feedback}, MODS:MODS, rng:Math.random,
+  prep:Time.prep,
+  init:function(D,root){ cur=D; MODS.forEach(function(m){ m.init(D,root); }); return D; },
+  newState:function(D){ if(cur!==D) E.init(D); var S={bi:0,mode:'card',board:null,turn:0,rejects:0,discards:0,placed:0,score:0,last:null,ended:false,results:[],tries:[],ev:[],lastEvent:''}; return S; },
+  act:function(D,S,a){ if(cur!==D) E.init(D); for(var i=0;i<MODS.length;i++) MODS[i].step(S,a); },
+  // 舊名字（驗收腳本與外部用）
+  at:function(D,b,r,c){ return null; },
+  canPlace:function(D,S,t,r,c){ return Core.canPlace(D,S,t,r,c); },
+  place:function(D,S,t,r,c){ E.act(D,S,{type:'place',t:t,r:r,c:c}); return S.last; },
+  discard:function(D,S){ E.act(D,S,{type:'discard'}); },
+  offer:function(D,S){ return Time.offer(D,S); },
+  score:function(D,S,b){ return Resource.score(D,S,b||S.board); },
+  totals:function(D,S){ return Verdict.totals(D,S); },
   validate:function(D){
-    var e=[]; if(!D||typeof D!=='object') return ['整份資料不是一個 { } 物件。'];
-    ['title','board','turns','tiles','deck','place_rules','score_rules','rules_text','endings','reflect'].forEach(function(k){ if(!(k in D)) e.push('少了「'+k+'」這一段。'); });
+    var e=[]; if(!D||typeof D!=='object') return ['整份資料不是一個 { } 物件。']; E.prep(D);
+    ['title','boards','tiles','place_rules','score_rules','rules_text','endings','reflect'].forEach(function(k){ if(!(k in D)) e.push('少了「'+k+'」這一段。'); });
     if(e.length) return e;
-    if(!(D.board.rows>=3&&D.board.rows<=8)) e.push('board.rows 要在 3 到 8 之間，現在是 '+D.board.rows+'。');
-    if(!(D.board.cols>=3&&D.board.cols<=7)) e.push('board.cols 要在 3 到 7 之間（手機才排得下），現在是 '+D.board.cols+'。');
-    if(!(D.board.sea_col>=0&&D.board.sea_col<D.board.cols)) e.push('board.sea_col 要是 0 到 cols−1 的數字。');
-    if(!Array.isArray(D.deck)||D.deck.length<D.turns) e.push('deck 至少要有 '+D.turns+' 手（turns 寫幾手，deck 就要有幾組）。');
-    (D.deck||[]).forEach(function(p,i){ if(!Array.isArray(p)||p.length<1) e.push('deck 第 '+(i+1)+' 手要是一個 [ ] 清單。'); else p.forEach(function(t){ if(!D.tiles[t]) e.push('deck 第 '+(i+1)+' 手用了不存在的板塊「'+t+'」。'); }); });
+    if(!Array.isArray(D.boards)||!D.boards.length) return ['boards 至少要有一盤。'];
+    D.boards.forEach(function(B,bi){ var w='第 '+(bi+1)+' 盤';
+      if(!(B.rows>=3&&B.rows<=8)) e.push(w+'的 rows 要在 3 到 8 之間，現在是 '+B.rows+'。');
+      if(!(B.cols>=3&&B.cols<=7)) e.push(w+'的 cols 要在 3 到 7 之間（手機才排得下），現在是 '+B.cols+'。');
+      if(!(B.sea_col>=0&&B.sea_col<B.cols)) e.push(w+'的 sea_col 要是 0 到 cols−1 的數字。');
+      if(!Array.isArray(B.deck)||B.deck.length<B.turns) e.push(w+'的 deck 至少要有 '+B.turns+' 手（turns 寫幾手，deck 就要有幾組）。');
+      (B.deck||[]).forEach(function(p,i){ if(!Array.isArray(p)||p.length<1) e.push(w+' deck 第 '+(i+1)+' 手要是一個 [ ] 清單。'); else p.forEach(function(t){ if(!D.tiles[t]) e.push(w+' deck 第 '+(i+1)+' 手用了不存在的板塊「'+t+'」。'); }); }); });
     Object.keys(D.tiles).forEach(function(t){ var T=D.tiles[t]; if(!T.name) e.push('板塊「'+t+'」沒有 name。'); if(!T.icon) e.push('板塊「'+t+'」沒有 icon（一兩個字）。'); });
     Object.keys(D.place_rules).forEach(function(t){ if(!D.tiles[t]) e.push('place_rules 寫了不存在的板塊「'+t+'」。'); (D.place_rules[t]||[]).forEach(function(R,i){ if(!RULE_TYPES[R.type]) e.push('「'+t+'」的第 '+(i+1)+' 條放置規則 type「'+R.type+'」看不懂（只能用 adj_any、turf）。'); if(R.type==='adj_any'){ if(!DIRS[R.dir]) e.push('「'+t+'」的 adj_any 要寫 dir：left、vertical 或 any。'); (R.of||[]).forEach(function(o){ if(o!=='sea'&&!D.tiles[o]) e.push('「'+t+'」的放置規則提到不存在的「'+o+'」。'); }); } if(!R.why) e.push('「'+t+'」的第 '+(i+1)+' 條放置規則沒有 why（放不下時要告訴玩家為什麼）。'); }); });
     Object.keys(D.score_rules).forEach(function(t){ if(!D.tiles[t]) e.push('score_rules 寫了不存在的板塊「'+t+'」。'); (D.score_rules[t]||[]).forEach(function(R,i){ if(!SCORE_TYPES[R.type]) e.push('「'+t+'」的第 '+(i+1)+' 條得分規則 type「'+R.type+'」看不懂（只能用 base、per_adj、if_adj_all）。'); if(typeof R.pts!=='number') e.push('「'+t+'」的第 '+(i+1)+' 條得分規則 pts 要是數字。'); if(!R.label) e.push('「'+t+'」的第 '+(i+1)+' 條得分規則沒有 label。'); }); });
     if(!Array.isArray(D.endings)||!D.endings.length) e.push('endings 至少要有一個結局。'); else if(!D.endings.some(function(x){return x.min===0;})) e.push('endings 要有一個 min 是 0 的結局（不然低分時沒有結局）。');
     if(!D.reflect||!Array.isArray(D.reflect.options)||D.reflect.options.length<2) e.push('reflect.options 至少要兩個選項。');
-    return e;
-  },
-  // 模擬：informed＝知道規則、每手挑分數最高的位置；blind＝看不懂規則，隨便選一塊、隨便點一格，被擋就再試（最多 tries 次）
-  simulate:function(D,policy,seed,tries){
-    var s=seed||1; function rnd(){ s=(s*1103515245+12345)%2147483648; return s/2147483648; }
-    var S=E.newState(D);
-    while(!E.done(D,S)){
-      var off=E.offer(D,S), placed=false;
-      if(policy==='informed'){
-        var best=null; off.forEach(function(t){ for(var r=0;r<D.board.rows;r++) for(var c=0;c<D.board.cols;c++){ if(!E.canPlace(D,S,t,r,c).ok) continue; var b2=S.board.map(function(x){return x.slice();}); b2[r][c]=t; var sc=E.score(D,b2).total; if(!best||sc>best.sc) best={t:t,r:r,c:c,sc:sc}; } });
-        if(best){ E.place(D,S,best.t,best.r,best.c); placed=true; }
-      } else {
-        for(var k=0;k<(tries||6)&&!placed;k++){ var t=off[Math.floor(rnd()*off.length)], r=Math.floor(rnd()*D.board.rows), c=Math.floor(rnd()*D.board.cols); if(S.board[r][c]!==null){k--; continue;} if(E.place(D,S,t,r,c).ok) placed=true; }
-      }
-      if(!placed) E.discard(D,S);
+    return e; },
+  // 模擬：informed＝知道規則、每手挑分數最高的位置；blind＝看不懂規則，隨便選一塊、隨便點一格，被擋就再試（最多 tries 次）。沒達標就再蓋一次（最多 2 次）。
+  simulate:function(D,policy,seed,tries){ E.prep(D); var s=seed||1; function rnd(){ s=(s*1103515245+12345)%2147483648; return s/2147483648; }
+    var S=E.newState(D), guard=0, per=[], rej=0, dis=0; E.init(D);
+    while(S.mode!=='done'&&guard++<5000){
+      if(S.mode==='card'){ E.act(D,S,{type:'go'}); continue; }
+      if(S.mode==='boardend'){ var res=S.results[S.bi]; rej+=res.rejects; dis+=res.discards; if(res.stars===0&&(S.tries[S.bi]||1)<3){ E.act(D,S,{type:'retry'}); } else { per[S.bi]=res.score; E.act(D,S,{type:'next'}); } continue; }
+      var B=D.boards[S.bi], off=Time.offer(D,S), placed=false;
+      if(policy==='informed'){ var best=null; off.forEach(function(t){ for(var r=0;r<B.rows;r++) for(var c=0;c<B.cols;c++){ if(!Core.canPlace(D,S,t,r,c).ok) continue; var b2=S.board.map(function(x){return x.slice();}); b2[r][c]=t; var sc=Resource.score(D,S,b2).total; if(!best||sc>best.sc) best={t:t,r:r,c:c,sc:sc}; } });
+        if(best){ E.act(D,S,{type:'place',t:best.t,r:best.r,c:best.c}); placed=true; } }
+      else { for(var k=0;k<(tries||6)&&!placed;k++){ var t=off[Math.floor(rnd()*off.length)], r=Math.floor(rnd()*B.rows), c=Math.floor(rnd()*B.cols); if(S.board[r][c]!==null){k--; if(++guard>5000) break; continue;} E.act(D,S,{type:'place',t:t,r:r,c:c}); if(S.last&&S.last.ok) placed=true; } }
+      if(!placed&&S.mode==='play') E.act(D,S,{type:'discard'});
+      S.ev.length=0;
     }
-    return {score:E.score(D,S.board).total, rejects:S.rejects, discards:S.discards, placed:S.placed};
-  }
+    var T=E.totals(D,S); return {per:per, total:per.reduce(function(a,b){return a+(b||0);},0), stars:T.stars, rejects:rej, discards:dis, finished:S.mode==='done', tries:S.tries.slice()}; }
 };
 
 // ===================== 畫面 =====================
 var DATA={rule:readData('data-rule'), skin:readData('data-skin'), custom:null};
-var LETTERS='ABCDEFGHIJ', GRAYS=['#7a7a7a','#5f5f5f','#949494','#6c6c6c','#868686','#535353','#9f9f9f','#787878'];
-var ui={screen:'home', ver:'rule', strip:false, S:null, sel:null, msg:'', msgCls:'', answer:null, why:'', remixErr:'', remixOk:''};
+var FAST=/[?&]fast(=|&|$)/.test(location.search);
+var LETTERS='ABCDEFGHIJ';
+var ui={screen:FAST?'home':'title', ver:'rule', strip:false, S:null, sel:null, msg:'', msgCls:'', answer:null, why:'', remixErr:'', remixOk:'', mute:false};
+try{ ui.mute=localStorage.getItem('tiles_mute')==='1'; }catch(e){}
 function D(){ return DATA[ui.ver]; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];}); }
-function tileView(t){ var d=D(); if(t==='sea') return {name:d.board.sea_name||'海',icon:d.board.sea_icon||'海',color:''};
-  var keys=Object.keys(d.tiles), i=keys.indexOf(t), T=d.tiles[t];
-  if(ui.strip) return {name:'方塊'+LETTERS[i],icon:LETTERS[i],color:GRAYS[i%GRAYS.length],meaning:''};
-  return {name:T.name,icon:T.icon,color:T.color||'#777',meaning:T.meaning||''}; }
 function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; } }
+function stars(n){ return '★★★'.slice(0,n)+'☆☆☆'.slice(0,3-n); }
+function tileView(t){ var d=D(); var B=d.boards[ui.S?ui.S.bi:0]; if(t==='sea') return {name:B.sea_name||d.sea_name||'海',icon:d.sea_icon||'海',color:'sea'};
+  var keys=Object.keys(d.tiles), i=keys.indexOf(t), T=d.tiles[t];
+  if(ui.strip) return {name:'方塊'+LETTERS[i],icon:LETTERS[i],color:'gray'+(i%6+1),meaning:''};
+  return {name:T.name,icon:T.icon,color:T.color||'gray1',meaning:T.meaning||''}; }
+function bg(v){ return 'background:var(--t-'+v.color+')'; }
 
-function render(){ var a=document.getElementById('app'); a.innerHTML = ui.screen==='home'?home():ui.screen==='play'?play():end(); bind(); }
+// ---- 回饋：音效（程式合成：水滴、木頭敲擊、紙張；這個樣板自己的聲音） ----
+var AC=null;
+function ac(){ if(AC||ui.mute) return AC; try{ var C=window.AudioContext||window.webkitAudioContext; if(C) AC=new C(); }catch(e){} return AC; }
+function tone(f0,f1,dur,type,vol,delay){ var c=ac(); if(!c||ui.mute) return; try{ var t=c.currentTime+(delay||0), o=c.createOscillator(), g=c.createGain(), fl=c.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=2400; o.type=type||'sine'; o.frequency.setValueAtTime(f0,t); if(f1) o.frequency.exponentialRampToValueAtTime(f1,t+dur); g.gain.setValueAtTime(vol||0.15,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur); o.connect(fl); fl.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.02); }catch(e){} }
+function paper(dur,vol,delay){ var c=ac(); if(!c||ui.mute) return; try{ var t=c.currentTime+(delay||0), n=Math.floor(c.sampleRate*dur), b=c.createBuffer(1,n,c.sampleRate), d=b.getChannelData(0); for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n)*(1-i/n); var s=c.createBufferSource(); s.buffer=b; var fl=c.createBiquadFilter(); fl.type='highpass'; fl.frequency.value=3000; var g=c.createGain(); g.gain.value=vol||0.12; s.connect(fl); fl.connect(g); g.connect(c.destination); s.start(t); }catch(e){} }
+var SFX={ place:function(){ tone(620,260,0.14,'sine',0.18); }, canal:function(){ tone(480,900,0.1,'sine',0.14); tone(520,1000,0.1,'sine',0.1,0.09); tone(560,1100,0.1,'sine',0.07,0.18); },
+  reject:function(){ tone(150,110,0.09,'square',0.12); tone(150,110,0.09,'square',0.1,0.12); }, discard:function(){ paper(0.18,0.14); }, start:function(){ tone(392,392,0.4,'triangle',0.1); tone(587,587,0.5,'triangle',0.1,0.15); },
+  stele:function(){ tone(180,120,0.12,'square',0.14); tone(180,120,0.12,'square',0.14,0.2); tone(180,120,0.12,'square',0.14,0.4); }, card:function(){ paper(0.25,0.12); tone(330,330,0.5,'triangle',0.08); },
+  win:function(){ [523,659,784,1047].forEach(function(f,i){ tone(f,f,0.5,'triangle',0.12,i*0.14); }); }, lose:function(){ tone(330,220,0.5,'triangle',0.12); tone(262,196,0.6,'triangle',0.1,0.22); }, end:function(){ [392,523,659,784,1047].forEach(function(f,i){ tone(f,f,0.7,'triangle',0.12,i*0.16); }); } };
+Feedback.flush=function(S){ var ev=S.ev.splice(0,S.ev.length); ev.forEach(function(n){ if(SFX[n]) SFX[n](); }); };
+Feedback.render=function(S){ return '<div class="msg '+ui.msgCls+'" id="msg" role="status">'+esc(ui.msg||'選一塊，再點地圖上的空格。'+(ui.strip?'':'黃色的格子是可以放的地方。'))+'</div>'; };
 
-function w2block(d){ return '<div class="card"><span class="kind">W2 文化卡：'+esc(d.w2_kind.label)+'</span><p>'+esc(d.w2_kind.line)+'</p>'+
-  d.w2_cards.map(function(c){ return '<div class="w2c"><b>#'+c.no+' '+esc(c.v)+'</b>：'+esc(c.note)+(c.more?'<small>'+esc(c.more)+'</small>':'')+'</div>'; }).join('')+'</div>'; }
-
+function render(){ var a=document.getElementById('app'); a.innerHTML = ui.screen==='title'?title():ui.screen==='home'?home():ui.screen==='play'?play():end(); bind(); }
+function frame(inner){ return '<div class="chartframe">'+inner+'</div>'; }
+function w2block(d){ return '<div class="panel"><span class="kind">W2 文化卡：'+esc(d.w2_kind.label)+'</span><p>'+esc(d.w2_kind.line)+'</p>'+d.w2_cards.map(function(c){ return '<div class="w2c"><b>#'+c.no+' '+esc(c.v)+'</b>：'+esc(c.note)+(c.more?'<small>'+esc(c.more)+'</small>':'')+'</div>'; }).join('')+'</div>'; }
+function basis(d){ return '<details><summary>依據：哪些是原著、歷史資料、遊戲自己加的</summary><div class="panel">'+d.basis.map(function(b){ return '<p><span class="tag">'+esc(b.tag)+'</span>'+esc(b.text)+'</p>'; }).join('')+'</div></details>'; }
+function soundBtn(){ return '<div class="row"><button data-act="mute" class="quiet">音效：'+(ui.mute?'關':'開')+'</button></div>'; }
+function title(){ var d=DATA.rule; return '<section class="cartouche"><div class="compass" aria-hidden="true"><i></i><b>北</b></div><div class="sub">文化遊戲松樣板・板塊拼接</div><h1>'+esc(d.title)+'</h1><div class="waves" aria-hidden="true"></div>'+
+  '<p class="lead">'+esc(d.tagline)+'</p><table class="legendtab"><tr><th>第一盤</th><td>港道開鑿</td><td>'+d.boards[0].turns+' 手</td></tr><tr><th>第二盤</th><td>兩姓搶港</td><td>'+d.boards[1].turns+' 手</td></tr><tr><th>第三盤</th><td>廟口人潮</td><td>'+d.boards[2].turns+' 手</td></tr></table><p class="sub">約 8–12 分鐘。每一手選一塊、放一格。</p></section>'+
+  '<div class="row"><button class="primary big" data-act="start" data-ver="rule">開始繪製</button></div><div class="row"><button data-act="start" data-ver="skin">玩另一版（文化只是皮）</button><button data-act="home">W2 卡片・說明・改做</button></div>'+soundBtn(); }
 function home(){ var d=DATA.rule;
   return '<h1>'+esc(d.title)+'</h1><div class="sub">板塊拼接・文化遊戲松樣板</div>'+w2block(d)+
-  '<div class="card"><h2>怎麼玩</h2><p>地圖最左邊一排是海。每一手會給你兩塊地，選一塊、點一格放下去。一共 '+d.turns+' 手，放完算分。</p>'+
+  '<div class="panel"><h2>怎麼玩</h2><p>地圖最左邊一排是海。每一手會給你兩塊地，選一塊、點一格放下去。一共三盤，每盤有目標分，放完算分、拿星星。</p>'+
   '<p>這個樣板有兩版，玩法看起來一樣，差在<b>規則看不看「它是什麼」</b>。兩版都玩完，再回答同一題。</p>'+
   '<div class="row"><button class="primary" data-act="start" data-ver="rule">玩「文化長在規則裡」</button><button data-act="start" data-ver="skin">玩「文化只是皮」</button></div>'+
   (DATA.custom?'<div class="row"><button data-act="start" data-ver="custom">玩我改做的版本</button></div>':'')+'</div>'+
-  remix()+basis(d)+'<div class="foot">工坊創作的樣板；《小封神》相關內容只取故事裡的事實，標示在「依據」。</div>'; }
-
-function basis(d){ return '<details><summary>依據：哪些是原著、歷史資料、遊戲自己加的</summary><div class="card">'+
-  d.basis.map(function(b){ return '<p><span class="tag">'+esc(b.tag)+'</span>'+esc(b.text)+'</p>'; }).join('')+'</div></details>'; }
-
-function remix(){ return '<details id="remix"><summary>我要改做（貼上自己的資料）</summary><div class="card">'+
-  '<p>整個遊戲的內容都在一份 JSON 裡。取出來、貼給 Claude 或 Gemini 改，再貼回來載入。改法看「怎麼改做」那一頁。</p>'+
+  remix()+basis(d)+soundBtn()+'<div class="foot">工坊創作的樣板；《小封神》相關內容只取故事裡的事實，標示在「依據」。</div>'; }
+function remix(){ return '<details id="remix"><summary>我要改做（貼上自己的資料）</summary><div class="panel">'+
+  '<p>整個遊戲的內容都在一份 JSON 裡：三盤各自的大小、手數、牌堆、目標分（boards），以及放置規則、得分規則。取出來、貼給 Claude 或 Gemini 改，再貼回來載入。改法看「怎麼改做」那一頁。</p>'+
   '<div class="row"><button data-act="dump" data-ver="rule">取出規則版資料</button><button data-act="dump" data-ver="skin">取出皮版資料</button></div>'+
   '<textarea id="remix-box" spellcheck="false" placeholder="把 JSON 貼在這裡"></textarea>'+
   '<div class="row"><button class="primary" data-act="load">載入我的版本</button></div>'+
   (ui.remixErr?'<div class="err">'+esc(ui.remixErr)+'</div>':'')+(ui.remixOk?'<div class="msg ok">'+esc(ui.remixOk)+'</div>':'')+'</div></details>'; }
+function legend(d){ return '<details><summary>每一塊是什麼</summary><div class="legend">'+Object.keys(d.tiles).map(function(t){ var v=tileView(t); return '<div><span class="chip" style="'+bg(v)+'">'+esc(v.icon)+'</span><span><b>'+esc(v.name)+'</b>'+(v.meaning?'：'+esc(v.meaning):'')+'</span></div>'; }).join('')+'</div></details>'; }
 
-function legend(d){ return '<details><summary>每一塊是什麼</summary><div class="legend">'+Object.keys(d.tiles).map(function(t){ var v=tileView(t); return '<div><span class="chip" style="background:'+v.color+'">'+esc(v.icon)+'</span><span><b>'+esc(v.name)+'</b>'+(v.meaning?'：'+esc(v.meaning):'')+'</span></div>'; }).join('')+'</div></details>'; }
+Time.render=function(S){ var d=D(), B=d.boards[S.bi], n=d.boards.length, prev='';
+  if(S.bi>0){ var r=S.results[S.bi-1]; if(r) prev='<div class="recap">上一盤　'+stars(r.stars)+'　'+r.score+' 分（目標 '+r.goal+'）</div>'; }
+  var body=ui.strip?'<p>名字和規則都換成代號了。自己看，自己摸出怎麼放。</p>':'<p>'+esc(B.intro)+'</p>'+(B.new&&B.new.length?'<div class="newbox"><b>這一盤新的</b><ul>'+B.new.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'');
+  return '<div class="overlay card-ovl" id="card"><div class="sub">第 '+(S.bi+1)+'／'+n+' 盤・'+B.turns+' 手・目標 '+B.goal+' 分</div><h2>'+esc(ui.strip?'第 '+(S.bi+1)+' 盤':B.name)+'</h2>'+prev+body+'<div class="row"><button class="primary" data-act="go">開始這一盤</button></div></div>'; };
+Verdict.render=function(S){ var d=D(), B=d.boards[S.bi], r=S.results[S.bi]; var last=S.bi+1>=d.boards.length;
+  var msg=r.stars>0?'達到目標了！':'還差 '+(r.goal-r.score)+' 分才到目標。';
+  return '<div class="overlay" id="boardend"><div class="sub">這一盤結算</div><h2>'+stars(r.stars)+'　'+r.score+' 分／目標 '+r.goal+'</h2><p>'+msg+'　被擋下 '+r.rejects+' 次、丟掉 '+r.discards+' 塊'+(r.tries>1?'、第 '+r.tries+' 次蓋':'')+'。</p>'+
+    '<div class="row">'+(r.stars===0?'<button class="primary" data-act="retry">這一盤再蓋一次</button><button data-act="next">'+(last?'先看結算':'先往下一盤')+'</button>':'<button class="primary" data-act="next">'+(last?'看結算':'下一盤')+'</button><button data-act="retry">想拿更多星，再蓋一次</button>')+'</div></div>'; };
 
-function play(){ var d=D(), S=ui.S, off=E.offer(d,S), sc=E.score(d,S.board).total;
-  var cand={}; if(ui.sel!==null){ var t=off[ui.sel]; for(var r=0;r<d.board.rows;r++) for(var c=0;c<d.board.cols;c++) if(!ui.strip && E.canPlace(d,S,t,r,c).ok) cand[r+','+c]=1; }
-  var g='<div class="board" style="grid-template-columns:repeat('+d.board.cols+',1fr)">';
-  for(var r=0;r<d.board.rows;r++) for(var c=0;c<d.board.cols;c++){ var v=S.board[r][c];
-    if(v==='sea'){ var sv=tileView('sea'); g+='<button class="cell sea" aria-label="'+esc(sv.name)+'" disabled>'+(ui.strip?'·':esc(sv.icon))+'</button>'; }
-    else if(v){ var tv=tileView(v); g+='<button class="cell filled" data-r="'+r+'" data-c="'+c+'" aria-label="'+esc(tv.name)+'" style="background:'+tv.color+'">'+esc(tv.icon)+'</button>'; }
-    else g+='<button class="cell'+(cand[r+','+c]?' cand':'')+'" data-act="cell" data-r="'+r+'" data-c="'+c+'" aria-label="空格 第'+(r+1)+'排第'+(c+1)+'格"></button>'; }
-  g+='</div>';
-  var hand='<div class="hand">'+off.map(function(t,i){ var v=tileView(t); return '<button data-act="pick" data-i="'+i+'" class="'+(ui.sel===i?'sel':'')+'"><span class="chip" style="background:'+v.color+'">'+esc(v.icon)+'</span><span>'+esc(v.name)+'</span></button>'; }).join('')+'</div>';
-  var rules=d.rules_text.filter(function(x){ return !ui.strip||!x.culture; });
-  var hidden=d.rules_text.length-rules.length;
-  var stele=''; if(!ui.strip && d.stele_turn>0){ stele='<div class="stele">'+(E.turfActive(d,S)?'【碑】還沒立碑：一條港只歸一姓搬。'+esc(d.stele_text):'【碑】'+esc(d.stele_text))+'</div>'; }
-  return '<div class="hud"><b>'+esc(d.title)+'｜'+esc(ui.ver==='custom'?'我改做的版本':d.version_label)+'</b><span>第 '+(S.turn+1)+' / '+d.turns+' 手・目前 '+sc+' 分</span></div>'+
+function play(){ var d=D(), S=ui.S, B=d.boards[S.bi];
+  if(S.mode==='card') return frame('<div class="hud"><b>'+esc(d.title)+'｜'+esc(ui.vlabel||'')+'</b></div>'+Time.render(S)+'<div class="row"><button data-act="home">回首頁</button></div>');
+  var off=Time.offer(d,S), sc=S.score||0, boardEnd=S.mode==='boardend';
+  var g=Space.render(S,boardEnd);
+  var hand=boardEnd?'':Actor.render(S);
+  var rules=d.rules_text.filter(function(x){ return !ui.strip||!x.culture; }), hidden=d.rules_text.length-rules.length;
+  var stele=Event.render(S);
+  var pct=Math.min(100,Math.round(sc/(B.goal*(d.stars?d.stars.three:1.5))*100)), gp=Math.round(100/(d.stars?d.stars.three:1.5));
+  var meter='<div class="meter" aria-label="目標 '+B.goal+' 分"><i style="width:'+pct+'%"></i><b style="left:'+gp+'%"></b></div>';
+  return frame('<div class="hud"><b>'+esc(d.title)+'｜'+esc(ui.vlabel||'')+'</b><span>'+esc(ui.strip?'第 '+(S.bi+1)+' 盤':B.name)+'・第 '+Math.min(S.turn+1,B.turns)+'／'+B.turns+' 手</span></div>'+
+   '<div class="score">'+sc+' 分<span class="sub">　目標 '+B.goal+'</span></div>'+meter+
    '<div class="'+(ui.strip?'strip-on':'')+'">'+(ui.strip?'<div class="sub">🔍 抽掉文化中：名字、圖示、規則說明都換成代號。</div>':'')+stele+
-   '<div class="sub">這一手給你兩塊，先選一塊：</div>'+hand+g+
-   '<div class="msg '+ui.msgCls+'" id="msg" role="status">'+esc(ui.msg||'選一塊，再點地圖上的空格。'+(ui.strip?'':'黃色的格子是可以放的地方。'))+'</div>'+
-   '<div class="row"><button data-act="discard">這兩塊都放不下：丟掉一塊</button><button data-act="strip">'+(ui.strip?'把文化放回來':'抽掉文化試試看')+'</button></div>'+
+   (boardEnd?Verdict.render(S):'<div class="sub">這一手給你兩塊，先選一塊：</div>'+hand)+g+Feedback.render(S)+
+   '<div class="row"><button data-act="discard"'+(boardEnd?' disabled':'')+'>這兩塊都放不下：丟掉一塊</button><button data-act="strip">'+(ui.strip?'把文化放回來':'抽掉文化試試看')+'</button><button data-act="mute" class="quiet">音效：'+(ui.mute?'關':'開')+'</button></div>'+
    '<details '+(S.turn===0?'open':'')+'><summary>規則</summary><ul class="rules">'+rules.map(function(x){return '<li>'+esc(x.text)+'</li>';}).join('')+(hidden?'<li class="sub">（還有 '+hidden+' 條規則是用文化講的，抽掉之後就看不到了。）</li>':'')+'</ul></details>'+
-   legend(d)+'</div><div class="row"><button data-act="home">回首頁</button></div>'; }
+   legend(d)+'</div><div class="row"><button data-act="home">回首頁</button></div>'); }
 
-function end(){ var d=D(), sc=E.score(d,ui.S.board), en=d.endings.slice().sort(function(a,b){return b.min-a.min;}).filter(function(x){return sc.total>=x.min;})[0]||{title:'',text:''};
-  var R=d.reflect, ansDone=ui.answer!==null;
-  var top=sc.items.slice().sort(function(a,b){return b.pts-a.pts;})[0];
-  var story='我在這張地圖上放了 '+ui.S.placed+' 塊，最多分數來自「'+(top?top.label:'—')+'」，最後 '+sc.total+' 分'+(ui.strip?'（抽掉文化玩的）':'')+'。';
-  return '<h1>'+esc(en.title)+'</h1><div class="sub">'+esc(ui.ver==='custom'?'我改做的版本':d.version_label)+(ui.strip?'・抽掉文化':'')+'・'+sc.total+' 分</div>'+
-   '<div class="card"><p>'+esc(en.text)+'</p><p><b>一句話故事：</b>'+esc(story)+'</p><ul class="score-list">'+sc.items.map(function(x){return '<li>'+esc(x.label)+'：'+x.pts+' 分</li>';}).join('')+'</ul>'+
-   '<p class="sub">被擋下來 '+ui.S.rejects+' 次・丟掉 '+ui.S.discards+' 塊</p></div>'+
-   '<div class="card"><h2>W2 判斷題</h2><p>'+esc(R.question)+'</p>'+R.options.map(function(o,i){ return '<button class="opt'+(ui.answer===i?' sel':'')+'" data-act="ans" data-i="'+i+'">'+esc(o)+'</button>'; }).join('')+
-   '<p>寫一句為什麼：</p><textarea id="why" placeholder="例：抽掉之後我只能亂試，因為……">'+esc(ui.why)+'</textarea>'+
-   (ansDone?'<div class="msg ok"><p>你選的是「'+esc(R.options[ui.answer])+'」。</p><p>'+esc(R.our_view)+'</p></div>':'')+'</div>'+
-   '<div class="card"><h2>'+esc(d.field.title)+'</h2><p>'+esc(d.field.prompt)+'</p><textarea id="field" placeholder="'+esc(d.field.placeholder)+'">'+esc(store('tiles_field')||'')+'</textarea><div class="row"><button data-act="field">記下來（只存在這台裝置）</button></div><div id="field-msg" class="sub"></div></div>'+
-   '<div class="row"><button class="primary" data-act="again">再玩一次</button><button data-act="other">換另一版玩</button><button data-act="again-strip">'+(ui.strip?'把文化放回來再玩':'抽掉文化再玩一次')+'</button><button data-act="home">回首頁</button></div>'+basis(d); }
+var ACH=[{id:'three',t:'有一盤拿到三顆星',f:function(S){return S.results.some(function(r){return r&&r.stars===3;});}},{id:'first',t:'三盤都一次達標',f:function(S){return S.results.length>=3&&S.results.every(function(r,i){return r&&r.stars>0&&(S.tries[i]||1)===1;});}},
+  {id:'clean',t:'有一盤沒被擋過',f:function(S){return S.results.some(function(r){return r&&r.rejects===0;});}},{id:'stele',t:'立碑後把兩姓碼頭排在一起',f:function(S){ var r=S.results[1]; return !!(r&&r.items.some(function(x){return /碑立之後/.test(x.label);})); }},
+  {id:'busy',t:'廟口熱鬧加分拿到 4 分以上',f:function(S){ var r=S.results[2]; return !!(r&&r.items.some(function(x){return x.label==='廟口熱鬧'&&x.pts>=4;})); }},{id:'allstar',t:'總共 7 顆星以上',f:function(S){ return E.totals(D(),S).stars>=7; }}];
+function achBlock(S){ var got=[]; try{ got=JSON.parse(store('tiles_ach')||'[]'); }catch(e){ got=[]; } var now=[];
+  ACH.forEach(function(a){ if(a.f(S)){ now.push(a.id); if(got.indexOf(a.id)<0) got.push(a.id); } }); store('tiles_ach',JSON.stringify(got));
+  return '<h2>成就（本機累計 '+got.length+'／'+ACH.length+'）</h2><div class="ach">'+ACH.map(function(a){ var on=now.indexOf(a.id)>=0, old=got.indexOf(a.id)>=0; return '<span class="'+(on?'on':(old?'':'off'))+'">'+(on?'★ ':(old?'☆ ':'？ '))+esc(on||old?a.t:'還沒解鎖')+'</span>'; }).join('')+'</div><p class="sub">★ 這一輪拿到　☆ 以前拿過　？ 再玩一次，換不同的蓋法。</p>'; }
+function end(){ var d=D(), S=ui.S, T=E.totals(d,S), en=Verdict.ending(d,T.score), R=d.reflect, ansDone=ui.answer!==null;
+  var story='我蓋了三盤港邊，共 '+T.score+' 分、'+T.stars+' 顆星'+(ui.strip?'（抽掉文化玩的）':'')+'。';
+  var recs=d.boards.map(function(B,i){ var r=S.results[i]; if(!r) return '<li>'+esc(ui.strip?'第 '+(i+1)+' 盤':B.name)+'　沒有蓋完</li>'; var top=r.items.slice().sort(function(a,b){return b.pts-a.pts;})[0]; return '<li><b>'+esc(ui.strip?'第 '+(i+1)+' 盤':B.name)+'</b>　'+stars(r.stars)+'<br><span class="sub">'+r.score+' 分（目標 '+r.goal+'）・被擋 '+r.rejects+' 次・丟 '+r.discards+' 塊'+(r.tries>1?'・蓋了 '+r.tries+' 次':'')+(top?'・最多分：'+esc(top.label):'')+'</span></li>'; }).join('');
+  return '<h1>'+esc(en.title)+'</h1><div class="sub">'+esc(ui.vlabel||'')+(ui.strip?'・抽掉文化':'')+'・'+T.score+' 分・'+T.stars+'／'+T.maxStars+' 顆星</div>'+
+   '<div class="panel"><p>'+esc(en.text)+'</p><p><b>一句話故事：</b>'+esc(story)+'</p><h2>三盤回顧</h2><ul class="plain">'+recs+'</ul>'+(ui.ver==='rule'&&!ui.strip?achBlock(S):'')+'</div>'+
+   '<div class="panel"><h2>給你的企劃用：這個遊戲好玩在哪</h2><p>'+esc(R.question)+'</p>'+R.options.map(function(o,i){ return '<button class="opt'+(ui.answer===i?' sel':'')+'" data-act="ans" data-i="'+i+'">'+esc(o)+'</button>'; }).join('')+
+   '<p>寫一句為什麼，再想：要放進你的企劃，你會留下它、還是換掉它？</p><textarea id="why" placeholder="例：我最有感的是立碑讓規則改變，因為……">'+esc(ui.why)+'</textarea>'+(ansDone?'<div class="msg ok"><p>你選的是「'+esc(R.options[ui.answer])+'」。</p><p>'+esc(R.our_view)+'</p></div>':'')+'</div>'+
+   '<div class="panel"><h2>'+esc(d.field.title)+'</h2><p>'+esc(d.field.prompt)+'</p><textarea id="field" placeholder="'+esc(d.field.placeholder)+'">'+esc(store('tiles_field')||'')+'</textarea><div class="row"><button data-act="field">記下來（只存在這台裝置）</button></div><div id="field-msg" class="sub"></div></div>'+
+   '<div class="row"><button class="primary" data-act="again">再玩一次</button><button data-act="other">換另一版玩</button><button data-act="home">回首頁</button></div>'+basis(d); }
+Space.render=function(S,boardEnd){ var d=D(), B=d.boards[S.bi], off=Time.offer(d,S);
+  var cand={}; if(!boardEnd&&ui.sel!==null){ var t=off[ui.sel]; for(var r=0;r<B.rows;r++) for(var c=0;c<B.cols;c++) if(!ui.strip && Core.canPlace(d,S,t,r,c).ok) cand[r+','+c]=1; }
+  var g='<div class="board" style="grid-template-columns:1rem repeat('+B.cols+',minmax(0,1fr))"><i></i>'; for(var c0=0;c0<B.cols;c0++) g+='<i class="ax">'+(c0+1)+'</i>';
+  for(var r=0;r<B.rows;r++){ g+='<i class="ax">'+LETTERS[r]+'</i>'; for(var c=0;c<B.cols;c++){ var v=S.board[r][c];
+    if(v==='sea'){ var sv=tileView('sea'); g+='<button class="cell sea" aria-label="'+esc(sv.name)+'" disabled>'+(ui.strip?'·':esc(sv.icon))+'</button>'; }
+    else if(v){ var tv=tileView(v); g+='<button class="cell filled" data-r="'+r+'" data-c="'+c+'" aria-label="'+esc(tv.name)+'" style="'+bg(tv)+'">'+esc(tv.icon)+'</button>'; }
+    else g+='<button class="cell'+(cand[r+','+c]?' cand':'')+'" data-act="cell" data-r="'+r+'" data-c="'+c+'" aria-label="空格 '+LETTERS[r]+(c+1)+'"></button>'; } }
+  g+='</div>';
+  return g; };
+Core.render=function(S){ return ''; };
+Actor.render=function(S){ var d=D(), off=Time.offer(d,S); return '<div class="hand">'+off.map(function(t,i){ var v=tileView(t); return '<button data-act="pick" data-i="'+i+'" class="'+(ui.sel===i?'sel':'')+'"><span class="chip" style="'+bg(v)+'">'+esc(v.icon)+'</span><span>'+esc(v.name)+'</span></button>'; }).join('')+'</div>'; };
+Resource.render=function(S){ return String(S.score||0); };
+Event.render=function(S){ var d=D(), B=d.boards[S.bi]; if(ui.strip||!(B.stele_turn>0)) return ''; return '<div class="stele">'+(Event.turfActive(d,S)?'【碑】還沒立碑：一條港只歸一姓搬。'+esc(B.stele_text):'【碑】'+esc(B.stele_text))+'</div>'; };
 
-function start(ver,strip){ ui.ver=ver; ui.strip=!!strip; ui.S=E.newState(D()); ui.sel=null; ui.msg=''; ui.msgCls=''; ui.answer=null; ui.why=''; ui.screen='play'; render(); window.scrollTo(0,0); }
+function start(ver,strip){ ui.ver=ver; ui.strip=!!strip; ui.vlabel=ver==='custom'?'我改做的版本':D().version_label; E.init(D()); ui.S=E.newState(D()); ui.sel=null; ui.msg=''; ui.msgCls=''; ui.answer=null; ui.why=''; ui.screen='play'; if(FAST) act2({type:'go'}); render(); window.scrollTo(0,0); }
+function act2(a){ E.act(D(),ui.S,a); Feedback.flush(ui.S); }
 function say(m,cls){ ui.msg=m; ui.msgCls=cls||''; }
-
 function bind(){ document.querySelectorAll('[data-act]').forEach(function(el){ el.addEventListener('click',function(){ act(el.getAttribute('data-act'),el); }); }); }
-function act(a,el){ var d=D();
+function act(a,el){ var d=D(), S=ui.S; ac();
+  if(a==='mute'){ ui.mute=!ui.mute; store('tiles_mute',ui.mute?'1':'0'); el.textContent='音效：'+(ui.mute?'關':'開'); return; }
   if(a==='start'){ start(el.getAttribute('data-ver'),false); return; }
   if(a==='home'){ ui.screen='home'; ui.strip=false; render(); return; }
-  if(a==='pick'){ ui.sel=+el.getAttribute('data-i'); var t=E.offer(d,ui.S)[ui.sel]; var tv=tileView(t); say('你拿了「'+tv.name+'」'+(tv.meaning?'：'+tv.meaning:'')+'點一個空格放下去。',''); render(); return; }
+  if(a==='go'){ act2({type:'go'}); ui.msg=''; render(); window.scrollTo(0,0); return; }
+  if(a==='next'||a==='retry'){ act2({type:a}); ui.sel=null; ui.msg=''; ui.msgCls=''; if(S.mode==='done'){ ui.screen='end'; render(); window.scrollTo(0,0); return; } render(); window.scrollTo(0,0); return; }
+  if(a==='pick'){ ui.sel=+el.getAttribute('data-i'); E.act(d,S,{type:'pick',i:ui.sel}); var t=Time.offer(d,S)[ui.sel]; var tv=tileView(t); say('你拿了「'+tv.name+'」'+(tv.meaning?'：'+tv.meaning:'')+'點一個空格放下去。',''); render(); return; }
   if(a==='cell'){ if(ui.sel===null){ say('先在上面選一塊，再點格子。','bad'); render(); return; }
-    var t=E.offer(d,ui.S)[ui.sel], r=+el.getAttribute('data-r'), c=+el.getAttribute('data-c'); var v=E.place(d,ui.S,t,r,c);
-    if(!v.ok){ say('放不下：'+(ui.strip?'這裡不能放。':v.why),'bad'); render(); var b=document.querySelector('[data-r="'+r+'"][data-c="'+c+'"]'); if(b) b.classList.add('bad'); return; }
-    ui.sel=null; say('放好了。','ok'); next(); return; }
-  if(a==='discard'){ E.discard(d,ui.S); ui.sel=null; say('丟掉一塊，這一手過了。',''); next(); return; }
+    var t2=Time.offer(d,S)[ui.sel], r=+el.getAttribute('data-r'), c=+el.getAttribute('data-c'); var before=S.turn; act2({type:'place',t:t2,r:r,c:c});
+    if(S.turn===before){ say('放不下：'+(ui.strip?'這裡不能放。':S.last.why),'bad'); render(); var b=document.querySelector('[data-r="'+r+'"][data-c="'+c+'"]'); if(b) b.classList.add('bad'); return; }
+    ui.sel=null; say(S.lastEvent==='stele'&&!ui.strip?'放好了。下一手起，官府立碑，規則改變了！':'放好了。','ok'); S.lastEvent=''; render(); return; }
+  if(a==='discard'){ act2({type:'discard'}); ui.sel=null; say('丟掉一塊，這一手過了。',''); render(); return; }
   if(a==='strip'){ ui.strip=!ui.strip; say(ui.strip?'文化抽掉了：只剩代號。規則還是一樣，只是你看不到它為什麼。':'文化放回來了。',''); render(); return; }
   if(a==='ans'){ ui.why=(document.getElementById('why')||{}).value||ui.why; ui.answer=+el.getAttribute('data-i'); render(); return; }
   if(a==='field'){ var f=document.getElementById('field').value.trim(); var m=document.getElementById('field-msg'); if(f.length<(d.field.min_chars||10)){ m.textContent='再多寫一點（至少 '+(d.field.min_chars||10)+' 個字），寫你在哪裡、看到什麼。'; return; } store('tiles_field',f); m.textContent='記下來了。之後改做時，把它變成一條放置規則。'; return; }
@@ -224,20 +354,19 @@ function act(a,el){ var d=D();
     var errs=E.validate(obj); if(errs.length){ ui.remixErr=errs.join('\n')+'\n把上面的紅字貼回給 AI，說「請修這個」。'; render(); document.getElementById('remix').open=true; return; }
     DATA.custom=obj; ui.remixOk='載入成功。按「玩我改做的版本」。'; render(); document.getElementById('remix').open=true; return; }
 }
-function next(){ if(E.done(D(),ui.S)){ ui.screen='end'; render(); window.scrollTo(0,0); } else render(); }
-
-window.__T={E:E, DATA:DATA, ui:ui, start:start};
+window.__T={E:E, DATA:DATA, ui:ui, start:start, act:act2, modules:MODS.map(function(m){return {id:m.id,name:m.name,reads:m.reads,iface:['init','step','render'].filter(function(k){return typeof m[k]==='function';})};})};
 render();
 window.__tilesReady=true;
 })();
+
 </script>
 <!-- CT-HOOK-BEGIN -->
-<script src="../tutor/folk_index.js?v=202611151156"></script>
-<script src="../tutor/tutor_templates.js?v=202611151156"></script>
-<script src="../tutor/tutor_core.js?v=202611151156"></script>
-<script src="../tutor/tutor_ui.js?v=202611151156"></script>
-<script src="../tutor/tutor_hook.js?v=202611172110"></script>
-<script src="../tutor/tutor_boot.js?v=202611151156"></script>
+<script src="../tutor/folk_index.js"></script>
+<script src="../tutor/tutor_templates.js"></script>
+<script src="../tutor/tutor_core.js"></script>
+<script src="../tutor/tutor_ui.js"></script>
+<script src="../tutor/tutor_hook.js"></script>
+<script src="../tutor/tutor_boot.js"></script>
 <script>if (window.CT_BOOT) CT_BOOT('tiles');</script>
 <!-- CT-HOOK-END -->
 </body>

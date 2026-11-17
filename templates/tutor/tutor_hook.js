@@ -101,7 +101,7 @@
     vs.forEach(function (v) { if (v.stg === 1) rx.contentEdits += 1; else rx.ruleEdits += 1; rx.stage = Math.max(rx.stage, v.stg === 1 ? 1 : 2); });
     return { tpl: O.tpl, played: H.played, w2: H.w2, reason: H.reason, predict: H.predict, predGapNoted: H.predGapNoted, remix: rx, ai: H.ai, folkOpened: H.folkOpened, field: H.post.fieldfb > 0,
       fieldCited: it.some(function (x) { return x.cat === 5; }), fieldCiteExplained: it.some(function (x) { return x.cat === 5 && x.text.length >= 6; }),
-      build: { aiGenerated: it.some(function (x) { return x.who === 'ai'; }) || ledgerPv().some(function (p) { return p.ro > 0; }), ownership: it.some(function (x) { return x.who === 'self' || x.who === 'both'; }) || ledgerPv().some(function (p) { return !!p.mine; }), versions: vs.length,
+      build: { aiGenerated: it.some(function (x) { return x.who === 'ai'; }) || ledgerPv().some(function (p) { return p.ro > 0 || (p.ai && p.ai.length && p.ai.indexOf('none') < 0); }), ownership: it.some(function (x) { return x.who === 'self' || x.who === 'both'; }) || ledgerPv().some(function (p) { return !!p.mine; }), versions: vs.length,
         versionNotes: vs.filter(function (v, i) { return i > 0 && v.note.length >= 4; }).length, extractChecks: H.extractChecks, playtests: H.post.playtest, intentCompared: H.post.intent,
         fieldQs: H.post.fieldq, lens: H.post.lens, meaning: H.post.meaning } };
   }
@@ -134,17 +134,39 @@
     if (sh.source === false) hide(sectionOf('chIt'));
     if (!((((O.cfg || {}).hook || {}).survey || {}).code)) hide($('chSurveyBox'));
     var df = C.decisionFields(((O.cfg || {}).hook || {}).decision, O.unit);   // 欄位數與「最後一句指令」開關（見 tutor_core decisionFields）
-    if (df.fields === 2) hide($('chWhyBox'));
-    if (!df.lastPrompt) hide($('chLastBox'));
+    if ($('chWhyBox') && df.fields === 2) hide($('chWhyBox'));
+    if ($('chLastBox') && !df.lastPrompt) hide($('chLastBox'));
+  }
+  var AI7 = [['none', '沒有用 AI'], ['search', '找資料'], ['idea', '想點子'], ['write', '寫文字'], ['image', '做圖'], ['code', '寫或改程式'], ['other', '其他']];
+  function lev(a, b) {   // 字元差異數（Levenshtein）
+    a = String(a || ''); b = String(b || ''); if (a === b) return 0; if (!a) return b.length; if (!b) return a.length;
+    var prev = [], cur = [], i, j; for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) { cur = [i]; for (j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1)); prev = cur; }
+    return prev[b.length];
+  }
+  function pfKey() { return 'ct_pf_' + O.env; }
+  function pfGet() { try { var d = JSON.parse(localStorage.getItem(pfKey()) || 'null'); return d && d.unit === O.unit ? d : null; } catch (e) { return null; } }
+  function prefillNow() {   // 助教討論結束後，把「你自己決定的那一處」和「本週那一句」預先填進第 2、3 格（只在格子是空的時候填；學生看過可以改）
+    if (typeof O === 'undefined' || !O) return; var d = pfGet(); if (!d || !$('chMine')) return;
+    [['chMine', d.mine], ['chFeel', d.feel]].forEach(function (x) {
+      var el = $(x[0]); if (!el || !x[1]) return;
+      if (!el.value.trim() || el.getAttribute('data-pf') === el.value) { el.value = x[1]; el.setAttribute('data-pf', x[1]); }
+    });
+    if ($('chPfNote')) $('chPfNote').style.display = 'block';
   }
   function provHtml() {
-    return '<div class="sec"><h3>改作版本存檔</h3><div class="row"><select id="chStg" aria-label="改作階段">' + opts(STAGES, '這一版是') + '</select></div><label for="chVn">這一版改了什麼、是什麼讓你改的</label><textarea id="chVn" maxlength="200"></textarea>' +
-      '<div id="chFeelBox"><label for="chFeel">' + feelLabel() + '</label><textarea id="chFeel" maxlength="120"></textarea></div>' +
-      '<fieldset id="chPv"' + (ID ? ' class="ctid"' : '') + ' style="border:1px solid #cfdbe0;border-radius:10px;margin:8px 0;padding:8px 12px"><legend>' + th('legend') + '</legend><p class="m" id="chPvHint"></p><p class="m" id="chPvNote">' + th('note1') + ' ' + th('note2') + '</p><p class="m">' + th('q1') + '</p><div id="chRoles">' +
-      ROLES.map(function (r) { return '<label style="display:block;font-weight:400"><input type="checkbox" data-ro="' + r[0] + '"> ' + r[1] + '<span class="m">（' + r[2] + '）</span>' + idl(ROLES_ID[r[0] - 1][0] + ': ' + ROLES_ID[r[0] - 1][1]) + '</label>'; }).join('') +
-      '<label style="display:block;font-weight:400"><input type="checkbox" id="chNoAi"> ' + th('noai') + '</label></div>' +
-      '<label for="chMine">' + th('q2') + '</label><textarea id="chMine" maxlength="200"></textarea>' +
-      '<div id="chWhyBox"><label for="chWhy">' + th('q3') + '</label><textarea id="chWhy" maxlength="120"></textarea></div><div id="chLastBox"><label for="chLast">' + th('qlast') + '</label><textarea id="chLast" maxlength="200"></textarea></div><p id="chPvMsg" class="m" role="status"></p></fieldset><div class="row"><button type="button" id="chVb" class="pri">存成新版本</button></div><div id="chSurveyBox"><label for="chSurvey">' + th('sv_label') + '</label><input type="text" id="chSurvey" maxlength="12" autocomplete="off" style="width:100%"><p id="chSvMsg" class="m" role="status"></p></div><div id="chPvOutBox" style="display:none"><div id="chPvCheck" role="status" aria-live="polite" style="border:2px solid #2f6690;border-radius:10px;padding:10px 12px;margin:8px 0;background:#fff"></div><div id="chPvCopyBox" style="display:none"><p class="m">' + th('saved') + '</p><textarea id="chPvOut" readonly rows="4"></textarea><div class="row"><button type="button" id="chPvCp">' + th('copy') + '</button></div></div></div><div id="chVers" class="m">還沒有版本。</div></div>';
+    return '<div class="sec"><p class="m" id="chPvNote">存版本時填三格，很短就好；跟助教聊完會自動幫你填好，看過再存。</p>' +
+      '<div style="display:none"><select id="chStg" aria-label="改作階段"><option value="1" selected>1</option></select><textarea id="chVn"></textarea></div>' +
+      '<p class="m" id="chPvHint"></p><label>① 這一版，哪些部分交給了 AI？（可多選）</label><div id="chAiRow" class="row" role="group" aria-label="交給 AI 的部分">' +
+      AI7.map(function (a) { return '<button type="button" data-ai7="' + a[0] + '" aria-pressed="false">' + a[1] + '</button>'; }).join('') + '</div>' +
+      '<label for="chMine">② 你自己決定的那一處是什麼？</label><textarea id="chMine" maxlength="200"></textarea>' +
+      '<div id="chFeelBox"><label for="chFeel">③ 本週那一句</label><textarea id="chFeel" maxlength="120"></textarea></div>' +
+      '<p class="m" id="chPfNote" style="display:none">②③ 是助教幫你填的，看過、想改就改，再按存檔。</p><p id="chPvMsg" class="m" role="status"></p>' +
+      '<div class="row"><button type="button" id="chVb" class="pri">存檔</button></div>' +
+      '<div id="chSurveyBox" style="display:none"><input type="text" id="chSurvey"><p id="chSvMsg" class="m"></p></div>' +
+      '<div id="chPvOutBox" style="display:none"><div id="chPvCheck" role="status" aria-live="polite" style="border:2px solid #2f6690;border-radius:10px;padding:10px 12px;margin:8px 0;background:#fff"></div>' +
+      '<div id="chPvCopyBox" style="display:none"><textarea id="chPvOut" readonly rows="4"></textarea><div class="row"><button type="button" id="chPvCp">' + th('copy') + '</button></div></div></div>' +
+      '<div id="chVers" class="m"></div></div>';
   }
   function build() {
     css();
@@ -172,9 +194,7 @@
   function stamp(t) { var d = new Date(t || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
   function ckCode(un) { var c = ''; try { c = localStorage.getItem('ct_code_' + un) || ''; } catch (e) { c = ''; } return c || '—'; }   // 繳交檢核不顯示信封編號：顯示助教討論發的一次性代碼（還沒討論就是 —）
   function checkHtml(v, L) {
-    var pv = v.pv || {}, un = v.unit || O.unit, rows = [['ck_ai', !!(pv.roNames && pv.roNames.length)], ['ck_mine', !!pv.mine]];
-    if (pv.f !== 2) rows.push(['ck_why', !!pv.why]);
-    if (pv.lp) rows.push(['ck_last', !!pv.last]);
+    var pv = v.pv || {}, un = v.unit || O.unit, rows = [['ck_ai', !!((pv.ai && pv.ai.length) || (pv.roNames && pv.roNames.length))], ['ck_mine', !!pv.mine]];
     rows.push(['ck_feel', !!((L && L.feel && L.feel[un]) || '')]);
     if (L && L.survey) rows.push(['ck_survey', L.survey === ((((O.cfg || {}).hook || {}).survey || {}).code)]);
     return '<div style="font-weight:700;font-size:16px">' + th('ck_title') + '</div><p class="m" style="margin:4px 0 8px">' + th('ck_tip') + '</p>' +
@@ -211,14 +231,20 @@
       var stg = +$('chStg').value, note = $('chVn').value.trim(), hasUI = !O.provOnly, L0 = loadLedger(), feel = $('chFeel') ? $('chFeel').value.trim().slice(0, 120) : ''; if (!stg) return;
       var shw = ((O.cfg || {}).hook || {}).show || {}, dc = ((O.cfg || {}).hook || {}).decision || {}, dr = C.decisionRequired(dc, O.unit, decisionsAll(), stg), pv = null;
       if (shw.provenance !== false && dr.why !== 'off') {
-        var ids = [].map.call(document.querySelectorAll('#chRoles [data-ro]:checked'), function (c) { return +c.getAttribute('data-ro'); }), none = $('chNoAi').checked, mine = $('chMine').value.trim(), df = C.decisionFields(dc, O.unit), why = df.fields === 2 ? '' : $('chWhy').value.trim(), last = df.lastPrompt ? $('chLast').value.trim().slice(0, 200) : '', msg = '';
-        if (dr.req || ids.length || none || mine || why || last) {   // 這一版不用填也有填一部分時，照樣要填完整（半套比不填更難用）
-          if (!ids.length && !none) msg = 'err_ai';
-          else if (ids.length && none) msg = 'err_both';
+        var ai = [].map.call(document.querySelectorAll('#chAiRow [data-ai7][aria-pressed="true"]'), function (b) { return b.getAttribute('data-ai7'); }), mine = $('chMine').value.trim(), msg = '', pf = pfGet(),
+          feelv = (feel || (L0.feel[O.unit] || '')).trim(), df = C.decisionFields(dc, O.unit);
+        if (dr.req || ai.length || mine || feelv) {
+          if (!ai.length) msg = 'err_ai';
+          else if (ai.indexOf('none') >= 0 && ai.length > 1) msg = 'err_both';
           else if (mine.length < 2) msg = 'err_mine';
-          else if ((feel || (L0.feel[O.unit] || '')).length < 2) msg = 'err_feel';
+          else if (feelv.length < 2) msg = 'err_feel';
           $('chPvMsg').innerHTML = msg ? th(msg) : ''; if (msg) return;
-          pv = { ro: roMask(none ? [] : ids), roNames: none ? ['沒有用 AI'] : ROLES.filter(function (r) { return ids.indexOf(r[0]) >= 0; }).map(function (r) { return r[1]; }), mine: mine, why: why, last: last, why2: dr.why, f: df.fields, lp: df.lastPrompt };
+          var pm = ($('chMine').getAttribute('data-pf') || '') && pf ? ($('chMine').getAttribute('data-pf') || '') : '', pfe = ($('chFeel').getAttribute('data-pf') || '') && pf ? ($('chFeel').getAttribute('data-pf') || '') : '';
+          var labels = ai.map(function (c) { return (AI7.filter(function (a) { return a[0] === c; })[0] || [c, c])[1]; });
+          pv = { ai: ai, ro: 0, roNames: labels, mine: mine, why: '', last: '', why2: dr.why, f: df.fields, lp: false,
+            prefill: !!(pm || pfe),
+            mine_pf: { prefill_text: pm, saved_text: mine, edited: !!pm && mine !== pm, edit_chars: pm ? lev(pm, mine) : 0 },
+            feel_pf: { prefill_text: pfe, saved_text: feelv, edited: !!pfe && feelv !== pfe, edit_chars: pfe ? lev(pfe, feelv) : 0 }, saved_at: new Date().toISOString() };
         }
       }
       var snap = null; try { snap = O.adapter && O.adapter.exportState ? JSON.stringify(O.adapter.exportState()) : null; } catch (e) { snap = null; }
@@ -234,7 +260,7 @@
         var cp = ((dc || {}).copyText === 'on');   // 預設 off：不出現可複製的文字（內容只在學生自己的瀏覽器）
         $('chPvCopyBox').style.display = cp ? 'block' : 'none';
         $('chPvOut').value = cp ? '【第 ' + vn + ' 版的' + tz('title') + '】' + (ID ? '(' + I18N.title[1] + ', versi ke-' + vn + ')' : '') + '交給 AI 的部分：' + pv.roNames.join('、') + '｜我自己決定的：' + pv.mine + (pv.why ? '｜我為什麼這樣決定：' + pv.why : '') + (pv.last ? '｜' + tz('outlast') + '：' + pv.last : '') : '';
-        [].forEach.call(document.querySelectorAll('#chRoles input'), function (c) { c.checked = false; }); $('chNoAi').checked = false; $('chMine').value = ''; $('chWhy').value = ''; $('chLast').value = ''; $('chPvMsg').innerHTML = '';
+        [].forEach.call(document.querySelectorAll('#chAiRow [data-ai7]'), function (b) { b.setAttribute('aria-pressed', 'false'); b.className = ''; }); $('chMine').value = ''; $('chMine').removeAttribute('data-pf'); $('chFeel').removeAttribute('data-pf'); $('chPvMsg').innerHTML = '';
       }
       if (!pv && feel) saveLedger(L);
       if (hasUI) after('version'); else { save(); renderLite(); }
@@ -247,7 +273,15 @@
       var v = this.value.trim().toUpperCase().slice(0, 12), L = loadLedger(), code = ((((O.cfg || {}).hook || {}).survey || {}).code) || '';
       L.survey = v; saveLedger(L); $('chSvMsg').innerHTML = (v && v !== code) ? th('sv_bad') : ''; showCheck();
     };
-    $('chNoAi').onchange = function () { if (this.checked) [].forEach.call(document.querySelectorAll('#chRoles [data-ro]'), function (c) { c.checked = false; }); };
+    [].forEach.call(document.querySelectorAll('#chAiRow [data-ai7]'), function (b) {
+      b.onclick = function () {
+        var on = b.getAttribute('aria-pressed') !== 'true', c = b.getAttribute('data-ai7');
+        if (on && c === 'none') [].forEach.call(document.querySelectorAll('#chAiRow [data-ai7]'), function (o) { o.setAttribute('aria-pressed', 'false'); o.className = ''; });
+        if (on && c !== 'none') { var n0 = document.querySelector('#chAiRow [data-ai7="none"]'); if (n0) { n0.setAttribute('aria-pressed', 'false'); n0.className = ''; } }
+        b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.className = on ? 'on' : '';
+      };
+    });
+    prefillNow();
   }
   function wire() {
     ['chRS', 'chRR', 'chVn', 'chPt', 'chIn', 'chFf', 'chFq', 'chCh', 'chLn', 'chMe'].forEach(function (id) { UI.watchPaste($(id)); });
@@ -318,5 +352,5 @@
     el.appendChild(d); applyShow(); wireProvCore(); renderLite(); showCheck();
     return { env: O.env, unit: O.unit, lang: ID ? 'id' : 'zh' };
   }
-  root.CT_HOOK = { setStore: setStore, mount: mount, mountProv: mountProv, markPlayed: markPlayed, judged: judged, drew: drew, swapped: swapped, state: function () { return H ? state() : null; }, evidence: function () { return H ? JSON.parse(JSON.stringify(H)) : null; } };
+  root.CT_HOOK = { prefill: prefillNow, setStore: setStore, mount: mount, mountProv: mountProv, markPlayed: markPlayed, judged: judged, drew: drew, swapped: swapped, state: function () { return H ? state() : null; }, evidence: function () { return H ? JSON.parse(JSON.stringify(H)) : null; } };
 })(typeof self !== 'undefined' ? self : this);

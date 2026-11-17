@@ -35,6 +35,7 @@ table.jt{border-collapse:collapse;width:100%;min-width:440px;background:var(--su
 .six>div{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;min-width:0}
 .six b{display:block;font-size:15.5px}
 .six .draw{font-size:13.5px;color:var(--muted);margin-top:4px}
+.six .try{display:inline-flex;align-items:center;min-height:44px;margin:6px 0 0 8px;padding:0 14px;border-radius:999px;border:1px solid var(--tc,var(--accent));color:var(--tc,var(--accent));text-decoration:none;font-size:14px;font-weight:600;vertical-align:top}
 .six .demo{display:inline-block;margin-top:6px;font-size:12.5px;background:var(--gold-soft);color:var(--gold);border-radius:6px;padding:1px 8px}
 details.stage{background:var(--surface);border:1px solid var(--hair);border-radius:12px;margin:0 0 12px;box-shadow:var(--shadow)}
 details.stage>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 14px;font-weight:700}
@@ -66,27 +67,31 @@ details.adv .advb{padding:0 16px 14px}
 <div class="wrap">
 <p class="eyebrow">文化遊戲松實作 · W11 · Figma 1/3</p>
 <h1>用 Figma 為你的小遊戲畫一個畫面</h1>
-<p class="upd">最後更新：<b>2026-11-13 01:00</b></p>
+<p class="upd">最後更新：<b>2026-11-17 20:04</b></p>
 <p class="lede">後半學期，你會從十二種小遊戲樣板裡挑一個，一路改成你自己的作品。第一步先畫出它的樣子：用 <b>Figma</b> 畫一個畫面，輸出成圖片。下週會把這張圖交給 AI Studio，做成會動的東西。</p>
 <p class="lede"><b>今天課堂做完，期限不是讓你拖。</b>做到哪一階都可以交。</p>
-<nav class="tabs" aria-label="頁面"><a data-kind="learn" href="#intro">十二個樣板</a><a data-kind="learn" href="#play2">玩兩版</a><a data-kind="do" href="#steps">六步做完</a><a data-kind="log" id="nav-survey" href="#survey" hidden>問卷</a><a data-kind="log" href="#talk">助教討論</a><a data-kind="log" href="#three">出處標示欄</a><a data-kind="do" href="#check">檢核</a><a data-kind="learn" href="#stuck">卡住了</a><a data-kind="learn" href="#phone">手機注意</a></nav>
+<nav class="tabs" aria-label="頁面"><a data-kind="log" id="nav-survey" href="#survey" hidden>問卷</a><a data-kind="learn" href="#intro">十二個樣板</a><a data-kind="learn" href="#play2">玩兩版</a><a data-kind="do" href="#steps">六步做完</a><a data-kind="log" href="#talk">助教討論</a><a data-kind="log" href="#three">出處標示欄</a><a data-kind="do" href="#check">檢核</a><a data-kind="learn" href="#stuck">卡住了</a><a data-kind="learn" href="#phone">手機注意</a></nav>
 <p class="kind-key" aria-hidden="true"><span class="kl">學一下：先看懂</span><span class="kd">動手做：照步驟做</span><span class="kg">留紀錄：交件前填</span></p>
+
+<section id="survey" hidden data-kind="log"><h2><span class="num">問卷</span>課程自我檢核問卷（約 4 分鐘）</h2>
+<div id="surveyMount"></div>
+<p class="note">完成後，把「已完成課程自我檢核問卷」那張卡截圖，交到 flipclass 的 W11-1（佔 3%）。</p></section>
 
 <section id="intro" data-kind="learn"><h2><span class="num">認識</span>十二種樣板，挑一個</h2>
 <p class="sub">每一種玩法不同，要畫的畫面也不同。示範人物與法器都來自《小封神》；你畫自己的內容時，請標清楚哪些是原著、哪些是你改的、哪些是你加的。</p>
 <div class="six">
-<div data-tpl="avg"><b>故事（《通天冠》）</b><span class="draw">讀劇情，在關鍵處做選擇。要畫：一個場景（背景、人物、對話框、兩個選項）。</span><span class="demo">示範：小上帝、魁星</span></div>
-<div data-tpl="walk"><b>走讀</b><span class="draw">走到真實地點，完成任務。要畫：一張任務卡（地點、題目、拍照按鈕）。</span><span class="demo">示範：舊城裡的天后宮</span></div>
-<div data-tpl="puzzle"><b>解謎</b><span class="draw">蒐集線索，推出答案。要畫：一張線索卡與道具欄。</span><span class="demo">示範：通天冠、同裕當店</span></div>
-<div data-tpl="sim"><b>經營</b><span class="draw">資源有限，排出先後，撐過一天。要畫：經營畫面（資源列、來客、行動按鈕）。</span><span class="demo">示範：小上帝廟</span></div>
-<div data-tpl="cards"><b>卡牌</b><span class="draw">收集卡牌，靠相剋關係對戰。要畫：一張卡面。</span><span class="demo">示範：雷震子、哪吒、龜靈聖母</span></div>
-<div data-tpl="rhythm"><b>節奏</b><span class="draw">跟著節拍抓準時機。要畫：節奏譜面（落點、判定線、分數）。</span><span class="demo">示範：鑼、鼓、筊杯</span></div>
-<div data-tpl="sneak"><b>潛行（夜巡不踩線）</b><span class="draw">俯視地圖，避開看不見的線。要畫：一張地圖（路線、禁忌的線、你的位置）。練的是：禁忌・規矩。</span><span class="demo">示範：廟門的門檻</span></div>
-<div data-tpl="social"><b>談判（人情與面子）</b><span class="draw">跟幾個人談結盟，人情和面子是本錢。要畫：談判畫面（對象、人情與面子的數字、選項）。練的是：人際關係。</span><span class="demo">示範：小上帝廟的人情</span></div>
-<div data-tpl="towerdef"><b>塔防（普渡七日）</b><span class="draw">一波一波來的訪客，用供品和法器安頓。要畫：防守畫面（日期、供品欄、訪客）。練的是：時間節奏。</span><span class="demo">示範：普渡的七個夜晚</span></div>
-<div data-tpl="roguelike"><b>爬塔（擲筊問路）</b><span class="draw">每一層用擲筊決定走哪條路。要畫：選路畫面（擲筊結果、路線、獎勵）。練的是：行為・儀式。</span><span class="demo">示範：擲筊、收驚</span></div>
-<div data-tpl="tiles"><b>拼接（五條港接水道）</b><span class="draw">一次放一塊地圖板塊，相鄰決定得分。要畫：板塊地圖（水道、廟埕、攤位）。練的是：物件・地點。</span><span class="demo">示範：五條港</span></div>
-<div data-tpl="runner"><b>跑酷（遶境不能停）</b><span class="draw">抬著神轎沿路線前進，接駕、補給不能亂。要畫：路線畫面（神轎、接駕點、補給）。練的是：行為・儀式。</span><span class="demo">示範：遶境的路線</span></div>
+<div data-tpl="avg"><b>故事（《通天冠》）</b><span class="draw">讀劇情，在關鍵處做選擇。要畫：一個場景（背景、人物、對話框、兩個選項）。</span><span class="demo">示範：小上帝、魁星</span><a class="try" href="templates/avg/avg.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="walk"><b>走讀</b><span class="draw">走到真實地點，完成任務。要畫：一張任務卡（地點、題目、拍照按鈕）。</span><span class="demo">示範：舊城裡的天后宮</span><a class="try" href="templates/walk/walk.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="puzzle"><b>解謎</b><span class="draw">蒐集線索，推出答案。要畫：一張線索卡與道具欄。</span><span class="demo">示範：通天冠、同裕當店</span><a class="try" href="templates/puzzle/puzzle.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="sim"><b>經營</b><span class="draw">資源有限，排出先後，撐過一天。要畫：經營畫面（資源列、來客、行動按鈕）。</span><span class="demo">示範：小上帝廟</span><a class="try" href="templates/sim/sim.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="cards"><b>卡牌</b><span class="draw">收集卡牌，靠相剋關係對戰。要畫：一張卡面。</span><span class="demo">示範：雷震子、哪吒、龜靈聖母</span><a class="try" href="templates/cards/index.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="rhythm"><b>節奏</b><span class="draw">跟著節拍抓準時機。要畫：節奏譜面（落點、判定線、分數）。</span><span class="demo">示範：鑼、鼓、筊杯</span><a class="try" href="templates/rhythm/rhythm.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="sneak"><b>潛行（夜巡不踩線）</b><span class="draw">俯視地圖，避開看不見的線。要畫：一張地圖（路線、禁忌的線、你的位置）。練的是：禁忌・規矩。</span><span class="demo">示範：廟門的門檻</span><a class="try" href="templates/sneak/sneak.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="social"><b>談判（人情與面子）</b><span class="draw">跟幾個人談結盟，人情和面子是本錢。要畫：談判畫面（對象、人情與面子的數字、選項）。練的是：人際關係。</span><span class="demo">示範：小上帝廟的人情</span><a class="try" href="templates/social/social.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="towerdef"><b>塔防（普渡七日）</b><span class="draw">一波一波來的訪客，用供品和法器安頓。要畫：防守畫面（日期、供品欄、訪客）。練的是：時間節奏。</span><span class="demo">示範：普渡的七個夜晚</span><a class="try" href="templates/towerdef/towerdef.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="roguelike"><b>爬塔（擲筊問路）</b><span class="draw">每一層用擲筊決定走哪條路。要畫：選路畫面（擲筊結果、路線、獎勵）。練的是：行為・儀式。</span><span class="demo">示範：擲筊、收驚</span><a class="try" href="templates/roguelike/roguelike.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="tiles"><b>拼接（五條港接水道）</b><span class="draw">一次放一塊地圖板塊，相鄰決定得分。要畫：板塊地圖（水道、廟埕、攤位）。練的是：物件・地點。</span><span class="demo">示範：五條港</span><a class="try" href="templates/tiles/tiles.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
+<div data-tpl="runner"><b>跑酷（遶境不能停）</b><span class="draw">抬著神轎沿路線前進，接駕、補給不能亂。要畫：路線畫面（神轎、接駕點、補給）。練的是：行為・儀式。</span><span class="demo">示範：遶境的路線</span><a class="try" href="templates/runner/runner.html?unit=W11" target="_blank" rel="noopener">▶ 試玩</a></div>
 </div>
 <p class="note">這週的畫面包有前面六種（故事、走讀、解謎、經營、卡牌、節奏）。如果你挑的是後面六種（潛行、談判、塔防、爬塔、拼接、跑酷），先選畫面包裡最像的一個畫面來畫，下週會補上你那個樣板的畫面包。</p></section>
 
@@ -101,7 +106,8 @@ details.adv .advb{padding:0 16px 14px}
 
 <section data-kind="learn"><h2><span class="num">概覽</span>這份作業一頁看完</h2>
 <div class="jt-wrap"><table class="jt"><tbody>
-<tr><td>要交什麼</td><td>Figma 連結（確認別人打得開）和一張匯出的 PNG。一句話「你想讓玩的人有什麼感覺」寫在學習單的填寫區；繳交留言附上存版本後出現的「繳交檢核」畫面截圖。</td></tr>
+<tr><td>先做完</td><td>最上面的「課程自我檢核問卷」，完成後截圖交到 flipclass 的 W11-1（佔 3%）。</td></tr>
+<tr><td>要交什麼</td><td>Figma 連結（確認別人打得開）和一張匯出的 PNG。一句話「你想讓玩的人有什麼感覺」寫在學習單的填寫區；繳交留言附上存版本後出現的「繳交檢核」畫面截圖，和助教討論完成後的「結果卡」截圖。</td></tr>
 <tr><td>大約多久</td><td>課堂 100～120 分鐘，今天做完</td></tr>
 <tr><td>開放與期限</td><td>11/18（三）09:10 開放，11/25（三）09:10 截止</td></tr>
 <tr><td>做完接哪一份</td><td>下週 AI Studio 1/3：把你的圖和樣板交給 AI Studio，做成會動的畫面。再下一週（W13）才開始用 Claude 免費版幫忙。</td></tr>
@@ -112,7 +118,7 @@ details.adv .advb{padding:0 16px 14px}
 <p class="note">每一步是一張卡片，點標題可以收合或展開。英文按鈕的中文意思放在括號裡。</p>
 
 <details class="stage" open><summary><span class="sn">1</span><span class="st2">玩兩版，再把十二個樣板都看一眼</span><span class="sm">約 30 分鐘</span></summary><div class="sb">
-<p>先照上面「玩兩版」做約 18 分鐘。接著用約 12 分鐘把其他樣板的首頁看一眼（老師會給連結），每個 1 分鐘：它練哪一類文化、要畫什麼畫面。邊看邊想：我最想畫哪一個的畫面？<br><b>做完的樣子：</b>你心裡有一個最想畫的樣板，也寫了「玩兩版」的答案和一句為什麼。<br><b>卡住了：</b>某個樣板打不開，就先玩其他的，問老師。</p>
+<p>先照上面「玩兩版」做約 18 分鐘。接著用約 12 分鐘把其他樣板的首頁看一眼（每張卡片上都有「▶ 試玩」），每個 1 分鐘：它練哪一類文化、要畫什麼畫面。邊看邊想：我最想畫哪一個的畫面？<br><b>做完的樣子：</b>你心裡有一個最想畫的樣板，也寫了「玩兩版」的答案和一句為什麼。<br><b>卡住了：</b>某個樣板打不開，就先玩其他的，問老師。</p>
 <div class="wait">樣板連結：老師上課時提供。</div>
 </div></details>
 
@@ -163,12 +169,9 @@ details.adv .advb{padding:0 16px 14px}
 <p class="sub"><b>和助教的討論，佔這次成績的 30%。</b>助教不會給你答案，只會問你問題：你做了什麼決定、為什麼、放棄了什麼。</p>
 <p>評分看的是<b>你想得多深</b>，不是你講了幾次、寫了幾個字。想得越深，分數越高：</p>
 <ul class="plain"><li><b>只說做了什麼</b>：你講了你做了什麼。</li><li><b>說得出為什麼</b>：你講了理由。</li><li><b>比較過別的做法</b>：你說出你還想過什麼，還有放棄的那個代價是什麼。</li><li><b>不同意時有證據</b>：AI 或樣板說的和你想的不一樣時，你拿出你驗證過的證據，或說服了它。</li></ul>
-<p class="note">至少回答 3 輪才會被評；講很多次但一直重複，不會多算。登不進去或系統壞了，不會扣你的分，找老師補。你和助教的對話只有你和老師看得到。</p>
+<p class="note">至少回答 3 輪才會被評；講很多次但一直重複，不會多算。登不進去或系統壞了，不會扣你的分，找老師補。你和助教的對話會存下來，老師會讀。討論完按「對，就這樣」，會出現一張結果卡，把它截圖交到 flipclass；卡上是一組代碼，不是你的編號。討論的分數到第 16 週才公布，平時只會看到「已完成本週討論」。</p>
 <div id="talkMount" data-unit="W11"></div></section>
 
-<section id="survey" hidden data-kind="log"><h2><span class="num">問卷</span>課程自我檢核</h2>
-<div id="surveyMount"></div>
-<p class="note">填完，或選「這次不填」，都會拿到一組完成碼。把完成碼貼進下面「出處標示欄」那一區的「問卷完成碼」格，再把「繳交檢核」截圖交出去。</p></section>
 
 <section id="three" data-kind="log"><h2><span class="num">出處標示欄</span>存版本時填三格</h2>
 <p class="sub">每週至少寫一次；換規則或換形式的版本一定要寫。很短就好，目的是讓你自己看清楚哪些是你決定的。在這一頁下方的填寫區（或樣板頁的「📒 我的紀錄」）填，兩邊是同一份；填的內容只留在你自己的瀏覽器。存好後畫面會出現「繳交檢核」（只列編號、單元、第幾版、時間、完成了哪幾項的打勾，不顯示你寫的字），把它截圖交到 flipclass。</p>
@@ -186,7 +189,7 @@ details.adv .advb{padding:0 16px 14px}
 <li><b class="n">2</b><span><b>改了三處。</b>一處文字、一處顏色、一處自選。</span></li>
 <li><b class="n">3</b><span><b>有一張 PNG，</b>是用 Export 匯出的，不是截圖。</span></li>
 <li><b class="n">4</b><span><b>別人打得開。</b>Anyone 那一列是 can view，無痕視窗貼上連結打得開。</span></li>
-<li><b class="n">5</b><span><b>填了出處標示欄、附了檢核截圖。</b>填寫區寫了三格（含「你想讓玩的人有什麼感覺」），繳交留言附上「繳交檢核」截圖。</span></li></ul></section>
+<li><b class="n">5</b><span><b>填了出處標示欄、附了檢核截圖。</b>填寫區寫了三格（含「你想讓玩的人有什麼感覺」），繳交留言附上「繳交檢核」截圖和助教討論的「結果卡」截圖。</span></li></ul></section>
 
 <section id="stuck" data-kind="learn"><h2><span class="num">卡住了</span>常見的卡住與解法</h2>
 <dl class="stuck">
@@ -208,6 +211,11 @@ details.adv .advb{padding:0 16px 14px}
 <section id="addon-a" data-addon="A" hidden data-kind="log"><h2><span class="num">最後一題</span>這個單元你花了多少腦力？</h2>
 <p>做完這個單元，你覺得自己花了多少腦力？　1（非常少）……9（非常多）</p></section>
 
+<section id="bonus" data-kind="learn"><details class="adv"><summary>想多拿分：讀一份小封神參考（自願，加分，不扣分）</summary>
+<p>教材區有一份<a href="https://flipclass.stust.edu.tw/media/doc/409070" target="_blank" rel="noopener">「小封神參考資料（雲端資料夾）」</a>，裡面有 13 個和你的遊戲有關的檔案。第一次打開要按「要求存取權」，老師核准後才看得到。</p>
+<ol class="plain"><li><b>挑一份來讀。</b>自己讀，或請 AI 幫你整理都可以。</li><li><b>找一處能放進你遊戲的：</b>一個角色、一個地點或一段情節。</li><li><b>回到原文抽查 3 處，</b>確認 AI 整理的沒有亂編。沒用 AI 的話，這一步可以略過。</li><li><b>交一句話：</b>「我讀了＿＿，用了＿＿這一處，因為＿＿。」寫進出處標示欄，或在助教討論裡講給助教聽。</li></ol>
+<p class="note">加分幅度之後公布。沒讀完全不扣分。</p></details></section>
+
 <section id="adv"><details class="adv"><summary>帶筆電的進階任務（自願，加分，不扣分）</summary>
 <div class="advb">
 <p class="note">沒帶筆電、或只用手機和教室電腦的同學，<b>可以直接略過這一塊</b>，上面的主線一樣能完成。每週的進階任務只有一件，做不做都不影響你的主線作業。</p>
@@ -223,12 +231,13 @@ details.adv .advb{padding:0 16px 14px}
 <p class="note">下週的進階任務：把 AI Studio 做好的版本存回你的電腦。</p>
 </div></details></section>
 </div>
-<script src="templates/tutor/folk_index.js?v=202611151156"></script><script src="templates/tutor/tutor_templates.js?v=202611151156"></script><script src="templates/tutor/tutor_core.js?v=202611151156"></script><script src="templates/tutor/tutor_config.js?v=202611151156"></script><script src="templates/tutor/tutor_hook.js?v=202611151156"></script>
+<script src="templates/tutor/folk_index.js?v=202611151156"></script><script src="templates/tutor/tutor_templates.js?v=202611151156"></script><script src="templates/tutor/tutor_core.js?v=202611151156"></script><script src="templates/tutor/tutor_config.js?v=202611151156"></script><script src="templates/tutor/tutor_hook.js?v=202611172110"></script>
 <script>document.getElementById("provMount")&&window.CT_HOOK&&(function(){var el=document.getElementById("provMount"),done=false;function go(){if(done)return;var env=parseInt(localStorage.getItem("designjam_env"),10);if(!isFinite(env))return;done=true;try{var cfg=(window.CT_CONFIG&&CT_CONFIG.base)||{};CT_HOOK.mountProv(el,{env:env,unit:CT_CORE.unitOfDate(Date.now(),cfg.term),cfg:{hook:cfg.hook}});var h=document.getElementById("provHint");if(h)h.style.display="none";}catch(e){}}go();if(!done){var t=setInterval(function(){go();if(done)clearInterval(t);},1500);}})();</script>
 
-<script src="js/widget_id.js?v=202611172000"></script>
-<script src="js/talk_widget.js?v=202611172000"></script>
-<script src="js/survey_widget.js?v=202611172000"></script>
+<script src="js/widget_id.js?v=202611172110"></script>
+<script src="js/talk_hints.js?v=202611172110"></script>
+<script src="js/talk_widget.js?v=202611172110"></script>
+<script src="js/survey_widget.js?v=202611172110"></script>
 <script>window.DJ_BIND_UNIT='w11';</script>
 <script src="js/gate_i18n.js?v=202609291032"></script>
 <script src="js/bind_gate.js?v=202610212100"></script>

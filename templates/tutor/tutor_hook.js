@@ -42,7 +42,7 @@
     note2: ["請不要寫同學或家人的名字。", "Harap jangan menulis nama teman sekelas atau keluarga."],
     qlast: ["最後一句指令：你貼給 AI 的最後一句話（只貼一句，200 字以內；這一版沒有用 AI 就留空）", "Instruksi terakhir: Kalimat terakhir yang Anda tempel ke AI (tempel satu kalimat saja, maksimal 200 karakter; jika versi ini tidak menggunakan AI, biarkan kosong)"],
     outlast: ["最後一句指令", "Instruksi terakhir"],
-    ck_title: ["繳交檢核", "Pemeriksaan Pengumpulan"], ck_tip: ["請把這個畫面截圖，交到 flipclass。畫面只顯示編號與完成狀態，不顯示你寫的內容。", "Ambil tangkapan layar tampilan ini dan kumpulkan ke flipclass. Layar hanya menampilkan nomor dan status penyelesaian, tidak menampilkan isi yang kamu tulis."], ck_env: ["編號", "Nomor"], ck_unit: ["單元", "Unit"], ck_ver: ["第 {n} 版", "Versi ke-{n}"], ck_time: ["時間", "Waktu"],
+    ck_title: ["繳交檢核", "Pemeriksaan Pengumpulan"], ck_tip: ["請把這個畫面截圖，交到 flipclass。畫面只顯示代碼與完成狀態，不顯示你寫的內容。", "Ambil tangkapan layar tampilan ini dan kumpulkan ke flipclass. Layar hanya menampilkan kode dan status penyelesaian, tidak menampilkan isi yang kamu tulis."], ck_env: ["代碼", "Kode"], ck_unit: ["單元", "Unit"], ck_ver: ["第 {n} 版", "Versi ke-{n}"], ck_time: ["時間", "Waktu"],
     ck_ai: ["交給 AI 的部分", "Bagian yang diserahkan ke AI"], ck_mine: ["自己決定的一兩處", "Satu atau dua bagian yang ditentukan sendiri"], ck_why: ["其中一處的理由", "Alasan untuk salah satu bagian"], ck_last: ["最後一句指令", "Kalimat instruksi terakhir"], ck_empty: ["未填", "Belum diisi"],
     err_feel: ["請填「本週那一句」，一句話就好；想不到就寫「沒有」。", "Tolong isi 「本週那一句」(kalimat minggu ini), cukup satu kalimat saja. Kalau tidak terpikirkan, tulis saja 「沒有」(tidak ada)."], sv_label: ["問卷完成碼（填了問卷才有；沒填問卷就空著）", "Kode penyelesaian kuesioner (hanya ada kalau sudah isi kuesioner; kalau tidak isi, kosongkan saja)"], sv_bad: ["完成碼不對，請再檢查一次。", "Kode penyelesaian salah, silakan periksa lagi ya."], more: ["更多紀錄（選填，不填也可以）", "Catatan tambahan (opsional, boleh tidak diisi)"], ck_survey: ["問卷完成碼", "Kode penyelesaian kuesioner"],
     feel_title: ["本週那一句", "Satu kalimat minggu ini"], ck_feel: ["本週那一句", "Satu kalimat minggu ini"], devcount: ["這台裝置上有 {n} 筆紀錄；空的話，請回到你填寫的那台裝置。", "Ada {n} catatan di perangkat ini. Kalau kosong, silakan kembali ke perangkat tempat kamu mengisinya."]
@@ -170,6 +170,7 @@
      不顯示學生寫的任何文字。複製那一段文字預設關閉（hook.decision.copyText＝'on' 才有，以防萬一）。 */
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function stamp(t) { var d = new Date(t || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+  function ckCode(un) { var c = ''; try { c = localStorage.getItem('ct_code_' + un) || ''; } catch (e) { c = ''; } return c || '—'; }   // 繳交檢核不顯示信封編號：顯示助教討論發的一次性代碼（還沒討論就是 —）
   function checkHtml(v, L) {
     var pv = v.pv || {}, un = v.unit || O.unit, rows = [['ck_ai', !!(pv.roNames && pv.roNames.length)], ['ck_mine', !!pv.mine]];
     if (pv.f !== 2) rows.push(['ck_why', !!pv.why]);
@@ -177,7 +178,7 @@
     rows.push(['ck_feel', !!((L && L.feel && L.feel[un]) || '')]);
     if (L && L.survey) rows.push(['ck_survey', L.survey === ((((O.cfg || {}).hook || {}).survey || {}).code)]);
     return '<div style="font-weight:700;font-size:16px">' + th('ck_title') + '</div><p class="m" style="margin:4px 0 8px">' + th('ck_tip') + '</p>' +
-      '<div style="font-size:15px">' + th('ck_env') + '：<b>' + esc(String(O.env)) + '</b>｜' + th('ck_unit') + '：<b>' + esc(un) + '</b>｜' + esc(tz('ck_ver').replace('{n}', v.n || v.vn)) + (ID ? idl(I18N.ck_ver[1].replace('{n}', v.n || v.vn)) : '') + '｜' + th('ck_time') + '：' + esc(stamp(v.t)) + '</div>' +
+      '<div style="font-size:15px">' + th('ck_env') + '：<b>' + esc(ckCode(un)) + '</b>｜' + th('ck_unit') + '：<b>' + esc(un) + '</b>｜' + esc(tz('ck_ver').replace('{n}', v.n || v.vn)) + (ID ? idl(I18N.ck_ver[1].replace('{n}', v.n || v.vn)) : '') + '｜' + th('ck_time') + '：' + esc(stamp(v.t)) + '</div>' +
       rows.map(function (x) { return '<div style="font-size:16px;padding:3px 0">' + (x[1] ? '<b style="color:#1b6b3a">✓</b> ' : '<span style="color:#7a6a55">－</span> ') + th(x[0]) + (x[1] ? '' : ' <span class="m">' + th('ck_empty') + '</span>') + '</div>'; }).join('');
   }
   function showCheck() {   // 顯示最近一次有填出處標示欄的版本（重新整理後也找得回來；樣板頁與學習單頁看到同一筆）

@@ -1,4 +1,4 @@
-/* 助教討論元件（W11 起）：學習單頁上和 AI 助教多輪討論，討論佔作業 30%。
+/* 助教討論元件（W11 起）：學習單頁上和 AI 助教多輪討論，討論佔成績 30%。
    傳輸：寫 ctalk/q/{場次}/{編號}/{qid}，輪詢 ctalk/a/{場次}/{編號}/{qid}（和 tutor_core 的第二層同一個做法）；對話正本只在老師電腦本機。
    ⚠ 不用 alert／confirm／prompt。學生打的字一律用 textContent 顯示。網址 ?emu=1 只對測試編號 55–60 生效（打本機模擬器）。 */
 (function () {
@@ -7,6 +7,7 @@
     '47602': { W11: '兩版都玩完了，你選哪一個樣板？' },
     '46582': { W11: '你把走讀的畫面做成網頁，你選了哪一個畫面來還原？' }
   };
+  var HINTS = window.CT_HINTS || {};
   var DAY_CAP = 20, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;
   var $ = function (id) { return document.getElementById(id); };
   var WID = window.CT_WID || {}, ID = false;
@@ -18,6 +19,10 @@
   function courseOf(env) { env = Number(env); if (env >= 55 && env <= 60) return 'test'; if (env >= 1 && env <= 52) return '47602'; if (env >= 101 && env <= 130) return '46582'; return ''; }
   function sessKey(env, ms) { var p = tw(ms), c = courseOf(env), half = p.h < 14 ? 'am' : 'pm'; if (!c) c = half === 'am' ? '47602' : '46582'; return c + '-' + p.ymd + half; }
   function openOf(env, unit) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; return (OPEN[c] || {})[unit] || ''; }
+  function hintsOf(env, unit, rounds) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; var st = ((HINTS[c] || {})[unit]) || []; return st.length ? st[Math.min(rounds, st.length - 1)] : []; }
+  function decisionOf(env, unit) { var c = courseOf(env); if (c === 'test') c = '47602'; if (!c) c = tw(Date.now()).h < 14 ? '47602' : '46582'; return (((HINTS.decision || {})[c]) || {})[unit] || ''; }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function stampNow(ms) { var d = new Date(ms || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
   function qid() { return String(Date.now()) + '_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0'); }
   function css() {
     if ($('talkcss')) return;
@@ -26,7 +31,9 @@
       + '.tk .b{padding:8px 12px;border-radius:12px;max-width:92%;white-space:pre-wrap;word-break:break-word;line-height:1.6}.tk .a{background:var(--accent-soft,rgba(0,0,0,.05));align-self:flex-start}.tk .s{background:var(--accent);color:#fff;align-self:flex-end}'
       + '.tk textarea{width:100%;box-sizing:border-box;min-height:84px;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--hair);background:var(--bg,#fff);color:inherit}'
       + '.tk button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer}.tk button.g{background:transparent;color:var(--accent)}.tk button[disabled]{opacity:.5;cursor:default}'
-      + '.tk .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.tk .cnt{font-size:13px;opacity:.8}.tk .sumbox{border:1px dashed var(--accent);border-radius:10px;padding:10px;margin-top:8px}';
+      + '.tk .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.tk .cnt{font-size:13px;opacity:.8}.tk .sumbox{border:1px dashed var(--accent);border-radius:10px;padding:10px;margin-top:8px}'
+      + '.tk .hints{margin-top:8px}.tk .hints .hb{display:flex;gap:6px;flex-wrap:wrap}.tk .hints button.h{min-width:0;min-height:44px;padding:6px 12px;border-radius:12px;background:transparent;color:var(--accent);text-align:left;font-size:14px;line-height:1.35}'
+      + '.tk .rc{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--bg,#fff)}.tk .rc h4{margin:0 0 6px;font-size:17px}.tk .rc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.5}.tk .rc dt{opacity:.75}.tk .rc dd{margin:0;word-break:break-word}.tk .rc .code{font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.1em}.tk .rc .tag{font-size:12px;opacity:.8}';
     document.head.appendChild(s);
   }
   function mount(el) {
@@ -43,10 +50,11 @@
     try { var sv = JSON.parse(localStorage.getItem(LK) || 'null'); if (sv && sv.msgs) st = sv; } catch (e) { /* 讀不到就從頭 */ }
     var open = openOf(env, unit); if (open) open = T(open);
     el.innerHTML = '<div class="tk"><div class="log" id="tk-log" aria-live="polite"></div>'
+      + '<div class="hints" id="tk-hints"></div>'
       + '<textarea id="tk-in" maxlength="600" placeholder="' + T('用你自己的話回答（一兩句就好）') + '" aria-label="' + T('用你自己的話回答（一兩句就好）') + '"></textarea>'
       + '<div class="row"><button type="button" id="tk-send">' + T('送出') + '</button><span class="cnt" id="tk-cnt"></span></div>'
       + '<p class="note" id="tk-msg" role="status"></p><div id="tk-sum"></div></div>';
-    var log = $('tk-log'), inp = $('tk-in'), btn = $('tk-send'), msg = $('tk-msg'), cnt = $('tk-cnt'), sum = $('tk-sum');
+    var hintBox = $('tk-hints'), log = $('tk-log'), inp = $('tk-in'), btn = $('tk-send'), msg = $('tk-msg'), cnt = $('tk-cnt'), sum = $('tk-sum');
     function save() { try { localStorage.setItem(LK, JSON.stringify(st)); } catch (e) { /* 存不下照樣可用 */ } }
     function bubble(cls, t) { var d = document.createElement('div'); d.className = 'b ' + cls; d.textContent = t; log.appendChild(d); log.scrollTop = log.scrollHeight; }
     function paint() {
@@ -54,7 +62,29 @@
       st.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t); });
       cnt.textContent = T('已討論 {n} 輪（至少 {m} 輪才會被評；一天最多 {d} 輪）').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP);
       if (st.done && !st.confirmed) showSummary();
-      if (st.confirmed) { sum.innerHTML = ''; var p = document.createElement('p'); p.className = 'note'; p.textContent = T('已記下：') + st.summary; sum.appendChild(p); inp.disabled = true; btn.disabled = true; }
+      paintHints();
+      if (st.confirmed) { paintCard(); inp.disabled = true; btn.disabled = true; }
+    }
+    function paintHints() {
+      hintBox.innerHTML = '';
+      if (st.confirmed || st.done || st.editing || st.rounds >= MAX_ROUNDS) return;
+      var hs = hintsOf(env, unit, st.rounds); if (!hs.length) return;
+      var p = document.createElement('p'); p.className = 'note'; p.textContent = T('不知道怎麼開口？點一個句型放進框裡，改成你自己的話再送出。'); hintBox.appendChild(p);
+      var row = document.createElement('div'); row.className = 'hb';
+      hs.forEach(function (h) { var b = document.createElement('button'); b.type = 'button'; b.className = 'h'; b.textContent = T(h); b.onclick = function () { inp.value = h; inp.focus(); }; row.appendChild(b); });
+      hintBox.appendChild(row);
+    }
+    function paintCard() {
+      sum.innerHTML = '';
+      var card = document.createElement('div'); card.className = 'rc'; card.setAttribute('role', 'group');
+      var rows = [[T('單元'), unit], [T('這週的決定點'), decisionOf(env, unit)], [T('你確認的那一句'), st.summary], [T('討論輪數'), String(st.rounds)], [T('代碼'), st.code || '—'], [T('完成時間'), st.at || '']];
+      var h = document.createElement('h4'); h.textContent = T('已完成本週討論'); card.appendChild(h);
+      var dl = document.createElement('dl');
+      rows.forEach(function (r) { if (!r[1] && r[0] !== T('代碼')) return; var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('代碼')) dd.className = 'code'; dl.appendChild(dt); dl.appendChild(dd); });
+      card.appendChild(dl);
+      var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = (st.edited ? T('那一句是你自己改寫的。') : T('那一句由助教整理，你確認過。')); card.appendChild(tag);
+      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這個畫面截圖，交到 flipclass。畫面上只有代碼，不顯示你的編號。'); card.appendChild(tip);
+      sum.appendChild(card);
     }
     function showSummary() {
       sum.innerHTML = '<div class="sumbox"><b id="tk-sh"></b><div id="tk-s"></div><div class="row"><button type="button" id="tk-ok"></button><button type="button" class="g" id="tk-ed"></button></div></div>';
@@ -78,7 +108,7 @@
     }
     function confirmIt(text) {
       btn.disabled = true; msg.textContent = T('記下中…');
-      put('confirm', text).then(function () { st.confirmed = true; st.summary = text; st.editing = false; save(); msg.textContent = ''; paint(); })
+      put('confirm', text).then(function (a) { st.confirmed = true; st.edited = (text !== st.autoSummary); st.summary = text; st.editing = false; st.at = stampNow(); if (a && a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 存不下照樣可用 */ } } save(); msg.textContent = ''; paint(); })
         .catch(function () { msg.textContent = T('現在送不出去，過一下再按一次。'); btn.disabled = false; });
     }
     btn.onclick = function () {
@@ -87,10 +117,11 @@
       if (st.editing) { confirmIt(text); inp.value = ''; return; }
       if (st.rounds >= MAX_ROUNDS) { msg.textContent = T('這次討論已經滿 8 輪了。'); return; }
       btn.disabled = true; inp.disabled = true; msg.textContent = T('助教想一下…（最多等 1 分半）');
-      st.msgs.push({ w: 's', t: text }); inp.value = ''; paint(); save();
+      st.msgs.push({ w: 's', t: text }); inp.value = ''; paint(); save(); hintBox.innerHTML = '';
       put('talk', text).then(function (a) {
         st.msgs.push({ w: 'a', t: a.say }); if (!a.rule && !a.capped) st.rounds = a.n || (st.rounds + 1);
-        if (a.done) { st.done = true; st.summary = a.summary || ''; }
+        if (a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 沒存成也沒關係 */ } }
+        if (a.done) { st.done = true; st.summary = a.summary || ''; st.autoSummary = st.summary; }
         save(); msg.textContent = ''; btn.disabled = false; inp.disabled = false; paint(); inp.focus();
       }).catch(function (e) {
         st.msgs.pop(); inp.value = text; save(); paint();

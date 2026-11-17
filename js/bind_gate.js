@@ -224,8 +224,8 @@
       '<div class="dj-gatelang" id="dj-gate-lang"></div>' +
       '<div class="course">文化遊戲松實作　<span>通識・綜合實踐領域</span><br>' +
         '遊戲設計學　<span>夜四技多樂一甲</span></div>' +
-      '<h2>進入前，先綁定一次</h2>' +
-      '<p class="sub">' + (reason || '確認你的信封編號與學校 Google 帳號。綁定之後，你在所有單元留下的紀錄都會連在一起。') + '</p>' +
+      '<h2>進入前，先綁定編號（只要做一次）</h2>' +
+      '<p class="sub">' + (reason || '請用學校 Google 帳號登入，再輸入你的信封編號。做完這一步，你每一週的紀錄都會記在同一個編號下。') + '</p>' +
 
       '<div class="step" id="dj-s1">' +
         '<div class="stitle"><span id="dj-t1">①</span> 確認 Google 帳號</div>' +
@@ -245,12 +245,12 @@
       '</div>' +
 
       '<div class="qrwrap"><div class="qrbox"><div id="dj-qr"></div></div>' +
-        '<div class="qrcap">用手機掃這個 QR，可以在手機上開同一頁</div></div>' +
+        '<div class="qrcap">用手機掃這個 QR 碼，就能在手機上打開同一頁</div></div>' +
 
       '<div class="row" style="margin-top:10px"><button class="ok grow" id="dj-go" disabled>綁定並進入</button></div>' +
       '<p class="err" id="dj-err" style="display:none"></p>' +
       '<p class="tiny">登不進 Google？<a href="#" id="dj-skip">先只用編號進去</a>，' +
-        '之後在任何一頁右上角都可以補綁。</p>' +
+        '之後點頁面右上角的編號，再補上 Google 帳號。</p>' +
       '</div>';
     document.body.appendChild(d);
     drawQr('dj-qr', pageUrl);
@@ -497,13 +497,13 @@
        排在總入口之後——tone 借用 clay（磚色）：目前 W1-4 用掉 warm/cool/plum/leaf，
        clay 還空著，跟任何一週的顏色都不會混淆；之後真的排到 W5 用掉 clay 時再挑一個新色。 */
     { key: 'laptop', href: 'laptop_survey.html', name: '設備調查', tone: 'clay',
-      desc: '帶筆電意願＋VNC／SSH 遠端協助意願（行政，跟週次無關）' },
+      desc: '調查你會不會帶筆電，以及願不願意讓老師遠端協助你的電腦（行政調查，跟週次無關）' },
     /* 2026-10-28 期中作業 W8-9：不給 wk（不進每週清單、不搶「本週」），排在設備調查後面（楊老師指定）。 */
     { key: 'mid', href: 'mid.html', name: '第8–9週', tone: 'plum',
       desc: '期中作業：把 W4–W7 接成同一款改版遊戲' },
     /* 2026-09-29 楊老師：選單長了，週次改倒序（最新的排最上面，緊接在設備調查下面），
        不用往下捲才找得到本週。加新的一週＝插在這一段最前面，其他不用動。 */
-    { key: 'w11',  href: 'w11.html',   wk: 11, name: '第11–16週', desc: '從樣板到你的小遊戲' },
+    { key: 'w11',  href: 'w11.html',   wk: 11, name: '第 11–16 週（W11–W16）', desc: '從樣板到你的小遊戲' },
     { key: 'w4',   href: 'w4.html',    wk: 4, name: '第4–7週', desc: '從企劃、原型到 NotebookLM 成果包',
       long: '延伸你們 W3 實際玩到的卡片組合：先用 Gemini Deep Research 跑三輪，'
           + '把企劃定案、加上介面與美術設定，再用 Google AI Studio 做出一個真的能玩的網頁原型，最後用 NotebookLM 做資訊圖表、語音摘要、簡報。' },
@@ -638,13 +638,13 @@
     var b = document.createElement('div');
     b.id = 'dj-bar';
     b.title = '點一下可以重新綁定';
-    b.textContent = '#' + env + (mail ? ' · ' + mail : ' · 未綁 Gmail');
+    b.textContent = '#' + env + (mail ? ' · ' + mail : ' · 未綁 Google 帳號');
     b.onclick = function () {
       /* 沒綁 Google 的人要補綁，這條路要留著（跳過登入只用編號進來的情況）。
          已經綁好的人就不能自己改編號了——整學期的紀錄要接得起來，號碼就不能浮動。 */
       if (!mail || isTeacher(env)) {
         b.remove();
-        openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補綁。');
+        openGate(mail ? '要換人或換編號就改這裡。' : '你還沒綁 Google 帳號，現在補上。');
         return;
       }
       var old = document.getElementById('dj-locked');

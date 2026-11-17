@@ -84,5 +84,29 @@ window.DJ_GATE_I18N = {
  "總入口": {
   "vi": "Cổng chính",
   "id": "Pintu Masuk Utama"
+ },
+ "進入前，先綁定編號（只要做一次）": {
+  "vi": "Liên kết mã số trước khi vào nhé (chỉ làm 1 lần).",
+  "id": "Tautkan nomor dulu sebelum masuk (cukup sekali aja)."
+ },
+ "請用學校 Google 帳號登入，再輸入你的信封編號。做完這一步，你每一週的紀錄都會記在同一個編號下。": {
+  "vi": "Đăng nhập bằng Google trường rồi nhập mã trên phong bì. Xong bước này, dữ liệu mỗi tuần sẽ lưu chung vào mã đó.",
+  "id": "Masuk pakai Google kampus, lalu isi nomor amplopmu. Nanti semua catatan mingguan bakal kerekam di nomor ini."
+ },
+ "之後點頁面右上角的編號，再補上 Google 帳號。": {
+  "vi": "Sau đó bấm vào mã số ở góc trên bên phải để thêm tài khoản Google.",
+  "id": "Nanti klik nomor di pojok kanan atas buat hubungin akun Google."
+ },
+ "用手機掃這個 QR 碼，就能在手機上打開同一頁": {
+  "vi": "Quét mã QR để mở trang này trên điện thoại.",
+  "id": "Scan QR ini buat buka halaman yang sama di HP."
+ },
+ "你還沒綁 Google 帳號，現在補上。": {
+  "vi": "Bạn chưa liên kết tài khoản Google, thêm ngay nhé.",
+  "id": "Kamu belum tautkan akun Google, sambungkan sekarang yuk."
+ },
+ "，之後點頁面右上角的編號，再補上 Google 帳號。": {
+  "vi": "Rồi bấm vào ID ở góc trên bên phải, thêm tài khoản Google vào nhé.",
+  "id": "Lalu klik ID di pojok kanan atas, terus tambahkan akun Google."
  }
 };

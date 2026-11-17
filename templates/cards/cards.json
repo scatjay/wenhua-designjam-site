@@ -27,14 +27,14 @@
   "min_collection": 5,
   "versions": {
    "culture": {
-    "label": "版本一：相剋有故事",
+    "label": "玩法版：相剋有故事",
     "relations": "story",
     "special": true,
     "tiebreak": "root",
     "loss_penalty": "lowest_root"
    },
    "skin": {
-    "label": "版本二：只換了名字",
+    "label": "換皮版：只換了名字",
     "relations": "triangle",
     "special": false,
     "tiebreak": "total_power",
@@ -1143,7 +1143,7 @@
   "skin": "cards",
   "modules": {
    "核心動作": "出牌：一位主將＋最多一張隨侍",
-   "資源計分": "力＋法器＋相剋加成（版本一）／火木水三角（版本二）",
+   "資源計分": "力＋法器＋相剋加成（玩法版）／火木水三角（換皮版）",
    "時間回合": "每場最多三合，先拿兩分",
    "空間": "收藏格與出陣五席",
    "角色": "26 張神明與法器卡，每張附出處",

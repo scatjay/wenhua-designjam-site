@@ -177,7 +177,7 @@
     <button class="u u4" data-t="W3"><b>第3週 · 社交推理遊戲</b><span>場次、回饋、學生設計的卡</span></button>
     <button class="u u5" data-t="W4"><b>第4–7週 · AI 工具協作</b><span>提交、回饋、指令技能</span></button>
     <button class="u u6" data-t="Mid"><b>第8–9週 · 期中作業</b><span>進度矩陣、回報、AI 助教</span></button>
-    <button class="u u7" data-t="W11"><b>第11週 · AI 助教整合</b><span>綁定、問卷、討論、出處標示欄（對話在本機）</span></button>
+    <button class="u u7" data-t="W11"><b>第11週 · AI 助教整合</b><span>綁定狀況、本機後台在線與待處理</span></button>
     <button class="u u3" data-t="Tools"><b>研究用途與工具</b><span>persona／ENA／Vertex 用量（研究用）</span></button>
   </div>
   <div id="onlineStrip" style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:10px 0 14px;font-size:13.5px" role="status" aria-live="polite">
@@ -333,7 +333,7 @@
 
   <div id="tabW11" hidden>
     <div class="w47box" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 12px;line-height:1.8">
-      <b>助教討論、問卷判定、出處標示欄、申請加開的核准，都在老師電腦的本機頁</b>（對話全文只存在這台電腦，不上雲端）。<br>
+      <b>助教討論、問卷、點子、花費、申請加開的核准，都在老師電腦的本機頁</b>（對話全文只存在這台電腦，不上雲端）。<br>
       <a href="http://127.0.0.1:8821/teacher_w11" target="_blank" rel="noopener" style="font-weight:800;color:var(--accent)">打開本機 W11 後台 →</a>　<span id="w11local" style="font-size:13px"></span><br>
       <span id="w11pend" style="font-size:13px"></span><br>
       <span style="font-size:12px;color:var(--ink-soft)">本機後台沒開時，在老師電腦執行 <code>python E:/Downloads/課程管理與備課/文化遊戲松_designjam/templates_draft/tutor/teacher_w11_local.py</code>。這一頁只放 Firebase 上有的資料；只用信封編號。</span>
@@ -1483,6 +1483,6 @@ db.ref(`${NS}/rounds`).on("value", snap => {
 })();
 </script>
 <script src="js/teacher_mid.js?v=202610281925"></script>
-<script src="js/teacher_w11.js?v=202611172110"></script>
+<script src="js/teacher_w11.js?v=202611172125"></script>
 </body>
 </html>

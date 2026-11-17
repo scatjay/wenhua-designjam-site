@@ -49,7 +49,20 @@
     var s = document.createElement('style'); s.id = 'svycss';
     s.textContent = '.sy .it{margin:12px 0;padding:10px 12px;border:1px solid var(--hair);border-radius:12px;background:var(--surface)}.sy .it .q{margin:0 0 4px}.sy .it .ask{margin:0 0 6px;font-size:13px;opacity:.75}.sy .sc{display:flex;gap:6px;flex-wrap:wrap}'
       + '.sy .sc label{flex:1 1 56px;min-height:44px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--hair);border-radius:10px;padding:4px 6px;cursor:pointer;font-size:14px;line-height:1.3}'
-      + '.sy .sc input{position:absolute;opacity:0;pointer-events:none}.sy .sc label.on{background:var(--accent);color:#fff;border-color:var(--accent)}'
+      + '.sy .sc input{position:absolute;opacity:0;pointer-events:none}'
+      /* 構面＝軸向，每個構面一個色相；五點量尺＝強度，同一色相由淺到深（楊老師 11-17 20:30–20:31） */
+      + '.sy{--dA:#2b8a3e;--dB:#1c64c8;--dC:#7c3aed;--dD:#b45309}'
+      + '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sy{--dA:#69db7c;--dB:#74b0ff;--dC:#b79bff;--dD:#ffb454}}'
+      + ':root[data-theme="dark"] .sy{--dA:#69db7c;--dB:#74b0ff;--dC:#b79bff;--dD:#ffb454}'
+      + '.sy .dim{--c:var(--accent);margin:18px 0;padding:4px 12px 8px;border-left:6px solid var(--c);border-radius:0 14px 14px 0;background:color-mix(in srgb,var(--c) 6%,transparent)}'
+      + '.sy .dim[data-d="A"]{--c:var(--dA)}.sy .dim[data-d="B"]{--c:var(--dB)}.sy .dim[data-d="C"]{--c:var(--dC)}.sy .dim[data-d="D"]{--c:var(--dD)}'
+      + '.sy .dim>h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--c);margin:8px 0 4px}.sy .dim>h3 .tag{font-size:12px;font-weight:800;color:#fff;background:var(--c);border-radius:6px;padding:3px 8px}.sy .dim>h3 .cnt{font-size:12.5px;font-weight:600;opacity:.8}'
+      + '.sy .dim .it{border-color:color-mix(in srgb,var(--c) 35%,transparent)}'
+      + '.sy .sc label{border-color:color-mix(in srgb,var(--c) var(--b),transparent);background:color-mix(in srgb,var(--c) var(--f),var(--surface))}'
+      + '.sy .sc label[data-v="1"]{--f:4%;--b:25%}.sy .sc label[data-v="2"]{--f:9%;--b:38%}.sy .sc label[data-v="3"]{--f:15%;--b:52%}.sy .sc label[data-v="4"]{--f:23%;--b:68%}.sy .sc label[data-v="5"]{--f:32%;--b:85%}'
+      + '.sy .sc label.on{color:#fff;border-color:var(--c);font-weight:700}'
+      + '.sy .sc label[data-v="1"].on{background:color-mix(in srgb,var(--c) 45%,#888)}.sy .sc label[data-v="2"].on{background:color-mix(in srgb,var(--c) 62%,#777)}.sy .sc label[data-v="3"].on{background:color-mix(in srgb,var(--c) 78%,#555)}.sy .sc label[data-v="4"].on{background:var(--c)}.sy .sc label[data-v="5"].on{background:color-mix(in srgb,var(--c) 75%,#000)}'
+      + '.sy .svkey{display:flex;align-items:center;gap:8px;font-size:12.5px;opacity:.85;margin:2px 0 6px}.sy .svkey i{flex:1;height:8px;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 12%,var(--surface)),var(--c))}'
       + '.sy button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer}.sy button.g{background:transparent;color:var(--accent)}'
       + '.sy .card{border:2px solid var(--accent);border-radius:14px;padding:14px 16px;margin-top:10px;background:var(--bg,#fff);max-width:420px}.sy .card h4{margin:0 0 8px;font-size:18px}'
       + '.sy .card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px}.sy .card dt{opacity:.75}.sy .card dd{margin:0}'
@@ -66,14 +79,16 @@
     var base = emu ? 'http://127.0.0.1:' + port : DB, qs = emu ? '?ns=' + NS : '';
     var DK = 'survey_' + SURVEY.unit + '_done';
     var ans = {}, html = ['<div class="sy"><p class="note" id="sy-intro"></p><div id="sy-open" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button type="button" id="sy-yes">' + esc(T('願意填')) + '</button><button type="button" class="g" id="sy-no">' + esc(T('這次不填')) + '</button></div><div id="sy-form" hidden>'];
-    SURVEY.dims.forEach(function (d) {
-      html.push('<h3>' + esc(T(d.name)) + '</h3>');
+    SURVEY.dims.forEach(function (d, di) {
+      html.push('<div class="dim" data-d="' + d.id + '"><h3><span class="tag">' + esc(T('第')) + ' ' + (di + 1) + '／' + SURVEY.dims.length + ' ' + esc(T('部分')) + '</span>' + esc(T(d.name)) + '<span class="cnt">' + d.items.length + ' ' + esc(T('題')) + '</span></h3>');
+      html.push('<p class="svkey" aria-hidden="true"><span>' + esc(T(SURVEY.scale[0])) + '</span><i></i><span>' + esc(T(SURVEY.scale[4])) + '</span></p>');
       d.items.forEach(function (t, i) {
         var k = d.id + (i + 1);
         html.push('<div class="it" data-k="' + k + '"><p class="q">' + esc(T(t)) + '</p><p class="ask">' + esc(T(SURVEY.ask)) + '</p><div class="sc" role="radiogroup" aria-label="' + esc(t) + '">');
-        SURVEY.scale.forEach(function (lab, v) { html.push('<label><input type="radio" name="' + k + '" value="' + (v + 1) + '">' + (v + 1) + ' ' + esc(T(lab)) + '</label>'); });
+        SURVEY.scale.forEach(function (lab, v) { html.push('<label data-v="' + (v + 1) + '"><input type="radio" name="' + k + '" value="' + (v + 1) + '">' + (v + 1) + ' ' + esc(T(lab)) + '</label>'); });
         html.push('</div></div>');
       });
+      html.push('</div>');
     });
     html.push('<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" id="sy-go">' + esc(T('送出')) + '</button></div></div><p class="note" id="sy-msg" role="status"></p><div id="sy-done"></div></div>');
     el.innerHTML = html.join('');

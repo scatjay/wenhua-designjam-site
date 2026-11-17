@@ -81,7 +81,7 @@ window.CT_WID = {
  "我覺得這個畫面最重要的是＿＿": "Menurut saya, hal terpenting dari tampilan ini adalah ＿＿",
  "景點說明我改了＿＿，原本是＿＿": "Pada penjelasan tempat wisata, saya mengubah ＿＿, yang awalnya adalah ＿＿",
  "我沒改歷史說明，因為＿＿": "Saya tidak mengubah penjelasan sejarah, karena ＿＿",
- "我改了畫面，但故事還成立，因為＿＿": "Saya mengubah tampilannya, tetapi ceritanya tetap masuk akal karena ＿＿",
+ "我改了畫面，但原本的故事還說得通，因為＿＿": "Saya mengubah tampilannya, tetapi ceritanya masih masuk akal karena ＿＿",
  "AI 還原的結果我留了＿＿，改回了＿＿，因為＿＿": "Dari hasil rekonstruksi AI, saya mempertahankan ＿＿ dan mengubah kembali ＿＿, karena ＿＿",
  "我怎麼確認它沒有改到歷史：＿＿": "Cara saya memastikan bahwa sejarahnya tidak diubah: ＿＿",
  "我不同意助教剛剛說的，因為＿＿": "Saya tidak setuju dengan apa yang baru saja disampaikan asisten pengajar, karena ＿＿",

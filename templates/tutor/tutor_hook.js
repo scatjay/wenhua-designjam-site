@@ -172,11 +172,11 @@
     css();
     var d = document.createElement('details'); d.id = 'ctHook';
     var t = C.TPL_BY_ID[O.tpl] || {};
-    var s1 = '<div class="sec"><h3>玩之前先猜，玩完再判斷</h3><p class="m">問題：抽掉文化之後，這個遊戲還玩得下去嗎？</p>' +
-      '<div class="row"><span>先猜</span><select id="chPrS" aria-label="先猜：文化只是皮版">' + w2opts('皮版（先猜）') + '</select><select id="chPrR" aria-label="先猜：文化長在規則裡版">' + w2opts('規則版（先猜）') + '</select><button type="button" id="chPrB">我猜好了</button></div>' +
-      '<div class="row"><button type="button" id="chPlS">我玩完「文化只是皮」版了</button><button type="button" id="chPlR">我玩完「文化長在規則裡」版了</button></div>' +
-      '<div class="row"><span>判斷</span><select id="chJS" aria-label="判斷：文化只是皮版">' + w2opts('皮版（判斷）') + '</select><select id="chJR" aria-label="判斷：文化長在規則裡版">' + w2opts('規則版（判斷）') + '</select></div>' +
-      '<label for="chRS">為什麼（皮版）</label><textarea id="chRS" maxlength="200"></textarea><label for="chRR">為什麼（規則版）</label><textarea id="chRR" maxlength="200"></textarea><div class="row"><button type="button" id="chJB" class="pri">我答好了</button></div></div>',
+    var s1 = '<div class="sec"><h3>玩之前先猜，玩完再判斷</h3><p class="m">問題：把那裡的東西換掉（例如把廟換成便利商店），你當時的決定會變嗎？</p>' +
+      '<div class="row"><span>先猜</span><select id="chPrS" aria-label="先猜：換皮版">' + w2opts('換皮版（先猜）') + '</select><select id="chPrR" aria-label="先猜：玩法版">' + w2opts('玩法版（先猜）') + '</select><button type="button" id="chPrB">我猜好了</button></div>' +
+      '<div class="row"><button type="button" id="chPlS">我玩完「換皮版」了</button><button type="button" id="chPlR">我玩完「玩法版」了</button></div>' +
+      '<div class="row"><span>判斷</span><select id="chJS" aria-label="判斷：換皮版">' + w2opts('換皮版（判斷）') + '</select><select id="chJR" aria-label="判斷：玩法版">' + w2opts('玩法版（判斷）') + '</select></div>' +
+      '<label for="chRS">為什麼（換皮版）</label><textarea id="chRS" maxlength="200"></textarea><label for="chRR">為什麼（玩法版）</label><textarea id="chRR" maxlength="200"></textarea><div class="row"><button type="button" id="chJB" class="pri">我答好了</button></div></div>',
       s2 = '<div class="sec"><h3>內容出處（選填）：我的作品用到的內容</h3><p class="m">這一項是從哪來的？不確定就選「待查」，不要硬選。</p>' +
       '<label for="chIt">內容（一次一項）</label><input type="text" id="chIt" maxlength="60" style="width:100%"><div class="row"><select id="chCat" aria-label="出處類別">' + opts(CATS, '出處類別') + '</select><button type="button" id="chItB">加入</button></div><div id="chItems"></div>' +
       '<p class="m">讀過的資料卡：</p><div class="row" id="chFolk">' + ((t.folk || []).map(function (id) { var f = C.FOLK_BY_ID[id]; return f ? '<button type="button" data-folk="' + id + '">📖 ' + esc(f.name) + '</button>' : ''; }).join(' ')) + '</div></div>',
@@ -325,7 +325,7 @@
 
   function markPlayed(ver) { if (!H) return; if (ver === 'skin' || ver === 'rule') { H.played[ver] = true; UI.record('play', { ver: ver }); after('play'); } }
 
-  /* 樣板自己有判斷題時，在學生選好之後呼叫這個（code＝選項的位置 1–4，與 W2 四選一同序：照樣玩／故事垮了玩法還在／玩法本身就垮了／說不準；reason 可省略）。
+  /* 樣板自己有判斷題時，在學生選好之後呼叫這個（code＝選項的位置 1–4，與 W2 四選一同序：決定不會變／感覺變了決定沒變／決定會變／說不準；reason 可省略）。
      這樣學生不用在掛鉤裡再答一次；兩邊的選項字面不同也沒關係，記的是位置。 */
   function judged(ver, code, reason) {
     if (!H || (ver !== 'skin' && ver !== 'rule') || !(code >= 1 && code <= 4)) return;

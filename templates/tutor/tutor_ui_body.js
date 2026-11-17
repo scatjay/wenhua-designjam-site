@@ -62,8 +62,8 @@
   var STUDENT_KEEP = 300;
   function stateBullets(st) {
     var p = st.played || {}, w = st.w2 || {}, ai = st.ai || {}, b = st.build || {}, out = [];
-    out.push('玩過：' + (p.skin ? '皮版' : '') + (p.rule ? '規則版' : '') + (!p.skin && !p.rule ? '還沒玩' : ''));
-    if (w.skin || w.rule) out.push('判斷代碼：皮版 ' + (w.skin || 0) + '、規則版 ' + (w.rule || 0));
+    out.push('玩過：' + (p.skin ? '換皮版' : '') + (p.rule ? '玩法版' : '') + (!p.skin && !p.rule ? '還沒玩' : ''));
+    if (w.skin || w.rule) out.push('判斷代碼：換皮版 ' + (w.skin || 0) + '、玩法版 ' + (w.rule || 0));
     if (ai.suggested) out.push('AI 建議 ' + ai.suggested + ' 條：照用 ' + (ai.accepted || 0) + '、改了 ' + (ai.modified || 0) + '、不用 ' + (ai.rejected || 0));
     if (b.versions) out.push('已存 ' + b.versions + ' 版');
     return out.slice(0, 8).map(function (x) { return x.slice(0, 80); });

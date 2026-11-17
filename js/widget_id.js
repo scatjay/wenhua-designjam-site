@@ -102,5 +102,6 @@ window.CT_WID = {
  "先綁定你的編號才能送出：點頁面右上角的小圓標，或重新整理頁面。綁好之後，這裡就能和助教討論。": "Tautkan nomor kamu dulu sebelum kirim: klik ikon bulat kecil di pojok kanan atas halaman, atau muat ulang halaman. Setelah ditautkan, kamu bisa berdiskusi dengan asisten pengajar di sini.",
  "AI 助教": "AI asisten pengajar",
  "打開右下角助教": "Buka asisten pengajar di pojok kanan bawah",
- "AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。": "AI asisten pengajar ada di pojok kanan bawah layar pada 「💬 AI asisten pengajar」, klik untuk mulai mengobrol."
+ "AI 助教在畫面右下角的「💬 AI 助教」，點開就能聊。": "AI asisten pengajar ada di pojok kanan bawah layar pada 「💬 AI asisten pengajar」, klik untuk mulai mengobrol.",
+ "這一題請直接選「不太符合」，用來確認畫面有正常顯示。": "Untuk soal ini, pilih langsung 「不太符合」 (Kurang sesuai), untuk memastikan tampilan layar normal."
 };

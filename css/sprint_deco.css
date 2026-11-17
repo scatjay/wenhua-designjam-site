@@ -90,3 +90,10 @@ a.tpl[data-tpl]{display:inline-block;padding:1px 9px;margin:2px 0;border-radius:
   color:var(--tc);background:color-mix(in srgb,var(--tc) 10%,var(--surface));text-decoration:none;font-weight:700;white-space:nowrap}
 a.tpl[data-tpl]:hover{background:color-mix(in srgb,var(--tc) 20%,var(--surface))}
 @media (max-width:420px){section[data-kind]{padding-left:10px}}
+
+/* 樣板卡：按鈕固定在卡片底部同一排（楊老師 11-17 21:28「按鈕位置都跑掉了」） */
+.six>div[data-tpl]{display:grid;grid-template-columns:auto auto 1fr;grid-template-rows:auto 1fr auto;column-gap:8px}
+.six>div[data-tpl]>b,.six>div[data-tpl]>.draw,.six>div[data-tpl]>.demo{grid-column:1/-1}
+.six>div[data-tpl]>.draw{display:block;min-height:2.9em;line-height:1.45}
+.six>div[data-tpl]>.demo{justify-self:start}
+.six>div[data-tpl]>.try{grid-row:3;margin:10px 0 0;align-self:end;justify-self:start;white-space:nowrap}

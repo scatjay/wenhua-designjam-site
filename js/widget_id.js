@@ -35,7 +35,7 @@ window.CT_WID = {
  "完全不符合": "Sangat tidak sesuai",
  "不太符合": "Kurang sesuai",
  "有點符合": "Agak sesuai",
- "相當符合": "Cukup sesuai",
+ "相當符合": "Sesuai",
  "非常符合": "Sangat sesuai",
  "一、你為什麼在這門課做事": "1. Mengapa Anda mengerjakan tugas di mata kuliah ini",
  "我會在這門課認真做作品，是因為要拿到學分和成績。": "Saya mengerjakan karya di mata kuliah ini dengan sungguh-sungguh karena ingin mendapatkan SKS dan nilai.",

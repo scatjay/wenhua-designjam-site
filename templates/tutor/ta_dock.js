@@ -61,6 +61,7 @@
   function linkOk(id) { var e = document.getElementById(id); return !!(e && (e.tagName === 'SECTION' || (e.tagName === 'DETAILS') || e.classList.contains('stage'))); }
   function goTo(id) {
     var el = document.getElementById(id); if (!el) return;
+    if (window.COL_EXPAND) window.COL_EXPAND(el);
     var d = el.closest('details'); while (d) { d.open = true; d = d.parentElement && d.parentElement.closest('details'); }
     if (el.tagName === 'DETAILS') el.open = true;
     if (window.matchMedia('(max-width:700px)').matches && D) D.open(false);

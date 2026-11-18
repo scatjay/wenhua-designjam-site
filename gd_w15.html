@@ -122,6 +122,8 @@ function setId(on){document.body.classList.toggle('show-id',on);$('langbtn').set
 var env=NaN;try{env=parseInt(localStorage.getItem('designjam_env'),10)}catch(e){}
 var q=/[?&]lang=(id|zh)/.exec(location.search),saved=null;try{saved=localStorage.getItem('gd_w11_id')}catch(e){}
 setId(q?q[1]==='id':(saved!==null?saved==='1':(env>=101&&env<=130)));
+try{localStorage.setItem('designjam_lang',document.body.classList.contains('show-id')?'id':'zh')}catch(e){}
+window.applyLang=function(k){var w=(k==='id');if(w===document.body.classList.contains('show-id'))return;setId(w);setTimeout(function(){location.reload()},60)};window.applyLang.langs=['zh','id'];
 $('langbtn').onclick=function(){setId(!document.body.classList.contains('show-id'))};
 document.querySelectorAll('[data-copy]').forEach(function(b){b.onclick=function(){var t=$(b.getAttribute('data-copy')).textContent;
 function ok(){var o=b.textContent;b.textContent='✓';setTimeout(function(){b.textContent=o},1200)}
@@ -138,7 +140,7 @@ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.write
 <script src="js/talk_widget.js?v=202611181420"></script>
 <script src="js/survey_widget.js?v=202611180950"></script>
 <script src="js/collapse.js?v=202611181015"></script>
-<style>#dj-langrow{display:none!important}body:has(#dj-gate-lang) .langbar{display:none!important}</style>
+<style>.langbar{display:none!important}</style>
 <script>window.DJ_PAGE_LANGS=['zh','id'];</script>
 <script>window.DJ_BIND_UNIT='w11';</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>

@@ -188,5 +188,7 @@ window.CT_WID = {
  "我的 3 個畫面是＿＿、＿＿、＿＿": "3 layar saya adalah ＿＿, ＿＿, ＿＿",
  "最大的那個畫面是＿＿，因為＿＿": "Layar yang paling besar adalah ＿＿, karena ＿＿",
  "我覺得最好玩的那一刻是＿＿": "Momen yang menurut saya paling seru adalah ＿＿",
- "我不確定＿＿，想請 AI 助教問我": "Saya tidak yakin tentang ＿＿, ingin meminta asisten pengajar AI bertanya kepada saya"
+ "我不確定＿＿，想請 AI 助教問我": "Saya tidak yakin tentang ＿＿, ingin meminta asisten pengajar AI bertanya kepada saya",
+ "聊夠了，按這個，AI 助教把你剛剛說的整理成一句話。": "Udah kelar ngobrol? Klik ini, asisten AI bakal rangkum obrolanmu jadi satu kalimat.",
+ "我想整理了，請幫我整理成一句話。": "Mau rangkum nih, tolong rangkumin jadi satu kalimat ya."
 };

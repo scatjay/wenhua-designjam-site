@@ -20,6 +20,10 @@
       + '#ta-panel header button{min-height:36px;min-width:36px;border:0;border-radius:8px;background:transparent;color:inherit;font-size:20px;line-height:1;cursor:pointer}'
       + '#ta-lockmsg,#ta-pause{margin:0;padding:8px 14px;font-size:13px;color:var(--ta-ink)}#ta-lockmsg{background:var(--ta-soft)}#ta-pause{background:#fdecc8}#ta-lockmsg[hidden],#ta-pause[hidden]{display:none}'
       + '#ta-body{overflow:auto;padding:10px 12px 12px;flex:1;min-height:0}'
+      + '#ta-panel header button#ta-big{font-size:13px;font-weight:700;padding:0 10px;border:1px solid currentColor;min-width:60px;white-space:nowrap}'
+      + '#ta-panel.open.big{z-index:99990;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);width:70vw;max-width:1100px;height:85vh;max-height:85vh}'
+      + '#ta-panel.big #ta-body{display:flex;flex-direction:column;overflow:hidden}#ta-panel.big #ta-body>div{display:flex;flex-direction:column;flex:1;min-height:0}#ta-panel.big .tk{display:flex;flex-direction:column;flex:1;min-height:0;margin:0;overflow:auto}#ta-panel.big .tk .log{flex:1 1 auto;max-height:none;min-height:120px}#ta-panel.big .tk .b{max-width:80%;font-size:16px}#ta-panel.big .tk #tk-tpl .hb,#ta-panel.big .tk #tk-hints .hb{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px}#ta-panel.big .tk .hints button.h{flex:0 0 min(260px,72vw)}#ta-panel.big .tk textarea{min-height:96px}'
+      + '@media(max-width:700px){#ta-panel.open.big{left:0;top:0;right:0;bottom:0;transform:none;width:100%;max-width:none;height:100%;max-height:none;border-radius:0}}'
       + '.askbtn{font:inherit;font-size:12.5px;font-weight:600;color:var(--ta-ac);background:var(--ta-soft);border:1px solid var(--ta-ac);border-radius:99px;padding:3px 11px;min-height:32px;cursor:pointer;margin:0 0 8px}'
       + 'a.ta-loc{color:var(--ta-ac);font-weight:700;text-decoration:underline;cursor:pointer}.ta-hl{outline:3px solid var(--ta-ac);outline-offset:3px;transition:outline-color .4s}'
       + '@media(max-width:700px){#ta-fab{right:10px;bottom:calc(12px + env(safe-area-inset-bottom,0px));width:52px;height:52px;padding:0;border-radius:50%;font-size:12.5px;line-height:1;display:flex;align-items:center;justify-content:center;white-space:nowrap}#ta-fab .fl{display:none}#ta-fab .fs{display:inline}#ta-panel{right:10px;width:min(400px,calc(100vw - 20px));bottom:calc(72px + env(safe-area-inset-bottom,0px));max-height:70vh}}';
@@ -35,7 +39,8 @@
     var p = document.createElement('div'); p.id = 'ta-panel'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'AI助教');
     var hd = document.createElement('header'), t = document.createElement('b'), cx = document.createElement('span'), x = document.createElement('button');
     t.textContent = 'AI助教'; cx.className = 'ctx'; cx.id = 'ta-ctx'; x.id = 'ta-x'; x.type = 'button'; x.setAttribute('aria-label', '關閉AI助教'); x.textContent = '×';
-    hd.appendChild(t); hd.appendChild(cx); hd.appendChild(x);
+    var big = document.createElement('button'); big.id = 'ta-big'; big.type = 'button'; big.textContent = '放大'; big.title = '放大 / Perbesar'; big.setAttribute('aria-label', '放大助教面板'); big.setAttribute('aria-pressed', 'false');
+    hd.appendChild(t); hd.appendChild(cx); hd.appendChild(big); hd.appendChild(x);
     var lock = document.createElement('p'); lock.id = 'ta-lockmsg'; lock.hidden = true;
     var pause = document.createElement('p'); pause.id = 'ta-pause'; pause.hidden = true; pause.setAttribute('role', 'status'); pause.textContent = 'AI 助教暫停中，請先看老師放的說明影片，或舉手問老師。你寫的字還在框裡，過一下再按送出。';
     var body = document.createElement('div'); body.id = 'ta-body';
@@ -53,6 +58,7 @@
     };
     fab.addEventListener('click', function () { if (o.onFab) o.onFab(D); else D.open(!D.isOpen()); });
     x.addEventListener('click', function () { D.open(false); });
+    big.addEventListener('click', function () { var on = !p.classList.contains('big'); p.classList.toggle('big', on); big.textContent = on ? '縮小' : '放大'; big.title = on ? '縮小 / Perkecil' : '放大 / Perbesar'; big.setAttribute('aria-label', on ? '縮小助教面板' : '放大助教面板'); big.setAttribute('aria-pressed', on ? 'true' : 'false'); var lg = document.getElementById('tk-log'); if (lg) lg.scrollTop = lg.scrollHeight; });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') D.open(false); });
     return D;
   }

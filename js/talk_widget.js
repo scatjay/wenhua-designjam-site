@@ -8,7 +8,7 @@
     '46582': { W11: '你把走讀的畫面做成網頁，你選了哪一個畫面來還原？' }
   };
   var HINTS = window.CT_HINTS || {};
-  var DAY_CAP = 50, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;
+  var DAY_CAP = 100, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;
   var $ = function (id) { return document.getElementById(id); };
   var WID = window.CT_WID || {}, ID = false;
   function T(zh) { var t = WID[zh]; return ID && t ? zh + ' / ' + t.charAt(0).toUpperCase() + t.slice(1) : zh; }
@@ -27,6 +27,8 @@
   function ledgerChecks() { return []; }   // 紀錄欄已撤除（11-17 21:06）；保留空函式以免舊呼叫處出錯
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function stampNow(ms) { var d = new Date(ms || Date.now()); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+  function hm(ms) { var d = new Date(ms); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+  var WDAY = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
   function qid() { return String(Date.now()) + '_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0'); }
   function css() {
     if ($('talkcss')) return;
@@ -37,7 +39,7 @@
       + '.tk button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer}.tk button.g{background:transparent;color:var(--accent)}.tk button[disabled]{opacity:.5;cursor:default}'
       + '.tk .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.tk .cnt{font-size:13px;opacity:.8}.tk .sumbox{border:1px dashed var(--accent);border-radius:10px;padding:10px;margin-top:8px}'
       + '.tk .hints{margin-top:8px}.tk .hints .hb{display:flex;gap:6px;flex-wrap:wrap}.tk .hints button.h{min-width:0;min-height:44px;padding:6px 12px;border-radius:12px;background:transparent;color:var(--accent);text-align:left;font-size:14px;line-height:1.35}'
-      + '.tk .rc{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--bg,#fff)}.tk .rc h4{margin:0 0 6px;font-size:17px}.tk .rc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.5}.tk .rc dt{opacity:.75}.tk .rc dd{margin:0;word-break:break-word}.tk .rc .code{font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.1em}.tk .rc .tag{font-size:12px;opacity:.8}';
+      + '.tk .tm{display:block;font-size:11px;opacity:.65;margin-top:2px}.tk .s .tm{text-align:right}.tk .prev{border-bottom:1px dashed var(--hair);padding-bottom:6px}.tk .prev .pt{font-size:12px;opacity:.75;margin:0 0 4px}.tk .prev details{margin:2px 0}.tk .prev summary{cursor:pointer;font-size:13px;min-height:32px;display:flex;align-items:center}.tk .prev .pl{display:flex;flex-direction:column;gap:6px;margin:4px 0 6px;padding-left:8px}.tk .prev .none{font-size:12px;opacity:.65;margin:0}.tk .rc{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--bg,#fff)}.tk .rc h4{margin:0 0 6px;font-size:17px}.tk .rc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.5}.tk .rc dt{opacity:.75}.tk .rc dd{margin:0;word-break:break-word}.tk .rc .code{font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.1em}.tk .rc .tag{font-size:12px;opacity:.8}';
     document.head.appendChild(s);
   }
   var APIREF = { a: null };
@@ -65,10 +67,48 @@
     var tplRow = $('tk-tpl').firstChild; TPL.forEach(function (h) { var b = document.createElement('button'); b.type = 'button'; b.className = 'h'; b.textContent = T(h); b.onclick = function () { inp.value = (inp.value ? inp.value + ' ' : '') + h; inp.focus(); }; tplRow.appendChild(b); });
     var hintBox = $('tk-hints'), log = $('tk-log'), inp = $('tk-in'), btn = $('tk-send'), msg = $('tk-msg'), cnt = $('tk-cnt'), sum = $('tk-sum');
     function save() { try { localStorage.setItem(LK, JSON.stringify(st)); } catch (e) { /* 存不下照樣可用 */ } }
-    function bubble(cls, t) { var d = document.createElement('div'); d.className = 'b ' + cls; if (cls === 'a' && window.TA_DOCK) window.TA_DOCK.linkify(d, t); else d.textContent = t; log.appendChild(d); log.scrollTop = log.scrollHeight; }
+    function bubble(cls, t, at, host) { var d = document.createElement('div'); d.className = 'b ' + cls; if (cls === 'a' && window.TA_DOCK) window.TA_DOCK.linkify(d, t); else d.textContent = t; if (at) { var tm = document.createElement('span'); tm.className = 'tm'; tm.textContent = hm(at); d.appendChild(tm); } (host || log).appendChild(d); if (!host) log.scrollTop = log.scrollHeight; }
+    function prevDays() {
+      var re = /^talk_(?:47602|46582|test)-(20[0-9]{6})(am|pm)_([0-9]+)_(W1[0-9])$/, by = {};
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i), m = re.exec(k || '');
+          if (!m || m[3] !== String(env) || m[4] !== unit || k === LK) continue;
+          var v = JSON.parse(localStorage.getItem(k) || 'null'); if (!v || !v.msgs || !v.msgs.length) continue;
+          (by[m[1]] = by[m[1]] || []).push({ half: m[2], v: v });
+        }
+      } catch (e) { /* 讀不到就當沒有 */ }
+      return Object.keys(by).sort().reverse().map(function (ymd) {
+        var parts = by[ymd].sort(function (a, b) { return a.half < b.half ? -1 : 1; }), msgs = [], rounds = 0, last = 0;
+        parts.forEach(function (p) { p.v.msgs.forEach(function (x) { msgs.push(x); if (x.at && x.at > last) last = x.at; }); rounds += p.v.rounds || 0; });
+        return { ymd: ymd, msgs: msgs, rounds: rounds, last: last };
+      });
+    }
+    function dayLabel(d) {
+      var y = +d.ymd.slice(0, 4), mo = +d.ymd.slice(4, 6), da = +d.ymd.slice(6, 8), wd = new Date(y, mo - 1, da).getDay();
+      return mo + '/' + da + '（' + T(WDAY[wd]) + '）・' + T('聊了 {n} 輪').split('{n}').join(d.rounds) + (d.last ? '・' + T('最後 {t}').split('{t}').join(hm(d.last)) : '');
+    }
+    function dayEl(d) {
+      var det = document.createElement('details'), sm = document.createElement('summary'), box = document.createElement('div'); sm.textContent = dayLabel(d); box.className = 'pl';
+      det.appendChild(sm); det.appendChild(box);
+      det.addEventListener('toggle', function () { if (det.open && !box.firstChild) d.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t, m.at, box); }); });   // 展開才畫那一天的對話
+      return det;
+    }
+    function buildPrev() {
+      var days = prevDays(), el = document.createElement('div'); el.className = 'prev';
+      var h = document.createElement('p'); h.className = 'pt'; h.textContent = T('先前聊過的'); el.appendChild(h);
+      if (!days.length) { var n = document.createElement('p'); n.className = 'none'; n.textContent = T('這台裝置沒有先前聊過的紀錄。'); el.appendChild(n); return el; }
+      days.slice(0, 3).forEach(function (d) { el.appendChild(dayEl(d)); });
+      if (days.length > 3) {
+        var more = document.createElement('details'), ms = document.createElement('summary'), mb = document.createElement('div'); ms.textContent = T('更早的（{n} 天）').split('{n}').join(days.length - 3); mb.className = 'pl';
+        more.appendChild(ms); more.appendChild(mb); days.slice(3).forEach(function (d) { mb.appendChild(dayEl(d)); }); el.appendChild(more);
+      }
+      return el;
+    }
+    var prevEl = buildPrev();   // 只建一次，重畫對話時重複使用（展開狀態才不會被洗掉）
     function paint() {
-      log.innerHTML = ''; if (open) bubble('a', open);
-      st.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t); });
+      log.innerHTML = ''; log.appendChild(prevEl); if (open) bubble('a', open);
+      st.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t, m.at); });
       cnt.textContent = T('已聊 {n} 輪（你說一次、AI 助教回一次＝1 輪）。至少 {m} 輪老師才會評分；一天最多 {d} 輪。').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP + (st.granted || 0));
       if (st.granted) { cnt.textContent += T('（老師已幫你加開 {g} 輪）').split('{g}').join(st.granted); }
       if (st.done && !st.confirmed) showSummary();
@@ -142,9 +182,9 @@
       if (st.editing) { confirmIt(text); inp.value = ''; return; }
       if (!st.confirmed && st.rounds >= MAX_ROUNDS) { msg.textContent = T('這次討論已經滿 8 輪了。'); return; }
       btn.disabled = true; inp.disabled = true; msg.textContent = T('AI 助教想一下…（最多等 1 分半）');
-      st.msgs.push({ w: 's', t: text }); inp.value = ''; forced = 0; paint(); save(); hintBox.innerHTML = '';
+      st.msgs.push({ w: 's', t: text, at: Date.now() }); inp.value = ''; forced = 0; paint(); save(); hintBox.innerHTML = '';
       put('talk', text).then(function (a) {
-        st.msgs.push({ w: 'a', t: a.say }); if (!a.rule && !a.capped) st.rounds = a.n || (st.rounds + 1);
+        st.msgs.push({ w: 'a', t: a.say, at: Date.now() }); if (!a.rule && !a.capped) st.rounds = a.n || (st.rounds + 1);
         if (a.code) { st.code = a.code; try { localStorage.setItem('ct_code_' + unit, a.code); } catch (e) { /* 沒存成也沒關係 */ } }
         if (a.card) st.card = a.card; if (a.granted != null) st.granted = a.granted;
         if (a.done && !st.confirmed) { st.done = true; st.summary = a.summary || ''; st.autoSummary = st.summary; st.next_step = a.next_step || ''; }

@@ -188,5 +188,17 @@ window.CT_WID = {
  "我的 3 個畫面是＿＿、＿＿、＿＿": "3 layar saya adalah ＿＿, ＿＿, ＿＿",
  "最大的那個畫面是＿＿，因為＿＿": "Layar yang paling besar adalah ＿＿, karena ＿＿",
  "我覺得最好玩的那一刻是＿＿": "Momen yang menurut saya paling seru adalah ＿＿",
- "我不確定＿＿，想請 AI 助教問我": "Saya tidak yakin tentang ＿＿, ingin meminta asisten pengajar AI bertanya kepada saya"
+ "我不確定＿＿，想請 AI 助教問我": "Saya tidak yakin tentang ＿＿, ingin meminta asisten pengajar AI bertanya kepada saya",
+ "先前聊過的": "Chat sebelumnya",
+ "這台裝置沒有先前聊過的紀錄。": "Belum ada riwayat chat di perangkat ini.",
+ "聊了 {n} 輪": "{n} putaran",
+ "最後 {t}": "Terakhir {t}",
+ "更早的（{n} 天）": "Lebih lama ({n} hari)",
+ "週日": "Minggu",
+ "週一": "Senin",
+ "週二": "Selasa",
+ "週三": "Rabu",
+ "週四": "Kamis",
+ "週五": "Jumat",
+ "週六": "Sabtu"
 };

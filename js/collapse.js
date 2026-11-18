@@ -5,7 +5,7 @@
    鍵盤：標題是 button（Enter／空白鍵切換），aria-expanded 同步。⚠ 不用 alert／confirm／prompt。 */
 (function () {
   var PAGE = (location.pathname.split('/').pop() || 'index').replace('.html', '');
-  var SUM = { survey: '約 3–4 分鐘，只有今天這一次', intro: '十二種樣板，可以試玩，也有 Figma 稿', play2: '玩兩版，想四件事', talk: '和 AI 助教聊你的提案（佔 30%）', three: '存版本時填三格，聊完會自動預填',
+  var SUM = { survey: '約 3–4 分鐘，只有今天這一次', intro: '十二種樣板，可以試玩，也有 Figma 稿', play2: '玩兩版，想四件事', talk: '和 AI 助教聊你的提案（佔 50%）', three: '存版本時填三格，聊完會自動預填',
     check: '交之前對照三點', stuck: '常見的卡住與解法', phone: '手機注意事項', overview: '要交什麼、期限、下週接什麼', next: '做完之後接哪一份' };
   var OPEN_DEFAULT = { survey: true };
   function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }

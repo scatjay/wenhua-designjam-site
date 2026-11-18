@@ -63,6 +63,11 @@
     var h = '<div class="stats">' + [
       [started.length + ' / ' + total, '開始跟助教聊的人'], [res.length, '拿到結果卡的人'], [rounds, '今天助教總輪數（所有單元）'], ['NT$ ' + twd.toFixed(1), '今天助教花費（只給老師看）'],
       [reqs.length, '申請加開待處理'], [nb + ' / ' + total, '已綁定編號'], [no, '目前上線']].map(function (x) { return '<div class="stat"><div class="n">' + x[0] + '</div><div class="l">' + x[1] + '</div></div>'; }).join('') + '</div>';
+    // 今天最常被問的 3 類問題（只有分類與次數，沒有原話）
+    var qt = {}, unsure = 0;
+    rows.forEach(function (r) { var q = r.d.qt || {}; Object.keys(q).forEach(function (k) { qt[k] = (qt[k] || 0) + q[k]; }); unsure += r.d.unsure || 0; });
+    var top3 = Object.keys(qt).sort(function (a, b) { return qt[b] - qt[a]; }).slice(0, 3);
+    h += '<div style="font-size:14px;margin:0 0 10px">❓ 今天最常被問的 3 類問題：' + (top3.length ? top3.map(function (k) { return esc(k) + ' ' + qt[k] + ' 次'; }).join('、') : '還沒有人問任務說明') + (unsure ? '　<span style="color:var(--warn,#b8860b)">助教說「不確定、請問老師」' + unsure + ' 次（可補進知識庫）</span>' : '') + '</div>';
     // 申請加開
     if (reqs.length) {
       h += '<div class="w47box" style="background:var(--panel);border:1.5px solid var(--warn,#b8860b);border-radius:12px;padding:10px 14px;margin:0 0 12px"><b>🙋 申請加開（' + reqs.length + '）</b><br>' + reqs.map(function (r) {

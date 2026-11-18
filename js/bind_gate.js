@@ -424,7 +424,8 @@
         不可以因為「這一頁的內容還沒翻」就把登入畫面的語言選項也停用（2026-09-22 犯過）。 */
   function langMenuHtml(onGate) {
     var cur = getLang();
-    var h = LANGS.map(function (L) {
+    var only = window.DJ_PAGE_LANGS;   // 頁面宣告「我只有這些語言」（遊戲設計學＝中文＋印尼文，沒有越南文）；沒宣告＝全部
+    var h = LANGS.filter(function (L) { return !only || only.indexOf(L.k) >= 0; }).map(function (L) {
       var off = (L.k !== 'zh') && !(onGate || pageSupportsLang(L.k));
       return '<button type="button" data-lang="' + L.k + '"'
         + (off ? ' disabled title="這一頁還沒有翻譯"' : '')

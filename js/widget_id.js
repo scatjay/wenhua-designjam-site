@@ -200,5 +200,7 @@ window.CT_WID = {
  "週三": "Rabu",
  "週四": "Kamis",
  "週五": "Jumat",
- "週六": "Sabtu"
+ "週六": "Sabtu",
+ "聊夠了，按這個，AI 助教把你剛剛說的整理成一句話。": "Udah kelar ngobrol? Klik ini, asisten AI bakal rangkum obrolanmu jadi satu kalimat.",
+ "我想整理了，請幫我整理成一句話。": "Mau rangkum nih, tolong rangkumin jadi satu kalimat ya."
 };

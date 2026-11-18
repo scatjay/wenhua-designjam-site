@@ -112,12 +112,13 @@
       cnt.textContent = T('已聊 {n} 輪（你說一次、AI 助教回一次＝1 輪）。至少 {m} 輪老師才會評分；一天最多 {d} 輪。').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP + (st.granted || 0));
       if (st.granted) { cnt.textContent += T('（老師已幫你加開 {g} 輪）').split('{g}').join(st.granted); }
       if (st.done && !st.confirmed) showSummary();
+      else if (!st.confirmed && !st.editing && st.rounds >= MIN_ROUNDS) showWrap();
       paintHints();
       if (st.confirmed) { paintCard(); var mo = document.createElement('p'); mo.className = 'note'; mo.textContent = T('還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。今天最多 {d} 輪。').split('{d}').join(DAY_CAP); sum.appendChild(mo); }
     }
     function paintHints() {
       hintBox.innerHTML = '';
-      if (st.confirmed || st.done || st.editing || st.rounds >= MAX_ROUNDS) return;
+      if (st.confirmed || st.done || st.editing) return;
       var stp = forced || (st.rounds === 0 ? curStep() : 0), hs = stp ? stepHintsOf(env, unit, stp) : []; if (!hs.length) hs = hintsOf(env, unit, st.rounds); if (!hs.length) return;
       var p = document.createElement('p'); p.className = 'note'; p.textContent = (stp && stepHintsOf(env, unit, stp).length) ? T('你在第 {n} 步。不知道怎麼說，點下面一句（會放進輸入框），改成你自己的話再送出。').split('{n}').join(stp) : T('不知道怎麼說？點一個填空句放進輸入框，把＿＿換成你自己的話再送出。'); hintBox.appendChild(p);
       var row = document.createElement('div'); row.className = 'hb';
@@ -144,6 +145,12 @@
       var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = T('AI 助教不打分數，但討論會被評分、老師會讀。'); card.appendChild(tag);
       var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張「助教結果卡」截圖，連同你的 Figma 連結交到 flipclass 的 W11-2。畫面上只有完成碼，不會顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的輸入框，送給 AI 助教（選填）。'); card.appendChild(tip);
       sum.appendChild(card);
+    }
+    function showWrap() {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'g'; b.id = 'tk-wrap'; b.textContent = T('對，就這樣');
+      var hint = document.createElement('span'); hint.className = 'note'; hint.style.marginLeft = '8px'; hint.textContent = T('聊夠了，按這個，AI 助教把你剛剛說的整理成一句話。');
+      var row = document.createElement('div'); row.className = 'row'; row.appendChild(b); row.appendChild(hint); sum.innerHTML = ''; sum.appendChild(row);
+      b.onclick = function () { inp.value = T('我想整理了，請幫我整理成一句話。').split(' / ')[0]; btn.onclick(); };
     }
     function showSummary() {
       sum.innerHTML = '<div class="sumbox"><b id="tk-sh"></b><div id="tk-s"></div><div class="row"><button type="button" id="tk-ok"></button><button type="button" class="g" id="tk-ed"></button></div></div>';
@@ -180,7 +187,6 @@
       var text = inp.value.trim();
       if (!text) { msg.textContent = T('先寫一兩句再送出。'); return; }
       if (st.editing) { confirmIt(text); inp.value = ''; return; }
-      if (!st.confirmed && st.rounds >= MAX_ROUNDS) { msg.textContent = T('這次討論已經滿 8 輪了。'); return; }
       btn.disabled = true; inp.disabled = true; msg.textContent = T('AI 助教想一下…（最多等 1 分半）');
       st.msgs.push({ w: 's', t: text, at: Date.now() }); inp.value = ''; forced = 0; paint(); save(); hintBox.innerHTML = '';
       put('talk', text).then(function (a) {

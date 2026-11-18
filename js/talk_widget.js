@@ -109,12 +109,11 @@
     function paint() {
       log.innerHTML = ''; log.appendChild(prevEl); if (open) bubble('a', open);
       st.msgs.forEach(function (m) { bubble(m.w === 's' ? 's' : 'a', m.t, m.at); });
-      cnt.textContent = T('已聊 {n} 輪（你說一次、AI 助教回一次＝1 輪）。至少 {m} 輪老師才會評分；一天最多 {d} 輪。').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS).split('{d}').join(DAY_CAP + (st.granted || 0));
-      if (st.granted) { cnt.textContent += T('（老師已幫你加開 {g} 輪）').split('{g}').join(st.granted); }
+      cnt.textContent = T('已聊 {n} 輪（你說一次、AI 助教回一次＝1 輪）。至少 {m} 輪老師才會評分。').split('{n}').join(st.rounds).split('{m}').join(MIN_ROUNDS);
       if (st.done && !st.confirmed) showSummary();
       else if (!st.confirmed && !st.editing && st.rounds >= MIN_ROUNDS) showWrap();
       paintHints();
-      if (st.confirmed) { paintCard(); var mo = document.createElement('p'); mo.className = 'note'; mo.textContent = T('還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。今天最多 {d} 輪。').split('{d}').join(DAY_CAP); sum.appendChild(mo); }
+      if (st.confirmed) { paintCard(); var mo = document.createElement('p'); mo.className = 'note'; mo.textContent = T('還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。'); sum.appendChild(mo); }
     }
     function paintHints() {
       hintBox.innerHTML = '';

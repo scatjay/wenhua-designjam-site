@@ -43,7 +43,7 @@
     });
   }
 
-  function render(pub, sum, grant) {
+  function render(pub, sum, grant, ledger) {
     var sess = SEL.sess, unit = SEL.unit, course = sess.split('-')[0], isTest = course === 'test';
     var idx = pub.idx || {}, unb = {}, on = pub.on || {}, now = Date.now();
     Object.keys(pub.ub || {}).forEach(function (k) { var v = pub.ub[k]; if (v && v.env != null) unb[String(v.env)] = 1; });
@@ -58,20 +58,25 @@
     var started = rows.filter(function (r) { return r.started; }), res = rows.filter(function (r) { return r.u.res; });
     var rounds = rows.reduce(function (a, r) { return a + (r.d.today || 0); }, 0), twd = rows.reduce(function (a, r) { return a + (r.d.twd || 0); }, 0);
     var reqs = rows.filter(function (r) { return r.d.req; });
+    var unlimited = rows.every(function (r) { return !r.d.cap; });   // 每日輪數不設上限（11-18 11:43 起）；申請加開與核准流程保留，日後恢復上限就會再出現
     var nb = rows.filter(function (r) { return r.bound; }).length, no = rows.filter(function (r) { return r.online; }).length;
     var total = isTest ? rows.length : COURSES[course][1];
     var h = '<div class="stats">' + [
       [started.length + ' / ' + total, '開始跟助教聊的人'], [res.length, '拿到結果卡的人'], [rounds, '今天助教總輪數（所有單元）'], ['NT$ ' + twd.toFixed(1), '今天助教花費（只給老師看）'],
-      [reqs.length, '申請加開待處理'], [nb + ' / ' + total, '已綁定編號'], [no, '目前上線']].map(function (x) { return '<div class="stat"><div class="n">' + x[0] + '</div><div class="l">' + x[1] + '</div></div>'; }).join('') + '</div>';
+      [unlimited && !reqs.length ? '不設' : reqs.length, unlimited && !reqs.length ? '每日輪數上限（目前不設）' : '申請加開待處理'], [nb + ' / ' + total, '已綁定編號'], [no, '目前上線']].map(function (x) { return '<div class="stat"><div class="n">' + x[0] + '</div><div class="l">' + x[1] + '</div></div>'; }).join('') + '</div>';
     // 今天最常被問的 3 類問題（只有分類與次數，沒有原話）
     var qt = {}, unsure = 0;
     rows.forEach(function (r) { var q = r.d.qt || {}; Object.keys(q).forEach(function (k) { qt[k] = (qt[k] || 0) + q[k]; }); unsure += r.d.unsure || 0; });
     var top3 = Object.keys(qt).sort(function (a, b) { return qt[b] - qt[a]; }).slice(0, 3);
     h += '<div style="font-size:14px;margin:0 0 10px">❓ 今天最常被問的 3 類問題：' + (top3.length ? top3.map(function (k) { return esc(k) + ' ' + qt[k] + ' 次'; }).join('、') : '還沒有人問任務說明') + (unsure ? '　<span style="color:var(--warn,#b8860b)">助教說「不確定、請問老師」' + unsure + ' 次（可補進知識庫）</span>' : '') + '</div>';
+    if (ledger && typeof ledger.pct === 'number') {
+      var hot = ledger.pct >= 80;
+      h += '<div style="font-size:14px;margin:0 0 10px;' + (hot ? 'color:var(--warn,#b8860b);font-weight:700' : '') + '">💰 今日助教費用 NT$ ' + ledger.today_twd + ' / ' + ledger.cap_twd + '（' + ledger.pct + '%）' + (hot ? '　⚠ 接近日上限，超過後助教會顯示「今天太忙了」' : '') + '</div>';
+    }
     // 申請加開
     if (reqs.length) {
       h += '<div class="w47box" style="background:var(--panel);border:1.5px solid var(--warn,#b8860b);border-radius:12px;padding:10px 14px;margin:0 0 12px"><b>🙋 申請加開（' + reqs.length + '）</b><br>' + reqs.map(function (r) {
-        return '<div style="margin:6px 0">#' + r.e + '　今天 ' + (r.d.today || 0) + ' / ' + (r.d.cap || 100) + ' 輪　<select id="gsel' + r.e + '"><option>10</option><option selected>20</option><option>30</option><option>50</option></select> 輪　<button type="button" data-grant="' + r.e + '">核准加開</button> <span id="gmsg' + r.e + '" style="font-size:12px;color:var(--ink-soft)"></span></div>';
+        return '<div style="margin:6px 0">#' + r.e + '　今天 ' + (r.d.today || 0) + (r.d.cap ? ' / ' + r.d.cap : '') + ' 輪　<select id="gsel' + r.e + '"><option>10</option><option selected>20</option><option>30</option><option>50</option></select> 輪　<button type="button" data-grant="' + r.e + '">核准加開</button> <span id="gmsg' + r.e + '" style="font-size:12px;color:var(--ink-soft)"></span></div>';
       }).join('') + '<div style="font-size:12px;color:var(--ink-soft)">按下去會寫到網站，老師電腦上的助教代理程式約 20 秒內套用（需要代理程式開著）。核准後這位的上限會變大，申請標記自動消失。</div></div>';
     }
     // 已核准但代理程式還沒套用
@@ -84,7 +89,7 @@
       var stt = [];
       if (r.d.req) stt.push('🙋申請加開'); if (r.d.full) stt.push('用完'); if (r.d.grant) stt.push('加開 ' + r.d.grant); if (u.rule) stt.push('規則句 ' + u.rule); if (u.fig) stt.push('有 Figma');
       var gray = !r.started && !r.bound;
-      return '<tr' + (gray ? ' style="opacity:.55"' : '') + '><td><b>#' + r.e + '</b></td><td>' + (r.bound ? (r.login ? '✓' : '編號') : '—') + '</td><td>' + (r.online ? '🟢' : '') + '</td><td>' + (r.started || r.d.today ? (r.d.today || 0) + ' / ' + (r.d.cap || 100) + (u.n != null ? '　<span style="color:var(--ink-soft)">此單元 ' + u.n + '</span>' : '') : '<span style="color:var(--ink-soft)">還沒開始</span>') + '</td><td style="white-space:nowrap">' + dots + '</td><td>' + (u.res ? '✓ 已確認' : u.sum ? '已整理待確認' : '—') + '</td><td>' + stt.map(esc).join('、') + '</td><td>' + (r.last ? ago(r.last) : '—') + '</td><td style="font-size:12px">' + esc(tally(u.mv)) + (u.h ? '｜' + esc(tally(u.h)) : '') + '</td></tr>';
+      return '<tr' + (gray ? ' style="opacity:.55"' : '') + '><td><b>#' + r.e + '</b></td><td>' + (r.bound ? (r.login ? '✓' : '編號') : '—') + '</td><td>' + (r.online ? '🟢' : '') + '</td><td>' + (r.started || r.d.today ? (r.d.today || 0) + (r.d.cap ? ' / ' + r.d.cap : '') + (u.n != null ? '　<span style="color:var(--ink-soft)">此單元 ' + u.n + '</span>' : '') : '<span style="color:var(--ink-soft)">還沒開始</span>') + '</td><td style="white-space:nowrap">' + dots + '</td><td>' + (u.res ? '✓ 已確認' : u.sum ? '已整理待確認' : '—') + '</td><td>' + stt.map(esc).join('、') + '</td><td>' + (r.last ? ago(r.last) : '—') + '</td><td style="font-size:12px">' + esc(tally(u.mv)) + (u.h ? '｜' + esc(tally(u.h)) : '') + '</td></tr>';
     }).join('') + '</tbody></table></div>';
     h += '<div style="font-size:12px;color:var(--ink-soft);margin-top:6px">資料每 30 秒更新一次（助教每回答一輪就更新該位的摘要）。這裡沒有學生原話與助教回覆；對話全文只在老師電腦。花費是每輪估計值加總，只給老師看。' + (STATE.localOk ? '' : '') + '</div>';
     say(h);
@@ -116,7 +121,7 @@
       return loadSessions().then(function (ks) {
         if (ctl) { ctl.innerHTML = controls(); wire(); }
         if (!ks.length) { say('<div style="color:var(--ink-soft)">ctalk/sum 還沒有任何場次的摘要（助教代理程式更新後第一個學生聊完一輪就會出現）。</div>'); return; }
-        return Promise.all([jauth('ctalk/sum/' + SEL.sess), jauth('ctalk/grant/' + SEL.sess).catch(function () { return {}; })]).then(function (b) { render(pub, b[0] || {}, b[1] || {}); });
+        return Promise.all([jauth('ctalk/sum/' + SEL.sess), jauth('ctalk/grant/' + SEL.sess).catch(function () { return {}; }), jauth('ctalk/ledger').catch(function () { return null; })]).then(function (b) { render(pub, b[0] || {}, b[1] || {}, b[2]); });
       });
     }).catch(function (e) {
       if (e && e.message === 'no-auth') say(needLogin());

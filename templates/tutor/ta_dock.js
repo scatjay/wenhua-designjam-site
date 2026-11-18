@@ -56,7 +56,7 @@
       setPause: function (b) { pause.hidden = !b; },
       setBadge: function (b) { bd.hidden = !b; },
       onOpen: null,
-      relabel: function (T) { tf = T; fl.textContent = T('問AI助教'); fs.textContent = T('助教'); t.textContent = T('AI助教'); fab.setAttribute('aria-label', T('問AI助教')); big.textContent = p.classList.contains('big') ? T('縮小') : T('放大'); pause.textContent = T('AI 助教暫停中，請先看老師放的說明影片，或舉手問老師。你寫的字還在框裡，過一下再按送出。'); }
+      relabel: function (T) { tf = T; fl.textContent = T('問AI助教'); t.textContent = T('AI助教'); fab.setAttribute('aria-label', T('問AI助教')); big.textContent = p.classList.contains('big') ? T('縮小') : T('放大'); pause.textContent = T('AI 助教暫停中，請先看老師放的說明影片，或舉手問老師。你寫的字還在框裡，過一下再按送出。'); }
     };
     fab.addEventListener('click', function () { if (o.onFab) o.onFab(D); else D.open(!D.isOpen()); });
     x.addEventListener('click', function () { D.open(false); });

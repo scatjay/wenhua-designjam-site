@@ -5,7 +5,7 @@
   var DB = 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', NS = 'gen-lang-client-0929530380-default-rtdb';
   var OPEN = {
     '47602': { W11: '你的遊戲裡最好玩的那一刻是什麼？' },
-    '46582': { W11: '你挑了哪一個走讀方向？你的遊戲裡最好玩的那一刻是什麼？' }
+    '46582': { W11: '你的遊戲裡最好玩的那一刻是什麼？' }
   };
   var HINTS = window.CT_HINTS || {};
   var DAY_CAP = 100, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;
@@ -220,16 +220,17 @@
     var unit = el.getAttribute('data-unit') || 'W11';
     var env0 = parseInt(localStorage.getItem('designjam_env'), 10); ID = idOn(env0);
     var DK = window.TA_DOCK.create({}), holder = document.createElement('div'), mounted = false;
+    if (DK.relabel) DK.relabel(T);
     holder.setAttribute('data-unit', unit); DK.body.appendChild(holder);
     function ensure() { if (!mounted) { mounted = true; mount(holder, DK); } }
-    DK.onOpen = function () { ensure(); if (!APIREF.a || !DK.panel.querySelector('#ta-ctx').textContent) DK.setCtx('目前在：第 ' + (curStep() || 1) + ' 步'); };
+    DK.onOpen = function () { ensure(); if (!APIREF.a || !DK.panel.querySelector('#ta-ctx').textContent) DK.setCtx(T('目前在：第 {n} 步').split('{n}').join(curStep() || 1)); };
     el.innerHTML = '<p class="note">' + esc(T('右下角的「問AI助教」，還沒綁定編號也能先打開看看。')) + '</p><button type="button" id="tk-open" style="min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;cursor:pointer">' + esc(T('打開「問AI助教」')) + '</button>';
     $('tk-open').onclick = function () { DK.open(true); };
     // 每一步旁邊的「問AI助教」小鈕＋給每一步一個可以被連結的 id
     document.querySelectorAll('details.stage').forEach(function (d) {
       var sn = d.querySelector('.sn'), n = sn ? parseInt(sn.textContent, 10) : 0, sb = d.querySelector('.sb'); if (!n || !sb) return;
       if (!d.id) d.id = 'step' + n;
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'askbtn'; b.textContent = '問AI助教';
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'askbtn'; b.textContent = T('問AI助教');
       b.onclick = function () { ensure(); DK.open(true); var t = d.querySelector('.st2'); if (APIREF.a) APIREF.a.ask(n, t ? t.textContent : ''); };
       sb.insertBefore(b, sb.firstChild);
     });

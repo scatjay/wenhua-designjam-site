@@ -46,6 +46,7 @@
     var body = document.createElement('div'); body.id = 'ta-body';
     p.appendChild(hd); p.appendChild(lock); p.appendChild(pause); p.appendChild(body);
     document.body.appendChild(fab); document.body.appendChild(p);
+    var tf = function (z) { return z; };   // 印尼文：talk_widget 會呼叫 D.relabel(T) 換成中文／印尼文並列
     D = {
       fab: fab, panel: p, body: body,
       open: function (b) { p.classList.toggle('open', !!b); fab.setAttribute('aria-expanded', b ? 'true' : 'false'); if (b) { D.setBadge(false); if (D.onOpen) D.onOpen(); } },
@@ -54,11 +55,12 @@
       setLock: function (m) { lock.hidden = !m; lock.textContent = m || ''; p.classList.toggle('locked', !!m); },
       setPause: function (b) { pause.hidden = !b; },
       setBadge: function (b) { bd.hidden = !b; },
-      onOpen: null
+      onOpen: null,
+      relabel: function (T) { tf = T; fl.textContent = T('問AI助教'); fs.textContent = T('助教'); t.textContent = T('AI助教'); fab.setAttribute('aria-label', T('問AI助教')); big.textContent = p.classList.contains('big') ? T('縮小') : T('放大'); pause.textContent = T('AI 助教暫停中，請先看老師放的說明影片，或舉手問老師。你寫的字還在框裡，過一下再按送出。'); }
     };
     fab.addEventListener('click', function () { if (o.onFab) o.onFab(D); else D.open(!D.isOpen()); });
     x.addEventListener('click', function () { D.open(false); });
-    big.addEventListener('click', function () { var on = !p.classList.contains('big'); p.classList.toggle('big', on); big.textContent = on ? '縮小' : '放大'; big.title = on ? '縮小 / Perkecil' : '放大 / Perbesar'; big.setAttribute('aria-label', on ? '縮小助教面板' : '放大助教面板'); big.setAttribute('aria-pressed', on ? 'true' : 'false'); var lg = document.getElementById('tk-log'); if (lg) lg.scrollTop = lg.scrollHeight; });
+    big.addEventListener('click', function () { var on = !p.classList.contains('big'); p.classList.toggle('big', on); big.textContent = on ? tf('縮小') : tf('放大'); big.title = on ? '縮小 / Perkecil' : '放大 / Perbesar'; big.setAttribute('aria-label', on ? '縮小助教面板' : '放大助教面板'); big.setAttribute('aria-pressed', on ? 'true' : 'false'); var lg = document.getElementById('tk-log'); if (lg) lg.scrollTop = lg.scrollHeight; });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') D.open(false); });
     return D;
   }

@@ -208,5 +208,15 @@ window.CT_WID = {
  "我的遊戲和我挑的走讀方向不一樣的地方是＿＿": "Perbedaan antara game-ku dan arah tur jelajah yang kupilih adalah ＿＿",
  "我挑了方向＿＿，因為＿＿": "Aku memilih arah ＿＿ karena ＿＿",
  "這個方向最好玩的一刻是＿＿": "Momen paling seru di arah ini adalah ＿＿",
- "你挑了哪一個走讀方向？你的遊戲裡最好玩的那一刻是什麼？": "Arah tur jelajah mana yang kamu pilih? Momen apa yang paling seru di game-mu?"
+ "你挑了哪一個走讀方向？你的遊戲裡最好玩的那一刻是什麼？": "Arah tur jelajah mana yang kamu pilih? Momen apa yang paling seru di game-mu?",
+ "你的遊戲裡最好玩的那一刻是什麼？": "Momen apa yang paling seru di game-mu?",
+ "問AI助教": "Tanya Asisten Pengajar AI",
+ "AI助教": "Asisten Pengajar AI",
+ "放大": "Perbesar",
+ "縮小": "Perkecil",
+ "目前在：第 {n} 步": "Saat ini di: Langkah ke-{n}",
+ "AI 助教暫停中，請先看老師放的說明影片，或舉手問老師。你寫的字還在框裡，過一下再按送出。": "Asisten Pengajar AI sedang dijeda. Silakan tonton video penjelasan dari dosen terlebih dahulu, atau angkat tangan untuk bertanya kepada dosen. Teks yang kamu tulis masih tersimpan di kolom, silakan tekan kirim beberapa saat lagi.",
+ "課程自我檢核問卷（約 4 分鐘）": "Kuesioner Evaluasi Mandiri Pembelajaran (sekitar 4 menit)",
+ "這份問卷想了解你平常怎麼用 AI。答案沒有對錯，你怎麼回答都不影響成績；填完（或選這次不填）就拿到 W11-1 的 3%。每一句請照你平常的情況選一個：「主要為了學分」「卡住就直接問 AI」都是很常見的答案。只用你的編號作答，不寫名字。大約 4 分鐘。": "Kuesioner ini bertujuan untuk memahami bagaimana kamu biasanya menggunakan AI dalam keseharian. Tidak ada jawaban yang benar atau salah, dan apa pun jawabanmu tidak akan memengaruhi nilai; cukup isi sampai selesai (atau pilih untuk tidak mengisi kali ini) untuk mendapatkan 3% dari W11-1. Silakan pilih satu opsi untuk setiap pernyataan berdasarkan situasimu yang biasa: jawaban seperti 「主要為了學分」(terutama demi SKS) atau 「卡住就直接問 AI」(langsung bertanya ke AI saat buntu) adalah jawaban yang sangat umum. Gunakan hanya nomor identitasmu untuk menjawab, tanpa menulis nama. Waktu pengisian sekitar 4 menit.",
+ "這一題請直接選「不太符合」，用來確認畫面有正常顯示。": "Untuk pertanyaan ini, silakan langsung pilih 「不太符合」(kurang sesuai), ini digunakan untuk memastikan bahwa layar ditampilkan dengan normal."
 };

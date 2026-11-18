@@ -204,5 +204,9 @@ window.CT_WID = {
  "聊夠了，按這個，AI 助教把你剛剛說的整理成一句話。": "Udah kelar ngobrol? Klik ini, asisten AI bakal rangkum obrolanmu jadi satu kalimat.",
  "我想整理了，請幫我整理成一句話。": "Mau rangkum nih, tolong rangkumin jadi satu kalimat ya.",
  "已聊 {n} 輪（你說一次、AI 助教回一次＝1 輪）。至少 {m} 輪老師才會評分。": "Sudah {n} ronde (kamu chat 1x, asisten AI balas 1x = 1 ronde). Minimal {m} ronde baru akan dinilai dosen.",
- "還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。": "Mau lanjut bahas ide kamu? Langsung ketik aja di kolom atas, asisten bakal lanjut nanya kamu."
+ "還想繼續聊你的點子？接著在上面的框裡寫就好，助教會繼續問你。": "Mau lanjut bahas ide kamu? Langsung ketik aja di kolom atas, asisten bakal lanjut nanya kamu.",
+ "我的遊戲和我挑的走讀方向不一樣的地方是＿＿": "Perbedaan antara game-ku dan arah tur jelajah yang kupilih adalah ＿＿",
+ "我挑了方向＿＿，因為＿＿": "Aku memilih arah ＿＿ karena ＿＿",
+ "這個方向最好玩的一刻是＿＿": "Momen paling seru di arah ini adalah ＿＿",
+ "你挑了哪一個走讀方向？你的遊戲裡最好玩的那一刻是什麼？": "Arah tur jelajah mana yang kamu pilih? Momen apa yang paling seru di game-mu?"
 };

@@ -5,7 +5,7 @@
   var DB = 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', NS = 'gen-lang-client-0929530380-default-rtdb';
   var OPEN = {
     '47602': { W11: '你的遊戲裡最好玩的那一刻是什麼？' },
-    '46582': { W11: '你把走讀的畫面做成網頁，你選了哪一個畫面來還原？' }
+    '46582': { W11: '你挑了哪一個走讀方向？你的遊戲裡最好玩的那一刻是什麼？' }
   };
   var HINTS = window.CT_HINTS || {};
   var DAY_CAP = 100, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;

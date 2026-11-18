@@ -61,17 +61,22 @@ details.adv>summary{cursor:pointer;min-height:48px;padding:10px 14px;font-weight
 details.adv .advb{padding:0 16px 14px}
 @media (max-width:520px){.sm{display:none}h2{flex-wrap:wrap}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+.unitnav2{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding:2px 0 6px;-webkit-overflow-scrolling:touch}.unitnav2 a{flex:0 0 auto;text-decoration:none;border:1.5px solid var(--hair,#ccc);border-radius:10px;padding:6px 11px;color:var(--muted,#666);font-size:13.5px;font-weight:700;min-height:36px;display:flex;align-items:center;background:var(--surface,#fff)}.unitnav2 a.on{background:var(--accent-soft,#d3e7ed);border-color:var(--accent,#1b6578);color:var(--accent,#1b6578)}.unitnav2 a.hub{font-weight:600}
+.qrbox{display:flex;align-items:center;gap:12px;margin:10px 0;padding:10px 12px;border:1px solid var(--hair,#ccc);border-radius:12px;background:var(--surface,#fff);width:max-content;max-width:100%}.qrbox .t{font-size:14px;font-weight:700;line-height:1.4}.qrbox #qrcanvas{background:#fff;padding:6px;border-radius:8px;line-height:0;border:1px solid var(--hair,#ccc)}.qrbox #qrcanvas svg{display:block;width:120px;height:120px}
 </style>
 <style>
 .idn{display:none}body.show-id .idn{display:block;color:var(--muted);font-size:.93em;margin-top:2px}.langbar{display:flex;gap:8px;margin:10px 0 4px}.try{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-weight:600}.langbar button{min-height:44px;padding:6px 18px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;font-size:14px;cursor:pointer}.langbar button[aria-pressed=true]{background:var(--accent);color:var(--bg)}.pbox{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;margin:10px 0}.pbox pre{white-space:pre-wrap;word-break:break-word;font:14.5px/1.6 var(--sans);margin:6px 0 8px}.pbox button{min-height:44px;min-width:88px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;cursor:pointer}
 </style>
 <div class="wrap">
+<div class="unitnav2" role="navigation" aria-label="各週學習單"><a href="gd_w11.html">W11</a><a href="gd_w12.html">W12</a><a href="gd_w13.html">W13</a><a href="gd_w14.html" class="on" aria-current="page">W14</a><a href="gd_w15.html">W15</a><a href="gd_w16.html">W16</a><a class="hub" href="hub.html">所有週次</a></div>
+
 <p class="eyebrow"><span class="zh">遊戲設計學 · W14 · AI Studio 3/3</span><span class="idn" lang="id">Desain Game · W14 · AI Studio 3/3</span></p>
 <h1><span class="zh">找人試用、依他卡住的地方改版，請 Claude 檢查你寫的三項</span><span class="idn" lang="id">Minta orang menguji coba, revisi versi berdasarkan bagian di mana dia mengalami kesulitan, dan minta Claude memeriksa tiga poin yang kamu tulis</span></h1>
 <p class="upd"><span class="zh">最後更新：</span><span class="idn" lang="id">Terakhir diperbarui:</span> <b>2026-11-17 21:20</b></p>
 <p class="lede"><span class="zh">這是 AI Studio 的最後一份。你的走讀遊戲網頁已經能玩了。這一份<b>找一位同學來試用</b>，你只看、不教；再依他卡住的地方<b>改一處</b>；最後把你寫的三項交給 Claude 檢查有沒有寫清楚。</span><span class="idn" lang="id">Ini adalah bagian terakhir dari AI Studio. Halaman web game tur jalan kaki milikmu sudah bisa dimainkan. Bagian ini <b>mencari seorang teman sekelas untuk mencoba</b>, kamu hanya melihat, tidak mengajari; lalu berdasarkan bagian di mana dia mengalami kesulitan <b>ubah satu tempat</b>; terakhir serahkan tiga poin yang kamu tulis kepada Claude untuk memeriksa apakah sudah ditulis dengan jelas.</span></p>
 <p class="lede"><b><span class="zh">兩份作業的先後：W13（Figma）的期限是 12/16，這一份從 12/09 開放、12/23 截止。可以交替做，先把 W13 做完最穩。盡量在課堂上做完；期限有兩週，回家可以補。</span><span class="idn" lang="id">Urutan dua tugas: Tenggat waktu W13 (Figma) adalah 16/12, bagian ini dibuka mulai 09/12 dan ditutup 23/12. Bisa dikerjakan bergantian, menyelesaikan W13 terlebih dahulu adalah yang paling aman. Usahakan selesai di kelas; batas waktu dua minggu, bisa dilanjutkan di rumah.</span></b></p>
 <div class="langbar"><button type="button" id="langbtn" aria-pressed="false">Bahasa Indonesia</button></div>
+<div class="qrbox"><div class="t">手機掃這裡，打開這一頁</div><div id="qrcanvas"></div></div>
 <nav class="tabs" aria-label="頁面"><a href="#overview"><span class="zh">概覽</span><span class="idn" lang="id">概覽 (Ikhtisar)</span></a><a href="#steps"><span class="zh">六步做完</span><span class="idn" lang="id">Selesai dalam enam langkah</span></a><a href="#check"><span class="zh">檢核</span><span class="idn" lang="id">檢核 (Pemeriksaan)</span></a><a href="#stuck"><span class="zh">卡住了</span><span class="idn" lang="id">Mengalami kesulitan</span></a></nav>
 <section id="overview"><h2><span class="num"><span class="zh">概覽</span><span class="idn" lang="id">概覽 (Ikhtisar)</span></span><span class="zh">W14 AI Studio 3/3</span><span class="idn" lang="id">W14 AI Studio 3/3</span></h2><div class="jt-wrap"><table class="jt"><tbody>
 <tr><td><span class="zh">要交什麼</span><span class="idn" lang="id">Apa yang harus dikumpulkan</span></td><td><span class="zh">AI Studio 作品連結（改過的那一版、設成別人打得開），加上你寫的三項（貼在留言）、一張 Claude 的截圖，再加一張「繳交檢核」截圖</span><span class="idn" lang="id">Tautan karya AI Studio (versi yang telah direvisi, diatur agar orang lain dapat membukanya), ditambah tiga poin yang kamu tulis (tempel di komentar), satu tangkapan layar Claude, ditambah lagi satu tangkapan layar 「繳交檢核 (Pemeriksaan Pengumpulan)」</span></td></tr>
@@ -130,14 +135,20 @@ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.write
 <script src="templates/tutor/folk_index.js?v=202611172120"></script><script src="templates/tutor/tutor_templates.js?v=202611180650"></script><script src="templates/tutor/tutor_core.js?v=202611180650"></script><script src="templates/tutor/tutor_config.js?v=202611180650"></script><script src="templates/tutor/tutor_hook.js?v=202611180650"></script>
 <script>document.getElementById("provMount")&&window.CT_HOOK&&(function(){var el=document.getElementById("provMount"),done=false;function go(){if(done)return;var env=parseInt(localStorage.getItem("designjam_env"),10);if(!isFinite(env))return;done=true;try{var cfg=(window.CT_CONFIG&&CT_CONFIG.base)||{};CT_HOOK.mountProv(el,{env:env,unit:CT_CORE.unitOfDate(Date.now(),cfg.term),cfg:{hook:cfg.hook}});var h=document.getElementById("provHint");if(h)h.style.display="none";}catch(e){}}go();if(!done){var t=setInterval(function(){go();if(done)clearInterval(t);},1500);}})();</script>
 
-<script src="js/widget_id.js?v=202611172750"></script>
+<script src="js/widget_id.js?v=202611180950"></script>
 <script src="templates/tutor/ta_dock.js?v=202611172700"></script>
-<script src="js/talk_hints.js?v=202611172700"></script>
-<script src="js/talk_widget.js?v=202611172750"></script>
-<script src="js/survey_widget.js?v=202611172700"></script>
-<script src="js/collapse.js?v=202611172600"></script>
+<script src="js/talk_hints.js?v=202611180950"></script>
+<script src="js/talk_widget.js?v=202611180950"></script>
+<script src="js/survey_widget.js?v=202611180950"></script>
+<script src="js/collapse.js?v=202611180950"></script>
 <script>window.DJ_BIND_UNIT='w11';</script>
-<script src="js/gate_i18n.js?v=202611180240"></script>
-<script src="js/bind_gate.js?v=202611180240"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>try{if(window.firebase&&!firebase.apps.length)firebase.initializeApp({apiKey:"AIzaSyBwPR0oE5VK0eBlqq8JY1B56UXy3R9cyng",authDomain:"gen-lang-client-0929530380.firebaseapp.com",databaseURL:"https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"gen-lang-client-0929530380"});}catch(e){console.warn("firebase init",e)}</script>
+<script src="js/gate_i18n.js?v=202611180950"></script>
+<script src="js/bind_gate.js?v=202611180950"></script>
+<script>(function(){var h=document.getElementById("qrcanvas");if(!h)return;try{var q=qrcode(0,"M");q.addData("https://scatjay.github.io/wenhua-designjam-site/gd_w14.html");q.make();h.innerHTML=q.createSvgTag({cellSize:4,margin:2});}catch(e){var b=h.closest(".qrbox");if(b)b.style.display="none";console.warn("QR 載入失敗",e)}})();</script>
 </body>
 </html>

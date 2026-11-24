@@ -504,7 +504,10 @@
       desc: '期中作業：把 W4–W7 接成同一款改版遊戲' },
     /* 2026-09-29 楊老師：選單長了，週次改倒序（最新的排最上面，緊接在設備調查下面），
        不用往下捲才找得到本週。加新的一週＝插在這一段最前面，其他不用動。 */
-    { key: 'w11',  href: 'w11.html',   wk: 11, name: '第 11–16 週（W11–W16）', desc: '從樣板到你的小遊戲' },
+    /* 2026-11-24 W12：遊戲設計學（信封編號 101–130）的頁面是 gd_ 開頭的中文＋印尼文版，gdHref 給他們；沒給 gdHref 的單元兩班共用同一頁。 */
+    { key: 'w12',  href: 'w12.html',   gdHref: 'gd_w12.html', wk: 12, name: '第 12 週（W12）', desc: 'AI Studio 1/3：把畫面變成能動的樣板',
+      long: '把 W11 在 Figma 排好的畫面（PNG）和你挑的樣板一起交給 AI Studio，做成一個能點、能玩的頁面，再自己檢查 AI 有沒有偷偷改掉規則。' },
+    { key: 'w11',  href: 'w11.html',   gdHref: 'gd_w11.html', wk: 11, name: '第 11–16 週（W11–W16）', desc: '從樣板到你的小遊戲' },
     { key: 'w4',   href: 'w4.html',    wk: 4, name: '第4–7週', desc: '從企劃、原型到 NotebookLM 成果包',
       long: '延伸你們 W3 實際玩到的卡片組合：先用 Gemini Deep Research 跑三輪，'
           + '把企劃定案、加上介面與美術設定，再用 Google AI Studio 做出一個真的能玩的網頁原型，最後用 NotebookLM 做資訊圖表、語音摘要、簡報。' },
@@ -514,6 +517,11 @@
     { key: 'w2',   href: 'w2.html',    wk: 2, desc: '文化怎麼放進遊戲裡' },
     { key: 'w1',   href: 'unit1.html', wk: 1, desc: '四種角色，孵出一個點子' }
   ];
+  /* 遊戲設計學（信封編號 101–130）用 gdHref；其餘（含還沒綁定）用 href */
+  function hrefOf(u) {
+    var n = parseInt(ls(LS_ENV), 10);
+    return (u.gdHref && n >= 101 && n <= 130) ? u.gdHref : u.href;
+  }
   UNITS.forEach(function (u) {
     if (u.wk) {
       if (!u.name) u.name = '第' + u.wk + '週';
@@ -568,7 +576,7 @@
        class 的粗體樣式辨識（CSS 早就有），不再額外印文字。 */
     var items = UNITS.map(function (u) {
       var on = (u.key === UNIT) ? ' on' : '';
-      return '<a class="' + on.trim() + '" data-tone="' + u.tone + '" href="' + u.href + '">'
+      return '<a class="' + on.trim() + '" data-tone="' + u.tone + '" href="' + hrefOf(u) + '">'
         + '<b>' + u.name + '</b>'
         + '<span>' + u.desc + '</span></a>';
     }).join('');
@@ -613,7 +621,7 @@
     weeks.forEach(function (u) { if (u.key === NOW_KEY) now = u; });
     var html = '';
     if (now) {
-      html += '<a class="dj-hubnow" data-tone="' + now.tone + '" href="' + now.href + '"'
+      html += '<a class="dj-hubnow" data-tone="' + now.tone + '" href="' + hrefOf(now) + '"'
         + ' style="border-color:transparent">'
         + '<div class="k">第 ' + now.wk + ' 週 · 本週</div>'
         + '<div class="n">' + now.desc + '</div>'
@@ -624,7 +632,7 @@
     if (rest.length) {
       html += '<div class="dj-hubcap">前面幾週（隨時可以回來看）</div><div class="dj-hublist">'
         + rest.map(function (u) {
-            return '<a data-tone="' + u.tone + '" href="' + u.href + '">'
+            return '<a data-tone="' + u.tone + '" href="' + hrefOf(u) + '">'
               + '<b>第 ' + u.wk + ' 週</b><i>' + u.desc + '</i></a>';
           }).join('') + '</div>';
     }

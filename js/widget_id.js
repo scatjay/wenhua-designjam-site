@@ -159,6 +159,7 @@ window.CT_WID = {
  "這週的及格線（AI 助教看到的）": "Batas kelulusan minggu ini (yang dilihat oleh AI asisten pengajar)",
  "AI 助教不打分數，但討論會被評分、老師會讀。": "AI asisten pengajar tidak memberikan nilai, tetapi diskusi akan dinilai dan dibaca oleh dosen.",
  "請把這張「助教結果卡」截圖，連同你的 Figma 連結交到 flipclass 的 W11-2。畫面上只有完成碼，不會顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的輸入框，送給 AI 助教（選填）。": "Silakan tangkap layar 'kartu hasil asisten pengajar' ini, lalu kumpulkan bersama tautan Figma milikmu ke flipclass W11-2. Pada layar hanya ada kode selesai, tidak akan menampilkan nomor identitasmu. Jika ingin dosen melihat karya lebih cepat, kamu juga bisa tempel tautan Figma di kolom input di atas, lalu kirim ke AI asisten pengajar (opsional).",
+ "請把這張「助教結果卡」截圖，連同你的 Figma 連結交到 flipclass 的 W12。畫面上只有完成碼，不會顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的輸入框，送給 AI 助教（選填）。": "Silakan tangkap layar 'kartu hasil asisten pengajar' ini, lalu kumpulkan bersama tautan Figma milikmu ke flipclass W12. Pada layar hanya ada kode selesai, tidak akan menampilkan nomor identitasmu. Jika ingin dosen melihat karya lebih cepat, kamu juga bisa tempel tautan Figma di kolom input di atas, lalu kirim ke AI asisten pengajar (opsional).",
  "AI 助教把你剛剛說的整理成一句話：": "AI asisten pengajar merangkum apa yang baru saja kamu katakan menjadi satu kalimat:",
  "改好後按「送出」，結果卡就會用你改的版本。": "Setelah selesai mengubah, tekan 'kirim', kartu hasil akan menggunakan versi yang sudah kamu ubah.",
  "申請多聊幾輪": "Ajukan untuk mengobrol beberapa putaran lagi",

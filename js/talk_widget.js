@@ -142,7 +142,7 @@
       rows.forEach(function (r) { var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('完成碼')) dd.className = 'code'; meta.appendChild(dt); meta.appendChild(dd); });
       meta.style.marginTop = '8px'; card.appendChild(meta);
       var tag = document.createElement('p'); tag.className = 'tag'; tag.textContent = T('AI 助教不打分數，但討論會被評分、老師會讀。'); card.appendChild(tag);
-      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T('請把這張「助教結果卡」截圖，連同你的 Figma 連結交到 flipclass 的 W11-2。畫面上只有完成碼，不會顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的輸入框，送給 AI 助教（選填）。'); card.appendChild(tip);
+      var tip = document.createElement('p'); tip.className = 'note'; tip.textContent = T(unit === 'W11' ? '請把這張「助教結果卡」截圖，連同你的 Figma 連結交到 flipclass 的 W11-2。畫面上只有完成碼，不會顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的輸入框，送給 AI 助教（選填）。' : '請把這張「助教結果卡」截圖，連同你的 Figma 連結交到 flipclass 的 W11-2。畫面上只有完成碼，不會顯示你的編號。想讓老師更快看到作品，也可以把 Figma 連結貼在上面的輸入框，送給 AI 助教（選填）。'.replace('W11-2', unit)); card.appendChild(tip);
       sum.appendChild(card);
     }
     function showWrap() {

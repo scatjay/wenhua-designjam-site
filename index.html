@@ -3,11 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>文化遊戲松／遊戲設計學 · 本週學習單（W11）</title>
-<meta http-equiv="refresh" content="0;url=w11.html">
-<script>location.replace('w11.html' + location.search + location.hash);</script>
+<title>文化遊戲松／遊戲設計學 · 本週學習單（W12）</title>
+<script>
+/* 文化遊戲松 → w12.html；遊戲設計學（信封編號 101–130）→ gd_w12.html（中文＋印尼文）。沒綁定過編號的一律去 w12.html。 */
+(function () {
+  var n = NaN; try { n = parseInt(localStorage.getItem('designjam_env'), 10); } catch (e) {}
+  var to = (n >= 101 && n <= 130) ? 'gd_w12.html' : 'w12.html';
+  location.replace(to + location.search + location.hash);
+})();
+</script>
 </head>
 <body style="font-family:-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;padding:24px;font-size:16px">
-<p>正在前往本週學習單… <a href="w11.html">沒有自動跳轉請按這裡（W11）</a>　<a href="hub.html">所有週次的總入口</a></p>
+<p>正在前往本週學習單… <a href="w12.html">文化遊戲松（W12）</a>　<a href="gd_w12.html">遊戲設計學（W12）</a>　<a href="hub.html">所有週次的總入口</a></p>
 </body>
 </html>

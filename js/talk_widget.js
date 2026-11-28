@@ -131,12 +131,28 @@
       var h = document.createElement('h4'); h.textContent = T('助教結果卡（本週討論已完成）'); card.appendChild(h);
       function sec(title) { var b = document.createElement('b'); b.textContent = title; b.style.cssText = 'display:block;margin-top:8px'; card.appendChild(b); }
       function line(l, v) { if (!v) return; var d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.55;margin:2px 0'; d.textContent = l + '：' + v; card.appendChild(d); }
+      // W12 起：涵蓋格 ●◐○ N／6＋共聊幾輪＋沒涵蓋的格一句提示（不阻擋確認）
+      if (unit !== 'W11') {
+        var KEYS = ['base', 'moment', 'loop', 'tainan', 'winlose', 'screens'];
+        var LB = { W12: ['你交給 AI 的是哪張畫面、哪個樣板', 'AI 做出來哪裡和你的畫面不像', '你下了什麼指令去修', '你加了哪個互動、拿掉哪個', '規則有沒有被偷改、你怎麼檢查', '下一步要修哪一處'] }[unit];
+        if (LB) {
+          var sy = { clear: '●', vague: '◐', empty: '○' }, got = 0, bar = '', rest = [];
+          KEYS.forEach(function (k, i) { var s2 = (cd[k] || {}).state || 'empty'; if (s2 === 'clear') got++; else rest.push(LB[i]); bar += sy[s2] || '○'; });
+          sec(T('這次討論涵蓋了哪幾格'));
+          var cv = document.createElement('div'); cv.className = 'cov'; cv.style.cssText = 'font-size:16px;line-height:1.6'; cv.textContent = bar + '　' + got + '／6　' + T('共聊 {n} 輪').split('{n}').join(st.rounds); card.appendChild(cv);
+          rest.forEach(function (r) { var d = document.createElement('div'); d.style.cssText = 'font-size:14px;line-height:1.5;opacity:.85'; d.textContent = T('還可以聊：') + T(r); card.appendChild(d); });
+        }
+      }
       sec(T('AI 助教看到的提案（用你自己的話）'));
+      if (unit === 'W12') {   // W12：六格用 W12 的意思顯示，不用 W11 的「最好玩的一刻／台南的東西／及格線」
+        line(T('一句話說你的遊戲'), st.summary); line(T('AI 做出來哪裡和你的畫面不像'), cell('moment')); line(T('你加了哪個互動、拿掉哪個'), cell('tainan'));
+      } else {
       line(T('一句話說你的遊戲'), st.summary); line(T('最好玩的一刻'), cell('moment')); line(T('台南的東西，在遊戲裡變成'), cell('tainan'));
       sec(T('這週的及格線（AI 助教看到的）'));
       [[T('3 個遊戲畫面'), clr('screens')], [T('一句話說你的遊戲'), !!st.summary], [T('一個台南的東西'), clr('tainan')]].forEach(function (r) {
         var d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.7'; d.textContent = (r[1] ? '✓ ' : '－ ') + r[0] + (r[1] ? '' : T('（還缺）')); card.appendChild(d);
       });
+      }
       if (st.next_step) { sec(T('下一步建議')); var ns = document.createElement('div'); ns.style.cssText = 'font-size:15px;line-height:1.55'; ns.textContent = st.next_step; card.appendChild(ns); }
       var meta = document.createElement('dl'), rows = [[T('完成碼'), st.code || '—'], [T('完成時間'), st.at || '']];
       rows.forEach(function (r) { var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = r[0]; dd.textContent = r[1]; if (r[0] === T('完成碼')) dd.className = 'code'; meta.appendChild(dt); meta.appendChild(dd); });

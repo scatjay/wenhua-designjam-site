@@ -4,8 +4,8 @@
 (function () {
   var DB = 'https://gen-lang-client-0929530380-default-rtdb.asia-southeast1.firebasedatabase.app', NS = 'gen-lang-client-0929530380-default-rtdb';
   var OPEN = {
-    '47602': { W11: '你的遊戲裡最好玩的那一刻是什麼？' },
-    '46582': { W11: '你的遊戲裡最好玩的那一刻是什麼？' }
+    '47602': { W11: '你的遊戲裡最好玩的那一刻是什麼？', W13: 'Claude 列了幾點問題，你只改哪一點？' },
+    '46582': { W11: '你的遊戲裡最好玩的那一刻是什麼？', W13: 'Claude 列了幾點問題，你只改哪一點？' }
   };
   var HINTS = window.CT_HINTS || {};
   var DAY_CAP = 100, MIN_ROUNDS = 3, MAX_ROUNDS = 8, TIMEOUT = 90000;
@@ -131,10 +131,12 @@
       var h = document.createElement('h4'); h.textContent = T('助教結果卡（本週討論已完成）'); card.appendChild(h);
       function sec(title) { var b = document.createElement('b'); b.textContent = title; b.style.cssText = 'display:block;margin-top:8px'; card.appendChild(b); }
       function line(l, v) { if (!v) return; var d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.55;margin:2px 0'; d.textContent = l + '：' + v; card.appendChild(d); }
+      var LBS = { W12: ['你交給 AI 的是哪張畫面、哪個樣板', 'AI 做出來哪裡和你的畫面不像', '你下了什麼指令去修', '你加了哪個互動、拿掉哪個', '規則有沒有被偷改、你怎麼檢查', '下一步要修哪一處'],
+        W13: ['補了哪幾種畫面', '每種畫面玩家看到什麼', 'Claude 列了哪些毛病', '你只改哪一點、為什麼', '沒採用的建議與理由', '改動句（一句話）'] };
       // W12 起：涵蓋格 ●◐○ N／6＋共聊幾輪＋沒涵蓋的格一句提示（不阻擋確認）
       if (unit !== 'W11') {
         var KEYS = ['base', 'moment', 'loop', 'tainan', 'winlose', 'screens'];
-        var LB = { W12: ['你交給 AI 的是哪張畫面、哪個樣板', 'AI 做出來哪裡和你的畫面不像', '你下了什麼指令去修', '你加了哪個互動、拿掉哪個', '規則有沒有被偷改、你怎麼檢查', '下一步要修哪一處'] }[unit];
+        var LB = LBS[unit];
         if (LB) {
           var sy = { clear: '●', vague: '◐', empty: '○' }, got = 0, bar = '', rest = [];
           KEYS.forEach(function (k, i) { var s2 = (cd[k] || {}).state || 'empty'; if (s2 === 'clear') got++; else rest.push(LB[i]); bar += sy[s2] || '○'; });
@@ -144,8 +146,8 @@
         }
       }
       sec(T('AI 助教看到的提案（用你自己的話）'));
-      if (unit === 'W12') {   // W12：六格用 W12 的意思顯示，不用 W11 的「最好玩的一刻／台南的東西／及格線」
-        line(T('一句話說你的遊戲'), st.summary); line(T('AI 做出來哪裡和你的畫面不像'), cell('moment')); line(T('你加了哪個互動、拿掉哪個'), cell('tainan'));
+      if (LBS[unit]) {   // W12／W13：六格用該週的意思顯示，不用 W11 的「最好玩的一刻／台南的東西／及格線」
+        line(T('一句話說你的遊戲'), st.summary); line(T(LBS[unit][1]), cell('moment')); line(T(LBS[unit][3]), cell('tainan'));
       } else {
       line(T('一句話說你的遊戲'), st.summary); line(T('最好玩的一刻'), cell('moment')); line(T('台南的東西，在遊戲裡變成'), cell('tainan'));
       sec(T('這週的及格線（AI 助教看到的）'));
